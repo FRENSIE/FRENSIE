@@ -72,109 +72,58 @@ public:
   //! Get the particle type
   ParticleType getParticleType() const;
 
-  //! Enable thread support
-  void enableThreadSupport( const size_t threads ) override;
-
-  //! Reset the source data
-  void resetData() override;
-
-  //! Reduce the source data
-  void reduceData(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process ) override;
-
-  //! Export the source data
-  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>&
-                   hdf5_file ) const override;
-
-  //! Print a summary of the source data
-  void printSummary( std::ostream& os ) const override;
-
   //! Set the critical line energies
   void setCriticalLineEnergies(
                const Teuchos::ArrayRCP<const double>& critical_line_energies );
-
-  //! Set the rejection cell
-  void setRejectionCell(
-                       const Geometry::ModuleTraits::InternalCellHandle cell );
-
-  //! Sample a particle state from the source
-  void sampleParticleState( ParticleBank& bank,
-			    const unsigned long long history ) override;
-
-  //! Return the number of sampling trials
-  ModuleTraits::InternalCounter getNumberOfTrials() const override;
 
   //! Return the number of trials in the phase space dimension
   ModuleTraits::InternalCounter getNumberOfDimensionTrials(
                           const PhaseSpaceDimension dimension ) const override;
 
-  //! Return the number of samples that have been generated
-  ModuleTraits::InternalCounter getNumberOfSamples() const override;
-
   //! Return the number of samples in the phase space dimension
   ModuleTraits::InternalCounter getNumberOfDimensionSamples(
                           const PhaseSpaceDimension dimension ) const override;
-
-  //! Return the sampling efficiency from the source
-  double getSamplingEfficiency() const override;
 
   //! Return the sampling efficiency in the phase space dimension
   double getDimensionSamplingEfficiency(
                           const PhaseSpaceDimension dimension ) const override;
 
-  //! Return the starting cells that have been cached
-  void getStaringCells( std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells ) const override;
+protected:
+
+  //! Enable thread support
+  void enableThreadSupportImpl( const size_t threads ) override;
+
+  //! Reset the source data
+  void resetDataImpl() override;
+
+  //! Reduce the source data
+  void reduceDataImpl(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process ) override;
+
+  //! Export the source data
+  void exportDataImpl( SourceHDF5FileHandler& hdf5_file ) const override;
+
+  //! Print a summary of the source data
+  void printSummaryImpl( std::ostream& os ) const override;
+  
+  /*! \brief Return the number of particle states that will be sampled for the 
+   * given history number
+   */
+  unsigned long long getNumberOfParticleStateSamples(
+                             const unsigned long long history ) const override;
+
+  //! Initialize a particle state
+  std::shared_ptr<ParticleState> initializeParticleState(
+                          const unsigned long long history,
+                          const unsigned long long history_state_id ) override;
+
+  //! Sample a particle state from the source
+  bool sampleParticleStateImpl(
+                          const std::shared_ptr<ParticleState>& particle,
+                          const unsigned long long history_state_id ) override;
 
 private:
-
-  // Check if the sampled particle position is valid
-  bool isSampledParticlePositionValid( const ParticleState& particle ) const;
-
-  // Generate probe particles
-  void generateProbeParticles( ParticleBank& bank,
-                               const unsigned long long history );
-
-  // Sample a particle state
-  void sampleParticleStateBasicImpl(
-                         ParticleStateSamplingFunction& sampling_function,
-                         ParticleState& particle,
-                         const bool ignore_energy_dimension_counters = false );
-
-  // Merge the starting cells on the comm
-  void mergeStartingCells(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process );
-
-  // Merge the starting cells with the packaged data
-  void mergeStaringCellsWithPackagedData(
-          std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells,
-          const std::string& packaged_data );
-
-  // Package the starting cell data
-  std::string packageStartingCellData(
-                    const std::set<Geometry::ModuleTraits::InternalCellHandle>&
-                    starting_cells ) const;
-
-  // Unpack the starting cell data
-  std::set<Geometry::ModuleTraits::InternalCellHandle>
-  unpackStartingCellData( const std::string& packaged_data ) const;
-  
-  // Reduce the sample counters on the comm
-  void reduceSampleCounters(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process );
-
-  // Reduce the trial counters on the comm
-  void reduceTrialCounters(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process );
-
-  // Reduce the counters on the comm
-  static void reduceCounters(
-            Teuchos::Array<ModuleTraits::InternalCounter>& counters,
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process );
 
   // Reduce the dimension sample counters on the comm
   void reduceDimensionSampleCounters(
@@ -191,15 +140,6 @@ private:
             Teuchos::Array<DimensionCounterMap>& dimension_counters,
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process );
-
-  // Merge the local starting cells
-  void mergeLocalStartCellCaches( std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells ) const;
-
-  // Reduce the local samples counters
-  ModuleTraits::InternalCounter reduceLocalSampleCounters() const;
-
-  // Reduce the local trials counters
-  ModuleTraits::InternalCounter reduceLocalTrialCounters() const;
 
   // Reduce all of the local dimension samples counters
   void reduceAllLocalDimensionSampleCounters(
@@ -227,9 +167,6 @@ private:
                const PhaseSpaceDimension dimension,
                const Teuchos::Array<DimensionCounterMap>& dimension_counters );
 
-  // Initialze the start cell caches
-  void initializeStartCellCaches();
-
   // Initialize the dimension sample counters
   void initializeDimensionSampleCounters();
 
@@ -251,19 +188,6 @@ private:
   // Ther particle type that will be generated by this source
   ParticleType d_particle_type;
 
-  // The default particle state sampling function
-  ParticleStateSamplingFunction d_default_particle_state_sampling_function;
-
-  // The start cell cache
-  Teuchos::Array<std::set<Geometry::ModuleTraits::InternalCellHandle> >
-  d_start_cell_cache;
-
-  // The number of trials
-  Teuchos::Array<ModuleTraits::InternalCounter> d_number_of_trials;
-
-  // The number of valid samples
-  Teuchos::Array<ModuleTraits::InternalCounter> d_number_of_samples;
-
   // The dimension trial counters
   Teuchos::Array<DimensionCounterMap> d_dimension_trial_counters;
 
@@ -273,31 +197,7 @@ private:
   // The particle state critical line energy sampling functions
   Teuchos::Array<Utility::Pair<double,ParticleStateSamplingFunction> >
   d_particle_state_critical_line_energy_sampling_functions;
-
-  // The rejection cells
-  std::set<Geometry::ModuleTraits::InternalCellHandle> d_rejection_cells;
 };
-
-// Set a rejection cell
-/*! \details A rejection cell is used to determine if a sampled particle
- * position should be kept or rejected. If the sampled point is inside of
- * one of the rejection cells, it is kept. This function can be used to
- * set multiple rejection cells. Only the master thread should call this
- * method.
- */
-inline void StandardParticleSource::setRejectionCell(
-                        const Geometry::ModuleTraits::InternalCellHandle cell )
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure the cell is valid
-  testPrecondition( this->getModel().doesCellExist( cell ) );
-
-  d_rejection_cells.insert( cell );
-
-  for( int i = 0; i < d_start_cell_cache.size(); ++i )
-    d_start_cell_cache[i].insert( cell );
-}
 
 } // end MonteCarlo namespace
 

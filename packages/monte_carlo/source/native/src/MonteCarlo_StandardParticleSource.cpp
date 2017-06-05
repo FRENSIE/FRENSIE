@@ -9,11 +9,6 @@
 // Std Lib Includes
 #include <limits>
 #include <numeric>
-#include <sstream>
-
-// Boost Includes
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardParticleSource.hpp"
@@ -32,24 +27,12 @@ StandardParticleSource::StandardParticleSource(
       const ParticleType particle_type )
   : d_particle_distribution( particle_distribution ),
     d_particle_type( particle_type ),
-    d_default_particle_state_sampling_function(),
-    d_start_cell_cache( 1 ),
-    d_number_of_trials( 1, 0ull ),
-    d_number_of_samples( 1, 0ull ),
     d_dimension_trial_counters( 1 ),
     d_dimension_sample_counters( 1 ),
-    d_particle_state_critical_line_energy_sampling_functions(),
-    d_rejection_cells()
+    d_particle_state_critical_line_energy_sampling_functions()
 { 
   // Make sure that the particle distribution is valid
   testPrecondition( particle_distribution.get() );
-
-  // Create the default particle state sampling function
-  d_default_particle_state_sampling_function =
-    std::bind<void>( &ParticleDistribution::sampleAndRecordTrials,
-                     std::cref( *d_particle_distribution ),
-                     std::placeholders::_1,
-                     std::placeholders::_2 );
 
   // Initialize the dimension trial counters
   this->initializeDimensionTrialCounters();
@@ -73,21 +56,13 @@ ParticleType StandardParticleSource::getParticleType() const
 // Enable thread support
 /*! \details Only the master thread should call this method.
  */
-void StandardParticleSource::enableThreadSupport( const size_t threads )
+void StandardParticleSource::enableThreadSupportImpl( const size_t threads )
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure a valid number of threads has been requested
   testPrecondition( threads > 0 );
 
-  d_start_cell_cache.resize( threads );
-
-  // Initialize the start cell caches
-  this->initializeStartCellCaches();
-
-  d_number_of_trials.resize( threads, 0ull );
-  d_number_of_samples.resize( threads, 0ull );
-  
   d_dimension_trial_counters.resize( threads );
   d_dimension_sample_counters.resize( threads );
 
@@ -99,17 +74,11 @@ void StandardParticleSource::enableThreadSupport( const size_t threads )
 // Reset the source data
 /*! \details Only the master thread should call this method.
  */
-void StandardParticleSource::resetData()
+void StandardParticleSource::resetDataImpl()
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  for( unsigned i = 0; i < d_number_of_trials.size(); ++i )
-  {
-    d_number_of_trials[i] = 0;
-    d_number_of_samples[i] = 0;
-  }
-
+  
   this->initializeDimensionSampleCounters();
   this->initializeDimensionTrialCounters();
 }
@@ -117,7 +86,7 @@ void StandardParticleSource::resetData()
 // Reduce the source data
 /*! \details Only the master thread should call this method.
  */
-void StandardParticleSource::reduceData(
+void StandardParticleSource::reduceDataImpl(
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process )
 {
@@ -131,29 +100,6 @@ void StandardParticleSource::reduceData(
   // Only do the reduction if there is more than one process
   if( comm->getSize() > 1 )
   {
-    // Reduce the starting cell sets
-    try{
-      this->mergeStartingCells( comm, root_process );
-    }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "unable to merge starting cell caches!" );
-    
-    // Reduce the trial counters
-    try{
-      this->reduceTrialCounters( comm, root_process );
-    }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "unable to reduce the source trial "
-                             "counters!" );
-
-    // Reduce the sample counters
-    try{
-      this->reduceSampleCounters( comm, root_process );
-    }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "unable to reduce the source sample "
-                             "counters!" );
-
     // Reduce the dimension trial counters
     try{
       this->reduceDimensionTrialCounters( comm, root_process );
@@ -169,203 +115,7 @@ void StandardParticleSource::reduceData(
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "unable to reduce the dimension sample "
                              "counters!" );
-    
-    // Reset the sampling data if not the root process
-    if( comm->getRank() != root_process )
-      this->resetData();
   }
-}
-
-// Merge the starting cells on the comm
-void StandardParticleSource::mergeStartingCells(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process )
-{
-  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
-
-  this->mergeLocalStartingCellCaches( starting_cells );
-
-  // Handle the root process
-  if( comm->getRank() == root_process )
-  {
-    // Start at one since the root process does not need to report
-    int nodes_reporting = 1;
-    
-    while( nodes_reporting < comm->getSize() )
-    {
-      Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > status;
-
-      // Probe for incoming sends to determine message size
-      try{
-        Utility::probe( *comm, status );
-      }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                               "Root process (" << root_process <<
-                               ") was unable to probe for starting cell data "
-                               "sent by non-root processes!" );
-
-      // Get the size of the incoming message
-      std::string packaged_data;
-
-      try{
-        int message_size = Utility::getMessageSize<char>( *status );
-
-        packaged_data.resize( message_size );
-      }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                               "Root proces (" << root_process <<
-                               ") was unable to determine the size of the "
-                               "starting cell data sent from process "
-                               << status->getSourceRank() << "!" );
-
-      // Get the message
-      try{
-        Teuchos::receive( *comm,
-                          status->getSourceRank(),
-                          (unsigned long long)packaged_data.size(),
-                          &packaged_data[0] );
-      }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                               "Root process (" << root_process <<
-                               ") was unable to receive starting cell data "
-                               "from process "
-                               << static->getSourceRank() << "!" );
-
-      this->mergeStartingCellsWithPackagedData( starting_cells,
-                                                packaged_data );
-
-      ++nodes_reporting;
-    }
-  }
-  // Handle non-root nodes
-  else
-  {
-    std::string packaged_data =
-      this->packageStartingCellData( starting_cells );
-
-    try{
-      Teuchos::send( *comm,
-                     (unsigned long long)packaged_data.size(),
-                     &packaged_data[0],
-                     root_process );
-    }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Process " << comm->getRank() <<
-                             " was unable to send starting cell data "
-                             "to the root process ("
-                             << root_process << ")!" );
-  }
-
-  // Wait for the root node to finish merging starting cell sets
-  comm->barrier();
-
-  // Broadcast the merged starting cell set to every node
-  std::string packaged_data;
-  size_t packaged_data_size;
-  
-  if( comm->getRank() == root_process )
-  {
-    packaged_data = this->packageStartingCellData( starting_cells );
-    packaged_data_size = packaged_data.size();
-  }
-
-  Teuchos::broadcast( *comm, root_process, &packaged_data_size );
-
-  if( comm->getRank() != root_process )
-    packaged_data.resize( packaged_data_size );
-
-  Teuchos::broadcast( *comm,
-                      root_process,
-                      packaged_data_size,
-                      &packaged_data[0] );
-
-  if( comm->getRank() != root_process )
-    starting_cells = this->unpackStartingCellData( packaged_data );
-
-  // Distribute the starting cells set to all threads
-  for( size_t i = 0; i < d_start_cell_cache.size(); ++i )
-    d_start_cell_cache[i] = starting_cells;
-}
-
-// Merge the starting cells with the packaged data
-void StandardParticleSource::mergeStaringCellsWithPackagedData(
-          std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells,
-          const std::string& packaged_data )
-{
-  std::set<Geometry::ModuleTraits::InternalCellHandle>
-    unpacked_starting_cells = this->unpackStartingCellData( packaged_data );
-
-  starting_cells.insert( unpacked_starting_cells.begin(),
-                         unpacked_starting_cells.end() );
-}
-
-// Package the starting cell data
-std::string StandardParticleSource::packageStartingCellData(
-                    const std::set<Geometry::ModuleTraits::InternalCellHandle>&
-                    starting_cells ) const
-{
-  std::ostringstream starting_cells_stream;
-  
-  boost::archive::binary_oarchive
-    starting_cells_archive( starting_cells_stream );
-
-  starting_cells_archive << starting_cells;
-
-  return starting_cells_stream.str();
-}
-
-// Unpack the starting cell data
-std::set<Geometry::ModuleTraits::InternalCellHandle>
-StandardParticleSource::unpackStartingCellData(
-                                       const std::string& packaged_data ) const
-{
-  std::istringstream input_stream( packaged_data );
-  boost::archive::binary_iarchive input_archive( input_stream );
-
-  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
-  
-  input_archive >> starting_cells;
-
-  return starting_cells;
-}
-
-// Reduce the sample counters on the comm
-void StandardParticleSource::reduceSampleCounters(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process )
-{
-  StandardParticleSource::reduceCounters( d_number_of_samples,
-                                          comm,
-                                          root_process );
-                                         
-}
-
-// Reduce the trial counters on the comm
-void StandardParticleSource::reduceTrialCounters(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process )
-{
-  StandardParticleSource::reduceCounters( d_number_of_trials,
-                                          comm,
-                                          root_process );
-}
-
-// Reduce the counters on the comm
-void StandardParticleSource::reduceCounters(
-            Teuchos::Array<ModuleTraits::InternalCounter>& counters,
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process )
-{
-  try{
-    Teuchos::reduceAll<ModuleTraits::InternalCounter>(
-                                      *comm,
-                                      Teuchos::REDUCE_SUM,
-                                      counters.size(),
-                                      counters.getRawPtr(),
-                                      counters.getRawPtr() );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                           "unable to reduce the counters!" );
 }
 
 // Reduce the dimension trial counters on the comm
@@ -425,26 +175,11 @@ void StandardParticleSource::reduceDimensionCounters(
 // Export the source data
 /*! \details Only the master thread should call this method.
  */
-void StandardParticleSource::exportData(
-             const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const
+void StandardParticleSource::exportDataImpl(
+                                       SourceHDF5FileHandler& hdf5_file ) const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure the hdf5 file is valid
-  testPrecondition( hdf5_file.get() != NULL );
-
-  // Open the source hdf5 file
-  SourceHDF5FileHandler source_hdf5_file( hdf5_file );
-
-  // Set the number of trials
-  ModuleTraits::InternalCounter trials = this->getNumberOfTrials();
-
-  source_hdf5_file.setNumberOfSourceSamplingTrials( this->getId(), trials );
-
-  // Set the number of samples
-  ModuleTraits::InternalCounter samples = this->getNumberOfSamples();
-
-  source_hdf5_file.setNumberOfSourceSamples( this->getId(), samples );
 
   // Set the number of trials in each dimension
   DimensionCounterMap dimension_counters;
@@ -456,7 +191,7 @@ void StandardParticleSource::exportData(
 
   while( dimension_counter_it != dimension_counters.end() )
   {
-    source_hdf5_file.setNumberOfSourceDimensionSamplingTrials(
+    hdf5_file.setNumberOfSourceDimensionSamplingTrials(
                                                 this->getId(),
                                                 dimension_counter_it->first,
                                                 dimension_counter_it->second );
@@ -473,7 +208,7 @@ void StandardParticleSource::exportData(
 
   while( dimension_counter_it != dimension_counters.end() )
   {
-    source_hdf5_file.setNumberOfSourceDimensionSamples(
+    hdf5_file.setNumberOfSourceDimensionSamples(
                                                 this->getId(),
                                                 dimension_counter_it->first,
                                                 dimension_counter_it->second );
@@ -485,38 +220,24 @@ void StandardParticleSource::exportData(
 // Print a summary of the source data
 /*! \details Only the master thread should call this method.
  */
-void StandardParticleSource::printSummary( std::ostream& os ) const
+void StandardParticleSource::printSummaryImpl( std::ostream& os ) const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
-  // Print the source sampling statistics
-  this->printStandardSummary( "Standard Source",
-                              this->getNumberOfTrials(),
-                              this->getNumberOfSamples(),
-                              this->getSamplingEfficiency(),
-                              os );
-
-  // Print the starting cell summary
-  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
-  this->getStartingCells( starting_cells );
-  
-  this->printStandardStartingCellSummary( starting_cells, os );
-
   // Print the sampling statistics for each source dimension
-  ParticleDistribution::DimensionSet::const_iterator dimension_it,
-    dimension_end;
+  DimensionCounterMap::const_iterator dimension_it, dimension_end;
   dimension_it = d_dimension_trial_counters.front().begin();
   dimension_end = d_dimension_trial_counters.front().end();
   
   while( dimension_it != dimension_end )
   {
     this->printStandardDimensionSummary(
-      d_particle_distribution->getDimensionDistributionTypeName(*dimension_it),
-      *dimension_it,
-      this->getNumberOfDimensionTrials( *dimension_it ),
-      this->getNumberOfDimensionSamples( *dimension_it ),
-      this->getDimensionSamplingEfficiency( *dimension_it ),
+      d_particle_distribution->getDimensionDistributionTypeName( dimension_it->first ),
+      dimension_it->first,
+      this->getNumberOfDimensionTrials( dimension_it->first ),
+      this->getNumberOfDimensionSamples( dimension_it->first ),
+      this->getDimensionSamplingEfficiency( dimension_it->first ),
       os );
     
     ++dimension_it;
@@ -549,48 +270,38 @@ void StandardParticleSource::setCriticalLineEnergies(
                        critical_line_energies[i] );
   }
 }
-  
-// Sample the particle state from the source
-/*! \details If enableThreadSupport has been called, this method is
- * thread-safe. The cell that contains the sampled particle state will
- * not be set and must be determined by the geometry module.
+
+// Return the number of particle states that will be sampled for the 
+// given history number
+/*! \details The number of particle states that must be sampled for each
+ * history is the the number of critical energies plus one (a probe particle
+ * must be generated for each critical energy).
  */
-void StandardParticleSource::sampleParticleState(
-                                             ParticleBank& bank,
-					     const unsigned long long history )
+unsigned long long StandardParticleSource::getNumberOfParticleStateSamples(
+                                       const unsigned long long history ) const
 {
-  // Make sure thread support has been set up correctly
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
-                    d_number_of_samples.size() );
-
-  // Initialize the particle
-  std::shared_ptr<ParticleState> particle;
-    
-  ParticleStateFactory::createState( particle, d_particle_type, history );
-  
-  // Sample the particle state
-  this->sampleParticleStateBasicImpl(
-                       d_default_particle_state_sampling_function, *particle );
-
-  // Add the particle to the bank
-  bank.push( *particle );
-
-  // Generate probe particles with the critical line energies
-  this->generateProbeParticles( bank, history );
+  return d_particle_state_critical_line_energy_sampling_functions.size() + 1;
 }
 
-// Generate probe particles
-/* Note: Probe particles are currently sampled completely independently from
- * the parent particle. It is quite possible that there is a more efficient
- * way to generate probe particles but given that a particle distribution
- * can be defined in a very general way it is not immediately obvious how to
- * do this. 
- */
-void StandardParticleSource::generateProbeParticles(
-                                             ParticleBank& bank,
-                                             const unsigned long long history )
+// Initialize a particle state
+std::shared_ptr<ParticleState> StandardParticleSource::initializeParticleState(
+                                    const unsigned long long history,
+                                    const unsigned long long history_state_id )
 {
-  for( size_t i = 0; i < d_particle_state_critical_line_energy_sampling_functions.size(); ++i )
+  // Make sure that the history state id is valid
+  testPrecondition( history_state_id <
+                    this->getNumberOfParticleStateSamples( history ) );
+  
+  if( history_state_id == 0 )
+  {
+    // Initialize the particle
+    std::shared_ptr<ParticleState> particle;
+    
+    ParticleStateFactory::createState( particle, d_particle_type, history );
+
+    return particle;
+  }
+  else if( history_state_id > 0 )
   {
     // Initialize the particle (probe)
     std::shared_ptr<ParticleState> particle;
@@ -602,85 +313,48 @@ void StandardParticleSource::generateProbeParticles(
     EXCEPTION_CATCH_RETHROW( std::logic_error,
                              "A probe particle with the desired "
                              "critical line energy ("
-                             << Utility::get<0>(d_particle_state_critical_line_energy_sampling_functions[i]) <<
+                             << Utility::get<0>(d_particle_state_critical_line_energy_sampling_functions[history_state_id]) <<
                              ") could not be created!" );
-    
-    this->sampleParticleStateBasicImpl(
-            Utility::get<1>(d_particle_state_critical_line_energy_sampling_functions[i]),
-            *particle,
-            true );
-
-    // Add the particle to the bank
-    bank.push( *particle );
-  }  
+  }
 }
 
-// Sample a particle state
-void StandardParticleSource::sampleParticleStateBasicImpl(
-                              ParticleStateSamplingFunction& sampling_function,
-                              ParticleState& particle,
-                              const bool ignore_energy_dimension_counters )
+// Sample a particle state from the source
+/*! \details Probe particles are currently sampled completely independently 
+ * from the parent particle. It is quite possible that there is a more 
+ * efficient way to generate probe particles but given that a particle 
+ * distribution can be defined in a very general way it is not obvious how to 
+ * do this. 
+ */
+bool StandardParticleSource::sampleParticleStateImpl(
+                                const std::shared_ptr<ParticleState>& particle,
+                                const unsigned long long history_state_id )
 {
-  // Cache some of the counters for this thread in case they need to be
-  // accessed multiple times
-  ModuleTraits::InternalCounter& trial_counter =
-    d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
+  // Make sure that the history state id is valid
+  testPrecondition( history_state_id <
+                    this->getNumberOfParticleStateSamples(history_state_id) );
 
-  DimensionCounterMap& dimension_trial_counters =
-    d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()];
-
-  DimensionCounterMap& dimension_sample_counters =
-    d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()];
-
-  // Sample the particle state
-  while( true )
+  if( history_state_id > 0 )
   {
-    // Increment the trials counter
-    ++trial_counter;
-
-    // Sample the particle state and record dimension sampling statistics
-    sampling_function( particle, dimension_trial_counters );
+    // Sample a probe particle
+    Utility::get<1>(d_particle_state_critical_line_energy_sampling_functions[history_state_id])( *particle, d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()] );
 
     // Increment the dimension sample counters
-    this->incrementDimensionCounters( dimension_sample_counters,
-                                      ignore_energy_dimension_counters );
+    this->incrementDimensionCounters(
+      d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()],
+      true );
+  }
+  else if( history_state_id == 0 )
+  {
+    // Sample a standard particle
+    d_particle_distribution->sampleAndRecordTrials( *particle, d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()] );
 
-    // Check if the particle position satisfies a rejection cell.
-    if( this->isSampledParticlePositionValid( particle ) )
-      break;
+    // Increment the dimension sample counters
+    this->incrementDimensionCounters(
+      d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()],
+      false );
   }
 
-  // Determine the cell that this particle has been born in
-  Geometry::ModuleTraits::InternalCellHandle start_cell;
-
-  try{
-    start_cell = this->getGeometryNavigator().findCellContainingRay(
-             particle.getPosition(),
-             particle.getDirection(),
-             d_start_cell_cache[Utility::GlobalOpenMPSession::getThreadId()] );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                           "Unable to embed the sampled particle "
-                           << particle.getHistoryNumber() << "in "
-                           "the correct location of model "
-                           << this->getModel().getName() << "!" );
-
-  this->embedParticleInModel( particle, start_cell );
-
-  // Increment the samples counter
-  ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
-}
-  
-// Return the number of sampling trials
-/*! \details Only the master thread should call this method.
- */
-auto StandardParticleSource::getNumberOfTrials() const
-  -> ModuleTraits::InternalCounter
-{
-  // Make sure that only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
-  return this->reduceLocalTrialCounters();
+  return true;
 }
                   
 // Return the number of trials in the phase space dimension
@@ -698,17 +372,6 @@ auto StandardParticleSource::getNumberOfDimensionTrials(
   else
     return 0;
 }
-                  
-// Return the number of samples
-/*! \details Only the master thread should call this method.
- */
-auto StandardParticleSource::getNumberOfSamples() const -> ModuleTraits::InternalCounter
-{
-  // Make sure that only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  return this->reduceLocalSampleCounters();
-}
 
 // Return the number of dimension samples
 /*! \details Only the master thread should call this method.
@@ -723,26 +386,6 @@ auto StandardParticleSource::getNumberOfDimensionSamples(
     return this->reduceLocalDimensionSampleCounters( dimension );
   else
     return 0;
-}
-
-// Return the sampling efficiency from the source distribution
-/*! \details Only the master thread should call this method.
- */
-double StandardParticleSource::getSamplingEfficiency() const
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  // Reduce the number of samples
-  ModuleTraits::InternalCounter total_samples = this->reduceLocalSampleCounters();
-
-  // Reduce the number of trials
-  ModuleTraits::InternalCounter total_trials = this->reduceLocalTrialCounters();
-
-  if( total_trials > 0ull )
-    return static_cast<double>( total_samples )/total_trials;
-  else
-    return 1.0;
 }
 
 // Return the sampling efficiency in the phase space dimension
@@ -766,73 +409,6 @@ double StandardParticleSource::getDimensionSamplingEfficiency(
     return static_cast<double>( total_samples )/total_trials;
   else
     return 1.0;
-}
-
-// Check if the sampled particle position is valid
-bool StandardParticleSource::isSampledParticlePositionValid(
-                                          const ParticleState& particle ) const
-{
-  bool valid_position = false;
-  
-  // Check if the position is acceptable
-  if( d_rejection_cells.size() > 0 )
-  {
-    std::set<Geometry::ModuleTraits::InternalCellHandle>::const_iterator
-      rejection_cell_it, rejection_cell_end;
-    rejection_cell_it = d_rejection_cells.begin();
-    rejection_cell_end = d_rejection_cells.end();
-
-    while( rejection_cell_it != rejection_cell_end )
-    {
-      Geometry::PointLocation location =
-        this->getGeometryNavigator().getPointLocation( particle.getPosition(),
-                                                       particle.getDirection(),
-                                                       *rejection_cell_it );
-
-      if( location == Geometry::POINT_INSIDE_CELL )
-      {
-        valid_position = true;
-        
-        break;
-      }
-    }
-  }
-  else
-    valid_position = true;
-
-  return valid_position;
-}
-
-// Return the starting cells that have been cached
-void StandardParticleSource::getStaringCells( std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells ) const
-{
-  this->mergeLocalStartCellCaches( starting_cells );
-}
-
-// Merge the local starting cells
-void StandardParticleSource::mergeLocalStartCellCaches( std::set<Geometry::ModuleTraits::InternalCellHandle>& starting_cells ) const
-{
-  for( size_t i = 0; i < d_start_cell_cache.size(); ++i )
-  {
-    starting_cells.insert( d_start_cell_cache[i].begin(),
-                           d_start_cell_cache[i].end() );
-  }
-}
-
-// Reduce the local samples counters
-auto StandardParticleSource::reduceLocalSampleCounters() const -> ModuleTraits::InternalCounter
-{
-  return std::accumulate( d_number_of_samples.begin(),
-                          d_number_of_samples.end(),
-                          0ull );
-}
-
-// Reduce the local trials counters
-auto StandardParticleSource::reduceLocalTrialCounters() const -> ModuleTraits::InternalCounter
-{
-  return std::accumulate( d_number_of_trials.begin(),
-                          d_number_of_trials.end(),
-                          0ull );
 }
 
 // Reduce all of the local dimension samples counters
@@ -915,13 +491,6 @@ auto StandardParticleSource::reduceDimensionCounters(
   }
 
   return counter;
-}
-
-// Initialze the start cell caches
-void StandardParticleSource::initializeStartCellCaches()
-{
-  for( size_t i = 0; i < d_start_cell_cache.size(); ++i )
-    d_start_cell_cache[i] = d_rejection_cells;
 }
 
 // Initialize the dimension sample counters

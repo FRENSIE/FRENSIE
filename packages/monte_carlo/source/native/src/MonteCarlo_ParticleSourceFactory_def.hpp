@@ -15,7 +15,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_CachedStateParticleSource.hpp"
-#include "MonteCarlo_CompoundStandardParticleSource.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"

@@ -24,6 +24,7 @@
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_CommHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -35,8 +36,7 @@ CachedStateParticleSource::CachedStateParticleSource(
 		    const std::string& bank_name_in_archive,
 		    const Utility::ArchivableObject::ArchiveType archive_type )
   : ParticleSource(),
-    d_particle_states(),
-    d_number_of_samples( 1, 0ull )
+    d_particle_states()
 {
   // Make sure that the source bank archive name is valid
   testPrecondition( state_source_bank_archive_name.size() > 0 );
@@ -93,7 +93,7 @@ CachedStateParticleSource::CachedStateParticleSource(
       current_history_number = state_bank.top().getHistoryNumber();
     }
 
-    boost::shared_ptr<ParticleState> modified_state(
+    std::shared_ptr<ParticleState> modified_state(
 				    state_bank.top().clone( history_number ) );
 
     d_particle_states[history_number].push_back( modified_state );
@@ -109,139 +109,85 @@ ModuleTraits::InternalROIHandle CachedStateParticleSource::getId() const
 }
 
 // Enable thread support
-/*! \details Only the master thread should call this method.
+/*! \details There is no data that needs to be made thread safe.
  */
-void CachedStateParticleSource::enableThreadSupport( const size_t threads )
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure a valid number of threads has been requested
-  testPrecondition( threads > 0 );
-
-  d_number_of_samples.resize( threads, 0 );
-}
+void CachedStateParticleSource::enableThreadSupportImpl( const size_t )
+{ /* ... */ }
 
 // Reset the source data
-/*! \details Only the master thread should call this method.
+/*! \details There is no data that needs to be reset
  */
-void CachedStateParticleSource::resetData()
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  for( unsigned i = 0; i < d_number_of_samples.size(); ++i )
-    d_number_of_samples[i] = 0;
-}
+void CachedStateParticleSource::resetDataImpl()
+{ /* ... */ }
 
 // Reduce the source data
-/*! \details Only the master thread should call this method.
+/*! \details There is no data that needs to be reduced.
  */
-void CachedStateParticleSource::reduceData(
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-            const int root_process )
+void CachedStateParticleSource::reduceDataImpl(
+                 const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >&,
+                 const int )
+{ /* ... */ }
+
+// Export the source data
+/*! \details There is no data that needs to be exported.
+ */
+void CachedStateParticleSource::exportDataImpl(
+                                SourceHDF5FileHandler& source_hdf5_file ) const
+{ /* ... */ }
+
+// Print a summary of the source data
+/*! \details There is no data to summarize.
+ */
+void CachedStateParticleSource::printSummaryImpl( std::ostream& ) const
+{ /* ... */ }
+
+/*! \brief Return the number of particle states that will be sampled for the 
+ * given history number
+ */
+unsigned long long CachedStateParticleSource::getNumberOfParticleStateSamples(
+                                       const unsigned long long history ) const
 {
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure the communicator is valid
-  testPrecondition( !comm.is_null() );
-  // Make sure the root process is valid
-  testPrecondition( root_process < comm->getSize() );
+  HistoryStateMap::const_iterator history_it =
+    d_particle_states.find( history );
 
-  // Only do the reduction if there is more than one process
-  if( comm->getSize() > 1 )
+  if( history_it != d_particle_states.end() )
+    return history_it->second.size();
+  else
   {
-    try{
-      Teuchos::reduceAll<ModuleTraits::InternalCounter>(
-                                             *comm,
-                                             Teuchos::REDUCE_SUM,
-                                             d_number_of_samples.size(),
-                                             d_number_of_samples.getRawPtr(),
-                                             d_number_of_samples.getRawPtr() );
-    }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "unable to reduce the source samples!" );
-
-    // Reset the sampling data if not the root process
-    if( comm->getRank() != root_process )
-      this->resetData();
+    FRENSIE_LOG_WARNING( "Source " << this->getId() << " has no cached states "
+                         "for history " << history << "!" );
+    
+    return 0;
   }
 }
 
-// Export the source data
-/*! \details Only the master thread should call this method.
- */
-void CachedStateParticleSource::exportData(
-             const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const
+// Initialize a particle state
+std::shared_ptr<ParticleState>
+CachedStateParticleSource::initializeParticleState(
+                                    const unsigned long long history,
+                                    const unsigned long long history_state_id )
 {
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure the hdf5 file is valid
-  testPrecondition( hdf5_file.get() != NULL );
+  // Make sure that the history is valid
+  testPrecondition( d_particle_states.find( history ) !=
+                    d_particle_states.end() );
+  // Make sure that the history state id is valid
+  testPrecondition( history_state_id <
+                    d_particle_states.find( history )->second.size() );
 
-  // Open the source hdf5 file
-  SourceHDF5FileHandler source_hdf5_file( hdf5_file );
-
-  // Set the number of trials
-  ModuleTraits::InternalCounter trials = this->getNumberOfTrials();
-
-  source_hdf5_file.setNumberOfSourceSamplingTrials( this->getId(), trials );
-
-  // Set the number of samples
-  ModuleTraits::InternalCounter samples = this->getNumberOfSamples();
-
-  source_hdf5_file.setNumberOfSourceSamples( this->getId(), samples );
-}
-
-// Print a summary of the source data
-/*! \details Only the master thread should call this method.
- */
-// Print a summary of the source data
-void CachedStateParticleSource::printSummary( std::ostream& os ) const
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  this->printStandardSummary( "Cached State Source",
-                              this->getNumberOfTrials(),
-                              this->getNumberOfSamples(),
-                              this->getSamplingEfficiency(),
-                              os );
+  return d_particle_states.find( history )->second[history_state_id];
 }
 
 // Sample a particle state from the source
-/*! \details All cached particle states with the requested history number will
- * be added to the bank. If enableThreadSupport has been called, this method is
- * thread-safe. The cell that contains the sampled particle state will
- * not be set and must be determined by the geometry module.
+/*! \details Particle states are not sampled by this source. They are simply
+ * extracted from the particle state cache. All of the particle's info
+ * is set in the 
+ * MonteCarlo::CachedStateParticleSource::initializeParticleStateImpl method.
  */
-void CachedStateParticleSource::sampleParticleState(
-                                             ParticleBank& bank,
-                                             const unsigned long long history )
-{
-  TEST_FOR_EXCEPTION( d_particle_states.find( history ) ==
-		      d_particle_states.end(),
-		      std::runtime_error,
-		      "No particle states in the state source were "
-		      "found for history number " << history << "!" );
-
-  for( unsigned i = 0; i < d_particle_states[history].size(); ++i )
-  {
-    bank.push( *d_particle_states[history][i] );
-
-    ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
-  }
-}
-
-// Return the number of sampling trials
-/*! \details Only the master thread should call this method.
- */
-ModuleTraits::InternalCounter
-CachedStateParticleSource::getNumberOfTrials() const
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  return this->reduceLocalSamplesCounters();
+bool CachedStateParticleSource::sampleParticleStateImpl(
+                                         const std::shared_ptr<ParticleState>&,
+                                         const unsigned long long )
+{ 
+  return false;
 }
 
 // Return the number of sampling trials in the phase space dimension
@@ -252,30 +198,12 @@ CachedStateParticleSource::getNumberOfDimensionTrials(
   return 0.0;
 }
 
-// Return the number of samples
-/*! \details Only the master thread should call this method.
- */
-ModuleTraits::InternalCounter
-CachedStateParticleSource::getNumberOfSamples() const
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  return this->reduceLocalSamplesCounters();
-}
-
 // Return the number of samples in the phase space dimension
 ModuleTraits::InternalCounter
 CachedStateParticleSource::getNumberOfDimensionSamples(
                                               const PhaseSpaceDimension ) const
 {
   return 0.0;
-}
-
-// Return the sampling efficiency from the source
-double CachedStateParticleSource::getSamplingEfficiency() const
-{
-  return 1.0;
 }
 
 // Return the sampling efficiency in the phase space dimension
@@ -291,15 +219,6 @@ bool CachedStateParticleSource::compareHistoryNumbers(
                                                  const ParticleState& state_b )
 {
   return state_a.getHistoryNumber() < state_b.getHistoryNumber();
-}
-
-// Reduce the local samples counters
-ModuleTraits::InternalCounter
-CachedStateParticleSource::reduceLocalSamplesCounters() const
-{
-  return std::accumulate( d_number_of_samples.begin(),
-                          d_number_of_samples.end(),
-                          0 );
 }
 
 } // end MonteCarlo namespace

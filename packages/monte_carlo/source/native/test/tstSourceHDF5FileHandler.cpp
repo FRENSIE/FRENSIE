@@ -9,6 +9,8 @@
 // Std Lib Includes
 #include <iostream>
 #include <string>
+#include <set>
+#include <unordered_set>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -162,6 +164,50 @@ TEUCHOS_UNIT_TEST( SourceHDF5FileHandler,
   TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::TIME_DIMENSION ), 801 );
   TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 0, MonteCarlo::WEIGHT_DIMENSION ), 900 );
   TEST_EQUALITY_CONST( file_handler.getNumberOfSourceDimensionSamples( 1, MonteCarlo::WEIGHT_DIMENSION ), 901 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the start cell cache can be set
+TEUCHOS_UNIT_TEST( SourceHDF5FileHandle, setStartCellCache )
+{
+  MonteCarlo::SourceHDF5FileHandler file_handler( hdf5_file_name );
+
+  {
+    std::set<Geometry::ModuleTraits::InternalCellHandle> start_cell_cache;
+    start_cell_cache.insert( 1 );
+    start_cell_cache.insert( 3 );
+    start_cell_cache.insert( 201 );
+    
+    file_handler.setStartCellCache( 1, start_cell_cache );
+  }
+
+  std::set<Geometry::ModuleTraits::InternalCellHandle> start_cell_cache;
+  file_handler.getStartCellCache( 1, start_cell_cache );
+
+  TEST_EQUALITY_CONST( start_cell_cache.size(), 3 );
+  TEST_ASSERT( start_cell_cache.count( 1 ) );
+  TEST_ASSERT( start_cell_cache.count( 3 ) );
+  TEST_ASSERT( start_cell_cache.count( 201 ) );
+
+  {
+    std::unordered_set<Geometry::ModuleTraits::InternalCellHandle> start_cell_cache;
+    start_cell_cache.insert( 2 );
+    start_cell_cache.insert( 51 );
+    start_cell_cache.insert( 1023 );
+    start_cell_cache.insert( 9 );
+
+    file_handler.setStartCellCache( 2, start_cell_cache );
+  }
+
+  std::unordered_set<Geometry::ModuleTraits::InternalCellHandle>
+    unordered_start_cell_cache;
+  file_handler.getStartCellCache( 2, unordered_start_cell_cache );
+
+  TEST_EQUALITY_CONST( unordered_start_cell_cache.size(), 4 );
+  TEST_ASSERT( unordered_start_cell_cache.count( 2 ) );
+  TEST_ASSERT( unordered_start_cell_cache.count( 51 ) );
+  TEST_ASSERT( unordered_start_cell_cache.count( 1023 ) );
+  TEST_ASSERT( unordered_start_cell_cache.count( 9 ) );
 }
 
 //---------------------------------------------------------------------------//

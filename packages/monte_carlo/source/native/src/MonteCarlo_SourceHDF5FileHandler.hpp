@@ -90,6 +90,16 @@ public:
   Utility::DistributionTraits::Counter getNumberOfSourceDimensionSamples(
                                const ModuleTraits::InternalROIHandle source_id,
                                const PhaseSpaceDimension dimension ) const;
+
+  //! Set the start cell cache
+  template<template<typename,typename...> class StdCompliantSet>
+  void setStartCellCache( const ModuleTraits::InternalROIHandle source_id,
+                          const StdCompliantSet<Geometry::ModuleTraits::InternalCellHandle>& starting_cell_cache );
+
+  //! Get the start cell cache
+  template<template<typename,typename...> class StdCompliantSet>
+  void getStartCellCache( const ModuleTraits::InternalROIHandle source_id,
+                          StdCompliantSet<Geometry::ModuleTraits::InternalCellHandle>& starting_cell_cache );
   
 private:
 
@@ -107,6 +117,14 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes.
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_SourceHDF5FileHandler_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_SOURCE_HDF5_FILE_HANDLER_HPP
 
