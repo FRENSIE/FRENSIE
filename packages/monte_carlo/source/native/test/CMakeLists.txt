@@ -118,6 +118,23 @@ TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)
 ADD_TEST(StandardParticleSource_test tstStandardParticleSource)
 SET_PROPERTY(TEST StandardParticleSource_test PROPERTY LABELS monte_carlo_source_native)
 
+IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstEmbeddedStandardParticleSource
+    tstEmbeddedStandardParticleSource.cpp
+    ${FRENSIE_STD_UNIT_TEST_MAIN})
+  TARGET_LINK_LIBRARIES(tstEmbeddedStandardParticleSource monte_carlo_source_native geometry_factory)
+
+  IF(FRENSIE_ENABLE_DAGMC)
+    ADD_TEST(StandardParticleSource_DagMC_test tstEmbeddedStandardParticleSource --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
+    SET_PROPERTY(TEST StandardParticleSource_DagMC_test PROPERTY LABELS monte_carlo_source_native)
+  ENDIF()
+
+  IF(FRENSIE_ENABLE_ROOT)
+    ADD_TEST(StandardParticleSource_Root_test tstEmbeddedStandardParticleSource --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
+    SET_PROPERTY(TEST StandardParticleSource_Root_test PROPERTY LABELS monte_carlo_source_native)
+  ENDIF()
+ENDIF()
+
 # IF(${FRENSIE_ENABLE_OPENMP})
 #   ADD_TEST(SharedParallelStandardParticleSource_2_test tstStandardParticleSource --threads=2)
 #   ADD_TEST(SharedParallelStandardParticleSource_4_test tstStandardParticleSource --threads=4)

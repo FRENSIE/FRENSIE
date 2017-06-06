@@ -596,6 +596,8 @@ bool ParticleSource::isSampledParticlePositionValid(
         
         break;
       }
+
+      ++rejection_cell_it;
     }
   }
   else

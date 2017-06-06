@@ -35,18 +35,32 @@ void test_source_geom()
   gGeoManager->SetTopVolume( terminal_cube );
   terminal_cube->SetUniqueID( 1 );
 
+  // Define the intermediate cube
+  TGeoVolume* intermediate_cube =
+    gGeoManager->MakeBox( "Intermediate Cube",
+                          void_med,
+                          4.5,
+                          4.5,
+                          4.5 );
+  
+  intermediate_cube->SetUniqueID( 3 );
+  intermediate_cube->SetVisibility( kTRUE );
+
+  // Add the intermediate cube as a daughter of the graveyard
+  terminal_cube->AddNode( intermediate_cube, 1 );
+  
   // Define the inner cube
-  TGeoVolume* cube =
+  TGeoVolume* inner_cube =
     gGeoManager->MakeBox( "CUBE",
                           void_med,
                           1.1547005383792517,
                           1.1547005383792517,
                           1.1547005383792517 );
-  cube->SetUniqueID( 2 );
-  cube->SetVisibility( kTRUE );
+  inner_cube->SetUniqueID( 2 );
+  inner_cube->SetVisibility( kTRUE );
 
-  // Add the inner cube as a daughter of the graveyard
-  terminal_cube->AddNode( cube, 1 );
+  // Add the inner cube as a daughter of the intermediate cube
+  intermediate_cube->AddNode( inner_cube, 1 );
 
   // Close the geometry
   gGeoManager->CloseGeometry();
