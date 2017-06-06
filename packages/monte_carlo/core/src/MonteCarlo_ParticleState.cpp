@@ -151,10 +151,6 @@ Geometry::ModuleTraits::InternalCellHandle ParticleState::getSourceCell() const
 void ParticleState::setSourceCell(
                         const Geometry::ModuleTraits::InternalCellHandle cell )
 {
-  // Make sure the cell handle is valid
-  testPrecondition( cell !=
-                    Geometry::ModuleTraits::invalid_internal_cell_handle );
-
   d_source_cell = cell;
 }
 

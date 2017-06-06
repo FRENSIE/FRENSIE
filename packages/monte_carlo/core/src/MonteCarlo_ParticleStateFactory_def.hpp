@@ -71,10 +71,10 @@ void ParticleStateFactory::createState(
     break;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: The particle type requested cannot "
+		     "The particle type requested cannot "
 		     "currently be created by the ParticleStateFactory! If "
                      "a probe state was requested use the standard particle "
-                     "type and pass in true for the probe variable." );
+                     "type and use true for the probe variable." );
   }
 
   // Make sure the particle has been initialized

@@ -8,422 +8,578 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <sstream>
 #include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_UnitTestRepository.hpp>
-#include <Teuchos_GlobalMPISession.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_Ptr.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_StandardParticleSource.hpp"
-#include "MonteCarlo_SourceHDF5FileHandler.hpp"
-#include "Utility_SphericalSpatialDistribution.hpp"
-#include "Utility_SphericalDirectionalDistribution.hpp"
-#include "Utility_PowerDistribution.hpp"
+#include "MonteCarlo_StandardParticleDistribution.hpp"
+#include "MonteCarlo_IndependentPhaseSpaceDimensionDistribution.hpp"
+#include "MonteCarlo_FullyTabularDependentPhaseSpaceDimensionDistribution.hpp"
+#include "MonteCarlo_PartiallyTabularDependentPhaseSpaceDimensionDistribution.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_SourceUnitTestHarnessExtensions.hpp"
+#include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
+#include "Utility_BasicSphericalCoordinateConversionPolicy.hpp"
+#include "Utility_BasicCylindricalSpatialCoordinateConversionPolicy.hpp"
+#include "Utility_HistogramFullyTabularTwoDDistribution.hpp"
+#include "Utility_HistogramPartiallyTabularTwoDDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
-#include "Utility_HistogramDistribution.hpp"
-#include "Utility_PhysicalConstants.hpp"
+#include "Utility_PowerDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
+#include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-// Initialize the source (uniform spherical source)
-// template<typename ParticleSourceType>
-// void initializeSource( std::shared_ptr<ParticleSourceType>& source,
-//                        const bool set_importance_functions = false )
-// {
-//   // Power distribution in r dimension
-//   std::shared_ptr<Utility::OneDDistribution>
-//     r_distribution( new Utility::PowerDistribution<2u>( 3.0, 0.0, 2.0 ) );
-
-//   // Uniform distribution in theta dimension
-//   std::shared_ptr<Utility::OneDDistribution>
-//     theta_distribution( new Utility::UniformDistribution(
-// 					      0.0,
-// 					      2*Utility::PhysicalConstants::pi,
-// 					      1.0 ) );
-//   // Uniform distribution in mu dimension
-//   std::shared_ptr<Utility::OneDDistribution>
-//     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-
-//   // Create the spatial distribution
-//   std::shared_ptr<Utility::SpatialDistribution>
-//     spatial_distribution( new Utility::SphericalSpatialDistribution(
-// 							    r_distribution,
-// 							    theta_distribution,
-// 							    mu_distribution,
-// 							    0.0,
-// 							    0.0,
-// 							    0.0 ) );
-
-//   // Create the directional distribution
-//   std::shared_ptr<Utility::DirectionalDistribution>
-//     directional_distribution( new Utility::SphericalDirectionalDistribution(
-// 							   theta_distribution,
-// 							   mu_distribution ) );
-
-//   // Uniform distribution in energy dimension
-//   std::shared_ptr<Utility::OneDDistribution>
-//     energy_distribution( new Utility::UniformDistribution( 1e-3, 1.0, 1.0 ) );
-
-//   // Delta distribution in time dimension
-//   std::shared_ptr<Utility::OneDDistribution>
-//     time_distribution( new Utility::DeltaDistribution( 0.0 ) );
-
-//   // Create the source
-//   source.reset( new MonteCarlo::StandardParticleSource(
-//                                                       0u,
-//                                                       spatial_distribution,
-//                                                       directional_distribution,
-//                                                       energy_distribution,
-//                                                       time_distribution,
-//                                                       MonteCarlo::PHOTON ) );
-
-//   // Set the importance functions if requested
-//   if( set_importance_functions )
-//   {
-//     // Uniform distribution in theta dimension
-//     Teuchos::Array<double> bin_boundaries( 4 );
-//     bin_boundaries[0] = 0.0;
-//     bin_boundaries[1] = Utility::PhysicalConstants::pi/2;
-//     bin_boundaries[2] = 3*Utility::PhysicalConstants::pi/2;
-//     bin_boundaries[3] = 2*Utility::PhysicalConstants::pi;
-
-//     Teuchos::Array<double> bin_values( 3 );
-//     bin_values[0] = 1.0;
-//     bin_values[1] = 2.0;
-//     bin_values[2] = 1.0;
-
-//     std::shared_ptr<Utility::OneDDistribution>
-//       theta_importance_distribution( new Utility::HistogramDistribution(
-// 								bin_boundaries,
-// 								bin_values ) );
-
-//     // Create the spatial importance distribution
-//     std::shared_ptr<Utility::SpatialDistribution> spatial_importance_distribution(
-//        new Utility::SphericalSpatialDistribution( r_distribution,
-// 						 theta_importance_distribution,
-// 						 mu_distribution,
-// 						 0.0,
-// 						 0.0,
-// 						 0.0 ) );
-
-//     // Create the directional importance distribution
-//     std::shared_ptr<Utility::DirectionalDistribution>
-//       directional_importance_distribution(
-// 	   new Utility::SphericalDirectionalDistribution(
-// 						 theta_importance_distribution,
-// 						 mu_distribution ) );
-
-//     // Create the energy importance distribution
-//     bin_boundaries[0] = 1e-3;
-//     bin_boundaries[1] = 1e-2;
-//     bin_boundaries[2] = 1e-1;
-//     bin_boundaries[3] = 1.0;
-
-//     bin_values[0] = 5.0;
-//     bin_values[1] = 2.0;
-//     bin_values[2] = 1.0;
-//     std::shared_ptr<Utility::OneDDistribution>
-//       energy_importance_distribution( new Utility::HistogramDistribution(
-// 								bin_boundaries,
-// 								bin_values ) );
-
-//     std::shared_ptr<MonteCarlo::StandardParticleSource>
-//       distributed_source = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSource>( source );
-
-//     distributed_source->setSpatialImportanceDistribution(
-// 					     spatial_importance_distribution );
-//     distributed_source->setDirectionalImportanceDistribution(
-// 					 directional_importance_distribution );
-//     distributed_source->setEnergyImportanceDistribution(
-// 					      energy_importance_distribution );
-//   }
-// }
+using namespace MonteCarlo;
 
 //---------------------------------------------------------------------------//
-// Tests.
+// Testing variables
+//---------------------------------------------------------------------------//
+std::shared_ptr<const ParticleDistribution> particle_distribution;
+
+//---------------------------------------------------------------------------//
+// Tests
 //---------------------------------------------------------------------------//
 // Check that the source id can be returned
 TEUCHOS_UNIT_TEST( StandardParticleSource, getId )
 {
-  // std::shared_ptr<MonteCarlo::StandardParticleSource> source;
-
-  // initializeSource( source, false );
-
-  // TEST_EQUALITY_CONST( source->getId(), 0u );
-
-  // initializeSource( source, true );
-
-  // TEST_EQUALITY_CONST( source->getId(), 0u );
+  MonteCarlo::StandardParticleSource source( particle_distribution,
+                                             MonteCarlo::PHOTON );
+  
+  TEST_EQUALITY_CONST( source.getId(), particle_distribution->getId() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that particle states can be sampled (no importance functions, no
-// rejection cell )
-TEUCHOS_UNIT_TEST( StandardParticleSource,
-                   sampleParticleState_no_importance_no_reject )
+// Check that the particle type can be returned
+TEUCHOS_UNIT_TEST( StandardParticleSource, getParticleType )
 {
-  // std::shared_ptr<MonteCarlo::ParticleSource> source;
+  std::shared_ptr<MonteCarlo::StandardParticleSource> source(
+                new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                        MonteCarlo::PHOTON ) );
 
-  // initializeSource( source );
+  TEST_EQUALITY_CONST( source->getParticleType(), MonteCarlo::PHOTON );
 
-  // MonteCarlo::ParticleBank bank;
+  source.reset(
+               new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                       MonteCarlo::NEUTRON ) );
 
-  // source->sampleParticleState( bank, 0 );
+  TEST_EQUALITY_CONST( source->getParticleType(), MonteCarlo::NEUTRON );
 
-  // MonteCarlo::ParticleState& particle = bank.top();
+  source.reset(
+              new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                      MonteCarlo::ELECTRON ) );
 
-  // TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
-  // TEST_EQUALITY_CONST( particle.getHistoryNumber(), 0 );
-  // TEST_COMPARE( particle.getXPosition(), >=, -2.0 );
-  // TEST_COMPARE( particle.getXPosition(), <=, 2.0 );
-  // TEST_COMPARE( particle.getYPosition(), >=, -2.0 );
-  // TEST_COMPARE( particle.getYPosition(), <=, 2.0 );
-  // TEST_COMPARE( particle.getZPosition(), >=, -2.0 );
-  // TEST_COMPARE( particle.getZPosition(), <=, 2.0 );
-  // TEST_COMPARE( particle.getXDirection(), >=, -1.0 );
-  // TEST_COMPARE( particle.getXDirection(), <=, 1.0 );
-  // TEST_COMPARE( particle.getYDirection(), >=, -1.0 );
-  // TEST_COMPARE( particle.getYDirection(), <=, 1.0 );
-  // TEST_COMPARE( particle.getZDirection(), >=, -1.0 );
-  // TEST_COMPARE( particle.getZDirection(), <=, 1.0 );
-  // TEST_COMPARE( particle.getEnergy(), >=, 1e-3 );
-  // TEST_COMPARE( particle.getEnergy(), <=, 1.0 );
-  // TEST_EQUALITY_CONST( particle.getTime(), 0.0 );
-  // TEST_EQUALITY_CONST( particle.getWeight(), 1.0 );
+  TEST_EQUALITY_CONST( source->getParticleType(), MonteCarlo::ELECTRON );
 }
 
 //---------------------------------------------------------------------------//
-// Check that particle states can be sampled (no importance functions, no
-// rejection cell )
-TEUCHOS_UNIT_TEST( StandardParticleSource,
-                   sampleParticleState_no_importance_no_reject_thread_safe )
+// Check that a particle state can be sampled
+TEUCHOS_UNIT_TEST( StandardParticleSource, sampleParticleState )
 {
-  // std::shared_ptr<MonteCarlo::ParticleSource> source;
+  std::shared_ptr<MonteCarlo::ParticleSource> source(
+                new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                        MonteCarlo::PHOTON ) );
 
-  // initializeSource( source );
+  MonteCarlo::ParticleBank bank;
 
-  // unsigned threads =
-  //   Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+  // Set the random number generator stream
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.0; // x
+  fake_stream[1] = 0.5; // energy 
+  fake_stream[2] = 0.5; // y
+  fake_stream[3] = 1.0-1e-15; // z
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 1.0-1e-15; // mu
+  fake_stream[6] = 0.0; // time
 
-  // std::vector<MonteCarlo::ParticleBank> banks( threads );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  // source->enableThreadSupport(
-  //                Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  source->sampleParticleState( bank, 0ull );
 
-  // // Create a sample for each thread
-  // #pragma omp parallel num_threads( threads )
-  // {
-  //   source->sampleParticleState(
-  //                           banks[Utility::GlobalOpenMPSession::getThreadId()],
-  //                           Utility::GlobalOpenMPSession::getThreadId() );
-  // }
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), -1.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 0.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getZPosition(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
 
-  // // Splice all of the banks
-  // MonteCarlo::ParticleBank combined_bank;
+  bank.pop();
 
-  // for( unsigned i = 0; i < banks.size(); ++i )
-  //   combined_bank.splice( banks[i] );
+  source.reset(
+        new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                MonteCarlo::ADJOINT_PHOTON ) );
 
-  // TEST_EQUALITY_CONST( combined_bank.size(), threads );
+  source->sampleParticleState( bank, 0ull );
+
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(),
+                       MonteCarlo::ADJOINT_PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), -1.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 0.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getZPosition(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
+
+  bank.pop();
+
+  source.reset(
+              new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                      MonteCarlo::NEUTRON ) );
+
+  // Set the random number generator stream
+  fake_stream[0] = 0.5; // x
+  fake_stream[1] = 0.5; // energy 
+  fake_stream[2] = 0.0; // y
+  fake_stream[3] = 0.5; // z
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 0.0; // mu
+  fake_stream[6] = 0.5; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  source->sampleParticleState( bank, 1ull );
+
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), -1.0 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), -1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getSourceEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceTime(), 0.5 );
+  TEST_EQUALITY_CONST( bank.top().getTime(), 0.5 );
+  TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
+
+  bank.pop();
+
+  source.reset(
+       new MonteCarlo::StandardParticleSource( particle_distribution,
+                                               MonteCarlo::ADJOINT_NEUTRON ) );
+
+  TEST_THROW( source->sampleParticleState( bank, 1ull ),
+              std::logic_error );
+
+  // TEST_EQUALITY_CONST( bank.size(), 1 );
+  // TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
+  // TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
+  // TEST_EQUALITY_CONST( bank.top().getXPosition(), 0.0 );
+  // TEST_EQUALITY_CONST( bank.top().getYPosition(), -1.0 );
+  // TEST_EQUALITY_CONST( bank.top().getZPosition(), 0.0 );
+  // UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-12 );
+  // UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  // TEST_FLOATING_EQUALITY( bank.top().getZDirection(), -1.0, 1e-12 );
+  // TEST_EQUALITY_CONST( bank.top().getSourceEnergy(), 10.0 );
+  // TEST_EQUALITY_CONST( bank.top().getEnergy(), 10.0 );
+  // TEST_EQUALITY_CONST( bank.top().getSourceTime(), 0.5 );
+  // TEST_EQUALITY_CONST( bank.top().getTime(), 0.5 );
+  // TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  // TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  // TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  // TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 1.0 );
+  // TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
+
+  // bank.pop();
+  
+  source.reset(
+              new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                      MonteCarlo::ELECTRON ) );
+
+  // Set the random number generator stream
+  fake_stream[0] = 1.0-1e-15; // x
+  fake_stream[1] = 1.0-1e-15; // energy 
+  fake_stream[2] = 1.0-1e-15; // y
+  fake_stream[3] = 0.0; // z
+  fake_stream[4] = 0.5; // theta
+  fake_stream[5] = 0.5; // mu
+  fake_stream[6] = 1.0-1e-15; // time
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  source->sampleParticleState( bank, 2ull );
+
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 2ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getXPosition(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getYPosition(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), -1.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getSourceEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 20.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getSourceTime(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getTime(), 1.0, 1e-15 );
+  TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
-// Check that particle states can be sampled (importance functions, no
-// rejection cells )
+// Check that a particle state can be sampled
 TEUCHOS_UNIT_TEST( StandardParticleSource,
-                   sampleParticleState_importance_no_reject )
+                   sampleParticleState_critical_energies )
 {
-  // std::shared_ptr<MonteCarlo::ParticleSource> source;
+  std::shared_ptr<MonteCarlo::StandardParticleSource> source(
+        new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                MonteCarlo::ADJOINT_PHOTON ) );
 
-  // initializeSource( source, true );
+  {
+    Teuchos::ArrayRCP<double> critical_line_energies( 2 );
+    critical_line_energies[0] =
+      Utility::PhysicalConstants::electron_rest_mass_energy;
+    critical_line_energies[1] = 1.0;
+    
+    source->setCriticalLineEnergies( critical_line_energies );
+  }
 
-  // std::vector<double> fake_stream( 10 );
-  // fake_stream[0] = 0.0;
-  // fake_stream[1] = 0.0;
-  // fake_stream[2] = 0.0;
-  // fake_stream[3] = 0.0;
-  // fake_stream[4] = 0.0;
-  // fake_stream[5] = 0.0;
-  // fake_stream[6] = 0.0;
-  // fake_stream[7] = 0.0;
-  // fake_stream[8] = 0.0;
-  // fake_stream[9] = 0.0;
+  MonteCarlo::ParticleBank bank;
 
-  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // Set the random number generator stream
+  std::vector<double> fake_stream( 19 );
+  fake_stream[0] = 0.0; // x
+  fake_stream[1] = 0.5; // energy 
+  fake_stream[2] = 0.5; // y
+  fake_stream[3] = 1.0-1e-15; // z
+  fake_stream[4] = 0.0; // theta
+  fake_stream[5] = 1.0-1e-15; // mu
+  fake_stream[6] = 0.0; // time
+  
+  fake_stream[7] = 0.5; // x
+  fake_stream[8] = 0.5; // y
+  fake_stream[9] = 0.5; // z
+  fake_stream[10] = 0.5; // theta
+  fake_stream[11] = 0.5; // mu
+  fake_stream[12] = 0.5; // time
 
-  // MonteCarlo::ParticleBank bank;
+  fake_stream[13] = 0.0; // x
+  fake_stream[14] = 1.0-1e-15; // y
+  fake_stream[15] = 0.0; // z
+  fake_stream[16] = 0.0; // theta
+  fake_stream[17] = 1.0-1e-15; // mu
+  fake_stream[18] = 1.0-1e-15; // time
 
-  // source->sampleParticleState( bank, 0 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  // MonteCarlo::ParticleState& particle = bank.top();
+  source->sampleParticleState( bank, 0ull );
 
-  // TEST_EQUALITY_CONST( particle.getHistoryNumber(), 0 );
-  // TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
-  // TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
-  // TEST_EQUALITY_CONST( particle.getYDirection(), 0.0 );
-  // TEST_EQUALITY_CONST( particle.getZDirection(), -1.0 );
-  // TEST_EQUALITY_CONST( particle.getXPosition(), 0.0 );
-  // TEST_EQUALITY_CONST( particle.getYPosition(), 0.0 );
-  // TEST_EQUALITY_CONST( particle.getZPosition(), 0.0 );
-  // TEST_EQUALITY_CONST( particle.getEnergy(), 1e-3 );
-  // TEST_EQUALITY_CONST( particle.getTime(), 0.0 );
-  // TEST_FLOATING_EQUALITY( particle.getWeight(), 0.3378378378375, 1e-9 );
+  TEST_EQUALITY_CONST( bank.size(), 3 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(),
+                       MonteCarlo::ADJOINT_PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), -1.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 0.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getZPosition(), 1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getSourceEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
 
-  // Utility::RandomNumberGenerator::unsetFakeStream();
+  bank.pop();
+
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(),
+                       MonteCarlo::ADJOINT_PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), 0.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getSourceEnergy(),
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(),
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
+  TEST_EQUALITY_CONST( bank.top().getSourceTime(), 0.5 );
+  TEST_EQUALITY_CONST( bank.top().getTime(), 0.5 );
+  TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 0.05 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 0.05 );
+
+  bank.pop();
+
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(),
+                       MonteCarlo::ADJOINT_PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), -1.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getYPosition(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), -1.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getSourceEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getSourceTime(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getTime(), 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getSourceId(), 2 );
+  TEST_EQUALITY_CONST( bank.top().getSourceCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getCell(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getSourceWeight(), 0.1 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 0.1 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that particle states can be sampled (importance functions, no
-// // rejection cells )
-// TEUCHOS_UNIT_TEST( StandardParticleSource,
-//                    sampleParticleState_importance_no_reject_thread_safe )
-// {
-//   std::shared_ptr<MonteCarlo::ParticleSource> source;
+//---------------------------------------------------------------------------//
+// Check that the source can accumulate sampling statistics
+TEUCHOS_UNIT_TEST( StandardParticleSource, sampling_statistics )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source(
+               new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                       MonteCarlo::NEUTRON ) );
 
-//   initializeSource( source, true );
+  MonteCarlo::ParticleBank bank;
 
-//   unsigned threads =
-//     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+  for( int i = 0; i < 1000; ++i )
+    source->sampleParticleState( bank, i );
 
-//   std::vector<MonteCarlo::ParticleBank> banks( threads );
+  TEST_EQUALITY_CONST( bank.size(), 1000 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfTrials(), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 1000 );
+  TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 
-//   source->enableThreadSupport(
-//                  Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
+}
 
-//   // Create a sample for each thread
-//   #pragma omp parallel num_threads( threads )
-//   {
-//     source->sampleParticleState(
-//                             banks[Utility::GlobalOpenMPSession::getThreadId()],
-//                             Utility::GlobalOpenMPSession::getThreadId() );
-//   }
+//---------------------------------------------------------------------------//
+// Check that a summary of the source data can be printed
+TEUCHOS_UNIT_TEST( StandardParticleSource, printSummary )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source(
+               new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                       MonteCarlo::NEUTRON ) );
 
-//   // Splice all of the banks
-//   MonteCarlo::ParticleBank combined_bank;
+  MonteCarlo::ParticleBank bank;
 
-//   for( unsigned i = 0; i < banks.size(); ++i )
-//     combined_bank.splice( banks[i] );
+  for( int i = 0; i < 1000; ++i )
+    source->sampleParticleState( bank, i );
 
-//   TEST_EQUALITY_CONST( combined_bank.size(), threads );
-// }
+  std::ostringstream oss;
 
-// //---------------------------------------------------------------------------//
-// // Check that the number of trials can be returned
-// TEUCHOS_UNIT_TEST( StandardParticleSource, getNumberOfTrials )
-// {
-//   std::shared_ptr<MonteCarlo::ParticleSource> source;
+  source->printSummary( oss );
 
-//   initializeSource( source, true );
+  TEST_ASSERT( oss.str().size() > 0 );
+}
 
-//   unsigned threads =
-//     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+//---------------------------------------------------------------------------//
+// Check that the source data can be exported
+TEUCHOS_UNIT_TEST( StandardParticleSource, exportData )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source(
+               new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                       MonteCarlo::NEUTRON ) );
 
-//   source->enableThreadSupport( threads );
+  MonteCarlo::ParticleBank bank;
 
-//   // Create a sample for each thread
-//   #pragma omp parallel num_threads( threads )
-//   {
-//     MonteCarlo::ParticleBank bank;
+  for( int i = 0; i < 1000; ++i )
+    source->sampleParticleState( bank, i );
 
-//     source->sampleParticleState( bank,
-//                                  Utility::GlobalOpenMPSession::getThreadId() );
-//   }
+  // Export the source data
+  {
+    std::shared_ptr<Utility::HDF5FileHandler>
+      hdf5_file( new Utility::HDF5FileHandler );
 
-//   TEST_COMPARE( source->getNumberOfTrials(), >=, threads );
-// }
+    hdf5_file->openHDF5FileAndOverwrite( "test_source_hdf5_file.h5" );
+    
+    source->exportData( hdf5_file );
+    
+    hdf5_file->closeHDF5File();
+  }
 
-// //---------------------------------------------------------------------------//
-// // Check that the number of samples can be returned
-// TEUCHOS_UNIT_TEST( StandardParticleSource, getNumberOfSamples )
-// {
-//   std::shared_ptr<MonteCarlo::ParticleSource> source;
+  // Load the exported source data
+  MonteCarlo::SourceHDF5FileHandler exported_source_data(
+                                 "test_source_hdf5_file.h5",
+                                 MonteCarlo::HDF5FileHandler::READ_ONLY_FILE );
 
-//   initializeSource( source, true );
+  TEST_ASSERT( exported_source_data.doesSourceExist( 2 ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceSamplingTrials( 2 ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceSamples( 2 ), 1000 );
 
-//   unsigned threads =
-//     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::PRIMARY_SPATIAL_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1000 );
 
-//   source->enableThreadSupport( threads );
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::SECONDARY_SPATIAL_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1000 );
+  
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::TERTIARY_SPATIAL_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1000 );
+  
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1000 );
 
-//   // Conduct a sample for each thread
-//   #pragma omp parallel num_threads( threads )
-//   {
-//     MonteCarlo::ParticleBank bank;
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1000 );
+  
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1000 );
+  
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::ENERGY_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::ENERGY_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::ENERGY_DIMENSION ), 1000 );
+  
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::TIME_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::TIME_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::TIME_DIMENSION ), 1000 );
+  
+  TEST_ASSERT( exported_source_data.doesSourceDimensionExist( 2, MonteCarlo::WEIGHT_DIMENSION ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamplingTrials( 2, MonteCarlo::WEIGHT_DIMENSION ), 1000 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceDimensionSamples( 2, MonteCarlo::WEIGHT_DIMENSION ), 1000 );
 
-//     source->sampleParticleState( bank,
-//                                  Utility::GlobalOpenMPSession::getThreadId() );
-//   }
+  std::set<Geometry::ModuleTraits::InternalCellHandle> start_cell_cache;
 
-//   TEST_EQUALITY_CONST( source->getNumberOfSamples(), threads );
-// }
+  exported_source_data.getStartCellCache( 2, start_cell_cache );
 
-// //---------------------------------------------------------------------------//
-// // Check that the sampling efficiency can be returned
-// TEUCHOS_UNIT_TEST( StandardParticleSource, getSamplingEfficiency )
-// {
-//   std::shared_ptr<MonteCarlo::ParticleSource> source;
+  TEST_EQUALITY_CONST( start_cell_cache.size(), 1 );
+  TEST_ASSERT( start_cell_cache.count( 0 ) );
+}
 
-//   initializeSource( source, false );
+//---------------------------------------------------------------------------//
+// Check that the source data can be reset
+TEUCHOS_UNIT_TEST( StandardParticleSource, resetData )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source(
+               new MonteCarlo::StandardParticleSource( particle_distribution,
+                                                       MonteCarlo::NEUTRON ) );
 
-//   MonteCarlo::ParticleBank bank;
+  MonteCarlo::ParticleBank bank;
 
-//   // Conduct 10 samples
-//   for( unsigned i = 0; i < 10; ++i )
-//     source->sampleParticleState( bank, i );
+  for( int i = 0; i < 1000; ++i )
+    source->sampleParticleState( bank, i );
 
-//   TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
-// }
+  source->resetData();
+  
+  TEST_EQUALITY_CONST( source->getNumberOfTrials(), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0 );
+  TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 
-// //---------------------------------------------------------------------------//
-// // Check that the source data can be exported
-// TEUCHOS_UNIT_TEST( StandardParticleSource, exportData )
-// {
-//   std::shared_ptr<MonteCarlo::ParticleSource> source;
-
-//   initializeSource( source, true );
-
-//   MonteCarlo::ParticleBank bank;
-
-//   // Conduct 10 samples
-//   for( unsigned i = 0; i < 10; ++i )
-//     source->sampleParticleState( bank, i );
-
-//   // Export the source data
-//   std::string source_data_file_name( "test_standard_particle_source.h5" );
-
-//   {
-//     std::shared_ptr<Utility::HDF5FileHandler> hdf5_file(
-//                                                 new Utility::HDF5FileHandler );
-//     hdf5_file->openHDF5FileAndOverwrite( source_data_file_name );
-
-//     source->exportData( hdf5_file );
-//   }
-
-//   // Check that the source data was written correctly
-//   MonteCarlo::SourceHDF5FileHandler source_file_handler(
-//                source_data_file_name,
-//                MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
-
-//   TEST_ASSERT( source_file_handler.doesSourceExist( 0 ) );
-//   TEST_EQUALITY_CONST(
-//                 source_file_handler.getNumberOfSourceSamplingTrials( 0 ), 10 );
-//   TEST_EQUALITY_CONST(
-//             source_file_handler.getNumberOfDefaultSourceSamplingTrials(), 10 );
-//   TEST_EQUALITY_CONST( source_file_handler.getNumberOfSourceSamples( 0 ), 10 );
-//   TEST_EQUALITY_CONST(
-//                    source_file_handler.getNumberOfDefaultSourceSamples(), 10 );
-// }
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
+}
 
 //---------------------------------------------------------------------------//
 // Custom setup
@@ -431,20 +587,94 @@ TEUCHOS_UNIT_TEST( StandardParticleSource,
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-int threads = 1;
+std::string test_geom_xml_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "threads",
-                   &threads,
-                   "Number of threads to use" );
+  clp().setOption( "test_geom_xml_file",
+                   &test_geom_xml_file_name,
+                   "Test xml geometry file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  // Create the particle distribution
+  std::shared_ptr<MonteCarlo::StandardParticleDistribution>
+    tmp_particle_distribution;
+
+  {
+    std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
+
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy );
+  
+    tmp_particle_distribution.reset(
+                                  new MonteCarlo::StandardParticleDistribution(
+                                       2,
+                                       "source distribution",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy ) );
+  }
+
+  // Set the dimension distributions
+  {
+    std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_a(
+                          new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
+    std::shared_ptr<const Utility::OneDDistribution> raw_uniform_dist_b(
+                           new Utility::UniformDistribution( 0.0, 1.0, 1.0 ) );
+
+    std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+      x_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+    tmp_particle_distribution->setDimensionDistribution( x_dimension_dist );
+
+    std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+      y_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+    tmp_particle_distribution->setDimensionDistribution( y_dimension_dist );
+
+    std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+      z_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( raw_uniform_dist_a ) );
+    tmp_particle_distribution->setDimensionDistribution( z_dimension_dist );
+
+    std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+      time_dimension_dist( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION>( raw_uniform_dist_b ) );
+    tmp_particle_distribution->setDimensionDistribution( time_dimension_dist );
+
+    std::shared_ptr<MonteCarlo::PhaseSpaceDimensionDistribution>
+      energy_dimension_dist;
+
+    // Create the fully tabular energy distribution
+    {
+      Utility::HistogramFullyTabularTwoDDistribution::DistributionType
+        distribution_data( 3 );
+      
+      // Create the secondary distribution in the first bin
+      Utility::get<0>( distribution_data[0] ) = -1.0;
+      Utility::get<1>( distribution_data[0] ).reset( new Utility::UniformDistribution( 0.0, 10.0, 0.5 ) );
+      
+      
+      // Create the secondary distribution in the second bin
+      Utility::get<0>( distribution_data[1] ) = 0.0;
+      Utility::get<1>( distribution_data[1] ).reset( new Utility::UniformDistribution( 0.0, 20.0, 0.25 ) );
+      
+      // Create the secondary distribution in the third bin
+      Utility::get<0>( distribution_data[2] ) = 1.0;
+      Utility::get<1>( distribution_data[2] ) =
+        Utility::get<1>( distribution_data[1] );
+
+      std::shared_ptr<Utility::HistogramFullyTabularTwoDDistribution>
+        raw_dependent_distribution( new Utility::HistogramFullyTabularTwoDDistribution( distribution_data ) );
+
+      raw_dependent_distribution->limitToPrimaryIndepLimits();
+      
+      energy_dimension_dist.reset( new MonteCarlo::FullyTabularDependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION,MonteCarlo::ENERGY_DIMENSION>( raw_dependent_distribution ) );
+    }
+    
+    tmp_particle_distribution->setDimensionDistribution( energy_dimension_dist );
+    tmp_particle_distribution->constructDimensionDistributionDependencyTree();
+    
+    particle_distribution = tmp_particle_distribution;
+  }
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

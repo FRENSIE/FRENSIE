@@ -31,7 +31,10 @@ namespace MonteCarlo{
 // Constructor
 ParticleSource::ParticleSource()
   : d_model( new Geometry::InfiniteMediumModel( Geometry::ModuleTraits::invalid_internal_cell_handle ) ),
-    d_navigator( d_model->createNavigatorAdvanced() )
+    d_navigator( d_model->createNavigatorAdvanced() ),
+    d_start_cell_cache( 1 ),
+    d_number_of_trials( 1, 0 ),
+    d_number_of_samples( 1, 0 )
 { /* ... */ }
 
 // Enable thread support
@@ -470,7 +473,7 @@ void ParticleSource::sampleParticleState(
       // Sample the particle state
       bool can_sample_again =
         this->sampleParticleStateImpl( particle, history_state_id );
-
+      
       // Check if the particle position is inside of a rejection cell
       if( this->isSampledParticlePositionValid( *particle ) )
       {
@@ -483,6 +486,9 @@ void ParticleSource::sampleParticleState(
         break;
       }
     }
+
+    // Set the particle source id
+    particle->setSourceId( this->getId() );
 
     // Determine the cell that this particle has been born in
     if( valid_sample )
@@ -503,6 +509,7 @@ void ParticleSource::sampleParticleState(
       
       // Embed the particle in the model
       particle->embedInModel( d_model, start_cell );
+      particle->setSourceCell( start_cell );
       
       // Add the particle to the bank
       bank.push( particle );
@@ -656,7 +663,7 @@ void ParticleSource::printStandardStartingCellSummary(
            std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells,
            std::ostream& os ) const
 {
-  os << "Source " << this->getId() << " Starting Cells: ";
+  os << "\tSource " << this->getId() << " Starting Cells: ";
 
   std::set<Geometry::ModuleTraits::InternalCellHandle>::const_iterator cell_it,
     cell_end;
@@ -682,13 +689,11 @@ void ParticleSource::printStandardDimensionSummary(
                                 const double efficiency,
                                 std::ostream& os ) const
 {
-  os << "Source " << this->getId() << " "
-     << dimension << " Sampling Summary..."
-     << "\n"
-     << "\tDistribution Type: " << dimension_distribution_type << "\n"
-     << "\tNumber of trials: " << trials << "\n"
-     << "\tNumber of samples: " << samples << "\n"
-     << "\tSampling efficiency: " << efficiency << std::endl;
+  os << "\t" << dimension << " Sampling Summary: \n"
+     << "\t\tDistribution Type: " << dimension_distribution_type << "\n"
+     << "\t\tNumber of trials: " << trials << "\n"
+     << "\t\tNumber of samples: " << samples << "\n"
+     << "\t\tSampling efficiency: " << efficiency << std::endl;
 }
   
 } // end MonteCarlo namespace

@@ -261,7 +261,7 @@ void StandardParticleSource::setCriticalLineEnergies(
     Utility::get<0>(d_particle_state_critical_line_energy_sampling_functions[i]) =
       critical_line_energies[i];
 
-    Utility::get<1>( d_particle_state_critical_line_energy_sampling_functions[i]) =
+    Utility::get<1>(d_particle_state_critical_line_energy_sampling_functions[i]) =
       std::bind<void>( &ParticleDistribution::sampleWithDimensionValueAndRecordTrials,
                        std::cref( *d_particle_distribution ),
                        std::placeholders::_1,
@@ -315,6 +315,8 @@ std::shared_ptr<ParticleState> StandardParticleSource::initializeParticleState(
                              "critical line energy ("
                              << Utility::get<0>(d_particle_state_critical_line_energy_sampling_functions[history_state_id]) <<
                              ") could not be created!" );
+
+    return particle;
   }
 }
 
@@ -330,28 +332,29 @@ bool StandardParticleSource::sampleParticleStateImpl(
                                 const unsigned long long history_state_id )
 {
   // Make sure that the history state id is valid
-  testPrecondition( history_state_id <
-                    this->getNumberOfParticleStateSamples(history_state_id) );
+  testPrecondition( history_state_id < this->getNumberOfParticleStateSamples(particle->getHistoryNumber()) );
 
-  if( history_state_id > 0 )
-  {
-    // Sample a probe particle
-    Utility::get<1>(d_particle_state_critical_line_energy_sampling_functions[history_state_id])( *particle, d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()] );
+  DimensionCounterMap& dimension_trial_counters =
+    d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()];
 
-    // Increment the dimension sample counters
-    this->incrementDimensionCounters(
-      d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()],
-      true );
-  }
-  else if( history_state_id == 0 )
+  DimensionCounterMap& dimension_sample_counters =
+    d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()];
+  
+  if( history_state_id == 0 )
   {
     // Sample a standard particle
-    d_particle_distribution->sampleAndRecordTrials( *particle, d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()] );
+    d_particle_distribution->sampleAndRecordTrials( *particle, dimension_trial_counters );
 
     // Increment the dimension sample counters
-    this->incrementDimensionCounters(
-      d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()],
-      false );
+    this->incrementDimensionCounters( dimension_sample_counters, false );
+  }
+  else if( history_state_id > 0 )
+  {
+    // Sample a probe particle
+    Utility::get<1>(d_particle_state_critical_line_energy_sampling_functions[history_state_id-1])( *particle, dimension_trial_counters );
+
+    // Increment the dimension sample counters
+    this->incrementDimensionCounters( dimension_sample_counters, true );
   }
 
   return true;
@@ -512,7 +515,7 @@ void StandardParticleSource::initializeDimensionCounters(
                       Teuchos::Array<DimensionCounterMap>& dimension_counters )
 {
   for( size_t i = 0; i < dimension_counters.size(); ++i )
-  d_particle_distribution->initializeDimensionCounters( dimension_counters[i] );
+    d_particle_distribution->initializeDimensionCounters( dimension_counters[i] );
 }
 
 // Increment the dimension counters
@@ -536,6 +539,8 @@ void StandardParticleSource::incrementDimensionCounters(
       if( !ignore_energy_dimension )
         ++dimension_counter_it->second;
     }
+
+    ++dimension_counter_it;
   }
 }
 
