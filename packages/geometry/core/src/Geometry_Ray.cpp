@@ -25,9 +25,9 @@ Ray::Ray( const double x_position,
     d_deep_copy_initialization( true )
 {
   // Make sure the position is valid
-  testPrecondition( !ST::isnaninf( d_position[0] ) );
-  testPrecondition( !ST::isnaninf( d_position[1] ) );
-  testPrecondition( !ST::isnaninf( d_position[2] ) );
+  testPrecondition( !ST::isnaninf( x_position ) );
+  testPrecondition( !ST::isnaninf( y_position ) );
+  testPrecondition( !ST::isnaninf( z_position ) );
   // Make sure the direction is a unit vector
   testPrecondition( Utility::isUnitVector( x_direction,
                                            y_direction,

@@ -80,14 +80,20 @@ private:
   // Typedef for basic text sink backend type
   typedef boost::log::sinks::text_ostream_backend BasicTextSinkBackend;
 
-  // Typedef for the basic text sink type
-  typedef boost::log::sinks::asynchronous_sink<BasicTextSinkBackend> BasicTextSink;
-
   // Typedef for fancy text sink backend type
   typedef FancyTextOStreamBackend FancyTextSinkBackend;
 
-  // Typedef for the fancy text sink type
-  typedef boost::log::sinks::asynchronous_sink<FancyTextSinkBackend> FancyTextSink;
+  // Typedef for the basic text asynchronous sink type
+  typedef boost::log::sinks::asynchronous_sink<BasicTextSinkBackend> BasicTextAsyncSink;
+
+  // Typedef for the basic text synchronous sink type
+  typedef boost::log::sinks::synchronous_sink<BasicTextSinkBackend>  BasicTextSyncSink;
+
+  // Typedef for the fancy text asynchronous sink type
+  typedef boost::log::sinks::asynchronous_sink<FancyTextSinkBackend> FancyTextAsyncSink;
+
+  // Typedef for the fancy text synchronous sink type
+  typedef boost::log::sinks::synchronous_sink<FancyTextSinkBackend> FancyTextSyncSink;
 
 public:
 
@@ -102,51 +108,63 @@ typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLog
   static void addGlobalLogFilter( FilterExpression expr );
 
   //! Add standard log sinks using the requested output stream
-  static void addStandardLogSinks( const boost::shared_ptr<std::ostream>& os );
+  static void addStandardLogSinks( const boost::shared_ptr<std::ostream>& os,
+                                   const bool asynchronous = true );
 
   //! Add standard log sinks using the requested console stream
-  static void addStandardLogSinks( std::ostream& console_os );
+  static void addStandardLogSinks( std::ostream& console_os,
+                                   const bool asynchronous = true );
 
   //! Add standard log sinks using the requested output streams
   template<template<typename,typename...> class STLCompliantArray>
   static void addStandardLogSinks(
-         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
+         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array,
+         const bool asynchronous = true );
 
   //! Add a standard error log sink using the requested output stream
   static void addStandardErrorLogSink(
-                                   const boost::shared_ptr<std::ostream>& os );
+                                   const boost::shared_ptr<std::ostream>& os,
+                                   const bool asynchronous = true );
 
   //! Add a standard error log sink using the console stream
-  static void addStandardErrorLogSink( std::ostream& console_os );
+  static void addStandardErrorLogSink( std::ostream& console_os,
+                                       const bool asynchronous = true );
   
   //! Add a standard error log sink using the requested output streams
   template<template<typename,typename...> class STLCompliantArray>
   static void addStandardErrorLogSink(
-         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
+         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array,
+         const bool asynchronous = true );
 
   //! Add a standard warning log sink using the requested output stream
   static void addStandardWarningLogSink(
-                                   const boost::shared_ptr<std::ostream>& os );
+                                   const boost::shared_ptr<std::ostream>& os,
+                                   const bool asynchronous = true );
 
   //! Add a standard warning log sink using the requested console stream
-  static void addStandardWarningLogSink( std::ostream& console_os );
+  static void addStandardWarningLogSink( std::ostream& console_os,
+                                         const bool asynchronous = true );
   
   //! Add a standard warning log sink using the requested output streams
   template<template<typename,typename...> class STLCompliantArray>
   static void addStandardWarningLogSink(
-         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
+         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array,
+         const bool asynchronous = true );
 
   //! Add a standard notification log sink using the requested output stream
   static void addStandardNotificationLogSink(
-                                   const boost::shared_ptr<std::ostream>& os );
+                                   const boost::shared_ptr<std::ostream>& os,
+                                   const bool asynchronous = true );
 
   //! Add a standard notification log sink using the requested console stream
-  static void addStandardNotificationLogSink( std::ostream& console_os );
+  static void addStandardNotificationLogSink( std::ostream& console_os,
+                                              const bool asynchronous = true );
 
   //! Add a standard notification log sink using the requested output streams
   template<template<typename,typename...> class STLCompliantArray>
   static void addStandardNotificationLogSink(
-         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array );
+         const STLCompliantArray<boost::shared_ptr<std::ostream> >& os_array,
+         const bool asynchronous = true );
 
   //! Remove all log sinks
   static void removeAllLogSinks();
@@ -160,15 +178,18 @@ typedef boost::log::sources::severity_logger<Utility::LogRecordType> StandardLog
 
 private:
 
-  //! Initialize and add error log sink
+  // Initialize and add error log sink
+  template<typename Sink>
   static void initializeAndAddErrorLogSink(
                  const boost::shared_ptr<FancyTextSinkBackend>& sink_backend );
 
-  //! Initialize and add warning log sink
+  // Initialize and add warning log sink
+  template<typename Sink>
   static void initializeAndAddWarningLogSink(
                  const boost::shared_ptr<FancyTextSinkBackend>& sink_backend );
 
-  //! Initialize and add notification log sink
+  // Initialize and add notification log sink
+  template<typename Sink>
   static void initializeAndAddNotificationLogSink(
                  const boost::shared_ptr<FancyTextSinkBackend>& sink_backend );
 };

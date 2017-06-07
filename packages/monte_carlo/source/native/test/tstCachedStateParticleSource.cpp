@@ -18,7 +18,6 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
-#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_CachedStateParticleSource.hpp"
@@ -98,14 +97,6 @@ void initializeSource( std::shared_ptr<MonteCarlo::ParticleSource>& source )
 				    bank_name_in_archive,
 				    Utility::ArchivableObject::XML_ARCHIVE ) );
 }
-
-// Compare history numbers
-bool compareHistoryNumbers( const MonteCarlo::ParticleState& state_a,
-			    const MonteCarlo::ParticleState& state_b )
-{
-  return state_a.getHistoryNumber() < state_b.getHistoryNumber();
-}
-
 
 //---------------------------------------------------------------------------//
 // Tests.

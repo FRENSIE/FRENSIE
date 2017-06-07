@@ -170,6 +170,23 @@ TARGET_LINK_LIBRARIES(tstCachedStateParticleSource monte_carlo_source_native)
 ADD_TEST(CachedStateParticleSource_test tstCachedStateParticleSource)
 SET_PROPERTY(TEST CachedStateParticleSource_test PROPERTY LABELS monte_carlo_source_native)
 
+IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstEmbeddedCachedStateParticleSource
+    tstEmbeddedCachedStateParticleSource.cpp
+    ${FRENSIE_STD_UNIT_TEST_MAIN})
+  TARGET_LINK_LIBRARIES(tstEmbeddedCachedStateParticleSource monte_carlo_source_native geometry_factory)
+
+  IF(FRENSIE_ENABLE_DAGMC)
+    ADD_TEST(CachedStateParticleSource_DagMC_test tstEmbeddedCachedStateParticleSource --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
+    SET_PROPERTY(TEST CachedStateParticleSource_DagMC_test PROPERTY LABELS monte_carlo_source_native)
+  ENDIF()
+
+  IF(FRENSIE_ENABLE_ROOT)
+    ADD_TEST(CachedStateParticleSource_Root_test tstEmbeddedCachedStateParticleSource --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
+    SET_PROPERTY(TEST CachedStateParticleSource_Root_test PROPERTY LABELS monte_carlo_source_native)
+  ENDIF()
+ENDIF()
+
 # IF(${FRENSIE_ENABLE_OPENMP})
 #   ADD_TEST(SharedParallelCachedStateParticleSource_2_test tstCachedStateParticleSource --threads=2)
 #   ADD_TEST(SharedParallelCachedStateParticleSource_4_test tstCachedStateParticleSource --threads=4)

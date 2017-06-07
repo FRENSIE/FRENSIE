@@ -59,7 +59,7 @@
 #define FRENSIE_SET_GLOBAL_LOG_FILTER( filter_expr )    \
   Utility::LoggingHelper::addGlobalLogFilter( filter_expr )
 
-/*! \brief Create a log using the requested ostream object. 
+/*! \brief Create synchronous logs using the requested ostream object. 
  *
  * This object should have one of the following types: 
  * <ol>
@@ -76,10 +76,30 @@
  *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
  * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_STANDARD_LOGS( os )       \
-  Utility::LoggingHelper::addStandardLogSinks( os )
+#define FRENSIE_SETUP_STANDARD_SYNCHRONOUS_LOGS( os )       \
+  Utility::LoggingHelper::addStandardLogSinks( os, false )
 
-/*! \brief Create an error log using the requested ostream object.
+/*! \brief Create asynchronous logs using the requested ostream object. 
+ *
+ * This object should have one of the following types: 
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
+ */
+#define FRENSIE_SETUP_STANDARD_ASYNCHRONOUS_LOGS( os )       \
+  Utility::LoggingHelper::addStandardLogSinks( os, true )
+
+/*! \brief Create a synchronous error log using the requested ostream object.
  *
  * This object should have one of the following types:
  * <ol>
@@ -96,10 +116,30 @@
  *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
  * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_ERROR_LOG( os ) \
-  Utility::LoggingHelper::addStandardErrorLogSink( os )
+#define FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG( os ) \
+  Utility::LoggingHelper::addStandardErrorLogSink( os, false )
 
-/*! \brief Create a warning log using the requested ostream object.
+/*! \brief Create an asynchronous error log using the requested ostream object.
+ *
+ * This object should have one of the following types:
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
+ */
+#define FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os ) \
+  Utility::LoggingHelper::addStandardErrorLogSink( os, true )
+
+/*! \brief Create a synchronous warning log using the requested ostream object.
  * 
  * This object should have one of the following types:
  * <ol>
@@ -116,12 +156,13 @@
  *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
  * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_WARNING_LOG( os ) \
-  Utility::LoggingHelper::addStandardWarningLogSink( os );
+#define FRENSIE_SETUP_SYNCHRONOUS_WARNING_LOG( os ) \
+  Utility::LoggingHelper::addStandardWarningLogSink( os, false );
 
-/*! \brief Create a notification log using the requested ostream object.
+/*! \brief Create an asynchronous warning log using the requested ostream 
+ * object
  * 
- * This object should have one of the following types:
+ * \details This object should have one of the following types:
  * <ol>
  *  <li>std::cout </li>
  *  <li>std::cerr </li>
@@ -136,8 +177,50 @@
  *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
  * \ingroup logging_macros
  */
-#define FRENSIE_SETUP_NOTIFICATION_LOG( os )  \
-  Utility::LoggingHelper::addStandardNotificationLogSink( os );
+#define FRENSIE_SETUP_ASYNCHRONOUS_WARNING_LOG( os ) \
+  Utility::LoggingHelper::addStandardWarningLogSink( os, true );
+
+/*! \brief Create a synchronous notification log using the requested ostream
+ * object.
+ * 
+ * \details This object should have one of the following types:
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
+ */
+#define FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( os )  \
+  Utility::LoggingHelper::addStandardNotificationLogSink( os, false );
+
+/*! \brief Create an asynchronous notification log using the requested ostream
+ * object.
+ * 
+ * \details This object should have one of the following types:
+ * <ol>
+ *  <li>std::cout </li>
+ *  <li>std::cerr </li>
+ *  <li>std::clog </li>
+ *  <li>boost::shared_ptr<std::ostream> </li>
+ *  <li>Array<boost::shared_ptr<std::ostream> > (where Array is any STL
+ *      compliant array type). </li>
+ * </ol>
+ * Note that the console streams can be safely wrapped in a 
+ * boost::shared_ptr<std::ostream> object by using the boost::null_deleter()
+ * (e.g. boost::shared_ptr<std::ostream> 
+ *  wrapped_cout( &std::cout, boost::null_deleter() ); ).
+ * \ingroup logging_macros
+ */
+#define FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os )  \
+  Utility::LoggingHelper::addStandardNotificationLogSink( os, true );
 
 /*! Remove all logs
  * \ingroup logging_macros

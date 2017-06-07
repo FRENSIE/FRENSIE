@@ -121,9 +121,9 @@ int main( int argc, char** argv )
   {
     boost::shared_ptr<std::ostream>
       log_stream( out.get(), boost::null_deleter() );
-      //log_stream( &std::cout, boost::null_deleter() );
-  
-    FRENSIE_SETUP_STANDARD_LOGS( log_stream );
+    
+    // We want logging to occur immediately so we will use synchronous sinks
+    FRENSIE_SETUP_STANDARD_SYNCHRONOUS_LOGS( log_stream );
   }
 
   FRENSIE_LOG_TAGGED_NOTIFICATION( "Testing", "Logger initialized" );
@@ -162,9 +162,9 @@ int main( int argc, char** argv )
 
     success =
       (mpi_session.sum(local_unit_test_success ? 0 : 1) == 0 ? true : false);
-  }
 
-  FRENSIE_FLUSH_ALL_LOGS();
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
 
   // Report local failure details
   if( mpi_session.getNProc() > 1 )
@@ -182,8 +182,6 @@ int main( int argc, char** argv )
     oss.str( "" );
     oss.clear();
   }
-
-  FRENSIE_FLUSH_ALL_LOGS();
 
   // Summarize the local results
   if( mpi_session.getNProc() > 1 )
@@ -204,10 +202,9 @@ int main( int argc, char** argv )
 
     std::cout << formatter << std::endl;
   }
-
-  FRENSIE_FLUSH_ALL_LOGS();
+  
   FRENSIE_REMOVE_ALL_LOGS();
-
+  
   return (success ? 0 : 1 );
 }
 

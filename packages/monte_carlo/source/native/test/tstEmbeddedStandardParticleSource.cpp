@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( StandardParticleSource,
   // Embed the source in the geometry model
   source->embedInModel( geometry_model );
 
-  // Set the rejection cell
+  // Set the rejection cells
   source->setRejectionCell( 2 );
   source->setRejectionCell( 3 );
     

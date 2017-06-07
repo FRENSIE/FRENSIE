@@ -30,8 +30,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_error )
   // Setup the error log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
   
-  FRENSIE_SETUP_ERROR_LOG( os_ptr );
-  FRENSIE_SETUP_ERROR_LOG( std::cout );
+  FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG( os_ptr );
+  FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Log an error
   std::cout << std::endl;
@@ -53,8 +53,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_error )
   // Setup the error log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
   
-  FRENSIE_SETUP_ERROR_LOG( os_ptr );
-  FRENSIE_SETUP_ERROR_LOG( std::cout );
+  FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG( os_ptr );
+  FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Log an error
   std::cout << std::endl;
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_scope_error )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
   
-  FRENSIE_SETUP_ERROR_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os_array );
 
   // Log an error
   std::cout << std::endl;
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_scope_error )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
   
-  FRENSIE_SETUP_ERROR_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os_array );
 
   // Log an error
   std::cout << std::endl;
@@ -130,8 +130,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_error_with_logger )
   // Setup the error log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
   
-  FRENSIE_SETUP_ERROR_LOG( os_ptr );
-  FRENSIE_SETUP_ERROR_LOG( std::cout );
+  FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Create a custom logger
   Utility::LoggingHelper::StandardLoggerType custom_logger;
@@ -159,8 +159,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_scope_error_with_logger )
   // Setup the error log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
   
-  FRENSIE_SETUP_ERROR_LOG( os_ptr );
-  FRENSIE_SETUP_ERROR_LOG( std::cout );
+  FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Create a custom logger
   Utility::LoggingHelper::StandardLoggerType custom_logger;
@@ -186,11 +186,11 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_nested_error )
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
 
-  // Setup the warning log
+  // Setup the error log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  FRENSIE_SETUP_ERROR_LOG( os_ptr );
-  FRENSIE_SETUP_ERROR_LOG( std::cout );
+  FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Log a nested error
   std::cout << std::endl;
@@ -213,8 +213,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_warning )
   // Setup the warning log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  FRENSIE_SETUP_WARNING_LOG( os_ptr );
-  FRENSIE_SETUP_WARNING_LOG( std::cout );
+  FRENSIE_SETUP_ASYNCHRONOUS_WARNING_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_WARNING_LOG( std::cout );
 
   // Log a warning
   std::cout << std::endl;
@@ -240,7 +240,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_warning )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_WARNING_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_WARNING_LOG( os_array );
 
   // Log a warning
   std::cout << std::endl;
@@ -266,7 +266,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_warning_with_logger )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_WARNING_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_WARNING_LOG( os_array );
 
   // Create a custom logger
   Utility::LoggingHelper::StandardLoggerType custom_logger;
@@ -294,8 +294,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_notification )
   // Setup the notification log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_ptr );
-  FRENSIE_SETUP_NOTIFICATION_LOG( std::cout );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( std::cout );
 
   // Log a notification
   std::cout << std::endl;
@@ -320,7 +320,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_notification )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Log a notification
   std::cout << std::endl;
@@ -345,7 +345,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_notification_with_logger )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Create a custom logger
   Utility::LoggingHelper::StandardLoggerType custom_logger;
@@ -372,8 +372,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_detail )
   // Setup the notification log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_ptr );
-  FRENSIE_SETUP_NOTIFICATION_LOG( std::cout );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( std::cout );
 
   // Log a detail
   std::cout << std::endl;
@@ -402,7 +402,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_detail )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Log a detail
   std::cout << std::endl;
@@ -431,7 +431,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_detail_with_logger )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Create a custom logger
   Utility::LoggingHelper::StandardLoggerType custom_logger;
@@ -462,8 +462,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_pedantic_detail )
   // Setup the notification log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_ptr );
-  FRENSIE_SETUP_NOTIFICATION_LOG( std::cout );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( std::cout );
 
   // Log a detail
   std::cout << std::endl;
@@ -493,7 +493,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_pedantic_detail )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_NOTIFICATION_LOG( os_array );
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Log a detail
   std::cout << std::endl;
@@ -519,8 +519,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   // Setup the logs
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  FRENSIE_SETUP_STANDARD_LOGS( os_ptr );
-  FRENSIE_SETUP_STANDARD_LOGS( std::cout );
+  FRENSIE_SETUP_STANDARD_ASYNCHRONOUS_LOGS( os_ptr );
+  FRENSIE_SETUP_STANDARD_SYNCHRONOUS_LOGS( std::cout );
 
   // Log an error
   std::cout << std::endl;
@@ -662,7 +662,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_STANDARD_LOGS( os_array );
+  FRENSIE_SETUP_STANDARD_ASYNCHRONOUS_LOGS( os_array );
 
   // Set the global log filter
   FRENSIE_SET_GLOBAL_LOG_FILTER( record_type_log_attr >= Utility::WARNING_RECORD || (boost::log::expressions::has_attr(tag_log_attr) && tag_log_attr == "Important") );

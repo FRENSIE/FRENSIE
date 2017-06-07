@@ -483,7 +483,7 @@ void ParticleSource::sampleParticleState(
                                << particle->getHistoryNumber() << "in "
                                "the correct location of model "
                                << d_model->getName() << "!" );
-      
+
       // Embed the particle in the model
       particle->embedInModel( d_model, start_cell );
       particle->setSourceCell( start_cell );

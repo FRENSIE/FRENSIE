@@ -565,7 +565,7 @@ void ParticleState::embedInModel(
   catch( const std::exception& exception )
   {
     FRENSIE_LOG_WARNING( "Attempt to embed particle into geometry model "
-                         << model->getName() << "failed! \n"
+                         << model->getName() << " failed! \n"
                          << exception.what() );
     
     d_lost = true;
