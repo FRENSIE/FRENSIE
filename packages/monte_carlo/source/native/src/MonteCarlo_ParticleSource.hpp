@@ -56,7 +56,7 @@ public:
             const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const;
 
   //! Print a summary of the source data
-  void printSummary( std::ostream& os ) const;
+  virtual void printSummary( std::ostream& os ) const = 0;
 
   //! Embed the source in the desired model
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model );
@@ -109,9 +109,6 @@ protected:
   //! Export the source data
   virtual void exportDataImpl(
                            SourceHDF5FileHandler& source_hdf5_file ) const = 0;
-
-  //! Print a summary of the source data
-  virtual void printSummaryImpl( std::ostream& os ) const = 0;
 
   /*! \brief Return the number of particle states that will be sampled for the 
    * given history number

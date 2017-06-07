@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <sstream>
 #include <memory>
 
 // Boost Includes
@@ -26,6 +27,7 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing functions
@@ -37,38 +39,47 @@ void initializeSource( std::shared_ptr<MonteCarlo::ParticleSource>& source )
 
   boost::shared_ptr<MonteCarlo::ParticleState> particle(
 					 new MonteCarlo::PhotonState( 1ull ) );
+  particle->setSourceId( 0 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::NeutronState( 10ull ) );
+  particle->setSourceId( 0 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::PhotonState( 1ull ) );
+  particle->setSourceId( 0 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::ElectronState( 11ull ) );
+  particle->setSourceId( 0 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::NeutronState( 12ull ) );
+  particle->setSourceId( 0 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::PhotonState( 13ull ) );
+  particle->setSourceId( 1 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::ElectronState( 14ull ) );
+  particle->setSourceId( 1 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::NeutronState( 15ull ) );
+  particle->setSourceId( 2 );
 
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::PhotonState( 16ull ) );
+  particle->setSourceId( 0 );
 
   bank.push( *particle );
 
@@ -99,6 +110,17 @@ bool compareHistoryNumbers( const MonteCarlo::ParticleState& state_a,
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the source id can be returned
+TEUCHOS_UNIT_TEST( CachedStateParticleSource, getId )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+
+  initializeSource( source );
+
+  TEST_EQUALITY_CONST( source->getId(), MonteCarlo::ModuleTraits::reserved_internal_roi_handle );
+}
+
+//---------------------------------------------------------------------------//
 // Check that particle states can be "sampled"
 TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 {
@@ -113,11 +135,13 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
@@ -128,6 +152,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
@@ -138,6 +163,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 2ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
@@ -148,6 +174,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 3ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
@@ -158,6 +185,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 4ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
@@ -168,6 +196,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 5ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
@@ -178,6 +207,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 6ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
@@ -188,170 +218,90 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 7ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY( bank.top().getSourceId(), source->getId() );
 
   bank.pop();
 
-  // Attempting to get another particle state should cause an exception
-  TEST_THROW( source->sampleParticleState( bank, 10 ), std::runtime_error );
+  // Attempting to get another particle state should do nothing
+  source->sampleParticleState( bank, 8 );
+
+  TEST_EQUALITY_CONST( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that particle states can be "sampled"
-TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState_thread_safe )
+// Check that the source can accumulate sampling statistics
+TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampling_statistics )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
 
   initializeSource( source );
 
-  unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-
-  source->enableThreadSupport( threads );
-
-  std::vector<MonteCarlo::ParticleBank> banks( threads );
-
-  #pragma omp parallel for num_threads( threads )
-  for( unsigned i = 0; i < 8; ++i )
-  {
-    source->sampleParticleState(
-                       banks[Utility::GlobalOpenMPSession::getThreadId()], i );
-  }
-
-  // Merge the banks
   MonteCarlo::ParticleBank bank;
 
-  for( unsigned i = 0; i < banks.size(); ++i )
-    bank.merge( banks[i], compareHistoryNumbers );
-
-  banks.clear();
+  for( unsigned long long i = 0; i < 8; ++i )
+    source->sampleParticleState( bank, i );
 
   TEST_EQUALITY_CONST( bank.size(), 9 );
 
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 2ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 3ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 4ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 5ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 6ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 7ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-
-  bank.pop();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the number of trials can be returned
-TEUCHOS_UNIT_TEST( CachedStateParticleSource, getNumberOfTrials )
-{
-  std::shared_ptr<MonteCarlo::ParticleSource> source;
-
-  initializeSource( source );
-
-  TEST_EQUALITY_CONST( source->getNumberOfTrials(), 0ull );
-
-  unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-
-  source->enableThreadSupport( threads );
-
-  std::vector<MonteCarlo::ParticleBank> banks( threads );
-
-  #pragma omp parallel for num_threads( threads )
-  for( unsigned i = 0; i < 8; ++i )
-  {
-    source->sampleParticleState(
-                       banks[Utility::GlobalOpenMPSession::getThreadId()], i );
-  }
-
-  TEST_EQUALITY_CONST( source->getNumberOfTrials(), 9ull );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the number of samples can be returned
-TEUCHOS_UNIT_TEST( CachedStateParticleSource, getNumberOfSamples )
-{
-  std::shared_ptr<MonteCarlo::ParticleSource> source;
-
-  initializeSource( source );
-
-  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0ull );
-
-  unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-
-  source->enableThreadSupport( threads );
-
-  std::vector<MonteCarlo::ParticleBank> banks( threads );
-
-  #pragma omp parallel for num_threads( threads )
-  for( unsigned i = 0; i < 8; ++i )
-  {
-    source->sampleParticleState(
-                       banks[Utility::GlobalOpenMPSession::getThreadId()], i );
-  }
-
-  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 9ull );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( CachedStateParticleSource, getSamplingEfficiency )
-{
-  std::shared_ptr<MonteCarlo::ParticleSource> source;
-
-  initializeSource( source );
-
+  TEST_EQUALITY_CONST( source->getNumberOfTrials(), 9 );
+  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 9 );
   TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 
-  unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
+}
 
-  source->enableThreadSupport( threads );
+//---------------------------------------------------------------------------//
+// Check that a summary of the source data can be printed
+TEUCHOS_UNIT_TEST( StandardParticleSource, printSummary )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
 
-  std::vector<MonteCarlo::ParticleBank> banks( threads );
+  initializeSource( source );
 
-  #pragma omp parallel for num_threads( threads )
-  for( unsigned i = 0; i < 8; ++i )
-  {
-    source->sampleParticleState(
-                       banks[Utility::GlobalOpenMPSession::getThreadId()], i );
-  }
+  MonteCarlo::ParticleBank bank;
 
-  TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
+  for( unsigned long long i = 0; i < 8; ++i )
+    source->sampleParticleState( bank, i );
+
+  std::ostringstream oss;
+
+  source->printSummary( oss );
+
+  TEST_ASSERT( oss.str().size() > 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -364,30 +314,38 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, exportData )
 
   MonteCarlo::ParticleBank bank;
 
-  // Conduct 10 samples
-  for( unsigned i = 0; i < 8; ++i )
+  for( unsigned long long i = 0; i < 8; ++i )
     source->sampleParticleState( bank, i );
 
   // Export the source data
-  std::string source_data_file_name( "test_standard_particle_source.h5" );
-
   {
     std::shared_ptr<Utility::HDF5FileHandler> hdf5_file(
                                                 new Utility::HDF5FileHandler );
-    hdf5_file->openHDF5FileAndOverwrite( source_data_file_name );
+    hdf5_file->openHDF5FileAndOverwrite( "test_standard_particle_source.h5" );
 
     source->exportData( hdf5_file );
+
+    hdf5_file->closeHDF5File();
   }
 
   // Check that the source data was written correctly
-  MonteCarlo::SourceHDF5FileHandler source_file_handler(
-               source_data_file_name,
-               MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
+  MonteCarlo::SourceHDF5FileHandler exported_source_data(
+                                 "test_standard_particle_source.h5",
+                                 MonteCarlo::HDF5FileHandler::READ_ONLY_FILE );
 
-  TEST_EQUALITY_CONST(
-             source_file_handler.getNumberOfDefaultSourceSamplingTrials(), 9 );
-  TEST_EQUALITY_CONST(
-                    source_file_handler.getNumberOfDefaultSourceSamples(), 9 );
+  TEST_ASSERT( exported_source_data.doesSourceExist( source->getId() ) );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceSamplingTrials( source->getId() ), 9 );
+  TEST_EQUALITY_CONST( exported_source_data.getNumberOfSourceSamples( source->getId() ), 9 );
+  
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::PRIMARY_SPATIAL_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::SECONDARY_SPATIAL_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::TERTIARY_SPATIAL_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::ENERGY_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::TIME_DIMENSION ) );
+  TEST_ASSERT( !exported_source_data.doesSourceDimensionExist( source->getId(), MonteCarlo::WEIGHT_DIMENSION ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -398,74 +356,67 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, resetData )
 
   initializeSource( source );
 
-  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0ull );
+  MonteCarlo::ParticleBank bank;
 
-  unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-
-  source->enableThreadSupport( threads );
-
-  std::vector<MonteCarlo::ParticleBank> banks( threads );
-
-  #pragma omp parallel for num_threads( threads )
-  for( unsigned i = 0; i < 8; ++i )
-  {
-    source->sampleParticleState(
-                       banks[Utility::GlobalOpenMPSession::getThreadId()], i );
-  }
-
-  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 9ull );
+  for( unsigned long long i = 0; i < 8; ++i )
+    source->sampleParticleState( bank, i );
 
   source->resetData();
+  
+  TEST_EQUALITY_CONST( source->getNumberOfTrials(), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0 );
+  TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 
-  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0ull );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::ENERGY_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::ENERGY_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::ENERGY_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::TIME_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::TIME_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::TIME_DIMENSION ), 1.0 );
+  
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionTrials( MonteCarlo::WEIGHT_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getNumberOfDimensionSamples( MonteCarlo::WEIGHT_DIMENSION ), 0 );
+  TEST_EQUALITY_CONST( source->getDimensionSamplingEfficiency( MonteCarlo::WEIGHT_DIMENSION ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  int threads = 1;
-
-  clp.setOption( "threads",
-		 &threads,
-		 "Number of threads to use" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCachedStateParticleSource.cpp

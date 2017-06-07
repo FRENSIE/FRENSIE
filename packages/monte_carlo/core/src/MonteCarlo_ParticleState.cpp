@@ -132,9 +132,6 @@ MonteCarlo::ModuleTraits::InternalROIHandle ParticleState::getSourceId() const
 void ParticleState::setSourceId(
                          const MonteCarlo::ModuleTraits::InternalROIHandle id )
 {
-  // Make sure that the id is valid
-  testPrecondition( id != MonteCarlo::ModuleTraits::reserved_internal_roi_handle );
-  
   d_source_id = id;
 }
 

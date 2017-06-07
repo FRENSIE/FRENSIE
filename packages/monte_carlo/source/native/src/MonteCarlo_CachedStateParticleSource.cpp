@@ -136,10 +136,26 @@ void CachedStateParticleSource::exportDataImpl(
 { /* ... */ }
 
 // Print a summary of the source data
-/*! \details There is no data to summarize.
+/*! \details Only the master thread should call this method.
  */
-void CachedStateParticleSource::printSummaryImpl( std::ostream& ) const
-{ /* ... */ }
+void CachedStateParticleSource::printSummary( std::ostream& os ) const
+{ 
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  // Print the source sampling statistics
+  this->printStandardSummary( "Cached State Source",
+                              this->getNumberOfTrials(),
+                              this->getNumberOfSamples(),
+                              this->getSamplingEfficiency(),
+                              os );
+
+  // Print the starting cell summary
+  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
+  this->getStartingCells( starting_cells );
+  
+  this->printStandardStartingCellSummary( starting_cells, os );
+}
 
 /*! \brief Return the number of particle states that will be sampled for the 
  * given history number
@@ -154,8 +170,8 @@ unsigned long long CachedStateParticleSource::getNumberOfParticleStateSamples(
     return history_it->second.size();
   else
   {
-    FRENSIE_LOG_WARNING( "Source " << this->getId() << " has no cached states "
-                         "for history " << history << "!" );
+    FRENSIE_LOG_WARNING( "The cached state particle source has no cached "
+                         "particle states for history " << history << "!" );
     
     return 0;
   }
@@ -167,14 +183,18 @@ CachedStateParticleSource::initializeParticleState(
                                     const unsigned long long history,
                                     const unsigned long long history_state_id )
 {
-  // Make sure that the history is valid
-  testPrecondition( d_particle_states.find( history ) !=
-                    d_particle_states.end() );
-  // Make sure that the history state id is valid
-  testPrecondition( history_state_id <
-                    d_particle_states.find( history )->second.size() );
-
-  return d_particle_states.find( history )->second[history_state_id];
+  HistoryStateMap::iterator history_it = d_particle_states.find( history );
+    
+  if( history_it != d_particle_states.end() )
+    return d_particle_states.find( history )->second[history_state_id];
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "The cached state particle source has no particles for "
+                     "history " << history << "!" );
+    
+    return std::shared_ptr<ParticleState>();
+  }
 }
 
 // Sample a particle state from the source

@@ -358,31 +358,6 @@ void ParticleSource::exportData(
   this->exportDataImpl( source_hdf5_file );
 }
 
-// Print a summary of the source data
-/*! \details Only the master thread should call this method.
- */
-void ParticleSource::printSummary( std::ostream& os ) const
-{
-  // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-
-  // Print the source sampling statistics
-  this->printStandardSummary( "Standard Source",
-                              this->getNumberOfTrials(),
-                              this->getNumberOfSamples(),
-                              this->getSamplingEfficiency(),
-                              os );
-
-  // Print the starting cell summary
-  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
-  this->getStartingCells( starting_cells );
-  
-  this->printStandardStartingCellSummary( starting_cells, os );
-
-  // Print the child class summary
-  this->printSummaryImpl( os );
-}
-
 // Embed the source in the desired model
 /*! \details The start cell cache and statistical data will be deleted. If any 
  * rejection cells have been set they will also be deleted.

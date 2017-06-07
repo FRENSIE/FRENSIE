@@ -222,11 +222,24 @@ void StandardParticleSource::exportDataImpl(
 // Print a summary of the source data
 /*! \details Only the master thread should call this method.
  */
-void StandardParticleSource::printSummaryImpl( std::ostream& os ) const
+void StandardParticleSource::printSummary( std::ostream& os ) const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
+  // Print the source sampling statistics
+  this->printStandardSummary( "Standard Source",
+                              this->getNumberOfTrials(),
+                              this->getNumberOfSamples(),
+                              this->getSamplingEfficiency(),
+                              os );
+
+  // Print the starting cell summary
+  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
+  this->getStartingCells( starting_cells );
+  
+  this->printStandardStartingCellSummary( starting_cells, os );
+  
   // Print the sampling statistics for each source dimension
   DimensionCounterMap::const_iterator dimension_it, dimension_end;
   dimension_it = d_dimension_trial_counters.front().begin();

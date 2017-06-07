@@ -163,36 +163,12 @@ IF(FRENSIE_ENABLE_OPENPM OR FRENSIE_ENABLE_MPI)
   ENDIF()
 ENDIF()
 
-# ADD_EXECUTABLE(tstCompoundStandardParticleSource
-#   tstCompoundStandardParticleSource.cpp)
-# TARGET_LINK_LIBRARIES(tstCompoundStandardParticleSource monte_carlo_source_native)
-# ADD_TEST(CompoundStandardParticleSource_test tstCompoundStandardParticleSource)
-# SET_PROPERTY(TEST CompoundStandardParticleSource_test PROPERTY LABELS monte_carlo_source_native)
-
-# IF(${FRENSIE_ENABLE_OPENMP})
-#   ADD_TEST(SharedParallelCompoundStandardParticleSource_2_test tstCompoundStandardParticleSource --threads=2)
-#   ADD_TEST(SharedParallelCompoundStandardParticleSource_4_test tstCompoundStandardParticleSource --threads=4)
-#   SET_PROPERTY(TEST SharedParallelCompoundStandardParticleSource_2_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
-#   SET_PROPERTY(TEST SharedParallelCompoundStandardParticleSource_4_test PROPERTY LABELS monte_carlo_source_native openmp no_threads)
-# ENDIF()
-
-# IF(${FRENSIE_ENABLE_MPI})
-#   ADD_EXECUTABLE(tstDistributedParallelCompoundStandardParticleSource
-#   tstDistributedCompoundStandardParticleSource.cpp)
-#   TARGET_LINK_LIBRARIES(tstDistributedParallelCompoundStandardParticleSource monte_carlo_source_native)
-#   ADD_TEST(DistributedParallelCompoundStandardParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedParallelCompoundStandardParticleSource)
-#   ADD_TEST(DistributedParallelCompoundStandardParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedParallelCompoundStandardParticleSource)
-#   ADD_TEST(DistributedParallelCompoundStandardParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedParallelCompoundStandardParticleSource)
-#   SET_PROPERTY(TEST DistributedParallelCompoundStandardParticleSource_1_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-#   SET_PROPERTY(TEST DistributedParallelCompoundStandardParticleSource_2_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-#   SET_PROPERTY(TEST DistributedParallelCompoundStandardParticleSource_4_test PROPERTY LABELS monte_carlo_source_native mpi no_threads)
-# ENDIF()
-
-# ADD_EXECUTABLE(tstCachedStateParticleSource
-#   tstCachedStateParticleSource.cpp)
-# TARGET_LINK_LIBRARIES(tstCachedStateParticleSource monte_carlo_source_native)
-# ADD_TEST(CachedStateParticleSource_test tstCachedStateParticleSource)
-# SET_PROPERTY(TEST CachedStateParticleSource_test PROPERTY LABELS monte_carlo_source_native)
+ADD_EXECUTABLE(tstCachedStateParticleSource
+  tstCachedStateParticleSource.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCachedStateParticleSource monte_carlo_source_native)
+ADD_TEST(CachedStateParticleSource_test tstCachedStateParticleSource)
+SET_PROPERTY(TEST CachedStateParticleSource_test PROPERTY LABELS monte_carlo_source_native)
 
 # IF(${FRENSIE_ENABLE_OPENMP})
 #   ADD_TEST(SharedParallelCachedStateParticleSource_2_test tstCachedStateParticleSource --threads=2)

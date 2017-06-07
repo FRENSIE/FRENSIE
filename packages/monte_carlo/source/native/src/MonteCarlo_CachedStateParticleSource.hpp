@@ -42,6 +42,9 @@ public:
   //! Get the source id
   ModuleTraits::InternalROIHandle getId() const override;
 
+  //! Print a summary of the source data
+  void printSummary( std::ostream& os ) const override;
+
   //! Return the number of sampling trials in the phase space dimension
   ModuleTraits::InternalCounter getNumberOfDimensionTrials(
                           const PhaseSpaceDimension dimension ) const override;
@@ -69,9 +72,6 @@ protected:
 
   //! Export the source data
   void exportDataImpl( SourceHDF5FileHandler& source_hdf5_file ) const override;
-
-  //! Print a summary of the source data
-  void printSummaryImpl( std::ostream& os ) const override;
 
   /*! \brief Return the number of particle states that will be sampled for the 
    * given history number
