@@ -110,7 +110,7 @@ void StandardParticleSource::reduceDataImpl(
 
     // Reduce the dimension sample counters
     try{
-      this->reduceDimensionTrialCounters( comm, root_process );
+      this->reduceDimensionSampleCounters( comm, root_process );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "unable to reduce the dimension sample "
@@ -168,6 +168,8 @@ void StandardParticleSource::reduceDimensionCounters(
                                << local_dimension_counters_it->first
                                << "!" );
       comm->barrier();
+
+      ++local_dimension_counters_it;
     }
   }
 }

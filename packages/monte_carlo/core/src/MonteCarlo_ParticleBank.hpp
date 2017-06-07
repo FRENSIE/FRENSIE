@@ -11,10 +11,9 @@
 
 // Std Lib Includes
 #include <memory>
+#include <functional>
 
 // Boost Includes
-#include <boost/shared_ptr.hpp>
-#include <boost/function.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/list.hpp>
@@ -37,7 +36,7 @@ class ParticleBank
 public:
 
   //! The compare function type
-  typedef boost::function<bool (const ParticleState&, const ParticleState&)> CompareFunctionType;
+  typedef std::function<bool (const ParticleState&, const ParticleState&)> CompareFunctionType;
 
   //! Default Constructor
   ParticleBank();

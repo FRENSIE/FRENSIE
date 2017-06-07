@@ -28,7 +28,7 @@ public:
   //! Get the number of threads that have been requested in parallel blocks
   static unsigned getRequestedNumberOfThreads();
 
-  //! Get the default number of threads used in the current parallel
+  //! Get the default number of threads used in the current parallel block
   static unsigned getNumberOfThreads();
 
   //! Get the thread id within the current scope

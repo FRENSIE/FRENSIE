@@ -111,7 +111,7 @@ void ParticleSource::reduceData(
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "unable to reduce the source trial "
                              "counters!" );
-
+    
     // Reduce the sample counters
     try{
       this->reduceSampleCounters( comm, root_process );
@@ -119,7 +119,9 @@ void ParticleSource::reduceData(
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "unable to reduce the source sample "
                              "counters!" );
-
+    
+    comm->barrier();
+    
     // Reduce data in child class
     this->reduceDataImpl( comm, root_process );
     

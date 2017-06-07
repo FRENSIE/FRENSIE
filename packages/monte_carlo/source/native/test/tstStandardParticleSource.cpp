@@ -587,15 +587,6 @@ TEUCHOS_UNIT_TEST( StandardParticleSource, resetData )
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_geom_xml_file_name;
-
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  clp().setOption( "test_geom_xml_file",
-                   &test_geom_xml_file_name,
-                   "Test xml geometry file name" );
-}
-
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   // Create the particle distribution
