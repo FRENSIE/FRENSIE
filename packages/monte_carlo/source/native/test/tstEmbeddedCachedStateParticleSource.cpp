@@ -253,6 +253,13 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
   source->sampleParticleState( bank, 8 );
   
   TEST_EQUALITY_CONST( bank.size(), 0 );
+
+  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
+  source->getStartingCells( starting_cells );
+
+  TEST_EQUALITY_CONST( starting_cells.size(), 2 );
+  TEST_ASSERT( starting_cells.count( 2 ) );
+  TEST_ASSERT( starting_cells.count( 3 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -389,6 +396,13 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource,
   source->sampleParticleState( bank, 8 );
 
   TEST_EQUALITY_CONST( bank.size(), 0 );
+
+  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
+  source->getStartingCells( starting_cells );
+
+  TEST_EQUALITY_CONST( starting_cells.size(), 2 );
+  TEST_ASSERT( starting_cells.count( 2 ) );
+  TEST_ASSERT( starting_cells.count( 3 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -516,6 +530,12 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource,
   source->sampleParticleState( bank, 8 );
 
   TEST_EQUALITY_CONST( bank.size(), 0 );
+
+  std::set<Geometry::ModuleTraits::InternalCellHandle> starting_cells;
+  source->getStartingCells( starting_cells );
+
+  TEST_EQUALITY_CONST( starting_cells.size(), 1 );
+  TEST_ASSERT( starting_cells.count( 2 ) );
 }
 
 //---------------------------------------------------------------------------//

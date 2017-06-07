@@ -43,7 +43,7 @@ CachedStateParticleSource::CachedStateParticleSource(
 
   // Load the the archived bank
   ParticleBank state_bank;
-
+    
   std::ifstream ifs( state_source_bank_archive_name.c_str() );
 
   switch( archive_type )
@@ -76,6 +76,8 @@ CachedStateParticleSource::CachedStateParticleSource(
     }
   }
 
+  ifs.close();
+  
   // Sort the bank by history number
   state_bank.sort( CachedStateParticleSource::compareHistoryNumbers );
 
