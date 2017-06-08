@@ -336,7 +336,7 @@ void ParticleSimulationManager<GeometryHandler,
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
-
+    
       if( op_to_surface_hit < remaining_subtrack_op )
       {
   	    // Advance the particle to the cell boundary
@@ -406,11 +406,11 @@ void ParticleSimulationManager<GeometryHandler,
       // A collision occurs in this cell
       else
       {
-  	// Advance the particle to the collision site
-  	double distance_to_collision =
-          remaining_subtrack_op/cell_total_macro_cross_section;
+  	    // Advance the particle to the collision site
+  	    double distance_to_collision =
+            remaining_subtrack_op/cell_total_macro_cross_section;
 
-  	particle.advance( distance_to_collision );
+  	    particle.advance( distance_to_collision );
 
         GMI::advanceInternalRayBySubstep( distance_to_collision );
 
@@ -435,15 +435,13 @@ void ParticleSimulationManager<GeometryHandler,
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank, true );
         
-        if( !particle.isGone() )
-        {
-          GMI::changeInternalRayDirection( particle.getDirection() );
 
-          // Cache the current position of the new ray
-          ray_start_point[0] = particle.getXPosition();
-          ray_start_point[1] = particle.getYPosition();
-          ray_start_point[2] = particle.getZPosition();
-        }
+        GMI::changeInternalRayDirection( particle.getDirection() );
+
+        // Cache the current position of the new ray
+        ray_start_point[0] = particle.getXPosition();
+        ray_start_point[1] = particle.getYPosition();
+        ray_start_point[2] = particle.getZPosition();
 
         // Make sure the energy is above the cutoff
         if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
