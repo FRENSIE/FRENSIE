@@ -185,6 +185,13 @@ TARGET_LINK_LIBRARIES(tstTuple utility_core)
 ADD_TEST(Tuple_test tstTuple)
 SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstHumanReadableSerializer
+  tstHumanReadableSerializer.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHumanReadableSerializer utility_core)
+ADD_TEST(HumanReadableSerializer_test tstHumanReadableSerializer)
+SET_PROPERTY(TEST HumanReadableSerializer_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstArrayTraits
   tstArrayTraits.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

@@ -126,36 +126,7 @@ template<typename... Types>
 inline auto makeTuple( Types&&... args ) -> decltype(std::make_tuple(args...))
 { return std::make_tuple( args... ); }
 
-/*! Convert the tuple to a string
- * \ingroup tuple
- */
-template<typename... Types>
-std::string tupleToString( const Utility::Tuple<Types...>& tuple );
-
-/*! Place the tuple in a stream
- * \ingroup tuple
- */
-template<typename... Types>
-void tupleToStream( std::ostream&os, const Utility::Tuple<Types...>& tuple );
-
 } // end Utility namespace
-
-namespace std{
-
-/*! Stream operator for tuples
- * \ingroup tuple
- * \ingroup print_format
- */
-template<typename... Types>
-inline std::ostream& operator<<( std::ostream& os,
-                                 const Utility::Tuple<Types...>& tuple )
-{
-  Utility::tupleToStream( os, tuple );
-  
-  return os;
-}
-
-} // end std namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes.

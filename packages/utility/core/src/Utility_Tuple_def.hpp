@@ -140,67 +140,6 @@ get( const boost::units::quantity<Unit,T>& tuple )
 template<size_t I, typename TupleType, typename ValueType>
 inline void set( TupleType& tuple, ValueType value )
 { Utility::get<I>( tuple ) = value; }
-
-namespace Details{
-
-//! The helper class that places a tuple in a stream
-template<size_t I, typename TupleType, typename Enable = void>
-struct TupleToStreamHelper
-{
-  static inline void toStream( std::ostream& os, const TupleType& tuple )
-  { 
-    // Print the tuple element
-    os << Utility::get<I>( tuple ) << ", ";
-
-    // Print the remaining tuple elements
-    TupleToStreamHelper<I+1,TupleType>::toStream( os, tuple );
-  }
-};
-
-/*! \brief The helper class that places a tuple in a stream
- * (specialization for I == TupleSize-1, which is for the last element)
- */
-template<size_t I, typename TupleType>
-struct TupleToStreamHelper<I, TupleType, typename std::enable_if<I==TupleSize<TupleType>::value-1>::type>
-{
-  static inline void toStream( std::ostream& os, const TupleType& tuple )
-  {
-    // Print the tuple element
-    os << Utility::get<I>( tuple );
-  }
-};
-
-/*! \brief The helper class that places a tuple in a stream
- * (specialization for I == TupleSize, which is past the last element)
- */
-template<size_t I, typename TupleType>
-struct TupleToStreamHelper<I, TupleType, typename std::enable_if<I==TupleSize<TupleType>::value>::type>
-{
-  static inline void toStream( std::ostream& os, const TupleType& tuple )
-  { /* ... */ }
-};
-  
-} // end Details namespace
-
-// Place the tuple in a stream
-template<typename... Types>
-void tupleToStream( std::ostream&os, const Utility::Tuple<Types...>& tuple )
-{
-  os << "{";
-  Utility::Details::TupleToStreamHelper<0,Utility::Tuple<Types...> >::toStream(
-                                                                   os, tuple );
-  os << "}";
-}
-  
-// Convert the tuple to a string
-template<typename... Types>
-std::string tupleToString( const Utility::Tuple<Types...>& tuple )
-{
-  std::ostringstream oss;
-  tupleToStream( oss, tuple );
-
-  return oss.str();
-}
   
 } // end Utility namespace
 

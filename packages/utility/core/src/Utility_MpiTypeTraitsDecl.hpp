@@ -4,7 +4,7 @@
 //! \author Alex Robinson
 //! \brief  Mpi Type Traits declaration. Note: This class wouldn't be necessary
 //!         if the Teuchos::MpiTypeTraits class (found in
-//!         Teuchos_CommHelpers.cpp) was not in an Anonymous namespace!!!
+//!         Teuchos_CommHelpers.cpp) was not in an Anonymous namespace :(
 //!
 //---------------------------------------------------------------------------//
 
@@ -31,7 +31,7 @@ template<typename T>
 struct MpiTypeTraits
 {
   //! The MPI_Datatype corresponding to T
-  static MPI_Datatype getType( const T& )
+  static inline MPI_Datatype getType( const T& )
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 };
 

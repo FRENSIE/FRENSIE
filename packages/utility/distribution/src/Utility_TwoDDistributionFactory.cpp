@@ -8,6 +8,10 @@
 
 // FRENSIE Includes
 #include "Utility_TwoDDistributionFactory.hpp"
+#include "Utility_HistogramFullyTabularTwoDDistribution.hpp"
+#include "Utility_HistogramPartiallyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedPartiallyTabularTwoDDistribution.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -20,8 +24,7 @@ TwoDDistributionFactory::TwoDDistributionFactory()
 
 // Constructor
 TwoDDistributionFactory::TwoDDistributionFactory(
-                              const Teuchos::RCP<const Teuchos::ParameterList>&
-                              raw_one_d_distributions )
+                        const Teuchos::ParameterList& raw_one_d_distributions )
   : d_one_d_distribution_name_map()
 {
   // Extract the one-d distributions
@@ -58,7 +61,7 @@ std::shared_ptr<TwoDDistribution> TwoDDistributionFactory::createDistribution(
   std::string type = raw_two_d_distribution.get<std::string>( "Type" );
 
   if( this->isTabular( type ) )
-    return this->createTabularDistribution( raw_two_d_distribution );
+    return this->createTabularDistribution( type, raw_two_d_distribution );
   else
     return std::shared_ptr<TwoDDistribution>();
 }
@@ -176,18 +179,40 @@ TwoDDistributionFactory::createTabularDistribution(
   }
 
   // Validate the secondary distribution names
-  this->validateSecondaryDistributionNames( secondary_dist_names );
+  this->validateSecondaryDistributionNames( raw_two_d_distribution.name(),
+                                            secondary_dist_names );
 
   if( type == "Histogram Distribution" )
   {
-    return this->createHistogramTabularDistribution( primary_grid,
-                                                     secondary_dist_names );
+    if( this->isTabularDistributionFullyTabular( secondary_dist_names ) )
+    {
+      return this->createHistogramTabularDistribution<HistogramFullyTabularTwoDDistribution>(
+                                                        primary_grid,
+                                                        secondary_dist_names );
+    }
+    else
+    {
+      return this->createHistogramTabularDistribution<HistogramPartiallyTabularTwoDDistribution>(
+                                                        primary_grid,
+                                                        secondary_dist_names );
+    }
   }
   else if( type.find( "Interpolated" ) < type.size() )
   {
-    return this->createInterpolatedTabularDistribution( type,
+    if( this->isTabularDistributionFullyTabular( secondary_dist_names ) )
+    {
+      return this->createInterpolatedTabularDistribution<InterpolatedFullyTabularTwoDDistribution>(
+                                                        type,
                                                         primary_grid,
                                                         secondary_dist_names );
+    }
+    else
+    {
+      return this->createInterpolatedTabularDistribution<InterpolatedPartiallyTabularTwoDDistribution>(
+                                                        type,
+                                                        primary_grid,
+                                                        secondary_dist_names );
+    }
   }
   else
     return std::shared_ptr<TwoDDistribution>();
@@ -211,111 +236,15 @@ void TwoDDistributionFactory::validateSecondaryDistributionNames(
   }
 }
 
-// Create a histogram tabular distribution
-std::shared_ptr<TwoDDistribution>
-TwoDDistributionFactory::createHistogramTabularDistribution(
-        const Teuchos::Array<double>& primary_grid,
-        const Teuchos::Array<std::string>& secondary_distribution_names ) const
-{
-  // Make sure that there is a secondary distribution for every grid point
-  // except the last
-  TEST_FOR_EXCEPTION(
-                  secondary_distribution_names.size() == primary_grid.size() ||
-                  secondary_distribution_names.size() == primary_grid.size()-1,
-                  std::runtime_error,
-                  "A two-d histogram distribution must have a secondary "
-                  "distribution for every primary grid point except for the "
-                  "last!" );
-
-  // Check if the distribution is fully tabular
-  if( this->isTabularDistributionFullyTabular( secondary_distribution_names ) )
-  {
-    Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
-      secondary_distributions( primary_grid.size() - 1 );
-
-    for( size_t i = 0; i < secondary_distributions.size(); ++i )
-    {
-      secondary_distributions[i] =
-        std::dynamic_pointer_cast<const Utility::TabularOneDDistribution>(
-            d_one_d_distribution_name_map.find( secondary_distribution_names[i] )->second );
-    }
-
-    return std::shared_ptr<TwoDDistribution>(
-              new HistogramFullyTabularTwoDDistribution(
-                                     primary_grid, secondary_distributions ) );
-  }
-  else
-  {
-    Teuchos::Array<std::shared_ptr<const Utility::OneDDistribution> >
-      secondary_distributions( primary_grid.size() - 1 );
-
-    for( size_t i = 0; i < secondary_distributions.size(); ++i )
-    {
-      secondary_distributions[i] = d_one_d_distribution_name_map.find( secondary_distribution_names[i] )->second;
-    }
-
-    return std::shared_ptr<TwoDDistribution>(
-              new HistogramPartiallyTabularTwoDDistribution(
-                                     primary_grid, secondary_distributions ) );
-  }
-}
-
-// Create an interpolated tabular distribution
-std::shared_ptr<TwoDDistribution>
-TwoDDistributionFactory::createInterpolatedTabularDistribution(
-        const std::string& type,
-        const Teuchos::Array<double>& primary_grid,
-        const Teuchos::Array<std::string>& secondary_distribution_names ) const
-{
-  // Make sure that there is a secondary distribution for every grid point
-  TEST_FOR_EXCEPTION(
-                  secondary_distribution_names.size() == primary_grid.size(),
-                  std::runtime_error,
-                  "A two-d interpolated distribution must have a secondary "
-                  "distribution for every primary grid point!" );
-
-  // Check if the distribution is fully tabular
-  if( this->isTabularDistributionFullyTabular( secondary_distribution_names ) )
-  {
-    Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
-      secondary_distributions( primary_grid.size() );
-
-    for( size_t i = 0; i < secondary_distributions.size(); ++i )
-    {
-      secondary_distributions[i] =
-        std::dynamic_pointer_cast<const Utility::TabularOneDDistribution>(
-            d_one_d_distribution_name_map.find( secondary_distribution_names[i] )->second );
-    }
-
-    return std::shared_ptr<TwoDDistribution>(
-              new InterpolatedFullyTabularTwoDDistribution(
-                                     primary_grid, secondary_distributions ) );
-  }
-  else
-  {
-    Teuchos::Array<std::shared_ptr<const Utility::OneDDistribution> >
-      secondary_distributions( primary_grid.size() );
-
-    for( size_t i = 0; i < secondary_distributions.size(); ++i )
-    {
-      secondary_distributions[i] = d_one_d_distribution_name_map.find( secondary_distribution_names[i] )->second;
-    }
-
-    return std::shared_ptr<TwoDDistribution>(
-              new InterpolatedPartiallyTabularTwoDDistribution(
-                                     primary_grid, secondary_distributions ) );
-  }
-}
-
 // Check if the tabular distribution is fully tabular
 bool TwoDDistributionFactory::isTabularDistributionFullyTabular(
         const Teuchos::Array<std::string>& secondary_distribution_names ) const
 {
-  const bool fully_tabular = true;
+  bool fully_tabular = true;
   
   for( size_t i = 0; i < secondary_distribution_names.size(); ++i )
   {
-    std::shared_ptr<const Utility::OneDDistribution>& one_d_distribution =
+    const std::shared_ptr<const Utility::OneDDistribution>& one_d_distribution =
       d_one_d_distribution_name_map.find( secondary_distribution_names[i] )->second;
     
     if( !one_d_distribution->isTabular() )
@@ -324,6 +253,8 @@ bool TwoDDistributionFactory::isTabularDistributionFullyTabular(
       break;
     }
   }
+
+  return fully_tabular;
 }
 
 } // end Utility namespace

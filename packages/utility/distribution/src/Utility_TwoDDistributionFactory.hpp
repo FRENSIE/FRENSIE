@@ -19,6 +19,7 @@
 
 // FRENSIE Includes
 #include "Utility_TwoDDistribution.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace Utility{
 
@@ -32,11 +33,11 @@ public:
   TwoDDistributionFactory();
 
   //! Constructor
-  TwoDDistributionFactory( const Teuchos::RCP<const Teuchos::ParameterList>&
-                           raw_one_d_distributions );
+  TwoDDistributionFactory(
+                       const Teuchos::ParameterList& raw_one_d_distributions );
 
   //! Destructor
-  ~TwoDDistributionFactor()
+  ~TwoDDistributionFactory()
   { /* ... */ }
 
   //! Create the two-dimensional distribution
@@ -51,6 +52,7 @@ private:
 
   // Validate the secondary distribution names
   void validateSecondaryDistributionNames(
+       const std::string& two_d_distribution_rep_name,
        const Teuchos::Array<std::string>& secondary_distribution_names ) const;
 
   // Check if the type is tabular
@@ -62,11 +64,13 @@ private:
                   const Teuchos::ParameterList& raw_two_d_distribution ) const;
 
   // Create a histogram tabular distribution
+  template<typename ChildTwoDDistribution>
   std::shared_ptr<TwoDDistribution> createHistogramTabularDistribution(
        const Teuchos::Array<double>& primary_grid,
        const Teuchos::Array<std::string>& secondary_distribution_names ) const;
 
   // Create an interpolated tabular distribution
+  template<template<typename,typename...> class ChildTwoDDistribution>
   std::shared_ptr<TwoDDistribution> createInterpolatedTabularDistribution(
        const std::string& type,
        const Teuchos::Array<double>& primary_grid,
@@ -77,10 +81,10 @@ private:
        const Teuchos::Array<std::string>& secondary_distribution_names ) const;
 
   // The one-dimensional distributions
-  std::map<std::string,std::shared_ptr<const Utility::OneDDistribution> >
+  typedef std::map<std::string,std::shared_ptr<const Utility::OneDDistribution> >
   OneDDistributionNameMap;
 
-  OneDDisistributionNameMap d_one_d_distribution_name_map;
+  OneDDistributionNameMap d_one_d_distribution_name_map;
 };
   
 } // end Utility namespace
