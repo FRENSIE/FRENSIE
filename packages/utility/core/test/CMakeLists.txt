@@ -52,6 +52,13 @@ TARGET_LINK_LIBRARIES(tstContractException utility_core)
 ADD_TEST(ContractException_test tstContractException)
 SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstToStringTraits
+  tstToStringTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstToStringTraits utility_core)
+ADD_TEST(ToStringTraits_test tstToStringTraits)
+SET_PROPERTY(TEST ToStringTraits_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstElectronVoltUnit
   tstElectronVoltUnit.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -184,13 +191,6 @@ ADD_EXECUTABLE(tstTuple
 TARGET_LINK_LIBRARIES(tstTuple utility_core)
 ADD_TEST(Tuple_test tstTuple)
 SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstHumanReadableSerializer
-  tstHumanReadableSerializer.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstHumanReadableSerializer utility_core)
-ADD_TEST(HumanReadableSerializer_test tstHumanReadableSerializer)
-SET_PROPERTY(TEST HumanReadableSerializer_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstArrayTraits
   tstArrayTraits.cpp

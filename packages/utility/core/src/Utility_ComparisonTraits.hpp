@@ -290,18 +290,18 @@ struct TupleMemberCompareHelper<I,TupleType,typename std::enable_if<I==TupleSize
  * \ingroup comparison_traits
  */
 template<typename... Types>
-struct ComparisonTraits<Tuple<Types...> >
+struct ComparisonTraits<std::tuple<Types...> >
 {
   typedef const double scalarType;
-  static inline bool compare( const Tuple<Types...>& first_value,
+  static inline bool compare( const std::tuple<Types...>& first_value,
 			      const std::string& first_name,
-			      const Tuple<Types...>& second_value,
+			      const std::tuple<Types...>& second_value,
 			      const std::string& second_name,
 			      Teuchos::FancyOStream& out,
 			      const int index = -1,
 			      const scalarType tol = 0.0 )
   {
-    return Details::TupleMemberCompareHelper<0,Tuple<Types...> >::compareTupleMembers(
+    return Details::TupleMemberCompareHelper<0,std::tuple<Types...> >::compareTupleMembers(
                                                                  first_value,
                                                                  first_name,
                                                                  second_value,

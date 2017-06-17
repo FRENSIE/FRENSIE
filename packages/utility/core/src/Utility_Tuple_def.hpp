@@ -15,6 +15,10 @@
 // Boost Includes
 #include <boost/units/quantity.hpp>
 
+// FRENSIE Includes
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
+
 namespace Utility{
 
 /*! \brief Specialization of TupleElement for all const types

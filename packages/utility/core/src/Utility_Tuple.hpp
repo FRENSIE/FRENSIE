@@ -12,7 +12,6 @@
 // Std Lib Includes
 #include <iostream>
 #include <sstream>
-#include <string>
 #include <tuple>
 #include <utility>
 
@@ -60,11 +59,6 @@ template<typename T1, typename T2, typename T3> using Trip =
 template<typename T1, typename T2, typename T3, typename T4> using Quad =
   std::tuple<T1,T2,T3,T4>;
 
-/*! The generic tuple struct
- * \ingroup tuple
- */
-template<typename... Types> using Tuple = std::tuple<Types...>;
-
 /*! The tuple element struct (see std::tuple_element)
  * \ingroup tuple
  */
@@ -83,16 +77,16 @@ struct TupleSize : public std::tuple_size<T>
  * \ingroup tuple
  */
 template<size_t I, typename... Types>
-inline typename TupleElement<I,Utility::Tuple<Types...> >::type&
-get( Utility::Tuple<Types...>& tuple ) noexcept
+inline typename TupleElement<I,std::tuple<Types...> >::type&
+get( std::tuple<Types...>& tuple ) noexcept
 { return std::get<I>( tuple ); }
 
 /*! Return a const reference to the desired tuple element (std::get)
  * \ingroup tuple
  */
 template<size_t I, typename... Types>
-inline const typename TupleElement<I,Utility::Tuple<Types...> >::type&
-get( const Utility::Tuple<Types...>& tuple ) noexcept
+inline const typename TupleElement<I,std::tuple<Types...> >::type&
+get( const std::tuple<Types...>& tuple ) noexcept
 { return std::get<I>( tuple ); }
 
 /*! Return a reference to the desired tuple element (std::get)
@@ -125,7 +119,7 @@ void set( TupleType& tuple, ValueType value );
 template<typename... Types>
 inline auto makeTuple( Types&&... args ) -> decltype(std::make_tuple(args...))
 { return std::make_tuple( args... ); }
-
+  
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
