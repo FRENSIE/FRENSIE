@@ -15,6 +15,14 @@
 #include <iterator>
 #include <tuple>
 #include <utility>
+#include <vector>
+#include <list>
+#include <forward_list>
+#include <deque>
+#include <set>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
 
 // FRENSIE Includes
 #include "Utility_ToStringTraitsDecl.hpp"
@@ -258,11 +266,11 @@ struct ToStringTraits<std::pair<T1,T2> >
   }
 };
 
-/*! Partial specialization of ToStringTraits for all types with iterators
- * \ingroup to_string_traits
- */
+namespace Details{
+
+//! ToStringTraits helper class for types with iterators
 template<typename T>
-struct ToStringTraits<T,typename T::const_iterator>
+struct ToStringTraitsIteratorHelper
 {
   //! Convert the object of type T to a string
   static inline std::string toString( const T& obj )
@@ -296,6 +304,71 @@ struct ToStringTraits<T,typename T::const_iterator>
     os << "}";
   }
 };
+  
+} // end Details namespace
+
+/*! Partial specialization of ToStringTraits for std::array
+ * \ingroup to_string_traits
+ */
+template<typename T, size_t N>
+struct ToStringTraits<std::array<T,N> > : public Details::ToStringTraitsIteratorHelper<std::array<T,N> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::vector
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::vector<T> > : public Details::ToStringTraitsIteratorHelper<std::vector<T> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::list
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::list<T> > : public Details::ToStringTraitsIteratorHelper<std::list<T> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::forward_list
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::forward_list<T> > : public Details::ToStringTraitsIteratorHelper<std::forward_list<T> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::deque
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::deque<T> > : public Details::ToStringTraitsIteratorHelper<std::deque<T> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::set
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::set<T> > : public Details::ToStringTraitsIteratorHelper<std::set<T> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::unordered_set
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::unordered_set<T> > : public Details::ToStringTraitsIteratorHelper<std::unordered_set<T> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::map
+ * \ingroup to_string_traits
+ */
+template<typename Key, typename T>
+struct ToStringTraits<std::map<Key,T> > : public Details::ToStringTraitsIteratorHelper<std::map<Key,T> >
+{ /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::unordered_map
+ * \ingroup to_string_traits
+ */
+template<typename Key, typename T>
+struct ToStringTraits<std::unordered_map<Key,T> > : public Details::ToStringTraitsIteratorHelper<std::unordered_map<Key,T> >
+{ /* ... */ };
 
 // Convert the object to a string
 template<typename T>
