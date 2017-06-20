@@ -74,7 +74,7 @@ template<typename T, size_t N>
 inline std::ostream& operator<<( std::ostream& os,
                                  const std::array<T,N>& array )
 {
-  Utility::toStream( os, vector );
+  Utility::toStream( os, array );
 
   return os;
 }

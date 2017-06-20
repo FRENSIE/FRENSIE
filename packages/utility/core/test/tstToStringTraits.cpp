@@ -10,16 +10,6 @@
 #include <iostream>
 #include <sstream>
 #include <type_traits>
-#include <string>
-#include <array>
-#include <vector>
-#include <list>
-#include <forward_list>
-#include <deque>
-#include <set>
-#include <unordered_set>
-#include <map>
-#include <unordered_map>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>

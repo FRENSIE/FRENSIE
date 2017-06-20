@@ -59,6 +59,13 @@ TARGET_LINK_LIBRARIES(tstToStringTraits utility_core)
 ADD_TEST(ToStringTraits_test tstToStringTraits)
 SET_PROPERTY(TEST ToStringTraits_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstFromStringTraits
+  tstFromStringTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstFromStringTraits utility_core)
+ADD_TEST(FromStringTraits_test tstFromStringTraits)
+SET_PROPERTY(TEST FromStringTraits_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstElectronVoltUnit
   tstElectronVoltUnit.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

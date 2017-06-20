@@ -28,15 +28,18 @@ namespace Utility{
 template<typename T, typename Enabled = void>
 struct FromStringTraits
 {
+  //! The type that a string will be converted to (usually T)
+  typedef typename Utility::UndefinedTraits<T>::DesiredTypeIsMissingSpecialization ReturnType;
+  
   //! Convert the string to an object of type T
-  static inline T fromString( const std::string& obj_rep )
+  static inline ReturnType fromString( const std::string& obj_rep )
   { Utility::UndefinedTraits<T>::notDefined(); return T(); }
 
   //! Extract the object from a stream
   static inline void fromStream( std::istream&,
                                  T&,
                                  const std::string& = std::string() )
-  { Utility::UndefinedTraits<T>::notDefined(); return T(); }
+  { Utility::UndefinedTraits<T>::notDefined(); }
 };
 
 /*! Convert the string to an object of type T
@@ -46,7 +49,7 @@ struct FromStringTraits
  * \ingroup from_string_traits
  */
 template<typename T>
-void fromString( const std::string& obj_rep, T& obj );
+typename FromStringTraits<T>::ReturnType fromString( const std::string& obj_rep );
 
 /*! Extract an object of type T from the stream
  *

@@ -26,15 +26,18 @@
 #include <unordered_map>
 
 // Boost Includes
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/trim.hpp>
 
 // FRENSIE Includes
+#include "Utility_FromStringTraitsDecl.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
   
 // Initialize the input stream that will be used to deserialize an object
-inline void initializeInputStream( std::istream& is, const char start_delim );
+inline void initializeInputStream( std::istream& is, const char start_delim )
 {
   // Read the start deliminator
   std::string start_bracket;
@@ -61,10 +64,15 @@ inline bool moveInputStreamToNextElement( std::istream& is,
   {
     is.get( delim );
 
-    TEST_FOR_EXCEPTION( !is,
+    TEST_FOR_EXCEPTION( is.eof(),
                         std::runtime_error,
                         "Unable to move the input stream to the next element "
                         "(EOF reached unexpectedly)!" );
+
+    TEST_FOR_EXCEPTION( !is,
+                        std::runtime_error,
+                        "Unable to move the input stream to the next element "
+                        "(one or more error flags have been set)!" );
 
     // Another element must be deserialized
     if( delim == elem_delim )
@@ -85,14 +93,24 @@ inline bool moveInputStreamToNextElement( std::istream& is,
   }
 }
 
+/*! Partial specialization for reference type
+ * \ingroup from_string_traits
+ */
+template<typename T>
+struct FromStringTraits<T&> : public FromStringTraits<T>
+{ /* ... */ };
+
 /*! Specialization of FromStringTraits for std::string
  * \ingroup from_string_traits
  */
 template<>
 struct FromStringTraits<std::string>
 {
+  //! The type that a string will be converted to
+  typedef std::string ReturnType;
+  
   //! Return the string
-  static inline std::string fromString( const std::sting& obj_rep )
+  static inline ReturnType fromString( const std::string& obj_rep )
   { return obj_rep; }
 
   //! Extract the string from the stream
@@ -100,8 +118,8 @@ struct FromStringTraits<std::string>
                                  std::string& obj,
                                  const std::string& delims = std::string() )
   {
-    std::string obj;
-
+    obj.clear();
+    
     if( delims.size() > 0 )
     {
       bool done = false;
@@ -111,10 +129,15 @@ struct FromStringTraits<std::string>
         char string_element;
         is.get( string_element );
 
-        TEST_FOR_EXCEPTION( !is,
+        TEST_FOR_EXCEPTION( is.eof(),
                             std::runtime_error,
                             "Unable to get the string element (EOF reached "
                             "unexpectedly)!" );
+
+        TEST_FOR_EXCEPTION( !is,
+                            std::runtime_error,
+                            "Unable to get the string element (one or more "
+                            "error flags have been set)!" );
 
         for( size_t i = 0; i < delims.size(); ++i )
         {
@@ -134,13 +157,13 @@ struct FromStringTraits<std::string>
         if( !done )
           obj.push_back( string_element );
       }
-    }
-    // No deliminators have been specified - use a space
-    else
-      std::getline( is, obj, ' ' );
 
-    // Trim the extracted string
-    boost::algorithm::trim( obj );
+      // Trim the extracted string
+      boost::algorithm::trim( obj );
+    }
+    // No deliminators have been specified - use the default extraction method
+    else
+      std::getline( is, obj );
   }
 };
 
@@ -150,8 +173,11 @@ struct FromStringTraits<std::string>
 template<>
 struct FromStringTraits<bool>
 {
+  //! The type that a string will be converted to
+  typedef bool ReturnType;
+  
   //! Convert the string to a boolean
-  static inline bool fromString( const std::string& obj_rep )
+  static inline ReturnType fromString( const std::string& obj_rep )
   {
     std::string lower_case_obj_rep =
       boost::algorithm::to_lower_copy( obj_rep );
@@ -180,7 +206,7 @@ struct FromStringTraits<bool>
 
     Utility::fromStream( is, bool_rep, delim );
 
-    return FromStringTraits<bool>::fromString( bool_rep );
+    obj = FromStringTraits<bool>::fromString( bool_rep );
   }
 };
 
@@ -190,14 +216,17 @@ struct FromStringTraits<bool>
 template<typename T>
 struct FromStringTraits<T,typename std::enable_if<std::is_arithmetic<T>::value>::type>
 {
+  //! The type that a string will be converted to
+  typedef T ReturnType;
+  
   //! Convert the string to an object of type T
-  static inline T fromString( const std::string& obj_rep )
+  static inline ReturnType fromString( const std::string& obj_rep )
   {
     std::istringstream iss( obj_rep );
 
-    T obj;
+    ReturnType obj;
 
-    FromStringTraits<T>::fromStream( is, obj );
+    FromStringTraits<ReturnType>::fromStream( iss, obj );
 
     return obj;
   }
@@ -291,14 +320,17 @@ struct TupleFromStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple
 template<typename... Types>
 struct FromStringTraits<std::tuple<Types...> >
 {
+  //! The type that a string will be converted to
+  typedef std::tuple<typename std::remove_reference<Types>::type...> ReturnType;
+  
   //! Convert the string to an object of type T
-  static inline std::tuple<Types...> fromString( const std::string& obj_rep )
+  static inline ReturnType fromString( const std::string& obj_rep )
   {
     std::istringstream iss( obj_rep );
 
-    std::tuple<Types...> obj;
+    ReturnType obj;
 
-    FromStringTraits<std::tuple<Types...> >::fromStream( is, obj );
+    FromStringTraits<ReturnType>::fromStream( iss, obj );
 
     return obj;
   }
@@ -325,14 +357,16 @@ struct FromStringTraits<std::tuple<Types...> >
 template<typename T1, typename T2>
 struct FromStringTraits<std::pair<T1,T2> >
 {
+  //! The type that a string will be converted to
+  typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> ReturnType;
   //! Convert the string to an object of type T
-  static inline std::pair<T1,T2> fromString( const std::string& obj_rep )
+  static inline ReturnType fromString( const std::string& obj_rep )
   {
-    std::pair<T1,T2> pair;
+    ReturnType pair;
 
     std::istringstream iss( obj_rep );
 
-    FromStringTraits<std::pair<T1,T2> >::fromStream( is, pair );
+    FromStringTraits<ReturnType>::fromStream( iss, pair );
 
     return pair;
   }
@@ -355,10 +389,10 @@ template<typename FromStringTraitsChild>
 struct FromStringTraitsSTLCompliantContainerBase
 {
   //! Convert the string to the required contianer type
-  static inline typename FromStringTraitsChild::ContainerType fromString(
+  static inline typename FromStringTraitsChild::ReturnType fromString(
                                                    const std::string& obj_rep )
   {
-    typename FromStringTraitsChild::ContainerType container;
+    typename FromStringTraitsChild::ReturnType container;
 
     std::istringstream iss( obj_rep );
 
@@ -370,7 +404,7 @@ struct FromStringTraitsSTLCompliantContainerBase
 protected:
 
   //! Extract the object from a stream
-  template<ElementInsertionMemberFunction>
+  template<typename ElementInsertionMemberFunction>
   static inline void fromStreamImpl(
                             std::istream& is,
                             typename FromStringTraitsChild::ContainerType& obj,
@@ -399,11 +433,15 @@ protected:
                                "successfully extracted from the stream!" );
 
       // Check if the stream is still valid
+      TEST_FOR_EXCEPTION( is.eof(),
+                          std::runtime_error,
+                          "Unable to get element " << element_index << " (EOF "
+                          "reached unexpectedly)!" );
+
       TEST_FOR_EXCEPTION( !is,
                           std::runtime_error,
-                          "An error has occurred in the stream while "
-                          "attempting to extract element "
-                          << element_index << "!" );
+                          "Unable to get element " << element_index << " (one "
+                          "or more error flags have been set)!" );
 
       // The element has been successfully extracted
       insert_element( obj, element );
@@ -411,7 +449,7 @@ protected:
 
       // Position the stream at the start of the next element (or end)
       try{
-        done = Details::moveInputStreamToNextElement( is, ',', '}' );
+        done = Utility::moveInputStreamToNextElement( is, ',', '}' );
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Could not move the input stream to the next "
@@ -426,10 +464,12 @@ protected:
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::vector<T> >
+struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::vector<T> > >
 {
+  //! The type that a string will be converted to
+  typedef std::vector<T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::vector<T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -444,10 +484,12 @@ struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCo
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::list<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::list<T> >
-{ 
+struct FromStringTraits<std::list<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::list<T> > >
+{
+  //! The type that a string will be converted to
+  typedef std::list<T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::list<T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -462,10 +504,12 @@ struct FromStringTraits<std::list<T> > : public Details::FromStringTraitsSTLComp
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::forward_list<T> >
-{ 
+struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::forward_list<T> > >
+{
+  //! The type that a string will be converted to
+  typedef std::forward_list<T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::forward_list<T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -485,10 +529,12 @@ struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTrait
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::deque<T> >
-{ 
+struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::deque<T> > >
+{
+  //! The type that a string will be converted to
+  typedef std::deque<T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::deque<T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -503,10 +549,12 @@ struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCom
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::set<T> >
-{ 
+struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::set<T> > >
+{
+  //! The type that a string will be converted to
+  typedef std::set<T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::set<T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -521,10 +569,12 @@ struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompl
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::unordered_set<T> >
-{ 
+struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::unordered_set<T> > >
+{
+  //! The type that a string will be converted to
+  typedef std::unordered_set<T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::unordered_set<T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -539,10 +589,12 @@ struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTrai
  * \ingroup from_string_traits
  */
 template<typename Key, typename T>
-struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::map<Key,T> >
-{ 
+struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::map<Key,T> > >
+{
+  //! The type that a string will be converted to
+  typedef std::map<Key,T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::map<Key,T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -557,10 +609,12 @@ struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLC
  * \ingroup from_string_traits
  */
 template<typename Key, typename T>
-struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerBase<FromStringTraits<std::unordered_map<Key,T> >
-{ 
+struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::unordered_map<Key,T> > >
+{
+  //! The type that a string will be converted to
+  typedef std::unordered_map<Key,T> ReturnType;
   //! The container type (used by the base class)
-  typedef std::unordered_map<Key,T> ContainerType;
+  typedef ReturnType ContainerType;
 
   //! Extract the container from a stream
   static inline void fromStream( std::istream& is,
@@ -573,16 +627,17 @@ struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromString
 
 // Convert the string to an object of type T
 template<typename T>
-inline void fromString( const std::string& obj_rep, T& obj )
+inline typename Utility::FromStringTraits<T>::ReturnType
+fromString( const std::string& obj_rep )
 {
-  obj = Utility::FromStringTraits<typename std::remove_reference<T>::type>::fromString( obj_rep );
+  return Utility::FromStringTraits<T>::fromString( obj_rep );
 }
 
 // Extract an object of type T from the stream
 template<typename T>
 inline void fromStream( std::istream& is, T& obj, const std::string& delims )
 {
-  Utility::FromStringTraits<typename std::remove_reference<T>::type>::fromStream( is, obj, delims );
+  Utility::FromStringTraits<T>::fromStream( is, obj, delims );
 }
   
 } // end Utility namespace
