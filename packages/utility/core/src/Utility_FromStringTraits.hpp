@@ -73,7 +73,7 @@ inline bool moveInputStreamToNextElement( std::istream& is,
                         std::runtime_error,
                         "Unable to move the input stream to the next element "
                         "(one or more error flags have been set)!" );
-
+    
     // Another element must be deserialized
     if( delim == elem_delim )
       return false;
@@ -164,6 +164,56 @@ struct FromStringTraits<std::string>
     // No deliminators have been specified - use the default extraction method
     else
       std::getline( is, obj );
+  }
+};
+
+/*! Specialization of FromStringTraits for char
+ * \ingroup from_string_traits
+ */
+template<>
+struct FromStringTraits<char>
+{
+  //! The type that a string will be converted to
+  typedef char ReturnType;
+
+  //! Return the char
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    TEST_FOR_EXCEPTION( obj_rep.size() != 1,
+                        std::runtime_error,
+                        "Cannot convert the string to a char (the string has "
+                        "more than one character)!" );
+
+    return obj_rep.front();
+  }
+
+  //! Extract a char from the stream
+  static inline void fromStream( std::istream& is,
+                                 char& obj,
+                                 const std::string& delims = std::string() )
+  {
+    std::string tmp_string;
+
+    if( delims.size() > 0 )
+    {
+      FromStringTraits<std::string>::fromStream( is, tmp_string, delims );
+
+      // We will assume that an empty string corresponds to a space character
+      // since we are trimming white space from the string (are there cases
+      // when this assumption isn't valid?).
+      if( tmp_string.size() == 0 )
+        obj = ' ';
+      else if( tmp_string.size() == 1 )
+        obj = tmp_string.front();
+      else
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                         "Cannot extract a char from the stream (the current "
+                         "element has more than one character)!" );
+      }
+    }
+    else
+      is.get( obj );
   }
 };
 
@@ -359,6 +409,7 @@ struct FromStringTraits<std::pair<T1,T2> >
 {
   //! The type that a string will be converted to
   typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> ReturnType;
+  
   //! Convert the string to an object of type T
   static inline ReturnType fromString( const std::string& obj_rep )
   {
@@ -384,32 +435,38 @@ struct FromStringTraits<std::pair<T1,T2> >
 
 namespace Details{
 
-//! FromStringTraits base class for stl compliant containers
-template<typename FromStringTraitsChild>
-struct FromStringTraitsSTLCompliantContainerBase
+//! FromStringTraits base helper class for stl compliant containers
+template<typename STLCompliantContainer,
+         typename ReturnContainerType = STLCompliantContainer>
+struct FromStringTraitsSTLCompliantContainerBaseHelper
 {
-  //! Convert the string to the required contianer type
-  static inline typename FromStringTraitsChild::ReturnType fromString(
-                                                   const std::string& obj_rep )
+  //! The type that a string will be converted to
+  typedef ReturnContainerType ReturnType;
+
+protected:
+  
+  //! Convert the string to the required container type
+  template<typename ElementInsertionMemberFunction>
+  static inline ReturnType fromStringImpl( const std::string& obj_rep,
+                                           ElementInsertionMemberFunction insert_element )
   {
-    typename FromStringTraitsChild::ReturnType container;
+    ReturnType container;
 
     std::istringstream iss( obj_rep );
 
-    FromStringTraitsChild::fromStream( iss, container );
+    FromStringTraitsSTLCompliantContainerBaseHelper<ReturnType>::fromStreamImpl( iss, container, insert_element );
 
     return container;
   }
 
-protected:
-
-  //! Extract the object from a stream
+  //! Extract the container object from a stream
   template<typename ElementInsertionMemberFunction>
-  static inline void fromStreamImpl(
-                            std::istream& is,
-                            typename FromStringTraitsChild::ContainerType& obj,
-                            ElementInsertionMemberFunction& insert_element )
+  static inline void fromStreamImpl( std::istream& is,
+                                     STLCompliantContainer& obj,
+                                     ElementInsertionMemberFunction insert_element )
   {
+    obj.clear();
+    
     try{
       // Initialize the input stream
       Utility::initializeInputStream( is, '{' );
@@ -423,10 +480,10 @@ protected:
 
     while( !done )
     {
-      typename FromStringTraitsChild::ContainerType::value_type element;
+      typename STLCompliantContainer::value_type element;
 
       try{
-        element = Utility::fromStream( is, element, ",}" );
+        Utility::fromStream( is, element, ",}" );
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Element " << element_index << " was not "
@@ -444,9 +501,9 @@ protected:
                           "or more error flags have been set)!" );
 
       // The element has been successfully extracted
-      insert_element( obj, element );
+      (obj.*insert_element)( element );
       ++element_index;
-
+      
       // Position the stream at the start of the next element (or end)
       try{
         done = Utility::moveInputStreamToNextElement( is, ',', '}' );
@@ -458,68 +515,104 @@ protected:
   }
 };
 
+/*! \brief FromStringTraits helper class for stl compliant containers with a
+ * push_back method.
+ */
+template<typename STLCompliantContainer,
+         typename ReturnContainerType = STLCompliantContainer>
+struct FromStringTraitsSTLCompliantContainerPushBackHelper : public FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType>
+{
+  //! The base helper class type
+  typedef FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType> BaseType;
+  //! The type that a string will be converted to
+  typedef typename BaseType::ReturnType ReturnType;
+
+  //! Convert the string to an object of the container type
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    return BaseType::fromStringImpl( obj_rep, (void (ReturnType::*)(const typename ReturnType::value_type&))&ReturnType::push_back );
+  }
+
+  //! Extract the object from a stream
+  static inline void fromStream( std::istream& is,
+                                 STLCompliantContainer& obj,
+                                 const std::string& = std::string() )
+  {
+    BaseType::fromStreamImpl( is, obj, (void (STLCompliantContainer::*)(const typename STLCompliantContainer::value_type&))&STLCompliantContainer::push_back );
+  }
+};
+
+/*! \brief FromStringTraits helper class for stl compliant containers with an
+ * insert method.
+ */
+template<typename STLCompliantContainer,
+         typename ReturnContainerType = STLCompliantContainer>
+struct FromStringTraitsSTLCompliantContainerInsertHelper : public FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType>
+{
+  //! The base helper class type
+  typedef FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType> BaseType;
+  //! The type that a string will be converted to
+  typedef typename BaseType::ReturnType ReturnType;
+
+  //! Convert the string to an object of the container type
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    return BaseType::fromStringImpl( obj_rep, &ReturnType::insert );
+  }
+
+  //! Extract the object from a stream
+  static inline void fromStream( std::istream& is,
+                                 STLCompliantContainer& obj,
+                                 const std::string& = std::string() )
+  {
+    BaseType::fromStreamImpl( is, obj, &STLCompliantContainer::insert );
+  }
+};
+
 } // end Details namespace
 
 /*! Partial specialization of FromStringTraits for std::vector
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::vector<T> > >
-{
-  //! The type that a string will be converted to
-  typedef std::vector<T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
-
-  //! Extract the container from a stream
-  static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
-                                 const std::string& = std::string() )
-  {
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::push_back );
-  }
-};
+struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >
+{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::list
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::list<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::list<T> > >
-{
-  //! The type that a string will be converted to
-  typedef std::list<T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
-
-  //! Extract the container from a stream
-  static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
-                                 const std::string& = std::string() )
-  {
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::push_back );
-  }
-};
+struct FromStringTraits<std::list<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::list<T> >
+{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::forward_list
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::forward_list<T> > >
+struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTraitsSTLCompliantContainerBaseHelper<std::forward_list<T> >
 {
+  //! The base helper class type
+  typedef Details::FromStringTraitsSTLCompliantContainerBaseHelper<std::forward_list<T> > BaseType;
   //! The type that a string will be converted to
-  typedef std::forward_list<T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
+  typedef typename BaseType::ReturnType ReturnType;
 
-  //! Extract the container from a stream
+  //! Convert the string to an object of the container type
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    ReturnType container =
+      BaseType::fromStringImpl( obj_rep, &ReturnType::push_front );
+
+    container.reverse();
+
+    return container;
+  }
+
+  //! Extract the object from a stream
   static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
+                                 std::forward_list<T>& obj,
                                  const std::string& = std::string() )
   {
-    // Elements must be appended to the front of a forward list. To preserve
-    // the element order in the stream we will have to call reverse once
-    // all elements have been extracted
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::push_front );
+    BaseType::fromStreamImpl( is, obj, &std::forward_list<T>::push_front );
 
     obj.reverse();
   }
@@ -529,101 +622,36 @@ struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTrait
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::deque<T> > >
-{
-  //! The type that a string will be converted to
-  typedef std::deque<T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
-
-  //! Extract the container from a stream
-  static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
-                                 const std::string& = std::string() )
-  {
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::push_back );
-  }
-};
+struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::deque<T> >
+{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::set
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::set<T> > >
-{
-  //! The type that a string will be converted to
-  typedef std::set<T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
-
-  //! Extract the container from a stream
-  static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
-                                 const std::string& = std::string() )
-  {
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::insert );
-  }
-};
+struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::set<T> >
+{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::unordered_set
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::unordered_set<T> > >
-{
-  //! The type that a string will be converted to
-  typedef std::unordered_set<T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
-
-  //! Extract the container from a stream
-  static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
-                                 const std::string& = std::string() )
-  {
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::insert );
-  }
-};
+struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_set<T> >
+{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::map
  * \ingroup from_string_traits
  */
 template<typename Key, typename T>
-struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::map<Key,T> > >
-{
-  //! The type that a string will be converted to
-  typedef std::map<Key,T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
-
-  //! Extract the container from a stream
-  static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
-                                 const std::string& = std::string() )
-  {
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::insert );
-  }
-};
+struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::map<Key,T> >
+{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::unordered_map
  * \ingroup from_string_traits
  */
 template<typename Key, typename T>
-struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerBase<Utility::FromStringTraits<std::unordered_map<Key,T> > >
-{
-  //! The type that a string will be converted to
-  typedef std::unordered_map<Key,T> ReturnType;
-  //! The container type (used by the base class)
-  typedef ReturnType ContainerType;
-
-  //! Extract the container from a stream
-  static inline void fromStream( std::istream& is,
-                                 ContainerType& obj,
-                                 const std::string& = std::string() )
-  {
-    FromStringTraits<ContainerType>::fromStreamImpl( is, obj, &ContainerType::insert );
-  }
-};
+struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_map<Key,T> >
+{ /* ... */ };
 
 // Convert the string to an object of type T
 template<typename T>

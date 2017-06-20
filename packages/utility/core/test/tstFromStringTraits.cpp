@@ -733,17 +733,249 @@ TEUCHOS_UNIT_TEST( FromStringTraits, pair_fromStream )
     TEST_EQUALITY_CONST( test_pair, std::make_pair( false, std::string( "test" ) ) );
   }
 
-  // {
-  //   long test_long;
-  //   double test_double;
+  iss.str( "{-1000000, -1.0}" );
+  iss.clear();
+  
+  {
+    long test_long;
+    double test_double;
 
-  //   std::pair<long&, double&> pair_proxy = std::make_pair( std::ref( test_long ), std::ref( test_double ) );
+    std::pair<long&, double&> pair_proxy =
+      std::make_pair( std::ref( test_long ), std::ref( test_double ) );
 
-  //   pair_proxy = Utility::fromString<std::pair<long&, double&> >( "{-1000000, -1.0}" );
+    std::pair<long&, double&>& pair_proxy_reference = pair_proxy;
 
-  //   TEST_EQUALITY_CONST( test_long, -1000000l );
-  //   TEST_EQUALITY_CONST( test_double, -1.0 );
-  // }
+    Utility::fromStream( iss, pair_proxy_reference );
+
+    TEST_EQUALITY_CONST( test_long, -1000000l );
+    TEST_EQUALITY_CONST( test_double, -1.0 );
+  }
+
+  iss.str( "{1, test 0}, {-1, test 1}" );
+  iss.clear();
+
+  {
+    std::pair<int,std::string> test_pair;
+
+    Utility::fromStream( iss, test_pair, "," );
+
+    TEST_EQUALITY_CONST( test_pair, std::make_pair( 1, std::string( "test 0" ) ) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_pair );
+
+    TEST_EQUALITY_CONST( test_pair, std::make_pair( -1, std::string( "test 1" ) ) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a vector can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromString )
+{
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<short> >( "{-1, 2}" )),
+                       std::vector<short>({-1, 2}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned short> >( "{0, 10, 100}" )),
+                       std::vector<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<int> >( "{-11111, 0, 11111, 22222}" )),
+                       std::vector<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
+                       std::vector<unsigned int>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<long> >( "{-11111, 0, 11111, 22222}" )),
+                       std::vector<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
+                       std::vector<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<long long> >( "{-1000000000, 0, 1000000000}" )),
+                       std::vector<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
+                       std::vector<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<float> >( "{-1, 0.0, 1.000000000e+00}" )),
+                       std::vector<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
+                       std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
+                       std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<std::string> >( "{Test, string}" )),
+                       std::vector<std::string>({"Test","string"}) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
+                       (std::vector<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
+                       (std::vector<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a vector can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
+{
+  std::istringstream iss( "{-1, 2}" );
+
+  {
+    std::vector<short> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<short>({-1, 2}) );
+  }
+
+  iss.str( "{0, 10, 100}" );
+  iss.clear();
+
+  {
+    std::vector<unsigned short> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned short>({0, 10, 100}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::vector<int> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<int>({-11111, 0, 11111, 22222}) );
+  }
+                      
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::vector<unsigned> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::vector<long> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<long>({-11111, 0, 11111, 22222}) );
+  }
+
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::vector<unsigned long> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned long>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-1000000000, 0, 1000000000}" );
+  iss.clear();
+
+  {
+    std::vector<long long> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<long long>({-1000000000, 0, 1000000000}) );
+  }
+
+  iss.str( "{0, 1000000000, 10000000000}" );
+  iss.clear();
+
+  {
+    std::vector<unsigned long long> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned long long>({0, 1000000000, 10000000000}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000e+00}" );
+  iss.clear();
+
+  {
+    std::vector<float> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<float>({-1.0f, 0.0f, 1.0f}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000000000000e+00}" );
+  iss.clear();
+
+  {
+    std::vector<double> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<double>({-1.0, 0.0, 1.0}) );
+  }
+
+  iss.str( "{T, e, s, t,  , s, t, r, i, n, g}" );
+  iss.clear();
+
+  {
+    std::vector<char> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  }
+
+  iss.str( "{Test, string}" );
+  iss.clear();
+
+  {
+    std::vector<std::string> test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, std::vector<std::string>({"Test","string"}) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}" );
+  iss.clear();
+
+  {
+    std::vector<std::pair<int,int> > test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, (std::vector<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  }
+
+  iss.str( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" );
+  iss.clear();
+
+  {
+    std::vector<std::tuple<unsigned,double,long> > test_vector;
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_COMPARE_ARRAYS( test_vector, (std::vector<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}, {{1, 0}, {2, -1}}" );
+  iss.clear();
+
+  {
+    std::vector<std::pair<long,long> > test_vector;
+
+    Utility::fromStream( iss, test_vector, "," );
+
+    TEST_COMPARE_ARRAYS( test_vector, (std::vector<std::pair<long,long> >({std::make_pair(0l, 1l), std::make_pair(-1l, 2l)})) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_vector );
+
+    TEST_EQUALITY_CONST( test_vector, (std::vector<std::pair<long,long> >({std::make_pair(1l, 0l), std::make_pair(2l, -1l)})) );
+  }
 }
 
 //---------------------------------------------------------------------------//
