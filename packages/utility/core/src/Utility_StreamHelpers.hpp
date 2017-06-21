@@ -41,24 +41,14 @@ inline std::ostream& operator<<( std::ostream& os,
 
 //! Extract a std::pair from a stream
 template<typename T1, typename T2>
-inline std::istream& operator>>( std::istream& os,
-                                 const std::pair<T1,T2>& pair )
+inline std::istream& operator>>( std::istream& is,
+                                 std::pair<T1,T2>& pair )
 {
-  Utility::fromStream( os, pair );
+  Utility::fromStream( is, pair );
 
-  return os;
+  return is;
 }
 
-//! Extract a std::tuple from a stream
-template<typename... Types>
-inline std::istream& operator>>( std::istream& os,
-                                 const std::tuple<Types...>& tuple )
-{
-  Utility::fromStream( os, tuple );
-
-  return os;
-}
-  
 //! Place a std::tuple in a stream
 template<typename... Types>
 inline std::ostream& operator<<( std::ostream& os,
@@ -67,6 +57,16 @@ inline std::ostream& operator<<( std::ostream& os,
   Utility::toStream( os, tuple );
 
   return os;
+}
+
+//! Extract a std::tuple from a stream
+template<typename... Types>
+inline std::istream& operator>>( std::istream& is,
+                                 std::tuple<Types...>& tuple )
+{
+  Utility::fromStream( is, tuple );
+
+  return is;
 }
   
 //! Place a std::array in a stream
@@ -91,12 +91,12 @@ inline std::ostream& operator<<( std::ostream& os,
 
 //! Extract a std::vector from a stream
 template<typename T>
-inline std::istream& operator>>( std::istream& os,
-                                 const std::vector<T>& vector )
+inline std::istream& operator>>( std::istream& is,
+                                 std::vector<T>& vector )
 {
-  Utility::fromStream( os, vector );
+  Utility::fromStream( is, vector );
 
-  return os;
+  return is;
 }
 
 //! Place a std::list in a stream
@@ -110,11 +110,11 @@ inline std::ostream& operator<<( std::ostream& os, const std::list<T>& list )
 
 //! Extract a std::list from a stream
 template<typename T>
-inline std::istream& operator>>( std::istream& os, const std::list<T>& list )
+inline std::istream& operator>>( std::istream& is, std::list<T>& list )
 {
-  Utility::fromStream( os, list );
+  Utility::fromStream( is, list );
 
-  return os;
+  return is;
 }
 
 //! Place a std::forward_list in a stream
@@ -128,11 +128,11 @@ inline std::ostream& operator<<( std::ostream& os, const std::forward_list<T>& l
 
 //! Extract a std::forward_list from a stream
 template<typename T>
-inline std::istream& operator>>( std::istream& os, const std::forward_list<T>& list )
+inline std::istream& operator>>( std::istream& is, std::forward_list<T>& list )
 {
-  Utility::fromStream( os, list );
+  Utility::fromStream( is, list );
 
-  return os;
+  return is;
 }
 
 //! Place a std::deque in a stream
@@ -146,11 +146,11 @@ inline std::ostream& operator<<( std::ostream& os, const std::deque<T>& deque )
 
 //! Extract a std::deque from a stream
 template<typename T>
-inline std::istream& operator>>( std::istream& os, const std::deque<T>& deque )
+inline std::istream& operator>>( std::istream& is, std::deque<T>& deque )
 {
-  Utility::fromStream( os, deque );
+  Utility::fromStream( is, deque );
 
-  return os;
+  return is;
 }
 
 //! Place a std::set in a stream
@@ -164,11 +164,11 @@ inline std::ostream& operator<<( std::ostream& os, const std::set<T>& set )
 
 //! Extract a std::set from a stream
 template<typename T>
-inline std::istream& operator>>( std::istream& os, const std::set<T>& set )
+inline std::istream& operator>>( std::istream& is, std::set<T>& set )
 {
-  Utility::fromStream( os, set );
+  Utility::fromStream( is, set );
 
-  return os;
+  return is;
 }
 
 //! Place a std::unordered_set in a stream
@@ -183,12 +183,12 @@ inline std::ostream& operator<<( std::ostream& os,
 
 //! Extract a std::unordered_set from a stream
 template<typename T>
-inline std::istream& operator>>( std::istream& os,
-                                 const std::unordered_set<T>& set )
+inline std::istream& operator>>( std::istream& is,
+                                 std::unordered_set<T>& set )
 {
-  Utility::fromStream( os, set );
+  Utility::fromStream( is, set );
 
-  return os;
+  return is;
 }
 
 //! Place a std::map in a stream
@@ -203,12 +203,12 @@ inline std::ostream& operator<<( std::ostream& os,
 
 //! Extract a std::map from a stream
 template<typename Key, typename T>
-inline std::istream& operator>>( std::istream& os,
-                                 const std::map<Key,T>& map )
+inline std::istream& operator>>( std::istream& is,
+                                 std::map<Key,T>& map )
 {
-  Utility::fromStream( os, map );
+  Utility::fromStream( is, map );
 
-  return os;
+  return is;
 }
   
 //! Place a std::unordered_map in a stream
@@ -223,12 +223,12 @@ inline std::ostream& operator<<( std::ostream& os,
 
 //! Extract a std::unordered_map from a stream
 template<typename Key, typename T>
-inline std::istream& operator>>( std::istream& os,
-                                 const std::unordered_map<Key,T>& map )
+inline std::istream& operator>>( std::istream& is,
+                                 std::unordered_map<Key,T>& map )
 {
-  Utility::fromStream( os, map );
+  Utility::fromStream( is, map );
 
-  return os;
+  return is;
 }
   
 } // end std namespace
