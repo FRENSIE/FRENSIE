@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <string>
+#include <stdexcept>
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
@@ -21,6 +22,21 @@
  */
 
 namespace Utility{
+
+/*! \brief Exception thrown by FromStringTraits methods when a conversion from
+ * a string to the desired type fails
+ * \ingroup from_string_traits
+ */
+class StringConversionException : public std::runtime_error
+{
+public:
+  StringConversionException( const std::string& msg )
+    : std::runtime_error( msg )
+  { /* ... */ }
+
+  ~StringConversionException() throw()
+  { /* ... */ }
+};
 
 /*! Traits class used to convert a string to a type
  * \ingroup from_string_traits

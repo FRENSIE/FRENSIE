@@ -130,12 +130,12 @@ struct FromStringTraits<std::string>
         is.get( string_element );
 
         TEST_FOR_EXCEPTION( is.eof(),
-                            std::runtime_error,
+                            Utility::StringConversionException,
                             "Unable to get the string element (EOF reached "
                             "unexpectedly)!" );
 
         TEST_FOR_EXCEPTION( !is,
-                            std::runtime_error,
+                            Utility::StringConversionException,
                             "Unable to get the string element (one or more "
                             "error flags have been set)!" );
 
@@ -180,7 +180,7 @@ struct FromStringTraits<char>
   static inline ReturnType fromString( const std::string& obj_rep )
   {
     TEST_FOR_EXCEPTION( obj_rep.size() != 1,
-                        std::runtime_error,
+                        Utility::StringConversionException,
                         "Cannot convert the string to a char (the string has "
                         "more than one character)!" );
 
@@ -207,7 +207,7 @@ struct FromStringTraits<char>
         obj = tmp_string.front();
       else
       {
-        THROW_EXCEPTION( std::runtime_error,
+        THROW_EXCEPTION( Utility::StringConversionException,
                          "Cannot extract a char from the stream (the current "
                          "element has more than one character)!" );
       }
@@ -240,7 +240,7 @@ struct FromStringTraits<bool>
       return false;
     else
     {
-      THROW_EXCEPTION( std::runtime_error,
+      THROW_EXCEPTION( Utility::StringConversionException,
                        "The string (" << obj_rep << ") does not correspond to "
                        "a boolean!" );
       return false;
@@ -300,7 +300,7 @@ struct TupleFromStreamHelper
     try{
       Utility::fromStream( is, std::get<I>( tuple ), ",}" );
     }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                              "Tuple element " << I << " was not successfully "
                              "extracted from the input stream!" );
 
@@ -308,10 +308,11 @@ struct TupleFromStreamHelper
     try{
       Utility::moveInputStreamToNextElement( is, ',', '}' );
     }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Could not move the input stream to the next "
-                             "element (last tuple element successfully "
-                             "extracted = " << I << ")!" );
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not move the input stream to the next "
+                                "element (last tuple element successfully "
+                                "extracted = " << I << ")!" );
 
     // Extract the remaining tuple elements
     TupleFromStreamHelper<I+1,TupleType>::fromStream( is, tuple );
@@ -330,7 +331,7 @@ struct TupleFromStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple
     try{
       Utility::fromStream( is, std::get<I>( tuple ), ",}" );
     }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                              "Tuple element " << I << " was not "
                              "successfully extracted from the input stream!" );
 
@@ -339,13 +340,14 @@ struct TupleFromStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple
     try{
       at_end = Utility::moveInputStreamToNextElement( is, ',', '}' );
     }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Could not move the input stream to the next "
-                             "element (last tuple element successfully "
-                             "extracted = " << I << ")!" );
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not move the input stream to the next "
+                                "element (last tuple element successfully "
+                                "extracted = " << I << ")!" );
 
     TEST_FOR_EXCEPTION( !at_end,
-                        std::runtime_error,
+                        Utility::StringConversionException,
                         "Finished extracting tuple before the end of the "
                         "stream was reached (this likely means that the "
                         "string is not compatible with the tuple type)!" );
@@ -396,8 +398,9 @@ struct FromStringTraits<std::tuple<Types...> >
 
       Details::TupleFromStreamHelper<0,std::tuple<Types...> >::fromStream( is, obj );
     }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Could not extract a tuple from the stream!" );
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not extract a tuple from the stream!" );
   }
 };
 
@@ -471,8 +474,9 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
       // Initialize the input stream
       Utility::initializeInputStream( is, '{' );
     }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Could not extract a tuple from the stream!" );
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not extract a tuple from the stream!" );
 
     // Extract each element of the array
     bool done = false;
@@ -485,18 +489,18 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
       try{
         Utility::fromStream( is, element, ",}" );
       }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+      EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                                "Element " << element_index << " was not "
                                "successfully extracted from the stream!" );
 
       // Check if the stream is still valid
       TEST_FOR_EXCEPTION( is.eof(),
-                          std::runtime_error,
+                          Utility::StringConversionException,
                           "Unable to get element " << element_index << " (EOF "
                           "reached unexpectedly)!" );
 
       TEST_FOR_EXCEPTION( !is,
-                          std::runtime_error,
+                          Utility::StringConversionException,
                           "Unable to get element " << element_index << " (one "
                           "or more error flags have been set)!" );
 
@@ -508,9 +512,10 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
       try{
         done = Utility::moveInputStreamToNextElement( is, ',', '}' );
       }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                               "Could not move the input stream to the next "
-                               "element (" << element_index << ")!" );
+      EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                  Utility::StringConversionException,
+                                  "Could not move the input stream to the next "
+                                  "element (" << element_index << ")!" );
     }
   }
 };
