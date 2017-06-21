@@ -16,7 +16,6 @@
 
 // FRENSIE Includes
 #include "Utility_FromStringTraits.hpp"
-#include "Utility_StreamHelpers.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 typedef long long longlong;
@@ -773,34 +772,34 @@ TEUCHOS_UNIT_TEST( FromStringTraits, pair_fromStream )
 // Check that a vector can be created from a string
 TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromString )
 {
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<short> >( "{-1, 2}" )),
-                       std::vector<short>({-1, 2}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned short> >( "{0, 10, 100}" )),
-                       std::vector<unsigned short>({0, 10, 100}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<int> >( "{-11111, 0, 11111, 22222}" )),
-                       std::vector<int>({-11111, 0, 11111, 22222}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
-                       std::vector<unsigned int>({0, 10, 100, 1000, 10000}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<long> >( "{-11111, 0, 11111, 22222}" )),
-                       std::vector<long>({-11111, 0, 11111, 22222}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
-                       std::vector<unsigned long>({0, 10, 100, 1000, 10000}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<long long> >( "{-1000000000, 0, 1000000000}" )),
-                       std::vector<long long>({-1000000000, 0, 1000000000}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
-                       std::vector<unsigned long long>({0, 1000000000, 10000000000}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<float> >( "{-1, 0.0, 1.000000000e+00}" )),
-                       std::vector<float>({-1.0f, 0.0f, 1.0f}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
-                       std::vector<double>({-1.0, 0.0, 1.0}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
-                       std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<std::string> >( "{Test, string}" )),
-                       std::vector<std::string>({"Test","string"}) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
-                       (std::vector<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
-  TEST_COMPARE_ARRAYS( (Utility::fromString<std::vector<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
-                       (std::vector<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2}" )),
+                           std::vector<short>({-1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned short> >( "{0, 10, 100}" )),
+                           std::vector<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<int> >( "{-11111, 0, 11111, 22222}" )),
+                           std::vector<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::vector<unsigned int>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<long> >( "{-11111, 0, 11111, 22222}" )),
+                           std::vector<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::vector<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<long long> >( "{-1000000000, 0, 1000000000}" )),
+                           std::vector<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
+                           std::vector<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-1, 0.0, 1.000000000e+00}" )),
+                           std::vector<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
+                           std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
+                           std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::string> >( "{Test, string}" )),
+                           std::vector<std::string>({"Test","string"}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
+                           (std::vector<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
+                           (std::vector<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
 }
 
 //---------------------------------------------------------------------------//
@@ -814,7 +813,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<short>({-1, 2}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<short>({-1, 2}) );
   }
 
   iss.str( "{0, 10, 100}" );
@@ -825,7 +824,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned short>({0, 10, 100}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<unsigned short>({0, 10, 100}) );
   }
 
   iss.str( "{-11111, 0, 11111, 22222}" );
@@ -836,7 +835,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<int>({-11111, 0, 11111, 22222}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<int>({-11111, 0, 11111, 22222}) );
   }
                       
   iss.str( "{0, 10, 100, 1000, 10000}" );
@@ -847,7 +846,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned>({0, 10, 100, 1000, 10000}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<unsigned>({0, 10, 100, 1000, 10000}) );
   }
 
   iss.str( "{-11111, 0, 11111, 22222}" );
@@ -858,7 +857,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<long>({-11111, 0, 11111, 22222}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<long>({-11111, 0, 11111, 22222}) );
   }
 
   iss.str( "{0, 10, 100, 1000, 10000}" );
@@ -869,7 +868,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned long>({0, 10, 100, 1000, 10000}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<unsigned long>({0, 10, 100, 1000, 10000}) );
   }
 
   iss.str( "{-1000000000, 0, 1000000000}" );
@@ -880,7 +879,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<long long>({-1000000000, 0, 1000000000}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<long long>({-1000000000, 0, 1000000000}) );
   }
 
   iss.str( "{0, 1000000000, 10000000000}" );
@@ -891,7 +890,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<unsigned long long>({0, 1000000000, 10000000000}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<unsigned long long>({0, 1000000000, 10000000000}) );
   }
 
   iss.str( "{-1, 0.0, 1.000000000e+00}" );
@@ -902,7 +901,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<float>({-1.0f, 0.0f, 1.0f}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<float>({-1.0f, 0.0f, 1.0f}) );
   }
 
   iss.str( "{-1, 0.0, 1.000000000000000000e+00}" );
@@ -913,7 +912,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<double>({-1.0, 0.0, 1.0}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<double>({-1.0, 0.0, 1.0}) );
   }
 
   iss.str( "{T, e, s, t,  , s, t, r, i, n, g}" );
@@ -924,7 +923,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
   }
 
   iss.str( "{Test, string}" );
@@ -935,7 +934,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, std::vector<std::string>({"Test","string"}) );
+    TEST_COMPARE_CONTAINERS( test_vector, std::vector<std::string>({"Test","string"}) );
   }
 
   iss.str( "{{0, 1}, {-1, 2}}" );
@@ -946,7 +945,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, (std::vector<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+    TEST_COMPARE_CONTAINERS( test_vector, (std::vector<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
   }
 
   iss.str( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" );
@@ -957,7 +956,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_COMPARE_ARRAYS( test_vector, (std::vector<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+    TEST_COMPARE_CONTAINERS( test_vector, (std::vector<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
   }
 
   iss.str( "{{0, 1}, {-1, 2}}, {{1, 0}, {2, -1}}" );
@@ -968,14 +967,1436 @@ TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromStream )
 
     Utility::fromStream( iss, test_vector, "," );
 
-    TEST_COMPARE_ARRAYS( test_vector, (std::vector<std::pair<long,long> >({std::make_pair(0l, 1l), std::make_pair(-1l, 2l)})) );
+    TEST_COMPARE_CONTAINERS( test_vector, (std::vector<std::pair<long,long> >({std::make_pair(0l, 1l), std::make_pair(-1l, 2l)})) );
 
     Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
     Utility::fromStream( iss, test_vector );
 
-    TEST_EQUALITY_CONST( test_vector, (std::vector<std::pair<long,long> >({std::make_pair(1l, 0l), std::make_pair(2l, -1l)})) );
+    TEST_COMPARE_CONTAINERS( test_vector, (std::vector<std::pair<long,long> >({std::make_pair(1l, 0l), std::make_pair(2l, -1l)})) );
   }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a list can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, list_fromString )
+{
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<short> >( "{-1, 2}" )),
+                           std::list<short>({-1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<unsigned short> >( "{0, 10, 100}" )),
+                           std::list<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<int> >( "{-11111, 0, 11111, 22222}" )),
+                           std::list<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::list<unsigned int>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<long> >( "{-11111, 0, 11111, 22222}" )),
+                           std::list<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::list<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<long long> >( "{-1000000000, 0, 1000000000}" )),
+                           std::list<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
+                           std::list<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<float> >( "{-1, 0.0, 1.000000000e+00}" )),
+                           std::list<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
+                           std::list<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
+                           std::list<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<std::string> >( "{Test, string}" )),
+                           std::list<std::string>({"Test","string"}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
+                           (std::list<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::list<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
+                           (std::list<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a list can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, list_fromStream )
+{
+  std::istringstream iss( "{-1, 2}" );
+
+  {
+    std::list<short> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<short>({-1, 2}) );
+  }
+
+  iss.str( "{0, 10, 100}" );
+  iss.clear();
+
+  {
+    std::list<unsigned short> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<unsigned short>({0, 10, 100}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::list<int> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<int>({-11111, 0, 11111, 22222}) );
+  }
+                      
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::list<unsigned> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<unsigned>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::list<long> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<long>({-11111, 0, 11111, 22222}) );
+  }
+
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::list<unsigned long> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<unsigned long>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-1000000000, 0, 1000000000}" );
+  iss.clear();
+
+  {
+    std::list<long long> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<long long>({-1000000000, 0, 1000000000}) );
+  }
+
+  iss.str( "{0, 1000000000, 10000000000}" );
+  iss.clear();
+
+  {
+    std::list<unsigned long long> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<unsigned long long>({0, 1000000000, 10000000000}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000e+00}" );
+  iss.clear();
+
+  {
+    std::list<float> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<float>({-1.0f, 0.0f, 1.0f}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000000000000e+00}" );
+  iss.clear();
+
+  {
+    std::list<double> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<double>({-1.0, 0.0, 1.0}) );
+  }
+
+  iss.str( "{T, e, s, t,  , s, t, r, i, n, g}" );
+  iss.clear();
+
+  {
+    std::list<char> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  }
+
+  iss.str( "{Test, string}" );
+  iss.clear();
+
+  {
+    std::list<std::string> test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, std::list<std::string>({"Test","string"}) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}" );
+  iss.clear();
+
+  {
+    std::list<std::pair<int,int> > test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, (std::list<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  }
+
+  iss.str( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" );
+  iss.clear();
+
+  {
+    std::list<std::tuple<unsigned,double,long> > test_list;
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, (std::list<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}, {{1, 0}, {2, -1}}" );
+  iss.clear();
+
+  {
+    std::list<std::pair<long,long> > test_list;
+
+    Utility::fromStream( iss, test_list, "," );
+
+    TEST_COMPARE_CONTAINERS( test_list, (std::list<std::pair<long,long> >({std::make_pair(0l, 1l), std::make_pair(-1l, 2l)})) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_list );
+
+    TEST_COMPARE_CONTAINERS( test_list, (std::list<std::pair<long,long> >({std::make_pair(1l, 0l), std::make_pair(2l, -1l)})) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a forward_list can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, forward_list_fromString )
+{
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<short> >( "{-1, 2}" )),
+                           std::forward_list<short>({-1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<unsigned short> >( "{0, 10, 100}" )),
+                           std::forward_list<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<int> >( "{-11111, 0, 11111, 22222}" )),
+                           std::forward_list<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::forward_list<unsigned int>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<long> >( "{-11111, 0, 11111, 22222}" )),
+                           std::forward_list<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::forward_list<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<long long> >( "{-1000000000, 0, 1000000000}" )),
+                           std::forward_list<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
+                           std::forward_list<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<float> >( "{-1, 0.0, 1.000000000e+00}" )),
+                           std::forward_list<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
+                           std::forward_list<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
+                           std::forward_list<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<std::string> >( "{Test, string}" )),
+                           std::forward_list<std::string>({"Test","string"}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
+                           (std::forward_list<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::forward_list<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
+                           (std::forward_list<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a forward_list can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, forward_list_fromStream )
+{
+  std::istringstream iss( "{-1, 2}" );
+
+  {
+    std::forward_list<short> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<short>({-1, 2}) );
+  }
+
+  iss.str( "{0, 10, 100}" );
+  iss.clear();
+
+  {
+    std::forward_list<unsigned short> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<unsigned short>({0, 10, 100}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::forward_list<int> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<int>({-11111, 0, 11111, 22222}) );
+  }
+                      
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::forward_list<unsigned> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<unsigned>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::forward_list<long> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<long>({-11111, 0, 11111, 22222}) );
+  }
+
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::forward_list<unsigned long> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<unsigned long>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-1000000000, 0, 1000000000}" );
+  iss.clear();
+
+  {
+    std::forward_list<long long> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<long long>({-1000000000, 0, 1000000000}) );
+  }
+
+  iss.str( "{0, 1000000000, 10000000000}" );
+  iss.clear();
+
+  {
+    std::forward_list<unsigned long long> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<unsigned long long>({0, 1000000000, 10000000000}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000e+00}" );
+  iss.clear();
+
+  {
+    std::forward_list<float> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<float>({-1.0f, 0.0f, 1.0f}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000000000000e+00}" );
+  iss.clear();
+
+  {
+    std::forward_list<double> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<double>({-1.0, 0.0, 1.0}) );
+  }
+
+  iss.str( "{T, e, s, t,  , s, t, r, i, n, g}" );
+  iss.clear();
+
+  {
+    std::forward_list<char> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  }
+
+  iss.str( "{Test, string}" );
+  iss.clear();
+
+  {
+    std::forward_list<std::string> test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, std::forward_list<std::string>({"Test","string"}) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}" );
+  iss.clear();
+
+  {
+    std::forward_list<std::pair<int,int> > test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, (std::forward_list<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  }
+
+  iss.str( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" );
+  iss.clear();
+
+  {
+    std::forward_list<std::tuple<unsigned,double,long> > test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, (std::forward_list<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}, {{1, 0}, {2, -1}}" );
+  iss.clear();
+
+  {
+    std::forward_list<std::pair<long,long> > test_forward_list;
+
+    Utility::fromStream( iss, test_forward_list, "," );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, (std::forward_list<std::pair<long,long> >({std::make_pair(0l, 1l), std::make_pair(-1l, 2l)})) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_forward_list );
+
+    TEST_COMPARE_CONTAINERS( test_forward_list, (std::forward_list<std::pair<long,long> >({std::make_pair(1l, 0l), std::make_pair(2l, -1l)})) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a deque can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, deque_fromString )
+{
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<short> >( "{-1, 2}" )),
+                           std::deque<short>({-1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<unsigned short> >( "{0, 10, 100}" )),
+                           std::deque<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<int> >( "{-11111, 0, 11111, 22222}" )),
+                           std::deque<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::deque<unsigned int>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<long> >( "{-11111, 0, 11111, 22222}" )),
+                           std::deque<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
+                           std::deque<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<long long> >( "{-1000000000, 0, 1000000000}" )),
+                           std::deque<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
+                           std::deque<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<float> >( "{-1, 0.0, 1.000000000e+00}" )),
+                           std::deque<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
+                           std::deque<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
+                           std::deque<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<std::string> >( "{Test, string}" )),
+                           std::deque<std::string>({"Test","string"}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
+                           (std::deque<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::deque<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
+                           (std::deque<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a deque can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, deque_fromStream )
+{
+  std::istringstream iss( "{-1, 2}" );
+
+  {
+    std::deque<short> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<short>({-1, 2}) );
+  }
+
+  iss.str( "{0, 10, 100}" );
+  iss.clear();
+
+  {
+    std::deque<unsigned short> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<unsigned short>({0, 10, 100}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::deque<int> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<int>({-11111, 0, 11111, 22222}) );
+  }
+                      
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::deque<unsigned> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<unsigned>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::deque<long> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<long>({-11111, 0, 11111, 22222}) );
+  }
+
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::deque<unsigned long> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<unsigned long>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-1000000000, 0, 1000000000}" );
+  iss.clear();
+
+  {
+    std::deque<long long> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<long long>({-1000000000, 0, 1000000000}) );
+  }
+
+  iss.str( "{0, 1000000000, 10000000000}" );
+  iss.clear();
+
+  {
+    std::deque<unsigned long long> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<unsigned long long>({0, 1000000000, 10000000000}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000e+00}" );
+  iss.clear();
+
+  {
+    std::deque<float> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<float>({-1.0f, 0.0f, 1.0f}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000000000000e+00}" );
+  iss.clear();
+
+  {
+    std::deque<double> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<double>({-1.0, 0.0, 1.0}) );
+  }
+
+  iss.str( "{T, e, s, t,  , s, t, r, i, n, g}" );
+  iss.clear();
+
+  {
+    std::deque<char> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  }
+
+  iss.str( "{Test, string}" );
+  iss.clear();
+
+  {
+    std::deque<std::string> test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, std::deque<std::string>({"Test","string"}) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}" );
+  iss.clear();
+
+  {
+    std::deque<std::pair<int,int> > test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, (std::deque<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  }
+
+  iss.str( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" );
+  iss.clear();
+
+  {
+    std::deque<std::tuple<unsigned,double,long> > test_deque;
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, (std::deque<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}, {{1, 0}, {2, -1}}" );
+  iss.clear();
+
+  {
+    std::deque<std::pair<long,long> > test_deque;
+
+    Utility::fromStream( iss, test_deque, "," );
+
+    TEST_COMPARE_CONTAINERS( test_deque, (std::deque<std::pair<long,long> >({std::make_pair(0l, 1l), std::make_pair(-1l, 2l)})) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_deque );
+
+    TEST_COMPARE_CONTAINERS( test_deque, (std::deque<std::pair<long,long> >({std::make_pair(1l, 0l), std::make_pair(2l, -1l)})) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a set can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, set_fromString )
+{
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<short> >( "{-1, 2}" )),
+                                     std::set<short>({-1, 2}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<unsigned short> >( "{0, 10, 100}" )),
+                                     std::set<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<int> >( "{-11111, 0, 11111, 22222}" )),
+                                     std::set<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
+                                     std::set<unsigned int>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<long> >( "{-11111, 0, 11111, 22222}" )),
+                                     std::set<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
+                                     std::set<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<long long> >( "{-1000000000, 0, 1000000000}" )),
+                                     std::set<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
+                                     std::set<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<float> >( "{-1, 0.0, 1.000000000e+00}" )),
+                                     std::set<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
+                                     std::set<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
+                                     std::set<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<std::string> >( "{Test, string}" )),
+                                     std::set<std::string>({"Test","string"}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
+                                     (std::set<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::set<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
+                                     (std::set<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a set can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, set_fromStream )
+{
+  std::istringstream iss( "{-1, 2}" );
+
+  {
+    std::set<short> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<short>({-1, 2}) );
+  }
+
+  iss.str( "{0, 10, 100}" );
+  iss.clear();
+
+  {
+    std::set<unsigned short> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<unsigned short>({0, 10, 100}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::set<int> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<int>({-11111, 0, 11111, 22222}) );
+  }
+                      
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::set<unsigned> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<unsigned>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::set<long> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<long>({-11111, 0, 11111, 22222}) );
+  }
+
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::set<unsigned long> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<unsigned long>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-1000000000, 0, 1000000000}" );
+  iss.clear();
+
+  {
+    std::set<long long> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<long long>({-1000000000, 0, 1000000000}) );
+  }
+
+  iss.str( "{0, 1000000000, 10000000000}" );
+  iss.clear();
+
+  {
+    std::set<unsigned long long> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<unsigned long long>({0, 1000000000, 10000000000}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000e+00}" );
+  iss.clear();
+
+  {
+    std::set<float> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<float>({-1.0f, 0.0f, 1.0f}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000000000000e+00}" );
+  iss.clear();
+
+  {
+    std::set<double> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<double>({-1.0, 0.0, 1.0}) );
+  }
+
+  iss.str( "{T, e, s, t,  , s, t, r, i, n, g}" );
+  iss.clear();
+
+  {
+    std::set<char> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  }
+
+  iss.str( "{Test, string}" );
+  iss.clear();
+
+  {
+    std::set<std::string> test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, std::set<std::string>({"Test","string"}) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}" );
+  iss.clear();
+
+  {
+    std::set<std::pair<int,int> > test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, (std::set<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+  }
+
+  iss.str( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" );
+  iss.clear();
+
+  {
+    std::set<std::tuple<unsigned,double,long> > test_set;
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, (std::set<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+  }
+
+  iss.str( "{{0, 1}, {-1, 2}}, {{1, 0}, {2, -1}}" );
+  iss.clear();
+
+  {
+    std::set<std::pair<long,long> > test_set;
+
+    Utility::fromStream( iss, test_set, "," );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, (std::set<std::pair<long,long> >({std::make_pair(0l, 1l), std::make_pair(-1l, 2l)})) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_set, (std::set<std::pair<long,long> >({std::make_pair(1l, 0l), std::make_pair(2l, -1l)})) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unordered_set can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, unordered_set_fromString )
+{
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<short> >( "{-1, 2}" )),
+                                     std::unordered_set<short>({-1, 2}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<unsigned short> >( "{0, 10, 100}" )),
+                                     std::unordered_set<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<int> >( "{-11111, 0, 11111, 22222}" )),
+                                     std::unordered_set<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
+                                     std::unordered_set<unsigned int>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<long> >( "{-11111, 0, 11111, 22222}" )),
+                                     std::unordered_set<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
+                                     std::unordered_set<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<long long> >( "{-1000000000, 0, 1000000000}" )),
+                                     std::unordered_set<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
+                                     std::unordered_set<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<float> >( "{-1, 0.0, 1.000000000e+00}" )),
+                                     std::unordered_set<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
+                                     std::unordered_set<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
+                                     std::unordered_set<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<std::string> >( "{Test, string}" )),
+                                     std::unordered_set<std::string>({"Test","string"}) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unordered_set can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, unordered_set_fromStream )
+{
+  std::istringstream iss( "{-1, 2}" );
+
+  {
+    std::unordered_set<short> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<short>({-1, 2}) );
+  }
+
+  iss.str( "{0, 10, 100}" );
+  iss.clear();
+
+  {
+    std::unordered_set<unsigned short> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<unsigned short>({0, 10, 100}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::unordered_set<int> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<int>({-11111, 0, 11111, 22222}) );
+  }
+                      
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::unordered_set<unsigned> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<unsigned>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-11111, 0, 11111, 22222}" );
+  iss.clear();
+
+  {
+    std::unordered_set<long> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<long>({-11111, 0, 11111, 22222}) );
+  }
+
+  iss.str( "{0, 10, 100, 1000, 10000}" );
+  iss.clear();
+
+  {
+    std::unordered_set<unsigned long> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<unsigned long>({0, 10, 100, 1000, 10000}) );
+  }
+
+  iss.str( "{-1000000000, 0, 1000000000}" );
+  iss.clear();
+
+  {
+    std::unordered_set<long long> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<long long>({-1000000000, 0, 1000000000}) );
+  }
+
+  iss.str( "{0, 1000000000, 10000000000}" );
+  iss.clear();
+
+  {
+    std::unordered_set<unsigned long long> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<unsigned long long>({0, 1000000000, 10000000000}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000e+00}" );
+  iss.clear();
+
+  {
+    std::unordered_set<float> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<float>({-1.0f, 0.0f, 1.0f}) );
+  }
+
+  iss.str( "{-1, 0.0, 1.000000000000000000e+00}" );
+  iss.clear();
+
+  {
+    std::unordered_set<double> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<double>({-1.0, 0.0, 1.0}) );
+  }
+
+  iss.str( "{T, e, s, t,  , s, t, r, i, n, g}" );
+  iss.clear();
+
+  {
+    std::unordered_set<char> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+  }
+
+  iss.str( "{Test, string}" );
+  iss.clear();
+
+  {
+    std::unordered_set<std::string> test_unordered_set;
+
+    Utility::fromStream( iss, test_unordered_set );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_set, std::unordered_set<std::string>({"Test","string"}) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a map can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, map_fromString )
+{
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<short,short> >( "{{-1, 2}, {0, 1}}" )),
+                                     (std::map<short,short>( {std::pair<short,short>({-1, 2}), std::pair<short,short>({0, 1})} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<unsigned short, unsigned short> >( "{{0, 1}, {2, 10}}" )),
+                                     (std::map<unsigned short, unsigned short>( {std::pair<unsigned short,unsigned short>({0, 1}), std::pair<unsigned short, unsigned short>({2, 10})} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<int, int> >( "{{-10, 0}, {10, -20}}" )),
+                                     (std::map<int, int>( {std::make_pair(-10, 0), std::make_pair(10, -20)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<unsigned, unsigned> >( "{{0, 2}, {10, 100}}" )),
+                                     (std::map<unsigned, unsigned>( {std::make_pair(0u, 2u), std::make_pair(10u, 100u)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<long, long> >( "{{-1000000000, 1}, {1000000000, 2}}" )),
+                                     (std::map<long,long>( {std::make_pair(-1000000000l, 1l), std::make_pair(1000000000l, 2l)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<unsigned long, unsigned long> >( "{{0, 1000000000}, {1000000000, 2000000000}}" )),
+                                     (std::map<unsigned long, unsigned long>( {std::make_pair(0ul, 1000000000ul), std::make_pair(1000000000ul, 2000000000ul)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<long long, long long> >( "{{-10000000000, 1}, {10000000000, 2}}" )),
+                                     (std::map<long long, long long>( {std::make_pair(-10000000000ll, 1ll), std::make_pair(10000000000ll, 2ll)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<unsigned long long, unsigned long long> >( "{{0, 10000000000}, {10000000000, 20000000000}}" )),
+                                     (std::map<unsigned long long, unsigned long long>( {std::make_pair(0ull, 10000000000ull), std::make_pair(10000000000ull, 20000000000ull)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<int, float> >( "{{-1, -1.0000000000e+00}, {1, 1.000000000e+00}}" )),
+                                     (std::map<int, float>( {std::make_pair(-1, -1.0f), std::make_pair(1, 1.0f)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<unsigned, double> >( "{{0, 0.000000000000000000e+00}, {1, 1.000000000000000000e+00}}" )),
+                                     (std::map<unsigned, double>( {std::make_pair(0u, 0.0), std::make_pair(1u, 1.0)} )) );
+
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<char, char> >( "{{A, B}, {a, b}}" )),
+                                     (std::map<char, char>( {std::make_pair('A', 'B'), std::make_pair('a', 'b')} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<std::string, std::string> >( "{{Test String A, Hello A}, {Test String B, Hello B}}" )),
+                                    (std::map<std::string, std::string>( {std::make_pair("Test String A", "Hello A"), std::make_pair("Test String B", "Hello B")} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<int,std::pair<double,unsigned> > >( "{{-1, {1.0, 0}}, {1, {0.0, 10}}}" )),
+                                     (std::map<int,std::pair<double,unsigned> >( {std::make_pair(-1, std::make_pair(1.0, 0u)), std::make_pair(1, std::make_pair(0.0, 10u))} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::map<unsigned,std::tuple<int,float,unsigned long> > >( "{{0, {1, -1.0, 10}}, {1, {-1, 0.0, 100}}}" )),
+                                     (std::map<unsigned,std::tuple<int,float,unsigned long> >( {std::make_pair(0u, std::make_tuple(1, -1.0f, 10ul)), std::make_pair(1u, std::make_tuple(-1, 0.0f, 100ul))} )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a map can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, map_fromStream )
+{
+  std::istringstream iss( "{{-1, 2}, {0, 1}}" );
+
+  {
+    std::map<short,short> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<short,short>( {std::pair<short,short>({-1, 2}), std::pair<short,short>({0, 1})} )) );
+  }
+
+  iss.str( "{{0, 1}, {2, 10}}" );
+  iss.clear();
+
+  {
+    std::map<unsigned short, unsigned short> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<unsigned short, unsigned short>( {std::pair<unsigned short,unsigned short>({0, 1}), std::pair<unsigned short, unsigned short>({2, 10})} )) );
+  }
+
+  iss.str( "{{-10, 0}, {10, -20}}" );
+  iss.clear();
+
+  {
+    std::map<int, int> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<int, int>( {std::make_pair(-10, 0), std::make_pair(10, -20)} )) );
+  }
+
+  iss.str( "{{0, 2}, {10, 100}}" );
+  iss.clear();
+
+  {
+    std::map<unsigned, unsigned> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<unsigned, unsigned>( {std::make_pair(0u, 2u), std::make_pair(10u, 100u)} )) );
+  }
+
+  iss.str( "{{-1000000000, 1}, {1000000000, 2}}" );
+  iss.clear();
+
+  {
+    std::map<long, long> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<long,long>( {std::make_pair(-1000000000l, 1l), std::make_pair(1000000000l, 2l)} )) );
+  }
+
+  iss.str( "{{0, 1000000000}, {1000000000, 2000000000}}" );
+  iss.clear();
+
+  {
+    std::map<unsigned long, unsigned long> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<unsigned long, unsigned long>( {std::make_pair(0ul, 1000000000ul), std::make_pair(1000000000ul, 2000000000ul)} )) );
+  }
+
+  iss.str( "{{-10000000000, 1}, {10000000000, 2}}" );
+  iss.clear();
+
+  {
+    std::map<long long, long long> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<long long, long long>( {std::make_pair(-10000000000ll, 1ll), std::make_pair(10000000000ll, 2ll)} )) );
+  }
+
+  iss.str( "{{0, 10000000000}, {10000000000, 20000000000}}" );
+  iss.clear();
+
+  {
+    std::map<unsigned long long, unsigned long long> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<unsigned long long, unsigned long long>( {std::make_pair(0ull, 10000000000ull), std::make_pair(10000000000ull, 20000000000ull)} )) );
+  }
+
+  iss.str( "{{-1, -1.0000000000e+00}, {1, 1.000000000e+00}}" );
+  iss.clear();
+
+  {
+    std::map<int, float> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<int, float>( {std::make_pair(-1, -1.0f), std::make_pair(1, 1.0f)} )) );
+  }
+
+  iss.str( "{{0, 0.000000000000000000e+00}, {1, 1.000000000000000000e+00}}" );
+  iss.clear();
+
+  {
+    std::map<unsigned, double> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<unsigned, double>( {std::make_pair(0u, 0.0), std::make_pair(1u, 1.0)} )) );
+  }
+
+  iss.str( "{{A, B}, {a, b}}" );
+  iss.clear();
+
+  {
+    std::map<char, char> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<char, char>( {std::make_pair('A', 'B'), std::make_pair('a', 'b')} )) );
+  }
+
+  iss.str( "{{Test String A, Hello A}, {Test String B, Hello B}}" );
+  iss.clear();
+
+  {
+    std::map<std::string, std::string> test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<std::string, std::string>( {std::make_pair("Test String A", "Hello A"), std::make_pair("Test String B", "Hello B")} )) );
+  }
+
+  iss.str( "{{-1, {1.0, 0}}, {1, {0.0, 10}}}" );
+  iss.clear();
+
+  {
+    std::map<int,std::pair<double,unsigned> > test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<int,std::pair<double,unsigned> >( {std::make_pair(-1, std::make_pair(1.0, 0u)), std::make_pair(1, std::make_pair(0.0, 10u))} )) );
+  }
+
+  iss.str( "{{0, {1, -1.0, 10}}, {1, {-1, 0.0, 100}}}" );
+  iss.clear();
+
+  {
+    std::map<unsigned,std::tuple<int,float,unsigned long> > test_map;
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<unsigned,std::tuple<int,float,unsigned long> >( {std::make_pair(0u, std::make_tuple(1, -1.0f, 10ul)), std::make_pair(1u, std::make_tuple(-1, 0.0f, 100ul))} )) );
+  }
+
+  iss.str( "{{-10, Test String A}, {201, Test String B}}, {{0, Test String C}, {333, Test String D}}" );
+  iss.clear();
+
+  {
+    std::map<int, std::string> test_map;
+    
+    Utility::fromStream( iss, test_map, "," );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<int, std::string>({std::make_pair(-10, "Test String A"), std::make_pair(201, "Test String B")})) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_map, (std::map<int, std::string>({std::make_pair(0, "Test String C"), std::make_pair(333, "Test String D")})) );
+  }                                
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unordered_map can be created from a string
+TEUCHOS_UNIT_TEST( FromStringTraits, unordered_map_fromString )
+{
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<short,short> >( "{{-1, 2}, {0, 1}}" )),
+                                     (std::unordered_map<short,short>( {std::pair<short,short>({-1, 2}), std::pair<short,short>({0, 1})} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<unsigned short, unsigned short> >( "{{0, 1}, {2, 10}}" )),
+                                     (std::unordered_map<unsigned short, unsigned short>( {std::pair<unsigned short,unsigned short>({0, 1}), std::pair<unsigned short, unsigned short>({2, 10})} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<int, int> >( "{{-10, 0}, {10, -20}}" )),
+                                     (std::unordered_map<int, int>( {std::make_pair(-10, 0), std::make_pair(10, -20)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<unsigned, unsigned> >( "{{0, 2}, {10, 100}}" )),
+                                     (std::unordered_map<unsigned, unsigned>( {std::make_pair(0u, 2u), std::make_pair(10u, 100u)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<long, long> >( "{{-1000000000, 1}, {1000000000, 2}}" )),
+                                     (std::unordered_map<long,long>( {std::make_pair(-1000000000l, 1l), std::make_pair(1000000000l, 2l)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<unsigned long, unsigned long> >( "{{0, 1000000000}, {1000000000, 2000000000}}" )),
+                                     (std::unordered_map<unsigned long, unsigned long>( {std::make_pair(0ul, 1000000000ul), std::make_pair(1000000000ul, 2000000000ul)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<long long, long long> >( "{{-10000000000, 1}, {10000000000, 2}}" )),
+                                     (std::unordered_map<long long, long long>( {std::make_pair(-10000000000ll, 1ll), std::make_pair(10000000000ll, 2ll)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<unsigned long long, unsigned long long> >( "{{0, 10000000000}, {10000000000, 20000000000}}" )),
+                                     (std::unordered_map<unsigned long long, unsigned long long>( {std::make_pair(0ull, 10000000000ull), std::make_pair(10000000000ull, 20000000000ull)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<int, float> >( "{{-1, -1.0000000000e+00}, {1, 1.000000000e+00}}" )),
+                                     (std::unordered_map<int, float>( {std::make_pair(-1, -1.0f), std::make_pair(1, 1.0f)} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<unsigned, double> >( "{{0, 0.000000000000000000e+00}, {1, 1.000000000000000000e+00}}" )),
+                                     (std::unordered_map<unsigned, double>( {std::make_pair(0u, 0.0), std::make_pair(1u, 1.0)} )) );
+
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<char, char> >( "{{A, B}, {a, b}}" )),
+                                     (std::unordered_map<char, char>( {std::make_pair('A', 'B'), std::make_pair('a', 'b')} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<std::string, std::string> >( "{{Test String A, Hello A}, {Test String B, Hello B}}" )),
+                                    (std::unordered_map<std::string, std::string>( {std::make_pair("Test String A", "Hello A"), std::make_pair("Test String B", "Hello B")} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<int,std::pair<double,unsigned> > >( "{{-1, {1.0, 0}}, {1, {0.0, 10}}}" )),
+                                     (std::unordered_map<int,std::pair<double,unsigned> >( {std::make_pair(-1, std::make_pair(1.0, 0u)), std::make_pair(1, std::make_pair(0.0, 10u))} )) );
+  TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_map<unsigned,std::tuple<int,float,unsigned long> > >( "{{0, {1, -1.0, 10}}, {1, {-1, 0.0, 100}}}" )),
+                                     (std::unordered_map<unsigned,std::tuple<int,float,unsigned long> >( {std::make_pair(0u, std::make_tuple(1, -1.0f, 10ul)), std::make_pair(1u, std::make_tuple(-1, 0.0f, 100ul))} )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unordered_map can be extracted from a stream
+TEUCHOS_UNIT_TEST( FromStringTraits, unordered_map_fromStream )
+{
+  std::istringstream iss( "{{-1, 2}, {0, 1}}" );
+
+  {
+    std::unordered_map<short,short> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<short,short>( {std::pair<short,short>({-1, 2}), std::pair<short,short>({0, 1})} )) );
+  }
+
+  iss.str( "{{0, 1}, {2, 10}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<unsigned short, unsigned short> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<unsigned short, unsigned short>( {std::pair<unsigned short,unsigned short>({0, 1}), std::pair<unsigned short, unsigned short>({2, 10})} )) );
+  }
+
+  iss.str( "{{-10, 0}, {10, -20}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<int, int> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<int, int>( {std::make_pair(-10, 0), std::make_pair(10, -20)} )) );
+  }
+
+  iss.str( "{{0, 2}, {10, 100}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<unsigned, unsigned> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<unsigned, unsigned>( {std::make_pair(0u, 2u), std::make_pair(10u, 100u)} )) );
+  }
+
+  iss.str( "{{-1000000000, 1}, {1000000000, 2}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<long, long> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<long,long>( {std::make_pair(-1000000000l, 1l), std::make_pair(1000000000l, 2l)} )) );
+  }
+
+  iss.str( "{{0, 1000000000}, {1000000000, 2000000000}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<unsigned long, unsigned long> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<unsigned long, unsigned long>( {std::make_pair(0ul, 1000000000ul), std::make_pair(1000000000ul, 2000000000ul)} )) );
+  }
+
+  iss.str( "{{-10000000000, 1}, {10000000000, 2}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<long long, long long> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<long long, long long>( {std::make_pair(-10000000000ll, 1ll), std::make_pair(10000000000ll, 2ll)} )) );
+  }
+
+  iss.str( "{{0, 10000000000}, {10000000000, 20000000000}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<unsigned long long, unsigned long long> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<unsigned long long, unsigned long long>( {std::make_pair(0ull, 10000000000ull), std::make_pair(10000000000ull, 20000000000ull)} )) );
+  }
+
+  iss.str( "{{-1, -1.0000000000e+00}, {1, 1.000000000e+00}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<int, float> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<int, float>( {std::make_pair(-1, -1.0f), std::make_pair(1, 1.0f)} )) );
+  }
+
+  iss.str( "{{0, 0.000000000000000000e+00}, {1, 1.000000000000000000e+00}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<unsigned, double> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<unsigned, double>( {std::make_pair(0u, 0.0), std::make_pair(1u, 1.0)} )) );
+  }
+
+  iss.str( "{{A, B}, {a, b}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<char, char> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<char, char>( {std::make_pair('A', 'B'), std::make_pair('a', 'b')} )) );
+  }
+
+  iss.str( "{{Test String A, Hello A}, {Test String B, Hello B}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<std::string, std::string> test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<std::string, std::string>( {std::make_pair("Test String A", "Hello A"), std::make_pair("Test String B", "Hello B")} )) );
+  }
+
+  iss.str( "{{-1, {1.0, 0}}, {1, {0.0, 10}}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<int,std::pair<double,unsigned> > test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<int,std::pair<double,unsigned> >( {std::make_pair(-1, std::make_pair(1.0, 0u)), std::make_pair(1, std::make_pair(0.0, 10u))} )) );
+  }
+
+  iss.str( "{{0, {1, -1.0, 10}}, {1, {-1, 0.0, 100}}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<unsigned,std::tuple<int,float,unsigned long> > test_unordered_map;
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<unsigned,std::tuple<int,float,unsigned long> >( {std::make_pair(0u, std::make_tuple(1, -1.0f, 10ul)), std::make_pair(1u, std::make_tuple(-1, 0.0f, 100ul))} )) );
+  }
+
+  iss.str( "{{-10, Test String A}, {201, Test String B}}, {{0, Test String C}, {333, Test String D}}" );
+  iss.clear();
+
+  {
+    std::unordered_map<int, std::string> test_unordered_map;
+    
+    Utility::fromStream( iss, test_unordered_map, "," );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<int, std::string>({std::make_pair(-10, "Test String A"), std::make_pair(201, "Test String B")})) );
+
+    Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+    Utility::fromStream( iss, test_unordered_map );
+
+    TEST_COMPARE_UNORDERED_CONTAINERS( test_unordered_map, (std::unordered_map<int, std::string>({std::make_pair(0, "Test String C"), std::make_pair(333, "Test String D")})) );
+  }                                
 }
 
 //---------------------------------------------------------------------------//

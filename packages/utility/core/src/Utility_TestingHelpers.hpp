@@ -11,8 +11,10 @@
 
 // Std Lib Includes
 #include <iostream>
-#include <list>
-#include <utility>
+#include <sstream>
+#include <iterator>
+#include <type_traits>
+#include <algorithm>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -21,106 +23,201 @@
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_ComparisonTraits.hpp"
-#include "Utility_ArrayTraits.hpp"
-
-/*! \defgroup print_format Object Printing Format
- * \ingroup testing
- *
- * This group defines how some types used by Utility are output when printed to
- * the terminal using the stream operator.
- */
-
-/*! Stream operator for std::list
- * \ingroup print_format
- */
-template<typename T, template<typename,typename> class List>
-std::ostream& operator<<( std::ostream& out,
-			  List<T,std::allocator<T> >& list)
-{
-  typename List<T,std::allocator<T> >::const_iterator element, end_element;
-  element = list.begin();
-  end_element = list.end();
-
-  out << "{";
-
-  while( element != end_element )
-  {
-    out << *element;
-
-    ++element;
-    if( element != end_element )
-      out << ", ";
-  }
-
-  out << "}";
-
-  return out;
-}
+#include "Utility_StreamHelpers.hpp"
 
 namespace Utility{
 
-/*! \brief A function for comparing arrays of types.
+/*! \brief A function for comparing container contents
  *
- * This function is used by the Teuchos Unit Test Harness extension testing
- * macros (see \ref unit_test_harness_extensions). It allows any type commonly
- * used by Utility in an array to be tested. The generality is made possible
- * through the Utility::ComparisonTraits. Refer to the
- * Utility::ComparisonTraits to gain a better understanding of how this
- * function operates.
- * \tparam Array1 The first array type containing data that will be tested.
- * \tparam Array2 The second array type containing data that will be tested.
- * \param[in] a1 The first array containing data that needs to be tested.
- * \param[in] a1_name The name given to the first array, which will be used
- * to refer to the array if the test fails.
- * \param[in] a2 The second array containing data that needs to be tested.
- * \param[in] a2_name The name given to the second array, which will be used
- * to refer to the array if the test fails.
- * \param[in,out] out The output stream that will be used to output the
- * results of the test.
- * \param[in] tol The testing tolerance used to compare floating point values
- * in the arrays. This will be ignored with integer comparisons.
+ * This is an ordered comparison.
  * \ingroup unit_test_harness_extensions
  */
-template<typename Array1, typename Array2>
-bool compareArrays( const Array1& a1,
-		    const std::string& a1_name,
-		    const Array2& a2,
-		    const std::string& a2_name,
-		    Teuchos::FancyOStream& out,
-		    const double tol = 0.0 )
+template<typename STLCompliantContainer1, typename STLCompliantContainer2>
+typename std::enable_if<std::is_same<typename STLCompliantContainer1::value_type,typename STLCompliantContainer2::value_type>::value,bool>::type
+compareContainerContents( const STLCompliantContainer1& c1,
+                          const std::string& c1_name,
+                          const STLCompliantContainer2& c2,
+                          const std::string& c2_name,
+                          Teuchos::FancyOStream& out,
+                          const double tol = 0.0 )
 {
-  typedef typename Utility::ArrayTraits<Array1>::value_type value_type;
-
   bool success = true;
 
-  out << "Comparing " << a1_name << " == " << a2_name << " ... " << "\n";
+  // Not all stl compliant containers have a size member function - all
+  // have iterators though.
+  size_t c1_size = std::distance( c1.begin(), c1.end() );
+  size_t c2_size = std::distance( c2.begin(), c2.end() );
 
-  // ArrayViews are used so that TwoDArrays will be linearized
-  Teuchos::ArrayView<const value_type> view1 = Utility::getArrayView( a1 );
-  Teuchos::ArrayView<const value_type> view2 = Utility::getArrayView( a2 );
+  std::string size_comparison_details;
 
-  const int n = view1.size();
-  const int m = view2.size();
-
-  // Compare sizes
-  if( m != n )
   {
-    out << "\nError, " << a1_name << ".size() = " << n << " == "
-	<< a2_name << ".size() = " << m << " : failed!\n";
+    std::ostringstream oss;
+    oss << c1_name << " size = " << c1_size << " == "
+	<< c2_name << " size = " << c2_size << " :";
+
+    size_comparison_details = oss.str();
+  }
+  
+  if( c1_size != c2_size )
+  {
+    out << "\nError, " << size_comparison_details << " failed!\n";
     return false;
   }
+  else
+    out << "\n" << size_comparison_details << " passed\n";
 
   // Compare Elements
-  for( int i = 0; i < n; ++i )
+  typename STLCompliantContainer1::const_iterator c1_it, c1_end;
+  c1_it = c1.begin();
+  c1_end = c1.end();
+
+  typename STLCompliantContainer2::const_iterator c2_it, c2_end;
+  c2_it = c2.begin();
+  c2_end = c2.end();
+
+  size_t index = 0;
+
+  while( c1_it != c1_end )
   {
     bool local_success =
-      Utility::compare( view1[i], a1_name, view2[i], a2_name, out, i, tol );
+      Utility::compare( *c1_it, c1_name, *c2_it, c2_name, out, index, tol );
     
     if( !local_success )
       success = false;
+
+    ++c1_it;
+    ++c2_it;
+    ++index;
   }
 
   return success;
+}
+
+/*! \brief A function for comparing container contents
+ *
+ * This is an unordered comparison.
+ * \ingroup unit_test_harness_extensions
+ */
+template<typename STLCompliantContainer1, typename STLCompliantContainer2>
+typename std::enable_if<std::is_same<typename STLCompliantContainer1::value_type,typename STLCompliantContainer2::value_type>::value,bool>::type
+compareUnorderedContainerContents( const STLCompliantContainer1& c1,
+                                   const std::string& c1_name,
+                                   const STLCompliantContainer2& c2,
+                                   const std::string& c2_name,
+                                   Teuchos::FancyOStream& out )
+{
+  bool success = true;
+
+  // Not all stl compliant containers have a size member function - all
+  // have iterators though.
+  size_t c1_size = std::distance( c1.begin(), c1.end() );
+  size_t c2_size = std::distance( c2.begin(), c2.end() );
+
+  std::string size_comparison_details;
+
+  {
+    std::ostringstream oss;
+    oss << c1_name << " size = " << c1_size << " == "
+	<< c2_name << " size = " << c2_size << " :";
+
+    size_comparison_details = oss.str();
+  }
+  
+  if( c1_size != c2_size )
+  {
+    out << "\nError, " << size_comparison_details << " failed!\n";
+    return false;
+  }
+  else
+    out << "\n" << size_comparison_details << " passed\n";
+
+  // Compare Elements
+  std::string containment_comparison_statement;
+
+  {
+    std::ostringstream oss;
+    oss << c1_name << " && " << c2_name << " contain ";
+
+    containment_comparison_statement = oss.str();
+  }
+  
+  typename STLCompliantContainer1::const_iterator c1_it, c1_end;
+  c1_it = c1.begin();
+  c1_end = c1.end();
+
+  while( c1_it != c1_end )
+  {
+    typename STLCompliantContainer2::const_iterator c2_it =
+      std::find( c2.begin(), c2.end(), *c1_it );
+    
+    if( c2_it == c2.end() )
+    {
+      out << "\nError, " << containment_comparison_statement << *c1_it
+          << ": failed!\n";
+
+      success = false;
+    }
+    else
+      out << containment_comparison_statement << *c1_it << ": passed\n";
+    
+    ++c1_it;
+  }
+
+  return success;
+}
+
+/*! \brief A function for comparing different containers
+ *
+ * \ingroup unit_test_harness_extensions
+ */
+template<typename STLCompliantContainer1, typename STLCompliantContainer2>
+typename std::enable_if<std::is_same<typename STLCompliantContainer1::value_type,typename STLCompliantContainer2::value_type>::value,bool>::type
+compareContainers( const STLCompliantContainer1& c1,
+                        const std::string& c1_name,
+                        const STLCompliantContainer2& c2,
+                        const std::string& c2_name,
+                        Teuchos::FancyOStream& out,
+                        const double tol = 0.0 )
+{
+  out << "Comparing " << c1_name << " contents == "
+      << c2_name << " contents ... " << "\n";
+
+  return compareContainerContents( c1, c1_name, c2, c2_name, out, tol );
+}
+
+/*! \brief A function for comparing different unordered containers
+ *
+ * \ingroup unit_test_harness_extensions
+ */
+template<typename STLCompliantContainer1, typename STLCompliantContainer2>
+typename std::enable_if<std::is_same<typename STLCompliantContainer1::value_type,typename STLCompliantContainer2::value_type>::value,bool>::type
+compareUnorderedContainers( const STLCompliantContainer1& c1,
+                            const std::string& c1_name,
+                            const STLCompliantContainer2& c2,
+                            const std::string& c2_name,
+                            Teuchos::FancyOStream& out )
+{
+  out << "Comparing " << c1_name << " unordered contents == "
+      << c2_name << " unordered contents ... " << "\n";
+
+  return compareUnorderedContainerContents( c1, c1_name, c2, c2_name, out );
+}
+
+/*! \brief A function for comparing containers of the same type
+ *
+ * \ingroup unit_test_harness_extensions
+ */
+template<typename STLCompliantContainer>
+bool compareContainers( const STLCompliantContainer& c1,
+                        const std::string& c1_name,
+                        const STLCompliantContainer& c2,
+                        const std::string& c2_name,
+                        Teuchos::FancyOStream& out,
+                        const double tol = 0.0 )
+{
+  out << "Comparing " << c1_name << " == " << c2_name << " ... " << "\n";
+
+  return compareContainerContents( c1, c1_name, c2, c2_name, out, tol );
 }
 
 } // end Utility namespace

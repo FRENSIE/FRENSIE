@@ -401,33 +401,34 @@
     if( !result ) success = false;					\
   }
 
-/*! A macro for the Teuchos Unit Test Harness for comparing arrays of ordinal
- * data types and arrays of containers of ordinal data types.
- *
- * This macro allows arrays of tuples (Utility::Pair, Utility::Trip and
- * Utility::Quad), which are not supported by the standard Teuchos Unit Test
- * Harness, to be easily tested.
+/*! A macro for the Teuchos Unit Test Harness for comparing containers.
  * \ingroup unit_test_harness_extensions
  */
-#define UTILITY_TEST_COMPARE_ARRAYS( a1, a2 )				\
-  {									\
-    const bool result = Utility::compareArrays(a1,#a1,a2,#a2,out);	\
-    if( !result ) success = false;					\
+#define TEST_COMPARE_CONTAINERS( c1, c2 )       \
+  {                                                                     \
+    const bool result = Utility::compareContainers( c1, #c1, c2, #c2, out ); \
+    if( !result ) success = false;                                      \
   }
 
-/*! A macro for the Teuchos Unit Test Harness for comparing arrays of floating
- * point data types and arrays of containers of floating point data types.
- *
- * This macro allows arrays of tuples (Utility::Pair, Utility::Trip and
- * Utility::Quad), which are not supported by the standard Teuchos Unit Test
- * Harness, to be easily tested.
+/*! A macro for the Teuchos Unit Test Harness for comparing unordered containers.
  * \ingroup unit_test_harness_extensions
  */
-#define UTILITY_TEST_COMPARE_FLOATING_ARRAYS( a1, a2, tol )		\
-  {									\
-    const bool result =	Utility::compareArrays(a1,#a1,a2,#a2,out,tol);	\
-    if( !result ) success = false;					\
+#define TEST_COMPARE_UNORDERED_CONTAINERS( c1, c2 )       \
+  {                                                                     \
+    const bool result = Utility::compareUnorderedContainers( c1, #c1, c2, #c2, out ); \
+    if( !result ) success = false;                                      \
   }
+
+/*! A macro for the Teuchos Unit Test Harness for comparing containers of 
+ * floating point types
+ * \ingroup unit_test_harness_extensions
+ */
+#define TEST_COMPARE_FLOATING_CONTAINERS( c1, c2, tol ) \
+  {                                                     \
+    const bool result = Utility::compareContainers( c1, #c1, c2, #c2, out, tol ); \
+    if( !result ) success = false;                                      \
+  }
+
 
 #endif // end UTILITY_UNIT_TEST_HARNESS_EXTENSIONS_HPP
 

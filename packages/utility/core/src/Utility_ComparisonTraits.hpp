@@ -49,6 +49,59 @@ template<typename T>
 struct ComparisonTraits<T,typename std::enable_if<std::is_const<T>::value && std::is_volatile<T>::value>::type> : public ComparisonTraits<typename std::remove_cv<T>::type>
 { /* ... */ };
 
+/*! \brief The specialization of the Utility::ComparisonTraits for std::string
+ * \ingroup comparison_traits
+ */
+template<>
+struct ComparisonTraits<std::string>
+{
+  typedef const double scalarType;
+
+  static inline bool compare( const std::string& first_value,
+			      const std::string& first_name,
+			      const std::string& second_value,
+			      const std::string& second_name,
+			      Teuchos::FancyOStream& out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    bool success = true;
+
+    // Array Element Compare
+    if( index >= 0 )
+    {
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]"
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+
+    return success;
+  }
+};
+
 /*! \brief The specialization of the Utility::ComparisonTraits for 
  * integral types
  * \ingroup comparison_traits
@@ -103,29 +156,9 @@ struct ComparisonTraits<T,typename std::enable_if<std::is_integral<T>::value>::t
   }
 };
 
-/*! \brief A function for comparing individual types.
- *
- * This function is used by the Teuchos Unit Test Harness extension testing
- * macros (see \ref unit_test_harness_extensions). It allows any type commonly
- * used by Utility to be tested. The generality is made possible through the
- * Utility::ComparisonTraits. Refer to the Utility::ComparisonTraits
- * to gain a better understanding of how this function operates.
- * \tparam T A data type that will be tested.
- * \param[in] first_value The first value that will be tested.
- * \param[in] first_name The name given to the first value, which will be
- * used to refer to the value if the test fails.
- * \param[in] second_value The second value that will be tested.
- * \param[in] second_name The name given to the second value, which will be
- * used to refer to the value if the test fails.
- * \param[in,out] out The output stream that will be used to output the
- * results of the test.
- * \param[in] index The index in the array that corresponds to the values
- * being tested. An index of -1 indicates that the values are not part
- * of an array.
- * \param[in] tol The testing tolerance used to compare floating point
- * values. This will be ignored with integer comparisons.
+/*! \brief The specialization of the Utility::ComparisonTraits for 
+ * floating point types
  * \ingroup comparison_traits
- * \ingroup unit_test_harness_extensions
  */
 template<typename T>
 struct ComparisonTraits<T,typename std::enable_if<std::is_floating_point<T>::value>::type>

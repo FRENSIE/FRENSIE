@@ -437,13 +437,13 @@ namespace Details{
 
 //! FromStringTraits base helper class for stl compliant containers
 template<typename STLCompliantContainer,
-         typename ReturnContainerType = STLCompliantContainer>
+         typename ContainerValueType = typename STLCompliantContainer::value_type,
+         typename ReturnContainerType = STLCompliantContainer,
+         typename ReturnContainerValueType = typename ReturnContainerType::value_type>
 struct FromStringTraitsSTLCompliantContainerBaseHelper
 {
   //! The type that a string will be converted to
   typedef ReturnContainerType ReturnType;
-
-protected:
   
   //! Convert the string to the required container type
   template<typename ElementInsertionMemberFunction>
@@ -454,7 +454,7 @@ protected:
 
     std::istringstream iss( obj_rep );
 
-    FromStringTraitsSTLCompliantContainerBaseHelper<ReturnType>::fromStreamImpl( iss, container, insert_element );
+    FromStringTraitsSTLCompliantContainerBaseHelper<ReturnType,ReturnContainerValueType>::fromStreamImpl( iss, container, insert_element );
 
     return container;
   }
@@ -480,7 +480,7 @@ protected:
 
     while( !done )
     {
-      typename STLCompliantContainer::value_type element;
+      ContainerValueType element;
 
       try{
         Utility::fromStream( is, element, ",}" );
@@ -520,10 +520,13 @@ protected:
  */
 template<typename STLCompliantContainer,
          typename ReturnContainerType = STLCompliantContainer>
-struct FromStringTraitsSTLCompliantContainerPushBackHelper : public FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType>
+struct FromStringTraitsSTLCompliantContainerPushBackHelper : protected FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,typename STLCompliantContainer::value_type,ReturnContainerType,typename ReturnContainerType::value_type>
 {
+protected:
   //! The base helper class type
-  typedef FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType> BaseType;
+  typedef FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,typename STLCompliantContainer::value_type,ReturnContainerType,typename ReturnContainerType::value_type> BaseType;
+
+public:
   //! The type that a string will be converted to
   typedef typename BaseType::ReturnType ReturnType;
 
@@ -546,18 +549,23 @@ struct FromStringTraitsSTLCompliantContainerPushBackHelper : public FromStringTr
  * insert method.
  */
 template<typename STLCompliantContainer,
-         typename ReturnContainerType = STLCompliantContainer>
-struct FromStringTraitsSTLCompliantContainerInsertHelper : public FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType>
+         typename ContainerValueType = typename STLCompliantContainer::value_type,
+         typename ReturnContainerType = STLCompliantContainer,
+         typename ReturnContainerValueType = typename ReturnContainerType::value_type>
+struct FromStringTraitsSTLCompliantContainerInsertHelper : protected FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ContainerValueType,ReturnContainerType,ReturnContainerValueType>
 {
+protected:
   //! The base helper class type
-  typedef FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ReturnContainerType> BaseType;
+  typedef FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ContainerValueType,ReturnContainerType,ReturnContainerValueType> BaseType;
+
+public:
   //! The type that a string will be converted to
   typedef typename BaseType::ReturnType ReturnType;
 
   //! Convert the string to an object of the container type
   static inline ReturnType fromString( const std::string& obj_rep )
   {
-    return BaseType::fromStringImpl( obj_rep, &ReturnType::insert );
+    return BaseType::fromStringImpl( obj_rep, (std::pair<typename ReturnType::iterator,bool> (ReturnType::*)(const typename ReturnType::value_type&))&ReturnType::insert );
   }
 
   //! Extract the object from a stream
@@ -565,7 +573,7 @@ struct FromStringTraitsSTLCompliantContainerInsertHelper : public FromStringTrai
                                  STLCompliantContainer& obj,
                                  const std::string& = std::string() )
   {
-    BaseType::fromStreamImpl( is, obj, &STLCompliantContainer::insert );
+    BaseType::fromStreamImpl( is, obj, (std::pair<typename STLCompliantContainer::iterator,bool> (STLCompliantContainer::*)(const typename STLCompliantContainer::value_type&))&STLCompliantContainer::insert );
   }
 };
 
@@ -589,10 +597,13 @@ struct FromStringTraits<std::list<T> > : public Details::FromStringTraitsSTLComp
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTraitsSTLCompliantContainerBaseHelper<std::forward_list<T> >
+struct FromStringTraits<std::forward_list<T> > : protected Details::FromStringTraitsSTLCompliantContainerBaseHelper<std::forward_list<T> >
 {
+protected:
   //! The base helper class type
   typedef Details::FromStringTraitsSTLCompliantContainerBaseHelper<std::forward_list<T> > BaseType;
+
+public:
   //! The type that a string will be converted to
   typedef typename BaseType::ReturnType ReturnType;
 
@@ -600,7 +611,7 @@ struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTrait
   static inline ReturnType fromString( const std::string& obj_rep )
   {
     ReturnType container =
-      BaseType::fromStringImpl( obj_rep, &ReturnType::push_front );
+      BaseType::fromStringImpl( obj_rep, (void (ReturnType::*)(const typename ReturnType::value_type&))&ReturnType::push_front );
 
     container.reverse();
 
@@ -612,7 +623,7 @@ struct FromStringTraits<std::forward_list<T> > : public Details::FromStringTrait
                                  std::forward_list<T>& obj,
                                  const std::string& = std::string() )
   {
-    BaseType::fromStreamImpl( is, obj, &std::forward_list<T>::push_front );
+    BaseType::fromStreamImpl( is, obj, (void (std::forward_list<T>::*)(const typename std::forward_list<T>::value_type&))&std::forward_list<T>::push_front );
 
     obj.reverse();
   }
@@ -643,14 +654,14 @@ struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTrai
  * \ingroup from_string_traits
  */
 template<typename Key, typename T>
-struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::map<Key,T> >
+struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::map<Key,T>, std::pair<Key,T>, std::map<Key,T>, std::pair<Key,T> >
 { /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::unordered_map
  * \ingroup from_string_traits
  */
 template<typename Key, typename T>
-struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_map<Key,T> >
+struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_map<Key,T>, std::pair<Key,T>, std::unordered_map<Key,T>, std::pair<Key,T> >
 { /* ... */ };
 
 // Convert the string to an object of type T
