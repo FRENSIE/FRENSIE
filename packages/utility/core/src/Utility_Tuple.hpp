@@ -42,23 +42,6 @@ enum TupleMember{
   FOURTH
 };
 
-/*! The pair struct
- * \ingroup tuple
- */
-template<typename T1, typename T2> using Pair = std::tuple<T1,T2>;
-
-/*! The trip struct
- * \ingroup tuple
- */
-template<typename T1, typename T2, typename T3> using Trip =
-  std::tuple<T1,T2,T3>;
-
-/*! The quad struct
- * \ingroup tuple
- */
-template<typename T1, typename T2, typename T3, typename T4> using Quad =
-  std::tuple<T1,T2,T3,T4>;
-
 /*! The tuple element struct (see std::tuple_element)
  * \ingroup tuple
  */
@@ -112,13 +95,6 @@ get( const std::pair<T1,T2>& tuple ) noexcept
  */
 template<size_t I, typename TupleType, typename ValueType>
 void set( TupleType& tuple, ValueType value );
-
-/*! Construct a tuple (std::make_tuple)
- * \ingroup tuple
- */
-template<typename... Types>
-inline auto makeTuple( Types&&... args ) -> decltype(std::make_tuple(args...))
-{ return std::make_tuple( args... ); }
   
 } // end Utility namespace
 

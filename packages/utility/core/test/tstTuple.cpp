@@ -18,7 +18,6 @@
 
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
-#include "Utility_HumanReadableSerializer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -81,10 +80,10 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Basic, TupleSize );
 // Check that the size of a tuple can be determined
 TEUCHOS_UNIT_TEST( Tuple_0, TupleSize )
 {
-  TEST_EQUALITY_CONST( Utility::TupleSize<Utility::Tuple<> >::value, 0 );
+  TEST_EQUALITY_CONST( Utility::TupleSize<std::tuple<> >::value, 0 );
   TEST_EQUALITY_CONST( Utility::TupleSize<std::tuple<> >::value, 0 );
 
-  TEST_EQUALITY_CONST( std::tuple_size<Utility::Tuple<> >::value, 0 );
+  TEST_EQUALITY_CONST( std::tuple_size<std::tuple<> >::value, 0 );
   TEST_EQUALITY_CONST( std::tuple_size<std::tuple<> >::value, 0 );
 }
 
@@ -92,10 +91,10 @@ TEUCHOS_UNIT_TEST( Tuple_0, TupleSize )
 // Check that the size of a tuple can be determined
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, TupleSize, T )
 {
-  TEST_EQUALITY_CONST( Utility::TupleSize<Utility::Tuple<T> >::value, 1 );
+  TEST_EQUALITY_CONST( Utility::TupleSize<std::tuple<T> >::value, 1 );
   TEST_EQUALITY_CONST( Utility::TupleSize<std::tuple<T> >::value, 1 );
 
-  TEST_EQUALITY_CONST( std::tuple_size<Utility::Tuple<T> >::value, 1 );
+  TEST_EQUALITY_CONST( std::tuple_size<std::tuple<T> >::value, 1 );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, TupleSize );
@@ -104,13 +103,13 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, TupleSize );
 // Check that the size of a tuple can be determined
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, TupleSize, T1, T2 )
 {
-  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Tuple<T1,T2> >::value), 2 );
   TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2> >::value), 2 );
-  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Pair<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2> >::value), 2 );
 
-  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Tuple<T1,T2> >::value), 2 );
   TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2> >::value), 2 );
-  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Pair<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2> >::value), 2 );
+  TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2> >::value), 2 );
 }
 
 UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, TupleSize );
@@ -119,12 +118,12 @@ UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, TupleSize );
 // Check that the size of a tuple can be determined
 TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, TupleSize, T1, T2, T3 )
 {
-  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Tuple<T1,T2,T3> >::value), 3 );
   TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3> >::value), 3 );
-  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Trip<T1,T2,T3> >::value), 3 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3> >::value), 3 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3> >::value), 3 );
 
-  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Tuple<T1,T2,T3> >::value), 3 );
-  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Trip<T1,T2,T3> >::value), 3 );
+  TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2,T3> >::value), 3 );
+  TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2,T3> >::value), 3 );
 }
 
 UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, TupleSize );
@@ -133,12 +132,12 @@ UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, TupleSize );
 // Check that the size of a tuple can be determined
 TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, TupleSize, T1, T2, T3, T4 )
 {
-  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Tuple<T1,T2,T3,T4> >::value), 4 );
   TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3,T4> >::value), 4 );
-  TEST_EQUALITY_CONST( (Utility::TupleSize<Utility::Quad<T1,T2,T3,T4> >::value), 4 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3,T4> >::value), 4 );
+  TEST_EQUALITY_CONST( (Utility::TupleSize<std::tuple<T1,T2,T3,T4> >::value), 4 );
   
-  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Tuple<T1,T2,T3,T4> >::value), 4 );
-  TEST_EQUALITY_CONST( (std::tuple_size<Utility::Quad<T1,T2,T3,T4> >::value ), 4 );
+  TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2,T3,T4> >::value), 4 );
+  TEST_EQUALITY_CONST( (std::tuple_size<std::tuple<T1,T2,T3,T4> >::value ), 4 );
 }
 
 UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, TupleSize );
@@ -159,7 +158,7 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Basic, get );
 // Check that a 1-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, get, T )
 {
-  Utility::Tuple<T> tuple_1( 1 );
+  std::tuple<T> tuple_1( 1 );
   
   TEST_EQUALITY_CONST( std::get<0>( tuple_1 ), 1 );
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_1 ), 1 );
@@ -178,7 +177,7 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, get );
 // Check that a 2-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, get, T1, T2 )
 {
-  Utility::Tuple<T1,T2> tuple_2( 2, 1 );
+  std::tuple<T1,T2> tuple_2( 2, 1 );
   
   TEST_EQUALITY_CONST( std::get<0>( tuple_2 ), 2 );
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_2 ), 2 );
@@ -189,7 +188,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, get, T1, T2 )
   TEST_EQUALITY_CONST( Utility::get<Utility::SECOND>( tuple_2 ), 1 );
 
   // Check that the pair alias will also work
-  Utility::Pair<T1,T2> pair( 2, 1 );
+  std::tuple<T1,T2> pair( 2, 1 );
 
   TEST_EQUALITY_CONST( std::get<0>( pair ), 2 );
   TEST_EQUALITY_CONST( Utility::get<0>( pair ), 2 );
@@ -215,7 +214,7 @@ UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, get );
 // Check that a 3-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, get, T1, T2, T3 )
 {
-  Utility::Tuple<T1,T2,T3> tuple_3( 3, 2, 1 );
+  std::tuple<T1,T2,T3> tuple_3( 3, 2, 1 );
 
   TEST_EQUALITY_CONST( std::get<0>( tuple_3 ), 3 );
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_3 ), 3 );
@@ -230,7 +229,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, get, T1, T2, T3 )
   TEST_EQUALITY_CONST( Utility::get<Utility::THIRD>( tuple_3 ), 1 );
 
   // Check that the trip alias will also work
-  Utility::Trip<T1,T2,T3> trip( 3, 2, 1 );
+  std::tuple<T1,T2,T3> trip( 3, 2, 1 );
 
   TEST_EQUALITY_CONST( std::get<0>( trip ), 3 );
   TEST_EQUALITY_CONST( Utility::get<0>( trip ), 3 );
@@ -263,7 +262,7 @@ UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, get );
 // Check that a 4-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, get, T1, T2, T3, T4 )
 {
-  Utility::Tuple<T1,T2,T3,T4> tuple_4( 4, 3, 2, 1 );
+  std::tuple<T1,T2,T3,T4> tuple_4( 4, 3, 2, 1 );
 
   TEST_EQUALITY_CONST( std::get<0>( tuple_4 ), 4 );
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_4 ), 4 );
@@ -282,7 +281,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, get, T1, T2, T3, T4 )
   TEST_EQUALITY_CONST( Utility::get<Utility::FOURTH>( tuple_4 ), 1 );
 
   // Check that the quad alias will also work
-  Utility::Quad<T1,T2,T3,T4> quad( 4, 3, 2, 1 );
+  std::tuple<T1,T2,T3,T4> quad( 4, 3, 2, 1 );
 
   TEST_EQUALITY_CONST( std::get<0>( quad ), 4 );
   TEST_EQUALITY_CONST( Utility::get<0>( quad ), 4 );
@@ -337,7 +336,7 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Basic, get_reference );
 // Check that a 1-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, get_reference, T )
 {
-  Utility::Tuple<T> tuple_1( 1 );
+  std::tuple<T> tuple_1( 1 );
 
   std::get<0>( tuple_1 ) = 2;
   TEST_EQUALITY_CONST( std::get<0>( tuple_1 ), 2 );
@@ -364,7 +363,7 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, get_reference );
 // Check that a 2-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, get_reference, T1, T2 )
 {
-  Utility::Tuple<T1,T2> tuple_2( 1, 1 );
+  std::tuple<T1,T2> tuple_2( 1, 1 );
 
   std::get<0>( tuple_2 ) = 2;
   TEST_EQUALITY_CONST( std::get<0>( tuple_2 ), 2 );
@@ -385,7 +384,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, get_reference, T1, T2 )
   TEST_EQUALITY_CONST( Utility::get<Utility::SECOND>( tuple_2 ), 4 );
 
   // Check that the pair alias will also work
-  Utility::Pair<T1,T2> pair( 1, 1 );
+  std::tuple<T1,T2> pair( 1, 1 );
 
   std::get<0>( pair ) = 2;
   TEST_EQUALITY_CONST( std::get<0>( pair ), 2 );
@@ -427,7 +426,7 @@ UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, get_reference );
 // Check that a 3-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, get_reference, T1, T2, T3 )
 {
-  Utility::Tuple<T1,T2,T3> tuple_3( 1, 1, 1 );
+  std::tuple<T1,T2,T3> tuple_3( 1, 1, 1 );
 
   std::get<0>( tuple_3 ) = 2;
   TEST_EQUALITY_CONST( std::get<0>( tuple_3 ), 2 );
@@ -457,7 +456,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, get_reference, T1, T2, T3 )
   TEST_EQUALITY_CONST( Utility::get<Utility::THIRD>( tuple_3 ), 4 );
 
   // Check that the trip alias will also work
-  Utility::Trip<T1,T2,T3> trip( 1, 1, 1 );
+  std::tuple<T1,T2,T3> trip( 1, 1, 1 );
   
   std::get<0>( trip ) = 2;
   TEST_EQUALITY_CONST( std::get<0>( trip ), 2 );
@@ -514,7 +513,7 @@ UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, get_reference );
 // Check that a 4-element tuple's elements can be retrieved
 TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, get_reference, T1, T2, T3, T4 )
 {
-  Utility::Tuple<T1,T2,T3,T4> tuple_4( 1, 1, 1, 1 );
+  std::tuple<T1,T2,T3,T4> tuple_4( 1, 1, 1, 1 );
 
   std::get<0>( tuple_4 ) = 2;
   TEST_EQUALITY_CONST( std::get<0>( tuple_4 ), 2 );
@@ -553,7 +552,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, get_reference, T1, T2, T3, T4 )
   TEST_EQUALITY_CONST( Utility::get<Utility::FOURTH>( tuple_4 ), 4 );
 
   // Check that the quad alias will also work
-  Utility::Quad<T1,T2,T3,T4> quad( 1, 1, 1, 1 );
+  std::tuple<T1,T2,T3,T4> quad( 1, 1, 1, 1 );
 
   std::get<0>( quad ) = 2;
   TEST_EQUALITY_CONST( std::get<0>( quad ), 2 );
@@ -640,7 +639,7 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Basic, set );
 // Check that a tuple element can be set
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, set, T )
 {
-  Utility::Tuple<T> tuple_1( 1 );
+  std::tuple<T> tuple_1( 1 );
 
   typename Utility::TupleElement<0,decltype(tuple_1)>::type value_0( 2 );
 
@@ -662,7 +661,7 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, set );
 // Check that a tuple element can be set
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, set, T1, T2 )
 {
-  Utility::Tuple<T1,T2> tuple_2( 1, 1 );
+  std::tuple<T1,T2> tuple_2( 1, 1 );
 
   typename Utility::TupleElement<0,decltype(tuple_2)>::type value_0( 2 );
 
@@ -698,7 +697,7 @@ UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, set );
 // Check that a tuple element can be set
 TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, set, T1, T2, T3 )
 {
-  Utility::Tuple<T1,T2,T3> tuple_3( 1, 1, 1 );
+  std::tuple<T1,T2,T3> tuple_3( 1, 1, 1 );
 
   typename Utility::TupleElement<0,decltype(tuple_3)>::type value_0( 2 );
 
@@ -746,7 +745,7 @@ UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, set );
 // Check that a tuple element can be set
 TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, set, T1, T2, T3, T4 )
 {
-  Utility::Tuple<T1,T2,T3,T4> tuple_4( 1, 1, 1, 1 );
+  std::tuple<T1,T2,T3,T4> tuple_4( 1, 1, 1, 1 );
 
   Utility::set<0>( tuple_4, 0 );
 
@@ -790,12 +789,12 @@ UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, set );
 // Check that a tuple can be constructed using the standalone method
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, makeTuple, T )
 {
-  Utility::Tuple<T> tuple_1 = Utility::makeTuple( T( 1 ) );
+  std::tuple<T> tuple_1 = std::make_tuple( T( 1 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_1 ), 1 );
 
   // Check that std tuple can also be used
-  std::tuple<T> std_tuple_1 = Utility::makeTuple( T( 1 ) );
+  std::tuple<T> std_tuple_1 = std::make_tuple( T( 1 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_1 ), 1 );
 }
@@ -806,13 +805,13 @@ UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, makeTuple );
 // Check that a tuple can be contructed using the standalone method
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, makeTuple, T1, T2 )
 {
-  Utility::Tuple<T1,T2> tuple_2 = Utility::makeTuple( T1( 1 ), T2( 2 ) );
+  std::tuple<T1,T2> tuple_2 = std::make_tuple( T1( 1 ), T2( 2 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_2 ), 1 );
   TEST_EQUALITY_CONST( Utility::get<1>( tuple_2 ), 2 );
 
   // Check that std tuple can also be used
-  std::tuple<T1,T2> std_tuple_2 = Utility::makeTuple( T1( 1 ), T2( 2 ) );
+  std::tuple<T1,T2> std_tuple_2 = std::make_tuple( T1( 1 ), T2( 2 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_2 ), 1 );
   TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_2 ), 2 );
@@ -824,14 +823,14 @@ UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, makeTuple );
 // Check that a tuple can be constructed using the standalone method
 TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, makeTuple, T1, T2, T3 )
 {
-  Utility::Tuple<T1,T2,T3> tuple_3 = Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ) );
+  std::tuple<T1,T2,T3> tuple_3 = std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_3 ), 1 );
   TEST_EQUALITY_CONST( Utility::get<1>( tuple_3 ), 2 );
   TEST_EQUALITY_CONST( Utility::get<2>( tuple_3 ), 3 );
 
   // Check that std tuple can also be used
-  std::tuple<T1,T2,T3> std_tuple_3 = Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ) );
+  std::tuple<T1,T2,T3> std_tuple_3 = std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_3 ), 1 );
   TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_3 ), 2 );
@@ -844,8 +843,8 @@ UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, makeTuple );
 // Check that a tuple can be constructed using the standalone method
 TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, makeTuple, T1, T2, T3, T4 )
 {
-  Utility::Tuple<T1,T2,T3,T4> tuple_4 =
-    Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
+  std::tuple<T1,T2,T3,T4> tuple_4 =
+    std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( tuple_4 ), 1 );
   TEST_EQUALITY_CONST( Utility::get<1>( tuple_4 ), 2 );
@@ -854,7 +853,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, makeTuple, T1, T2, T3, T4 )
 
   // Check that std tuple can also be used
   std::tuple<T1,T2,T3,T4> std_tuple_4 =
-    Utility::makeTuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
+    std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
 
   TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_4 ), 1 );
   TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_4 ), 2 );
