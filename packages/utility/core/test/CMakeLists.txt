@@ -227,6 +227,13 @@ TARGET_LINK_LIBRARIES(tstView utility_core)
 ADD_TEST(View_test tstView)
 SET_PROPERTY(TEST View_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstArrayView
+  tstArrayView.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstArrayView utility_core)
+ADD_TEST(ArrayView_test tstArrayView)
+SET_PROPERTY(TEST ArrayView_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstArrayTraits
   tstArrayTraits.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

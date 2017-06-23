@@ -25,7 +25,8 @@ ArrayView<T>::ArrayView( T* start, T* end )
 
 // Range constructor
 template<typename T>
-ArrayView<T>::ArrayView( T* array_start, const size_type array_size )
+ArrayView<T>::ArrayView( T* array_start,
+                         const typename ArrayView<T>::size_type array_size )
   : View<T*>( array_start, array_start + array_size )
 { /* ... */ }
 
@@ -37,21 +38,22 @@ ArrayView<T>::ArrayView( std::vector<T>& vector )
 
 // Const vector constructor
 template<typename T>
-ArrayView<T>::ArrayView( const std::vector<typename std::enable_if<std::is_const<T>::value,T>::type>& vector )
+template<typename U>
+ArrayView<T>::ArrayView( const std::vector<U>& vector )
   : ArrayView<T>( vector.data(), vector.size() )
 { /* ... */ }
 
 // Array constructor
 template<typename T>
-template<typename N>
+template<size_t N>
 ArrayView<T>::ArrayView( std::array<T,N>& array )
   : ArrayView<T>( array.data(), N )
 { /* ... */ }
 
 // Const array constructor
 template<typename T>
-template<typename N>
-ArrayView<T>::ArrayView( const std::array<typename std::enable_if<std::is_const<T>::value,T>::type,N>& array )
+template<typename U, size_t N>
+ArrayView<T>::ArrayView( const std::array<U,N>& array )
   : ArrayView<T>( array.data(), N )
 { /* ... */ }
 
@@ -63,8 +65,8 @@ ArrayView<T>::ArrayView( ArrayView<T>& other_view )
 
 // Const array view copy constructor
 template<typename T>
-template<typename T2>
-ArrayView<T>::ArrayView( const ArrayView<typename std::enable_if<std::is_const<T>::value,T2>::type>& other_view )
+template<typename U>
+ArrayView<T>::ArrayView( const ArrayView<U>& other_view )
   : View<T*>( other_view )
 { /* ... */ }
 
@@ -80,8 +82,8 @@ ArrayView<T>& ArrayView<T>::operator=( ArrayView<T>& other_view )
 
 // Const view assignment operator
 template<typename T>
-template<typename T2>
-ArrayView<T>& ArrayView<T>::operator=( const ArrayView<typename std::enable_if<std::is_const<T>::value,T2>::type>& other_view )
+template<typename U>
+ArrayView<T>& ArrayView<T>::operator=( const ArrayView<U>& other_view )
 {
   if( this != &other_view )
     View<T*>::operator=( other_view );
@@ -91,14 +93,16 @@ ArrayView<T>& ArrayView<T>::operator=( const ArrayView<typename std::enable_if<s
 
 // Return a sub-array view
 template<typename T>
-ArrayView<T> ArrayView<T>::operator( const size_type offset, const size_type size ) const
+ArrayView<T> ArrayView<T>::operator()(
+                            const typename ArrayView<T>::size_type offset,
+                            const typename ArrayView<T>::size_type size ) const
 {
-  return ArrayView<T>( &this->at( offset ), size );
+  return ArrayView<T>( const_cast<T*>(this->begin())+offset, size );
 }
 
 // Return a const array view
 template<typename T>
-ArrayView<T>::ArrayView<const typename std::remove_const<T>::type> toConst() const
+ArrayView<const typename std::remove_const<T>::type> ArrayView<T>::toConst() const
 {
   return ArrayView<const typename std::remove_const<T>::type>( this->begin(), this->end() );
 }

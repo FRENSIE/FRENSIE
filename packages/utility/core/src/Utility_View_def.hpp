@@ -264,7 +264,7 @@ View<Iterator>::operator View<const_iterator>() const
 {
   return this->toConst();
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_VIEW_DEF_HPP

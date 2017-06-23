@@ -14,7 +14,7 @@
 #include <array>
 
 // FRENSIE Includes
-#include "Utility_ArrayView.hpp"
+#include "Utility_View.hpp"
 
 namespace Utility{
 
@@ -37,42 +37,44 @@ public:
   ArrayView( T* start, T* end );
 
   //! Range constructor
-  ArrayView( T* array_start, const size_type array_size );
+  ArrayView( T* array_start, const typename ArrayView<T>::size_type array_size );
 
   //! Vector constructor
   ArrayView( std::vector<T>& vector );
 
   //! Const vector constructor
-  ArrayView( const std::vector<typename std::enable_if<std::is_const<T>::value,T>::type>& vector );
+  template<typename U>
+  ArrayView( const std::vector<U>& vector );
 
   //! Array constructor
-  template<typename N>
+  template<size_t N>
   ArrayView( std::array<T,N>& array );
 
   //! Const array constructor
-  template<typename N>
-  ArrayView( const std::array<typename std::enable_if<std::is_const<T>::value,T>::type,N>& array );
+  template<typename U,size_t N>
+  ArrayView( const std::array<U,N>& array );
 
   //! Copy constructor
   ArrayView( ArrayView<T>& other_view );
 
   //! Const array view copy constructor
-  template<typename T2>
-  ArrayView( const ArrayView<typename std::enable_if<std::is_const<T>::value,T2>::type>& other_view );
+  template<typename U>
+  ArrayView( const ArrayView<U>& other_view );
 
   //! Assignment operator
   ArrayView<T>& operator=( ArrayView<T>& other_view );
 
   //! Const view assignment operator
-  template<typename T2>
-  ArrayView<T>& operator=( const ArrayView<typename std::enable_if<std::is_const<T>::value,T2>::type>& other_view );
+  template<typename U>
+  ArrayView<T>& operator=( const ArrayView<U>& other_view );
 
   //! Destructor
-  ~ArrayView();
+  ~ArrayView()
   { /* ... */ }
 
   //! Return a sub-array view
-  ArrayView<T> operator( const size_type offset, const size_type size ) const;
+  ArrayView<T> operator()( const typename ArrayView<T>::size_type offset,
+                           const typename ArrayView<T>::size_type size ) const;
 
   //! Return a const array view
   ArrayView<const typename std::remove_const<T>::type> toConst() const;
@@ -95,6 +97,13 @@ inline ArrayView<const T> arrayView( const std::vector<T>& vector )
   return ArrayView<const T>( vector );
 }
 
+//! Create a const array view of a std::vector
+template<typename T>
+inline ArrayView<const T> arrayViewOfConst( const std::vector<T>& vector )
+{
+  return ArrayView<const T>( vector );
+}
+
 //! Create an array view of a std::array
 template<typename T, size_t N>
 inline ArrayView<T> arrayView( std::array<T,N>& array )
@@ -105,6 +114,13 @@ inline ArrayView<T> arrayView( std::array<T,N>& array )
 //! Create a const array view of a std::array
 template<typename T, size_t N>
 inline ArrayView<const T> arrayView( const std::array<T,N>& array )
+{
+  return ArrayView<const T>( array );
+}
+
+//! Create a const array view of a std::array
+template<typename T, size_t N>
+inline ArrayView<const T> arrayViewOfConst( const std::array<T,N>& array )
 {
   return ArrayView<const T>( array );
 }
@@ -121,8 +137,8 @@ inline ArrayView<T2> av_const_cast( const ArrayView<T1>& array_view )
 template<typename T2, typename T1>
 inline ArrayView<T2> av_reinterpret_cast( const ArrayView<T1>& array_view )
 {
-  return ArrayView<T2>( reinterpret_cast<T2*>( array_view.begin() ),
-                        reinterpret_cast<T2*>( array_view.end() ) );
+  return ArrayView<T2>( reinterpret_cast<T2*>( const_cast<ArrayView<T1>&>(array_view).begin() ),
+                        reinterpret_cast<T2*>( const_cast<ArrayView<T1>&>(array_view).end() ) );
 }
   
 } // end Utility namespace
