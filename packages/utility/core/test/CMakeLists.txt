@@ -73,6 +73,20 @@ TARGET_LINK_LIBRARIES(tstStreamHelpers utility_core)
 ADD_TEST(StreamHelpers_test tstStreamHelpers)
 SET_PROPERTY(TEST StreamHelpers_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstTypeTraits
+  tstTypeTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTypeTraits utility_core)
+ADD_TEST(TypeTraits_test tstTypeTraits)
+SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstIteratorTypeTraits
+  tstIteratorTypeTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIteratorTypeTraits utility_core)
+ADD_TEST(IteratorTypeTraits_test tstIteratorTypeTraits)
+SET_PROPERTY(TEST IteratorTypeTraits_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstElectronVoltUnit
   tstElectronVoltUnit.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -205,6 +219,13 @@ ADD_EXECUTABLE(tstTuple
 TARGET_LINK_LIBRARIES(tstTuple utility_core)
 ADD_TEST(Tuple_test tstTuple)
 SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstView
+  tstView.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstView utility_core)
+ADD_TEST(View_test tstView)
+SET_PROPERTY(TEST View_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstArrayTraits
   tstArrayTraits.cpp

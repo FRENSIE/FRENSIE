@@ -20,981 +20,615 @@
 
 // FRENSIE Includes
 #include "Utility_IteratorTypeTraitsDecl.hpp"
+#include "Utility_TypeTraits.hpp"
 
 namespace Utility{
 
-/*! isConstIterator partial specialization for pointer type
+/*! IsConstIterator partial specialization for all const iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<T*> : public std::false_type
+template<typename Iterator>
+struct IsConstIterator<Iterator,typename std::enable_if<IsPointerToConst<typename std::iterator_traits<Iterator>::pointer>::value>::type> : public std::true_type
 { /* ... */ };
 
-/*! isConstIterator partial specialization for const pointer type
+/*! IsConstIterator partial specialization for all non-const iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<const T*> : public std::true_type
+template<typename Iterator>
+struct IsConstIterator<Iterator,typename std::enable_if<!IsPointerToConst<typename std::iterator_traits<Iterator>::pointer>::value>::type> : public std::false_type
 { /* ... */ };
 
-/*! constIterator partial specialization for pointer type
+/*! ConstIterator partial specialization for pointer type
  * \ingroup iterator_type_traits
  */
 template<typename T>
-struct constIterator<T*>
+struct ConstIterator<T*>
 {
   //! The pointer const iterator type
   typedef const T* type;
 };
 
-/*! constIterator specialization for const pointer type
+/*! ConstIterator partial specialization for pointer-to-const type
  * \ingroup iterator_type_traits
  */
 template<typename T>
-struct constIterator<const T*>
+struct ConstIterator<const T*>
 {
   //! The pointer const iterator type
   typedef const T* type;
 };
 
-/*! nonConstIterator specialization for pointer type
+/*! ConstIterator partial specialization for reverse_iterator of pointer type
  * \ingroup iterator_type_traits
  */
 template<typename T>
-struct nonConstITerator<T*>
+struct ConstIterator<std::reverse_iterator<T*> >
+{
+  //! The pointer const iterator type
+  typedef std::reverse_iterator<const T*> type;
+};
+
+/*! ConstIterator partial specialization for reverse_iterator of pointer-to-const type
+ * \ingroup iterator_type_traits
+ */
+template<typename T>
+struct ConstIterator<std::reverse_iterator<const T*> >
+{
+  //! The pointer const iterator type
+  typedef std::reverse_iterator<const T*> type;
+};
+
+/*! NonConstIterator specialization for pointer type
+ * \ingroup iterator_type_traits
+ */
+template<typename T>
+struct NonConstIterator<T*>
 {
   //! The pointer iterator type
   typedef T* type;
 };
 
-/*! nonConstIterator specialization for pointer type
+/*! NonConstIterator specialization for pointer-to-const type
  * \ingroup iterator_type_traits
  */
 template<typename T>
-struct nonConstIterator<const T*>
+struct NonConstIterator<const T*>
 {
   //! The pointer iterator type
   typedef T* type;
 };
 
-/*! isConstIterator specialization for std::string::iterator
+/*! NonConstIterator specialization for reverse_iterator of pointer type
  * \ingroup iterator_type_traits
  */
-template<>
-struct isConstIterator<std::string::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator specialization for std::string::const_iterator
- * \ingroup iterator_type_traits
- */
-template<>
-struct isConstIterator<std::string::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator specialization for std::string::iterator
- * \ingroup iterator_type_traits
- */
-template<>
-struct constIterator<std::string::iterator>
+template<typename T>
+struct NonConstIterator<std::reverse_iterator<T*> >
 {
-  //! The std::string const iterator type
-  typedef std::string::const_iterator type;
+  //! The pointer iterator type
+  typedef std::reverse_iterator<T*> type;
 };
 
-/*! constIterator specialization for const std::string::iterator
+/*! NonConstIterator specialization for reverse_iterator of pointer-to-const type
  * \ingroup iterator_type_traits
  */
-template<>
-struct constIterator<std::string::const_iterator>
+template<typename T>
+struct NonConstIterator<std::reverse_iterator<const T*> >
 {
-  //! The std::string const iterator type
-  typedef std::string::const_iterator type;
+  //! The pointer iterator type
+  typedef std::reverse_iterator<T*> type;
 };
 
-/*! nonConstIterator specialization for std::string::iterator
+/*! ConstIterator partial specialization for std::string iterator types
  * \ingroup iterator_type_traits
  */
-template<>
-struct nonConstIterator<std::string::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::iterator>::value>::type>
+{
+  //! The std::string const_iterator type
+  typedef typename std::string::const_iterator type;
+};
+
+/*! ConstIterator partial specialization for std::string const iterator types
+ * \ingroup iterator_type_traits
+ */
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::const_iterator>::value>::type>
+{
+  //! The std::string const_iterator type
+  typedef typename std::string::const_iterator type;
+};
+
+/*! ConstIterator partial specialization for std::string reverse iterator types
+ * \ingroup iterator_type_traits
+ */
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::reverse_iterator>::value>::type>
+{
+  //! The std::string const_reverse_iterator type
+  typedef typename std::string::const_reverse_iterator type;
+};
+
+/*! ConstIterator partial specialization for std::string const reverse iterator types
+ * \ingroup iterator_type_traits
+ */
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::const_reverse_iterator>::value>::type>
+{
+  //! The std::string const_iterator type
+  typedef typename std::string::const_reverse_iterator type;
+};
+
+/*! NonConstIterator partial specialization for std::string iterator types
+ * \ingroup iterator_type_traits
+ */
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::iterator>::value>::type>
 {
   //! The std::string iterator type
-  typedef std::string::iterator type;
+  typedef typename std::string::iterator type;
 };
 
-/*! nonConstIterator specialization for std::string::const_iterator
+/*! NonConstIterator partial specialization for std::string const_iterator types
  * \ingroup iterator_type_traits
  */
-template<>
-struct nonConstIterator<std::string::const_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::const_iterator>::value>::type>
 {
   //! The std::string iterator type
-  typedef std::string::iterator type;
+  typedef typename std::string::iterator type;
 };
 
-/*! isConstIterator specialization for std::string::reverse_iterator
+/*! NonConstIterator partial specialization for std::string reverse iterator types
  * \ingroup iterator_type_traits
  */
-template<>
-struct isConstIterator<std::string::reverse_iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator specialization for std::string::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<>
-struct isConstIterator<std::string::const_reverse_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator specialization for std::string::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<>
-struct constIterator<std::string::reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::reverse_iterator>::value>::type>
 {
-  //! The std::string const reverse_iterator type
-  typedef std::string::const_reverse_iterator type;
+  //! The std::string reverse_iterator type
+  typedef typename std::string::reverse_iterator type;
 };
 
-/*! nonConstIterator specialization for std::string::reverse_iterator
+/*! NonConstIterator partial specialization for std::string const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<>
-struct nonConstIterator<std::string::reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,std::string::const_reverse_iterator>::value>::type>
 {
-  //! The std::string reverse iterator type
-  typedef std::string::reverse_iterator type;
+  //! The std::string iterator type
+  typedef typename std::string::reverse_iterator type;
 };
 
-/*! constIterator specialization for std::string::const_reverse_iterator
+/*! ConstIterator partial specialization for std::vector iterator types
  * \ingroup iterator_type_traits
  */
-template<>
-struct constIterator<std::string::const_reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
-  //! The std::string const reverse iterator type
-  typedef std::string::const_reverse_iterator type;
+  //! The std::vector const_iterator type
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! nonConstIterator specialization for std::string::const_reverse_iterator
+/*! ConstIterator partial specialization for std::vector const_iterator types
  * \ingroup iterator_type_traits
  */
-template<>
-struct nonConstIterator<std::string::const_reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
-  //! The std::string reverse iterator type
-  typedef std::string::reverse_iterator type;
+  //! The std::vector const_iterator type
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! isConstIterator partial specialization for std::array::iterator
+/*! ConstIterator partial specialization for std::vector reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T, size_t N>
-struct isConstIterator<typename std::array<T,N>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::array::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct isConstIterator<typename std::array<T,N>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::array::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct constIterator<typename std::array<T,N>::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value>::type>
 {
-  //! The std::array const iterator type
-  typedef typename std::array<T,N>::const_iterator type;
+  //! The std::vector const_iterator type
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator type;
 };
 
-/*! constIterator partial specialization for std::array::const_iterator
+/*! ConstIterator partial specialization for std::vector const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T, size_t N>
-struct constIterator<typename std::array<T,N>::const_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator>::value>::type>
 {
-  //! The std::array const iterator type
-  typedef typename std::array<T,N>::const_iterator type;
+  //! The std::vector const_iterator type
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::array::iterator
+/*! NonConstIterator partial specialization for std::vector iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T, size_t N>
-struct nonConstIterator<typename std::array<T,N>::iterator>
-{
-  //! The std::array iterator type
-  typedef typename std::array<T,N>::iterator type;
-};
-  
-/*! nonConstIterator partial specialization for std::array::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct nonConstIterator<typename std::array<T,N>::const_iterator>
-{
-  //! The std::array iterator type
-  typedef typename std::array<T,N>::iterator type;
-};
-
-/*! isConstIterator partial specialization for std::array::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct isConstIterator<typename std::array<T,N>::reverse_iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::array::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct isConstIterator<typename std::array<T,N>::const_reverse_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::array::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct constIterator<typename std::array<T,N>::reverse_iterator>
-{
-  //! The std::array const reverse iterator type
-  typedef typename std::array<T,N>::const_reverse_iterator type;
-};
-
-/*! constIterator partial specialization for std::array::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct constIterator<typename std::array<T,N>::const_reverse_iterator>
-{
-  //! The std::array const reverse iterator type
-  typedef typename std::array<T,N>::const_reverse_iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::array::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct nonConstIterator<typename std::array<T,N>::reverse_iterator>
-{
-  //! The std::array reverse iterator type
-  typedef typename std::array<T,N>::reverse_iterator type;
-};
-  
-/*! nonConstIterator partial specialization for std::array::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T, size_t N>
-struct nonConstIterator<typename std::array<T,N>::const_reverse_iterator>
-{
-  //! The std::array reverse iterator type
-  typedef typename std::array<T,N>::reverse_iterator type;
-};
-
-/*! isConstIterator partial specialization for std::vector::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::vector<T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::vector::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::vector<T>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::vector::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::vector<T>::iterator>
-{
-  //! The std::vector const iterator type
-  typedef typename std::vector<T>::const_iterator type;
-};
-
-/*! constIterator partial specialization for std::vector::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::vector<T>::const_iterator>
-{
-  //! The std::vector const iterator type
-  typedef typename std::vector<T>::const_iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::vector::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct nonConstIterator<typename std::vector<T>::iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
   //! The std::vector iterator type
-  typedef typename std::vector<T>::iterator type;
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::vector::const_iterator
+/*! NonConstIterator partial specialization for std::vector const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::vector<T>::const_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
   //! The std::vector iterator type
-  typedef typename std::vector<T>::iterator type;
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! isConstIterator partial specialization for std::vector::reverse_iterator
+/*! NonConstIterator partial specialization for std::vector reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<typename std::vector<T>::reverse_iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::vector::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::vector<T>::const_reverse_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::vector::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::vector<T>::reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value>::type>
 {
-  //! The std::vector const reverse iterator type
-  typedef typename std::vector<T>::const_reverse_iterator type;
+  //! The std::vector iterator type
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator type;
 };
 
-/*! constIterator partial specialization for std::vector::const_reverse_iterator
+/*! NonConstIterator partial specialization for std::vector const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct constIterator<typename std::vector<T>::const_reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::vector<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator>::value>::type>
 {
-  //! The std::vector const reverse iterator type
-  typedef typename std::vector<T>::const_reverse_iterator type;
+  //! The std::vector iterator type
+  typedef typename std::vector<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::vector::reverse_iterator
+/*! ConstIterator partial specialization for std::list iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::vector<T>::reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
-  //! The std::vector reverse iterator type
-  typedef typename std::vector<T>::reverse_iterator type;
+  //! The std::list const_iterator type
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::vector::const_reverse_iterator
+/*! ConstIterator partial specialization for std::list const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::vector<T>::const_reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
-  //! The std::vector reverse iterator type
-  typedef typename std::vector<T>::reverse_iterator type;
+  //! The std::list const_iterator type
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! isConstIterator partial specialization for std::list::iterator
+/*! ConstIterator partial specialization for std::list reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<typename std::list<T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::list::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::list<T>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::list::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::list<T>::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value>::type>
 {
-  //! The std::list const iterator type
-  typedef typename std::list<T>::const_iterator type;
+  //! The std::list const_iterator type
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator type;
 };
 
-/*! constIterator partial specialization for std::list::const_iterator
+/*! ConstIterator partial specialization for std::list const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct constIterator<typename std::list<T>::const_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator>::value>::type>
 {
-  //! The std::list const iterator type
-  typedef typename std::list<T>::const_iterator type;
+  //! The std::list const_iterator type
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::list::iterator
+/*! NonConstIterator partial specialization for std::list iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::list<T>::iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
   //! The std::list iterator type
-  typedef typename std::list<T>::iterator type;
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::list::const_iterator
+/*! NonConstIterator partial specialization for std::list const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::list<T>::const_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
   //! The std::list iterator type
-  typedef typename std::list<T>::iterator type;
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! isConstIterator partial specialization for std::list::reverse_iterator
+/*! NonConstIterator partial specialization for std::list reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<typename std::list<T>::reverse_iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::list::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::list<T>::const_reverse_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::list::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::list<T>::reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value>::type>
 {
-  //! The std::list const reverse iterator type
-  typedef typename std::list<T>::const_reverse_iterator type;
+  //! The std::list iterator type
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator type;
 };
 
-/*! constIterator partial specialization for std::list::const_reverse_iterator
+/*! NonConstIterator partial specialization for std::list const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct constIterator<typename std::list<T>::const_reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator>::value>::type>
 {
-  //! The std::list const reverse iterator type
-  typedef typename std::list<T>::const_reverse_iterator type;
+  //! The std::list iterator type
+  typedef typename std::list<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::list::reverse_iterator
+/*! ConstIterator partial specialization for std::forward_list iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::list<T>::reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
-  //! The std::list reverse iterator type
-  typedef typename std::list<T>::reverse_iterator type;
+  //! The std::forward_list const_iterator type
+  typedef typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::list::const_reverse_iterator
+/*! ConstIterator partial specialization for std::forward_list const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::list<T>::const_reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
-  //! The std::list reverse iterator type
-  typedef typename std::list<T>::reverse_iterator type;
+  //! The std::forward_list const_iterator type
+  typedef typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! isConstIterator partial specialization for std::forward_list::iterator
+/*! NonConstIterator partial specialization for std::forward_list iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<typename std::forward_list<T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::forward_list::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::forward_list<T>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::forward_list::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::forward_list<T>::iterator>
-{
-  //! The std::forward_list const iterator type
-  typedef typename std::forward_list<T>::const_iterator type;
-};
-
-/*! constIterator partial specialization for std::forward_list::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::forward_list<T>::const_iterator>
-{
-  //! The std::forward_list const iterator type
-  typedef typename std::forward_list<T>::const_iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::forward_list::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct nonConstIterator<typename std::forward_list<T>::iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
   //! The std::forward_list iterator type
-  typedef typename std::forward_list<T>::iterator type;
+  typedef typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::forward_list::const_iterator
+/*! NonConstIterator partial specialization for std::forward_list const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::forward_list<T>::const_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
   //! The std::forward_list iterator type
-  typedef typename std::forward_list<T>::iterator type;
+  typedef typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! isConstIterator partial specialization for std::deque::iterator
+/*! ConstIterator partial specialization for std::deque iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<typename std::deque<T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::deque::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::deque<T>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::deque::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::deque<T>::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
-  //! The std::deque const iterator type
-  typedef typename std::deque<T>::const_iterator type;
+  //! The std::deque const_iterator type
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! constIterator partial specialization for std::deque::const_iterator
+/*! ConstIterator partial specialization for std::deque const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct constIterator<typename std::deque<T>::const_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
-  //! The std::deque const iterator type
-  typedef typename std::deque<T>::const_iterator type;
+  //! The std::deque const_iterator type
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::deque::iterator
+/*! ConstIterator partial specialization for std::deque reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::deque<T>::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value>::type>
 {
-  //! The std::deque iterator type
-  typedef typename std::deque<T>::iterator type;
+  //! The std::deque const_iterator type
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::deque::const_iterator
+/*! ConstIterator partial specialization for std::deque const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::deque<T>::const_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator>::value>::type>
+{
+  //! The std::deque const_iterator type
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator type;
+};
+
+/*! NonConstIterator partial specialization for std::deque iterator types
+ * \ingroup iterator_type_traits
+ */
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
   //! The std::deque iterator type
-  typedef typename std::deque<T>::iterator type;
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! isConstIterator partial specialization for std::deque::reverse_iterator
+/*! NonConstIterator partial specialization for std::deque const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<typename std::deque<T>::reverse_iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::deque::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::deque<T>::const_reverse_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::deque::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::deque<T>::reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value>::type>
 {
-  //! The std::deque const reverse iterator type
-  typedef typename std::deque<T>::const_reverse_iterator type;
+  //! The std::deque iterator type
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::iterator type;
 };
 
-/*! constIterator partial specialization for std::deque::const_reverse_iterator
+/*! NonConstIterator partial specialization for std::deque reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct constIterator<typename std::deque<T>::const_reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value>::type>
 {
-  //! The std::deque const reverse iterator type
-  typedef typename std::deque<T>::const_reverse_iterator type;
+  //! The std::deque iterator type
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::deque::reverse_iterator
+/*! NonConstIterator partial specialization for std::deque const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::deque<T>::reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::deque<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator>::value>::type>
 {
-  //! The std::deque reverse iterator type
-  typedef typename std::deque<T>::reverse_iterator type;
+  //! The std::deque iterator type
+  typedef typename std::deque<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::deque::const_reverse_iterator
+/*! ConstIterator partial specialization for std::set iterator types
+ *
+ * The iterator and const_iterator types are the same with std::set. In 
+ * addition, the std::map const_iterator types are the same as the
+ * std::set iterator and const_iterator types. This partial specialization
+ * will be invoked when using a std::map const_iterator type.
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::deque<T>::const_reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::set<typename std::iterator_traits<Iterator>::value_type>::iterator>::value>::type>
 {
-  //! The std::deque reverse iterator type
-  typedef typename std::deque<T>::reverse_iterator type;
+  //! The std::set const_iterator type
+  typedef typename std::set<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! isConstIterator partial specialization for std::set::iterator
+/*! ConstIterator partial specialization for std::set reverse_iterator types
+ *
+ * The reverse_iterator and const_reverse_iterator types are the same with
+ * std::set. In addition, the std::map const_reverse_iterator types are the 
+ * same as the std::set reverse_iterator and const_reverse_iterator types. This
+ * partial specialization will be invoked when using a std::map 
+ * const_reverse_iterator type.
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<typename std::set<T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::set::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::set<T>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::set::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::set<T>::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::set<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value>::type>
 {
-  //! The std::set const iterator type
-  typedef typename std::set<T>::const_iterator type;
+  //! The std::set const_iterator type
+  typedef typename std::set<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator type;
 };
 
-/*! constIterator partial specialization for std::set::const_iterator
+/*! ConstIterator partial specialization for std::map iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct constIterator<typename std::set<T>::const_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator>::value>::type>
 {
-  //! The std::set const iterator type
-  typedef typename std::set<T>::const_iterator type;
+  //! The std::map const_iterator type
+  typedef typename std::map<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::set::iterator
+/*! ConstIterator partial specialization for std::map reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::set<T>::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::reverse_iterator>::value>::type>
 {
-  //! The std::set iterator type
-  typedef typename std::set<T>::iterator type;
+  //! The std::map const_iterator type
+  typedef typename std::map<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::set::const_iterator
+/*! NonConstIterator partial specialization for std::map iterator types
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator<typename std::set<T>::const_iterator>
-{
-  //! The std::set iterator type
-  typedef typename std::set<T>::iterator type;
-};
-
-/*! isConstIterator partial specialization for std::set::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::set<T>::reverse_iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::set::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::set<T>::const_reverse_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::set::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::set<T>::reverse_iterator>
-{
-  //! The std::set const reverse iterator type
-  typedef typename std::set<T>::const_reverse_iterator type;
-};
-
-/*! constIterator partial specialization for std::set::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::set<T>::const_reverse_iterator>
-{
-  //! The std::set const reverse iterator type
-  typedef typename std::set<T>::const_reverse_iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::set::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct nonConstIterator<typename std::set<T>::reverse_iterator>
-{
-  //! The std::set reverse iterator type
-  typedef typename std::set<T>::reverse_iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::set::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct nonConstIterator<typename std::set<T>::const_reverse_iterator>
-{
-  //! The std::set reverse iterator type
-  typedef typename std::set<T>::reverse_iterator type;
-};
-
-/*! isConstIterator partial specialization for std::unordered_set::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::unordered_set<T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::unordered_set::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct isConstIterator<typename std::unordered_set<T>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::unordered_set::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::unordered_set<T>::iterator>
-{
-  //! The std::unordered_set const iterator type
-  typedef typename std::unordered_set<T>::const_iterator type;
-};
-
-/*! constIterator partial specialization for std::unordered_set::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct constIterator<typename std::unordered_set<T>::const_iterator>
-{
-  //! The std::unordered_set const iterator type
-  typedef typename std::unordered_set<T>::const_iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::unordered_set::iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct nonConstIterator<typename std::unordered_set<T>::iterator>
-{
-  //! The std::unordered_set iterator type
-  typedef typename std::unordered_set<T>::iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::unordered_set::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename T>
-struct nonConstIterator<typename std::unordered_set<T>::const_iterator>
-{
-  //! The std::unordered_set iterator type
-  typedef typename std::unordered_set<T>::iterator type;
-};
-
-/*! isConstIterator partial specialization for std::map::iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct isConstIterator<typename std::map<Key,T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::map::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct isConstIterator<typename std::map<Key,T>::const_iterator> : public std::true_type
-{ /* ... */ };
-
-/*! constIterator partial specialization for std::map::iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct constIterator<typename std::map<Key,T>::iterator>
-{
-  //! The std::map const iterator type
-  typedef typename std::map<Key,T>::const_iterator type;
-};
-
-/*! constIterator partial specialization for std::map::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct constIterator<typename std::map<Key,T>::const_iterator>
-{
-  //! The std::map const iterator type
-  typedef typename std::map<Key,T>::const_iterator type;
-};
-
-/*! nonConstIterator partial specialization for std::map::iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct nonConstIterator<typename std::map<Key,T>::iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator>::value>::type>
 {
   //! The std::map iterator type
-  typedef typename std::map<Key,T>::iterator type;
+  typedef typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::map::const_iterator
+/*! NonConstIterator partial specialization for std::map const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct nonConstIterator<typename std::map<Key,T>::const_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_iterator>::value>::type>
 {
   //! The std::map iterator type
-  typedef typename std::map<Key,T>::iterator type;
+  typedef typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator type;
 };
 
-/*! isConstIterator partial specialization for std::map::reverse_iterator
+/*! NonConstIterator partial specialization for std::map reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct isConstIterator<typename std::map<Key,T>::reverse_iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::map::const_reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct isConstIterator<typename std::map<Key,T>::const_reverse_iterator> : public std::true_type
-{ /* ... */ };
-  
-/*! constIterator partial specialization for std::map::reverse_iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct constIterator<typename std::map<Key,T>::reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::reverse_iterator>::value>::type>
 {
-  //! The std::map const reverse iterator type
-  typedef typename std::map<Key,T>::const_reverse_iterator type;
+  //! The std::map iterator type
+  typedef typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::reverse_iterator type;
 };
 
-/*! constIterator partial specialization for std::map::const_reverse_iterator
+/*! NonConstIterator partial specialization for std::map const_reverse_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct constIterator<typename std::map<Key,T>::const_reverse_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_reverse_iterator>::value>::type>
 {
-  //! The std::map const reverse iterator type
-  typedef typename std::map<Key,T>::const_reverse_iterator type;
+  //! The std::map iterator type
+  typedef typename std::map<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::reverse_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::map::reverse_iterator
+/*! ConstIterator partial specialization for std::unordered_set iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct nonConstIterator<typename std::map<Key,T>::reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_set<typename std::conditional<IsHashable<typename std::iterator_traits<Iterator>::value_type>::value,typename std::iterator_traits<Iterator>::value_type,void*>::type>::iterator>::value>::type>
 {
-  //! The std::map reverse iterator type
-  typedef typename std::map<Key,T>::reverse_iterator type;
+  //! The std::unordered_set const_iterator type
+  typedef typename std::unordered_set<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::map::const_reverse_iterator
+/*! ConstIterator partial specialization for std::unordered_set const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct nonConstIterator<typename std::map<Key,T>::const_reverse_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_set<typename std::conditional<IsHashable<typename std::iterator_traits<Iterator>::value_type>::value,typename std::iterator_traits<Iterator>::value_type,void*>::type>::const_iterator>::value>::type>
 {
-  //! The std::map reverse iterator type
-  typedef typename std::map<Key,T>::reverse_iterator type;
+  //! The std::unordered_set const_iterator type
+  typedef typename std::unordered_set<typename std::iterator_traits<Iterator>::value_type>::const_iterator type;
 };
 
-/*! isConstIterator partial specialization for std::unordered_map::iterator
+/*! ConstIterator partial specialization for std::unordered_map iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct isConstIterator<typename std::unordered_map<Key,T>::iterator> : public std::false_type
-{ /* ... */ };
-
-/*! isConstIterator partial specialization for std::unordered_map::const_iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct isConstIterator<typename std::unordered_map<Key,T>::const_iterator> : public std::true_type
-{ /* ... */ };
-  
-/*! constIterator partial specialization for std::unordered_map::iterator
- * \ingroup iterator_type_traits
- */
-template<typename Key, typename T>
-struct constIterator<typename std::unordered_map<Key,T>::iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename std::conditional<IsHashable<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type>::value,typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,void*>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator>::value>::type>
 {
-  //! The std::unordered_map const iterator type
-  typedef typename std::unordered_map<Key,T>::const_iterator type;
+  //! The std::unordered_map const_iterator type
+  typedef typename std::unordered_map<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_iterator type;
 };
 
-/*! constIterator partial specialization for std::unordered_map::const_iterator
+/*! ConstIterator partial specialization for std::unordered_map const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct constIterator<typename std::unordered_map<Key,T>::const_iterator>
+template<typename Iterator>
+struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename std::conditional<IsHashable<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type>::value,typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,void*>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_iterator>::value>::type>
 {
-  //! The std::unordered_map const iterator type
-  typedef typename std::unordered_map<Key,T>::const_iterator type;
+  //! The std::unordered_map const_iterator type
+  typedef typename std::unordered_map<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::unordered_map::iterator
+/*! NonConstIterator partial specialization for std::unordered_map iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct nonConstIterator<typename std::unordered_map<Key,T>::iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename std::conditional<IsHashable<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type>::value,typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,void*>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator>::value>::type> 
 {
   //! The std::unordered_map iterator type
-  typedef typename std::unordered_map<Key,T>::iterator type;
+  typedef typename std::unordered_map<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator type;
 };
 
-/*! nonConstIterator partial specialization for std::unordered_map::const_iterator
+/*! NonConstIterator partial specialization for std::unordered_map const_iterator types
  * \ingroup iterator_type_traits
  */
-template<typename Key, typename T>
-struct nonConstIterator<typename std::unordered_map<Key,T>::const_iterator>
+template<typename Iterator>
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename std::conditional<IsHashable<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type>::value,typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,void*>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::const_iterator>::value>::type> 
 {
   //! The std::unordered_map iterator type
-  typedef typename std::unordered_map<Key,T>::iterator type;
+  typedef typename std::unordered_map<typename std::remove_const<typename std::tuple_element<0,typename std::iterator_traits<Iterator>::value_type>::type>::type,typename std::tuple_element<1,typename std::iterator_traits<Iterator>::value_type>::type>::iterator type;
 };
-  
+ 
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

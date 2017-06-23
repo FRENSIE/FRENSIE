@@ -44,10 +44,10 @@ template<typename Iterator>
 struct IteratorHelper<Iterator,typename std::enable_if<std::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value>::type>
 {
   static inline typename std::iterator_traits<Iterator>::reference offsetValue( Iterator& start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
-  { return iterator[n]; }
+  { return start_iterator[n]; }
 
   static inline typename std::add_const<typename std::iterator_traits<Iterator>::reference>::type constOffsetValue( const Iterator& start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
-  { return iterator[n]; }
+  { return start_iterator[n]; }
 };
   
 } // end Details namespace
@@ -72,8 +72,8 @@ View<Iterator>::View( const OtherIterator& start, const OtherIterator& end )
 
 // Copy constructor
 template<typename Iterator>
-View<Iterator>::View( View<Iterator>& other_view )
-  : d_start_itertor( other_view.d_start_iterator ),
+View<Iterator>::View( const View<Iterator>& other_view )
+  : d_start_iterator( other_view.d_start_iterator ),
     d_end_iterator( other_view.d_end_iterator )
 { /* ... */ }
 
@@ -84,14 +84,14 @@ View<Iterator>::View( View<Iterator>& other_view )
  */
 template<typename Iterator>
 template<typename OtherIterator>
-View<Iterator>::View( const View<typename std::enable_if<Utility::isConstIterator<Iterator>::value,OtherIterator>::type>& other_view )
+View<Iterator>::View( const View<OtherIterator>& other_view )
   : d_start_iterator( other_view.begin() ),
     d_end_iterator( other_view.end() )
 { /* ... */ }
 
 // Assignment operator
 template<typename Iterator>
-View<Iterator>& View<Iterator>::operator=( View<Iterator>& other_view )
+View<Iterator>& View<Iterator>::operator=( const View<Iterator>& other_view )
 {
   if( this != &other_view )
   {
@@ -109,13 +109,10 @@ View<Iterator>& View<Iterator>::operator=( View<Iterator>& other_view )
  */
 template<typename Iterator>
 template<typename OtherIterator>
-View<Iterator>& View<Iterator>::operator=( const View<typename std::enable_if<Utility::isConstIterator<Iterator>::value,OtherIterator>::type>& other_view )
+View<Iterator>& View<Iterator>::operator=( const View<OtherIterator>& other_view )
 {
-  if( this != &other_view )
-  {
-    d_start_iterator = other_view.begin();
-    d_end_iterator = other_view.end();
-  }
+  d_start_iterator = other_view.begin();
+  d_end_iterator = other_view.end();
 
   return *this;
 }
@@ -129,7 +126,10 @@ View<Iterator>::~View()
 template<typename Iterator>
 auto View<Iterator>::size() const -> size_type
 {
-  return std::distance( d_start_iterator, d_end_iterator );
+  if( d_start_iterator != d_end_iterator )
+    return std::distance( d_start_iterator, d_end_iterator );
+  else
+    return 0;
 }
 
 // Check if the view is empty
@@ -239,8 +239,8 @@ auto View<Iterator>::cend() const -> const_iterator
 
 // Return a sub-view
 template<typename Iterator>
-View<Iterator> View<Iterator>::operator( const size_type offset,
-                                         const size_type size ) const
+View<Iterator> View<Iterator>::operator()( const size_type offset,
+                                           const size_type size ) const
 {
   Iterator new_start_it = d_start_iterator;
   std::advance( new_start_it, offset );

@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_IteratorTypeTraitsDecl.hpp
 //! \author Alex Robinson
-//! \brief  Iterator type traits class declaration
+//! \brief  Iterator type traits class declarations
 //!
 //---------------------------------------------------------------------------//
 
@@ -24,29 +24,23 @@ namespace Utility{
 /*! Check if an iterator is a const iterator
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct isConstIterator<T> : public UndefinedTraits<T>
+template<typename T, typename Enabled = void>
+struct IsConstIterator : public UndefinedTraits<T>
 { /* ... */ };
 
 /*! Get the const iterator associated with the iterator of interest
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct constIterator
-{ 
-  //! The const iterator type associated with iterator type T
-  typedef UndefinedTraits<T>::DesiredTypeIsMissingSpecialization type;
-};
+template<typename T, typename Enabled = void>
+struct ConstIterator
+{ /* ... */ };
 
 /*! Get the iterator associated with the const iterator of interest
  * \ingroup iterator_type_traits
  */
-template<typename T>
-struct nonConstIterator
-{
-  //! The iterator type associated with iterator type T
-  typedef UndefinedTraits<T>::DesiredTypeIsMissingSpecialization type;
-};
+template<typename T, typename Enabled = void>
+struct NonConstIterator
+{ /* ... */ };
   
 } // end Utility namespace
 

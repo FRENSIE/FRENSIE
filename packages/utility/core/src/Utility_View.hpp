@@ -45,7 +45,7 @@ public:
   typedef Iterator iterator;
 
   //! The const iterator type of the view
-  typedef typename Utility::constIterator<Iterator>::type const_iterator;
+  typedef typename Utility::ConstIterator<Iterator>::type const_iterator;
 
   //! The difference type of the view
   typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
@@ -61,18 +61,18 @@ public:
   View( const OtherIterator& start, const OtherIterator& end );
 
   //! Copy constructor
-  View( View<Iterator>& other_view );
+  View( const View<Iterator>& other_view );
   
   //! Const view copy constructor
   template<typename OtherIterator>
-  View( const View<typename std::enable_if<Utility::isConstIterator<Iterator>::value,OtherIterator>::type>& other_view );
+  View( const View<OtherIterator>& other_view );
 
   //! Assignment operator
-  View<Iterator>& operator=( View<Iterator>& other_view );
+  View<Iterator>& operator=( const View<Iterator>& other_view );
 
   //! Const view assignment operator
   template<typename OtherIterator>
-  View<Iterator>& operator=( const View<typename std::enable_if<Utility::isConstIterator<Iterator>::value,OtherIterator>::type>& other_view );
+  View<Iterator>& operator=( const View<OtherIterator>& other_view );
 
   //! Destructor
   virtual ~View();
@@ -126,7 +126,7 @@ public:
   const_iterator cend() const;
 
   //! Return a sub-view
-  View<iterator> operator( const size_type offset, const size_type size ) const;
+  View<iterator> operator()( const size_type offset, const size_type size ) const;
 
   //! Return a const view
   View<const_iterator> toConst() const;
@@ -136,10 +136,10 @@ public:
 
 private:
 
-  //! The view start iterator
+  // The view start iterator
   iterator d_start_iterator;
 
-  //! The view end iterator
+  // The view end iterator
   iterator d_end_iterator;
 };
 
@@ -170,6 +170,13 @@ inline View<typename STLCompliantContainer::const_reverse_iterator> reverseView(
 {
   return View<typename STLCompliantContainer::const_reverse_iterator>( container.rbegin(), container.rend() );
 }
+
+/*! Partial specialization of ToStringTraits for Utility::View
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<Utility::View<T> > : public Details::ToStringTraitsIteratorHelper<Utility::View<T> >
+{ /* ... */ };
 
 //! Place the view in a stream
 template<typename T>
