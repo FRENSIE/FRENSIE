@@ -157,6 +157,13 @@ inline View<typename STLCompliantContainer::const_iterator> view( const STLCompl
   return View<typename STLCompliantContainer::const_iterator>( container.begin(), container.end() );
 }
 
+//! Create a const view of a container
+template<typename STLCompliantContainer>
+inline View<typename STLCompliantContainer::const_iterator> viewOfConst( const STLCompliantContainer& container )
+{
+  return View<typename STLCompliantContainer::const_iterator>( container.begin(), container.end() );
+}
+
 //! Create a reverse view of a container
 template<typename STLCompliantContainer>
 inline View<typename STLCompliantContainer::reverse_iterator> reverseView( STLCompliantContainer& container )
@@ -171,11 +178,44 @@ inline View<typename STLCompliantContainer::const_reverse_iterator> reverseView(
   return View<typename STLCompliantContainer::const_reverse_iterator>( container.rbegin(), container.rend() );
 }
 
+//! Create a const reverse view of a container
+template<typename STLCompliantContainer>
+inline View<typename STLCompliantContainer::const_reverse_iterator> reverseViewOfConst( const STLCompliantContainer& container )
+{
+  return View<typename STLCompliantContainer::const_reverse_iterator>( container.rbegin(), container.rend() );
+}
+
 /*! Partial specialization of ToStringTraits for Utility::View
  * \ingroup to_string_traits
  */
 template<typename T>
 struct ToStringTraits<Utility::View<T> > : public Details::ToStringTraitsIteratorHelper<Utility::View<T> >
+{ /* ... */ };
+
+/*! Specialization of ToStringTraits for Utility::View<std::string::const_iterator>
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<Utility::View<std::string::const_iterator> >
+{
+  //! Return the string
+  static inline std::string toString( const Utility::View<std::string::const_iterator>& string_view )
+  {
+    return std::string( string_view.begin(), string_view.end() );
+  }
+
+  //! Place the string view in a stream
+  static inline void toStream( std::ostream& os, const Utility::View<std::string::const_iterator>& string_view )
+  {
+    os << ToStringTraits<Utility::View<std::string::const_iterator> >::toString( string_view );
+  }
+};
+
+/*! Specialization of ToStringTraits for Utility::View<std::string::iterator>
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<Utility::View<std::string::iterator> > : public ToStringTraits<Utility::View<std::string::const_iterator> >
 { /* ... */ };
 
 //! Place the view in a stream
