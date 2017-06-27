@@ -9,6 +9,17 @@
 #ifndef UTILITY_VARIANT_HPP
 #define UTILITY_VARIANT_HPP
 
+// Std Lib Includes
+#include <string>
+#include <vector>
+#include <list>
+#include <forward_list>
+#include <deque>
+
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_FromStringTraits.hpp"
+
 namespace Utility{
 
 //! The variant class
@@ -25,25 +36,28 @@ public:
 
   //! Constructor
   template<typename T>
-  Variant( const T& object );
+  explicit Variant( const T& object );
 
   //! Destructor
   ~Variant()
   { /* ... */ }
 
   //! Assignment operator
-  QVariant& operator=( const Variant& other );
+  Variant& operator=( const Variant& that );
 
   //! Create a variant
   template<typename T>
-  static QVariant fromValue( const T& object );
+  static Variant fromValue( const T& object );
 
   //! Set the value of the variant
   template<typename T>
   void setValue( const T& object );
 
+  //! Check if the variant is null (no stored object)
+  bool isNull();
+
   //! Swap this variant with another
-  void swap( QVariant& other );
+  void swap( Variant& other );
 
   //! Clear the variant
   void clear();
@@ -54,7 +68,7 @@ public:
 
   //! Convert the variant to the desired type
   template<typename T>
-  void convert( T& object ) const noexcept;
+  void convert( T& object ) const;
 
   //! Convert the variant to a bool
   bool toBool( bool* success = NULL ) const noexcept;
@@ -135,26 +149,26 @@ public:
   std::string toString( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a vector
-  std::vector<QVariant> toVector( bool* success = NULL ) const noexcept;
+  std::vector<Variant> toVector( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a list
-  std::list<QVariant> toList( bool* success = NULL ) const noexcept;
+  std::list<Variant> toList( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to forward list
-  std::forward_list<QVariant> toForwardList( bool* success = NULL ) const noexcept;
+  std::forward_list<Variant> toForwardList( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a deque
-  std::deque<QVariant> toDeque( bool* success = NULL ) const noexcept;
+  std::deque<Variant> toDeque( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to the desired type
   template<typename T>
-  T toType() const;
+  T toType( bool* success = NULL ) const;
 
   //! Inequality operator
-  bool operator!=( const QVariant& other ) const;
+  bool operator!=( const Variant& other ) const;
 
   //! Equality operator
-  bool operator==( const QVariant& other ) const;
+  bool operator==( const Variant& other ) const;
 
 private:
 
@@ -165,8 +179,72 @@ private:
 //! Cast the variant to the desired type
 template<typename T>
 T variant_cast( const Variant& variant );
+
+/*! Specialization of Utility::ToStringTraits for Utility::Variant
+ * \ingropu to_string_traits
+ */
+template<>
+struct ToStringTraits<Variant>
+{
+  //! Convert a Variant to a string
+  static inline std::string toString( const Variant& obj )
+  { return obj.toString(); }
+
+  //! Place the Variant in a stream
+  static inline void toStream( std::ostream& os, const Variant& obj )
+  { os << obj.toString(); }
+};
+
+/*! Specialization of Utility:FromStringTraits for Utility::Variant
+ * \ingroup from_string_traits
+ */
+template<>
+struct FromStringTraits<Variant>
+{
+  //! The type that a string will be converted to
+  typedef Variant ReturnType;
+
+  //! Convert the string to a Variant object
+  static inline ReturnType fromString( const std::string& obj_rep )
+  { return ReturnType( obj_rep ); }
+
+  //! Extract a variant from a stream
+  static inline void fromStream( std::istream& is,
+                                 Variant& obj,
+                                 const std::string& delims = std::string() )
+  {
+    std::string obj_data;
+    Utility::fromStream( is, obj_data, delims );
+                        
+    obj.setValue( obj_data );
+  }
+};
+
+//! Place a Variant in a stream
+inline std::ostream& operator<<( std::ostream& os, const Variant& variant )
+{
+  Utility::toStream( os, variant );
+
+  return os;
+}
+
+//! Extract a Variant from a stream
+inline std::istream& operator>>( std::istream& is, Variant& variant )
+{
+  Utility::fromStream( is, variant );
+
+  return is;
+}
   
 } // end Utility namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_Variant_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_VARIANT_HPP
 
