@@ -70,7 +70,7 @@ struct ComparisonTraits<std::string>
     // Array Element Compare
     if( index >= 0 )
     {
-      out << "\nError, " << first_name << "[" << index << "]" << " = "
+      out << first_name << "[" << index << "]" << " = "
 	  << first_value << " == " << second_name << "[" << index << "]"
 	  << " = " << second_value << ": ";
       if( first_value != second_value )
@@ -124,7 +124,7 @@ struct ComparisonTraits<T,typename std::enable_if<std::is_integral<T>::value>::t
     // Array Element Compare
     if( index >= 0 )
     {
-      out << "\nError, " << first_name << "[" << index << "]" << " = "
+      out << first_name << "[" << index << "]" << " = "
 	  << first_value << " == " << second_name << "[" << index << "]"
 	  << " = " << second_value << ": ";
       if( first_value != second_value )
@@ -179,7 +179,7 @@ struct ComparisonTraits<T,typename std::enable_if<std::is_floating_point<T>::val
       // Array Element Compare
       if( index >= 0 )
       {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	out << first_name << "[" << index << "]" << " = "
 	    << first_value << " == " << second_name << "[" << index << "]"
 	    << " = " << second_value << ": ";
 	if( first_value != second_value )
@@ -214,7 +214,7 @@ struct ComparisonTraits<T,typename std::enable_if<std::is_floating_point<T>::val
       // Array Element Compare
       if( index >= 0 )
       {
-	out << "\nError, relErr(" << first_name << "[" << index << "],"
+	out << "relErr(" << first_name << "[" << index << "],"
 	    << second_name << "[" << index << "])" << " = relErr("
 	    << first_value << "," << second_value << ") = " << err
 	    << " <= tol = " << tol << ": ";

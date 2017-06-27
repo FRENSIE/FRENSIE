@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <type_traits>
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
@@ -99,6 +100,30 @@ void initializeInputStream( std::istream& is, const char start_delim );
 bool moveInputStreamToNextElement( std::istream& is,
                                    const char elem_delim,
                                    const char end_delim );
+
+/*! Expand pi keyword in string
+ *
+ * All occurances of elements with the 'pi' keyword in the string will be
+ * expanded to the actual value. A valid element with the 'pi' keyword must 
+ * have one of the following formats: 'n*pi/d', '-pi' or '-pi/d', where n and d
+ * are integers and/or floating point values. The pi keyword is case 
+ * insensitive.
+ */
+void expandPiKeywords( std::string& obj_rep );
+
+/*! Expand interval keywords in string
+ *
+ * All occurances of elements with the 'i' or 'l' keyword in the string will be
+ * expanded to actual element values. The 'i' and 'l' keywords are case 
+ * insensitive. An integer must appear before the keyword to indicate the 
+ * number of elements that will be created. Both keywords rely on the elements 
+ * directly before and after the element with the keyword to calculate the 
+ * intermediate elements. The 'i' keyword represents elements with equal linear
+ * spacing while the l keyword represents elements with equal logarithmic 
+ * spacing.
+ * \ingroup from_string_traits
+ */
+void expandIntervalKeywords( std::string& obj_rep );
   
 } // end Utility namespace
 

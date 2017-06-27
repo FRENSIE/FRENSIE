@@ -11,9 +11,8 @@
 
 // Std Lib Includes
 #include <sstream>
-#include <string>
-#include <type_traits>
 #include <iterator>
+#include <limits>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -26,11 +25,11 @@
 #include <unordered_map>
 
 // Boost Includes
-#include <boost/algorithm/string/case_conv.hpp>
-#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string.hpp>
 
 // FRENSIE Includes
 #include "Utility_FromStringTraitsDecl.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
@@ -91,6 +90,305 @@ inline bool moveInputStreamToNextElement( std::istream& is,
       return true;
     }
   }
+}
+
+namespace Details{
+
+// Expand pi keyword in a substring
+void expandPiKeywordInSubstring( const std::string::size_type start,
+                                 const std::string::size_type true_end,
+                                 std::string& substring )
+{
+  // Convert to lower case
+  boost::algorithm::to_lower( substring );
+  
+  std::string::size_type pi_pos = substring.find( "pi", start );
+
+  TEST_FOR_EXCEPTION( substring.find( "pi", pi_pos+2 ) < true_end,
+		      std::runtime_error,
+		      "The 'pi' keyword cannot occur multiple times in the "
+                      "same element!" );
+
+  if( pi_pos >= start && pi_pos < true_end )
+  {
+    double front_value = 1.0, end_value = 1.0;
+
+    std::string front_string = substring.substr( start, pi_pos-start );
+
+    if( front_string.find_first_of( "0123456789" ) < front_string.size() )
+    {
+      std::istringstream iss( front_string );
+
+      iss >> front_value;
+    }
+    else if( front_string.find( "-" ) < front_string.size() )
+      front_value = -1.0;
+
+    std::string::size_type div_pos = substring.find_first_of( "/", start );
+
+    if( div_pos < true_end && div_pos > pi_pos )
+    {
+      std::string end_string =
+	substring.substr( div_pos+1, true_end - div_pos );
+
+      if( end_string.find_first_of( "0123456789" ) <
+	  end_string.size() )
+      {
+	std::istringstream iss( end_string );
+
+	iss >> end_value;
+      }
+    }
+    else if( div_pos < pi_pos )
+    {
+      THROW_EXCEPTION( std::runtime_error,
+		       "invalid array element value ("
+		       << substring.substr( start, true_end )
+		       << ")! " );
+    }
+
+    std::ostringstream oss;
+    oss.precision( 18 );
+
+    oss << front_value*Utility::PhysicalConstants::pi/end_value;
+
+    substring.replace( start, true_end - start + 1, oss.str() );
+  }
+}
+  
+} // end Details namespace
+
+// Expand pi keyword in string
+void expandPiKeywords( std::string& obj_rep )
+{
+  std::string::size_type orig_string_size = 0;
+  std::string::size_type elem_start_pos, elem_end_pos;
+
+  do{
+    // This is either the first loop or the string has changed because
+    // an occurance of the pi keyword has been replaced.
+    if( orig_string_size != obj_rep.size() )
+    {
+      // Find the start of an element
+      elem_start_pos = obj_rep.find( "{" );
+
+      if( elem_start_pos < obj_rep.size() )
+        ++elem_start_pos;
+      else
+        elem_start_pos = 0;
+
+      orig_string_size = obj_rep.size();
+    }
+    else
+    {
+      // Move the the next element
+      elem_start_pos = elem_end_pos+1;
+    }
+
+    // Find the end of an element
+    elem_end_pos = obj_rep.find_first_of( ",}", elem_start_pos );
+    
+    if( elem_end_pos > obj_rep.size() )
+      elem_end_pos = obj_rep.size();
+
+    
+    Details::expandPiKeywordInSubstring( elem_start_pos,
+                                         elem_end_pos - 1,
+                                         obj_rep );
+  }while( elem_end_pos < obj_rep.size() );
+}
+
+namespace Details{
+
+// Replace occurances of interval keyword within a substring
+void expandIntervalKeywordInSubstring( const std::string& left_element,
+                                       std::string& middle_element,
+                                       const std::string& right_element )
+{
+  bool raw_left_element = left_element.find( "," ) > left_element.size();
+  bool raw_right_element = right_element.find( "," ) > right_element.size();
+
+  std::string::size_type op_pos = middle_element.find_first_of( "il" );
+
+  if( raw_left_element && raw_right_element &&
+      op_pos < middle_element.size() )
+  {
+    TEST_FOR_EXCEPTION( left_element.find( "inf" ) < left_element.size(),
+                        std::runtime_error,
+                        "The inf keyword cannot be used with the interval "
+                        "keyword!" );
+    
+    TEST_FOR_EXCEPTION( left_element.find_first_of( "il" ) <
+			left_element.size(),
+			std::runtime_error,
+			"interval keywords cannot occur in consecutive "
+                        "elements!" );
+
+    TEST_FOR_EXCEPTION( right_element.find( "inf" ) < right_element.size(),
+                        std::runtime_error,
+                        "The inf keyword cannot be used with the interval "
+                        "keyword!" );
+    
+    TEST_FOR_EXCEPTION( right_element.find_first_of( "il" ) <
+			right_element.size(),
+			std::runtime_error,
+			"interval keywords cannot occur in consecutive "
+                        "elements!" );
+
+    double left_value, right_value;
+
+    {
+      std::istringstream iss( left_element );
+
+      iss >> left_value;
+    }
+
+    {
+      std::istringstream iss( right_element );
+
+      iss >> right_value;
+    }
+
+    TEST_FOR_EXCEPTION( left_value > right_value,
+			std::runtime_error,
+			"the array elements must be in ascending order ("
+                        << left_value << " !<= " << right_value << ")!" );
+
+    int intervals;
+
+    {
+      std::istringstream iss( middle_element.substr( 0, op_pos ) );
+
+      iss >> intervals;
+    }
+
+    TEST_FOR_EXCEPTION( intervals <= 0,
+			std::runtime_error,
+			"a positive integer must be specified with the "
+                        "interval keyword (e.g. 3i or 10l)!" );
+
+    // Increment the interval value to account for the last element
+    ++intervals;
+
+    // Linear increments
+    if( middle_element[op_pos] == 'i' )
+    {
+      double step_size = (right_value-left_value)/intervals;
+
+      // Replace the interval keyword with the new elements
+      middle_element.clear();
+
+      for( size_t i = 1; i < intervals; ++i )
+      {
+	std::ostringstream oss;
+	oss.precision( 18 );
+
+	oss << left_value + step_size*i;
+
+	middle_element += oss.str();
+
+	if( i < intervals-1 )
+	  middle_element += ", ";
+      }
+    }
+    // Log increments
+    else 
+    {
+      TEST_FOR_EXCEPTION( left_value <= 0.0,
+			  std::runtime_error,
+			  "the starting value ( " << left_value <<
+                          ") must be positive when using the log interval "
+                          "keyword 'l'!" );
+
+      double step_size = log(right_value/left_value)/intervals;
+
+      // Replace the interval keyword with the new elements
+      middle_element.clear();
+
+      for( size_t i = 1; i < intervals; ++i )
+      {
+	std::ostringstream oss;
+	oss.precision( 18 );
+
+	oss << exp( log(left_value) + step_size*i );
+
+	middle_element += oss.str();
+
+	if( i < intervals-1 )
+	  middle_element += ", ";
+      }
+    }
+  }
+}
+
+} // end Details namespace
+
+// Expand interval keywords in string
+void expandIntervalKeywords( std::string& obj_rep )
+{
+  // Loop through all array elements
+  boost::algorithm::trim( obj_rep );
+
+  std::vector<std::string> array_elements;
+
+  boost::split( array_elements,
+                obj_rep,
+                boost::is_any_of( "," ) );
+
+  std::string front_copy =
+    boost::algorithm::to_lower_copy( array_elements.front() );
+
+  if( front_copy.find( "inf" ) >= front_copy.size() )
+  {
+    TEST_FOR_EXCEPTION( array_elements.front().find_first_of( "il" ) <
+                        array_elements.front().size(),
+                        std::runtime_error,
+                        "the first element cannot have an interval keyword!" );
+  }
+
+  std::string back_copy =
+    boost::algorithm::to_lower_copy( array_elements.back() );
+
+  if( back_copy.find( "inf" ) >= back_copy.size() )
+  {
+    TEST_FOR_EXCEPTION( array_elements.back().find_first_of( "il" ) <
+                        array_elements.back().size(),
+                        std::runtime_error,
+                        "the last element cannot have an interval keyword!" );
+  }
+
+  std::string::size_type bracket_pos = array_elements.front().find( "{" );
+
+  if( bracket_pos < array_elements.front().size() )
+    array_elements.front().erase( bracket_pos, 1 );
+
+  bracket_pos = array_elements.back().find( "}" );
+
+  if( bracket_pos < array_elements.back().size() )
+    array_elements.back().erase( bracket_pos, 1 );
+
+  for( size_t i = 1; i < array_elements.size()-1; ++i )
+  {
+    // We want the 'i' and 'l' keywords to be case insensitive
+    boost::algorithm::to_lower( array_elements[i] );
+    
+    Details::expandIntervalKeywordInSubstring(
+                      boost::algorithm::to_lower_copy( array_elements[i-1] ),
+                      array_elements[i],
+                      boost::algorithm::to_lower_copy( array_elements[i+1] ) );
+  }
+
+  // Reconstruct the array string
+  obj_rep = "{";
+  obj_rep += array_elements.front();
+
+  for( unsigned i = 1; i < array_elements.size(); ++i )
+  {
+    obj_rep += ",";
+    obj_rep += array_elements[i];
+  }
+
+  obj_rep += "}";
 }
 
 /*! Partial specialization for reference type
@@ -218,6 +516,9 @@ struct FromStringTraits<char>
 };
 
 /*! Specialization of FromStringTraits for bool
+ *
+ * The following special keywords are allowed in strings when converting to 
+ * bool: true and false. The special keywords are case insensitive.
  * \ingroup from_string_traits
  */
 template<>
@@ -260,11 +561,68 @@ struct FromStringTraits<bool>
   }
 };
 
-/*! Partial specialization of FromStringTraits for arithmetic types
+/*! Specialization of FromStringTraits for floating point types
+ *
+ * The following special keywords are allowed in strings when converting to
+ * floating point types: pi, inf*, -inf*. These keywords are case insenstive.
+ * A valid string with the 'pi' keyword must have one of the following formats:
+ * 'n*pi/d', '-pi' or '-pi/d', where n and d are integers and/or floating point
+ * values. The wildcard character after the inf keywords indicates that any
+ * keyword that starts with 'inf' or '-inf' will be parsed as infinity or
+ * negative infinity respectively.
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<T,typename std::enable_if<std::is_arithmetic<T>::value>::type>
+struct FromStringTraits<T,typename std::enable_if<std::is_floating_point<T>::value>::type>
+{
+  //! The type that a string will be converted to
+  typedef T ReturnType;
+
+  //! Convert the string to an object of type T
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    std::string lower_case_obj_rep =
+      boost::algorithm::to_lower_copy( obj_rep );
+
+    // Check for the negative infinity keyword
+    if( lower_case_obj_rep.find( "-inf" ) < lower_case_obj_rep.size() )
+      return -std::numeric_limits<ReturnType>::infinity();
+
+    // Check for the infinity keyword
+    if( lower_case_obj_rep.find( "inf" ) < lower_case_obj_rep.size() )
+      return std::numeric_limits<ReturnType>::infinity();
+
+    // Check for the pi keyword
+    if( lower_case_obj_rep.find( "pi" ) < lower_case_obj_rep.size() )
+      Utility::expandPiKeywords( lower_case_obj_rep );
+
+    std::istringstream iss( lower_case_obj_rep );
+
+    ReturnType obj;
+
+    iss >> obj;
+
+    return obj;
+  }
+
+  //! Extract an object of type T from the stream
+  static inline void fromStream( std::istream& is,
+                                 T& obj,
+                                 const std::string& delim = std::string() )
+  {
+    std::string obj_rep;
+
+    Utility::fromStream( is, obj_rep, delim );
+
+    obj = FromStringTraits<T>::fromString( obj_rep );
+  }
+};
+
+/*! Partial specialization of FromStringTraits for integral types
+ * \ingroup from_string_traits
+ */
+template<typename T>
+struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value>::type>
 {
   //! The type that a string will be converted to
   typedef T ReturnType;
@@ -438,11 +796,12 @@ struct FromStringTraits<std::pair<T1,T2> >
 
 namespace Details{
 
-//! FromStringTraits base helper class for stl compliant containers
+//! FromStringTraits base helper class for stl compliant containers with general value types
 template<typename STLCompliantContainer,
          typename ContainerValueType = typename STLCompliantContainer::value_type,
          typename ReturnContainerType = STLCompliantContainer,
-         typename ReturnContainerValueType = typename ReturnContainerType::value_type>
+         typename ReturnContainerValueType = typename ReturnContainerType::value_type,
+         typename Enabled = void>
 struct FromStringTraitsSTLCompliantContainerBaseHelper
 {
   //! The type that a string will be converted to
@@ -476,9 +835,9 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::StringConversionException,
-                                "Could not extract a tuple from the stream!" );
+                                "Could not initialize the stream!" );
 
-    // Extract each element of the array
+    // Extract each element of the container
     bool done = false;
     size_t element_index = 0;
 
@@ -517,6 +876,120 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
                                   "Could not move the input stream to the next "
                                   "element (" << element_index << ")!" );
     }
+  }
+};
+
+//! FromStringTraits base helper class for stl compliant containers with general value types
+template<typename STLCompliantContainer,
+         typename ContainerValueType,
+         typename ReturnContainerType,
+         typename ReturnContainerValueType>
+struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,ContainerValueType,ReturnContainerType,ReturnContainerValueType,typename std::enable_if<std::is_arithmetic<ContainerValueType>::value && std::is_arithmetic<ReturnContainerValueType>::value && !std::is_same<ContainerValueType,char>::value && !std::is_same<ReturnContainerValueType,char>::value>::type>
+{
+  //! The type that a string will be converted to
+  typedef ReturnContainerType ReturnType;
+  
+  //! Convert the string to the required container type
+  template<typename ElementInsertionMemberFunction>
+  static inline ReturnType fromStringImpl( const std::string& obj_rep,
+                                           ElementInsertionMemberFunction insert_element )
+  {    
+    ReturnType container;
+
+    std::istringstream iss( obj_rep );
+
+    FromStringTraitsSTLCompliantContainerBaseHelper<ReturnType,ReturnContainerValueType>::fromStreamImpl( iss, container, insert_element );
+
+    return container;
+  }
+
+  //! Extract the container object from a stream
+  template<typename ElementInsertionMemberFunction>
+  static inline void fromStreamImpl( std::istream& is,
+                                     STLCompliantContainer& obj,
+                                     ElementInsertionMemberFunction insert_element )
+  {
+    obj.clear();
+
+    // Extract the entire string
+    std::string obj_rep;
+
+    try{
+      Utility::fromStream( is, obj_rep, "}" );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                             "Could not extract the object string from the "
+                             "stream!" );
+
+    boost::algorithm::to_lower( obj_rep );
+
+    // Check for the pi keyword
+    if( obj_rep.find( "pi" ) < obj_rep.size() )
+      Utility::expandPiKeywords( obj_rep );
+
+    // Expand interval keywords
+    Utility::expandIntervalKeywords( obj_rep );
+
+    // Create a new stream from the extracted and potentially modified
+    // object representation
+    std::istringstream iss( obj_rep );
+    
+    try{
+      // Initialize the input stream
+      Utility::initializeInputStream( iss, '{' );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not initialize the stream!" );
+
+    // Extract each element of the container
+    bool done = false;
+    size_t element_index = 0;
+
+    while( !done )
+    {
+      ContainerValueType element;
+
+      try{
+        Utility::fromStream( iss, element, ",}" );
+      }
+      EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                               "Element " << element_index << " was not "
+                               "successfully extracted from the stream!" );
+
+      // Check if the stream is still valid
+      TEST_FOR_EXCEPTION( iss.eof(),
+                          Utility::StringConversionException,
+                          "Unable to get element " << element_index << " (EOF "
+                          "reached unexpectedly)!" );
+
+      TEST_FOR_EXCEPTION( !iss,
+                          Utility::StringConversionException,
+                          "Unable to get element " << element_index << " (one "
+                          "or more error flags have been set)!" );
+
+      // The element has been successfully extracted
+      (obj.*insert_element)( element );
+      ++element_index;
+      
+      // Position the stream at the start of the next element (or end)
+      try{
+        done = Utility::moveInputStreamToNextElement( iss, ',', '}' );
+      }
+      EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                  Utility::StringConversionException,
+                                  "Could not move the input stream to the next "
+                                  "element (" << element_index << ")!" );
+    }
+
+    // Position the original stream at the start of the next element (or end)
+    try{
+      Utility::moveInputStreamToNextElement( is, ',', '}' );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not move the input stream to the next "
+                                "element!" );
   }
 };
 

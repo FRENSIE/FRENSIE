@@ -142,6 +142,65 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromString )
   TEST_EQUALITY_CONST( Utility::fromString<float>( "1" ), 1.0f );
   TEST_EQUALITY_CONST( Utility::fromString<float>( "-1.0" ), -1.0f );
   TEST_EQUALITY_CONST( Utility::fromString<float>( "0.000000000e+00" ), 0.0f );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "inf" ),
+                       std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "infinity" ),
+                       std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "Inf" ),
+                       std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "Infinity" ),
+                       std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "InFiNiTy" ),
+                       std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "INF" ),
+                       std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "INFINITY" ),
+                       std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-inf" ),
+                       -std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-infinity" ),
+                       -std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-Inf" ),
+                       -std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-Infinity" ),
+                       -std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-InFiNiTy" ),
+                       -std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-INF" ),
+                       -std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-INFINITY" ),
+                       -std::numeric_limits<float>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "pi" ),
+                       (float)Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( " Pi" ),
+                       (float)Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( " PI " ),
+                       (float)Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "1*pi" ),
+                       (float)Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "2Pi" ),
+                       2*(float)Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-pI" ),
+                       -(float)Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( Utility::fromString<float>( "-5*pi" ),
+                          -5*(float)Utility::PhysicalConstants::pi,
+                          1e-7 );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "pi/2" ),
+                       (float)Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-pi /2" ),
+                       -(float)Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "pi / 3" ),
+                       (float)Utility::PhysicalConstants::pi/3 );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "2pi/3" ),
+                       2*(float)Utility::PhysicalConstants::pi/3 );
+  TEST_EQUALITY_CONST( Utility::fromString<float>( "-3pi/7" ),
+                       -3*(float)Utility::PhysicalConstants::pi/7 );
+  TEST_FLOATING_EQUALITY( Utility::fromString<float>( "5*pi / 3" ),
+                          5*(float)Utility::PhysicalConstants::pi/3,
+                          1e-7 );
+  TEST_FLOATING_EQUALITY( Utility::fromString<float>( "-5*PI / 3" ),
+                          -5*(float)Utility::PhysicalConstants::pi/3,
+                          1e-7 );
 }
 
 //---------------------------------------------------------------------------//
@@ -170,6 +229,210 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
 
   TEST_EQUALITY_CONST( test_float, 0.0f );
 
+  iss.str( "inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+
+  iss.str( "infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+
+  iss.str( "Inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+
+  iss.str( "Infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+
+  iss.str( "InFiNiTy" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+
+  iss.str( "INF" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+
+  iss.str( "INFINITY" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+
+  iss.str( "-inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-Inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-Infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-InFiNiTy" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-INF" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-INFINITY" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  
+  iss.str( "pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+
+  iss.str( " Pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+
+  iss.str( " PI " );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+                       
+  iss.str( "1*pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+
+  iss.str( "2Pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, 2*(float)Utility::PhysicalConstants::pi );
+  
+  iss.str( "-pI" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -(float)Utility::PhysicalConstants::pi );
+
+  iss.str( "-5*pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_FLOATING_EQUALITY( test_float,
+                          -5*(float)Utility::PhysicalConstants::pi,
+                          1e-7 );
+
+  iss.str( "pi/2" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  
+  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi/2 );
+
+  iss.str( "-pi /2" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, -(float)Utility::PhysicalConstants::pi/2 );
+
+  iss.str( "pi / 3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+  
+  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi/3 );
+
+  iss.str( "2pi/3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, 2*(float)Utility::PhysicalConstants::pi/3 );
+
+  iss.str( "-3pi/7" );
+  iss.clear();
+  
+  Utility::fromStream( iss, test_float );
+  
+  TEST_EQUALITY_CONST( test_float,
+                       -3*(float)Utility::PhysicalConstants::pi/7 );
+
+  iss.str( "5*pi / 3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_FLOATING_EQUALITY( test_float,
+                          5*(float)Utility::PhysicalConstants::pi/3,
+                          1e-7 );
+
+  iss.str( "-5*PI / 3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float );
+  
+  TEST_FLOATING_EQUALITY( test_float,
+                          -5*(float)Utility::PhysicalConstants::pi/3,
+                          1e-7 );
+
   iss.str( "-1, 1.000000000000000000e+00" );
   iss.clear();
 
@@ -182,6 +445,32 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
   Utility::fromStream( iss, test_float );
 
   TEST_EQUALITY_CONST( test_float, 1.0f );
+
+  iss.str( "-1, 2*pi/3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float, "," );
+
+  TEST_EQUALITY_CONST( test_float, -1.0f );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, 2*(float)Utility::PhysicalConstants::pi/3 );
+
+  iss.str( "-PI, Pi/2" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_float, "," );
+
+  TEST_EQUALITY_CONST( test_float, -(float)Utility::PhysicalConstants::pi );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, test_float );
+
+  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi/2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -191,46 +480,335 @@ TEUCHOS_UNIT_TEST( FromStringTraits, double_fromString )
   TEST_EQUALITY_CONST( Utility::fromString<double>( "1" ), 1.0 );
   TEST_EQUALITY_CONST( Utility::fromString<double>( "-1.0" ), -1.0 );
   TEST_EQUALITY_CONST( Utility::fromString<double>( "0.000000000000000000e+00" ), 0.0 );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "inf" ),
+                       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "infinity" ),
+                       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "Inf" ),
+                       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "Infinity" ),
+                       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "InFiNiTy" ),
+                       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "INF" ),
+                       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "INFINITY" ),
+                       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-inf" ),
+                       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-infinity" ),
+                       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-Inf" ),
+                       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-Infinity" ),
+                       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-InFiNiTy" ),
+                       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-INF" ),
+                       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-INFINITY" ),
+                       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "pi" ),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( " Pi" ),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( " PI " ),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "1*pi" ),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "2Pi" ),
+                       2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-pI" ),
+                       -Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( Utility::fromString<double>( "-5*pi" ),
+                          -5*Utility::PhysicalConstants::pi,
+                          1e-7 );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "pi/2" ),
+                       Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-pi /2" ),
+                       -Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "pi / 3" ),
+                       Utility::PhysicalConstants::pi/3 );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "2pi/3" ),
+                       2*Utility::PhysicalConstants::pi/3 );
+  TEST_EQUALITY_CONST( Utility::fromString<double>( "-3pi/7" ),
+                       -3*Utility::PhysicalConstants::pi/7 );
+  TEST_FLOATING_EQUALITY( Utility::fromString<double>( "5*pi / 3" ),
+                          5*Utility::PhysicalConstants::pi/3,
+                          1e-7 );
+  TEST_FLOATING_EQUALITY( Utility::fromString<double>( "-5*PI / 3" ),
+                          -5*Utility::PhysicalConstants::pi/3,
+                          1e-7 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a float can be extracted from a stream
+// Check that a double can be extracted from a stream
 TEUCHOS_UNIT_TEST( FromStringTraits, double_fromStream )
 {
   std::istringstream iss( "1" );
 
-  float test_float;
+  double test_double;
 
-  Utility::fromStream( iss, test_float );
+  Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_float, 1.0 );
+  TEST_EQUALITY_CONST( test_double, 1.0 );
 
   iss.str( "-1.0" );
   iss.clear();
 
-  Utility::fromStream( iss, test_float );
+  Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_float, -1.0 );
+  TEST_EQUALITY_CONST( test_double, -1.0 );
 
   iss.str( "0.000000000000000000e+00" );
   iss.clear();
 
-  Utility::fromStream( iss, test_float );
+  Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_float, 0.0 );
+  TEST_EQUALITY_CONST( test_double, 0.0 );
+
+  iss.str( "inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, std::numeric_limits<float>::infinity() );
+
+  iss.str( "infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, std::numeric_limits<float>::infinity() );
+
+  iss.str( "Inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, std::numeric_limits<float>::infinity() );
+
+  iss.str( "Infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, std::numeric_limits<float>::infinity() );
+
+  iss.str( "InFiNiTy" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, std::numeric_limits<float>::infinity() );
+
+  iss.str( "INF" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, std::numeric_limits<float>::infinity() );
+
+  iss.str( "INFINITY" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, std::numeric_limits<float>::infinity() );
+
+  iss.str( "-inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-Inf" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-Infinity" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-InFiNiTy" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-INF" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<float>::infinity() );
+
+  iss.str( "-INFINITY" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<float>::infinity() );
+  
+  iss.str( "pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+
+  iss.str( " Pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+
+  iss.str( " PI " );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+                       
+  iss.str( "1*pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+
+  iss.str( "2Pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, 2*Utility::PhysicalConstants::pi );
+  
+  iss.str( "-pI" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -Utility::PhysicalConstants::pi );
+
+  iss.str( "-5*pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_FLOATING_EQUALITY( test_double,
+                          -5*Utility::PhysicalConstants::pi,
+                          1e-7 );
+
+  iss.str( "pi/2" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  
+  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi/2 );
+
+  iss.str( "-pi /2" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, -Utility::PhysicalConstants::pi/2 );
+
+  iss.str( "pi / 3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+  
+  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi/3 );
+
+  iss.str( "2pi/3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, 2*Utility::PhysicalConstants::pi/3 );
+
+  iss.str( "-3pi/7" );
+  iss.clear();
+  
+  Utility::fromStream( iss, test_double );
+  
+  TEST_EQUALITY_CONST( test_double,
+                       -3*Utility::PhysicalConstants::pi/7 );
+
+  iss.str( "5*pi / 3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_FLOATING_EQUALITY( test_double,
+                          5*Utility::PhysicalConstants::pi/3,
+                          1e-7 );
+
+  iss.str( "-5*PI / 3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double );
+  
+  TEST_FLOATING_EQUALITY( test_double,
+                          -5*Utility::PhysicalConstants::pi/3,
+                          1e-7 );
 
   iss.str( "-1, 1.000000000e+00" );
   iss.clear();
 
-  Utility::fromStream( iss, test_float, "," );
+  Utility::fromStream( iss, test_double, "," );
 
-  TEST_EQUALITY_CONST( test_float, -1.0 );
+  TEST_EQUALITY_CONST( test_double, -1.0 );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
-  Utility::fromStream( iss, test_float );
+  Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_float, 1.0 );
+  TEST_EQUALITY_CONST( test_double, 1.0 );
+
+  iss.str( "-1, 2*pi/3" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double, "," );
+
+  TEST_EQUALITY_CONST( test_double, -1.0 );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, 2*Utility::PhysicalConstants::pi/3 );
+
+  iss.str( "-PI, Pi/2" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_double, "," );
+
+  TEST_EQUALITY_CONST( test_double, -Utility::PhysicalConstants::pi );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, test_double );
+
+  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi/2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -772,34 +1350,121 @@ TEUCHOS_UNIT_TEST( FromStringTraits, pair_fromStream )
 // Check that a vector can be created from a string
 TEUCHOS_UNIT_TEST( FromStringTraits, vector_fromString )
 {
+  // Extract vector of short
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2}" )),
                            std::vector<short>({-1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2i, 2}" )),
+                           std::vector<short>({-1, 0, 1, 2}) );
+
+  // Extract vector of unsigned short
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned short> >( "{0, 10, 100}" )),
                            std::vector<unsigned short>({0, 10, 100}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned short> >( "{0, 3i, 100}" )),
+                           std::vector<unsigned short>({0, 25, 50, 75, 100}) );
+
+  // Extract vector of int
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<int> >( "{-11111, 0, 11111, 22222}" )),
                            std::vector<int>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<int> >( "{-11111, 2i, 22222}" )),
+                           std::vector<int>({-11111, 0, 11111, 22222}) );
+
+  // Extract vector of unsigned int
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned int> >( "{0, 10, 100, 1000, 10000}" )),
                            std::vector<unsigned int>({0, 10, 100, 1000, 10000}) );
+  
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned int> >( "{0, 3i, 10000}" )),
+                           std::vector<unsigned int>({0, 2500, 5000, 7500, 10000}) );
+
+  // Extract vector of lone
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<long> >( "{-11111, 0, 11111, 22222}" )),
                            std::vector<long>({-11111, 0, 11111, 22222}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<long> >( "{-11111, 2i, 22222}" )),
+                           std::vector<long>({-11111, 0, 11111, 22222}) );
+
+  // Extract vector of unsigned long
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned long> >( "{0, 10, 100, 1000, 10000}" )),
                            std::vector<unsigned long>({0, 10, 100, 1000, 10000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned long> >( "{0, 3i, 10000}" )),
+                           std::vector<unsigned long>({0, 2500, 5000, 7500, 10000}) );
+
+  // Extract vector of long long
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<long long> >( "{-1000000000, 0, 1000000000}" )),
                            std::vector<long long>({-1000000000, 0, 1000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<long long> >( "{-1000000000, 1i, 1000000000}" )),
+                           std::vector<long long>({-1000000000, 0, 1000000000}) );
+
+  // Extract vector of unsigned long long
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned long long> >( "{0, 1000000000, 10000000000}" )),
                            std::vector<unsigned long long>({0, 1000000000, 10000000000}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned long long> >( "{0, 1i, 10000000000}" )),
+                           std::vector<unsigned long long>({0, 5000000000, 10000000000}) );
+
+  // Extract vector of float
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-1, 0.0, 1.000000000e+00}" )),
                            std::vector<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-1, 3i, 1.000000000e+00}" )),
+                           std::vector<float>({-1.0f, -0.5f, 0.0f, 0.5f, 1.0f}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( (Utility::fromString<std::vector<float> >( "{1e-3, 2l, 1.0}" )),
+                                    std::vector<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
+                                    1e-9 );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{1.0, 1l, 100, 3i, 200}" )),
+                           std::vector<float>({1.0f, 10.0f, 100.0f, 125.0f, 150.0f, 175.0f, 200.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{0.0, pi/2, 3Pi / 4, PI, 2*pi}" )),
+                           std::vector<float>({0.0f, (float)Utility::PhysicalConstants::pi/2, 3*(float)Utility::PhysicalConstants::pi/4, (float)Utility::PhysicalConstants::pi, 2*(float)Utility::PhysicalConstants::pi}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-pi, 3i, 0}" )),
+                           std::vector<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-inf, 0, Infinity}" )),
+                           std::vector<float>({-std::numeric_limits<float>::infinity(), 0.0f, std::numeric_limits<float>::infinity()}) );
+  
+  
+  // Extract vector of double
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<double> >( "{-1, 0.0, 1.000000000000000000e+00}" )),
                            std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<double> >( "{-1, 3i, 1.000000000e+00}" )),
+                           std::vector<double>({-1.0, -0.5, 0.0, 0.5, 1.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( (Utility::fromString<std::vector<double> >( "{1e-3, 2l, 1.0}" )),
+                                    std::vector<double>({1e-3, 1e-2, 1e-1, 1.0}),
+                                    1e-9 );
+  TEST_COMPARE_FLOATING_CONTAINERS( (Utility::fromString<std::vector<double> >( "{1.0, 1l, 100, 3i, 200}" )),
+                                    std::vector<double>({1.0, 10.0, 100.0, 125.0, 150.0, 175.0, 200.0}),
+                                    1e-9 );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<double> >( "{0.0, pi/2, 3Pi / 4, PI, 2*pi}" )),
+                           std::vector<double>({0.0, Utility::PhysicalConstants::pi/2, 3*Utility::PhysicalConstants::pi/4, Utility::PhysicalConstants::pi, 2*Utility::PhysicalConstants::pi}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<double> >( "{-pi, 3i, 0}" )),
+                           std::vector<double>({-Utility::PhysicalConstants::pi, -3*Utility::PhysicalConstants::pi/4, -Utility::PhysicalConstants::pi/2, -Utility::PhysicalConstants::pi/4, 0.0}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<double> >( "{-Infinity, 0, inf}" )),
+                           std::vector<double>({-std::numeric_limits<double>::infinity(), 0, std::numeric_limits<double>::infinity()}) );
+
+  // Extract vector of char
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
                            std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
+
+  // Extract vector of string
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::string> >( "{Test, string}" )),
                            std::vector<std::string>({"Test","string"}) );
+
+  // Extract vector of pair
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::pair<int, int> > >( "{{0, 1}, {-1, 2}}" )),
                            (std::vector<std::pair<int,int> >({std::make_pair(0, 1), std::make_pair(-1, 2)})) );
+
+  // Extract vector of tuple
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::tuple<unsigned, double, long> > >( "{{0, 1.0, -100000}, {1, -1.00, 100001}}" )),
                            (std::vector<std::tuple<unsigned,double,long> >({std::make_tuple(0u, 1.0, -100000l), std::make_tuple(1u, -1.0, 100001l)})) );
+
+  // Extract vector of vectors
+  std::vector<std::vector<double> > test_vector =
+    Utility::fromString<std::vector<std::vector<double> > >( "{{-1, 3i, 1}, {1e-3, 2l, 1.0}, {-Inf, Inf}, {-pi/2, 1i, pi/2}}" );
+
+  TEST_EQUALITY_CONST( test_vector.size(), 4 );
+  TEST_COMPARE_CONTAINERS( test_vector[0],
+                           (std::vector<double>({-1.0, -0.5, 0.0, 0.5, 1.0})) );
+  TEST_COMPARE_FLOATING_CONTAINERS( test_vector[1],
+                                    (std::vector<double>({1e-3, 1e-2, 1e-1, 1.0})),
+                                    1e-9 );
+  TEST_COMPARE_CONTAINERS( test_vector[2],
+                           (std::vector<double>({-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()})) );
+  TEST_COMPARE_CONTAINERS( test_vector[3],
+                           (std::vector<double>({-Utility::PhysicalConstants::pi/2, 0.0, Utility::PhysicalConstants::pi/2})) );
 }
 
 //---------------------------------------------------------------------------//

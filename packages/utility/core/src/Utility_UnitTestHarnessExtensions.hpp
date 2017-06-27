@@ -407,6 +407,7 @@
 #define TEST_COMPARE_CONTAINERS( c1, c2 )       \
   {                                                                     \
     const bool result = Utility::compareContainers( c1, #c1, c2, #c2, out ); \
+    (out) << TEUCHOS_PASS_FAIL(result) << "\n\n";                       \
     if( !result ) success = false;                                      \
   }
 
@@ -416,6 +417,7 @@
 #define TEST_COMPARE_UNORDERED_CONTAINERS( c1, c2 )       \
   {                                                                     \
     const bool result = Utility::compareUnorderedContainers( c1, #c1, c2, #c2, out ); \
+    (out) << TEUCHOS_PASS_FAIL(result) << "\n\n";                       \
     if( !result ) success = false;                                      \
   }
 
@@ -426,6 +428,7 @@
 #define TEST_COMPARE_FLOATING_CONTAINERS( c1, c2, tol ) \
   {                                                     \
     const bool result = Utility::compareContainers( c1, #c1, c2, #c2, out, tol ); \
+    (out) << TEUCHOS_PASS_FAIL(result) << "\n\n";                       \
     if( !result ) success = false;                                      \
   }
 
