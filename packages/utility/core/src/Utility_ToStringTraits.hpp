@@ -13,9 +13,6 @@
 #include <sstream>
 #include <type_traits>
 #include <iterator>
-#include <deque>
-#include <set>
-#include <unordered_set>
 #include <map>
 #include <unordered_map>
 
@@ -207,27 +204,6 @@ struct ToStringTraitsIteratorHelper
 };
   
 } // end Details namespace
-
-/*! Partial specialization of ToStringTraits for std::deque
- * \ingroup to_string_traits
- */
-template<typename T>
-struct ToStringTraits<std::deque<T> > : public Details::ToStringTraitsIteratorHelper<std::deque<T> >
-{ /* ... */ };
-
-/*! Partial specialization of ToStringTraits for std::set
- * \ingroup to_string_traits
- */
-template<typename T>
-struct ToStringTraits<std::set<T> > : public Details::ToStringTraitsIteratorHelper<std::set<T> >
-{ /* ... */ };
-
-/*! Partial specialization of ToStringTraits for std::unordered_set
- * \ingroup to_string_traits
- */
-template<typename T>
-struct ToStringTraits<std::unordered_set<T> > : public Details::ToStringTraitsIteratorHelper<std::unordered_set<T> >
-{ /* ... */ };
 
 /*! Partial specialization of ToStringTraits for std::map
  * \ingroup to_string_traits

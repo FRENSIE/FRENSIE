@@ -13,9 +13,6 @@
 #include <sstream>
 #include <iterator>
 #include <limits>
-#include <deque>
-#include <set>
-#include <unordered_set>
 #include <map>
 #include <unordered_map>
 
@@ -553,27 +550,6 @@ public:
 };
 
 } // end Details namespace
-
-/*! Partial specialization of FromStringTraits for std::deque
- * \ingroup from_string_traits
- */
-template<typename T>
-struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::deque<T> >
-{ /* ... */ };
-
-/*! Partial specialization of FromStringTraits for std::set
- * \ingroup from_string_traits
- */
-template<typename T>
-struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::set<T> >
-{ /* ... */ };
-
-/*! Partial specialization of FromStringTraits for std::unordered_set
- * \ingroup from_string_traits
- */
-template<typename T>
-struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_set<T> >
-{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::map
  * \ingroup from_string_traits

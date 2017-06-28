@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "Utility_Vector.hpp"
 #include "Utility_List.hpp"
+#include "Utility_Deque.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 

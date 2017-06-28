@@ -241,6 +241,20 @@ TARGET_LINK_LIBRARIES(tstList utility_core)
 ADD_TEST(List_test tstList)
 SET_PROPERTY(TEST List_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstDeque
+  tstDeque.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDeque utility_core)
+ADD_TEST(Deque_test tstDeque)
+SET_PROPERTY(TEST Deque_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstSet
+  tstSet.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSet utility_core)
+ADD_TEST(Set_test tstSet)
+SET_PROPERTY(TEST Set_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstView
   tstView.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
