@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_Tuple.hpp
 //! \author Alex Robinson
-//! \brief  Simple struct for storing objects of arbitrary type
+//! \brief  Helper function and class declarations for std::tuple
 //!
 //---------------------------------------------------------------------------//
 
@@ -21,11 +21,12 @@
 
 /*! \defgroup tuple Tuple.
  *
- * There are some additional helper functions and classes that have
- * been defined that do not appear in the std library. Use Utility::get
- * instead of std::get when accessing tuple elements since some additional
- * useful overloads have been provided. All other std lib tuple helper
- * functions can be used.
+ * Additional helper functions and classes for use with std::tuple and
+ * std::pair types have been defined that do not appear in the standard 
+ * library. For example, Utility::get, Utility::TupleElement and 
+ * Utility::TupleSize can all be used instead of std::get, std::tuple_element 
+ * and std::tuple_size respectively to create methods that can take both tuple
+ * types and arithmetic types. 
  */
 
 namespace Utility{

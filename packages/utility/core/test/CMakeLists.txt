@@ -220,6 +220,13 @@ TARGET_LINK_LIBRARIES(tstTuple utility_core)
 ADD_TEST(Tuple_test tstTuple)
 SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstArray
+  tstArray.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstArray utility_core)
+ADD_TEST(Array_test tstArray)
+SET_PROPERTY(TEST Array_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstView
   tstView.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

@@ -13,8 +13,6 @@
 #include <sstream>
 #include <type_traits>
 #include <iterator>
-#include <tuple>
-#include <utility>
 #include <vector>
 #include <list>
 #include <forward_list>
@@ -212,13 +210,6 @@ struct ToStringTraitsIteratorHelper
 };
   
 } // end Details namespace
-
-/*! Partial specialization of ToStringTraits for std::array
- * \ingroup to_string_traits
- */
-template<typename T, size_t N>
-struct ToStringTraits<std::array<T,N> > : public Details::ToStringTraitsIteratorHelper<std::array<T,N> >
-{ /* ... */ };
 
 /*! Partial specialization of ToStringTraits for std::vector
  * \ingroup to_string_traits

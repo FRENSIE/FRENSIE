@@ -11,9 +11,6 @@
 
 // Std Lib Includes
 #include <iostream>
-#include <tuple>
-#include <utility>
-#include <array>
 #include <vector>
 #include <list>
 #include <forward_list>
@@ -28,16 +25,6 @@
 #include "Utility_FromStringTraits.hpp"
 
 namespace std{
-  
-//! Place a std::array in a stream
-template<typename T, size_t N>
-inline std::ostream& operator<<( std::ostream& os,
-                                 const std::array<T,N>& array )
-{
-  Utility::toStream( os, array );
-
-  return os;
-}
   
 //! Place a std::vector in a stream
 template<typename T>

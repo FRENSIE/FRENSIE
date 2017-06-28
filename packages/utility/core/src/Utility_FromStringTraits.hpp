@@ -13,8 +13,6 @@
 #include <sstream>
 #include <iterator>
 #include <limits>
-#include <tuple>
-#include <utility>
 #include <vector>
 #include <list>
 #include <forward_list>

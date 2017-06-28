@@ -49,6 +49,11 @@ struct TupleElement<I, const volatile T>
 };
 
 /*! \brief Specialization of TupleElement for all arithmetic types
+ *
+ * Unlike std::tuple_element, this specialization allows one to create
+ * methods that take both std::tuple types and arithmetic types (Utility::get
+ * must also be used instead of std::get). See the 
+ * Utility::Search::binaryLowerBound method for an example.
  * \ingroup tuple
  */
 template<typename T>
@@ -85,6 +90,11 @@ struct TupleSize<const volatile T> : public TupleSize<T>
 { /* ... */ };
 
 /*! \brief Specialization of TupleSize for all arithmetic types
+ *
+ * Unlike std::tuple_size, this specialization allows one to create
+ * methods that take both std::tuple types and arithmetic types (Utility::get
+ * must also be used instead of std::get). See the 
+ * Utility::Search::binaryLowerBound method for an example.
  * \ingroup tuple
  */
 template<typename T>
