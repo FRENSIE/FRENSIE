@@ -28,46 +28,6 @@
 #include "Utility_FromStringTraits.hpp"
 
 namespace std{
-
-//! Place a std::pair in a stream
-template<typename T1, typename T2>
-inline std::ostream& operator<<( std::ostream& os,
-                                 const std::pair<T1,T2>& pair )
-{
-  Utility::toStream( os, pair );
-
-  return os;
-}
-
-//! Extract a std::pair from a stream
-template<typename T1, typename T2>
-inline std::istream& operator>>( std::istream& is,
-                                 std::pair<T1,T2>& pair )
-{
-  Utility::fromStream( is, pair );
-
-  return is;
-}
-
-//! Place a std::tuple in a stream
-template<typename... Types>
-inline std::ostream& operator<<( std::ostream& os,
-                                 const std::tuple<Types...>& tuple )
-{
-  Utility::toStream( os, tuple );
-
-  return os;
-}
-
-//! Extract a std::tuple from a stream
-template<typename... Types>
-inline std::istream& operator>>( std::istream& is,
-                                 std::tuple<Types...>& tuple )
-{
-  Utility::fromStream( is, tuple );
-
-  return is;
-}
   
 //! Place a std::array in a stream
 template<typename T, size_t N>

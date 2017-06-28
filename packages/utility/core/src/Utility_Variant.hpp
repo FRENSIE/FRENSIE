@@ -88,26 +88,17 @@ public:
   //! Convert the variant to an uint8_t
   uint8_t toUint8( bool* success = NULL ) const noexcept;
 
-  //! Convert the variant to a char16_t
-  char16_t toChar16( bool* success = NULL ) const noexcept;
-
   //! Convert the variant to an int16_t
   int16_t toInt16( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a uint16_t
   uint16_t toUint16( bool* success = NULL ) const noexcept;
 
-  //! Convert the variant to a char32_t
-  char32_t toChar32( bool* success = NULL ) const noexcept;
-
   //! Convert the variant to a int32_t
   int32_t toInt32( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a uint32_t
   uint32_t toUint32( bool* success = NULL ) const noexcept;
-
-  //! Convert the variant to a wchar_t
-  wchar_t toWChar( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a short
   short toShort( bool* success = NULL ) const noexcept;

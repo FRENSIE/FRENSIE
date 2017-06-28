@@ -15,14 +15,13 @@
 #include <tuple>
 #include <utility>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_FromStringTraits.hpp"
+
 /*! \defgroup tuple Tuple.
  *
- * There were originally some homebrew tuple classes (Pair, Trip, Quad)
- * defined in the Utility_Tuple.hpp header file. Since moving to C++11 the 
- * std::tuple variadic template class and helper functions has made these 
- * classes obsolete. To provide backwards compatibility, the Utility_Tuple.hpp
- * header file provides aliases with Pair, Trip and Quad names that use the 
- * std::tuple class. There are some additional helper functions that have
+ * There are some additional helper functions and classes that have
  * been defined that do not appear in the std library. Use Utility::get
  * instead of std::get when accessing tuple elements since some additional
  * useful overloads have been provided. All other std lib tuple helper
@@ -95,8 +94,126 @@ get( const std::pair<T1,T2>& tuple ) noexcept
  */
 template<size_t I, typename TupleType, typename ValueType>
 void set( TupleType& tuple, ValueType value );
+
+/*! Partial specialization of ToStringTraits for tuple types
+ * \ingroup tuple
+ * \ingroup to_string_traits
+ */
+template<typename... Types>
+struct ToStringTraits<std::tuple<Types...> >
+{
+  //! Convert the tuple to a string
+  static std::string toString( const std::tuple<Types...>& tuple );
+
+  //! Place the tuple in a stream
+  static void toStream( std::ostream& os, const std::tuple<Types...>& tuple );
+};
+
+/*! Partial specialization of FromStringTraits for std::tuple
+ * \ingroup tuple
+ * \ingroup from_string_traits
+ */
+template<typename... Types>
+struct FromStringTraits<std::tuple<Types...> >
+{
+  //! The type that a string will be converted to
+  typedef std::tuple<typename std::remove_reference<Types>::type...> ReturnType;
+  
+  //! Convert the string to an object of type T
+  static ReturnType fromString( const std::string& obj_rep );
+
+  //! Extract the object from a stream
+  static void fromStream( std::istream& is,
+                          std::tuple<Types...>& obj,
+                          const std::string& = std::string() );
+};
+
+/*! Partial specialization of ToStringTraits for std::pair types
+ * \ingroup tuple
+ * \ingroup to_string_traits
+ */
+template<typename T1, typename T2>
+struct ToStringTraits<std::pair<T1,T2> >
+{
+  //! Convert the tuple to a string
+  static std::string toString( const std::pair<T1,T2>& pair );
+
+  //! Place the tuple in a stream
+  static void toStream( std::ostream& os, const std::pair<T1,T2>& pair );
+};
+
+/*! Partial specialization of FromStringTraits for std::pair
+ * \ingroup tuple
+ * \ingroup from_string_traits
+ */
+template<typename T1, typename T2>
+struct FromStringTraits<std::pair<T1,T2> >
+{
+  //! The type that a string will be converted to
+  typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> ReturnType;
+  
+  //! Convert the string to an object of type T
+  static ReturnType fromString( const std::string& obj_rep );
+
+  //! Extract the object from a stream
+  static void fromStream( std::istream& is,
+                          std::pair<T1,T2>& obj,
+                          const std::string& = std::string() );
+};
   
 } // end Utility namespace
+
+namespace std{
+
+/*! Place a std::tuple in a stream
+ * \ingroup tuple
+ */
+template<typename... Types>
+inline std::ostream& operator<<( std::ostream& os,
+                                 const std::tuple<Types...>& tuple )
+{
+  Utility::toStream( os, tuple );
+
+  return os;
+}
+
+/*! Extract a std::tuple from a stream
+ * \ingroup tuple
+ */
+template<typename... Types>
+inline std::istream& operator>>( std::istream& is,
+                                 std::tuple<Types...>& tuple )
+{
+  Utility::fromStream( is, tuple );
+
+  return is;
+}
+
+/*! Place a std::pair in a stream
+ * \ingroup tuple
+ */
+template<typename T1, typename T2>
+inline std::ostream& operator<<( std::ostream& os,
+                                 const std::pair<T1,T2>& pair )
+{
+  Utility::toStream( os, pair );
+
+  return os;
+}
+
+/*! Extract a std::pair from a stream
+ * \ingroup tuple
+ */
+template<typename T1, typename T2>
+inline std::istream& operator>>( std::istream& is,
+                                 std::pair<T1,T2>& pair )
+{
+  Utility::fromStream( is, pair );
+
+  return is;
+}
+  
+} // end std namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes.

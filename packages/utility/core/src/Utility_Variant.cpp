@@ -107,15 +107,6 @@ uint8_t Variant::toUint8( bool* success ) const noexcept
   return this->toType<uint8_t>( success );
 }
 
-// Convert the variant to a char16_t
-/*! \details If an error occurs in the conversion the success boolean
- * will be set to false (if it was passed in).
- */
-char16_t Variant::toChar16( bool* success ) const noexcept
-{
-  return this->toType<char16_t>( success );
-}
-
 // Convert the variant to an int16_t
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
@@ -134,15 +125,6 @@ uint16_t Variant::toUint16( bool* success ) const noexcept
   return this->toType<uint16_t>( success );
 }
 
-// Convert the variant to a char32_t
-/*! \details If an error occurs in the conversion the success boolean
- * will be set to false (if it was passed in).
- */
-char32_t Variant::toChar32( bool* success ) const noexcept
-{
-  return this->toType<char32_t>( success );
-}
-
 // Convert the variant to a int32_t
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
@@ -159,15 +141,6 @@ int32_t Variant::toInt32( bool* success ) const noexcept
 uint32_t Variant::toUint32( bool* success ) const noexcept
 {
   return this->toType<uint32_t>( success );
-}
-
-// Convert the variant to a wchar_t
-/*! \details If an error occurs in the conversion the success boolean
- * will be set to false (if it was passed in).
- */
-wchar_t Variant::toWChar( bool* success ) const noexcept
-{
-  return this->toType<wchar_t>( success );
 }
 
 // Convert the variant to a short
@@ -285,7 +258,7 @@ double Variant::toDouble( bool* success ) const noexcept
 std::string Variant::toString( bool* success ) const noexcept
 {
   if( success )
-    success = true;
+    *success = true;
   
   return d_stored_data;
 }

@@ -43,10 +43,12 @@ template<typename T>
 bool Variant::canConvert() const
 {
   try{
-    Utility::fromString( d_stored_data );
+    Utility::fromString<T>( d_stored_data );
   }
   catch( ... )
+  {
     return false;
+  }
 
   return true;
 }
@@ -58,7 +60,7 @@ bool Variant::canConvert() const
 template<typename T>
 void Variant::convert( T& object ) const
 {
-  object = Utility::fromString( d_stored_data );
+  object = Utility::fromString<T>( d_stored_data );
 }
 
 // Convert the variant to the desired type

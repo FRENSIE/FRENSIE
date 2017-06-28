@@ -144,6 +144,208 @@ get( const boost::units::quantity<Unit,T>& tuple )
 template<size_t I, typename TupleType, typename ValueType>
 inline void set( TupleType& tuple, ValueType value )
 { Utility::get<I>( tuple ) = value; }
+
+namespace Details{
+
+//! The tuple output stream helper class 
+template<size_t I, typename TupleType, typename Enable = void>
+struct TupleStreamHelper
+{
+  static inline void toStream( std::ostream& os, const TupleType& tuple )
+  { 
+    // Insert the tuple element
+    Utility::toStream( os, std::get<I>( tuple ) );
+    
+    os << ", ";
+
+    // Insert the remaining tuple elements
+    TupleStreamHelper<I+1,TupleType>::toStream( os, tuple );
+  }
+
+  static inline void fromStream( std::istream& is, TupleType& tuple )
+  {
+    // Extract the tuple element
+    try{
+      Utility::fromStream( is, std::get<I>( tuple ), ",}" );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                             "Tuple element " << I << " was not successfully "
+                             "extracted from the input stream!" );
+
+    // Position the stream at the start of the next element (or end)
+    try{
+      Utility::moveInputStreamToNextElement( is, ',', '}' );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not move the input stream to the next "
+                                "element (last tuple element successfully "
+                                "extracted = " << I << ")!" );
+
+    // Extract the remaining tuple elements
+    TupleStreamHelper<I+1,TupleType>::fromStream( is, tuple );
+  }
+};
+
+/*! \brief The tuple output stream helper class 
+ * (specialization for I == std::tuple_size-1, which is for the last element)
+ */
+template<size_t I, typename TupleType>
+struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_size<TupleType>::value-1>::type>
+{
+  static inline void toStream( std::ostream& os, const TupleType& tuple )
+  {
+    // Insert the tuple element
+    Utility::toStream( os, std::get<I>( tuple ) );
+  }
+
+  static inline void fromStream( std::istream& is, TupleType& tuple )
+  {
+    // Extract the tuple element
+    try{
+      Utility::fromStream( is, std::get<I>( tuple ), ",}" );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                             "Tuple element " << I << " was not "
+                             "successfully extracted from the input stream!" );
+
+    // Position the stream at the start of the next element (or end)
+    bool at_end;
+    try{
+      at_end = Utility::moveInputStreamToNextElement( is, ',', '}' );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not move the input stream to the next "
+                                "element (last tuple element successfully "
+                                "extracted = " << I << ")!" );
+
+    TEST_FOR_EXCEPTION( !at_end,
+                        Utility::StringConversionException,
+                        "Finished extracting tuple before the end of the "
+                        "stream was reached (this likely means that the "
+                        "string is not compatible with the tuple type)!" );
+  }
+};
+
+/*! \brief The tuple output stream helper class
+ * (specialization for I == std::tuple_size, which is past the last element)
+ */
+template<size_t I, typename TupleType>
+struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_size<TupleType>::value>::type>
+{
+  static inline void toStream( std::ostream& os, const TupleType& tuple )
+  { /* ... */ }
+
+  static inline void fromStream( std::istream& is, TupleType& tuple )
+  { /* ... */ }
+};
+
+} // end Details namespace
+
+// Convert the tuple to a string
+template<typename... Types>
+inline std::string ToStringTraits<std::tuple<Types...> >::toString(
+                                            const std::tuple<Types...>& tuple )
+{
+  std::ostringstream oss;
+  
+  ToStringTraits<std::tuple<Types...> >::toStream( oss, tuple );
+  
+  return oss.str();
+}
+
+// Place the tuple in a stream
+template<typename... Types>
+inline void ToStringTraits<std::tuple<Types...> >::toStream(
+                                            std::ostream& os,
+                                            const std::tuple<Types...>& tuple )
+{
+  os << '{';
+  Details::TupleStreamHelper<0,std::tuple<Types...> >::toStream( os, tuple);
+  os << '}';
+}
+
+
+// Convert the string to an object of type T
+template<typename... Types>
+inline auto FromStringTraits<std::tuple<Types...> >::fromString(
+                                     const std::string& obj_rep ) -> ReturnType
+{
+  std::istringstream iss( obj_rep );
+
+  ReturnType obj;
+
+  FromStringTraits<ReturnType>::fromStream( iss, obj );
+
+  return obj;
+}
+
+// Extract the object from a stream
+template<typename... Types>
+inline void FromStringTraits<std::tuple<Types...> >::fromStream(
+                                                     std::istream& is,
+                                                     std::tuple<Types...>& obj,
+                                                     const std::string& )
+{ 
+  try{
+    // Initialize the input stream
+    Utility::initializeInputStream( is, '{' );
+    
+    Details::TupleStreamHelper<0,std::tuple<Types...> >::fromStream( is, obj );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                              Utility::StringConversionException,
+                              "Could not extract a tuple from the stream!" );
+}
+
+// Convert the tuple to a string
+template<typename T1, typename T2>
+inline std::string ToStringTraits<std::pair<T1,T2> >::toString(
+                                                 const std::pair<T1,T2>& pair )
+{
+  auto pair_copy = std::tie( pair.first, pair.second );
+
+  return ToStringTraits<decltype(pair_copy)>::toString( pair_copy );
+}
+
+// Place the tuple in a stream
+template<typename T1, typename T2>
+inline void ToStringTraits<std::pair<T1,T2> >::toStream(
+                                                 std::ostream& os,
+                                                 const std::pair<T1,T2>& pair )
+{
+  auto pair_copy = std::tie( pair.first, pair.second );
+  
+  ToStringTraits<decltype(pair_copy)>::toStream( os, pair_copy );
+}
+
+
+// Convert the string to an object of type T
+template<typename T1, typename T2>
+inline auto FromStringTraits<std::pair<T1,T2> >::fromString(
+                                     const std::string& obj_rep ) -> ReturnType
+{
+  ReturnType pair;
+
+  std::istringstream iss( obj_rep );
+  
+  FromStringTraits<ReturnType>::fromStream( iss, pair );
+  
+  return pair;
+}
+
+// Extract the object from a stream
+template<typename T1, typename T2>
+inline void FromStringTraits<std::pair<T1,T2> >::fromStream(
+                                                         std::istream& is,
+                                                         std::pair<T1,T2>& obj,
+                                                         const std::string& )
+{ 
+  auto pair_reference = std::tie( obj.first, obj.second );
+
+  Utility::fromStream( is, pair_reference );
+}
   
 } // end Utility namespace
 

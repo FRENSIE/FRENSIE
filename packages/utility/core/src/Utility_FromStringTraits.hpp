@@ -299,154 +299,6 @@ struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value>::t
 
 namespace Details{
 
-// The helper class for stream i/o ops with tuples
-template<size_t I, typename TupleType, typename Enable = void>
-struct TupleFromStreamHelper
-{
-  static inline void fromStream( std::istream& is, TupleType& tuple )
-  {
-    // Extract the tuple element
-    try{
-      Utility::fromStream( is, std::get<I>( tuple ), ",}" );
-    }
-    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                             "Tuple element " << I << " was not successfully "
-                             "extracted from the input stream!" );
-
-    // Position the stream at the start of the next element (or end)
-    try{
-      Utility::moveInputStreamToNextElement( is, ',', '}' );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::StringConversionException,
-                                "Could not move the input stream to the next "
-                                "element (last tuple element successfully "
-                                "extracted = " << I << ")!" );
-
-    // Extract the remaining tuple elements
-    TupleFromStreamHelper<I+1,TupleType>::fromStream( is, tuple );
-  }
-};
-
-/*! \brief The helper class for stream i/o ops with tuples
- * (specialization for I == std::tuple_size-1, which is for the last element)
- */
-template<size_t I, typename TupleType>
-struct TupleFromStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_size<TupleType>::value-1>::type>
-{
-  static inline void fromStream( std::istream& is, TupleType& tuple )
-  {
-    // Extract the tuple element
-    try{
-      Utility::fromStream( is, std::get<I>( tuple ), ",}" );
-    }
-    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                             "Tuple element " << I << " was not "
-                             "successfully extracted from the input stream!" );
-
-    // Position the stream at the start of the next element (or end)
-    bool at_end;
-    try{
-      at_end = Utility::moveInputStreamToNextElement( is, ',', '}' );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::StringConversionException,
-                                "Could not move the input stream to the next "
-                                "element (last tuple element successfully "
-                                "extracted = " << I << ")!" );
-
-    TEST_FOR_EXCEPTION( !at_end,
-                        Utility::StringConversionException,
-                        "Finished extracting tuple before the end of the "
-                        "stream was reached (this likely means that the "
-                        "string is not compatible with the tuple type)!" );
-  }
-};
-
-/*! \brief The helper class for stream i/o ops with tuples
- * (specialization for I == std::tuple_size, which is past the last element)
- */
-template<size_t I, typename TupleType>
-struct TupleFromStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_size<TupleType>::value>::type>
-{
-  static inline void fromStream( std::istream& is, TupleType& tuple )
-  { /* ... */ }
-};
-
-} // end Details namespace
-
-/*! Partial specialization of FromStringTraits for std::tuple
- * \ingroup from_string_traits
- */
-template<typename... Types>
-struct FromStringTraits<std::tuple<Types...> >
-{
-  //! The type that a string will be converted to
-  typedef std::tuple<typename std::remove_reference<Types>::type...> ReturnType;
-  
-  //! Convert the string to an object of type T
-  static inline ReturnType fromString( const std::string& obj_rep )
-  {
-    std::istringstream iss( obj_rep );
-
-    ReturnType obj;
-
-    FromStringTraits<ReturnType>::fromStream( iss, obj );
-
-    return obj;
-  }
-
-  //! Extract the object from a stream
-  static inline void fromStream( std::istream& is,
-                                 std::tuple<Types...>& obj,
-                                 const std::string& = std::string() )
-  { 
-    try{
-      // Initialize the input stream
-      Utility::initializeInputStream( is, '{' );
-
-      Details::TupleFromStreamHelper<0,std::tuple<Types...> >::fromStream( is, obj );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::StringConversionException,
-                                "Could not extract a tuple from the stream!" );
-  }
-};
-
-/*! Partial specialization of FromStringTraits for std::pair
- * \ingroup from_string_traits
- */
-template<typename T1, typename T2>
-struct FromStringTraits<std::pair<T1,T2> >
-{
-  //! The type that a string will be converted to
-  typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> ReturnType;
-  
-  //! Convert the string to an object of type T
-  static inline ReturnType fromString( const std::string& obj_rep )
-  {
-    ReturnType pair;
-
-    std::istringstream iss( obj_rep );
-
-    FromStringTraits<ReturnType>::fromStream( iss, pair );
-
-    return pair;
-  }
-
-  //! Extract the object from a stream
-  static inline void fromStream( std::istream& is,
-                                 std::pair<T1,T2>& obj,
-                                 const std::string& = std::string() )
-  { 
-    auto pair_reference = std::tie( obj.first, obj.second );
-
-    Utility::fromStream( is, pair_reference );
-  }
-};
-
-namespace Details{
-
 //! FromStringTraits base helper class for stl compliant containers with general value types
 template<typename STLCompliantContainer,
          typename ContainerValueType = typename STLCompliantContainer::value_type,
@@ -867,9 +719,9 @@ inline bool moveInputStreamToNextElement( std::istream& is,
 namespace Details{
 
 // Expand pi keyword in a substring
-void expandPiKeywordInSubstring( const std::string::size_type start,
-                                 const std::string::size_type true_end,
-                                 std::string& substring )
+inline void expandPiKeywordInSubstring( const std::string::size_type start,
+                                        const std::string::size_type true_end,
+                                        std::string& substring )
 {
   // Convert to lower case
   boost::algorithm::to_lower( substring );
@@ -931,7 +783,7 @@ void expandPiKeywordInSubstring( const std::string::size_type start,
 } // end Details namespace
 
 // Expand pi keyword in string
-void expandPiKeywords( std::string& obj_rep )
+inline void expandPiKeywords( std::string& obj_rep )
 {
   std::string::size_type orig_string_size = 0;
   std::string::size_type elem_start_pos, elem_end_pos;
@@ -973,9 +825,9 @@ void expandPiKeywords( std::string& obj_rep )
 namespace Details{
 
 // Replace occurances of interval keyword within a substring
-void expandIntervalKeywordInSubstring( const std::string& left_element,
-                                       std::string& middle_element,
-                                       const std::string& right_element )
+inline void expandIntervalKeywordInSubstring( const std::string& left_element,
+                                              std::string& middle_element,
+                                              const std::string& right_element )
 {
   bool raw_left_element = left_element.find( "," ) > left_element.size();
   bool raw_right_element = right_element.find( "," ) > right_element.size();
@@ -1092,7 +944,7 @@ void expandIntervalKeywordInSubstring( const std::string& left_element,
 } // end Details namespace
 
 // Expand interval keywords in string
-void expandIntervalKeywords( std::string& obj_rep )
+inline void expandIntervalKeywords( std::string& obj_rep )
 {
   // Loop through all array elements
   boost::algorithm::trim( obj_rep );
