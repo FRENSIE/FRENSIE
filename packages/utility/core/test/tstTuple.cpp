@@ -783,86 +783,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, set, T1, T2, T3, T4 )
 UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, set );
 
 //---------------------------------------------------------------------------//
-// Check that a tuple can be constructed using the standalone method
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Tuple_1, makeTuple, T )
-{
-  std::tuple<T> tuple_1 = std::make_tuple( T( 1 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( tuple_1 ), 1 );
-
-  // Check that std tuple can also be used
-  std::tuple<T> std_tuple_1 = std::make_tuple( T( 1 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_1 ), 1 );
-}
-
-UNIT_TEST_TEMPLATE_1_INSTANT( Tuple_1, makeTuple );
-
-//---------------------------------------------------------------------------//
-// Check that a tuple can be contructed using the standalone method
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Tuple_2, makeTuple, T1, T2 )
-{
-  std::tuple<T1,T2> tuple_2 = std::make_tuple( T1( 1 ), T2( 2 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( tuple_2 ), 1 );
-  TEST_EQUALITY_CONST( Utility::get<1>( tuple_2 ), 2 );
-
-  // Check that std tuple can also be used
-  std::tuple<T1,T2> std_tuple_2 = std::make_tuple( T1( 1 ), T2( 2 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_2 ), 1 );
-  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_2 ), 2 );
-}
-
-UNIT_TEST_TEMPLATE_2_INSTANT( Tuple_2, makeTuple );
-
-//---------------------------------------------------------------------------//
-// Check that a tuple can be constructed using the standalone method
-TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Tuple_3, makeTuple, T1, T2, T3 )
-{
-  std::tuple<T1,T2,T3> tuple_3 = std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( tuple_3 ), 1 );
-  TEST_EQUALITY_CONST( Utility::get<1>( tuple_3 ), 2 );
-  TEST_EQUALITY_CONST( Utility::get<2>( tuple_3 ), 3 );
-
-  // Check that std tuple can also be used
-  std::tuple<T1,T2,T3> std_tuple_3 = std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_3 ), 1 );
-  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_3 ), 2 );
-  TEST_EQUALITY_CONST( Utility::get<2>( std_tuple_3 ), 3 );
-}
-
-UNIT_TEST_TEMPLATE_3_INSTANT( Tuple_3, makeTuple );
-
-//---------------------------------------------------------------------------//
-// Check that a tuple can be constructed using the standalone method
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Tuple_4, makeTuple, T1, T2, T3, T4 )
-{
-  std::tuple<T1,T2,T3,T4> tuple_4 =
-    std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( tuple_4 ), 1 );
-  TEST_EQUALITY_CONST( Utility::get<1>( tuple_4 ), 2 );
-  TEST_EQUALITY_CONST( Utility::get<2>( tuple_4 ), 3 );
-  TEST_EQUALITY_CONST( Utility::get<3>( tuple_4 ), 4 );
-
-  // Check that std tuple can also be used
-  std::tuple<T1,T2,T3,T4> std_tuple_4 =
-    std::make_tuple( T1( 1 ), T2( 2 ), T3( 3 ), T4( 4 ) );
-
-  TEST_EQUALITY_CONST( Utility::get<0>( std_tuple_4 ), 1 );
-  TEST_EQUALITY_CONST( Utility::get<1>( std_tuple_4 ), 2 );
-  TEST_EQUALITY_CONST( Utility::get<2>( std_tuple_4 ), 3 );
-  TEST_EQUALITY_CONST( Utility::get<3>( std_tuple_4 ), 4 );
-}
-
-UNIT_TEST_TEMPLATE_4_INSTANT( Tuple_4, makeTuple );
-
-//---------------------------------------------------------------------------//
 // Check that tuple types can be converted to a string
-TEUCHOS_UNIT_TEST( Tuple, tuple_toString )
+TEUCHOS_UNIT_TEST( Tuple, toString )
 {
   TEST_EQUALITY_CONST( Utility::toString( std::make_tuple( 0 ) ), "{0}" );
   TEST_EQUALITY_CONST( Utility::toString( std::make_tuple( 0.0f ) ),
@@ -916,7 +838,7 @@ TEUCHOS_UNIT_TEST( Tuple, tuple_toString )
 
 //---------------------------------------------------------------------------//
 // Check that tuple types can be placed in a stream
-TEUCHOS_UNIT_TEST( Tuple, tuple_toStream )
+TEUCHOS_UNIT_TEST( Tuple, toStream )
 {
   std::ostringstream oss;
 
@@ -1205,7 +1127,7 @@ TEUCHOS_UNIT_TEST( Tuple, pair_istream )
 
 //---------------------------------------------------------------------------//
 // Check that a tuple can be placed in a stream
-TEUCHOS_UNIT_TEST( Tuple, tuple_ostream )
+TEUCHOS_UNIT_TEST( Tuple, ostream )
 {
   std::ostringstream oss;
 
@@ -1334,7 +1256,7 @@ TEUCHOS_UNIT_TEST( Tuple, tuple_ostream )
 
 //---------------------------------------------------------------------------//
 // Check that a tuple can be extracted from a stream
-TEUCHOS_UNIT_TEST( Tuple, tuple_istream )
+TEUCHOS_UNIT_TEST( Tuple, istream )
 {
   std::istringstream iss( "{0}" );
 

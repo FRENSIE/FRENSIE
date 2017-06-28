@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_ContractException.hpp"
 
 /*! \defgroup vector Vector
  *
@@ -68,6 +69,83 @@ inline std::istream& operator>>( std::istream& is,
   Utility::fromStream( is, vector );
 
   return is;
+}
+
+/*! Append an element to a std::vector
+ *
+ * This operator gives a std::vector ostream-like capabilities.
+ * \ingroup vector
+ */
+template<typename T, typename U>
+inline std::vector<T>& operator<<( std::vector<T>& vector, const U& value )
+{
+  vector.push_back( value );
+  return vector;
+}
+
+/*! Append an element that has been converted to a string to a std::vector
+ *
+ * This operator first converts the string to a value of type T and then
+ * appends it to the vector.
+ * \ingroup vector
+ */
+template<typename T>
+inline std::vector<T>& operator<<( std::vector<T>& vector,
+                                   const std::string& value_string )
+{
+  vector.push_back( Utility::fromString<T>( value_string ) );
+  return vector;
+}
+
+/*! Append an element that has been converted to a string to a std::vector
+ *
+ * This operator first converts the string to a value of type T and then
+ * appends it to the vector.
+ * \ingroup vector
+ */
+template<typename T>
+inline std::vector<T>& operator<<( std::vector<T>& vector,
+                                   const char* value_string )
+{
+  vector.push_back( Utility::fromString<T>( value_string ) );
+  return vector;
+}
+
+/*! Extract an element from a std::vector
+ *
+ * This operator gives a std::vector istream-like capabilities. Unlike
+ * an istream, the last element is taken from the vector first (FILO).
+ * \ingroup vector
+ */
+template<typename T, typename U>
+inline std::vector<T>& operator>>( std::vector<T>& vector, U& value )
+{
+  // Make sure that there are elements to extract
+  testPrecondition( vector.size() > 0 );
+  
+  value = vector.back();
+  vector.pop_back();
+
+  return vector;
+}
+
+/*! Extract an element from a std::vector in its string form
+ *
+ * This operator extracts the last element from a vector and converts it
+ * to a string.
+ * \ingroup vector
+ */
+template<typename T>
+inline std::vector<T>& operator>>( std::vector<T>& vector,
+                                   std::string& value_string )
+{
+  // Make sure that there are elements to extract
+  testPrecondition( vector.size() > 0 );
+  
+  value_string = Utility::toString( vector.back() );
+  vector.pop_back();
+
+  return vector;
 }
   
 } // end std namespace
