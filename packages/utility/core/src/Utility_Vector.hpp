@@ -11,7 +11,6 @@
 
 // Std Lib Includes
 #include <iostream>
-#include <sstream>
 #include <vector>
 
 // FRENSIE Includes
@@ -21,7 +20,7 @@
 
 /*! \defgroup vector Vector
  *
- * Additional helper functions and classes for use the std::vector have
+ * Additional helper functions and classes for use with the std::vector have
  * been defined that do not appear in the standard library.
  */
 

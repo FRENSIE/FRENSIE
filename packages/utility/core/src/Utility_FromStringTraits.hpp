@@ -13,8 +13,6 @@
 #include <sstream>
 #include <iterator>
 #include <limits>
-#include <list>
-#include <forward_list>
 #include <deque>
 #include <set>
 #include <unordered_set>
@@ -555,49 +553,6 @@ public:
 };
 
 } // end Details namespace
-
-/*! Partial specialization of FromStringTraits for std::list
- * \ingroup from_string_traits
- */
-template<typename T>
-struct FromStringTraits<std::list<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::list<T> >
-{ /* ... */ };
-
-/*! Partial specialization of FromStringTraits for std::forward_list
- * \ingroup from_string_traits
- */
-template<typename T>
-struct FromStringTraits<std::forward_list<T> > : protected Details::FromStringTraitsSTLCompliantContainerBaseHelper<std::forward_list<T> >
-{
-protected:
-  //! The base helper class type
-  typedef Details::FromStringTraitsSTLCompliantContainerBaseHelper<std::forward_list<T> > BaseType;
-
-public:
-  //! The type that a string will be converted to
-  typedef typename BaseType::ReturnType ReturnType;
-
-  //! Convert the string to an object of the container type
-  static inline ReturnType fromString( const std::string& obj_rep )
-  {
-    ReturnType container =
-      BaseType::fromStringImpl( obj_rep, (void (ReturnType::*)(const typename ReturnType::value_type&))&ReturnType::push_front );
-
-    container.reverse();
-
-    return container;
-  }
-
-  //! Extract the object from a stream
-  static inline void fromStream( std::istream& is,
-                                 std::forward_list<T>& obj,
-                                 const std::string& = std::string() )
-  {
-    BaseType::fromStreamImpl( is, obj, (void (std::forward_list<T>::*)(const typename std::forward_list<T>::value_type&))&std::forward_list<T>::push_front );
-
-    obj.reverse();
-  }
-};
 
 /*! Partial specialization of FromStringTraits for std::deque
  * \ingroup from_string_traits

@@ -11,8 +11,6 @@
 
 // Std Lib Includes
 #include <iostream>
-#include <list>
-#include <forward_list>
 #include <deque>
 #include <set>
 #include <unordered_set>
@@ -24,42 +22,6 @@
 #include "Utility_FromStringTraits.hpp"
 
 namespace std{
-
-//! Place a std::list in a stream
-template<typename T>
-inline std::ostream& operator<<( std::ostream& os, const std::list<T>& list )
-{
-  Utility::toStream( os, list );
-
-  return os;
-}
-
-//! Extract a std::list from a stream
-template<typename T>
-inline std::istream& operator>>( std::istream& is, std::list<T>& list )
-{
-  Utility::fromStream( is, list );
-
-  return is;
-}
-
-//! Place a std::forward_list in a stream
-template<typename T>
-inline std::ostream& operator<<( std::ostream& os, const std::forward_list<T>& list )
-{
-  Utility::toStream( os, list );
-
-  return os;
-}
-
-//! Extract a std::forward_list from a stream
-template<typename T>
-inline std::istream& operator>>( std::istream& is, std::forward_list<T>& list )
-{
-  Utility::fromStream( is, list );
-
-  return is;
-}
 
 //! Place a std::deque in a stream
 template<typename T>

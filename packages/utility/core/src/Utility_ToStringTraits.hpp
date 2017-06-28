@@ -13,8 +13,6 @@
 #include <sstream>
 #include <type_traits>
 #include <iterator>
-#include <list>
-#include <forward_list>
 #include <deque>
 #include <set>
 #include <unordered_set>
@@ -209,20 +207,6 @@ struct ToStringTraitsIteratorHelper
 };
   
 } // end Details namespace
-
-/*! Partial specialization of ToStringTraits for std::list
- * \ingroup to_string_traits
- */
-template<typename T>
-struct ToStringTraits<std::list<T> > : public Details::ToStringTraitsIteratorHelper<std::list<T> >
-{ /* ... */ };
-
-/*! Partial specialization of ToStringTraits for std::forward_list
- * \ingroup to_string_traits
- */
-template<typename T>
-struct ToStringTraits<std::forward_list<T> > : public Details::ToStringTraitsIteratorHelper<std::forward_list<T> >
-{ /* ... */ };
 
 /*! Partial specialization of ToStringTraits for std::deque
  * \ingroup to_string_traits

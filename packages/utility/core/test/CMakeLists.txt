@@ -234,6 +234,13 @@ TARGET_LINK_LIBRARIES(tstVector utility_core)
 ADD_TEST(Vector_test tstVector)
 SET_PROPERTY(TEST Vector_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstList
+  tstList.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstList utility_core)
+ADD_TEST(List_test tstList)
+SET_PROPERTY(TEST List_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstView
   tstView.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
