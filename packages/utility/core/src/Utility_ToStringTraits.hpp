@@ -13,8 +13,6 @@
 #include <sstream>
 #include <type_traits>
 #include <iterator>
-#include <map>
-#include <unordered_map>
 
 // FRENSIE Includes
 #include "Utility_ToStringTraitsDecl.hpp"
@@ -204,20 +202,6 @@ struct ToStringTraitsIteratorHelper
 };
   
 } // end Details namespace
-
-/*! Partial specialization of ToStringTraits for std::map
- * \ingroup to_string_traits
- */
-template<typename Key, typename T>
-struct ToStringTraits<std::map<Key,T> > : public Details::ToStringTraitsIteratorHelper<std::map<Key,T> >
-{ /* ... */ };
-
-/*! Partial specialization of ToStringTraits for std::unordered_map
- * \ingroup to_string_traits
- */
-template<typename Key, typename T>
-struct ToStringTraits<std::unordered_map<Key,T> > : public Details::ToStringTraitsIteratorHelper<std::unordered_map<Key,T> >
-{ /* ... */ };
 
 // Convert the object to a string
 template<typename T>

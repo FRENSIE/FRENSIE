@@ -255,6 +255,13 @@ TARGET_LINK_LIBRARIES(tstSet utility_core)
 ADD_TEST(Set_test tstSet)
 SET_PROPERTY(TEST Set_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstMap
+  tstMap.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMap utility_core)
+ADD_TEST(Map_test tstMap)
+SET_PROPERTY(TEST Map_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstView
   tstView.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

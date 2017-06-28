@@ -13,8 +13,6 @@
 #include <sstream>
 #include <iterator>
 #include <limits>
-#include <map>
-#include <unordered_map>
 
 // Boost Includes
 #include <boost/algorithm/string.hpp>
@@ -550,20 +548,6 @@ public:
 };
 
 } // end Details namespace
-
-/*! Partial specialization of FromStringTraits for std::map
- * \ingroup from_string_traits
- */
-template<typename Key, typename T>
-struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::map<Key,T>, std::pair<Key,T>, std::map<Key,T>, std::pair<Key,T> >
-{ /* ... */ };
-
-/*! Partial specialization of FromStringTraits for std::unordered_map
- * \ingroup from_string_traits
- */
-template<typename Key, typename T>
-struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_map<Key,T>, std::pair<Key,T>, std::unordered_map<Key,T>, std::pair<Key,T> >
-{ /* ... */ };
 
 // Convert the string to an object of type T
 template<typename T>

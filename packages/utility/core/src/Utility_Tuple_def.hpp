@@ -316,7 +316,7 @@ inline std::string ToStringTraits<std::pair<T1,T2> >::toString(
 {
   auto pair_copy = std::tie( pair.first, pair.second );
 
-  return ToStringTraits<decltype(pair_copy)>::toString( pair_copy );
+  return Utility::toString( pair_copy );
 }
 
 // Place the tuple in a stream
@@ -326,8 +326,8 @@ inline void ToStringTraits<std::pair<T1,T2> >::toStream(
                                                  const std::pair<T1,T2>& pair )
 {
   auto pair_copy = std::tie( pair.first, pair.second );
-  
-  ToStringTraits<decltype(pair_copy)>::toStream( os, pair_copy );
+
+  Utility::toStream( os, pair_copy );
 }
 
 
@@ -339,8 +339,8 @@ inline auto FromStringTraits<std::pair<T1,T2> >::fromString(
   ReturnType pair;
 
   std::istringstream iss( obj_rep );
-  
-  FromStringTraits<ReturnType>::fromStream( iss, pair );
+
+  Utility::fromStream( iss, pair );
   
   return pair;
 }

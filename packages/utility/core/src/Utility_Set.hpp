@@ -29,6 +29,7 @@
 namespace Utility{
 
 /*! Partial specialization of ToStringTraits for std::set
+ * \ingroup set
  * \ingroup to_string_traits
  */
 template<typename T>
@@ -36,6 +37,7 @@ struct ToStringTraits<std::set<T> > : public Details::ToStringTraitsIteratorHelp
 { /* ... */ };
 
 /*! Partial specialization of ToStringTraits for std::unordered_set
+ * \ingroup set
  * \ingroup to_string_traits
  */
 template<typename T>
@@ -43,6 +45,7 @@ struct ToStringTraits<std::unordered_set<T> > : public Details::ToStringTraitsIt
 { /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::set
+ * \ingroup set
  * \ingroup from_string_traits
  */
 template<typename T>
@@ -50,6 +53,7 @@ struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompl
 { /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::unordered_set
+ * \ingroup set
  * \ingroup from_string_traits
  */
 template<typename T>
@@ -60,7 +64,9 @@ struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTrai
 
 namespace std{
 
-//! Place a std::set in a stream
+/*! Place a std::set in a stream
+ * \ingroup set
+ */
 template<typename T>
 inline std::ostream& operator<<( std::ostream& os, const std::set<T>& set )
 {
@@ -69,7 +75,9 @@ inline std::ostream& operator<<( std::ostream& os, const std::set<T>& set )
   return os;
 }
 
-//! Extract a std::set from a stream
+/*! Extract a std::set from a stream
+ * \ingroup set
+ */
 template<typename T>
 inline std::istream& operator>>( std::istream& is, std::set<T>& set )
 {
@@ -78,7 +86,9 @@ inline std::istream& operator>>( std::istream& is, std::set<T>& set )
   return is;
 }
 
-//! Place a std::unordered_set in a stream
+/*! Place a std::unordered_set in a stream
+ * \ingroup set
+ */
 template<typename T>
 inline std::ostream& operator<<( std::ostream& os,
                                  const std::unordered_set<T>& set )
@@ -88,7 +98,9 @@ inline std::ostream& operator<<( std::ostream& os,
   return os;
 }
 
-//! Extract a std::unordered_set from a stream
+/*! Extract a std::unordered_set from a stream
+ * \ingroup set
+ */
 template<typename T>
 inline std::istream& operator>>( std::istream& is,
                                  std::unordered_set<T>& set )
