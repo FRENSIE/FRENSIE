@@ -11,12 +11,12 @@
 
 // Std Lib Includes
 #include <string>
-#include <vector>
 #include <list>
 #include <forward_list>
 #include <deque>
 
 // FRENSIE Includes
+#include "Utility_Vector.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 

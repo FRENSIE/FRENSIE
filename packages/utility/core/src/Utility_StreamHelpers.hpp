@@ -11,7 +11,6 @@
 
 // Std Lib Includes
 #include <iostream>
-#include <vector>
 #include <list>
 #include <forward_list>
 #include <deque>
@@ -25,26 +24,6 @@
 #include "Utility_FromStringTraits.hpp"
 
 namespace std{
-  
-//! Place a std::vector in a stream
-template<typename T>
-inline std::ostream& operator<<( std::ostream& os,
-                                 const std::vector<T>& vector )
-{
-  Utility::toStream( os, vector );
-
-  return os;
-}
-
-//! Extract a std::vector from a stream
-template<typename T>
-inline std::istream& operator>>( std::istream& is,
-                                 std::vector<T>& vector )
-{
-  Utility::fromStream( is, vector );
-
-  return is;
-}
 
 //! Place a std::list in a stream
 template<typename T>

@@ -13,7 +13,6 @@
 #include <sstream>
 #include <iterator>
 #include <limits>
-#include <vector>
 #include <list>
 #include <forward_list>
 #include <deque>
@@ -556,13 +555,6 @@ public:
 };
 
 } // end Details namespace
-
-/*! Partial specialization of FromStringTraits for std::vector
- * \ingroup from_string_traits
- */
-template<typename T>
-struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >
-{ /* ... */ };
 
 /*! Partial specialization of FromStringTraits for std::list
  * \ingroup from_string_traits
