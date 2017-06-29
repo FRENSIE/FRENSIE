@@ -6,6 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <algorithm>
+#include <functional>
+#include <cctype>
+
 // FRENSIE Includes
 #include "Utility_Variant.hpp"
 #include "Utility_ContractException.hpp"
@@ -269,7 +274,7 @@ std::string Variant::toString( bool* success ) const noexcept
  */
 std::vector<Variant> Variant::toVector( bool* success ) const noexcept
 {
-  return this->toType<std::vector<Variant> >( success );
+  return this->toContainerType<std::vector<Variant> >( success );
 }
 
 // Convert the variant to a list
@@ -278,7 +283,7 @@ std::vector<Variant> Variant::toVector( bool* success ) const noexcept
  */
 std::list<Variant> Variant::toList( bool* success ) const noexcept
 {
-  return this->toType<std::list<Variant> >( success );
+  return this->toContainerType<std::list<Variant> >( success );
 }
 
 // Convert the variant to forward list
@@ -287,7 +292,7 @@ std::list<Variant> Variant::toList( bool* success ) const noexcept
  */
 std::forward_list<Variant> Variant::toForwardList( bool* success ) const noexcept
 {
-  return this->toType<std::forward_list<Variant> >( success );
+  return this->toContainerType<std::forward_list<Variant> >( success );
 }
 
 // Convert the variant to a deque
@@ -296,7 +301,26 @@ std::forward_list<Variant> Variant::toForwardList( bool* success ) const noexcep
  */
 std::deque<Variant> Variant::toDeque( bool* success ) const noexcept
 {
-  return this->toType<std::deque<Variant> >( success );
+  return this->toContainerType<std::deque<Variant> >( success );
+}
+
+// Convert the variant to a map
+/*! \details If an error occurs in the conversion the success boolean
+ * will be set to false (if it was passed in).
+ */
+std::map<std::string,Variant> Variant::toMap( bool* success ) const noexcept
+{
+  return this->toType<std::map<std::string,Variant> >( success );
+}
+
+// Compactify the underlying data
+/*! \details This method will eliminate all white space characters from
+ * the stored data string. If the stored type is a string, calling this method
+ * will change the stored string.
+ */
+void Variant::compactify()
+{
+  d_stored_data.erase( std::remove_if(d_stored_data.begin(), d_stored_data.end(), std::bind<bool>(&std::isspace<char>, std::placeholders::_1, std::locale())), d_stored_data.end() );
 }
 
 // Inequality operator
@@ -309,6 +333,123 @@ bool Variant::operator!=( const Variant& other ) const
 bool Variant::operator==( const Variant& other ) const
 {
   return d_stored_data == other.d_stored_data;
+}
+
+// Extract variant element string
+std::string FromStringTraits<Variant>::extractVariantElementString(
+                                                    std::istream& is,
+                                                    const std::string& delims )
+{
+  // Count the number of '{' characters that occur before any other
+  // characters (other than space characters)
+  size_t num_start_delim_chars = 0;
+  
+  std::string sub_container_string;
+  
+  bool done = false;
+  
+  while( !done )
+  {
+    char string_element;
+    is.get( string_element );
+      
+    TEST_FOR_EXCEPTION( is.eof(),
+                        Utility::StringConversionException,
+                        "Unable to get the string element (EOF reached "
+                        "unexpectedly)!" );
+    
+    TEST_FOR_EXCEPTION( !is,
+                        Utility::StringConversionException,
+                        "Unable to get the string element (one or more "
+                        "error flags have been set)!" );
+    
+    if( string_element == '{' )
+      ++num_start_delim_chars;
+    else if( string_element != ' ' )
+      done = true;
+    
+    sub_container_string.push_back( string_element );
+  }
+    
+  // Restore the stream
+  if( num_start_delim_chars == 0 )
+  {
+    while( sub_container_string.size() > 0 )
+    {
+      is.putback( sub_container_string.back() );
+      sub_container_string.pop_back();
+    }
+
+    // Extract a string from the stream
+    Utility::fromStream( is, sub_container_string, delims );
+  }
+    
+  // Continue reading until the correct number of consecutive end
+  // deliminators are encountered
+  else
+  {
+    // Count the number of '}' characters that occur consecutively (excluding
+    // space characters)
+    size_t num_end_delim_chars = 0;
+    char previous_element = 'a';
+    
+    while( true )
+    {
+      char string_element;
+      is.get( string_element );
+      
+      TEST_FOR_EXCEPTION( is.eof(),
+                          Utility::StringConversionException,
+                          "Unable to get the string element (EOF reached "
+                          "unexpectedly)!" );
+      
+      TEST_FOR_EXCEPTION( !is,
+                          Utility::StringConversionException,
+                          "Unable to get the string element (one or more "
+                          "error flags have been set)!" );
+      
+      if( string_element == '}' && previous_element == '}' )
+        ++num_end_delim_chars;
+      else if( string_element == '}' && previous_element != '}' )
+      {
+        num_end_delim_chars = 1;
+        previous_element = '}';
+      }
+      else if( string_element != ' ' )
+      {
+        num_end_delim_chars = 0;
+        previous_element = string_element;
+      }
+
+      sub_container_string.push_back( string_element );
+      
+      if( num_end_delim_chars == num_start_delim_chars )
+        break;
+    }
+
+    return sub_container_string;
+  }
+}
+
+// Extract a variant from a stream
+void FromStringTraits<Variant>::fromStream( std::istream& is,
+                                            Variant& obj,
+                                            const std::string& delims )
+{
+  std::string obj_data;
+
+  // Check if we're extracting a variant as an element of a container
+  if( delims.find( "," ) < delims.size() &&
+      delims.find( "}" ) < delims.size() )
+  {
+    obj_data =
+      FromStringTraits<Variant>::extractVariantElementString( is, delims );
+  }
+  // Extract a string from the stream
+  else
+    Utility::fromStream( is, obj_data, delims );
+  
+  obj.setValue( obj_data );
 }
   
 } // end Utility namespace

@@ -16,6 +16,7 @@
 #include <unordered_map>
 
 // FRENSIE Includes
+#include "Utility_Tuple.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 

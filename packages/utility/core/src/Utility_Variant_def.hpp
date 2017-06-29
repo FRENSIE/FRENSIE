@@ -14,6 +14,46 @@
 
 namespace Utility{
 
+namespace Details{
+
+//! Convert helper class
+template<typename T, typename Enabled>
+struct ConvertHelper
+{
+  //! Check if a Utility::Variant can be converted to the desired type
+  static inline bool canConvert( const Utility::Variant& variant )
+  {
+    try{
+      Utility::fromString<T>( variant.d_stored_data );
+    }
+    catch( ... )
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  //! Convert a Utility::Variant to the desired type
+  static inline void convert( const Utility::Variant& variant, T& object )
+  { object = Utility::fromString<T>( variant.d_stored_data ); }
+};
+
+//! Convert helper class specialization for containers of variants
+template<typename T>
+struct ConvertHelper<T,typename std::enable_if<std::is_same<typename T::value_type,Utility::Variant>::value>::type>
+{
+  //! Check if a Utility::Variant can be converted to the desired type
+  static inline bool canConvert( const Utility::Variant& variant )
+  { return true; }
+
+  //! Convert a Utility::Variant to the desired type
+  static inline void convert( const Utility::Variant& variant, T& object )
+  { object = variant.toContainerType<T>(); }
+};
+  
+} // end Details namespace
+
 // Constructor
 /*! \details To successfully convert the object of type T a Utility::Variant a 
  * specialization of the Utility::ToStringTraits class for type T
@@ -40,17 +80,9 @@ void Variant::setValue( const T& object )
 
 // Check if the variant can be converted to the type of interest
 template<typename T>
-bool Variant::canConvert() const
+inline bool Variant::canConvert() const
 {
-  try{
-    Utility::fromString<T>( d_stored_data );
-  }
-  catch( ... )
-  {
-    return false;
-  }
-
-  return true;
+  return Details::ConvertHelper<T>::canConvert( *this );
 }
 
 // Convert the variant to the desired type
@@ -58,9 +90,9 @@ bool Variant::canConvert() const
  * from it) will be thrown.
  */
 template<typename T>
-void Variant::convert( T& object ) const
+inline void Variant::convert( T& object ) const
 {
-  object = Utility::fromString<T>( d_stored_data );
+  Details::ConvertHelper<T>::convert( *this, object );
 }
 
 // Convert the variant to the desired type
@@ -70,9 +102,9 @@ void Variant::convert( T& object ) const
  * will be set to false (if it was passed in).
  */
 template<typename T>
-inline T Variant::toType( bool* success ) const
+inline T Variant::toType( bool* success ) const noexcept
 {
-  // Initialize the  success variable
+  // Initialize the success variable
   if( success )
     *success = true;
 
@@ -91,6 +123,31 @@ inline T Variant::toType( bool* success ) const
   return converted_value;
 }
 
+// Convert the variant to a general container of variants
+template<typename Container>
+typename std::enable_if<std::is_same<typename Container::value_type,Utility::Variant>::value,Container>::type
+Variant::toContainerType( bool* success ) const noexcept
+{
+  // Initialize the success variable
+  if( success )
+    *success = true;
+
+  Container converted_container;
+
+  try{
+    converted_container =
+      Utility::fromString<Container>( d_stored_data );
+  }
+  // Failure to convert the variant to the desired container type - add this
+  // variant to the container
+  catch( ... )
+  {
+    converted_container = Container({*this});
+  }
+
+  return converted_container;
+}
+
 // Cast the variant to the desired type
 /*! \details If the cast fails a std::runtime_error (or class derived
  * from it) will be thrown.
@@ -100,7 +157,7 @@ T variant_cast( const Variant& variant )
 {
   T object;
 
-  variant.convert( object );
+  Details::ConvertHelper<T>::convert( variant, object );
 
   return object;
 }

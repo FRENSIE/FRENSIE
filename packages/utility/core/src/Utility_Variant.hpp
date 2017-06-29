@@ -11,18 +11,32 @@
 
 // Std Lib Includes
 #include <string>
-#include <deque>
+#include <type_traits>
 
 // FRENSIE Includes
 #include "Utility_Vector.hpp"
 #include "Utility_List.hpp"
 #include "Utility_Deque.hpp"
+#include "Utility_Map.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 
+/*! \defgroup variant Variant.
+ *
+ */
+
 namespace Utility{
 
-//! The variant class
+namespace Details{
+  
+template<typename T, typename Enabled = void>
+struct ConvertHelper;
+  
+}
+
+/*! The variant class
+ * \ingroup variant
+ */
 class Variant
 {
 
@@ -151,9 +165,15 @@ public:
   //! Convert the variant to a deque
   std::deque<Variant> toDeque( bool* success = NULL ) const noexcept;
 
+  //! Convert the variant to a map
+  std::map<std::string,Variant> toMap( bool* success = NULL ) const noexcept;
+
   //! Convert the variant to the desired type
   template<typename T>
-  T toType( bool* success = NULL ) const;
+  T toType( bool* success = NULL ) const noexcept;
+
+  //! Compactify the underlying data
+  void compactify();
 
   //! Inequality operator
   bool operator!=( const Variant& other ) const;
@@ -163,16 +183,27 @@ public:
 
 private:
 
+  // Convert the variant to a general container of variants
+  template<typename Container>
+  typename std::enable_if<std::is_same<typename Container::value_type,Utility::Variant>::value,Container>::type toContainerType( bool* success = NULL ) const noexcept;
+
+  // The convert helper is a friend class
+  template<typename T, typename Enabled = void>
+  friend class Details::ConvertHelper;
+
   // The store type
   std::string d_stored_data;
 };
 
-//! Cast the variant to the desired type
+/*! Cast the variant to the desired type
+ * \ingroup variant
+ */
 template<typename T>
 T variant_cast( const Variant& variant );
 
 /*! Specialization of Utility::ToStringTraits for Utility::Variant
- * \ingropu to_string_traits
+ * \ingroup variant
+ * \ingroup to_string_traits
  */
 template<>
 struct ToStringTraits<Variant>
@@ -187,6 +218,7 @@ struct ToStringTraits<Variant>
 };
 
 /*! Specialization of Utility:FromStringTraits for Utility::Variant
+ * \ingroup variant
  * \ingroup from_string_traits
  */
 template<>
@@ -200,34 +232,51 @@ struct FromStringTraits<Variant>
   { return ReturnType( obj_rep ); }
 
   //! Extract a variant from a stream
-  static inline void fromStream( std::istream& is,
-                                 Variant& obj,
-                                 const std::string& delims = std::string() )
-  {
-    std::string obj_data;
-    Utility::fromStream( is, obj_data, delims );
-                        
-    obj.setValue( obj_data );
-  }
-};
+  static void fromStream( std::istream& is,
+                          Variant& obj,
+                          const std::string& delims = std::string() );
 
-//! Place a Variant in a stream
-inline std::ostream& operator<<( std::ostream& os, const Variant& variant )
+private:
+
+  // Extract variant element string
+  static std::string extractVariantElementString( std::istream& is,
+                                                  const std::string& delims );
+};
+  
+} // end Utility namespace
+
+namespace std{
+
+/*! Swap two variants
+ * \ingroup variant
+ */
+inline void swap( Utility::Variant& left, Utility::Variant& right )
+{
+  left.swap( right );
+}
+
+/*! Place a Variant in a stream
+ * \ingroup variant
+ */
+inline std::ostream& operator<<( std::ostream& os,
+                                 const Utility::Variant& variant )
 {
   Utility::toStream( os, variant );
 
   return os;
 }
 
-//! Extract a Variant from a stream
-inline std::istream& operator>>( std::istream& is, Variant& variant )
+/*! Extract a Variant from a stream
+ * \ingroup variant
+ */
+inline std::istream& operator>>( std::istream& is, Utility::Variant& variant )
 {
   Utility::fromStream( is, variant );
 
   return is;
 }
   
-} // end Utility namespace
+} // end std namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes
