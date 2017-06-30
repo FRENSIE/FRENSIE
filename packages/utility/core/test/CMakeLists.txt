@@ -220,6 +220,20 @@ TARGET_LINK_LIBRARIES(tstTuple utility_core)
 ADD_TEST(Tuple_test tstTuple)
 SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstView
+  tstView.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstView utility_core)
+ADD_TEST(View_test tstView)
+SET_PROPERTY(TEST View_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstArrayView
+  tstArrayView.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstArrayView utility_core)
+ADD_TEST(ArrayView_test tstArrayView)
+SET_PROPERTY(TEST ArrayView_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstArray
   tstArray.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -261,20 +275,6 @@ ADD_EXECUTABLE(tstMap
 TARGET_LINK_LIBRARIES(tstMap utility_core)
 ADD_TEST(Map_test tstMap)
 SET_PROPERTY(TEST Map_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstView
-  tstView.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstView utility_core)
-ADD_TEST(View_test tstView)
-SET_PROPERTY(TEST View_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstArrayView
-  tstArrayView.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstArrayView utility_core)
-ADD_TEST(ArrayView_test tstArrayView)
-SET_PROPERTY(TEST ArrayView_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstVariant
   tstVariant.cpp

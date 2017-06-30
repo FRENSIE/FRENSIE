@@ -12,6 +12,8 @@
 // Std Lib Includes
 #include <vector>
 #include <array>
+#include <tuple>
+#include <utility>
 
 // FRENSIE Includes
 #include "Utility_View.hpp"
@@ -106,11 +108,22 @@ public:
   { /* ... */ }
 
   //! Tuple constructor
-  template<template<typename,typename> class Tuple>
-  Slice( const Tuple<size_t,size_t>& tuple )
+  template<template<typename,typename> class Tuple,
+           typename T,
+           typename U>
+  Slice( const Tuple<T,U>& tuple )
     : d_offset( std::get<0>( tuple ) ),
       d_extent( std::get<1>( tuple ) )
   { /* ... */ }
+
+  //! Tuple move constructor
+  template<template<typename,typename> class Tuple,
+           typename T,
+           typename U>
+  Slice( Tuple<T,U>&& tuple )
+    : d_offset( std::move( std::get<0>( tuple ) ) ),
+      d_extent( std::move( std::get<1>( tuple ) ) )
+  { /* ... */ }                
 
   //! C-array constructor
   Slice( const size_t offset_extent[2] )
@@ -138,6 +151,14 @@ private:
   // the extent
   size_t d_extent;
 };
+
+/*! Create a slice object
+ * \ingroup view
+ */
+inline Slice slice( size_t offset, size_t extent )
+{
+  return Slice( offset, extent );
+}
 
 /*! Create an array view of a std::vector
  * \ingroup view

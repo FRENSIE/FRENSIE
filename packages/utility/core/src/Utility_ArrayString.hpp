@@ -17,7 +17,6 @@
 
 // FRENSIE Includes
 #include "Utility_ParameterListCompatibleObject.hpp"
-#include "Utility_ArrayTraits.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
@@ -103,11 +102,12 @@ private:
 template<typename T,template<typename,typename...> class Array>
 const Array<T> ArrayString::getConcreteArray() const
 {
-  try{
-    return Utility::stringToArray<Array<T> >( d_array_string );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-			   "Could not convert the array string to an array!" );
+  // try{
+  //   return Utility::stringToArray<Array<T> >( d_array_string );
+  // }
+  // EXCEPTION_CATCH_RETHROW( std::runtime_error,
+  //       		   "Could not convert the array string to an array!" );
+  return Array<T>();
 }
 
 } // end Utility namespace

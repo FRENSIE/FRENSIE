@@ -9,6 +9,9 @@
 #ifndef UTILITY_ARRAY_VIEW_DEF_HPP
 #define UTILITY_ARRAY_VIEW_DEF_HPP
 
+// FRENSIE Includes
+#include "Utility_ContractException.hpp"
+
 namespace Utility{
 
 // Default constructor

@@ -263,6 +263,62 @@ TEUCHOS_UNIT_TEST( Array, array_ostream )
                        "{{0, 1.000000000000000000e+00, -100000}, {1, -1.000000000000000000e+00, 100001}}" );
 }
 
+//---------------------------------------------------------------------------//
+// Check that a view of a array can be created
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Array, slice_operator, T )
+{
+  std::array<T,5> array({0, 1, 2, 3, 4});
+
+  Utility::ArrayView<T> view = array | Utility::Slice( 0, 1 );
+
+  TEST_EQUALITY_CONST( view.size(), 1 );
+  TEST_EQUALITY_CONST( view[0], array[0] );
+
+  view = array | Utility::slice( 1, 2 );
+
+  TEST_EQUALITY_CONST( view.size(), 2 );
+  TEST_EQUALITY_CONST( view[0], array[1] );
+  TEST_EQUALITY_CONST( view[1], array[2] );
+
+  view = array | std::make_pair( 1, 3 );
+
+  TEST_EQUALITY_CONST( view.size(), 3 );
+  TEST_EQUALITY_CONST( view[0], array[1] );
+  TEST_EQUALITY_CONST( view[1], array[2] );
+  TEST_EQUALITY_CONST( view[2], array[3] );
+
+  view = array | std::make_pair( 2, 3 );
+
+  TEST_EQUALITY_CONST( view.size(), 3 );
+  TEST_EQUALITY_CONST( view[0], array[2] );
+  TEST_EQUALITY_CONST( view[1], array[3] );
+  TEST_EQUALITY_CONST( view[2], array[4] );
+
+  Utility::ArrayView<const T> const_view =
+    const_cast<const std::array<T,5>&>( array ) | Utility::slice( 1, 4 );
+
+  TEST_EQUALITY_CONST( const_view.size(), 4 );
+  TEST_EQUALITY_CONST( const_view[0], array[1] );
+  TEST_EQUALITY_CONST( const_view[1], array[2] );
+  TEST_EQUALITY_CONST( const_view[2], array[3] );
+  TEST_EQUALITY_CONST( const_view[3], array[4] );
+}
+
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef long long longlong;
+typedef unsigned long long ulonglong;
+
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, short );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, ushort );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, int );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, uint );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, long );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, ulong );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, longlong );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, ulonglong );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, float );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Array, slice_operator, double );
 
 //---------------------------------------------------------------------------//
 // end tstArray.cpp

@@ -1614,5 +1614,62 @@ TEUCHOS_UNIT_TEST( Vector, stream_mimic )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a view of a vector can be created
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector, slice_operator, T )
+{
+  std::vector<T> vector({0, 1, 2, 3, 4});
+
+  Utility::ArrayView<T> view = vector | Utility::Slice( 0, 1 );
+
+  TEST_EQUALITY_CONST( view.size(), 1 );
+  TEST_EQUALITY_CONST( view[0], vector[0] );
+
+  view = vector | Utility::slice( 1, 2 );
+
+  TEST_EQUALITY_CONST( view.size(), 2 );
+  TEST_EQUALITY_CONST( view[0], vector[1] );
+  TEST_EQUALITY_CONST( view[1], vector[2] );
+
+  view = vector | std::make_pair( 1, 3 );
+
+  TEST_EQUALITY_CONST( view.size(), 3 );
+  TEST_EQUALITY_CONST( view[0], vector[1] );
+  TEST_EQUALITY_CONST( view[1], vector[2] );
+  TEST_EQUALITY_CONST( view[2], vector[3] );
+
+  view = vector | std::make_pair( 2, 3 );
+
+  TEST_EQUALITY_CONST( view.size(), 3 );
+  TEST_EQUALITY_CONST( view[0], vector[2] );
+  TEST_EQUALITY_CONST( view[1], vector[3] );
+  TEST_EQUALITY_CONST( view[2], vector[4] );
+
+  Utility::ArrayView<const T> const_view =
+    const_cast<const std::vector<T>&>( vector ) | Utility::slice( 1, 4 );
+
+  TEST_EQUALITY_CONST( const_view.size(), 4 );
+  TEST_EQUALITY_CONST( const_view[0], vector[1] );
+  TEST_EQUALITY_CONST( const_view[1], vector[2] );
+  TEST_EQUALITY_CONST( const_view[2], vector[3] );
+  TEST_EQUALITY_CONST( const_view[3], vector[4] );
+}
+
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef long long longlong;
+typedef unsigned long long ulonglong;
+
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, short );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, ushort );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, int );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, uint );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, long );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, ulong );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, longlong );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, ulonglong );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, float );
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( Vector, slice_operator, double );
+
+//---------------------------------------------------------------------------//
 // end tstVector.cpp
 //---------------------------------------------------------------------------//

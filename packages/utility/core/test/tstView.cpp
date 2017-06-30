@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "Utility_View.hpp"
+#include "Utility_Tuple.hpp"
 
 typedef unsigned char uchar;
 typedef signed char schar;
@@ -381,10 +382,33 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, toString, Container )
 {
   Container container = initializeContainer<Container>();
 
+  std::string container_string;
+
+  if( !std::is_same<Container,std::string>::value )
+    container_string += "{";
+
+  typename Container::iterator container_it, container_end;
+  container_it = container.begin();
+  container_end = container.end();
+
+  while( container_it != container_end )
+  {
+    container_string += Utility::toString( *container_it );
+
+    ++container_it;
+    
+    if( container_it != container_end &&
+        !std::is_same<Container,std::string>::value )
+      container_string += ", ";
+  }
+
+  if( !std::is_same<Container,std::string>::value )
+    container_string += "}";
+  
   TEST_EQUALITY( Utility::toString(Utility::view( container )),
-                 Utility::toString(container) );
+                 container_string );
   TEST_EQUALITY( Utility::toString(Utility::viewOfConst( container )),
-                 Utility::toString(container) );
+                 container_string );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( View, toString );
@@ -395,18 +419,41 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, ostream_operator, Container )
 {
   Container container = initializeContainer<Container>();
 
+  std::string container_string;
+  
+  if( !std::is_same<Container,std::string>::value )
+    container_string += "{";
+
+  typename Container::iterator container_it, container_end;
+  container_it = container.begin();
+  container_end = container.end();
+
+  while( container_it != container_end )
+  {
+    container_string += Utility::toString( *container_it );
+
+    ++container_it;
+    
+    if( container_it != container_end &&
+        !std::is_same<Container,std::string>::value )
+      container_string += ", ";
+  }
+
+  if( !std::is_same<Container,std::string>::value )
+    container_string += "}";
+
   std::ostringstream oss;
 
   oss << Utility::view( container );
 
-  TEST_EQUALITY( oss.str(), Utility::toString(container) );
+  TEST_EQUALITY( oss.str(), container_string );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::viewOfConst( container );
   
-  TEST_EQUALITY( oss.str(), Utility::toString(container) );
+  TEST_EQUALITY( oss.str(), container_string );
 }
 
 UNIT_TEST_TEMPLATE_1_INSTANT( View, ostream_operator );
@@ -437,21 +484,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_array, element_access, T )
   TEST_EQUALITY_CONST( view.front(), 1 );
   TEST_EQUALITY_CONST( view.back(), 0 );
 
-  Utility::View<typename std::array<T,2>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_view.at(0), 0 );
-  TEST_EQUALITY_CONST( partial_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_view.back(), 0 );
-
-  partial_view[0] = 1;
-
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-  TEST_EQUALITY_CONST( partial_view.front(), 1 );
-  TEST_EQUALITY_CONST( partial_view.back(), 1 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-
   Utility::View<typename std::array<T,2>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
@@ -466,31 +498,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_array, element_access, T )
   TEST_EQUALITY_CONST( reverse_view.back(), 0 );
   TEST_EQUALITY_CONST( view[0], 0 );
   TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-
-  Utility::View<typename std::array<T,2>::reverse_iterator>
-    partial_reverse_view = reverse_view( 0, 1 );
-
-  partial_reverse_view[0] = 0;
-
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
 
   container[0] = 1;
   container[1] = 0;
 
   TEST_EQUALITY_CONST( view[0], 1 );
   TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[1], 1 );
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
 
   Utility::View<typename std::array<T,2>::const_iterator>
     view_of_const( container.begin(), container.end() );
@@ -541,21 +556,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_vector, element_access, T )
   TEST_EQUALITY_CONST( view.front(), 1 );
   TEST_EQUALITY_CONST( view.back(), 0 );
 
-  Utility::View<typename std::vector<T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_view.at(0), 0 );
-  TEST_EQUALITY_CONST( partial_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_view.back(), 0 );
-
-  partial_view[0] = 1;
-
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-  TEST_EQUALITY_CONST( partial_view.front(), 1 );
-  TEST_EQUALITY_CONST( partial_view.back(), 1 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-
   Utility::View<typename std::vector<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
@@ -570,31 +570,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_vector, element_access, T )
   TEST_EQUALITY_CONST( reverse_view.back(), 0 );
   TEST_EQUALITY_CONST( view[0], 0 );
   TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-
-  Utility::View<typename std::vector<T>::reverse_iterator>
-    partial_reverse_view = reverse_view( 0, 1 );
-
-  partial_reverse_view[0] = 0;
-
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
 
   container[0] = 1;
   container[1] = 0;
 
   TEST_EQUALITY_CONST( view[0], 1 );
   TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[1], 1 );
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
 
   Utility::View<typename std::vector<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
@@ -645,21 +628,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_list, element_access, T )
   TEST_EQUALITY_CONST( view.front(), 1 );
   TEST_EQUALITY_CONST( view.back(), 0 );
 
-  Utility::View<typename std::list<T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_view.at(0), 0 );
-  TEST_EQUALITY_CONST( partial_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_view.back(), 0 );
-
-  partial_view[0] = 1;
-
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-  TEST_EQUALITY_CONST( partial_view.front(), 1 );
-  TEST_EQUALITY_CONST( partial_view.back(), 1 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-
   Utility::View<typename std::list<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
@@ -674,31 +642,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_list, element_access, T )
   TEST_EQUALITY_CONST( reverse_view.back(), 0 );
   TEST_EQUALITY_CONST( view[0], 0 );
   TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-
-  Utility::View<typename std::list<T>::reverse_iterator>
-    partial_reverse_view = reverse_view( 0, 1 );
-
-  partial_reverse_view[0] = 0;
-
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
 
   container.front() = 1;
   container.back() = 0;
 
   TEST_EQUALITY_CONST( view[0], 1 );
   TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[1], 1 );
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
 
   Utility::View<typename std::list<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
@@ -749,27 +700,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_forward_list, element_access, T )
   TEST_EQUALITY_CONST( view.front(), 1 );
   TEST_EQUALITY_CONST( view.back(), 0 );
 
-  Utility::View<typename std::forward_list<T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_view.at(0), 0 );
-  TEST_EQUALITY_CONST( partial_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_view.back(), 0 );
-
-  partial_view[0] = 1;
-
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-  TEST_EQUALITY_CONST( partial_view.front(), 1 );
-  TEST_EQUALITY_CONST( partial_view.back(), 1 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-
   container.front() = 1;
   *(++container.begin()) = 0;
-
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
 
   Utility::View<typename std::forward_list<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
@@ -810,21 +742,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_deque, element_access, T )
   TEST_EQUALITY_CONST( view.front(), 1 );
   TEST_EQUALITY_CONST( view.back(), 0 );
 
-  Utility::View<typename std::deque<T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_view.at(0), 0 );
-  TEST_EQUALITY_CONST( partial_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_view.back(), 0 );
-
-  partial_view[0] = 1;
-
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-  TEST_EQUALITY_CONST( partial_view.front(), 1 );
-  TEST_EQUALITY_CONST( partial_view.back(), 1 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-
   Utility::View<typename std::deque<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
@@ -839,31 +756,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_deque, element_access, T )
   TEST_EQUALITY_CONST( reverse_view.back(), 0 );
   TEST_EQUALITY_CONST( view[0], 0 );
   TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-
-  Utility::View<typename std::deque<T>::reverse_iterator>
-    partial_reverse_view = reverse_view( 0, 1 );
-  
-  partial_reverse_view[0] = 0;
-
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
 
   container.front() = 1;
   container.back() = 0;
 
   TEST_EQUALITY_CONST( view[0], 1 );
   TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[0], 0 );
   TEST_EQUALITY_CONST( reverse_view[1], 1 );
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 0 );
 
   Utility::View<typename std::deque<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
@@ -904,14 +804,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_set, element_access, T )
   TEST_EQUALITY_CONST( view.front(), 0 );
   TEST_EQUALITY_CONST( view.back(), 1 );
 
-  Utility::View<typename std::set<T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], 1 );
-  TEST_EQUALITY_CONST( partial_view.at(0), 1 );
-  TEST_EQUALITY_CONST( partial_view.front(), 1 );
-  TEST_EQUALITY_CONST( partial_view.back(), 1 );
-
   Utility::View<typename std::set<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
@@ -922,14 +814,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_set, element_access, T )
   TEST_EQUALITY_CONST( reverse_view.front(), 1 );
   TEST_EQUALITY_CONST( reverse_view.back(), 0 );
   
-  Utility::View<typename std::set<T>::reverse_iterator>
-    partial_reverse_view = reverse_view( 0, 1 );
-
-  TEST_EQUALITY_CONST( partial_reverse_view[0], 1 );
-  TEST_EQUALITY_CONST( partial_reverse_view.at(0), 1 );
-  TEST_EQUALITY_CONST( partial_reverse_view.front(), 1 );
-  TEST_EQUALITY_CONST( partial_reverse_view.back(), 1 );
-
   Utility::View<typename std::set<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
@@ -969,14 +853,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_unordered_set, element_access, T )
   TEST_EQUALITY_CONST( view.front(), 1 );
   TEST_EQUALITY_CONST( view.back(), 0 );
 
-  Utility::View<typename std::unordered_set<T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
-  TEST_EQUALITY_CONST( partial_view.at(0), 0 );
-  TEST_EQUALITY_CONST( partial_view.front(), 0 );
-  TEST_EQUALITY_CONST( partial_view.back(), 0 );
-
   Utility::View<typename std::unordered_set<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
@@ -1006,14 +882,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_map, element_access, T )
   TEST_EQUALITY_CONST( view.front(), (std::pair<const T,T>({0, 0})) );
   TEST_EQUALITY_CONST( view.back(), (std::pair<const T,T>({1, 1})) );
 
-  Utility::View<typename std::map<T,T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( partial_view.at(0), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( partial_view.front(), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( partial_view.back(), (std::pair<const T,T>({1, 1})) );
-
   Utility::View<typename std::map<T,T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
@@ -1024,14 +892,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_map, element_access, T )
   TEST_EQUALITY_CONST( reverse_view.front(), (std::pair<const T,T>({1, 1})) );
   TEST_EQUALITY_CONST( reverse_view.back(), (std::pair<const T,T>({0, 0})) );
   
-  Utility::View<typename std::map<T,T>::reverse_iterator>
-    partial_reverse_view = reverse_view( 0, 1 );
-
-  TEST_EQUALITY_CONST( partial_reverse_view[0], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( partial_reverse_view.at(0), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( partial_reverse_view.front(), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( partial_reverse_view.back(), (std::pair<const T,T>({1, 1})) );
-
   Utility::View<typename std::map<T,T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
@@ -1070,14 +930,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_unordered_map, element_access, T )
   TEST_EQUALITY_CONST( view.at(1), (std::pair<const T,T>({0, 0})) );
   TEST_EQUALITY_CONST( view.front(), (std::pair<const T,T>({1, 1})) );
   TEST_EQUALITY_CONST( view.back(), (std::pair<const T,T>({0, 0})) );
-
-  Utility::View<typename std::unordered_map<T,T>::iterator>
-    partial_view = view( 1, 1 );
-
-  TEST_EQUALITY_CONST( partial_view[0], (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( partial_view.at(0), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( partial_view.front(), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( partial_view.back(), (std::pair<const T,T>({0, 0})) );
 
   Utility::View<typename std::unordered_map<T,T>::const_iterator>
     view_of_const( container.begin(), container.end() );

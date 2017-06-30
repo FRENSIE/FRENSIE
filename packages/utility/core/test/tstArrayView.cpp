@@ -282,12 +282,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ArrayView, element_access, T )
   TEST_EQUALITY_CONST( partial_view.back(), 1 );
   TEST_EQUALITY_CONST( view[1], 1 );
 
+  partial_view = view | Utility::Slice( 0, 1 );
+
+  partial_view[0] = 0;
+
+  TEST_EQUALITY_CONST( partial_view[0], 0 );
+  TEST_EQUALITY_CONST( partial_view.front(), 0 );
+  TEST_EQUALITY_CONST( partial_view.back(), 0 );
+  TEST_EQUALITY_CONST( view[0], 0 );
+
   container[0] = 1;
   container[1] = 0;
 
   TEST_EQUALITY_CONST( view[0], 1 );
   TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( partial_view[0], 0 );
+  TEST_EQUALITY_CONST( partial_view[0], 1 );
 
   Utility::ArrayView<const T> view_of_const( container );
 
