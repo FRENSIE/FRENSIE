@@ -272,45 +272,45 @@ std::string Variant::toString( bool* success ) const noexcept
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
  */
-std::vector<Variant> Variant::toVector( bool* success ) const noexcept
+VariantVector Variant::toVector( bool* success ) const noexcept
 {
-  return this->toContainerType<std::vector<Variant> >( success );
+  return this->toContainerType<VariantVector>( success );
 }
 
 // Convert the variant to a list
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
  */
-std::list<Variant> Variant::toList( bool* success ) const noexcept
+VariantList Variant::toList( bool* success ) const noexcept
 {
-  return this->toContainerType<std::list<Variant> >( success );
+  return this->toContainerType<VariantList>( success );
 }
 
 // Convert the variant to forward list
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
  */
-std::forward_list<Variant> Variant::toForwardList( bool* success ) const noexcept
+VariantForwardList Variant::toForwardList( bool* success ) const noexcept
 {
-  return this->toContainerType<std::forward_list<Variant> >( success );
+  return this->toContainerType<VariantForwardList>( success );
 }
 
 // Convert the variant to a deque
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
  */
-std::deque<Variant> Variant::toDeque( bool* success ) const noexcept
+VariantDeque Variant::toDeque( bool* success ) const noexcept
 {
-  return this->toContainerType<std::deque<Variant> >( success );
+  return this->toContainerType<VariantDeque>( success );
 }
 
 // Convert the variant to a map
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
  */
-std::map<std::string,Variant> Variant::toMap( bool* success ) const noexcept
+VariantMap Variant::toMap( bool* success ) const noexcept
 {
-  return this->toType<std::map<std::string,Variant> >( success );
+  return this->toType<VariantMap>( success );
 }
 
 // Compactify the underlying data
@@ -318,9 +318,11 @@ std::map<std::string,Variant> Variant::toMap( bool* success ) const noexcept
  * the stored data string. If the stored type is a string, calling this method
  * will change the stored string.
  */
-void Variant::compactify()
+Variant& Variant::compactify()
 {
   d_stored_data.erase( std::remove_if(d_stored_data.begin(), d_stored_data.end(), std::bind<bool>(&std::isspace<char>, std::placeholders::_1, std::locale())), d_stored_data.end() );
+
+  return *this;
 }
 
 // Inequality operator

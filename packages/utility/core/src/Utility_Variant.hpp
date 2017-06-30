@@ -34,6 +34,33 @@ struct ConvertHelper;
   
 }
 
+class Variant;
+
+/*! The vector of Utility::Variant type
+ * \ingroup variant
+ */
+typedef std::vector<Variant> VariantVector;
+
+/*! The list of Utility::Variant type
+ * \ingroup variant
+ */
+typedef std::list<Variant> VariantList;
+
+/*! The forward list of Utility::Variant type
+ * \ingroup variant
+ */
+typedef std::forward_list<Variant> VariantForwardList;
+
+/*! The deque of Utility::Variant type
+ * \ingroup variant
+ */
+typedef std::deque<Variant> VariantDeque;
+
+/*! The map of std::string, Utility::Variant type
+ * \ingroup variant
+ */
+typedef std::map<std::string,Variant> VariantMap;
+
 /*! The variant class
  * \ingroup variant
  */
@@ -154,26 +181,26 @@ public:
   std::string toString( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a vector
-  std::vector<Variant> toVector( bool* success = NULL ) const noexcept;
+  VariantVector toVector( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a list
-  std::list<Variant> toList( bool* success = NULL ) const noexcept;
+  VariantList toList( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to forward list
-  std::forward_list<Variant> toForwardList( bool* success = NULL ) const noexcept;
+  VariantForwardList toForwardList( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a deque
-  std::deque<Variant> toDeque( bool* success = NULL ) const noexcept;
+  VariantDeque toDeque( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to a map
-  std::map<std::string,Variant> toMap( bool* success = NULL ) const noexcept;
+  VariantMap toMap( bool* success = NULL ) const noexcept;
 
   //! Convert the variant to the desired type
   template<typename T>
   T toType( bool* success = NULL ) const noexcept;
 
   //! Compactify the underlying data
-  void compactify();
+  Variant& compactify();
 
   //! Inequality operator
   bool operator!=( const Variant& other ) const;

@@ -256,7 +256,7 @@ TEUCHOS_UNIT_TEST( Variant, constructor_container )
 
   TEST_ASSERT( !variant->isNull() );
 
-  std::vector<Utility::Variant> extracted_vector =
+  Utility::VariantVector extracted_vector =
     variant->toVector( &conversion_success );
   
   TEST_ASSERT( conversion_success );
@@ -311,7 +311,7 @@ TEUCHOS_UNIT_TEST( Variant, constructor_container )
 
   TEST_ASSERT( !variant->isNull() );
 
-  std::list<Utility::Variant> extracted_list =
+  Utility::VariantList extracted_list =
     variant->toList( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -340,7 +340,7 @@ TEUCHOS_UNIT_TEST( Variant, constructor_container )
 
   TEST_ASSERT( !variant->isNull() );
 
-  std::forward_list<Utility::Variant> extracted_forward_list =
+  Utility::VariantForwardList extracted_forward_list =
     variant->toForwardList( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -362,7 +362,7 @@ TEUCHOS_UNIT_TEST( Variant, constructor_container )
   TEST_EQUALITY_CONST( std::distance( extracted_forward_list.begin(), extracted_forward_list.end() ), 2 );
 
   {
-    std::forward_list<Utility::Variant> sub_forward_list =
+    Utility::VariantForwardList sub_forward_list =
       extracted_forward_list.front().toForwardList();
     
     TEST_EQUALITY_CONST( std::distance( sub_forward_list.begin(), sub_forward_list.end() ), 2 );
@@ -389,7 +389,7 @@ TEUCHOS_UNIT_TEST( Variant, constructor_container )
 
   TEST_ASSERT( !variant->isNull() );
 
-  std::deque<Utility::Variant> extracted_deque =
+  Utility::VariantDeque extracted_deque =
     variant->toDeque( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -418,7 +418,7 @@ TEUCHOS_UNIT_TEST( Variant, constructor_container )
 
   TEST_ASSERT( !variant->isNull() );
   
-  std::map<std::string,Utility::Variant> extracted_map =
+  Utility::VariantMap extracted_map =
     variant->toMap( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -700,7 +700,7 @@ TEUCHOS_UNIT_TEST( Variant, fromValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::vector<Utility::Variant> extracted_vector =
+  Utility::VariantVector extracted_vector =
     variant.toVector( &conversion_success );
   
   TEST_ASSERT( conversion_success );
@@ -755,7 +755,7 @@ TEUCHOS_UNIT_TEST( Variant, fromValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::list<Utility::Variant> extracted_list =
+  Utility::VariantList extracted_list =
     variant.toList( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -784,7 +784,7 @@ TEUCHOS_UNIT_TEST( Variant, fromValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::forward_list<Utility::Variant> extracted_forward_list =
+  Utility::VariantForwardList extracted_forward_list =
     variant.toForwardList( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -806,7 +806,7 @@ TEUCHOS_UNIT_TEST( Variant, fromValue_container )
   TEST_EQUALITY_CONST( std::distance( extracted_forward_list.begin(), extracted_forward_list.end() ), 2 );
 
   {
-    std::forward_list<Utility::Variant> sub_forward_list =
+    Utility::VariantForwardList sub_forward_list =
       extracted_forward_list.front().toForwardList();
     
     TEST_EQUALITY_CONST( std::distance( sub_forward_list.begin(), sub_forward_list.end() ), 2 );
@@ -833,7 +833,7 @@ TEUCHOS_UNIT_TEST( Variant, fromValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::deque<Utility::Variant> extracted_deque =
+  Utility::VariantDeque extracted_deque =
     variant.toDeque( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -862,7 +862,7 @@ TEUCHOS_UNIT_TEST( Variant, fromValue_container )
 
   TEST_ASSERT( !variant.isNull() );
   
-  std::map<std::string,Utility::Variant> extracted_map =
+  Utility::VariantMap extracted_map =
     variant.toMap( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -1116,7 +1116,7 @@ TEUCHOS_UNIT_TEST( Variant, setValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::vector<Utility::Variant> extracted_vector =
+  Utility::VariantVector extracted_vector =
     variant.toVector( &conversion_success );
   
   TEST_ASSERT( conversion_success );
@@ -1171,7 +1171,7 @@ TEUCHOS_UNIT_TEST( Variant, setValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::list<Utility::Variant> extracted_list =
+  Utility::VariantList extracted_list =
     variant.toList( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -1200,7 +1200,7 @@ TEUCHOS_UNIT_TEST( Variant, setValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::forward_list<Utility::Variant> extracted_forward_list =
+  Utility::VariantForwardList extracted_forward_list =
     variant.toForwardList( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -1222,7 +1222,7 @@ TEUCHOS_UNIT_TEST( Variant, setValue_container )
   TEST_EQUALITY_CONST( std::distance( extracted_forward_list.begin(), extracted_forward_list.end() ), 2 );
 
   {
-    std::forward_list<Utility::Variant> sub_forward_list =
+    Utility::VariantForwardList sub_forward_list =
       extracted_forward_list.front().toForwardList();
     
     TEST_EQUALITY_CONST( std::distance( sub_forward_list.begin(), sub_forward_list.end() ), 2 );
@@ -1249,7 +1249,7 @@ TEUCHOS_UNIT_TEST( Variant, setValue_container )
 
   TEST_ASSERT( !variant.isNull() );
 
-  std::deque<Utility::Variant> extracted_deque =
+  Utility::VariantDeque extracted_deque =
     variant.toDeque( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -1278,7 +1278,7 @@ TEUCHOS_UNIT_TEST( Variant, setValue_container )
 
   TEST_ASSERT( !variant.isNull() );
   
-  std::map<std::string,Utility::Variant> extracted_map =
+  Utility::VariantMap extracted_map =
     variant.toMap( &conversion_success );
 
   TEST_ASSERT( conversion_success );
@@ -1602,10 +1602,10 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_string, " 1 " );
 
   // Convert to a general vector
-  TEST_ASSERT( variant.canConvert<std::vector<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantVector>() );
   TEST_ASSERT( !variant.canConvert<std::vector<int> >() );
 
-  std::vector<Utility::Variant> extracted_vector;
+  Utility::VariantVector extracted_vector;
   
   variant.convert( extracted_vector );
 
@@ -1613,10 +1613,10 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_vector[0].toInt(), 1 );
 
   // Convert to a general list
-  TEST_ASSERT( variant.canConvert<std::list<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantList>() );
   TEST_ASSERT( !variant.canConvert<std::list<int> >() );
 
-  std::list<Utility::Variant> extracted_list;
+  Utility::VariantList extracted_list;
 
   variant.convert( extracted_list );
 
@@ -1624,10 +1624,10 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_list.front().toInt(), 1 );
 
   // Convert to a general forward list
-  TEST_ASSERT( variant.canConvert<std::forward_list<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantForwardList>() );
   TEST_ASSERT( !variant.canConvert<std::forward_list<int> >() );
 
-  std::forward_list<Utility::Variant> extracted_forward_list;
+  Utility::VariantForwardList extracted_forward_list;
 
   variant.convert( extracted_forward_list );
 
@@ -1635,10 +1635,10 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_forward_list.front().toInt(), 1 );
 
   // Convert to a general deque
-  TEST_ASSERT( variant.canConvert<std::deque<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantDeque>() );
   TEST_ASSERT( !variant.canConvert<std::deque<int> >() );
 
-  std::deque<Utility::Variant> extracted_deque;
+  Utility::VariantDeque extracted_deque;
 
   variant.convert( extracted_deque );
 
@@ -1646,7 +1646,7 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_deque.front().toInt(), 1 );
 
   // Cannot convert to a map
-  TEST_ASSERT( !(variant.canConvert<std::map<std::string,Utility::Variant> >()) );
+  TEST_ASSERT( !(variant.canConvert<Utility::VariantMap>()) );
   
   // Store a container
   variant.setValue( " { -1, 0, 1 } " );
@@ -1661,7 +1661,7 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_string, " { -1, 0, 1 } " );
 
   // Convert to a general vector
-  TEST_ASSERT( variant.canConvert<std::vector<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantVector>() );
   
   variant.convert( extracted_vector );
   
@@ -1683,7 +1683,7 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_vector_int[2], 1 );
 
   // Convert to a general list
-  TEST_ASSERT( variant.canConvert<std::list<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantList>() );
 
   variant.convert( extracted_list );
 
@@ -1703,7 +1703,7 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_list_int.back(), 1 );
 
   // Convert to a general forward_list
-  TEST_ASSERT( variant.canConvert<std::forward_list<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantForwardList>() );
 
   variant.convert( extracted_forward_list );
 
@@ -1721,7 +1721,7 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_forward_list_int.front(), -1 );
 
   // Convert to a general deque
-  TEST_ASSERT( variant.canConvert<std::deque<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantDeque>() );
 
   variant.convert( extracted_deque );
 
@@ -1741,14 +1741,14 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_deque_int.back(), 1 );
 
   // Cannot convert to a map
-  TEST_ASSERT( !(variant.canConvert<std::map<std::string,Utility::Variant> >()) );
+  TEST_ASSERT( !(variant.canConvert<Utility::VariantMap>()) );
   TEST_ASSERT( !(variant.canConvert<std::map<int,int> >()) );
 
   // Store a container of containers
   variant.setValue( "{ {-1, 0} ,  {1, 2} }" );
 
   // Convert to a general vector
-  TEST_ASSERT( variant.canConvert<std::vector<Utility::Variant> >() );
+  TEST_ASSERT( variant.canConvert<Utility::VariantVector>() );
 
   variant.convert( extracted_vector );
   
@@ -1803,9 +1803,9 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( Utility::get<1>(extracted_vector_tuple[1]), 2 );
 
   // Convert to a general map
-  TEST_ASSERT( (variant.canConvert<std::map<std::string,Utility::Variant> >()) );
+  TEST_ASSERT( (variant.canConvert<Utility::VariantMap>()) );
 
-  std::map<std::string,Utility::Variant> extracted_map;
+  Utility::VariantMap extracted_map;
 
   variant.convert( extracted_map );
 
@@ -2051,9 +2051,9 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_THROW( Utility::variant_cast<std::vector<int> >( variant ),
               std::runtime_error );
   
-  std::vector<Utility::Variant> extracted_vector;
+  Utility::VariantVector extracted_vector;
   
-  TEST_NOTHROW( extracted_vector = Utility::variant_cast<std::vector<Utility::Variant> >( variant ) );
+  TEST_NOTHROW( extracted_vector = Utility::variant_cast<Utility::VariantVector>( variant ) );
   TEST_EQUALITY_CONST( extracted_vector.size(), 1 );
   TEST_EQUALITY_CONST( extracted_vector[0].toInt(), 1 );
 
@@ -2061,9 +2061,9 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_THROW( Utility::variant_cast<std::list<int> >( variant ),
               std::runtime_error );
   
-  std::list<Utility::Variant> extracted_list;
+  Utility::VariantList extracted_list;
 
-  TEST_NOTHROW( extracted_list = Utility::variant_cast<std::list<Utility::Variant> >( variant ) );
+  TEST_NOTHROW( extracted_list = Utility::variant_cast<Utility::VariantList>( variant ) );
   TEST_EQUALITY_CONST( extracted_list.size(), 1 );
   TEST_EQUALITY_CONST( extracted_list.front().toInt(), 1 );
 
@@ -2071,9 +2071,9 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_THROW( Utility::variant_cast<std::forward_list<int> >( variant ),
               std::runtime_error );
 
-  std::forward_list<Utility::Variant> extracted_forward_list;
+  Utility::VariantForwardList extracted_forward_list;
 
-  TEST_NOTHROW( extracted_forward_list = Utility::variant_cast<std::forward_list<Utility::Variant> >( variant ) );
+  TEST_NOTHROW( extracted_forward_list = Utility::variant_cast<Utility::VariantForwardList>( variant ) );
   TEST_EQUALITY_CONST( std::distance( extracted_forward_list.begin(), extracted_forward_list.end() ), 1 );
   TEST_EQUALITY_CONST( extracted_forward_list.front().toInt(), 1 );
 
@@ -2081,14 +2081,14 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_THROW( Utility::variant_cast<std::deque<int> >( variant ),
               std::runtime_error );
 
-  std::deque<Utility::Variant> extracted_deque;
+  Utility::VariantDeque extracted_deque;
 
-  TEST_NOTHROW( extracted_deque = Utility::variant_cast<std::deque<Utility::Variant> >( variant ) );
+  TEST_NOTHROW( extracted_deque = Utility::variant_cast<Utility::VariantDeque>( variant ) );
   TEST_EQUALITY_CONST( extracted_deque.size(), 1 );
   TEST_EQUALITY_CONST( extracted_deque.front().toInt(), 1 );
 
   // Cannot convert to a map
-  TEST_THROW( (Utility::variant_cast<std::map<std::string,Utility::Variant> >( variant )),
+  TEST_THROW( (Utility::variant_cast<Utility::VariantMap>( variant )),
               std::runtime_error );
   
   // Store a container
@@ -2102,7 +2102,7 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_EQUALITY_CONST( extracted_string, " { -1, 0, 1 } " );
 
   // Convert to a general vector
-  TEST_NOTHROW( extracted_vector = Utility::variant_cast<std::vector<Utility::Variant> >( variant ) );  
+  TEST_NOTHROW( extracted_vector = Utility::variant_cast<Utility::VariantVector>( variant ) );  
   TEST_EQUALITY_CONST( extracted_vector.size(), 3 );
   TEST_EQUALITY_CONST( extracted_vector[0].toInt(), -1 );
   TEST_EQUALITY_CONST( extracted_vector[1].toInt(), 0 );
@@ -2118,7 +2118,7 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_EQUALITY_CONST( extracted_vector_int[2], 1 );
 
   // Convert to a general list
-  TEST_NOTHROW( extracted_list = Utility::variant_cast<std::list<Utility::Variant> >( variant ) );
+  TEST_NOTHROW( extracted_list = Utility::variant_cast<Utility::VariantList>( variant ) );
   TEST_EQUALITY_CONST( extracted_list.size(), 3 );
   TEST_EQUALITY_CONST( extracted_list.front().toInt(), -1 );
   TEST_EQUALITY_CONST( extracted_list.back().toInt(), 1 );
@@ -2132,7 +2132,7 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_EQUALITY_CONST( extracted_list_int.back(), 1 );
 
   // Convert to a general forward_list
-  TEST_NOTHROW( extracted_forward_list = Utility::variant_cast<std::forward_list<Utility::Variant> >( variant ) );
+  TEST_NOTHROW( extracted_forward_list = Utility::variant_cast<Utility::VariantForwardList>( variant ) );
   TEST_EQUALITY_CONST( std::distance( extracted_forward_list.begin(), extracted_forward_list.end() ), 3 );
   TEST_EQUALITY_CONST( extracted_forward_list.front().toInt(), -1 );
 
@@ -2144,7 +2144,7 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_EQUALITY_CONST( extracted_forward_list_int.front(), -1 );
 
   // Convert to a general deque
-  TEST_NOTHROW( extracted_deque = Utility::variant_cast<std::deque<Utility::Variant> >( variant ) );
+  TEST_NOTHROW( extracted_deque = Utility::variant_cast<Utility::VariantDeque>( variant ) );
   TEST_EQUALITY_CONST( extracted_deque.size(), 3 );
   TEST_EQUALITY_CONST( extracted_deque.front().toInt(), -1 );
   TEST_EQUALITY_CONST( extracted_deque.back().toInt(), 1 );
@@ -2158,7 +2158,7 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_EQUALITY_CONST( extracted_deque_int.back(), 1 );
 
   // Cannot convert to a map
-  TEST_THROW( (Utility::variant_cast<std::map<std::string,Utility::Variant> >( variant )),
+  TEST_THROW( (Utility::variant_cast<Utility::VariantMap>( variant )),
               std::runtime_error );
   TEST_THROW( (Utility::variant_cast<std::map<int,int> >( variant )),
               std::runtime_error );
@@ -2167,7 +2167,7 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   variant.setValue( "{ {-1, 0} ,  {1, 2} }" );
 
   // Convert to a general vector
-  TEST_NOTHROW( extracted_vector = Utility::variant_cast<std::vector<Utility::Variant> >( variant ) );  
+  TEST_NOTHROW( extracted_vector = Utility::variant_cast<Utility::VariantVector>( variant ) );  
   TEST_EQUALITY_CONST( extracted_vector.size(), 2 )
   TEST_EQUALITY_CONST( extracted_vector[0].toVector().size(), 2 );
   TEST_EQUALITY_CONST( extracted_vector[0].toVector()[0].toInt(), -1 );
@@ -2212,9 +2212,9 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   TEST_EQUALITY_CONST( Utility::get<1>(extracted_vector_tuple[1]), 2 );
 
   // Convert to a general map
-  std::map<std::string,Utility::Variant> extracted_map;
+  Utility::VariantMap extracted_map;
 
-  TEST_NOTHROW( (extracted_map = Utility::variant_cast<std::map<std::string,Utility::Variant> >( variant )) );
+  TEST_NOTHROW( (extracted_map = Utility::variant_cast<Utility::VariantMap>( variant )) );
   TEST_EQUALITY_CONST( extracted_map.size(), 2 );
   TEST_EQUALITY_CONST( extracted_map["-1"].toInt(), 0 );
   TEST_EQUALITY_CONST( extracted_map["1"].toInt(), 2 );
@@ -2275,6 +2275,382 @@ TEUCHOS_UNIT_TEST( Variant, compactify )
 
   TEST_EQUALITY_CONST( variant.toString(), "{{1,0},{-1,2}}" );
   TEST_EQUALITY_CONST( (variant.toType<std::vector<std::pair<int,int> > >().size()), 2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that variants can be compared
+TEUCHOS_UNIT_TEST( Variant, comparison_operators )
+{
+  Utility::Variant variant_a, variant_b;
+
+  TEST_ASSERT( variant_a == variant_b );
+
+  variant_b.setValue( " " );
+
+  TEST_ASSERT( variant_a != variant_b );
+
+  variant_a.setValue( " " );
+
+  TEST_ASSERT( variant_a == variant_b );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a variant can be converted to a string
+TEUCHOS_UNIT_TEST( Variant, toString )
+{
+  Utility::Variant variant;
+
+  TEST_EQUALITY_CONST( Utility::toString( variant ), std::string() );
+
+  variant.setValue( 1 );
+
+  TEST_EQUALITY_CONST( Utility::toString( variant ), "1" );
+
+  variant.setValue( 1.0 );
+
+  TEST_EQUALITY_CONST( Utility::toString( variant ), "1.000000000000000000e+00" );
+
+  variant.setValue( std::make_pair(1u, 0.0f) );
+  variant.compactify();
+
+  TEST_EQUALITY_CONST( Utility::toString( variant ), "{1,0.000000000e+00}" );
+
+  variant.setValue( std::make_tuple(1ll, -1.0, 'a') );
+  variant.compactify();
+
+  TEST_EQUALITY_CONST( Utility::toString( variant ), "{1,-1.000000000000000000e+00,a}" );
+
+  variant.setValue( std::vector<int>({-1, 0, 1}) );
+  variant.compactify();
+
+  TEST_EQUALITY_CONST( Utility::toString( variant ), "{-1,0,1}" );
+
+  variant.setValue( std::map<int,int>({std::make_pair(0, 0), std::make_pair(1, 1)}) );
+  variant.compactify();
+
+  TEST_EQUALITY_CONST( Utility::toString( variant ), "{{0,0},{1,1}}" ); 
+}
+
+//---------------------------------------------------------------------------//
+// Check that a variant can be placed in a stream
+TEUCHOS_UNIT_TEST( Variant, toStream )
+{
+  std::ostringstream oss;
+
+  Utility::toStream( oss, Utility::Variant() );
+  
+  TEST_EQUALITY_CONST( oss.str(), std::string() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::Variant::fromValue( 1 ) );
+
+  TEST_EQUALITY_CONST( oss.str(), "1" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::Variant::fromValue( 1.0 ) );
+
+  TEST_EQUALITY_CONST( oss.str(), "1.000000000000000000e+00" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::Variant::fromValue(std::make_pair(1u, 0.0f)).compactify() );
+
+  TEST_EQUALITY_CONST( oss.str(), "{1,0.000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::Variant::fromValue(std::make_tuple(1ll, -1.0, 'a')).compactify() );
+
+  TEST_EQUALITY_CONST( oss.str(), "{1,-1.000000000000000000e+00,a}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::Variant::fromValue(std::vector<int>({-1, 0, 1})).compactify() );
+
+  TEST_EQUALITY_CONST( oss.str(), "{-1,0,1}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::Variant::fromValue(std::map<int,int>({std::make_pair(0, 0), std::make_pair(1, 1)})).compactify() );
+
+  TEST_EQUALITY_CONST( oss.str(), "{{0,0},{1,1}}" ); 
+}
+
+//---------------------------------------------------------------------------//
+// Check that a variant can be placed in a stream
+TEUCHOS_UNIT_TEST( Variant, ostream_operator )
+{
+  std::ostringstream oss;
+  
+  oss << Utility::Variant();
+  
+  TEST_EQUALITY_CONST( oss.str(), std::string() );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::Variant::fromValue( 1 );
+
+  TEST_EQUALITY_CONST( oss.str(), "1" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::Variant::fromValue( 1.0 );
+
+  TEST_EQUALITY_CONST( oss.str(), "1.000000000000000000e+00" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::Variant::fromValue(std::make_pair(1u, 0.0f)).compactify();
+
+  TEST_EQUALITY_CONST( oss.str(), "{1,0.000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::Variant::fromValue(std::make_tuple(1ll, -1.0, 'a')).compactify();
+
+  TEST_EQUALITY_CONST( oss.str(), "{1,-1.000000000000000000e+00,a}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::Variant::fromValue(std::vector<int>({-1, 0, 1})).compactify();
+
+  TEST_EQUALITY_CONST( oss.str(), "{-1,0,1}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::Variant::fromValue(std::map<int,int>({std::make_pair(0, 0), std::make_pair(1, 1)})).compactify();
+
+  TEST_EQUALITY_CONST( oss.str(), "{{0,0},{1,1}}" ); 
+}
+
+//---------------------------------------------------------------------------//
+// Check that a variant can be created from a string
+TEUCHOS_UNIT_TEST( Variant, fromString )
+{
+  Utility::Variant variant = Utility::fromString<Utility::Variant>( " " );
+
+  TEST_EQUALITY_CONST( variant.toString(), " " );
+
+  variant = Utility::fromString<Utility::Variant>( "1" );
+
+  TEST_EQUALITY_CONST( variant.toInt(), 1 );
+
+  variant = Utility::fromString<Utility::Variant>( "1.0" );
+
+  TEST_EQUALITY_CONST( variant.toDouble(), 1.0 );
+
+  variant = Utility::fromString<Utility::Variant>( "{1, 0.0}" );
+
+  TEST_EQUALITY_CONST( (variant.toType<std::pair<int,float> >()),
+                       std::make_pair(1, 0.0f) );
+
+  variant = Utility::fromString<Utility::Variant>( "{1, -1, a}" );
+
+  TEST_EQUALITY_CONST( (variant.toType<std::tuple<long long, double, char> >()),
+                       std::make_tuple(1ll, -1.0, 'a') );
+
+  variant = Utility::fromString<Utility::Variant>( "{-1, 0, 1}" );
+
+  TEST_COMPARE_CONTAINERS( variant.toType<std::vector<int> >(),
+                           std::vector<int>({-1, 0, 1}) );
+
+  variant = Utility::fromString<Utility::Variant>( "{{0,0},{1,1}}" );
+
+  TEST_EQUALITY_CONST( variant.toMap().size(), 2 );
+  TEST_EQUALITY_CONST( variant.toMap()["0"].toInt(), 0 );
+  TEST_EQUALITY_CONST( variant.toMap()["1"].toInt(), 1 );
+
+  Utility::VariantVector vector =
+    Utility::fromString<Utility::VariantVector>( "{{0,0},{1,1}}" );
+
+  TEST_EQUALITY_CONST( vector.size(), 2 );
+  TEST_EQUALITY_CONST( vector[0].toString(), "{0,0}" );
+  TEST_EQUALITY_CONST( vector[1].toString(), "{1,1}" );
+
+  Utility::VariantMap map =
+    Utility::fromString<Utility::VariantMap>( "{{0,0},{1,1}}" );
+
+  TEST_EQUALITY_CONST( variant.toMap().size(), 2 );
+  TEST_EQUALITY_CONST( variant.toMap()["0"].toInt(), 0 );
+  TEST_EQUALITY_CONST( variant.toMap()["1"].toInt(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a variant can be extracted from a stream
+TEUCHOS_UNIT_TEST( Variant, fromStream )
+{
+  std::istringstream iss( " " );
+  
+  Utility::Variant variant;
+
+  Utility::fromStream( iss, variant );
+
+  TEST_EQUALITY_CONST( variant.toString(), " " );
+
+  iss.str( "1" );
+  iss.clear();
+
+  Utility::fromStream( iss, variant );
+
+  TEST_EQUALITY_CONST( variant.toInt(), 1 );
+
+  iss.str( "pi" );
+  iss.clear();
+
+  Utility::fromStream( iss, variant );
+  
+  TEST_EQUALITY_CONST( variant.toDouble(), Utility::PhysicalConstants::pi );
+
+  iss.str( "{1, 0.0}" );
+  iss.clear();
+
+  Utility::fromStream( iss, variant );
+  
+  TEST_EQUALITY_CONST( (variant.toType<std::pair<int,float> >()),
+                       std::make_pair(1, 0.0f) );
+
+  iss.str( "{1, -1, a}" );
+  iss.clear();
+
+  Utility::fromStream( iss, variant );
+
+  TEST_EQUALITY_CONST( (variant.toType<std::tuple<long long, double, char> >()),
+                       std::make_tuple(1ll, -1.0, 'a') );
+
+  iss.str( "{-1, 0, 1}" );
+  iss.clear();
+
+  Utility::fromStream( iss, variant );
+
+  TEST_COMPARE_CONTAINERS( variant.toType<std::vector<int> >(),
+                           std::vector<int>({-1, 0, 1}) );
+
+  iss.str( "{{0,0},{1,1}}" );
+  iss.clear();
+
+  Utility::fromStream( iss, variant );
+
+  TEST_EQUALITY_CONST( variant.toMap().size(), 2 );
+  TEST_EQUALITY_CONST( variant.toMap()["0"].toInt(), 0 );
+  TEST_EQUALITY_CONST( variant.toMap()["1"].toInt(), 1 );
+
+  iss.str( "{{0,0},{1,1}}" );
+  iss.clear();
+  
+  Utility::VariantVector vector;
+
+  Utility::fromStream( iss, vector );
+
+  TEST_EQUALITY_CONST( vector.size(), 2 );
+  TEST_EQUALITY_CONST( vector[0].toString(), "{0,0}" );
+  TEST_EQUALITY_CONST( vector[1].toString(), "{1,1}" );
+
+  iss.str( "{{0,0},{1,1}}" );
+  iss.clear();
+  
+  Utility::VariantMap map;
+
+  Utility::fromStream( iss, map );
+
+  TEST_EQUALITY_CONST( variant.toMap().size(), 2 );
+  TEST_EQUALITY_CONST( variant.toMap()["0"].toInt(), 0 );
+  TEST_EQUALITY_CONST( variant.toMap()["1"].toInt(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a variant can be extracted from a stream
+TEUCHOS_UNIT_TEST( Variant, istream_operator )
+{
+  std::istringstream iss( " " );
+  
+  Utility::Variant variant;
+
+  iss >> variant;
+
+  TEST_EQUALITY_CONST( variant.toString(), " " );
+
+  iss.str( "1" );
+  iss.clear();
+
+  iss >> variant;
+
+  TEST_EQUALITY_CONST( variant.toInt(), 1 );
+
+  iss.str( "pi" );
+  iss.clear();
+
+  iss >> variant;
+  
+  TEST_EQUALITY_CONST( variant.toDouble(), Utility::PhysicalConstants::pi );
+
+  iss.str( "{1, 0.0}" );
+  iss.clear();
+
+  iss >> variant;
+  
+  TEST_EQUALITY_CONST( (variant.toType<std::pair<int,float> >()),
+                       std::make_pair(1, 0.0f) );
+
+  iss.str( "{1, -1, a}" );
+  iss.clear();
+
+  iss >> variant;
+
+  TEST_EQUALITY_CONST( (variant.toType<std::tuple<long long, double, char> >()),
+                       std::make_tuple(1ll, -1.0, 'a') );
+
+  iss.str( "{-1, 0, 1}" );
+  iss.clear();
+
+  iss >> variant;
+
+  TEST_COMPARE_CONTAINERS( variant.toType<std::vector<int> >(),
+                           std::vector<int>({-1, 0, 1}) );
+
+  iss.str( "{{0,0},{1,1}}" );
+  iss.clear();
+
+  iss >> variant;
+
+  TEST_EQUALITY_CONST( variant.toMap().size(), 2 );
+  TEST_EQUALITY_CONST( variant.toMap()["0"].toInt(), 0 );
+  TEST_EQUALITY_CONST( variant.toMap()["1"].toInt(), 1 );
+
+  iss.str( "{{0,0},{1,1}}" );
+  iss.clear();
+  
+  Utility::VariantVector vector;
+
+  iss >> vector;
+
+  TEST_EQUALITY_CONST( vector.size(), 2 );
+  TEST_EQUALITY_CONST( vector[0].toString(), "{0,0}" );
+  TEST_EQUALITY_CONST( vector[1].toString(), "{1,1}" );
+
+  iss.str( "{{0,0},{1,1}}" );
+  iss.clear();
+  
+  Utility::VariantMap map;
+
+  iss >> map;
+
+  TEST_EQUALITY_CONST( variant.toMap().size(), 2 );
+  TEST_EQUALITY_CONST( variant.toMap()["0"].toInt(), 0 );
+  TEST_EQUALITY_CONST( variant.toMap()["1"].toInt(), 1 );
 }
 
 //---------------------------------------------------------------------------//
