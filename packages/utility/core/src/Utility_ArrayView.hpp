@@ -18,11 +18,14 @@
 
 namespace Utility{
 
+class Slice;
+
 /*! The array view class
  * 
  * This class was inspired by the Teuchos::ArrayView class found in
  * the Trilinos Software package 
  * (https://trilinos.org/docs/dev/packages/teuchos/doc/html/index.html).
+ * \ingroup view
  */
 template<typename T>
 class ArrayView : public View<T*>
@@ -76,6 +79,9 @@ public:
   ArrayView<T> operator()( const typename ArrayView<T>::size_type offset,
                            const typename ArrayView<T>::size_type size ) const;
 
+  //! Return a sub-array view
+  ArrayView<T> operator|( const Utility::Slice& slice ) const;
+
   //! Return a const array view
   ArrayView<const typename std::remove_const<T>::type> toConst() const;
 
@@ -83,49 +89,113 @@ public:
   operator ArrayView<const typename std::remove_const<T>::type>() const;
 };
 
-//! Create an array view of a std::vector
+/*! The slice class 
+ *
+ * Use this class when overloading the | operator to create an ArrayView
+ * of a slice of an array
+ * \ingroup view
+ */
+class Slice
+{
+public:
+  
+  //! Constructor
+  Slice( const size_t offset, const size_t extent )
+    : d_offset( offset ),
+      d_extent( extent )
+  { /* ... */ }
+
+  //! Tuple constructor
+  template<template<typename,typename> class Tuple>
+  Slice( const Tuple<size_t,size_t>& tuple )
+    : d_offset( std::get<0>( tuple ) ),
+      d_extent( std::get<1>( tuple ) )
+  { /* ... */ }
+
+  //! C-array constructor
+  Slice( const size_t offset_extent[2] )
+    : d_offset( offset_extent[0] ),
+      d_extent( offset_extent[1] )
+  { /* ... */ }
+
+  //! Destructor
+  ~Slice()
+  { /* ... */ }
+
+  //! Get the offset
+  size_t offset() const
+  { return d_offset; }
+
+  //! Get the extent
+  size_t extent() const
+  { return d_extent; }
+
+private:
+
+  // The offset
+  size_t d_offset;
+
+  // the extent
+  size_t d_extent;
+};
+
+/*! Create an array view of a std::vector
+ * \ingroup view
+ */
 template<typename T>
 inline ArrayView<T> arrayView( std::vector<T>& vector )
 {
   return ArrayView<T>( vector );
 }
 
-//! Create a const array view of a std::vector
+/*! Create a const array view of a std::vector
+ * \ingroup view
+ */
 template<typename T>
 inline ArrayView<const T> arrayView( const std::vector<T>& vector )
 {
   return ArrayView<const T>( vector );
 }
 
-//! Create a const array view of a std::vector
+/*! Create a const array view of a std::vector
+ * \ingroup view
+ */
 template<typename T>
 inline ArrayView<const T> arrayViewOfConst( const std::vector<T>& vector )
 {
   return ArrayView<const T>( vector );
 }
 
-//! Create an array view of a std::array
+/*! Create an array view of a std::array
+ * \ingroup view
+ */
 template<typename T, size_t N>
 inline ArrayView<T> arrayView( std::array<T,N>& array )
 {
   return ArrayView<T>( array );
 }
 
-//! Create a const array view of a std::array
+/*! Create a const array view of a std::array
+ * \ingroup view
+ */
 template<typename T, size_t N>
 inline ArrayView<const T> arrayView( const std::array<T,N>& array )
 {
   return ArrayView<const T>( array );
 }
 
-//! Create a const array view of a std::array
+/*! Create a const array view of a std::array
+ * \ingroup view
+ */
 template<typename T, size_t N>
 inline ArrayView<const T> arrayViewOfConst( const std::array<T,N>& array )
 {
   return ArrayView<const T>( array );
 }
 
-//! Const cast array view
+/*! Const cast array view
+ * \ingroup view
+ */
 template<typename T2, typename T1>
 inline ArrayView<T2> av_const_cast( const ArrayView<T1>& array_view )
 {
@@ -133,7 +203,9 @@ inline ArrayView<T2> av_const_cast( const ArrayView<T1>& array_view )
                         array_view.size() );
 }
 
-//! Reinterpret cast array view
+/*! Reinterpret cast array view
+ * \ingroup view
+ */
 template<typename T2, typename T1>
 inline ArrayView<T2> av_reinterpret_cast( const ArrayView<T1>& array_view )
 {

@@ -17,6 +17,12 @@
 #include "Utility_IteratorTypeTraits.hpp"
 #include "Utility_ToStringTraits.hpp"
 
+/*! \defgroup view View
+ *
+ * Methods and classes for working with slices (views) of containers. These
+ * views are STL compliant containers.
+ */
+
 namespace Utility{
 
 //! The view class 
@@ -125,9 +131,6 @@ public:
   //! Return const iterator to end
   const_iterator cend() const;
 
-  //! Return a sub-view
-  View<iterator> operator()( const size_type offset, const size_type size ) const;
-
   //! Return a const view
   View<const_iterator> toConst() const;
 
@@ -143,42 +146,54 @@ private:
   iterator d_end_iterator;
 };
 
-//! Create a view of a container
+/*! Create a view of a container
+ * \ingroup view
+ */
 template<typename STLCompliantContainer>
 inline View<typename STLCompliantContainer::iterator> view( STLCompliantContainer& container )
 {
   return View<typename STLCompliantContainer::iterator>( container.begin(), container.end() );
 }
 
-//! Create a const view of a container
+/*! Create a const view of a container
+ * \ingroup view
+ */
 template<typename STLCompliantContainer>
 inline View<typename STLCompliantContainer::const_iterator> view( const STLCompliantContainer& container )
 {
   return View<typename STLCompliantContainer::const_iterator>( container.begin(), container.end() );
 }
 
-//! Create a const view of a container
+/*! Create a const view of a container
+ * \ingroup view
+ */
 template<typename STLCompliantContainer>
 inline View<typename STLCompliantContainer::const_iterator> viewOfConst( const STLCompliantContainer& container )
 {
   return View<typename STLCompliantContainer::const_iterator>( container.begin(), container.end() );
 }
 
-//! Create a reverse view of a container
+/*! Create a reverse view of a container
+ * \ingroup view
+ */
 template<typename STLCompliantContainer>
 inline View<typename STLCompliantContainer::reverse_iterator> reverseView( STLCompliantContainer& container )
 {
   return View<typename STLCompliantContainer::reverse_iterator>( container.rbegin(), container.rend() );
 }
 
-//! Create a const reverse view of a container
+/*! Create a const reverse view of a container
+ * \ingroup view
+ */
 template<typename STLCompliantContainer>
 inline View<typename STLCompliantContainer::const_reverse_iterator> reverseView( const STLCompliantContainer& container )
 {
   return View<typename STLCompliantContainer::const_reverse_iterator>( container.rbegin(), container.rend() );
 }
 
-//! Create a const reverse view of a container
+/*! Create a const reverse view of a container
+ * \ingroup view
+ */
 template<typename STLCompliantContainer>
 inline View<typename STLCompliantContainer::const_reverse_iterator> reverseViewOfConst( const STLCompliantContainer& container )
 {
@@ -186,6 +201,7 @@ inline View<typename STLCompliantContainer::const_reverse_iterator> reverseViewO
 }
 
 /*! Partial specialization of ToStringTraits for Utility::View
+ * \ingroup view
  * \ingroup to_string_traits
  */
 template<typename T>
@@ -193,6 +209,7 @@ struct ToStringTraits<Utility::View<T> > : public Details::ToStringTraitsIterato
 { /* ... */ };
 
 /*! Specialization of ToStringTraits for Utility::View<std::string::const_iterator>
+ * \ingroup view
  * \ingroup to_string_traits
  */
 template<>
@@ -212,6 +229,7 @@ struct ToStringTraits<Utility::View<std::string::const_iterator> >
 };
 
 /*! Specialization of ToStringTraits for Utility::View<std::string::iterator>
+ * \ingroup view
  * \ingroup to_string_traits
  */
 template<>

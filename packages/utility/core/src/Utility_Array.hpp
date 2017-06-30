@@ -10,9 +10,11 @@
 #define UTILITY_ARRAY_HPP
 
 // Std Lib Includes
+#include <iostream>
 #include <array>
 
 // FRENSIE Includes
+#include "Utility_ArrayView.hpp"
 #include "Utility_ToStringTraits.hpp"
 
 /*! \defgroup array Array.
@@ -34,6 +36,40 @@ struct ToStringTraits<std::array<T,N> > : public Details::ToStringTraitsIterator
 } // end Utility namespace
 
 namespace std{
+
+/*! Create a view of an array
+ * \ingroup vector
+ * \ingroup view
+ */
+template<typename T, size_t N>
+inline Utility::ArrayView<T> operator|( std::array<T,N>& array,
+                                        const Utility::Slice& slice )
+{
+  // Make sure that the slice offset is valid
+  testPrecondition( slice.offset() < N );
+  // Make sure that the slice is valid
+  testPrecondition( slice.offset() + slice.extent() <= N );
+  
+  return Utility::ArrayView<T>( array.data() + slice.offset(),
+                                slice.extent() );
+}
+
+/*! Create a const view of a vector
+ * \ingroup vector
+ * \ingroup view
+ */
+template<typename T, size_t N>
+inline Utility::ArrayView<const T> operator|( const std::array<T,N>& array,
+                                              const Utility::Slice& slice )
+{
+  // Make sure that the slice offset is valid
+  testPrecondition( slice.offset() < N );
+  // Make sure that the slice is valid
+  testPrecondition( slice.offset() + slice.extent() <= N );
+  
+  return Utility::ArrayView<const T>( array.data() + slice.offset(),
+                                      slice.extent() );
+}
 
 /*! Place a std::array in a stream
  * \ingroup array

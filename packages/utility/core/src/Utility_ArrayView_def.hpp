@@ -97,7 +97,25 @@ ArrayView<T> ArrayView<T>::operator()(
                             const typename ArrayView<T>::size_type offset,
                             const typename ArrayView<T>::size_type size ) const
 {
+  // Make sure that the offset is valid
+  testPrecondition( offset < this->size() );
+  // Make sure that the slice is valid
+  testPrecondition( offset + size <= this->size() );
+  
   return ArrayView<T>( const_cast<T*>(this->begin())+offset, size );
+}
+
+// Return a sub-array view
+template<typename T>
+ArrayView<T> ArrayView<T>::operator|( const Utility::Slice& slice ) const
+{
+  // Make sure that the slice offset is valid
+  testPrecondition( slice.offset() < this->size() );
+  // Make sure that the slice is valid
+  testPrecondition( slice.offset() + slice.extent() <= this->size() );
+
+  return ArrayView<T>( const_cast<T*>(this->begin())+slice.offset(),
+                       slice.extent() );
 }
 
 // Return a const array view

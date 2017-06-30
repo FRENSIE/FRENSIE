@@ -25,9 +25,9 @@ namespace Utility{
  * in a table of continuous data using the desired data processing policy (see
  * Utility::LogLogDataProcessingPolicy or
  * Utility::SquareSquareDataProcessingPolicy). Since this data
- * will be stored in a Teuchos::Array of Tuples (Utility::Pair, Utility::Trip,
- * or Utility::Quad) this function must also know which members of the tuple
- * store the raw independent data values and the raw dependent data values.
+ * will be stored in an Array of Tuples this function must also know which 
+ * members of the tuple store the raw independent data values and the raw 
+ * dependent data values.
  * This function will only compile if the desired tuple members are actually
  * available in Tuple.
  * \tparam DataProcessingPolicy A policy class that is used to process the
@@ -36,30 +36,24 @@ namespace Utility{
  * adheres to the necessary interface can be used (the static members
  * processIndependentVar and processDependentVar must be defined or a compile
  * time error will be given).
- * \tparam indepMember A member of the enumeration Utility::TupleMember,
- * which is used to refer to the member of Tuple that stores the independent
- * data values.
- * \tparam depMember A member of the enumeration Utility::TupleMember,
- * which is used to refer to the member of Tuple that stores the dependent
- * data values.
- * \tparam Tuple A Utility tuple struct (either Utility::Pair, Utility::Trip, or
- * Utility::Quad) that is used to store processed data.
+ * \tparam Tuple A tuple struct that is used to store processed data.
  * \param[in,out] data The array of tuple structs which contains the
  * raw table data.
  * \pre A valid array, which is any array of tuples with at least one element,
  * must be given to this function.
  */
 template<typename DataProcessingPolicy,
-	 TupleMember indepMember,
-	 TupleMember depMember,
+	 size_t indepMember,
+	 size_t depMember,
+         template<typename,typename...> class STLCompliantContainer,
 	 typename Tuple>
-void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
+void DataProcessor::processContinuousData( STLCompliantContainer<Tuple>& data )
 {
   // Make sure that the array is valid
   testPrecondition( data.size() > 0 );
 
-  typename Teuchos::Array<Tuple>::iterator data_point = data.begin();
-  typename Teuchos::Array<Tuple>::iterator end = data.end();
+  typename STLCompliantContainer<Tuple>::iterator data_point = data.begin();
+  typename STLCompliantContainer<Tuple>::iterator end = data.end();
 
   typename TupleElement<indepMember,Tuple>::type indep_value;
   typename TupleElement<depMember,Tuple>::type dep_value;
@@ -87,16 +81,15 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
  * ignored. To allow for accurate interpolation, the data point closest to the
  * given value but below it will be kept. If the tuple member of interest does
  * not exist in Tuple, a compile time error will be given.
- * \tparam member A member of the enumeration Utility::TupleMember, which
- * is used to refer to the member of Tuple that stores the value that will be
+ * \tparam member refers to the member of Tuple that stores the value that will
+ * be
  * tested against the value of interest.
- * \tparam Tuple A Utility tuple struct (either Utility::Pair, Utility::Trip, or
- * Utility::Quad) that is used to store the table data.
+ * \tparam Tuple A tuple struct that is used to store the table data.
  * \param[in,out] data The array of tuple structs which contain the raw table
  * data.
  * \param[in] value The minimum value that all Tuples in the array will be
- * compared against. Tuples with Utility::TupleMember <em> member </em> less
- * than <b> value </b> will be removed from the array.
+ * compared against. Tuples with <em> member </em> less than <b> value </b> 
+ * will be removed from the array.
  * \pre A valid array, which is any array of tuples with at least one element,
  * must be given to this function.
  * \post A valid array, which is any array of tuples with at least one element,
@@ -104,21 +97,23 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
  * it is possible for all elements to be eliminated from the array, which is
  * surely not an intended results.
  */
-template<TupleMember member,
+template<size_t member,
+         template<typename,typename...> class STLCompliantContainer,
 	 typename Tuple>
-void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
-						 const double value )
+void DataProcessor::removeElementsLessThanValue(
+                                            STLCompliantContainer<Tuple>& data,
+                                            const double value )
 {
   // Make sure that the array is valid
   testPrecondition( data.size() > 0 );
   // Make sure that array is sorted (need a check for this)
 
-  typename Teuchos::Array<Tuple>::iterator data_point_1 = data.begin();
-  typename Teuchos::Array<Tuple>::iterator data_point_2 = data_point_1 + 1;
-  typename Teuchos::Array<Tuple>::iterator end = data.end();
+  typename STLCompliantContainer<Tuple>::iterator data_point_1 = data.begin();
+  typename STLCompliantContainer<Tuple>::iterator data_point_2 = data_point_1 + 1;
+  typename STLCompliantContainer<Tuple>::iterator end = data.end();
 
   // Loop through the array and find the element range to remove
-  typename Teuchos::Array<Tuple>::size_type max_index = 0;
+  typename STLCompliantContainer<Tuple>::size_type max_index = 0;
   while( data_point_2 != end )
   {
     if( Utility::get<member>( *data_point_1 ) < value &&
@@ -149,16 +144,15 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
  * ignored. To allow for accurate interpolation, the data point closest to the
  * give value but above it will be kept. If the tuple member of interest does
  * not exist in Tuple, a compile time error will be given.
- * \tparam member A member of the enumeration Utility::TupleMember, which
- * is used to refer to the member of Tuple that stores the value that will be
+ * \tparam member refers to the member of Tuple that stores the value that will
+ * be
  * tested against the value of interest.
- * \tparam Tuple A Utility tuple struct (either Utility::Pair, Utility::Trip, or
- * Utility::Quad) that is used to store the table data.
+ * \tparam Tuple A tuple struct that is used to store the table data.
  * \param[in,out] data The array of tuple structs which contain the raw table
  * data.
  * \param[in] The maximum value that all Tuples in the array will be compared
- * against. Tuples with Utility::TupleMember <em> member </em> greater than
- * <b> value </b> will be removed from the array.
+ * against. Tuples with <em> member </em> greater than <b> value </b> will be 
+ * removed from the array.
  * \pre A valid array, which is any array of tuples with at least one element,
  * must be given to this function.
  * \post A valid array, which is any array of tuples with at least one element,
@@ -166,22 +160,24 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
  * is possible for all elements to be eliminated from the array, which is surely
  * not an intended result.
  */
-template<TupleMember member,
+template<size_t member,
+         template<typename,typename...> class STLCompliantContainer,
 	 typename Tuple>
-void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
-						    const double value )
+void DataProcessor::removeElementsGreaterThanValue(
+                                            STLCompliantContainer<Tuple>& data,
+                                            const double value )
 {
   // Make sure that the array is valid
   testPrecondition( data.size() > 0 );
   // Make sure that array is sorted (need a check for this)
 
   // Use bidirectional iterator in reverse to improve performance
-  typename Teuchos::Array<Tuple>::iterator data_point_1 = data.end() - 1;
-  typename Teuchos::Array<Tuple>::iterator data_point_2 = data_point_1 - 1;
-  typename Teuchos::Array<Tuple>::iterator end = data.begin() - 1;
+  typename STLCompliantContainer<Tuple>::iterator data_point_1 = data.end() - 1;
+  typename STLCompliantContainer<Tuple>::iterator data_point_2 = data_point_1 - 1;
+  typename STLCompliantContainer<Tuple>::iterator end = data.begin() - 1;
 
   // Loop through the array and find the element range to remove
-  typename Teuchos::Array<Tuple>::size_type max_index = 0;
+  typename STLCompliantContainer<Tuple>::size_type max_index = 0;
   while( data_point_2 != end )
   {
     if( Utility::get<member>( *data_point_1 ) > value &&
@@ -208,10 +204,9 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
  * points in a table the memory requirements and the search time can be
  * reduced. If the tuple member of interest does not exist in Tuple, a compile
  * time error will be given.
- * \tparam member A member of the enumeration Utility::TupleMember, which is used
- * to refer to the member of Tuple that stores the value that will be tested.
- * \tparam Tuple A Utility tuple struct (either Utility::Pair, Utility::Trip,
- * Utility::Quad) that is used to store the table data.
+ * \tparam member refers to the member of Tuple that stores the value that will
+ * be tested.
+ * \tparam Tuple A tuple struct that is used to store the table data.
  * \param[in,out] data The array of tuple structs which contain the raw table
  * data.
  * \pre A valid array, which is any array of tuples with at least <em> three
@@ -219,18 +214,19 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
  * \post A valid array, which is any array of tuples with at least <em> two
  * </em> elements, must be returned from this function.
  */
-template<TupleMember member,
+template<size_t member,
+         template<typename,typename...> class STLCompliantContainer,
 	 typename Tuple>
-void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
+void DataProcessor::coarsenConstantRegions( STLCompliantContainer<Tuple>& data )
 {
   // Make sure that the array is valid
   testPrecondition( data.size() > 2 );
 
   // Use bidirectional iterator in reverse to improve performance
   // when the constant region is at the end of the array
-  typename Teuchos::Array<Tuple>::iterator data_point_1 = data.end()-1;
-  typename Teuchos::Array<Tuple>::iterator data_point_2, data_point_3;
-  typename Teuchos::Array<Tuple>::iterator end = data.begin()-1;
+  typename STLCompliantContainer<Tuple>::iterator data_point_1 = data.end()-1;
+  typename STLCompliantContainer<Tuple>::iterator data_point_2, data_point_3;
+  typename STLCompliantContainer<Tuple>::iterator end = data.begin()-1;
 
   data_point_2 = data_point_1-1;
   data_point_3 = data_point_2-1;
@@ -254,44 +250,38 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
 }
 
 /*! \details This function calculates the slopes between each pair of data
- * points. Since this data will be stored in an Array of Tuples
- * (either Utility::Trip or Utility::Quad) this function must know which
- * members of the tuple store the processed independent data values and the
- * processed dependent data values. This function must also know which member
- * of the tuple will store the slope value that is calculated. The tuple with
- * the smaller independent variable will store the slope value for the pair.
- * This is desirable since conducting a search for a value in the table will
- * always return the lower bin boundary (the tuple with the smaller independent
- * variable). This function will only compile if the desired tuple members are
- * actually available in Tuple.
- * \tparam indepMember A member of the enumeration Utility::TupleMember, which
- * is used to refer to the member of Tuple that stores the independent data
+ * points. Since this data will be stored in an array of Tuples
+ * this function must know which members of the tuple store the processed 
+ * independent data values and the processed dependent data values. This
+ * function must also know which member of the tuple will store the slope value
+ * that is calculated. The tuple with the smaller independent variable will
+ * store the slope value for the pair. This is desirable since conducting a 
+ * search for a value in the table will always return the lower bin boundary 
+ * (the tuple with the smaller independent variable). This function will only 
+ * compile if the desired tuple members are actually available in Tuple.
+ * \tparam indepMember refers to the member of Tuple that stores the 
+ * independent data values.
+ * \tparam depMember refers to the member of Tuple that stores the dependent 
+ * data values.
+ * \tparam slopeMember refers to the member of Tuple that stores the slope 
  * values.
- * \tparam depMember A member of the enumeration Utility::TupleMember, which
- * is used to refer to the member of Tuple that stores the dependent data
- * values.
- * \tparam slopeMember A member of the enumeration Utility::TupleMember, which
- * is used to refer to the member of Tuple that stores the slope values.
- * \tparam Array An array class of tuple structs (either Utility::Trip or
- * Utility::Quad).
  * \param[in,out] data The array of tuple structs which contain the raw table
  * data.
  * \pre A valid array, which is any array of tuples with at least two elements,
  * must be given to this function.
  */
-template<TupleMember indepMember,
-	 TupleMember depMember,
-	 TupleMember slopeMember,
-	 typename Array>
-void DataProcessor::calculateSlopes( Array &data  )
+template<size_t indepMember,
+	 size_t depMember,
+	 size_t slopeMember,
+         template<typename,typename...> class STLCompliantContainer,
+	 typename Tuple>
+void DataProcessor::calculateSlopes( STLCompliantContainer<Tuple>& data  )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
 
-  typedef typename ArrayTraits<Array>::value_type Tuple;
-
-  typename Array::iterator data_point_1, data_point_2;
-  typename Array::iterator end = data.end();
+  typename STLCompliantContainer<Tuple>::iterator data_point_1, data_point_2;
+  typename STLCompliantContainer<Tuple>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
@@ -315,8 +305,8 @@ void DataProcessor::calculateSlopes( Array &data  )
 }
 
 /*! \details This function calculates a CDF from an array of continuous
- * data points. Since this data will be stored in an Array of Tuples (only
- * Utility::Quad) this function must know which members of the tuple store the
+ * data points. Since this data will be stored in an array of Tuples (must have
+ * size >= 4) this function must know which members of the tuple store the
  * processed independent data values and the processed dependent data values
  * (PDF values). This function must also know which member of the tuple will
  * store the CDF value that is calculated. To calculate the CDF values a
@@ -330,35 +320,33 @@ void DataProcessor::calculateSlopes( Array &data  )
  *   & = CDF(x_0) + PDF(x_0)*(x - x_0) + \frac{1}{2}\left[
  *   \frac{PDF(x_1) - PDF(x_0)}{x_1 - x_0} \right](x - x_0)^2. \nonumber
  * \f}
- * \tparam indepMember A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of Tuple that stores the independent data values.
- * \tparam pdfMember A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of Tuple that stores the PDF data values.
- * \tparam cdfMember A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of Tuple that will store the CDF data values.
- * \tparam Tuple A Utility tuple struct (only Utility::Quad) that is used to
- * store the processed data.
- * \tparam Array An array class of tuple structs (only Utility::Quad).
+ * \tparam indepMember refers to the member of Tuple that stores the 
+ * independent data values.
+ * \tparam pdfMember refers to the member of Tuple that stores the PDF data 
+ * values.
+ * \tparam cdfMember refers to the member of Tuple that will store the CDF data
+ * values.
+ * \tparam Tuple A tuple struct that is used to store the processed data.
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre A valid array, which is any array of tuples with at least two
  * elements, must be given to this function.
  */
-template<TupleMember indepMember,
-	 TupleMember pdfMember,
-	 TupleMember cdfMember,
-	 typename Array>
-typename QuantityTraits<typename TupleElement<cdfMember,typename ArrayTraits<Array>::value_type>::type>::template GetQuantityToPowerType<-1>::type
-DataProcessor::calculateContinuousCDF( Array &data,
+template<size_t indepMember,
+	 size_t pdfMember,
+	 size_t cdfMember,
+         template<typename,typename...> class STLCompliantContainer,
+	 typename Tuple>
+typename QuantityTraits<typename TupleElement<cdfMember,Tuple>::type>::template GetQuantityToPowerType<-1>::type
+DataProcessor::calculateContinuousCDF( STLCompliantContainer<Tuple>& data,
 				       const bool normalize )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
 
-  typedef typename ArrayTraits<Array>::value_type Tuple;
   typedef QuantityTraits<typename TupleElement<cdfMember,Tuple>::type> CDFQT;
 
-  typename Array::iterator data_point_1, data_point_2;
-  typename Array::iterator end = data.end();
+  typename STLCompliantContainer<Tuple>::iterator data_point_1, data_point_2;
+  typename STLCompliantContainer<Tuple>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
@@ -419,19 +407,18 @@ DataProcessor::calculateContinuousCDF( Array &data,
 
 
 // Create a pdf from an array of data using a first order approximation
-template<TupleMember indepMember,
-	   TupleMember pdfMember,
-	   TupleMember cdfMember,
-	   typename Array>
-void DataProcessor::calculateContinuousPDF( Array &data )
+template<size_t indepMember,
+         size_t pdfMember,
+         size_t cdfMember,
+         template<typename,typename...> class STLCompliantContainer,
+         typename Tuple>
+void DataProcessor::calculateContinuousPDF( STLCompliantContainer<Tuple>& data )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
 
-  typedef typename ArrayTraits<Array>::value_type Tuple;
-
-  typename Array::iterator data_point_1, data_point_2;
-  typename Array::iterator end = data.end();
+  typename STLCompliantContainer<Tuple>::iterator data_point_1, data_point_2;
+  typename STLCompliantContainer<Tuple>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
@@ -462,31 +449,30 @@ void DataProcessor::calculateContinuousPDF( Array &data )
 }
 
 /*! \details This function calculates a discrete CDF from an array of discrete
- * data points. Since this data will be stored in a Teuchos::Array of Tuples
- * (either Utility::Pair, Utility::Trip or Utility::Quad) this function must know
- * which member of the tuple stores the processed PDF value and which member of
- * the tuple will store the CDF value that is calculated. This function will
- * only compile if the desired tuple members are actually available in Tuple.
- * \tparam pdfMember A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of Tuple that stores the PDF data values.
- * \tparam cdfMember A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of Tuple that will store the CDF data values.
- * \tparam Tuple A Utility tuple struct (either Utility::Pair, Utility::Trip or
- * Utility::Quad) that is used to store the processed data.
+ * data points. Since this data will be stored in an array of Tuples
+ * this function must know which member of the tuple stores the processed PDF 
+ * value and which member of the tuple will store the CDF value that is 
+ * calculated. This function will only compile if the desired tuple members 
+ * are actually available in Tuple.
+ * \tparam pdfMember refers to the member of Tuple that stores the PDF data 
+ * values.
+ * \tparam cdfMember refers to the member of Tuple that will store the CDF data
+ * values.
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre A valid array, which is any array of tuples with at least two elements,
  * must be given to this function.
  */
-template<TupleMember pdfMember,
-	 TupleMember cdfMember,
+template<size_t pdfMember,
+	 size_t cdfMember,
+         template<typename,typename...> class STLCompliantContainer,
 	 typename Tuple>
-void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
+void DataProcessor::calculateDiscreteCDF( STLCompliantContainer<Tuple>& data )
 {
   // Make sure that the array has at least one element
   testPrecondition( data.size() > 0 );
 
-  typename Teuchos::Array<Tuple>::iterator data_point;
-  typename Teuchos::Array<Tuple>::iterator end = data.end();
+  typename STLCompliantContainer<Tuple>::iterator data_point;
+  typename STLCompliantContainer<Tuple>::iterator end = data.end();
 
   data_point = data.begin();
 
@@ -517,16 +503,10 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
 /*! \details This function copies the data in the desired tuple member of one
  * tuple to the desired tuple member of another tuple. The two arrays of
  * tuples must be distinct (no in place copying).
- * \tparam origMember A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of the tuple whose value will be copied.
- * \tparam copyMember A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of the new tuple that will store the copy.
- * \tparam OrigArray An array class of tuple structs (either Utility::Pair,
- * Utility::Trip or Utility::Quad) that will have a member value copied.
- * \tparam CopyArray An array class of tuple structs (either Utility::Pair,
- * Utility::Trip or Utility::Quad) that will store a copy in one of its members.
- * The tuple type contained in the array does not need to be the same as the
- * one contained in the <em> OrigArray </em>.
+ * \tparam origMember refers to the member of the tuple whose value will be 
+ * copied.
+ * \tparam copyMember refers to the member of the new tuple that will store the
+ * copy.
  * \param[in] orig_data The array of tuple structs which contain the data that
  * will be copied.
  * \param[in,out] copy_data The array of tuple structs that will store the
@@ -539,23 +519,25 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
  *  <li> The two arrays must be distinct.
  * </ul>
  */
-template<TupleMember origMember,
-	 TupleMember copyMember,
-	 typename OrigArray,
-	 typename CopyArray>
-void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
-					 CopyArray &copy_data )
+template<size_t origMember,
+	 size_t copyMember,
+	 template<typename,typename...> class STLCompliantContainerA,
+         template<typename,typename...> class STLCompliantContainerB,
+         typename TupleA,
+         typename TupleB>
+void DataProcessor::copyTupleMemberData(
+                               const STLCompliantContainerA<TupleA>& orig_data,
+                               STLCompliantContainerB<TupleB>& copy_data )
 {
   // Make sure that the arrays are valid
   testPrecondition( (orig_data.size() > 0) );
   testPrecondition( (orig_data.size() == copy_data.size()) );
-  remember(typedef typename ArrayTraits<OrigArray>::pointer
-	   origTuplePointer);
-  testPrecondition( &orig_data[0] !=
-		    reinterpret_cast<origTuplePointer>( &copy_data[0] ) );
+  remember(typedef typename STLCompliantContainerA<TupleA>::pointer origTuplePointer);
+  testPrecondition( &orig_data.front() !=
+		    reinterpret_cast<origTuplePointer>( &copy_data.front() ) );
 
-  typename OrigArray::const_iterator orig_data_point, end;
-  typename CopyArray::iterator copy_data_point;
+  typename STLCompliantContainerA<TupleA>::const_iterator orig_data_point, end;
+  typename STLCompliantContainerB<TupleB>::iterator copy_data_point;
   orig_data_point = orig_data.begin();
   copy_data_point = copy_data.begin();
   end = orig_data.end();
@@ -572,12 +554,11 @@ void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
 
 /*! \details This function swaps the data in two tuple members. It can be used
  * to reorganize the processed data in a table.
- * \tparam member1 A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of the tuple whose value will be swapped.
- * \tparam member2 A member of the enumeration Utility::TupleMember, which is
- * used to refer to the member of the tuple whose value will be swapped.
- * \tparam Array An array class of tuple structs (either Utility::Pair,
- * Utility::Trip or Utility::Quad).
+ * \tparam member1 refers to the member of the tuple whose value will be 
+ * swapped.
+ * \tparam member2 refers to the member of the tuple whose value will be 
+ * swapped.
+ * \tparam Array An array class of tuple structs.
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre
  * <ul>
@@ -586,19 +567,18 @@ void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
  *       must be given to this function.
  * </ul>
  */
-template<TupleMember member1,
-	 TupleMember member2,
-	 typename Array>
-void DataProcessor::swapTupleMemberData( Array &data )
+template<size_t member1,
+	 size_t member2,
+	 template<typename,typename...> class STLCompliantContainer,
+         typename Tuple>
+void DataProcessor::swapTupleMemberData( STLCompliantContainer<Tuple>& data )
 {
   // Make sure that the members are valid
   testPrecondition( member1 != member2 );
   // Make sure that the arrays are valid
   testPrecondition( (data.size() > 0) );
 
-  typedef typename ArrayTraits<Array>::value_type Tuple;
-
-  typename Array::iterator data_point, end;
+  typename STLCompliantContainer<Tuple>::iterator data_point, end;
   data_point = data.begin();
   end = data.end();
 

@@ -14,6 +14,7 @@
 #include <vector>
 
 // FRENSIE Includes
+#include "Utility_ArrayView.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ContractException.hpp"
@@ -45,6 +46,40 @@ struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCo
 } // end Utility namespace
 
 namespace std{
+
+/*! Create a view of a vector
+ * \ingroup vector
+ * \ingroup view
+ */
+template<typename T>
+inline Utility::ArrayView<T> operator|( std::vector<T>& vector,
+                                        const Utility::Slice& slice )
+{
+  // Make sure that the slice offset is valid
+  testPrecondition( slice.offset() < vector.size() );
+  // Make sure that the slice is valid
+  testPrecondition( slice.offset() + slice.extent() <= vector.size() );
+  
+  return Utility::ArrayView<T>( vector.data() + slice.offset(),
+                                slice.extent() );
+}
+
+/*! Create a const view of a vector
+ * \ingroup vector
+ * \ingroup view
+ */
+template<typename T>
+inline Utility::ArrayView<const T> operator|( const std::vector<T>& vector,
+                                              const Utility::Slice& slice )
+{
+  // Make sure that the slice offset is valid
+  testPrecondition( slice.offset() < vector.size() );
+  // Make sure that the slice is valid
+  testPrecondition( slice.offset() + slice.extent() <= vector.size() );
+  
+  return Utility::ArrayView<const T>( vector.data() + slice.offset(),
+                                      slice.extent() );
+}
 
 /*! Place a std::vector in a stream
  * \ingroup vector

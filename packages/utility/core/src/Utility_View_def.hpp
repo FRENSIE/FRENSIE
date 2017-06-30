@@ -237,20 +237,6 @@ auto View<Iterator>::cend() const -> const_iterator
   return d_end_iterator;
 }
 
-// Return a sub-view
-template<typename Iterator>
-View<Iterator> View<Iterator>::operator()( const size_type offset,
-                                           const size_type size ) const
-{
-  Iterator new_start_it = d_start_iterator;
-  std::advance( new_start_it, offset );
-
-  Iterator new_end_it = new_start_it;
-  std::advance( new_end_it, size );
-  
-  return View<Iterator>( new_start_it, new_end_it );
-}
-
 // Return a const view
 template<typename Iterator>
 auto View<Iterator>::toConst() const -> View<const_iterator>
