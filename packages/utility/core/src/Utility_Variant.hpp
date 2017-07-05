@@ -113,6 +113,12 @@ public:
   //! Clear the variant
   void clear();
 
+  //! Check if the variant stores a basic type
+  bool storesBasicType() const;
+
+  //! Check if the variant stores a container type
+  bool storesContainerType() const;
+
   //! Check if the variant can be converted to the type of interest
   template<typename T>
   bool canConvert() const;

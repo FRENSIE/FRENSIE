@@ -2243,6 +2243,184 @@ TEUCHOS_UNIT_TEST( Variant, clear )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the variant stores a basic type
+TEUCHOS_UNIT_TEST( Variant, stores_type )
+{
+  // Store a char
+  Utility::Variant variant( 'a' );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  variant.setValue( '{' );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  variant.setValue( '}' );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a boolean
+  variant.setValue( true );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  variant.setValue( false );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a signed char
+  variant.setValue( static_cast<signed char>(-1) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  // Store an unsigned char
+  variant.setValue( static_cast<unsigned char>(0) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an int8_t
+  variant.setValue( static_cast<int8_t>(-100) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an uint8_t
+  variant.setValue( static_cast<uint8_t>(255) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an int16_t
+  variant.setValue( static_cast<int16_t>(-200) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a uint16_t
+  variant.setValue( static_cast<uint16_t>(300) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an int32_t
+  variant.setValue( static_cast<int32_t>(-1000000000) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an uint32_t
+  variant.setValue( static_cast<uint32_t>(1000000000) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a short
+  variant.setValue( static_cast<short>(-100) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an unsigned short
+  variant.setValue( static_cast<unsigned short>(255) );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  // Store an int
+  variant.setValue( -100000000 );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an unsigned int
+  variant.setValue( 100000000u );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a long
+  variant.setValue( -100000000l );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store an unsigned long
+  variant.setValue( 100000000ul );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a long long
+  variant.setValue( -10000000000ll );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  // Store an unsigned long long
+  variant.setValue( 10000000000ull );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  // Store a float
+  variant.setValue( 1.0f );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  variant.setValue( "-INF" );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  variant.setValue( "-PI" );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a double
+  variant.setValue( -1.0 );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  variant.setValue( "INFty" );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  variant.setValue( "3pi/4" );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+
+  // Store a string value
+  variant.setValue( " 1 " );
+
+  TEST_ASSERT( variant.storesBasicType() );
+  TEST_ASSERT( !variant.storesContainerType() );
+  
+  // Store a container
+  variant.setValue( " { -1, 0, 1 } " );
+
+  TEST_ASSERT( !variant.storesBasicType() );
+  TEST_ASSERT( variant.storesContainerType() );
+
+  // Store a container of containers
+  variant.setValue( "{ {-1, 0} ,  {1, 2} }" );
+
+  TEST_ASSERT( !variant.storesBasicType() );
+  TEST_ASSERT( variant.storesContainerType() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that variants can be swapped
 TEUCHOS_UNIT_TEST( Variant, swap )
 {

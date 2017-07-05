@@ -66,6 +66,30 @@ void Variant::clear()
   d_stored_data.clear();
 }
 
+// Check if the variant stores a basic type
+bool Variant::storesBasicType() const
+{
+  if( d_stored_data.size() > 1 )
+  {
+    return d_stored_data.find( "{" ) > d_stored_data.size() &&
+      d_stored_data.find( "}" ) > d_stored_data.size();
+  }
+  else
+    return true;
+}
+
+// Check if the variant stores a container type
+bool Variant::storesContainerType() const
+{
+  if( d_stored_data.size() > 1 )
+  {
+    return (d_stored_data.find( "{" ) < d_stored_data.size() ||
+            d_stored_data.find( "}" ) < d_stored_data.size());
+  }
+  else
+    return false;
+}
+
 // Convert the variant to a bool
 /*! \details If an error occurs in the conversion the success boolean
  * will be set to false (if it was passed in).
