@@ -69,11 +69,17 @@ class Variant
 
 public:
 
+  //! Typedefs for std::string interfaces
+  typedef std::string::value_type value_type;
+
   //! Default constructor
   Variant();
 
   //! Copy constructor
   Variant( const Variant& other );
+
+  //! String constructor
+  Variant( const std::string& object );
 
   //! Constructor
   template<typename T>
@@ -86,6 +92,10 @@ public:
   //! Assignment operator
   Variant& operator=( const Variant& that );
 
+  //! General assignment operator
+  template<typename T>
+  Variant& operator=( const T& that );
+
   //! Create a variant
   template<typename T>
   static Variant fromValue( const T& object );
@@ -95,7 +105,7 @@ public:
   void setValue( const T& object );
 
   //! Check if the variant is null (no stored object)
-  bool isNull();
+  bool isNull() const;
 
   //! Swap this variant with another
   void swap( Variant& other );
@@ -208,6 +218,23 @@ public:
   //! Equality operator
   bool operator==( const Variant& other ) const;
 
+  //! Inline addition operator
+  Variant& operator+=( const Variant& other );
+
+  //! Inline addition operator
+  template<template<typename,typename...> class STLCompliantSequenceContainer>
+  Variant& operator+=( const STLCompliantSequenceContainer<Variant>& other );
+
+  //! Inline addition operator
+  template<template<typename,typename,typename...> class STLCompliantAssociativeContainer>
+  Variant& operator+=( const STLCompliantAssociativeContainer<std::string,Variant>& other );
+
+  //! Inline addition operator
+  Variant& operator+=( const char& string_element );
+
+  //! Implicit conversion to std::string
+  operator std::string() const;
+
 private:
 
   // Convert the variant to a general container of variants
@@ -282,7 +309,7 @@ inline void swap( Utility::Variant& left, Utility::Variant& right )
   left.swap( right );
 }
 
-/*! Place a Variant in a stream
+/*! Place a Utility::Variant in a stream
  * \ingroup variant
  */
 inline std::ostream& operator<<( std::ostream& os,
@@ -293,7 +320,7 @@ inline std::ostream& operator<<( std::ostream& os,
   return os;
 }
 
-/*! Extract a Variant from a stream
+/*! Extract a Utility::Variant from a stream
  * \ingroup variant
  */
 inline std::istream& operator>>( std::istream& is, Utility::Variant& variant )

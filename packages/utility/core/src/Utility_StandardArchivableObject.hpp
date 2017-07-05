@@ -34,13 +34,15 @@ public:
 
   //! Import data from the desired archive
   void importData( const std::string& archive_name,
-		   const ArchivableObject::ArchiveType archive_type );
+		   const ArchivableObject::ArchiveType archive_type,
+                   const std::string& object_name = std::string() );
 
 protected:
 
   //! Export the data in the container to the desired archive type
   void exportData( const std::string& archive_name,
-		   const ArchivableObject::ArchiveType archive_type ) const;
+		   const ArchivableObject::ArchiveType archive_type,
+                   const std::string& object_name = std::string() ) const;
 };
 
 } // end Utility namespace

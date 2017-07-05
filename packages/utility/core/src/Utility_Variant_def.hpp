@@ -34,6 +34,29 @@ struct ConvertHelper
     return true;
   }
 
+  //! Convert a Utility::Variant to the desired type (safe)
+  static inline T safeConvert( const Utility::Variant& variant,
+                               bool* success )
+  {
+    // Initialize the success variable
+    if( success )
+      *success = true;
+
+    T converted_value;
+
+    try{
+      converted_value = Utility::fromString<T>( variant.d_stored_data );
+    }
+    catch( ... )
+    {
+      // Failure to convert the variant to the desired type
+      if( success )
+        *success = false;
+    }
+
+    return converted_value;
+  }
+
   //! Convert a Utility::Variant to the desired type
   static inline void convert( const Utility::Variant& variant, T& object )
   { object = Utility::fromString<T>( variant.d_stored_data ); }
@@ -47,9 +70,33 @@ struct ConvertHelper<T,typename std::enable_if<std::is_same<typename T::value_ty
   static inline bool canConvert( const Utility::Variant& variant )
   { return true; }
 
+  //! Convert a Utility::Variant to the desired type (safe)
+  static inline T safeConvert( const Utility::Variant& variant,
+                               bool* success )
+  {
+    // Initialize the success variable
+    if( success )
+      *success = true;
+
+    T converted_container;
+    
+    try{
+      converted_container =
+        Utility::fromString<T>( variant.d_stored_data );
+    }
+    // Failure to convert the variant to the desired container type - add this
+    // variant to the container
+    catch( ... )
+    {
+      converted_container = T({variant});
+    }
+
+    return converted_container;
+  }
+
   //! Convert a Utility::Variant to the desired type
   static inline void convert( const Utility::Variant& variant, T& object )
-  { object = variant.toContainerType<T>(); }
+  { object = ConvertHelper<T,typename std::enable_if<std::is_same<typename T::value_type,Utility::Variant>::value>::type>::safeConvert( variant, NULL ); }
 };
   
 } // end Details namespace
@@ -63,6 +110,17 @@ template<typename T>
 Variant::Variant( const T& object )
   : d_stored_data( Utility::toString(object) )
 { /* ... */ }
+
+// General assignment operator
+/*! \details To successfully convert the object of type T a Utility::Variant a 
+ * specialization of the Utility::ToStringTraits class for type T
+ * must exist.
+ */
+template<typename T>
+Variant& Variant::operator=( const T& that )
+{
+  d_stored_data = Utility::toString(that);
+}
 
 // Create a variant
 template<typename T>
@@ -104,23 +162,7 @@ inline void Variant::convert( T& object ) const
 template<typename T>
 inline T Variant::toType( bool* success ) const noexcept
 {
-  // Initialize the success variable
-  if( success )
-    *success = true;
-
-  T converted_value;
-
-  try{
-    converted_value = Utility::fromString<T>( d_stored_data );
-  }
-  catch( ... )
-  {
-    // Failure to convert the variant to the desired type
-    if( success )
-      *success = false;
-  }
-
-  return converted_value;
+  return Details::ConvertHelper<T>::safeConvert( *this, success );
 }
 
 // Convert the variant to a general container of variants
@@ -128,24 +170,42 @@ template<typename Container>
 typename std::enable_if<std::is_same<typename Container::value_type,Utility::Variant>::value,Container>::type
 Variant::toContainerType( bool* success ) const noexcept
 {
-  // Initialize the success variable
-  if( success )
-    *success = true;
+  return Details::ConvertHelper<Container>::safeConvert( *this, success );
+}
 
-  Container converted_container;
+// Inline addition operator
+template<template<typename,typename...> class STLCompliantSequenceContainer>
+Variant& Variant::operator+=( const STLCompliantSequenceContainer<Variant>& other )
+{
+  VariantList list = this->toList();
 
-  try{
-    converted_container =
-      Utility::fromString<Container>( d_stored_data );
-  }
-  // Failure to convert the variant to the desired container type - add this
-  // variant to the container
-  catch( ... )
+  list.insert( list.end(), other.begin(), other.end() );
+
+  *this = Variant( list );
+  
+  return *this;
+}
+
+// Inline addition operator
+template<template<typename,typename,typename...> class STLCompliantAssociativeContainer>
+Variant& Variant::operator+=( const STLCompliantAssociativeContainer<std::string,Variant>& other )
+{
+  VariantList list = this->toList();
+
+  typename STLCompliantAssociativeContainer<std::string,Variant>::const_iterator
+    other_it, other_end;
+  other_it = other.begin();
+  other_end = other.end();
+
+  while( other_it != other_end )
   {
-    converted_container = Container({*this});
+    list.push_back( Variant(*other_it) );
+    ++other_it;
   }
 
-  return converted_container;
+  *this = Variant( list );
+  
+  return *this;
 }
 
 // Cast the variant to the desired type

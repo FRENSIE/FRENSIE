@@ -283,12 +283,12 @@ TARGET_LINK_LIBRARIES(tstVariant utility_core)
 ADD_TEST(Variant_test tstVariant)
 SET_PROPERTY(TEST Variant_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstArrayTraits
-  tstArrayTraits.cpp
+ADD_EXECUTABLE(tstPropertyTree
+  tstPropertyTree.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstArrayTraits utility_core)
-ADD_TEST(ArrayTraits_test tstArrayTraits)
-SET_PROPERTY(TEST ArrayTraits_test PROPERTY LABELS utility_core)
+TARGET_LINK_LIBRARIES(tstPropertyTree utility_core)
+ADD_TEST(PropertyTree_test tstPropertyTree)
+SET_PROPERTY(TEST PropertyTree_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstSerialCommHelpers
   tstSerialCommHelpers.cpp
@@ -561,13 +561,6 @@ ADD_EXECUTABLE(tstTetrahedronHelpers
 TARGET_LINK_LIBRARIES(tstTetrahedronHelpers utility_core)
 ADD_TEST(TetrahedronHelpers_test tstTetrahedronHelpers)
 SET_PROPERTY(TEST TetrahedronHelpers_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstArrayString
-  tstArrayString.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstArrayString utility_core)
-ADD_TEST(ArrayString_test tstArrayString --test_array_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_arrays.xml")
-SET_PROPERTY(TEST ArrayString_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstSampleMoment
   tstSampleMoment.cpp

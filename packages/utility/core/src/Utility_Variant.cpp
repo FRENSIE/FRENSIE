@@ -22,6 +22,14 @@ Variant::Variant()
   : d_stored_data()
 { /* ... */ }
 
+// String constructor
+/*! \details This constructor is not explicit - implicit conversion from
+ * std::string to Utility::Variant is allowed (unlike with other types).
+ */
+Variant::Variant( const std::string& object )
+  : d_stored_data( object )
+{ /* ... */ }
+
 // Copy constructor
 Variant::Variant( const Variant& other )
   : d_stored_data( other.d_stored_data )
@@ -37,7 +45,7 @@ Variant& Variant::operator=( const Variant& that )
 }
 
 // Check if the variant is null (no stored object)
-bool Variant::isNull()
+bool Variant::isNull() const
 {
   return d_stored_data.size() == 0;
 }
@@ -337,24 +345,53 @@ bool Variant::operator==( const Variant& other ) const
   return d_stored_data == other.d_stored_data;
 }
 
+// Inline addition operator
+/*! \details This method will append a sequence element to the stored variant
+ * data. If the stored variant data is not a sequence type, it will be
+ * converted to a sequence type.
+ */ 
+Variant& Variant::operator+=( const Variant& other )
+{
+  VariantList list = this->toList();
+
+  *this += other.toList();
+
+  return *this;
+}
+
+// Inline addition operator
+/*! \details This inline addition overload is primarily for std::string
+ * interfaces (it is a required by the Utility::PropertyTree).
+ */
+Variant& Variant::operator+=( const char& string_element )
+{
+  d_stored_data += string_element;
+
+  return *this;
+}
+
+// Implicit conversion to std::string
+Variant::operator std::string() const
+{
+  return d_stored_data;
+}
+
 // Extract variant element string
 std::string FromStringTraits<Variant>::extractVariantElementString(
                                                     std::istream& is,
                                                     const std::string& delims )
 {
-  // Count the number of '{' characters that occur before any other
-  // characters (other than space characters)
-  size_t num_start_delim_chars = 0;
+  // Check if a sub-container is present
+  bool sub_container_present = false;
   
   std::string sub_container_string;
   
-  bool done = false;
-  
-  while( !done )
+  while( true )
   {
     char string_element;
     is.get( string_element );
-      
+    sub_container_string.push_back( string_element );
+    
     TEST_FOR_EXCEPTION( is.eof(),
                         Utility::StringConversionException,
                         "Unable to get the string element (EOF reached "
@@ -366,15 +403,16 @@ std::string FromStringTraits<Variant>::extractVariantElementString(
                         "error flags have been set)!" );
     
     if( string_element == '{' )
-      ++num_start_delim_chars;
+    {
+      sub_container_present = true;
+      break;
+    }
     else if( string_element != ' ' )
-      done = true;
-    
-    sub_container_string.push_back( string_element );
+      break;
   }
     
   // Restore the stream
-  if( num_start_delim_chars == 0 )
+  if( !sub_container_present )
   {
     while( sub_container_string.size() > 0 )
     {
@@ -384,18 +422,19 @@ std::string FromStringTraits<Variant>::extractVariantElementString(
 
     // Extract a string from the stream
     Utility::fromStream( is, sub_container_string, delims );
+    
+    return sub_container_string;
   }
     
-  // Continue reading until the correct number of consecutive end
-  // deliminators are encountered
+  // Continue reading until the numer of start deliminators equals the
+  // number of end deliminators
   else
   {
-    // Count the number of '}' characters that occur consecutively (excluding
-    // space characters)
+    // Count the number of '{' and '}' characters that occur
+    size_t num_start_delim_chars = 1;
     size_t num_end_delim_chars = 0;
-    char previous_element = 'a';
     
-    while( true )
+    while( num_start_delim_chars != num_end_delim_chars )
     {
       char string_element;
       is.get( string_element );
@@ -409,24 +448,13 @@ std::string FromStringTraits<Variant>::extractVariantElementString(
                           Utility::StringConversionException,
                           "Unable to get the string element (one or more "
                           "error flags have been set)!" );
-      
-      if( string_element == '}' && previous_element == '}' )
+
+      if( string_element == '{' )
+        ++num_start_delim_chars;
+      if( string_element == '}' )
         ++num_end_delim_chars;
-      else if( string_element == '}' && previous_element != '}' )
-      {
-        num_end_delim_chars = 1;
-        previous_element = '}';
-      }
-      else if( string_element != ' ' )
-      {
-        num_end_delim_chars = 0;
-        previous_element = string_element;
-      }
 
       sub_container_string.push_back( string_element );
-      
-      if( num_end_delim_chars == num_start_delim_chars )
-        break;
     }
 
     return sub_container_string;

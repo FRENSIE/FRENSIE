@@ -31,9 +31,17 @@ namespace Utility{
 template<typename DerivedType>
 void StandardArchivableObject<DerivedType,false>::exportData(
 		       const std::string& archive_name,
-		       const ArchivableObject::ArchiveType archive_type ) const
+		       const ArchivableObject::ArchiveType archive_type,
+                       const std::string& object_name ) const
 {
   std::ofstream ofs( archive_name.c_str() );
+
+  std::string true_object_name;
+  
+  if( object_name.size() == 0 )
+    true_object_name = typeid(*dynamic_cast<const DerivedType*>(this)).name();
+  else
+    true_object_name = object_name;
 
   switch( archive_type )
   {
@@ -55,8 +63,8 @@ void StandardArchivableObject<DerivedType,false>::exportData(
     {
       boost::archive::xml_oarchive ar(ofs);
       ar << boost::serialization::make_nvp(
-			typeid(*dynamic_cast<const DerivedType*>(this)).name(),
-			*dynamic_cast<const DerivedType*>(this) );
+                                     true_object_name,
+                                     *dynamic_cast<const DerivedType*>(this) );
 
       break;
     }
@@ -71,9 +79,17 @@ void StandardArchivableObject<DerivedType,false>::exportData(
 template<typename DerivedType>
 void StandardArchivableObject<DerivedType,false>::importData(
 			     const std::string& archive_name,
-			     const ArchivableObject::ArchiveType archive_type )
+			     const ArchivableObject::ArchiveType archive_type,
+                             const std::string& object_name )
 {
   std::ifstream ifs( archive_name.c_str() );
+
+  std::string true_object_name;
+  
+  if( object_name.size() == 0 )
+    true_object_name = typeid(*dynamic_cast<const DerivedType*>(this)).name();
+  else
+    true_object_name = object_name;
 
   switch( archive_type )
   {
@@ -94,9 +110,8 @@ void StandardArchivableObject<DerivedType,false>::importData(
     case Utility::ArchivableObject::XML_ARCHIVE:
     {
       boost::archive::xml_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp(
-		              typeid(*dynamic_cast<DerivedType*>(this)).name(),
-			      *dynamic_cast<DerivedType*>(this) );
+      ar >> boost::serialization::make_nvp( true_object_name,
+                                            *dynamic_cast<DerivedType*>(this) );
 
       break;
     }

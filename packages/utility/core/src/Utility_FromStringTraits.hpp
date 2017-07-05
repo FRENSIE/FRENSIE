@@ -570,7 +570,7 @@ inline void initializeInputStream( std::istream& is, const char start_delim )
   // Read the start deliminator
   std::string start_bracket;
   std::getline( is, start_bracket, start_delim );
-  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
+  boost::algorithm::trim( start_bracket );
 
   TEST_FOR_EXCEPTION( start_bracket.size() != 0,
                       std::runtime_error,
