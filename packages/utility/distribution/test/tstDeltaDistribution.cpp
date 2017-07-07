@@ -17,10 +17,6 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -40,18 +36,18 @@ namespace cgs = boost::units::cgs;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
 
-Teuchos::RCP<Utility::TabularOneDDistribution>
+std::shared_ptr<Utility::TabularOneDDistribution>
   tab_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
-Teuchos::RCP<Utility::OneDDistribution>
+std::shared_ptr<Utility::OneDDistribution>
   distribution( tab_distribution );
 
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<si::time,si::length> >
+std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<si::time,si::length> >
   unit_aware_tab_distribution( new Utility::UnitAwareDeltaDistribution<si::time,si::length>( 3.0*si::seconds ) );
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<si::time,si::length> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> >
   unit_aware_distribution( unit_aware_tab_distribution );
 
 //---------------------------------------------------------------------------//
@@ -366,106 +362,422 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( DeltaDistribution, toParameterList )
+// Check that the distribution can be converted to a string
+TEUCHOS_UNIT_TEST( DeltaDistribution, toString )
 {
-  Teuchos::RCP<Utility::DeltaDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<Utility::DeltaDistribution>( distribution );
+  std::string dist_string = Utility::toString( *distribution );
 
-  Teuchos::ParameterList parameter_list;
+  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 0.000000000000000000e+00}" );
 
-  parameter_list.set<Utility::DeltaDistribution>( "test distribution",
-						  *true_distribution );
+  dist_string = Utility::toString( Utility::DeltaDistribution( 1.0, 0.5 ) );
 
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"delta_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "delta_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<Utility::DeltaDistribution>
-    copy_distribution( new Utility::DeltaDistribution );
-
-  *copy_distribution = read_parameter_list->get<Utility::DeltaDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toParameterList )
+// Check that the unit-aware distribution can be converted to a string
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toString )
 {
-  typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
+  std::string dist_string = Utility::toString( *unit_aware_distribution );
 
-  Teuchos::RCP<UnitAwareDeltaDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<UnitAwareDeltaDistribution>( unit_aware_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 3.000000000000000000e+00}" );
+  dist_string = Utility::toString( Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters ) );
 
-  Teuchos::ParameterList parameter_list;
-
-  parameter_list.set<UnitAwareDeltaDistribution>( "test distribution",
-						  *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"unit_aware_delta_dist_test_list.xml");
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "unit_aware_delta_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<UnitAwareDeltaDistribution>
-    copy_distribution( new UnitAwareDeltaDistribution );
-
-  *copy_distribution = read_parameter_list->get<UnitAwareDeltaDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
-
-  std::cout << boost::units::name_string( si::energy() ) << std::endl;
+  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( DeltaDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( DeltaDistribution, toStream )
 {
-  Utility::DeltaDistribution xml_distribution =
-    test_dists_list->get<Utility::DeltaDistribution>( "Delta Distribution A" );
+  std::ostringstream oss;
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0 );
+  Utility::toStream( oss, *distribution );
 
-  xml_distribution =
-    test_dists_list->get<Utility::DeltaDistribution>( "Delta Distribution B" );
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi );
+  oss.str( "" );
+  oss.clear();
 
-  xml_distribution =
-    test_dists_list->get<Utility::DeltaDistribution>( "Delta Distribution C" );
+  Utility::toStream( oss, Utility::DeltaDistribution( 1.0, 0.5 ) );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
-		       -Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromParameterList )
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toStream )
 {
-  typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
+  std::ostringstream oss;
 
-  UnitAwareDeltaDistribution xml_distribution =
-    test_dists_list->get<UnitAwareDeltaDistribution>( "Unit-Aware Delta Distribution A" );
+  Utility::toStream( oss, *unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
-		       3.0*si::seconds );
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
 
-  xml_distribution =
-    test_dists_list->get<UnitAwareDeltaDistribution>( "Unit-Aware Delta Distribution B" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
-		       2*Utility::PhysicalConstants::pi*si::seconds );
+  Utility::toStream( oss, Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters ) );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( DeltaDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+
+  oss << *distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::DeltaDistribution( 1.0, 0.5 );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+
+  oss << *unit_aware_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( DeltaDistribution, fromString )
+{
+  Utility::DeltaDistribution test_dist =
+    Utility::fromString<Utility::DeltaDistribution>( "{Delta Distribution, 0.000000000000000000e+00}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::DeltaDistribution>( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+
+  TEST_ASSERT( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0 ), 0.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialize from a string
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromString )
+{
+  Utility::UnitAwareDeltaDistribution<si::time,si::length> test_dist =
+    Utility::fromString<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "{Delta Distribution, 3.000000000000000000e+00}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+
+  test_dist = Utility::fromString<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+
+  TEST_ASSERT( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
+  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( DeltaDistribution, fromStream )
+{
+  std::istringstream iss( "{Delta Distribution, 0.000000000000000000e+00}" );
+
+  Utility::DeltaDistribution test_dist;
+
+  Utility::fromStream( iss, test_dist );
+  
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+
+  iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_ASSERT( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0 ), 0.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromStream )
+{
+  std::istringstream iss( "{Delta Distribution, 3.000000000000000000e+00}" );
+  
+  Utility::UnitAwareDeltaDistribution<si::time,si::length> test_dist;
+
+  Utility::fromStream( iss, test_dist );
+  
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+
+  iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_ASSERT( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
+  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( DeltaDistribution, istream_operator )
+{
+  std::istringstream iss( "{Delta Distribution, 0.000000000000000000e+00}" );
+
+  Utility::DeltaDistribution test_dist;
+
+  iss >> test_dist;
+  
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+
+  iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_ASSERT( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0 ), 0.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, istream_operator )
+{
+  std::istringstream iss( "{Delta Distribution, 3.000000000000000000e+00}" );
+  
+  Utility::UnitAwareDeltaDistribution<si::time,si::length> test_dist;
+
+  iss >> test_dist;
+  
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+
+  iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_ASSERT( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
+  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to a property tree node
+TEUCHOS_UNIT_TEST( DeltaDistribution, toNode )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *distribution );
+
+  Utility::DeltaDistribution copy_dist =
+    ptree.get<Utility::DeltaDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+
+  ptree.put( "test distribution", *tab_distribution );
+
+  copy_dist = ptree.get<Utility::DeltaDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( tab_distribution.get() ) );
+
+  // Use the PropertyTreeCompatibleObject interface
+  distribution->toNode( "test distribution", ptree, true );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+
+  copy_dist = ptree.get<Utility::DeltaDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+
+  distribution->toNode( "test distribution", ptree, false );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), 0.0 );
+
+  Utility::DeltaDistribution test_dist( -1.0, 0.5 );
+
+  test_dist.toNode( "test distribution", ptree, true );
+
+  copy_dist = ptree.get<Utility::DeltaDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, test_dist );
+
+  test_dist.toNode( "test distribution", ptree, false );
+  
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "multiplier" ), 0.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be written to a property tree node
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toNode )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *unit_aware_distribution );
+
+  Utility::UnitAwareDeltaDistribution<si::time,si::length> copy_dist =
+    ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+
+  ptree.put( "test distribution", *unit_aware_tab_distribution );
+
+  copy_dist = ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_tab_distribution.get() )) );
+
+  // Use the PropertyTreeCompatibleObject interface
+  unit_aware_distribution->toNode( "test distribution", ptree, true );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+
+  copy_dist = ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+
+  unit_aware_distribution->toNode( "test distribution", ptree, false );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), 3.0 );
+
+  Utility::UnitAwareDeltaDistribution<si::time,si::length>
+    test_dist( -1.0*si::seconds, 0.5*si::meters );
+
+  test_dist.toNode( "test distribution", ptree, true );
+
+  copy_dist = ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, test_dist );
+
+  test_dist.toNode( "test distribution", ptree, false );
+  
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "multiplier" ), 0.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be read from a property tree node
+TEUCHOS_UNIT_TEST( DeltaDistribution, fromNode )
+{
+  Utility::DeltaDistribution dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution A" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution B" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution C" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution D" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
+                       0.5 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+              std::runtime_error );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be read from a property tree node
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromNode )
+{
+  Utility::UnitAwareDeltaDistribution<si::time,si::length> dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution A" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution B" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution C" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution D" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -2*Utility::PhysicalConstants::pi*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+              std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
@@ -488,7 +800,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwareDeltaDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareDeltaDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::DeltaDistribution>( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareDeltaDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwareDeltaDistribution<IndepUnitB,DepUnitB>
@@ -703,22 +1015,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_xml_file;
+std::string test_dists_json_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_dists_xml_file",
-                   &test_dists_xml_file,
+  clp().setOption( "test_dists_json_file",
+                   &test_dists_json_file_name,
                    "Test distributions xml file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::DeltaDistribution );
-  typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareDeltaDistribution );
+  // Load the property tree from the json file
+  test_dists_ptree.reset( new Utility::PropertyTree );
 
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
+  std::ifstream test_dists_json_file( test_dists_json_file_name );
+
+  test_dists_json_file >> *test_dists_ptree;
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();

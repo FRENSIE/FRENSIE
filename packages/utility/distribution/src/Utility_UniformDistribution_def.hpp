@@ -342,15 +342,15 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std:
 {
   os << "{" << Utility::convertOneDDistributionTypeToString( UnitAwareUniformDistribution::distribution_type ) << ", ";
 
-  Utility::toStream( os, getRawQuantity( d_min_independent_value ) );
+  Utility::toStream( os, Utility::getRawQuantity( d_min_independent_value ) );
 
   os << ", ";
 
-  Utility::toStream( os, getRawQuantity( d_max_independent_value ) );
+  Utility::toStream( os, Utility::getRawQuantity( d_max_independent_value ) );
   
   os << ", ";
 
-  Utility::toStream( os, getRawQuantity( d_dependent_value ) );
+  Utility::toStream( os, Utility::getRawQuantity( d_dependent_value ) );
   
   os << "}";
 }
@@ -424,9 +424,9 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toNode(
     Utility::PropertyTree child_tree;
   
     child_tree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareUniformDistribution::distribution_type ) );
-    child_tree.put( "min indep value", getRawQuantity( d_min_independent_value ) );
-    child_tree.put( "max indep value", getRawQuantity( d_max_independent_value ) );
-    child_tree.put( "dep value", getRawQuantity( d_dependent_value ) );
+    child_tree.put( "min indep value", Utility::getRawQuantity( d_min_independent_value ) );
+    child_tree.put( "max indep value", Utility::getRawQuantity( d_max_independent_value ) );
+    child_tree.put( "dep value", Utility::getRawQuantity( d_dependent_value ) );
     
     ptree.put_child( node_key, child_tree );
   }

@@ -274,84 +274,244 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isContinuous() c
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_location );
+  os << "{" << Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) << ", ";
+
+  Utility::toStream( os, Utility::getRawQuantity( d_location ) );
 
   if( d_multiplier != DQT::one() )
-    os << "," << getRawQuantity( d_multiplier ) << "}";
-  else
-    os << "}";
+  {
+    os << ", ";
+    Utility::toStream( os, Utility::getRawQuantity( d_multiplier ) );
+  }
+
+  os << "}";
 }
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
+                                                           std::istream& is,
+                                                           const std::string& )
 {
   // Read in the distribution representation
   std::string dist_rep;
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
-  // Parse special characters
+  VariantVector distribution_data;
+
   try{
-    ArrayString::locateAndReplacePi( dist_rep );
+    distribution_data =
+      Utility::variant_cast<VariantVector>( Utility::Variant::fromValue( dist_rep ) );
   }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the delta distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not extract the distribution data from "
+                           "the stream!" );
 
-  Teuchos::Array<double> distribution;
-  try{
-    distribution = Teuchos::fromStringToArray<double>( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the delta distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( distribution.size() < 1 || distribution.size() > 2,
+  // Verify that the correct amount of distribution data is present
+  TEST_FOR_EXCEPTION( distribution_data.size() < 2 ||
+                      distribution_data.size() > 3,
 		      InvalidDistributionStringRepresentation,
-		      "Error: the delta distribution cannot be constructed "
-		      "because the representation is not valid (only one or"
-		      "two values can be specified)!" );
+		      "The delta distribution cannot be constructed "
+		      "because the string representation is not valid!" );
 
-  setQuantity( d_location, distribution[0] );
+  // Verify that the distribution type is delta
+  this->verifyDistributionType( distribution_data[0] );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( distribution[0] ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the delta distribution cannot be constructed "
-		      "because of an invalid location (" << distribution[0] <<
-		      ")!" );
+  // Extract the location value
+  this->setLocationValue( distribution_data[1] );
 
-  if( distribution.size() > 1 )
-  {
-    setQuantity( d_multiplier, distribution[1] );
-
-    TEST_FOR_EXCEPTION( QT::isnaninf( distribution[1] ),
-			InvalidDistributionStringRepresentation,
-			"Error: the delta distribution cannot be constructed "
-			"because of an invalid multiplier ("
-			<< distribution[1] << ")!" );
-
-    TEST_FOR_EXCEPTION( distribution[1] == 0.0,
-			InvalidDistributionStringRepresentation,
-			"Error: the delta distribution cannot be constructed "
-			"because of an invalid multiplier ("
-			<< distribution[1] << ")!" );
-  }
+  // Extract the multiplier value
+  if( distribution_data.size() > 2 )
+    this->setMultiplierValue( distribution_data[2] );
   else
     d_multiplier = DQT::one();
 }
 
-// Method for testing if two objects are equivalent
+// Method for placing the object in the desired property tree node
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isEqual(
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toNode(
+                                                 const std::string& node_key,
+                                                 Utility::PropertyTree& ptree,
+                                                 const bool inline_data ) const
+{
+  if( inline_data )
+  {
+    std::ostringstream oss;
+
+    this->toStream( oss );
+
+    ptree.put( node_key, oss.str() );
+  }
+  else
+  {
+    Utility::PropertyTree child_tree;
+
+    child_tree.put( "type", Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) );
+    child_tree.put( "location", Utility::getRawQuantity( d_location ) );
+
+    if( d_multiplier != DQT::one() )
+      child_tree.put( "multiplier", Utility::getRawQuantity( d_multiplier ) );
+
+    ptree.put_child( node_key, child_tree );
+  }
+}
+
+// Method for initializing the object from a property tree node
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
+                                    const Utility::PropertyTree& node,
+                                    std::vector<std::string>& unused_children )
+{
+  // Initialize from inline data
+  if( node.size() == 0 )
+  {
+    std::istringstream iss( node.data().toString() );
+
+    this->fromStream( iss );
+  }
+  // Initialize from child nodes
+  else
+  {
+    Utility::PropertyTree::const_iterator node_it, node_end;
+    node_it = node.begin();
+    node_end = node.end();
+
+    bool type_verified = false;
+    bool location_set = false;
+    bool multiplier_set = false;
+
+    while( node_it != node_end )
+    {
+      std::string child_node_key =
+        boost::algorithm::to_lower_copy( node_it->first );
+
+      // Verify the distribution type
+      if( child_node_key.find( "type" ) < child_node_key.size() )
+      {
+        this->verifyDistributionType( node_it->second.data() );
+
+        type_verified = true;
+      }
+
+      // Extract the location value
+      else if( child_node_key.find( "loc" ) < child_node_key.size() )
+      {
+        this->setLocationValue( node_it->second.data() );
+
+        location_set = true;
+      }
+
+      // Extract the multiplier value
+      else if( child_node_key.find( "mult" ) < child_node_key.size() )
+      {
+        this->setMultiplierValue( node_it->second.data() );
+
+        multiplier_set = true;
+      }
+
+      // This child node is unused (and is not a comment)
+      else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
+               child_node_key.size() )
+      {
+        unused_children.push_back( node_it->first );
+      }
+
+      ++node_it;
+    }
+
+    // Make sure that the distribution type was verified
+    TEST_FOR_EXCEPTION( !type_verified,
+                        std::runtime_error,
+                        "The delta distribution could not be constructed "
+                        "because the type could not be verified!" );
+
+    // Make sure that the location value was set
+    TEST_FOR_EXCEPTION( !location_set,
+                        std::runtime_error,
+                        "The delta distribution could not be constructed "
+                        "because the location value was not specified!" );
+    
+    // Check if the multiplier was set
+    if( !multiplier_set )
+      d_multiplier = DQT::one();
+  }
+}
+
+// Verify the distribution type
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
+{
+  std::string distribution_type = type_data.toString();
+  boost::algorithm::to_lower( distribution_type );
+
+  TEST_FOR_EXCEPTION( distribution_type.find( "delta" ) >=
+                      distribution_type.size(),
+                      Utility::StringConversionException,
+                      "The delta distribution cannot be constructed "
+                      "because the distribution type ("
+                      << distribution_type << ") does not match!" );
+}
+
+// Set the location value
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue( const Utility::Variant& location_data )
+{
+  try{
+    Utility::setQuantity( d_location,
+                          Utility::variant_cast<double>( location_data ) );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not extract the location value!" );
+
+  // Verify that the location value is valid
+  TEST_FOR_EXCEPTION( IQT::isnaninf( d_location ),
+		      InvalidDistributionStringRepresentation,
+		      "The delta distribution cannot be constructed "
+		      "because of an invalid location (" << d_location <<
+		      ")!" );
+}
+
+// Set the multiplier value
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierValue( const Utility::Variant& multiplier_data )
+{
+  try{
+    Utility::setQuantity( d_multiplier,
+                          Utility::variant_cast<double>( multiplier_data ) );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not extract the multiplier value!" );
+
+  TEST_FOR_EXCEPTION( DQT::isnaninf( d_multiplier ),
+                      InvalidDistributionStringRepresentation,
+                      "The delta distribution cannot be constructed "
+                      "because of an invalid multiplier ("
+                      << d_multiplier << ")!" );
+
+  TEST_FOR_EXCEPTION( d_multiplier == DQT::zero(),
+                      InvalidDistributionStringRepresentation,
+                      "The delta distribution cannot be constructed "
+                      "because of an invalid multiplier ("
+                      << d_multiplier << ")!" );
+}
+
+// Equality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::operator==(
  const UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_location == other.d_location &&
     d_multiplier == other.d_multiplier;
+}
+
+// Inequality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::operator!=(
+ const UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>& other ) const
+{
+  return d_location != other.d_location ||
+    d_multiplier != other.d_multiplier;
 }
 
 // Test if the dependent variable can be zero within the indep bounds

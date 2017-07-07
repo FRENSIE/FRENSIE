@@ -78,54 +78,75 @@ public:
   { /* ... */ }
 
   //! Evaluate the distribution
-  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const override;
 
   //! Evaluate the PDF
-  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const override;
 
   //! Evaulate the CDF
-  double evaluateCDF( const IndepQuantity indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const override;
 
   //! Return a random sample from the corresponding CDF
-  IndepQuantity sample() const;
+  IndepQuantity sample() const override;
 
   //! Return a random sample from the corresponding CDF and record the number of trials
-  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample from the distribution and the sampled index
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
-  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample from the distribution in a subrange
-  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
   IndepQuantity sampleWithRandomNumberInSubrange(
 				     const double random_number,
-				     const IndepQuantity max_indep_var ) const;
+				     const IndepQuantity max_indep_var ) const override;
 
   //! Return the upper bound of the distribution independent variable
-  IndepQuantity getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const override;
 
   //! Return the lower bound of the distribution independent variable
-  IndepQuantity getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const;
+  OneDDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
-  bool isContinuous() const;
+  bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
-  void toStream( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const override;
 
   //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is );
+  void fromStream( std::istream& is, const std::string& delims ) override;
 
-  //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareDeltaDistribution& other ) const;
+  //! Method for initializing the object from an input stream
+  using IStreamableObject::fromStream;
+
+  //! Method for placing an object in the desired property tree node
+  void toNode( const std::string& node_key,
+               Utility::PropertyTree& ptree,
+               const bool inline_data ) const override;
+
+  //! Method for placing an object in the desired property tree node
+  using PropertyTreeCompatibleObject::toNode;
+
+  //! Method for initializing the object from a property tree node
+  void fromNode( const Utility::PropertyTree& node,
+                 std::vector<std::string>& unused_children ) override;
+
+  //! Method for initializing the object from a property tree node
+  using PropertyTreeCompatibleObject::fromNode;
+
+  //! Equality comparison operator
+  bool operator==( const UnitAwareDeltaDistribution& other ) const;
+
+  //! Inequality comparison operator
+  bool operator!=( const UnitAwareDeltaDistribution& other ) const;
 
 protected:
 
@@ -140,6 +161,15 @@ private:
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareDeltaDistribution;
+
+  // Verify the distribution type
+  static void verifyDistributionType( const Utility::Variant& type_data );
+
+  // Set the location value
+  void setLocationValue( const Utility::Variant& location_data );
+
+  // Set the multiplier value
+  void setMultiplierValue( const Utility::Variant& multiplier_data );
 
   // The distribution type
   static const OneDDistributionType distribution_type = DELTA_DISTRIBUTION;

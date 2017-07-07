@@ -670,6 +670,24 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be converted to a string
+TEUCHOS_UNIT_TEST( UniformDistribution, toString )
+{
+  std::string dist_string = Utility::toString( *distribution );
+
+  TEST_EQUALITY_CONST( dist_string, "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be converted to a string
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toString )
+{
+  std::string dist_string = Utility::toString( *unit_aware_distribution );
+
+  TEST_EQUALITY_CONST( dist_string, "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
 TEUCHOS_UNIT_TEST( UniformDistribution, toStream )
 {
@@ -711,6 +729,60 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, ostream_operator )
   oss << *unit_aware_distribution;
 
   TEST_EQUALITY_CONST( oss.str(), "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( UniformDistribution, fromString )
+{
+  Utility::UniformDistribution test_dist =
+    Utility::fromString<Utility::UniformDistribution>( "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  
+  test_dist = Utility::fromString<Utility::UniformDistribution>( "{uniform distribution, -1.0, 1.0, 2.0}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::UniformDistribution>( "{uniform-distribution, -1, 1, 2}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::UniformDistribution>( "{uniform,-1,1,2}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::UniformDistribution>( "{Uniform, -1, 1}" );
+
+  TEST_ASSERT( test_dist != *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( test_dist.getUpperBoundOfIndepVar(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromString )
+{
+  Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist =
+    Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+
+  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{uniform distribution, 0.0, 1.0, 1.0}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+
+  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{uniform-distribution, 0, 1, 1}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+
+  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{uniform,0,1,1}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+
+  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{Uniform, 0, 1}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
 }
 
 //---------------------------------------------------------------------------//

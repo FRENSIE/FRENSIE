@@ -1,0 +1,43 @@
+{
+    "Delta Distribution A": "{delta, 0, 2}",
+    "Delta Distribution B": "{Delta, pi}",
+
+    "Delta Distribution C":
+    {
+        "type": "Delta Distribution",
+        "location": -1.0
+    },
+
+    "Delta Distribution D":
+    {
+        "comment": "optional comment example",
+        "mult": 0.5,
+        "loc": "-2*pi",
+        "type": "Delta Distribution",
+        "dummy": ""
+    },
+
+    "comment": "This distribution is ill-formed",
+    "Delta Distribution E": "{dummy, 0}",
+
+    "Delta Distribution F":
+    {
+        "comment": "This distribution is ill-formed",
+        "type": "dummy"
+    },
+
+    "Delta Distribution G":
+    {
+        "comment": "This distribution is ill-formed",
+        "type": "Delta",
+        "location": "-Inf"
+    },
+
+    "Delta Distribution H":
+    {
+        "comment": "This distribution is ill-formed",
+        "type": "Delta",
+        "location": 0.0,
+        "multiplier": 0.0
+    }
+}
