@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_PolynomialDistribution.hpp"
+//#include "Utility_PolynomialDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwarePolynomialDistribution<void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwarePolynomialDistribution<void,void> );
   
 } // end Utility namespace
 

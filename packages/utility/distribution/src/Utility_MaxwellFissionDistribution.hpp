@@ -19,7 +19,6 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
@@ -27,8 +26,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareMaxwellFissionDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-					    public ParameterListCompatibleObject<UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareMaxwellFissionDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the independent unit corresponds to energy

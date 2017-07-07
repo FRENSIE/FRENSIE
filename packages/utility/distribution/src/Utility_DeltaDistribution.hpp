@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 
@@ -21,8 +20,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-				   public ParameterListCompatibleObject<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
 
 private:

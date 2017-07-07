@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_DeltaDistribution.hpp"
+//#include "Utility_DeltaDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDeltaDistribution<void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDeltaDistribution<void,void> );
   
 } // end Utility namespace
 

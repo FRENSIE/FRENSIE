@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_EquiprobableBinDistribution.hpp"
+//#include "Utility_EquiprobableBinDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEquiprobableBinDistribution<void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEquiprobableBinDistribution<void,void> );
   
 } // end Utility namespace
 

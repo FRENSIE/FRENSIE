@@ -36,6 +36,11 @@ namespace Utility{
  */
 typedef boost::property_tree::basic_ptree<std::string,Utility::Variant> PropertyTree;
 
+/*! The comment node key
+ * \ingroup ptree
+ */
+#define PTREE_COMMENT_NODE_KEY "comment"
+
 /*! Check if the property tree node stores a JSON array
  * \ingroup ptree
  */

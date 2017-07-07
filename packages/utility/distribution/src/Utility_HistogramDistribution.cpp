@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_HistogramDistribution.hpp"
+//#include "Utility_HistogramDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareHistogramDistribution<void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareHistogramDistribution<void,void> );
   
 } // end Utility namespace
 

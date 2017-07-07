@@ -7,15 +7,15 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_TabularDistribution.hpp"
+//#include "Utility_TabularDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLog,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLog,void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLin,void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLog,void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLin,void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLog,void,void> );
   
 } // end Utility namespace
 

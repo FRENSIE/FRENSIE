@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_NormalDistribution.hpp"
+//#include "Utility_NormalDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareNormalDistribution<void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareNormalDistribution<void,void> );
   
 } // end Utility namespace
 

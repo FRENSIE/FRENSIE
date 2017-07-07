@@ -45,7 +45,7 @@ struct GenericPTreeObjectTranslator
       return boost::optional<external_type>( boost::none );
   }
 
-  // Convert an object of type T to a Utility::Variant
+  //! Convert an object of type T to a Utility::Variant
   static inline boost::optional<internal_type> put_value( const T& obj )
   {
     return Utility::Variant( obj );
@@ -224,8 +224,10 @@ namespace boost {
 
 namespace property_tree {
 
-// Specialize boost::property_tree::translator_between so that it uses
-// the custom translator Utility::GenericPTreeObjectTranslator
+/*! \brief Specialize boost::property_tree::translator_between so that it uses
+ * the custom translator Utility::GenericPTreeObjectTranslator
+ * \ingroup ptree
+ */
 template<typename T>
 struct translator_between<Utility::Variant,T>
 {

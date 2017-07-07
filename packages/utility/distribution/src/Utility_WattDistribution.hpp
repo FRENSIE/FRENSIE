@@ -21,7 +21,6 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
@@ -30,8 +29,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-				  public ParameterListCompatibleObject<UnitAwareWattDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the independent unit corresponds to energy

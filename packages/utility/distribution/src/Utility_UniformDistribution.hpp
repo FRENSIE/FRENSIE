@@ -9,12 +9,8 @@
 #ifndef UTILITY_UNIFORM_DISTRIBUTION_HPP
 #define UTILITY_UNIFORM_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
@@ -23,8 +19,8 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-			    public ParameterListCompatibleObject<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+                                     
 {
 
 private:
@@ -79,23 +75,23 @@ public:
   { /* ... */ }
 
   //! Evaluate the distribution
-  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const override;
 
   //! Evaluate the PDF
-  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const override;
 
   //! Evaluate the CDF
-  double evaluateCDF( const IndepQuantity indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const override;
 
   //! Return a random sample from the distribution
-  IndepQuantity sample() const;
+  IndepQuantity sample() const override;
 
   //! Return a random sample from the distribution
   static IndepQuantity sample( const IndepQuantity min_independent_value,
 			       const IndepQuantity max_independent_value );
 
   //! Return a random sample from the corresponding CDF and record the number of trials
-  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample from the distribution and record the number of trials
   static IndepQuantity sampleAndRecordTrials(
@@ -104,7 +100,7 @@ public:
 				DistributionTraits::Counter& trials );
 
   //! Return a random sample from the distribution at the given CDF value
-  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
   static IndepQuantity sampleWithRandomNumber(
@@ -113,37 +109,58 @@ public:
 				const double random_number );
 
   //! Return a random sample and sampled index from the corresponding CDF
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
 
   //! Return a random sample from the corresponding CDF in a subrange
-  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
   IndepQuantity sampleWithRandomNumberInSubrange(
-				     const double random_number,
-				     const IndepQuantity max_indep_var ) const;
+                            const double random_number,
+			    const IndepQuantity max_indep_var ) const override;
 
   //! Return the upper bound of the distribution independent variable
-  IndepQuantity getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const override;
 
   //! Return the lower bound of the distribution independent variable
-  IndepQuantity getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const;
+  OneDDistributionType getDistributionType() const override;
 
   // Test if the distribution is continuous
-  bool isContinuous() const;
+  bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
-  void toStream( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const override;
 
   //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is );
+  void fromStream( std::istream& is, const std::string& delims ) override;
 
-  //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& other ) const;
+  //! Method for initializing the object from an input stream
+  using IStreamableObject::fromStream;
 
+  //! Method for placing an object in the desired property tree node
+  void toNode( const std::string& node_key,
+               Utility::PropertyTree& ptree,
+               const bool inline_data ) const override;
+
+  //! Method for placing an object in the desired property tree node
+  using PropertyTreeCompatibleObject::toNode;
+
+  //! Method for initializing the object from a property tree node
+  void fromNode( const Utility::PropertyTree& node,
+                 std::vector<std::string>& unused_children ) override;
+
+  //! Method for initializing the object from a property tree node
+  using PropertyTreeCompatibleObject::fromNode;
+
+  //! Equality comparison operator
+  bool operator==( const UnitAwareUniformDistribution& other ) const;
+
+  //! Inequality comparison operator
+  bool operator!=( const UnitAwareUniformDistribution& other ) const;
+  
 protected:
 
   //! Copy constructor (copying from unitless distribution only)
@@ -153,6 +170,21 @@ protected:
   bool canDepVarBeZeroInIndepBounds() const;
 
 private:
+
+  // Verify the distribution type
+  static void verifyDistributionType( const Utility::Variant& type_data );
+
+  // Set the min indep value
+  void setMinIndependentValue( const Utility::Variant& min_indep_data );
+
+  // Set the max indep value
+  void setMaxIndependentValue( const Utility::Variant& max_indep_data );
+
+  // Verify that the independent values are valid
+  void verifyValidIndependentValues();
+
+  // Set the dependent indep value
+  void setDependentValue( const Utility::Variant& dep_data );
 
   // Calculate the PDF value
   void calculatePDFValue();

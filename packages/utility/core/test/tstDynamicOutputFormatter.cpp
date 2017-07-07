@@ -1665,7 +1665,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatTeuchosUnitTestKeywords )
 
 //---------------------------------------------------------------------------//
 // Check that the desired output can be printed
-TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
+TEUCHOS_UNIT_TEST( DynamicOutputFormatter, toStream )
 {
   std::cout << std::endl;
   std::ostringstream oss_raw, oss;
@@ -1675,8 +1675,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1696,8 +1696,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::BoldTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1717,8 +1717,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::FadedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1738,8 +1738,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::ItalicizedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1759,8 +1759,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::UnderlinedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1780,8 +1780,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::BlackTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1801,8 +1801,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1822,8 +1822,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::GreenTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1843,8 +1843,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::YellowTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1864,8 +1864,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::BlueTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1885,8 +1885,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::MagentaTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1906,8 +1906,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::CyanTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1927,8 +1927,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::WhiteTextColor,Utility::DefaultTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1948,8 +1948,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::BlackTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1969,8 +1969,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::RedTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -1990,8 +1990,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::GreenTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -2011,8 +2011,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::YellowTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -2032,8 +2032,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::BlueTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -2053,8 +2053,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::MagentaTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -2074,8 +2074,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::CyanTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -2095,8 +2095,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     Utility::DynamicOutputFormatter formatter( "This is a test." );
 
     formatter.formatKeyword<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::WhiteTextBackgroundColor>( "test" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 
@@ -2120,8 +2120,8 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     formatter.boldCyanKeyword( "a" );
     formatter.boldMagentaKeyword( "test" );
     
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "This is a test." );
 

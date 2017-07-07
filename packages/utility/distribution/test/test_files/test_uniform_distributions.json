@@ -1,0 +1,30 @@
+{
+    "Uniform Distribution A": "{uniform, -1.0, 1.0, 2}",
+    "Uniform Distribution B": "{Uniform,0,2pi}",
+
+    "Uniform Distribution C":
+    {
+        "type": "Uniform Distribution",
+        "min indep value": 0.0,
+        "max indep value": 10.0,
+        "dep value": 3.0
+    },
+
+    "Uniform Distribution D":
+    {
+        "comment": "optional comment example",
+        "max": "Pi",
+        "min": 0.0,
+        "type": "uniform-distribution",
+        "dummy": ""
+    },
+
+    "comment": "This distribution is ill-formed",
+    "Uniform Distribution E": "{dummy, 0, 1}",
+
+    "Uniform Distribution F":
+    {
+        "comment": "This distribution is ill-formed",
+        "type": "dummy"
+    }
+}

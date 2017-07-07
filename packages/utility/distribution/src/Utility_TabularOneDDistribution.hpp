@@ -60,7 +60,7 @@ public:
 				 const IndepQuantity max_indep_var ) const = 0;
 
   //! Test if the distribution is tabular
-  bool isTabular() const;
+  bool isTabular() const override;
 };
 
 // Test if the distribution is tabular
@@ -79,6 +79,25 @@ typedef UnitAwareTabularOneDDistribution<void,void> TabularOneDDistribution;
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularOneDDistribution<void,void> );
 
 } // end Utility namespace
+
+namespace boost{
+
+namespace property_tree{
+
+/*! \brief Partial specialization of boost::property_tree::translator_between
+ * for Utility::TabularOneDDistribution
+ *
+ * This translator only allows put operators. Get operations must be done
+ * through a complete distribution type.
+ * \ingroup ptree
+ */
+template<typename IndependentUnit, typename DependentUnit>
+struct translator_between<Utility::Variant,Utility::UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> > : public translator_between<Utility::Variant,Utility::UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
+{ /* ... */ };
+
+} // end property_tree namespace
+
+} // end boost namespace
 
 #endif // end UTILITY_TABULAR_ONE_D_DISTRIBUTION_HPP
 

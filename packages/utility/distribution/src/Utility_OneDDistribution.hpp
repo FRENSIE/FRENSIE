@@ -21,6 +21,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
+#include "Utility_PropertyTreeCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ComparisonTraits.hpp"
 #include "Utility_UnitTraits.hpp"
@@ -41,7 +42,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareOneDDistribution
+class UnitAwareOneDDistribution : public PropertyTreeCompatibleObject
 {
 
 protected:
@@ -119,6 +120,15 @@ public:
 
   //! Test if the distribution has the same bounds
   bool hasSameBounds( const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const;
+
+  //! Method for initializing the object from an input stream
+  using IStreamableObject::fromStream;
+  
+  //! Method for placing an object in the desired property tree node
+  using PropertyTreeCompatibleObject::toNode;
+
+  //! Method for initializing the object from a property tree node
+  using PropertyTreeCompatibleObject::fromNode;
 
 protected:
 
@@ -319,6 +329,39 @@ typedef typename boost::enable_if<boost::mpl::or_<typename boost::is_same<typena
 typedef typename boost::disable_if<typename boost::is_same<typename UnitTraits<Unit>::Dimension,boost::units::Dim>::type>,Unit>::type __unit_has_invalid_ ## Dim ## _if_visible__
 
 } // end Utility namespace
+
+namespace boost{
+
+namespace property_tree{
+
+/*! \brief Partial specialization of boost::property_tree::translator_between
+ * for Utility::OneDDistribution
+ *
+ * This translator only allows put operators. Get operations must be done
+ * through a complete distribution type.
+ * \ingroup ptree
+ */
+template<typename IndependentUnit, typename DependentUnit>
+struct translator_between<Utility::Variant,Utility::UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
+{
+  //! The translator
+  struct translator
+  {
+    typedef Utility::Variant internal_type;
+    typedef void external_type;
+
+    //! Convert a distribution to a Utility::Variant
+    static inline boost::optional<internal_type> put_value( const Utility::UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& obj )
+    { return Utility::Variant( obj ); }
+  };
+
+  //! The translator type
+  typedef translator type;
+};
+  
+} // end property_tree namespace
+
+} // end boost namespace
 
 #endif // end UTILITY_ONE_D_DISTRIBUTION_HPP
 

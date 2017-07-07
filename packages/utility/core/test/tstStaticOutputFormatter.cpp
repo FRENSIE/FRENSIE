@@ -308,7 +308,7 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, getFormattedOutput )
 
 //---------------------------------------------------------------------------//
 // Check that the desired output can be printed
-TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
+TEUCHOS_UNIT_TEST( StaticOutputFormatter, toStream )
 {
   std::cout << std::endl;
   std::ostringstream oss_raw, oss;
@@ -316,8 +316,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check all defaults
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
 
@@ -336,8 +336,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check bold text format only
   {
     Utility::StaticOutputFormatter<Utility::BoldTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -356,8 +356,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check faded text format only
   {
     Utility::StaticOutputFormatter<Utility::FadedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -376,8 +376,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check italicized text format only
   {
     Utility::StaticOutputFormatter<Utility::ItalicizedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -396,8 +396,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check underlined text format only
   {
     Utility::StaticOutputFormatter<Utility::UnderlinedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -416,8 +416,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the black text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::BlackTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -436,8 +436,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the red text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -456,8 +456,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the green text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::GreenTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -476,8 +476,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the yellow text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::YellowTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -496,8 +496,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the blue text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::BlueTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -516,8 +516,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the magenta text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::MagentaTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -536,8 +536,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the cyan text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::CyanTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -556,8 +556,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the white text color only
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::WhiteTextColor,Utility::DefaultTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -576,8 +576,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the black text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::BlackTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -596,8 +596,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the red text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::RedTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -616,8 +616,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the green text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::GreenTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -636,8 +636,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the yellow text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::YellowTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -656,8 +656,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the blue text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::BlueTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -676,8 +676,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the magenta text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::MagentaTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -696,8 +696,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the cyan text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::CyanTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -716,8 +716,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check the white text background color
   {
     Utility::StaticOutputFormatter<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::WhiteTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     
@@ -736,8 +736,8 @@ TEUCHOS_UNIT_TEST( StaticOutputFormatter, print )
   // Check combinations
   {
     Utility::StaticOutputFormatter<Utility::UnderlinedTextFormat,Utility::GreenTextColor,Utility::MagentaTextBackgroundColor> formatter( "Testing" );
-    formatter.print( oss_raw, false );
-    formatter.print( oss, true );
+    formatter.toStream( oss_raw, false );
+    formatter.toStream( oss, true );
 
     TEST_EQUALITY_CONST( oss_raw.str(), "Testing" );
     

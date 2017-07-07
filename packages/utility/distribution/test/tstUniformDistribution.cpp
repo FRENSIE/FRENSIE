@@ -16,11 +16,6 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -41,17 +36,17 @@ namespace cgs = boost::units::cgs;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
 
-Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution(
+std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
 
-Teuchos::RCP<Utility::OneDDistribution> distribution = tab_distribution;
+std::shared_ptr<Utility::OneDDistribution> distribution = tab_distribution;
 
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<si::energy,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<si::energy,si::amount> >
   unit_aware_tab_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<si::energy,si::amount> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<si::energy,si::amount> >
   unit_aware_distribution;
 
 //---------------------------------------------------------------------------//
@@ -675,107 +670,477 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UniformDistribution, toParameterList )
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UniformDistribution, toStream )
 {
-  Teuchos::RCP<Utility::UniformDistribution> true_distribution =
-   Teuchos::rcp_dynamic_cast<Utility::UniformDistribution>( distribution );
+  std::ostringstream oss;
 
-  Teuchos::ParameterList parameter_list;
+  Utility::toStream( oss, *distribution );
 
-  parameter_list.set<Utility::UniformDistribution>( "test distribution",
-						     *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"uniform_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "uniform_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<Utility::UniformDistribution>
-    copy_distribution( new Utility::UniformDistribution );
-
-  *copy_distribution =
-    read_parameter_list->get<Utility::UniformDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( oss.str(), "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toParameterList )
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toStream )
 {
-  typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> UnitAwareUniformDistribution;
+  std::ostringstream oss;
 
-  Teuchos::RCP<UnitAwareUniformDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<UnitAwareUniformDistribution>( unit_aware_distribution );
+  Utility::toStream( oss, *unit_aware_distribution );
 
-  Teuchos::ParameterList parameter_list;
-
-  parameter_list.set<UnitAwareUniformDistribution>( "test distribution",
-						    *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"unit_aware_uniform_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "unit_aware_uniform_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<UnitAwareUniformDistribution>
-    copy_distribution( new UnitAwareUniformDistribution );
-
-  *copy_distribution =
-    read_parameter_list->get<UnitAwareUniformDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( oss.str(), "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UniformDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UniformDistribution, ostream_operator )
 {
-  Utility::UniformDistribution xml_distribution =
-    test_dists_list->get<Utility::UniformDistribution>( "Uniform Distribution A" );
+  std::ostringstream oss;
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), -1.0 );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 1.0 );
-  TEST_EQUALITY_CONST( xml_distribution.evaluate( 0.0 ), 2.0 );
+  oss << *distribution;
 
-  xml_distribution =
-    test_dists_list->get<Utility::UniformDistribution>( "Uniform Distribution B" );
-
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(),
-		       2*Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( xml_distribution.evaluate( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( oss.str(), "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromParameterList )
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, ostream_operator )
 {
-  typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> UnitAwareUniformDistribution;
+  std::ostringstream oss;
+  
+  oss << *unit_aware_distribution;
 
-  UnitAwareUniformDistribution xml_distribution =
-    test_dists_list->get<UnitAwareUniformDistribution>( "Unit-Aware Uniform Distribution A" );
+  TEST_EQUALITY_CONST( oss.str(), "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+}
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 10.0*si::joule);
-  TEST_EQUALITY_CONST( xml_distribution.evaluate( 5.0*si::joule ), 3.0*si::mole );
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UniformDistribution, fromStream )
+{
+  std::istringstream iss( "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  xml_distribution =
-    test_dists_list->get<UnitAwareUniformDistribution>( "Unit-Aware Uniform Distribution B" );
+  {
+    Utility::UniformDistribution test_dist;
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi*si::joule );
-  TEST_EQUALITY_CONST( xml_distribution.evaluate( 1.0*si::joule ), 1.0*si::mole );
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{uniform distribution, -1.0, 1.0, 2.0}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{uniform-distribution, -1, 1, 2}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{uniform,-1,1,2}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{Uniform, -1, 1}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_ASSERT( test_dist != *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+    TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), -1.0 );
+    TEST_EQUALITY_CONST( test_dist.getUpperBoundOfIndepVar(), 1.0 );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromStream )
+{
+  std::istringstream iss( "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{uniform distribution, 0.0, 1.0, 1.0}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{uniform-distribution, 0, 1, 1}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{uniform,0,1,1}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{Uniform, 0, 1}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    Utility::fromStream( iss, test_dist );
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UniformDistribution, istream_operator )
+{
+  std::istringstream iss( "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{uniform distribution, -1.0, 1.0, 2.0}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{uniform-distribution, -1, 1, 2}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{uniform,-1,1,2}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+  }
+
+  iss.str( "{Uniform, -1, 1}" );
+  iss.clear();
+
+  {
+    Utility::UniformDistribution test_dist;
+
+    iss >> test_dist;
+
+    TEST_ASSERT( test_dist != *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+    TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), -1.0 );
+    TEST_EQUALITY_CONST( test_dist.getUpperBoundOfIndepVar(), 1.0 );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, istream_operator )
+{
+  std::istringstream iss( "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{uniform distribution, 0.0, 1.0, 1.0}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{uniform-distribution, 0, 1, 1}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{uniform,0,1,1}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+
+  iss.str( "{Uniform, 0, 1}" );
+  iss.clear();
+
+  {
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
+
+    iss >> test_dist;
+
+    TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to a property tree node
+TEUCHOS_UNIT_TEST( UniformDistribution, toNode )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *distribution );
+
+  Utility::UniformDistribution copy_dist =
+    ptree.get<Utility::UniformDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
+
+  ptree.put( "test distribution", *tab_distribution );
+
+  copy_dist = ptree.get<Utility::UniformDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
+
+  // Use the PropertyTreeCompatibleObject interface
+  distribution->toNode( "test distribution", ptree, true );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+
+  copy_dist = ptree.get<Utility::UniformDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
+
+  distribution->toNode( "test distribution", ptree, false );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 2.0 );
+
+  distribution->toNode( "test distribution", ptree );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 2.0 );  
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be written to a property tree node
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toNode )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *unit_aware_distribution );
+
+  Utility::UnitAwareUniformDistribution<si::energy,si::amount> copy_dist =
+    ptree.get<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
+
+  ptree.put( "test distribution", *unit_aware_tab_distribution );
+
+  copy_dist = ptree.get<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
+
+  // Use the PropertyTreeCompatibleObject interface
+  unit_aware_distribution->toNode( "test distribution", ptree, true );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+
+  copy_dist = ptree.get<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
+
+  unit_aware_distribution->toNode( "test distribution", ptree, false );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 1.0 );
+
+  unit_aware_distribution->toNode( "test distribution", ptree );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 1.0 );  
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be read from a property tree node
+TEUCHOS_UNIT_TEST( UniformDistribution, fromNode )
+{
+  Utility::UniformDistribution dist;
+
+  std::vector<std::string> unused_children;
+  
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution A" ),
+                 unused_children );
+ 
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution B" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution C" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 5.0 ), 3.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution D" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
+              std::runtime_error );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be read from a property tree node
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromNode )
+{
+  Utility::UnitAwareUniformDistribution<si::energy,si::amount> dist;
+
+  std::vector<std::string> unused_children;
+  
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution A" ),
+                 unused_children );
+ 
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::joule ), 2.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution B" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0*si::joule ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution C" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 5.0*si::joule ), 3.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution D" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0*si::joule ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
+              std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
@@ -798,7 +1163,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareUniformDistribution,
 
   // Copy from a unitless distribution to distribution type A (static method)
   Utility::UnitAwareUniformDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareUniformDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::UniformDistribution>( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareUniformDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B (explicit cast)
   Utility::UnitAwareUniformDistribution<IndepUnitB,DepUnitB>
@@ -958,23 +1323,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_xml_file;
+std::string test_dists_json_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_dists_xml_file",
-                   &test_dists_xml_file,
-                   "Test distributions xml file name" );
+  clp().setOption( "test_dists_json_file",
+                   &test_dists_json_file_name,
+                   "Test distributions json file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::UniformDistribution );
-  typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> UnitAwareUniformDistribution;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareUniformDistribution );
+  // Load the property tree from the json file
+  test_dists_ptree.reset( new Utility::PropertyTree );
+  
+  std::ifstream test_dists_json_file( test_dists_json_file_name );
 
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-
+  test_dists_json_file >> *test_dists_ptree;
+  
   // Initialize the unit-aware distributions
   unit_aware_tab_distribution.reset(
 	     new Utility::UnitAwareUniformDistribution<si::energy,si::amount>(

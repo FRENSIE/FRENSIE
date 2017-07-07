@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_EvaporationDistribution.hpp"
+//#include "Utility_EvaporationDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEvaporationDistribution<void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEvaporationDistribution<void,void> );
 
 } // end Utility namespac
 

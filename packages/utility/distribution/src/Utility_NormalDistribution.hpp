@@ -14,14 +14,12 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Normal distribution class
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-				    public ParameterListCompatibleObject<UnitAwareNormalDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
 
 private:

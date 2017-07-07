@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_WattDistribution.hpp"
+//#include "Utility_WattDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareWattDistribution<void,void> );
+//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareWattDistribution<void,void> );
   
 } // end Utility namespace
 
