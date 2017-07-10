@@ -443,7 +443,13 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
   {
     std::istringstream iss( node.data().toString() );
 
-    this->fromStream( iss );
+    try{
+      this->fromStream( iss );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PTreeNodeConversionException,
+                                "Could not create the uniform "
+                                "distribution!" );
   }
   // Initialize from child nodes
   else
@@ -465,7 +471,13 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
       // Verify the distribution type
       if( child_node_key.find( "type" ) < child_node_key.size() )
       {
-        this->verifyDistributionType( node_it->second.data() );
+        try{
+          this->verifyDistributionType( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the uniform "
+                                    "distribution!" );
         
         type_verified = true;
       }
@@ -473,7 +485,13 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
       // Extract the min indep value
       else if( child_node_key.find( "min" ) < child_node_key.size() )
       {
-        this->setMinIndependentValue( node_it->second.data() );
+        try{
+          this->setMinIndependentValue( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the uniform "
+                                    "distribution!" );
         
         min_indep_val_set = true;
       }
@@ -481,7 +499,13 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
       // Extract the max indep value
       else if( child_node_key.find( "max" ) < child_node_key.size() )
       {
-        this->setMaxIndependentValue( node_it->second.data() );
+        try{
+          this->setMaxIndependentValue( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the uniform "
+                                    "distribution!" );
         
         max_indep_val_set = true;
       }
@@ -489,7 +513,13 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
       // Extract the dependent value
       else if( child_node_key.find( "dep" ) < child_node_key.size() )
       {
-        this->setDependentValue( node_it->second.data() );
+        try{
+          this->setDependentValue( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the uniform "
+                                    "distribution!" );
         
         dep_val_set = true;
       }
@@ -506,26 +536,32 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
 
     // Make sure that the distribution type was verified
     TEST_FOR_EXCEPTION( !type_verified,
-                        std::runtime_error,
+                        Utility::PTreeNodeConversionException,
                         "The uniform distribution could not be constructed "
                         "because the type could not be verified!" );
     
     // Make sure that the min indep value was set
     TEST_FOR_EXCEPTION( !min_indep_val_set,
-                        std::runtime_error,
+                        Utility::PTreeNodeConversionException,
                         "The uniform distribution could not be constructed "
                         "because the min independent value was not "
                         "specified!" );
     
     // Make sure that the max indep value was set
     TEST_FOR_EXCEPTION( !max_indep_val_set,
-                        std::runtime_error,
+                        Utility::PTreeNodeConversionException,
                         "The uniform distribution could not be constructed "
                         "because the max independent value was not "
                         "specified!" );
     
     // Verify that the independent values are valid
-    this->verifyValidIndependentValues();
+    try{
+      this->verifyValidIndependentValues();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PTreeNodeConversionException,
+                                "Could not create the uniform "
+                                "distribution!" );
     
     // Check if the dependent value was set
     if( !dep_val_set )
@@ -564,7 +600,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::setMinIndepend
 
   // Verify that the min independent value is valid
   TEST_FOR_EXCEPTION( IQT::isnaninf( d_min_independent_value ),
-		      InvalidDistributionStringRepresentation,
+		      Utility::StringConversionException,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid min "
 		      "independent value " <<

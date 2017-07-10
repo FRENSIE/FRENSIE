@@ -11,12 +11,11 @@
 
 // Std Lib Includes
 #include <string>
+#include <stdexcept>
 
 // Boost Includes
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/info_parser.hpp>
 
 // FRENSIE Includes
 #include "Utility_Variant.hpp"
@@ -70,6 +69,21 @@ VariantForwardList convertPTreeNodeToVariantForwardList( const Utility::Property
  * \ingroup ptree
  */
 VariantMap convertPTreeNodeToVariantMap( const Utility::PropertyTree& ptree );
+
+/*! \brief Exception thrown by methods when a convert from a PTree node
+ * to the desired type fails
+ * \ingroup ptree
+ */
+class PTreeNodeConversionException : public std::runtime_error
+{
+public:
+  PTreeNodeConversionException( const std::string& msg )
+    : std::runtime_error( msg )
+  { /* ... */ }
+
+  ~PTreeNodeConversionException() throw()
+  { /* ... */ }
+};
 
 /*! Specialization of Utility::ToStringTraits for Utility::PropertyTree
  * \ingroup ptree

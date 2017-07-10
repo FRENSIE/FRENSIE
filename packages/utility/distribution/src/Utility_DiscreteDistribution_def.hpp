@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ArrayString.hpp"
+#include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -38,8 +38,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
  */
 template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
-			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values,
+			      const std::vector<double>& independent_values,
+			      const std::vector<double>& dependent_values,
 			      const bool interpret_dependent_values_as_cdf )
   : d_distribution( independent_values.size() ),
     d_norm_constant()
@@ -53,8 +53,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
-	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<double>& dependent_values )
+	      const std::vector<InputIndepQuantity>& independent_quantities,
+	      const std::vector<double>& dependent_values )
   : d_distribution( independent_quantities.size() ),
     d_norm_constant()
 {
@@ -66,8 +66,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
-	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<InputDepQuantity>& dependent_values )
+	      const std::vector<InputIndepQuantity>& independent_quantities,
+	      const std::vector<InputDepQuantity>& dependent_values )
   : d_distribution( independent_quantities.size() ),
     d_norm_constant()
 {
@@ -97,8 +97,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   typedef typename UnitAwareDiscreteDistribution<InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
   // Reconstruct the original input distribution
-  Teuchos::Array<InputIndepQuantity> input_indep_quantities;
-  Teuchos::Array<InputDepQuantity> input_dep_quantities;
+  std::vector<InputIndepQuantity> input_indep_quantities;
+  std::vector<InputDepQuantity> input_dep_quantities;
 
   dist_instance.reconstructOriginalDistribution( input_indep_quantities,
 						 input_dep_quantities );
@@ -117,7 +117,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
 
   // Reconstruct the original input distribution
-  Teuchos::Array<double> input_bin_boundaries, input_bin_values;
+  std::vector<double> input_bin_boundaries, input_bin_values;
 
   unitless_dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 							  input_bin_values );
@@ -186,12 +186,12 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const
   if( indep_var_value >= Utility::get<FIRST>(d_distribution.front()) &&
       indep_var_value <= Utility::get<FIRST>(d_distribution.back()) )
   {
-    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
+    typename std::vector<std::pair<IndepQuantity,double> >::const_iterator bin =
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
 				       d_distribution.end(),
 				       indep_var_value );
 
-    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator
+    typename std::vector<std::pair<IndepQuantity,double> >::const_iterator
       prev_bin = bin;
     --prev_bin;
 
@@ -229,7 +229,7 @@ double UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluateCDF
   if( indep_var_value >= Utility::get<FIRST>(d_distribution.front()) &&
       indep_var_value <= Utility::get<FIRST>(d_distribution.back()) )
   {
-    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
+    typename std::vector<std::pair<IndepQuantity,double> >::const_iterator bin =
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
 				       d_distribution.end(),
 				       indep_var_value );
@@ -381,116 +381,234 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isContinuous(
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  Teuchos::Array<double> independent_values, dependent_values;
+  std::vector<double> independent_values, dependent_values;
 
   this->reconstructOriginalUnitlessDistribution( independent_values,
 						 dependent_values );
 
-  os << "{" << independent_values << "," << dependent_values << "}";
+  os << "{"
+     << Utility::convertOneDDistributionTypeToString( UnitAwareDiscreteDistribution::distribution_type )
+     << ", " << independent_values
+     << ", " << dependent_values
+     << "}";
 }
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
+                                                           std::istream& is,
+                                                           const std::string& )
 {
-  // Read the initial '{'
-  std::string start_bracket;
-  std::getline( is, start_bracket, '{' );
-  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
+  VariantVector distribution_data;
 
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the input stream is not a valid discrete "
-		      "distribution representation!" );
-
-  std::string independent_values_rep;
-  std::getline( is, independent_values_rep, '}' );
-  independent_values_rep += "}";
-
-  // Parse special charaters
   try{
-    ArrayString::locateAndReplacePi( independent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( independent_values_rep );
+    Utility::fromStream( is, distribution_data );
   }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the discrete distribution cannot be "
-			      "constructed because the independent values are "
-			      "not valid (see details below)!\n" );
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not extract the distribution data from "
+                           "the stream!" );
+  
+  // Verify that the correct amount of distribution data is present
+  TEST_FOR_EXCEPTION( distribution_data.size() != 3,
+                      Utility::StringConversionException,
+                      "The discrete distribution cannot be constructed "
+                      "because the string representation is not valid!" );
 
-  Teuchos::Array<double> independent_values;
-  try{
-    independent_values =
-      Teuchos::fromStringToArray<double>( independent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the discrete distribution cannot be "
-			      "constructed because the independent values are "
-			      "not valid (see details below)!\n" );
+  // Verify that the distribution type is discrete
+  this->verifyDistributionType( distribution_data[0] );
 
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
-						independent_values.end() ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the discrete distribution cannot be constructed "
-		      "because the bin boundaries "
-		      << independent_values_rep << " are not sorted!" );
+  // Extract the independent values
+  std::vector<double> independent_values;
+  
+  this->extractIndependentValues( distribution_data[1], independent_values );
 
-  // Read the ","
-  std::string separator;
-  std::getline( is, separator, ',' );
+  // Extract the dependent values
+  std::vector<double> dependent_values;
+  
+  this->extractDependentValues( distribution_data[2], dependent_values );
 
-  std::string dependent_values_rep;
-  std::getline( is, dependent_values_rep, '}' );
-  dependent_values_rep += "}";
-
-  // Parse special charaters
-  try{
-    ArrayString::locateAndReplacePi( dependent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the discrete distribution cannot be "
-			      "constructed because the dependent values are "
-			      "not valid (see details below)!\n" );
-
-  Teuchos::Array<double> dependent_values;
-  try{
-    dependent_values =
-      Teuchos::fromStringToArray<double>( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the discrete distribution cannot be "
-			      "constructed because the dependent values are "
-			      "not valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the discrete distribution "
-		      "{" << independent_values_rep << "},{"
-		      << dependent_values_rep << "} "
-		      "cannot be constructed because the number of "
-		      "independent values does not match the number of "
-		      "dependent values!" );
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values );
 
   this->initializeDistribution( independent_values, dependent_values, false );
 }
 
-// Method for testing if two objects are equivalent
+// Method for placing the object in the desired property tree node
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toNode(
+                                                 const std::string& node_key,
+                                                 Utility::PropertyTree& ptree,
+                                                 const bool inline_data ) const
+{
+  if( inline_data )
+  {
+    std::ostringstream oss;
+
+    this->toStream( oss );
+
+    ptree.put( node_key, oss.str() );
+  }
+  else
+  {
+    Utility::PropertyTree child_tree;
+
+    child_tree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareDiscreteDistribution::distribution_type ) );
+
+    std::vector<double> independent_values, dependent_values;
+
+    this->reconstructOriginalUnitlessDistribution( independent_values,
+                                                   dependent_values );
+    
+    child_tree.put( "independent values", independent_values );
+    child_tree.put( "dependent values", dependent_values );
+
+    ptree.put_child( node_key, child_tree );
+  }
+}
+
+// Method for initializing the object from a property tree node
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
+                                    const Utility::PropertyTree& node,
+                                    std::vector<std::string>& unused_children )
+{
+  // Initialize from inline data
+  if( node.size() == 0 )
+  {
+    std::istringstream iss( node.data().toString() );
+
+    try{
+      this->fromStream( iss );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PTreeNodeConversionException,
+                                "Could not create the discrete "
+                                "distribution!" );
+  }
+  // Initialize from child nodes
+  else
+  {
+    Utility::PropertyTree::const_iterator node_it, node_end;
+    node_it = node.begin();
+    node_end = node.end();
+    
+    bool type_verified = false;
+    bool independent_vals_extracted = false;
+    bool dependent_vals_extracted = false;
+
+    std::vector<double> independent_values, dependent_values;
+
+    while( node_it != node_end )
+    {
+      std::string child_node_key =
+        boost::algorithm::to_lower_copy( node_it->first );
+
+      // Verify the distribution type
+      if( child_node_key.find( "type" ) < child_node_key.size() )
+      {
+        try{
+          this->verifyDistributionType( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the discrete "
+                                    "distribution!" );
+
+        type_verified = true;
+      }
+
+      // Extract the independent values
+      else if( child_node_key.find( "indep" ) < child_node_key.size() )
+      {
+        try{
+          this->extractIndependentValues( node_it->second.data(),
+                                          independent_values );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the discrete "
+                                    "distribution!" );
+
+        independent_vals_extracted = true;
+      }
+
+      // Extract the dependent values
+      else if( child_node_key.find( "dep" ) < child_node_key.size() )
+      {
+        try{
+          this->extractDependentValues( node_it->second.data(),
+                                        dependent_values );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the discrete "
+                                    "distribution!" );
+
+        dependent_vals_extracted = true;
+      }
+
+      // This child node is unused (and is not a comment)
+      else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
+               child_node_key.size() )
+      {
+        unused_children.push_back( node_it->first );
+      }
+      
+      ++node_it;
+    }
+
+    // Make sure that the distribution type was verified
+    TEST_FOR_EXCEPTION( !type_verified,
+                        Utility::PTreeNodeConversionException,
+                        "The discrete distribution could not be constructed "
+                        "because the type could not be verified!" );
+
+    // Make sure that the independent values were set
+    TEST_FOR_EXCEPTION( !independent_vals_extracted,
+                        Utility::PTreeNodeConversionException,
+                        "The discrete distribution could not be constructed "
+                        "because the independent values were not specified!" );
+
+    // Make sure that the dependent values were set
+    TEST_FOR_EXCEPTION( !dependent_vals_extracted,
+                        Utility::PTreeNodeConversionException,
+                        "The discrete distribution could not be constructed "
+                        "because the dependent values were not specified!" );
+
+    // Verify that the values are valid
+    try{
+      this->verifyValidValues( independent_values, dependent_values );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PTreeNodeConversionException,
+                                "Could not create the discrete "
+                                "distribution!" );
+
+    this->initializeDistribution(independent_values, dependent_values, false);
+  }
+}
+
+// Equality comparison operator
 template<typename IndependentUnit,typename DependentUnit>
-bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isEqual( const UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>& other ) const
+bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator==( const UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
     d_norm_constant == other.d_norm_constant;
 }
 
+// Inequality comparison operator
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator!=( const UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>& other ) const
+{
+  return d_distribution != other.d_distribution ||
+    d_norm_constant != other.d_norm_constant;
+}  
+
 // Initialize the distribution
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-			  const Teuchos::Array<double>& independent_values,
-			  const Teuchos::Array<double>& dependent_values,
+			  const std::vector<double>& independent_values,
+			  const std::vector<double>& dependent_values,
 			  const bool interpret_dependent_values_as_cdf )
 {
   // Make sure that every value has a probability assigned
@@ -500,7 +618,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 					     independent_values.end() ) );
 
   // Convert the raw independent values to quantities
-  Teuchos::Array<IndepQuantity> independent_quantities;
+  std::vector<IndepQuantity> independent_quantities;
 
   this->convertUnitlessValues( independent_values, independent_quantities );
 
@@ -512,7 +630,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   else
   {
     // Convert the raw dependent values to quantities
-    Teuchos::Array<DepQuantity> dependent_quantities;
+    std::vector<DepQuantity> dependent_quantities;
 
     this->convertUnitlessValues( dependent_values, dependent_quantities );
 
@@ -525,8 +643,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
-	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<double>& cdf_values )
+	      const std::vector<InputIndepQuantity>& independent_quantities,
+	      const std::vector<double>& cdf_values )
 {
   // Make sure that every value has a probability assigned
   testPrecondition( independent_quantities.size() == cdf_values.size() );
@@ -567,8 +685,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<InputDepQuantity>& dependent_values )
+		  const std::vector<InputIndepQuantity>& independent_values,
+		  const std::vector<InputDepQuantity>& dependent_values )
 {
   // Make sure that every value has a probability assigned
   testPrecondition( independent_values.size() == dependent_values.size() );
@@ -578,6 +696,9 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 
   // Resize the distribution array
   d_distribution.resize( independent_values.size() );
+
+  // Initialize the normalization constant
+  Utility::setQuantity( d_norm_constant, 0.0 );
 
   // Assign the raw distribution data
   for( unsigned i = 0; i < dependent_values.size(); ++i )
@@ -600,8 +721,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 // Reconstruct original distribution
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
-		     Teuchos::Array<IndepQuantity>& independent_quantities,
-		     Teuchos::Array<DepQuantity>& dependent_quantities ) const
+		     std::vector<IndepQuantity>& independent_quantities,
+		     std::vector<DepQuantity>& dependent_quantities ) const
 {
   // Resize the arrays
   independent_quantities.resize( d_distribution.size() );
@@ -628,8 +749,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
 // Reconstruct original distribution w/o units
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
-			      Teuchos::Array<double>& independent_values,
-			      Teuchos::Array<double>& dependent_values ) const
+			      std::vector<double>& independent_values,
+			      std::vector<double>& dependent_values ) const
 {
   // Resize the arrays
   independent_values.resize( d_distribution.size() );
@@ -658,8 +779,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
 template<typename IndependentUnit,typename DependentUnit>
 template<typename Quantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitlessValues(
-		                 const Teuchos::Array<double>& unitless_values,
-				 Teuchos::Array<Quantity>& quantities )
+		                 const std::vector<double>& unitless_values,
+				 std::vector<Quantity>& quantities )
 {
   // Resize the quantities array
   quantities.resize( unitless_values.size() );
@@ -674,6 +795,79 @@ template<typename IndependentUnit,typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
 {
   return true;
+}
+
+// Verify that the distribution type is discrete
+template<typename IndependentUnit,typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
+{
+  std::string distribution_type = type_data.toString();
+  boost::algorithm::to_lower( distribution_type );
+
+  TEST_FOR_EXCEPTION( distribution_type.find( "discrete" ) >=
+                      distribution_type.size(),
+                      Utility::StringConversionException,
+                      "The discrete distribution cannot be constructed "
+                      "because the distribution type ("
+                      << distribution_type << ") does not match!" );
+}
+
+// Set the independent values
+template<typename IndependentUnit,typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndependentValues(
+                                      const Utility::Variant& indep_data,
+                                      std::vector<double>& independent_values )
+{
+  try{
+    independent_values =
+      Utility::variant_cast<std::vector<double> >( indep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The discrete distribution cannot be "
+                           "constructed because the independent values are "
+                           "not valid!\n" );
+
+  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
+						independent_values.end() ),
+		      Utility::StringConversionException,
+		      "The discrete distribution cannot be constructed "
+		      "because the independent values "
+		      << indep_data.toString() << " are not sorted!" );
+}
+
+// Set the dependent values
+template<typename IndependentUnit,typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDependentValues(
+                                        const Utility::Variant& dep_data,
+                                        std::vector<double>& dependent_values )
+{
+  try{
+    dependent_values = Utility::variant_cast<std::vector<double> >( dep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The discrete distribution cannot be "
+                           "constructed because the dependent values are "
+                           "not valid!\n" );
+}
+
+// Verify that the values are valid
+template<typename IndependentUnit,typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidValues(
+                                 const std::vector<double>& independent_values,
+                                 const std::vector<double>& dependent_values )
+{
+  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
+		      Utility::StringConversionException,
+		      "The discrete distribution cannot be constructed "
+                      "because the number of independent values ("
+                      << independent_values.size() << ") does not match the "
+                      "number of dependent values ("
+                      << dependent_values.size() << ")!" );
+  
+  TEST_FOR_EXCEPTION( independent_values.size() == 0,
+                      Utility::StringConversionException,
+                      "The discrete distribution cannot be constructed "
+                      "because no independent values have been specified!" );
 }
 
 } // end Utility namespace

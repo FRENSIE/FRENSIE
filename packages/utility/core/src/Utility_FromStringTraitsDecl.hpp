@@ -101,6 +101,18 @@ bool moveInputStreamToNextElement( std::istream& is,
                                    const char elem_delim,
                                    const char end_delim );
 
+/*! Check if the input stream contains any more elements to read.
+ *
+ * The input stream will be temporarily moved from its current location to
+ * the next occurance of a character not equal to the end delimator. White
+ * space can be optionally ignored. If another element is present, the
+ * stream's original state will be restored.
+ * \ingroup from_string_traits
+ */
+bool doesInputStreamContainAnotherElement( std::istream& is,
+                                           const char end_delim,
+                                           const bool ignore_whitespace = false );
+
 /*! Expand pi keyword in string
  *
  * All occurances of elements with the 'pi' keyword in the string will be
@@ -124,6 +136,17 @@ void expandPiKeywords( std::string& obj_rep );
  * \ingroup from_string_traits
  */
 void expandIntervalKeywords( std::string& obj_rep );
+
+/*! Expand repeated value keywords in string
+ *
+ * All occurances of elements with the 'r' keyword in the string wil be
+ * expanded to actual element values. The 'r' keywords are case
+ * insensitive. An arithmetic value must appear before the keyword to 
+ * indicate that value that will be repeated. An integer value must appear
+ * after the r keyword to indicate the number of times that the value
+ * is repeated.
+ * \ingroup from_string_traits
+ */
   
 } // end Utility namespace
 

@@ -7,12 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-//#include "Utility_DiscreteDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-//EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
   
 } // end Utility namespace
 

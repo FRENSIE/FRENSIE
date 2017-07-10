@@ -24,6 +24,7 @@
 // Check that a vector can be converted to a string
 TEUCHOS_UNIT_TEST( Vector, toString )
 {
+  TEST_EQUALITY_CONST( Utility::toString( std::vector<short>() ), "{}" );
   TEST_EQUALITY_CONST( Utility::toString( std::vector<short>( {-1, 2} ) ),
                        "{-1, 2}" );
   TEST_EQUALITY_CONST( Utility::toString( std::vector<unsigned short>( {0, 10, 100} ) ),
@@ -44,8 +45,10 @@ TEUCHOS_UNIT_TEST( Vector, toString )
                        "{-1.000000000e+00, 0.000000000e+00, 1.000000000e+00}" );
   TEST_EQUALITY_CONST( Utility::toString( std::vector<double>( {-1.0, 0.0, 1.0} ) ),
                        "{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  TEST_EQUALITY_CONST( Utility::toString( std::vector<char>() ), "{}" );
   TEST_EQUALITY_CONST( Utility::toString( std::vector<char>( {'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g' } ) ),
                        "{T, e, s, t,  , s, t, r, i, n, g}" );
+  TEST_EQUALITY_CONST( Utility::toString( std::vector<std::string>() ), "{}" );
   TEST_EQUALITY_CONST( Utility::toString( std::vector<std::string>( {"Test", "string"} ) ),
                        "{Test, string}" );
   TEST_EQUALITY_CONST( Utility::toString( std::vector<std::pair<int, int> >( {std::pair<int, int>({0, 1}), std::pair<int,int>({-1, 2})} ) ),
@@ -164,6 +167,8 @@ TEUCHOS_UNIT_TEST( Vector, toStream )
 TEUCHOS_UNIT_TEST( Vector, fromString )
 {
   // Extract vector of short
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{}" )),
+                           std::vector<short>() );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2}" )),
                            std::vector<short>({-1, 2}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2i, 2}" )),
@@ -249,10 +254,22 @@ TEUCHOS_UNIT_TEST( Vector, fromString )
                            std::vector<double>({-std::numeric_limits<double>::infinity(), 0, std::numeric_limits<double>::infinity()}) );
 
   // Extract vector of char
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<char> >( "{}" )),
+                           std::vector<char>() );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<char> >( "{ }" )),
+                           std::vector<char>({' '}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<char> >( "{   }" )),
+                           std::vector<char>({' '}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<char> >( "{T, e, s, t,  , s, t, r, i, n, g}" )),
                            std::vector<char>({'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g'}) );
 
   // Extract vector of string
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::string> >( "{}" )),
+                           std::vector<std::string>() );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::string> >( "{ }" )),
+                           std::vector<std::string>({" "}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::string> >( "{   }" )),
+                           std::vector<std::string>({"   "}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<std::string> >( "{Test, string}" )),
                            std::vector<std::string>({"Test","string"}) );
 

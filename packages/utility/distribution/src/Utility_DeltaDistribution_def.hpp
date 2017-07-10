@@ -311,7 +311,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
   // Verify that the correct amount of distribution data is present
   TEST_FOR_EXCEPTION( distribution_data.size() < 2 ||
                       distribution_data.size() > 3,
-		      InvalidDistributionStringRepresentation,
+		      Utility::StringConversionException,
 		      "The delta distribution cannot be constructed "
 		      "because the string representation is not valid!" );
 
@@ -368,7 +368,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
   {
     std::istringstream iss( node.data().toString() );
 
-    this->fromStream( iss );
+    try{
+      this->fromStream( iss );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PTreeNodeConversionException,
+                                "Could not create the delta "
+                                "distribution!" );
   }
   // Initialize from child nodes
   else
@@ -389,7 +395,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
       // Verify the distribution type
       if( child_node_key.find( "type" ) < child_node_key.size() )
       {
-        this->verifyDistributionType( node_it->second.data() );
+        try{
+          this->verifyDistributionType( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the delta "
+                                    "distribution!" );
 
         type_verified = true;
       }
@@ -397,7 +409,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
       // Extract the location value
       else if( child_node_key.find( "loc" ) < child_node_key.size() )
       {
-        this->setLocationValue( node_it->second.data() );
+        try{
+          this->setLocationValue( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the delta "
+                                    "distribution!" );
 
         location_set = true;
       }
@@ -405,7 +423,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
       // Extract the multiplier value
       else if( child_node_key.find( "mult" ) < child_node_key.size() )
       {
-        this->setMultiplierValue( node_it->second.data() );
+        try{
+          this->setMultiplierValue( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the delta "
+                                    "distribution!" );
 
         multiplier_set = true;
       }
@@ -422,13 +446,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
 
     // Make sure that the distribution type was verified
     TEST_FOR_EXCEPTION( !type_verified,
-                        std::runtime_error,
+                        Utility::PTreeNodeConversionException,
                         "The delta distribution could not be constructed "
                         "because the type could not be verified!" );
 
     // Make sure that the location value was set
     TEST_FOR_EXCEPTION( !location_set,
-                        std::runtime_error,
+                        Utility::PTreeNodeConversionException,
                         "The delta distribution could not be constructed "
                         "because the location value was not specified!" );
     
@@ -466,7 +490,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue
 
   // Verify that the location value is valid
   TEST_FOR_EXCEPTION( IQT::isnaninf( d_location ),
-		      InvalidDistributionStringRepresentation,
+		      Utility::StringConversionException,
 		      "The delta distribution cannot be constructed "
 		      "because of an invalid location (" << d_location <<
 		      ")!" );
@@ -484,13 +508,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierVal
                            "Could not extract the multiplier value!" );
 
   TEST_FOR_EXCEPTION( DQT::isnaninf( d_multiplier ),
-                      InvalidDistributionStringRepresentation,
+                      Utility::StringConversionException,
                       "The delta distribution cannot be constructed "
                       "because of an invalid multiplier ("
                       << d_multiplier << ")!" );
 
   TEST_FOR_EXCEPTION( d_multiplier == DQT::zero(),
-                      InvalidDistributionStringRepresentation,
+                      Utility::StringConversionException,
                       "The delta distribution cannot be constructed "
                       "because of an invalid multiplier ("
                       << d_multiplier << ")!" );

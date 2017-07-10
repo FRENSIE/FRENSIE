@@ -16,7 +16,9 @@
 
 namespace Utility{
 
-//! The base class for Utility::PropertyTree compatible objects
+/*! The base class for Utility::PropertyTree compatible objects
+ * \ingroup ptree
+ */
 class PropertyTreeCompatibleObject : public StreamableObject
 {
 

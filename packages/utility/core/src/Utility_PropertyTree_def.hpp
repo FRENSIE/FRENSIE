@@ -83,7 +83,8 @@ struct GenericPTreeObjectTranslator<std::string>
  */
 template<template<typename,typename...> class STLCompliantSequenceContainer,
          typename ElementInsertionMemberFunction>
-inline STLCompliantSequenceContainer<Utility::Variant> convertJSONArrayPTreeNodeToSequenceContainer(
+inline STLCompliantSequenceContainer<Utility::Variant>
+convertJSONArrayPTreeNodeToSequenceContainer(
                                 const Utility::PropertyTree& ptree,
                                 ElementInsertionMemberFunction insert_element )
 {
@@ -127,7 +128,13 @@ inline STLCompliantSequenceContainer<Utility::Variant> convertPTreeNodeToSequenc
   // This is a leaf node
   else if( ptree.size() == 0 )
   {
-    return ptree.data().toType<STLCompliantSequenceContainer<Utility::Variant> >();
+    try{
+      return ptree.data().toType<STLCompliantSequenceContainer<Utility::Variant> >();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PTreeNodeConversionException,
+                                "Could not convert the node to a sequence "
+                                "container!" );
   }
   else
     return STLCompliantSequenceContainer<Utility::Variant>();

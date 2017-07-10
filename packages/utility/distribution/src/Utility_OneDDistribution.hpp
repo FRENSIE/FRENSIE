@@ -268,30 +268,6 @@ typedef UnitAwareOneDDistribution<void,void> OneDDistribution;
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareOneDDistribution<void,void> );
 
-//! The invalid distribution string name error
-class InvalidDistributionStringName : public std::logic_error
-{
-
-public:
-
-  InvalidDistributionStringName( const std::string& what_arg )
-    : std::logic_error( what_arg )
-  { /* ... */ }
-};
-
-/*! The invalid distribution string representation error
- * \ingroup one_d_distributions
- */
-class InvalidDistributionStringRepresentation : public std::logic_error
-{
-
-public:
-
-  InvalidDistributionStringRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
-  { /* ... */ }
-};
-
 /*! Macro for restricting distribution units to a certain dimension
  *
  * \details Certain distributions only make sense when defined on a certain

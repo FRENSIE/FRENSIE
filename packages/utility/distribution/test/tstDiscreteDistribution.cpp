@@ -17,11 +17,6 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -42,23 +37,23 @@ namespace cgs = boost::units::cgs;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
 
-Teuchos::RCP<Utility::OneDDistribution> distribution;
-Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
-Teuchos::RCP<Utility::OneDDistribution> cdf_cons_distribution;
-Teuchos::RCP<Utility::TabularOneDDistribution> tab_cdf_cons_distribution;
-Teuchos::RCP<Utility::OneDDistribution> repeat_vals_distribution;
-Teuchos::RCP<Utility::TabularOneDDistribution> tab_repeat_vals_distribution;
+std::shared_ptr<Utility::OneDDistribution> distribution;
+std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
+std::shared_ptr<Utility::OneDDistribution> cdf_cons_distribution;
+std::shared_ptr<Utility::TabularOneDDistribution> tab_cdf_cons_distribution;
+std::shared_ptr<Utility::OneDDistribution> repeat_vals_distribution;
+std::shared_ptr<Utility::TabularOneDDistribution> tab_repeat_vals_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_cdf_cons_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_cdf_cons_distribution;
 
 
@@ -1446,100 +1441,450 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( DiscreteDistribution, toParameterList )
+// Check that the distribution can be converted to a string
+TEUCHOS_UNIT_TEST( DiscreteDistribution, toString )
 {
-  Teuchos::RCP<Utility::DiscreteDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<Utility::DiscreteDistribution>( distribution );
+  std::string dist_string = Utility::toString( *distribution );
 
-  Teuchos::ParameterList parameter_list;
+  TEST_EQUALITY_CONST( dist_string, "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
 
-  parameter_list.set<Utility::DiscreteDistribution>( "test distribution",
-						     *true_distribution );
+  dist_string = Utility::toString( *cdf_cons_distribution );
 
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"discrete_dist_test_list.xml" );
+  TEST_EQUALITY_CONST( dist_string, "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
 
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "discrete_dist_test_list.xml" );
+  dist_string = Utility::toString( *repeat_vals_distribution );
 
-  // Rounding errors prevent us from being able to do this test reliably
-  // TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<Utility::DiscreteDistribution>
-    copy_distribution( new Utility::DiscreteDistribution );
-
-  *copy_distribution = read_parameter_list->get<Utility::DiscreteDistribution>(
-							  "test distribution");
-
-  // Rounding errors prevent us from being able to do a full equality test
-  // reliably
-  //TEST_EQUALITY( *copy_distribution, *true_distribution );
-  TEST_FLOATING_EQUALITY( copy_distribution->getLowerBoundOfIndepVar(),
-                          true_distribution->getLowerBoundOfIndepVar(),
-                          1e-15 );
-  TEST_FLOATING_EQUALITY( copy_distribution->getUpperBoundOfIndepVar(),
-                          true_distribution->getUpperBoundOfIndepVar(),
-                          1e-15 );
+  TEST_EQUALITY_CONST( dist_string, "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toParameterList )
+// Check that the unit-aware distributio can be converted to a string
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toString )
 {
-  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
+  std::string dist_string = Utility::toString( *unit_aware_distribution );
 
-  Teuchos::RCP<UnitAwareDiscreteDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<UnitAwareDiscreteDistribution>( unit_aware_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
 
-  Teuchos::ParameterList parameter_list;
+  dist_string = Utility::toString( *unit_aware_cdf_cons_distribution );
 
-  parameter_list.set<UnitAwareDiscreteDistribution>( "test distribution",
-						     *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"unit_aware_discrete_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "unit_aware_discrete_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<UnitAwareDiscreteDistribution>
-    copy_distribution( new UnitAwareDiscreteDistribution );
-
-  *copy_distribution = read_parameter_list->get<UnitAwareDiscreteDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( DiscreteDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( DiscreteDistribution, toStream )
 {
-  Utility::DiscreteDistribution xml_distribution =
-    test_dists_list->get<Utility::DiscreteDistribution>( "Discrete Distribution A" );
+  std::ostringstream oss;
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), -1.0 );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 1.0 );
-  TEST_EQUALITY_CONST( xml_distribution.evaluatePDF( -1.0 ), 0.25 );
-  TEST_EQUALITY_CONST( xml_distribution.evaluatePDF( 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( xml_distribution.evaluatePDF( 1.0 ), 0.25 );
+  Utility::toStream( oss, *distribution );
 
-  xml_distribution =
-    test_dists_list->get<Utility::DiscreteDistribution>( "Discrete Distribution B" );
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
 
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
-		       -Utility::PhysicalConstants::pi/2 );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi );
-  TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF(-Utility::PhysicalConstants::pi/2),
-			  0.2,
-			  1e-15 );
-  TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF(Utility::PhysicalConstants::pi),
-			  0.2,
-			  1e-15 );
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, *cdf_cons_distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, *repeat_vals_distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toStream )
+{
+  std::ostringstream oss;
+
+  Utility::toStream( oss, *unit_aware_distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, *unit_aware_cdf_cons_distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( DiscreteDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+
+  oss << *distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *cdf_cons_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *repeat_vals_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+
+  oss << *unit_aware_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *unit_aware_cdf_cons_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( DiscreteDistribution, fromString )
+{
+  Utility::DiscreteDistribution test_dist =
+    Utility::fromString<Utility::DiscreteDistribution>( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::DiscreteDistribution>( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( cdf_cons_distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::DiscreteDistribution>( "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( repeat_vals_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromString )
+{
+  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> test_dist;
+
+  test_dist = Utility::fromString<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+
+  test_dist = Utility::fromString<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_cdf_cons_distribution.get() )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( DiscreteDistribution, fromStream )
+{
+  std::istringstream iss( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+
+  Utility::DiscreteDistribution test_dist;
+  
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+
+  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
+  iss.clear();
+  
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( cdf_cons_distribution.get() ) );
+
+  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( repeat_vals_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromStream )
+{
+  std::istringstream iss( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
+  
+  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> test_dist;
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+
+  iss.str( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_cdf_cons_distribution.get() )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( DiscreteDistribution, istream_operator )
+{
+  std::istringstream iss( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+
+  Utility::DiscreteDistribution test_dist;
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+
+  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( cdf_cons_distribution.get() ) );
+
+  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( repeat_vals_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, istream_operator )
+{
+  std::istringstream iss( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
+  
+  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> test_dist;
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+
+  iss.str( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_cdf_cons_distribution.get() )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to a property tree node
+TEUCHOS_UNIT_TEST( DiscreteDistribution, toNode )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *distribution );
+
+  Utility::DiscreteDistribution copy_dist =
+    ptree.get<Utility::DiscreteDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+
+  ptree.put( "test distribution", *tab_distribution );
+
+  copy_dist = ptree.get<Utility::DiscreteDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( tab_distribution.get() ) );
+
+  // Use the PropertTreeCompatibleObject interface
+  distribution->toNode( "test distribution", ptree, true );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+
+  copy_dist = ptree.get<Utility::DiscreteDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+
+  distribution->toNode( "test distribution", ptree, false );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+
+  distribution->toNode( "test distribution", ptree );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be written to a property tree
+// node
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toNode )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *unit_aware_distribution );
+
+  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> copy_dist =
+    ptree.get<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+
+  ptree.put( "test distribution", *unit_aware_tab_distribution );
+
+  copy_dist = ptree.get<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_tab_distribution.get() )) );
+
+  // Use the PropertTreeCompatibleObject interface
+  unit_aware_distribution->toNode( "test distribution", ptree, true );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+
+  copy_dist = ptree.get<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+
+   unit_aware_distribution->toNode( "test distribution", ptree, false );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+
+  unit_aware_distribution->toNode( "test distribution", ptree );
+
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be read from a property tree
+TEUCHOS_UNIT_TEST( DiscreteDistribution, fromNode )
+{
+  Utility::DiscreteDistribution dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution A" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution B" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution C" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.1 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.1 ), 2.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 1.0 ), 6.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 10.0 ), 2.0, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution D" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
+              Utility::PTreeNodeConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be read from a property tree
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromNode )
+{
+  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution A" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*eV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution B" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -Utility::PhysicalConstants::pi/2*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*eV );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution C" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.1*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*eV );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( 0.1*eV ), 2.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( 1.0*eV ), 6.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( 10.0*eV ), 2.0*si::mole, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution D" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi/2*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*eV );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
+              Utility::PTreeNodeConversionException );
 }
 
 //---------------------------------------------------------------------------//
@@ -1562,7 +1907,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDiscreteDistribution,
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwareDiscreteDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareDiscreteDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::DiscreteDistribution>( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareDiscreteDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwareDiscreteDistribution<IndepUnitB,DepUnitB>
@@ -1773,70 +2118,35 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDiscreteDistribution,
 				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromParameterList )
-{
-  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
-
-  UnitAwareDiscreteDistribution xml_distribution =
-    test_dists_list->get<UnitAwareDiscreteDistribution>( "Unit-Aware Discrete Distribution A" );
-
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.1*eV );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 10.0*eV );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 0.1*eV ),
-				  0.2/eV,
-				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 1.0*eV ),
-				  0.6/eV,
-				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( 10.0*eV ),
-				  0.2/eV,
-				  1e-15 );
-
-  xml_distribution =
-    test_dists_list->get<UnitAwareDiscreteDistribution>( "Unit-Aware Discrete Distribution B" );
-
-  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi/2*eV );
-  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi*eV );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( Utility::PhysicalConstants::pi/2*eV ),
-			  0.2/eV,
-			  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( xml_distribution.evaluatePDF( Utility::PhysicalConstants::pi*eV ),
-			  0.2/eV,
-			  1e-15 );
-}
-
-//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_xml_file;
+std::string test_dists_json_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_dists_xml_file",
-                   &test_dists_xml_file,
-                   "Test distributions xml file name" );
+  clp().setOption( "test_dists_json_file",
+                   &test_dists_json_file_name,
+                   "Test distributions json file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::DiscreteDistribution );
-  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareDiscreteDistribution );
+  // Load the property tree from the json file
+  test_dists_ptree.reset( new Utility::PropertyTree );
 
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
+  std::ifstream test_dists_json_file( test_dists_json_file_name );
+
+  test_dists_json_file >> *test_dists_ptree;
 
   // Create a distribution using the standard constructor
-  Teuchos::Array<double> independent_values( 3 );
+  std::vector<double> independent_values( 3 );
   independent_values[0] = -1.0;
   independent_values[1] = 0.0;
   independent_values[2] = 1.0;
 
-  Teuchos::Array<double> dependent_values( 3 );
+  std::vector<double> dependent_values( 3 );
   dependent_values[0] = 1.0;
   dependent_values[1] = 2.0;
   dependent_values[2] = 1.0;
@@ -1848,7 +2158,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   distribution = tab_distribution;
 
   // Create a distribution using the cdf constructor
-  Teuchos::Array<double> cdf_values( 3 );
+  std::vector<double> cdf_values( 3 );
   cdf_values[0] = 0.25;
   cdf_values[1] = 0.75;
   cdf_values[2] = 1.0;
@@ -1882,13 +2192,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   repeat_vals_distribution = tab_repeat_vals_distribution;
 
   // Create a unit aware distribution using quantities
-  Teuchos::Array<quantity<ElectronVolt> > independent_quantities( 4 );
+  std::vector<quantity<ElectronVolt> > independent_quantities( 4 );
   independent_quantities[0] = 0.1*eV;
   independent_quantities[1] = 1.0*eV;
   independent_quantities[2] = 5.0*eV;
   independent_quantities[3] = quantity<ElectronVolt>( 1.0*keV );
 
-  Teuchos::Array<quantity<si::amount> > dependent_quantities( 4 );
+  std::vector<quantity<si::amount> > dependent_quantities( 4 );
   dependent_quantities[0] = 0.25*si::mole;
   dependent_quantities[1] = 1.0*si::mole;
   dependent_quantities[2] = 2.7*si::mole;

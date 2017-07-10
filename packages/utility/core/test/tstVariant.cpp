@@ -42,6 +42,11 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toChar( &conversion_success ), 'a' );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toChar( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store a char[]
   variant.reset( new Utility::Variant( "Test string" ) );
   
@@ -52,6 +57,19 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   variant->toChar( &conversion_success );
 
   TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "   " ) );
+  TEST_ASSERT( !variant->isNull() );
+  TEST_EQUALITY_CONST( variant->toString( &conversion_success ), "   " );
+  TEST_ASSERT( conversion_success );
+
+  TEST_EQUALITY_CONST( variant->toChar( &conversion_success ), ' ' );
+  TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+  TEST_EQUALITY_CONST( variant->toString( &conversion_success ),
+                       std::string() );
+  TEST_ASSERT( conversion_success );
 
   // Store a boolean
   variant.reset( new Utility::Variant( true ) );
@@ -78,11 +96,31 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toBool( &conversion_success ), false );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toBool( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toBool( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store a signed char
   variant.reset( new Utility::Variant( (signed char)-1 ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toSignedChar( &conversion_success ), -1 );
+  TEST_ASSERT( conversion_success );
+  
+  Utility::variant_cast<signed char>( *variant );
+  variant.reset( new Utility::Variant );
+
+  variant->toSignedChar( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  TEST_EQUALITY_CONST( variant->toSignedChar( &conversion_success ),
+                       static_cast<signed char>( ' ' ) );
   TEST_ASSERT( conversion_success );
 
   // Store an unsigned char
@@ -92,11 +130,31 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toUnsignedChar( &conversion_success ), 0 );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toUnsignedChar( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  TEST_EQUALITY_CONST( variant->toUnsignedChar( &conversion_success ),
+                       static_cast<unsigned char>( ' ' ) );
+  TEST_ASSERT( conversion_success );
+
   // Store an int8_t
   variant.reset( new Utility::Variant( (int8_t)-100 ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toInt8( &conversion_success ), -100 );
+  TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toInt8( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  TEST_EQUALITY_CONST( variant->toInt8( &conversion_success ),
+                       static_cast<int8_t>( ' ' ) );
   TEST_ASSERT( conversion_success );
 
   // Store an uint8_t
@@ -106,12 +164,32 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toUint8( &conversion_success ), 255 );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toUint8( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  TEST_EQUALITY_CONST( variant->toUint8( &conversion_success ),
+                       static_cast<uint8_t>( ' ' ) );
+  TEST_ASSERT( conversion_success );
+  
+
   // Store an int16_t
   variant.reset( new Utility::Variant( (int16_t)-200 ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toInt16( &conversion_success ), -200 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toInt16( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toInt16( &conversion_success );
+  TEST_ASSERT( !conversion_success );
 
   // Store a uint16_t
   variant.reset( new Utility::Variant( (uint16_t)300 ) );
@@ -120,12 +198,30 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toUint16( &conversion_success ), 300 );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toUint16( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toUint16( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store an int32_t
   variant.reset( new Utility::Variant( (int32_t)-1000000000 ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toInt32( &conversion_success ), -1000000000 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toInt32( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toInt32( &conversion_success );
+  TEST_ASSERT( !conversion_success );
 
   // Store an uint32_t
   variant.reset( new Utility::Variant( (uint32_t)1000000000 ) );
@@ -134,12 +230,30 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toUint32( &conversion_success ), 1000000000 );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toUint32( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toUint32( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store a short
   variant.reset( new Utility::Variant( (short)-100 ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toShort( &conversion_success ), -100 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toShort( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toShort( &conversion_success );
+  TEST_ASSERT( !conversion_success );
 
   // Store an unsigned short
   variant.reset( new Utility::Variant( (unsigned short)255 ) );
@@ -148,12 +262,30 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toUnsignedShort( &conversion_success ), 255 );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toUnsignedShort( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toUnsignedShort( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store an int
   variant.reset( new Utility::Variant( -100000000 ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toInt( &conversion_success ), -100000000 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toInt( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toInt( &conversion_success );
+  TEST_ASSERT( !conversion_success );
 
   // Store an unsigned int
   variant.reset( new Utility::Variant( 100000000u ) );
@@ -162,12 +294,30 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toUnsignedInt( &conversion_success ), 100000000 );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toUnsignedInt( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toUnsignedInt( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store a long
   variant.reset( new Utility::Variant( -100000000l ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toLong( &conversion_success ), -100000000 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
 
   // Store an unsigned long
   variant.reset( new Utility::Variant( 100000000ul ) );
@@ -176,12 +326,30 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toUnsignedLong( &conversion_success ), 100000000 );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant );
+
+  variant->toUnsignedLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toUnsignedLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store a long long
   variant.reset( new Utility::Variant( -10000000000ll ) );
 
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toLongLong( &conversion_success ), -10000000000 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toLongLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toLongLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
   
   // Store an unsigned long long
   variant.reset( new Utility::Variant( 10000000000ull ) );
@@ -189,6 +357,15 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_ASSERT( !variant->isNull() );
   TEST_EQUALITY_CONST( variant->toUnsignedLongLong( &conversion_success ), 10000000000 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toUnsignedLongLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toUnsignedLongLong( &conversion_success );
+  TEST_ASSERT( !conversion_success );
 
   // Store a float
   variant.reset( new Utility::Variant( 1.0f ) );
@@ -211,6 +388,39 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
                        -(float)Utility::PhysicalConstants::pi );
   TEST_ASSERT( conversion_success );
 
+  variant.reset( new Utility::Variant( "-1.0" ) );
+
+  TEST_ASSERT( !variant->isNull() );
+  TEST_EQUALITY_CONST( variant->toFloat( &conversion_success ), -1.0f );
+  TEST_ASSERT( conversion_success );
+
+  variant->toInt( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( " -1.1e+00 " ) );
+
+  TEST_ASSERT( !variant->isNull() );
+  TEST_EQUALITY_CONST( variant->toFloat( &conversion_success ), -1.1f );
+  TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant( "-1.0 1.0" ) );
+
+  variant->toFloat( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toFloat( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toFloat( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( " a " ) );
+  variant->toFloat( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
   // Store a double
   variant.reset( new Utility::Variant( -1.0 ) );
 
@@ -231,6 +441,36 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_EQUALITY_CONST( variant->toDouble( &conversion_success ),
                        3*Utility::PhysicalConstants::pi/4 );
   TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant( "-1.0" ) );
+
+  TEST_ASSERT( !variant->isNull() );
+  TEST_EQUALITY_CONST( variant->toDouble( &conversion_success ), -1.0 );
+  TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant( " -1.1e+00 " ) );
+
+  TEST_ASSERT( !variant->isNull() );
+  TEST_EQUALITY_CONST( variant->toDouble( &conversion_success ), -1.1 );
+  TEST_ASSERT( conversion_success );
+
+  variant.reset( new Utility::Variant( "-1.0 1.0" ) );
+
+  variant->toDouble( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant );
+
+  variant->toDouble( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( "  " ) );
+  variant->toDouble( &conversion_success );
+  TEST_ASSERT( !conversion_success );
+
+  variant.reset( new Utility::Variant( " a " ) );
+  variant->toDouble( &conversion_success );
+  TEST_ASSERT( !conversion_success );
 }
 
 //---------------------------------------------------------------------------//
@@ -442,6 +682,40 @@ TEUCHOS_UNIT_TEST( Variant, constructor_container )
   TEST_EQUALITY_CONST( extracted_map["1"].toMap().size(), 2 );
   TEST_EQUALITY_CONST( extracted_map["1"].toMap()["first"].toInt(), 0 );
   TEST_EQUALITY_CONST( extracted_map["1"].toMap()["second"].toInt(), 10 );
+
+  // Store an empty container
+  variant.reset( new Utility::Variant( "{}" ) );
+
+  TEST_ASSERT( !variant->isNull() );
+
+  extracted_vector = variant->toVector();
+  extracted_list = variant->toList();
+  extracted_forward_list = variant->toForwardList();
+  extracted_deque = variant->toDeque();
+
+  TEST_EQUALITY_CONST( extracted_vector.size(), 0 );
+  TEST_EQUALITY_CONST( extracted_list.size(), 0 );
+  TEST_EQUALITY_CONST( std::distance( extracted_forward_list.begin(), extracted_forward_list.end() ), 0 );
+  TEST_EQUALITY_CONST( extracted_deque.size(), 0 );
+
+  // Store an 'empty' container
+  variant.reset( new Utility::Variant( "{ }" ) );
+
+  TEST_ASSERT( !variant->isNull() );
+
+  extracted_vector = variant->toVector();
+  extracted_list = variant->toList();
+  extracted_forward_list = variant->toForwardList();
+  extracted_deque = variant->toDeque();
+
+  TEST_EQUALITY_CONST( extracted_vector.size(), 1 );
+  TEST_EQUALITY_CONST( extracted_vector.front().toString(), " " );
+  TEST_EQUALITY_CONST( extracted_list.size(), 1 );
+  TEST_EQUALITY_CONST( extracted_list.front().toString(), " " );
+  TEST_EQUALITY_CONST( std::distance( extracted_forward_list.begin(), extracted_forward_list.end() ), 1 );
+  TEST_EQUALITY_CONST( extracted_forward_list.front().toString(), " " );
+  TEST_EQUALITY_CONST( extracted_deque.size(), 1 );
+  TEST_EQUALITY_CONST( extracted_deque.front().toString(), " " );
 }
 
 //---------------------------------------------------------------------------//
@@ -472,7 +746,7 @@ TEUCHOS_UNIT_TEST( Variant, assignment_operator )
 
   TEST_ASSERT( !variant_copy->isNull() );
   TEST_EQUALITY_CONST( *variant_copy, *variant );
-  TEST_EQUALITY_CONST( variant_copy->toInt(), 1 );
+  TEST_EQUALITY_CONST( variant_copy->toDouble(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2038,8 +2312,11 @@ TEUCHOS_UNIT_TEST( Variant, variant_cast_container )
   // Store a basic value
   Utility::Variant variant( " 1 " );
 
-  TEST_THROW( Utility::variant_cast<char>( variant ),
-              std::runtime_error );
+  // Convert to a char
+  char extracted_char;
+  
+  TEST_NOTHROW( extracted_char = Utility::variant_cast<char>( variant ) );
+  TEST_EQUALITY_CONST( extracted_char, '1' );
 
   // Convert to a string
   std::string extracted_string;

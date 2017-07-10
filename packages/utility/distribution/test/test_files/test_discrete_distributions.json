@@ -1,0 +1,45 @@
+{
+    "Discrete Distribution A": "{discrete, {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0}}",
+    "Discrete Distribution B": "{Discrete, {-pi/2, 3i, pi}, {1.0, 1.0, 1.0, 1.0, 1.0}}",
+
+    "Discrete Distribution C":
+    {
+        "type": "Discrete Distribution",
+        "independent values": "{0.1, 1.0, 10.0}",
+        "dependent values": "{2, 6, 2}"
+    },
+
+    "Discrete Distribution D":
+    {
+        "comment": "optional comment example",
+        "dep vals": "{1.0, 3i, 1.0}",
+        "indep vals": "{pi/2, 3i, pi}",
+        "type": "discrete-dist",
+        "dummy": ""
+    },
+
+    "comment": "This distribution is ill-formed",
+    "Discrete Distribution E": "{dummy, {}, {}}",
+
+    "Discrete Distribution F":
+    {
+        "comment": "This distribution is ill-formed (incorrect type)",
+        "type": "dummy"
+    },
+
+    "Discrete Distribution G":
+    {
+        "comment": "This distribution is ill-formed",
+        "type": "discrete",
+        "independent values": "{}",
+        "dependent values": "{}"
+    },
+
+    "Discrete Distribution H":
+    {
+        "comment": "This distribution is ill-formed",
+        "type": "Discrete",
+        "independent values": "{0.0, 1.0, 2.0}",
+        "dependent values": "{1.0, 2.0}"
+    }
+}
