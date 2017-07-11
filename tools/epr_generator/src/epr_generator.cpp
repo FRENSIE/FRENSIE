@@ -354,8 +354,8 @@ int main( int argc, char** argv )
       try{
         DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
           data_container,
-          tabular_evaluation_tol,
           cutoff_angle_cosine,
+          tabular_evaluation_tol,
           number_of_moment_preserving_angles,
           linlinlog_interpolation_mode_on );
       }

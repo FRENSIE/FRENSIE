@@ -1,24 +1,24 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Gen.ElectronPhoton.i
+//! \file   DataGen.ElectronPhoton.i
 //! \author Luke Kersting
-//! \brief  The Gen.ElectronPhoton sub-module swig interface file
+//! \brief  The DataGen.ElectronPhoton sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//
 
-%define %gen_electron_photon_docstring
+%define %data_gen_electron_photon_docstring
 "
-PyFrensie.Gen.ElectronPhoton is the python interface to the FRENSIE
-gen/electron_photon subpackage.
+PyFrensie.DataGen.ElectronPhoton is the python interface to the FRENSIE
+data_gen/electron_photon subpackage.
 
 The purpose of ElectronPhoton is to provide tools for generating Electron-Photon
 data.
 "
 %enddef
 
-%module(package   = "PyFrensie.Gen",
+%module(package   = "PyFrensie.DataGen",
         autodoc   = "1",
-        docstring = %gen_electron_photon_docstring) ElectronPhoton
+        docstring = %data_gen_electron_photon_docstring) ElectronPhoton
 
 %{
 // Std Lib Includes
@@ -104,13 +104,13 @@ data.
 //---------------------------------------------------------------------------//
 // Add a more detailed docstring for the StandardMomentPreservingElectronDataGenerator
 %feature("docstring")
-DataGen_EPRDataGeneratorHelpers
+DataGen::EPRDataGeneratorHelpers
 "
 The EPRDataGeneratorHelpers can be used to generate
 /*elastic moment preserving data.*/
 /*A brief usage tutorial for this class is shown below:*/
 
-/*  import PyFrensie.Gen.ElectronPhoton, PyTrilinos.Teuchos, numpy, matplotlib.pyplot*/
+/*  import PyFrensie.DataGen.ElectronPhoton, PyTrilinos.Teuchos, numpy, matplotlib.pyplot*/
 
 /*  source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )*/
 /*  xml_obj = source.getObject()*/
@@ -164,5 +164,5 @@ DataGen::StandardMomentPreservingElectronDataGenerator::evaluateDiscreteAnglesAn
 %exception;
 
 //---------------------------------------------------------------------------//
-// end Gen.ElectronPhoton.i
+// end DataGen.ElectronPhoton.i
 //---------------------------------------------------------------------------//

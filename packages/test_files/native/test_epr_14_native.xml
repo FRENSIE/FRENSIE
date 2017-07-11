@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Wed May 10 08:22:45 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Tue Jul 11 15:47:17 CDT 2017. It is for testing only!</notes>
 	<atomic_number>14</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -11,6 +11,7 @@
 	<occupation_number_evaluation_tolerance>1.00000000000000002e-03</occupation_number_evaluation_tolerance>
 	<subshell_incoherent_evaluation_tolerance>1.00000000000000002e-03</subshell_incoherent_evaluation_tolerance>
 	<photon_threshold_energy_nudge_factor>1.00009999999999999e+00</photon_threshold_energy_nudge_factor>
+	<electron_total_elastic_integrated_cross_section_mode_on>0</electron_total_elastic_integrated_cross_section_mode_on>
 	<cutoff_angle_cosine>9.00000000000000022e-01</cutoff_angle_cosine>
 	<number_of_moment_preserving_angles>1.00000000000000000e+00</number_of_moment_preserving_angles>
 	<electron_tabular_evaluation_tol>1.00000000000000008e-15</electron_tabular_evaluation_tol>
@@ -55229,6 +55230,26 @@
 			</second>
 		</item>
 	</moment_preserving_elastic_weights>
+	<moment_preserving_cross_section_reductions>
+		<count>16</count>
+		<item_version>0</item_version>
+		<item>7.50007499925003707e-01</item>
+		<item>3.59214678274179855e-01</item>
+		<item>2.89273650907869828e-01</item>
+		<item>2.28607537726820631e-01</item>
+		<item>1.76127155616712688e-01</item>
+		<item>1.32315584899783234e-01</item>
+		<item>9.40692371309422293e-02</item>
+		<item>6.40338363952955847e-02</item>
+		<item>4.16192989189146309e-02</item>
+		<item>2.56519651602734010e-02</item>
+		<item>6.69097912416064260e-04</item>
+		<item>2.00531054913233704e-04</item>
+		<item>9.91551840188189225e-05</item>
+		<item>6.00329527169096060e-05</item>
+		<item>2.95636938592201458e-05</item>
+		<item>5.14633061700067652e-11</item>
+	</moment_preserving_cross_section_reductions>
 	<electroionization_energy_grid>
 		<count>7</count>
 		<item_version>0</item_version>

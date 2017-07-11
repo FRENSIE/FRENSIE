@@ -73,7 +73,16 @@ public:
 
   //! Get the photon threshold energy nudge factor
   double getPhotonThresholdEnergyNudgeFactor() const;
-  
+
+  //! Set electron total elastic integrated cross section mode to off (off by default)
+  void setElectronTotalElasticIntegratedCrossSectionModeOff();
+
+  //! Set electron total elastic integrated cross section mode to on (off by default)
+  void setElectronTotalElasticIntegratedCrossSectionModeOn();
+
+  //! Return if electron total elastic integrated cross section mode to on (off by default)
+  bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
+
   //! Set the cutoff angle cosine
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -305,8 +314,8 @@ private:
     std::vector<double>& elastic_angle,
     std::vector<double>& elastic_pdf ) const;
 
-  // Generate elastic moment preserving discrete angle cosines and weights
-  static void evaluateDiscreteAnglesAndWeights(
+  // Calculate the elastic moment preserving discrete angle cosines and weights
+  static void calculateDiscreteAnglesAndWeights(
     const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,
@@ -314,8 +323,14 @@ private:
     std::vector<double>& weights,
     double& cross_section_reduction );
 
-  // Generate elastic moment preserving cross section
-  static void evaluateMomentPreservingCrossSection(
+  // Calculate the electron total elastic cross section
+  void calculateElectronTotalElasticCrossSection(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+    std::shared_ptr<const Utility::OneDDistribution>& total_elastic_cross_section,
+    const std::vector<double>& raw_energy_grid ) const;
+
+  // Calculate the  elastic moment preserving cross section
+  static void calculateMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
     const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
     const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_section,
@@ -347,6 +362,10 @@ private:
 
   // The photon threshold energy nudge factor
   double d_photon_threshold_energy_nudge_factor;
+
+  /* The electron total elastic integrated cross section mode
+   * (true = on, false = off - default) */
+  bool d_integrated_total_elastic_cross_section_mode_on;
 
   // The cutoff angle cosine above which screened rutherford is used
   double d_cutoff_angle_cosine;

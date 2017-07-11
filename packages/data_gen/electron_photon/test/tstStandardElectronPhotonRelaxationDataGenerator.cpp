@@ -64,6 +64,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                        1e-3 );
   TEST_EQUALITY_CONST( generator.getPhotonThresholdEnergyNudgeFactor(),
                        1.0001 );
+  TEST_ASSERT( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( generator.getCutoffAngleCosine(), 1.0 );
   TEST_EQUALITY_CONST( generator.getNumberOfMomentPreservingAngles(), 0 );
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(), 1e-7 );
@@ -99,6 +100,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
                        1e-3 );
   TEST_EQUALITY_CONST( generator.getPhotonThresholdEnergyNudgeFactor(),
                        1.0001 );
+  TEST_ASSERT( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( generator.getCutoffAngleCosine(), 1.0 );
   TEST_EQUALITY_CONST( generator.getNumberOfMomentPreservingAngles(), 0 );
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(), 1e-7 );
@@ -187,6 +189,22 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   generator.setPhotonThresholdEnergyNudgeFactor( 1.5 );
   TEST_EQUALITY_CONST( generator.getPhotonThresholdEnergyNudgeFactor(), 1.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron total elastic integrated cross section mode can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setElectronTotalElasticIntegratedCrossSectionMode )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  TEST_ASSERT( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
+  generator.setElectronTotalElasticIntegratedCrossSectionModeOn();
+  TEST_ASSERT( generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
+  generator.setElectronTotalElasticIntegratedCrossSectionModeOff();
+  TEST_ASSERT( !generator.isElectronTotalElasticIntegratedCrossSectionModeOn() );
 }
 
 //---------------------------------------------------------------------------//
@@ -298,6 +316,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
     raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
+    raw_data_generator->setElectronTotalElasticIntegratedCrossSectionModeOff();
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
@@ -328,6 +347,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST(
     data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
+  TEST_ASSERT( !data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
@@ -868,6 +888,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
     raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
+    raw_data_generator->setElectronTotalElasticIntegratedCrossSectionModeOff();
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
@@ -898,6 +919,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST(
     data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
+  TEST_ASSERT( !data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
@@ -1464,6 +1486,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST(
     data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
+  TEST_ASSERT( !data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
@@ -2035,6 +2058,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
   TEST_EQUALITY_CONST(
     data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
+  TEST_ASSERT( !data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
@@ -2569,6 +2593,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //    raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
 //    raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
 //    raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
+//    raw_data_generator->setElectronTotalElasticIntegratedCrossSectionModeOff();
 //    raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
 //    raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-70 );
 //    raw_data_generator->setDefaultGridDistanceTolerance( 1e-16 );
@@ -2592,6 +2617,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //    data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
 //  TEST_EQUALITY_CONST(
 //    data_container.getPhotonThresholdEnergyNudgeFactor(), 1.0001 );
+//  TEST_ASSERT( !data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
 //  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 1.0 );
 //  TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 0 );
 //  TEST_EQUALITY_CONST( data_container.getTabularEvaluationTolerance(), 1e-7 );

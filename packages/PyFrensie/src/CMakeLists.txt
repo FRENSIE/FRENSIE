@@ -36,6 +36,12 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
 #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
 SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist ${TEUCHOS_CORE} ${PYTRILINOS})
 
+# Add the DataGen package
+SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} DataGen)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.__init__)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ElectronPhoton)
+SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon ${TEUCHOS_CORE} ${PYTRILINOS})
+
 # Add the Data package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.__init__)
@@ -43,12 +49,6 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ENDL)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_endl data_native ${TEUCHOS_CORE} ${PYTRILINOS})
-
-# Add the Gen package
-SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Gen)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Gen.__init__)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Gen.ElectronPhoton)
-SET(GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon ${TEUCHOS_CORE} ${PYTRILINOS})
 
 # Add the Geometry package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
@@ -123,6 +123,24 @@ FOREACH(MODULE ${PyFrensie_MODULES})
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Utility/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Utility)
 
+  # The DataGen package must be compiled before the Data package or 
+  ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/DataGen")
+    SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${DATA_GEN_PACKAGE_LINK_LIBRARIES})
+
+    # Byte compile the generated python files
+    ADD_CUSTOM_COMMAND(TARGET ${PyFrensie_TARGET_NAME} POST_BUILD
+      COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile; py_compile.compile('PyFrensie/DataGen/${MODULE_NAME}.py')"
+      COMMENT "Byte compiling DataGen/${MODULE_NAME}.py"
+      VERBATIM)
+
+    # Install the generated files
+    INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
+      DESTINATION ${PyFrensie_INSTALL_DIR}/DataGen)
+    INSTALL(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/DataGen/${MODULE_NAME}.py
+      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/DataGen/${MODULE_NAME}.pyc
+      DESTINATION ${PyFrensie_INSTALL_DIR}/DataGen)
+
   ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Data")
     SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${DATA_PACKAGE_LINK_LIBRARIES})
 
@@ -139,23 +157,6 @@ FOREACH(MODULE ${PyFrensie_MODULES})
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Data)
-
-  ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Gen")
-    SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${GEN_PACKAGE_LINK_LIBRARIES})
-
-    # Byte compile the generated python files
-    ADD_CUSTOM_COMMAND(TARGET ${PyFrensie_TARGET_NAME} POST_BUILD
-      COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile; py_compile.compile('PyFrensie/Gen/${MODULE_NAME}.py')"
-      COMMENT "Byte compiling Gen/${MODULE_NAME}.py"
-      VERBATIM)
-
-    # Install the generated files
-    INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
-      DESTINATION ${PyFrensie_INSTALL_DIR}/Gen)
-    INSTALL(FILES
-      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Gen/${MODULE_NAME}.py
-      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Gen/${MODULE_NAME}.pyc
-      DESTINATION ${PyFrensie_INSTALL_DIR}/Gen)
 
   ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Geometry")
     SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${GEOMETRY_PACKAGE_LINK_LIBRARIES})

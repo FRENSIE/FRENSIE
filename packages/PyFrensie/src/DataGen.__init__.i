@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Gen.__init__.i
+//! \file   DataGen.__init__.i
 //! \author Luke Kersting
-//! \brief  The gen module swig interface file
+//! \brief  The data gen module swig interface file
 //!
 //---------------------------------------------------------------------------//
 
-%define %gen_docstring
+%define %data_gen_docstring
 "
-PyFrensie.Gen is the python interface to the FRENSIE gen package.
+PyFrensie.DataGen is the python interface to the FRENSIE data_gen package.
 "
 %enddef
 
-%module(package   = "PyFrensie.Gen",
+%module(package   = "PyFrensie.DataGen",
         autodoc   = "1",
-        docstring = %gen_docstring) __init__
+        docstring = %data_gen_docstring) __init__
 
 // Set the special python variables
 %pythoncode
@@ -23,5 +23,5 @@ __all__ = ['ElectronPhoton']
 %}
 
 //---------------------------------------------------------------------------//
-// end Gen.__init__.i
+// end DataGen.__init__.i
 //---------------------------------------------------------------------------//

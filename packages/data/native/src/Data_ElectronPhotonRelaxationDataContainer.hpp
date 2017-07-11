@@ -78,6 +78,9 @@ public:
   //! Return the photon threshold energy nudge factor
   double getPhotonThresholdEnergyNudgeFactor() const;
 
+  //! Return if electron total elastic integrated cross section mode is on
+  bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
+
   //! Return the upper cutoff scattering angle cosine above which moment preserving elastic scattering is used
   double getCutoffAngleCosine() const;
 
@@ -289,12 +292,15 @@ public:
   bool hasMomentPreservingData() const;
 
   //! Return the moment preserving elastic discrete angles
-  const std::map<double,std::vector<double> >
+  const std::map<double,std::vector<double> >&
     getMomentPreservingElasticDiscreteAngles() const;
 
   //! Return the moment preserving elastic weights
-  const std::map<double,std::vector<double> >
+  const std::map<double,std::vector<double> >&
     getMomentPreservingElasticWeights() const;
+
+  //! Return the moment preserving cross section reductions
+  const std::vector<double>& getMomentPreservingCrossSectionReduction() const;
 
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
@@ -424,6 +430,10 @@ protected:
 
   //! Set the photon threshold energy nudge factor
   void setPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
+
+  //! Set the electron total elastic integrated cross section mode
+  void setElectronTotalElasticIntegratedCrossSectionModeOnOff(
+    const bool electron_total_elastic_integrated_cross_section_mode_on );
 
   //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
@@ -666,6 +676,10 @@ protected:
     const double incoming_energy,
     const std::vector<double>& moment_preserving_elastic_weights );
 
+  //! Set the moment preserving cross section reduction
+  void setMomentPreservingCrossSectionReduction(
+    const std::vector<double>& cross_section_reduction );
+
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setElectroionizationEnergyGrid(
     const unsigned subshell,
@@ -829,6 +843,9 @@ private:
 
   // The photon threshold energy nudge factor
   double d_photon_threshold_energy_nudge_factor;
+
+  // The electron total elastic integrated cross section mode
+  bool d_electron_total_elastic_integrated_cross_section_mode_on;
 
   // The elastic cutoff angle
   double d_cutoff_angle_cosine;
@@ -1007,6 +1024,9 @@ private:
 
   // The moment preserving elastic weights
   std::map<double,std::vector<double> > d_moment_preserving_elastic_weights;
+
+  // The moment preserving cross section reductions
+  std::vector<double> d_moment_preserving_cross_section_reductions;
 
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_energy_grid;
