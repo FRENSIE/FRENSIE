@@ -172,8 +172,14 @@ TEUCHOS_UNIT_TEST( Vector, fromString )
   
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2}" )),
                            std::vector<short>({-1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1r1, 2}" )),
+                           std::vector<short>({-1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1r3, 2}" )),
+                           std::vector<short>({-1, -1, -1, 2}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2i, 2}" )),
                            std::vector<short>({-1, 0, 1, 2}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1r2, 2i, 2r2}" )),
+                           std::vector<short>({-1, -1, 0, 1, 2, 2}) );
 
   // Extract vector of unsigned short
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<unsigned short> >( "{0, 10, 100}" )),
@@ -221,19 +227,30 @@ TEUCHOS_UNIT_TEST( Vector, fromString )
   // Extract vector of float
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-1, 0.0, 1.000000000e+00}" )),
                            std::vector<float>({-1.0f, 0.0f, 1.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-1, 0.0r2, 1.0}" )),
+                           std::vector<float>({-1.0f, 0.0f, 0.0f, 1.0f}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-1, 3i, 1.000000000e+00}" )),
                            std::vector<float>({-1.0f, -0.5f, 0.0f, 0.5f, 1.0f}) );
   TEST_COMPARE_FLOATING_CONTAINERS( (Utility::fromString<std::vector<float> >( "{1e-3, 2l, 1.0}" )),
                                     std::vector<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                    1e-9 );
+                                    1e-7 );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{1.0, 1l, 100, 3i, 200}" )),
                            std::vector<float>({1.0f, 10.0f, 100.0f, 125.0f, 150.0f, 175.0f, 200.0f}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{1.0r2, 1l, 100r2, 3i, 200r2}" )),
+                           std::vector<float>({1.0f, 1.0f, 10.0f, 100.0f, 100.0f, 125.0f, 150.0f, 175.0f, 200.0f, 200.0f}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{0.0, pi/2, 3Pi / 4, PI, 2*pi}" )),
                            std::vector<float>({0.0f, (float)Utility::PhysicalConstants::pi/2, 3*(float)Utility::PhysicalConstants::pi/4, (float)Utility::PhysicalConstants::pi, 2*(float)Utility::PhysicalConstants::pi}) );
-  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-pi, 3i, 0}" )),
-                           std::vector<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-pi, 3i, 0}" )),
+                                    std::vector<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}),
+                                    1e-7 );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{pi r3}" )),
+                                    std::vector<float>({(float)Utility::PhysicalConstants::pi, (float)Utility::PhysicalConstants::pi, (float)Utility::PhysicalConstants::pi}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-3*pi/4 r2}" )),
+                           std::vector<float>({-3*(float)Utility::PhysicalConstants::pi/4, -3*(float)Utility::PhysicalConstants::pi/4}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-inf, 0, Infinity}" )),
                            std::vector<float>({-std::numeric_limits<float>::infinity(), 0.0f, std::numeric_limits<float>::infinity()}) );
+  TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<float> >( "{-inf r2, 0r2, Infinity r 2}" )),
+                           std::vector<float>({-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), 0.0f, 0.0f, std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()}) );
   
   
   // Extract vector of double
@@ -478,7 +495,7 @@ TEUCHOS_UNIT_TEST( Vector, fromStream )
 
     TEST_COMPARE_FLOATING_CONTAINERS( test_vector,
                                       std::vector<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                      1e-9 );
+                                      1e-7 );
 
     iss.str( "{1.0, 1l, 100, 3i, 200}" );
     iss.clear();
@@ -501,8 +518,9 @@ TEUCHOS_UNIT_TEST( Vector, fromStream )
 
     Utility::fromStream( iss, test_vector );
     
-    TEST_COMPARE_CONTAINERS( test_vector,
-                             std::vector<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+    TEST_COMPARE_FLOATING_CONTAINERS( test_vector,
+                                      std::vector<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}),
+                                      1e-7 );
 
     iss.str( "{-inf, 0, Infinity}" );
     iss.clear();
@@ -947,7 +965,7 @@ TEUCHOS_UNIT_TEST( Vector, istream )
 
     TEST_COMPARE_FLOATING_CONTAINERS( test_vector,
                                       std::vector<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                      1e-9 );
+                                      1e-7 );
 
     iss.str( "{1.0, 1l, 100, 3i, 200}" );
     iss.clear();
@@ -970,8 +988,9 @@ TEUCHOS_UNIT_TEST( Vector, istream )
 
     iss >> test_vector;
     
-    TEST_COMPARE_CONTAINERS( test_vector,
-                             std::vector<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+    TEST_COMPARE_FLOATING_CONTAINERS( test_vector,
+                                      std::vector<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}),
+                                      1e-7 );
 
     iss.str( "{-inf, 0, Infinity}" );
     iss.clear();

@@ -135,6 +135,7 @@ void expandPiKeywords( std::string& obj_rep );
  * spacing.
  * \ingroup from_string_traits
  */
+  template<typename T>
 void expandIntervalKeywords( std::string& obj_rep );
 
 /*! Expand repeated value keywords in string
@@ -147,6 +148,8 @@ void expandIntervalKeywords( std::string& obj_rep );
  * is repeated.
  * \ingroup from_string_traits
  */
+template<typename T>
+void expandRepeatKeywords( std::string& obj_rep );
   
 } // end Utility namespace
 

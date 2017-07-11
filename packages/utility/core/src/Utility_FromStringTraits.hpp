@@ -700,9 +700,17 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
                              "Could not extract the object string from the "
                              "stream!" );
 
+    // Expand repeat keywords
+    try{
+      Utility::expandRepeatKeywords<ContainerValueType>( obj_rep );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Unable to expand the repeat keywords!" );
+    
     // Expand interval keywords
     try{
-      Utility::expandIntervalKeywords( obj_rep );
+      Utility::expandIntervalKeywords<ContainerValueType>( obj_rep );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::StringConversionException,
@@ -843,6 +851,284 @@ template<typename T>
 inline void fromStream( std::istream& is, T& obj, const std::string& delims )
 {
   Utility::FromStringTraits<T>::fromStream( is, obj, delims );
+}
+
+namespace Details{
+
+// Replace occurances of interval keyword within a substring
+template<typename T>
+inline void expandIntervalKeywordInSubstring( const std::string& left_element,
+                                              std::string& middle_element,
+                                              const std::string& right_element )
+{
+  bool raw_left_element = left_element.find( next_container_element_char ) > left_element.size();
+  bool raw_right_element = right_element.find( next_container_element_char ) > right_element.size();
+
+  std::string::size_type op_pos;
+
+  if( middle_element.find( "pi" ) >= middle_element.size() &&
+      middle_element.find( "inf" ) >= middle_element.size() )
+    op_pos = middle_element.find_first_of( "il" );
+  else
+    op_pos = middle_element.size();
+
+
+  if( raw_left_element && raw_right_element &&
+      op_pos < middle_element.size() )
+  {
+    TEST_FOR_EXCEPTION( left_element.find( "inf" ) < left_element.size(),
+                        std::runtime_error,
+                        "The inf keyword cannot be used with the interval "
+                        "keyword!" );
+
+    if( left_element.find( "pi" ) >= left_element.size() )
+    {
+      TEST_FOR_EXCEPTION( left_element.find_first_of( "il" ) <
+                          left_element.size(),
+                          std::runtime_error,
+                          "interval keywords cannot occur in consecutive "
+                          "elements!" );
+    }
+
+    TEST_FOR_EXCEPTION( right_element.find( "inf" ) < right_element.size(),
+                        std::runtime_error,
+                        "The inf keyword cannot be used with the interval "
+                        "keyword!" );
+
+    if( right_element.find( "pi" ) >= right_element.size() )
+    {
+      TEST_FOR_EXCEPTION( right_element.find_first_of( "il" ) <
+                          right_element.size(),
+                          std::runtime_error,
+                          "interval keywords cannot occur in consecutive "
+                          "elements!" );
+    }
+
+    T left_value = Utility::fromString<T>( left_element );
+    T right_value = Utility::fromString<T>( right_element );
+
+    TEST_FOR_EXCEPTION( left_value > right_value,
+			std::runtime_error,
+			"the array elements must be in ascending order ("
+                        << left_value << " !<= " << right_value << ")!" );
+
+    size_t intervals =
+      Utility::fromString<size_t>( middle_element.substr( 0, op_pos ) );
+
+    TEST_FOR_EXCEPTION( intervals <= 0ll,
+			std::runtime_error,
+			"a positive integer must be specified with the "
+                        "interval keyword (e.g. 3i or 10l)!" );
+
+    // Increment the interval value to account for the last element
+    ++intervals;
+
+    // Linear increments
+    if( middle_element[op_pos] == 'i' )
+    {
+      T step_size = (right_value-left_value)/intervals;
+
+      // Replace the interval keyword with the new elements
+      middle_element = " ";
+
+      for( size_t i = 1; i < intervals; ++i )
+      {
+	std::ostringstream oss;
+
+        Utility::toStream( oss, left_value + step_size*i );
+
+	middle_element += oss.str();
+
+	if( i < intervals-1 )
+        {
+	  middle_element += next_container_element_char;
+          middle_element += " ";
+        }
+      }
+    }
+    // Log increments
+    else 
+    {
+      TEST_FOR_EXCEPTION( left_value <= 0,
+			  std::runtime_error,
+			  "the starting value ( " << left_value <<
+                          ") must be positive when using the log interval "
+                          "keyword 'l'!" );
+
+      T step_size = log(right_value/left_value)/intervals;
+
+      // Replace the interval keyword with the new elements
+      middle_element = " ";
+
+      for( size_t i = 1; i < intervals; ++i )
+      {
+	std::ostringstream oss;
+
+        Utility::toStream( oss, (T)exp( log(left_value) + step_size*i ) );
+
+	middle_element += oss.str();
+
+	if( i < intervals-1 )
+        {
+	  middle_element += next_container_element_char;
+          middle_element += " ";
+        }
+      }
+    }
+  }
+}
+
+} // end Details namespace
+
+// Expand interval keywords in string
+template<typename T>
+void expandIntervalKeywords( std::string& obj_rep )
+{
+  // Loop through all array elements
+  boost::algorithm::trim( obj_rep );
+
+  std::vector<std::string> array_elements;
+
+  boost::split( array_elements,
+                obj_rep,
+                boost::is_any_of( "," ) );
+
+  std::string front_copy =
+    boost::algorithm::to_lower_copy( array_elements.front() );
+
+  if( front_copy.find( "inf" ) >= front_copy.size() &&
+      front_copy.find( "pi" ) >= front_copy.size() )
+  {
+    TEST_FOR_EXCEPTION( array_elements.front().find_first_of( "il" ) <
+                        array_elements.front().size(),
+                        std::runtime_error,
+                        "the first element cannot have an interval keyword!" );
+  }
+
+  std::string back_copy =
+    boost::algorithm::to_lower_copy( array_elements.back() );
+
+  if( back_copy.find( "inf" ) >= back_copy.size() &&
+      back_copy.find( "pi" ) >= back_copy.size() )
+  {
+    TEST_FOR_EXCEPTION( array_elements.back().find_first_of( "il" ) <
+                        array_elements.back().size(),
+                        std::runtime_error,
+                        "the last element cannot have an interval keyword!" );
+  }
+
+  std::string::size_type bracket_pos =
+    array_elements.front().find( container_start_char );
+
+  if( bracket_pos < array_elements.front().size() )
+    array_elements.front().erase( bracket_pos, 1 );
+
+  bracket_pos = array_elements.back().find( container_end_char );
+
+  if( bracket_pos < array_elements.back().size() )
+    array_elements.back().erase( bracket_pos, 1 );
+
+  for( size_t i = 1; i < array_elements.size()-1; ++i )
+  {
+    // We want the 'i' and 'l' keywords to be case insensitive
+    boost::algorithm::to_lower( array_elements[i] );
+    
+    Details::expandIntervalKeywordInSubstring<T>(
+                      boost::algorithm::to_lower_copy( array_elements[i-1] ),
+                      array_elements[i],
+                      boost::algorithm::to_lower_copy( array_elements[i+1] ) );
+  }
+
+  // Reconstruct the array string
+  obj_rep = container_start_char;
+  obj_rep += array_elements.front();
+
+  for( size_t i = 1; i < array_elements.size(); ++i )
+  {
+    obj_rep += next_container_element_char;
+    obj_rep += array_elements[i];
+  }
+
+  obj_rep += container_end_char;
+}
+
+// Expand repeated value keywords in string
+template<typename T>
+void expandRepeatKeywords( std::string& obj_rep )
+{
+  // Loop through all array elements
+  boost::algorithm::trim( obj_rep );
+
+  std::vector<std::string> array_elements;
+
+  boost::split( array_elements,
+                obj_rep,
+                boost::is_any_of( "," ) );
+
+  std::string::size_type bracket_pos =
+    array_elements.front().find( container_start_char );
+
+  if( bracket_pos < array_elements.front().size() )
+    array_elements.front().erase( bracket_pos, 1 );
+
+  bracket_pos = array_elements.back().find( container_end_char );
+
+  if( bracket_pos < array_elements.back().size() )
+    array_elements.back().erase( bracket_pos, 1 );
+
+  for( size_t i = 0; i < array_elements.size(); ++i )
+  {
+    // We want the 'r' to be case insensitive
+    boost::algorithm::to_lower( array_elements[i] );
+
+    std::string::size_type op_pos = 
+      array_elements[i].find_first_of( 'r' );
+
+    if( op_pos < array_elements[i].size() )
+    {
+      T repeated_value =
+        Utility::fromString<T>( array_elements[i].substr( 0, op_pos ) );
+
+      size_t number_of_repeats =
+        Utility::fromString<size_t>( array_elements[i].substr( op_pos+1, array_elements[i].size() - op_pos - 1 ) );
+
+      TEST_FOR_EXCEPTION( number_of_repeats <= 0,
+                          std::runtime_error,
+                          "A positive integer must be specified with repeat "
+                          "operator!" );
+
+      std::string repeated_value_string = Utility::toString( repeated_value );
+ 
+      // Replace the element string with the expansion
+      if( i > 0 )
+      {
+        array_elements[i] = " ";
+        array_elements[i] += repeated_value_string;
+      }
+      else
+        array_elements[i] = repeated_value_string;
+      
+      for( size_t j = 1; j < number_of_repeats; ++j )
+      {
+        array_elements[i] += next_container_element_char;
+        array_elements[i] += " ";
+        
+	array_elements[i] += repeated_value_string;
+      }
+    }
+  }
+
+  // Reconstruct the array string
+  obj_rep = container_start_char;
+  obj_rep += array_elements.front();
+
+  for( size_t i = 1; i < array_elements.size(); ++i )
+  {
+    obj_rep += next_container_element_char;
+    obj_rep += array_elements[i];
+  }
+
+  obj_rep += container_end_char;
 }
   
 } // end Utility namespace
