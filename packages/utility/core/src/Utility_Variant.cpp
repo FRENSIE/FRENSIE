@@ -71,8 +71,8 @@ bool Variant::storesBasicType() const
 {
   if( d_stored_data.size() > 1 )
   {
-    return d_stored_data.find( "{" ) > d_stored_data.size() &&
-      d_stored_data.find( "}" ) > d_stored_data.size();
+    return d_stored_data.find( Utility::container_start_char ) > d_stored_data.size() &&
+      d_stored_data.find( Utility::container_end_char ) > d_stored_data.size();
   }
   else
     return true;
@@ -83,8 +83,8 @@ bool Variant::storesContainerType() const
 {
   if( d_stored_data.size() > 1 )
   {
-    return (d_stored_data.find( "{" ) < d_stored_data.size() ||
-            d_stored_data.find( "}" ) < d_stored_data.size());
+    return (d_stored_data.find( Utility::container_start_char ) < d_stored_data.size() ||
+            d_stored_data.find( Utility::container_end_char ) < d_stored_data.size());
   }
   else
     return false;

@@ -1943,7 +1943,7 @@ TEUCHOS_UNIT_TEST( Variant, convert_container )
   TEST_EQUALITY_CONST( extracted_vector[0].toInt(), -1 );
   TEST_EQUALITY_CONST( extracted_vector[1].toInt(), 0 );
   TEST_EQUALITY_CONST( extracted_vector[2].toInt(), 1 );
-
+  
   // Convert to a vector of int
   TEST_ASSERT( variant.canConvert<std::vector<int> >() );
 

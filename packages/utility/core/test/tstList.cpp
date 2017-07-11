@@ -512,7 +512,7 @@ TEUCHOS_UNIT_TEST( List, fromStream )
 
     TEST_COMPARE_FLOATING_CONTAINERS( test_list,
                                       std::list<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                      1e-9 );
+                                      1e-7 );
 
     iss.str( "{1.0, 1l, 100, 3i, 200}" );
     iss.clear();
@@ -535,8 +535,9 @@ TEUCHOS_UNIT_TEST( List, fromStream )
 
     Utility::fromStream( iss, test_list );
     
-    TEST_COMPARE_CONTAINERS( test_list,
-                             std::list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+    TEST_COMPARE_FLOATING_CONTAINERS( test_list,
+                                      std::list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}),
+                                      1e-7 );
 
     iss.str( "{-inf, 0, Infinity}" );
     iss.clear();
@@ -923,7 +924,7 @@ TEUCHOS_UNIT_TEST( ForwardList, fromStream )
 
     TEST_COMPARE_FLOATING_CONTAINERS( test_list,
                                       std::forward_list<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                      1e-9 );
+                                      1e-7 );
 
     iss.str( "{1.0, 1l, 100, 3i, 200}" );
     iss.clear();
@@ -946,8 +947,9 @@ TEUCHOS_UNIT_TEST( ForwardList, fromStream )
 
     Utility::fromStream( iss, test_list );
     
-    TEST_COMPARE_CONTAINERS( test_list,
-                             std::forward_list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+    TEST_COMPARE_FLOATING_CONTAINERS( test_list,
+                                      std::forward_list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}),
+                                      1e-7 );
 
     iss.str( "{-inf, 0, Infinity}" );
     iss.clear();
@@ -1405,7 +1407,7 @@ TEUCHOS_UNIT_TEST( List, istream )
 
     TEST_COMPARE_FLOATING_CONTAINERS( test_list,
                                       std::list<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                      1e-9 );
+                                      1e-7);
 
     iss.str( "{1.0, 1l, 100, 3i, 200}" );
     iss.clear();
@@ -1428,8 +1430,9 @@ TEUCHOS_UNIT_TEST( List, istream )
 
     iss >> test_list;
     
-    TEST_COMPARE_CONTAINERS( test_list,
-                             std::list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+    TEST_COMPARE_FLOATING_CONTAINERS( test_list,
+                                      std::list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}),
+                                      1e-7 );
 
     iss.str( "{-inf, 0, Infinity}" );
     iss.clear();
@@ -1887,7 +1890,7 @@ TEUCHOS_UNIT_TEST( ForwardList, istream )
 
     TEST_COMPARE_FLOATING_CONTAINERS( test_list,
                                       std::forward_list<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                      1e-9 );
+                                      1e-7 );
 
     iss.str( "{1.0, 1l, 100, 3i, 200}" );
     iss.clear();
@@ -1910,8 +1913,9 @@ TEUCHOS_UNIT_TEST( ForwardList, istream )
 
     iss >> test_list;
     
-    TEST_COMPARE_CONTAINERS( test_list,
-                             std::forward_list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}) );
+    TEST_COMPARE_FLOATING_CONTAINERS( test_list,
+                                      std::forward_list<float>({-(float)Utility::PhysicalConstants::pi, -3*(float)Utility::PhysicalConstants::pi/4, -(float)Utility::PhysicalConstants::pi/2, -(float)Utility::PhysicalConstants::pi/4, 0.0}),
+                                      1e-7 );
 
     iss.str( "{-inf, 0, Infinity}" );
     iss.clear();
