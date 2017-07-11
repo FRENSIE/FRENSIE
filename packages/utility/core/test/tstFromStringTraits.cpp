@@ -44,6 +44,8 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromString )
 {
   TEST_EQUALITY_CONST( Utility::fromString<std::string>( " " ), " " );
   TEST_EQUALITY_CONST( Utility::fromString<std::string>( "testing" ), "testing" );
+  TEST_EQUALITY_CONST( Utility::fromString<std::string>( "{{1,0},{-1,2}}" ), "{{1,0},{-1,2}}" );
+  TEST_EQUALITY_CONST( Utility::fromString<std::string>( "{ {1,0}, {-1,2} }" ), "{ {1,0}, {-1,2} }" );
 }
 
 //---------------------------------------------------------------------------//
@@ -127,6 +129,34 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
   Utility::fromStream( iss, string );
 
   TEST_EQUALITY_CONST( string, "testing-2" );
+
+  // Multiple string elements in the same stream with container deliminators
+  iss.str( "{1,0},{-1,2}, {a,b} , {key, {a,b}} }" );
+  iss.clear();
+
+  Utility::fromStream( iss, string, ",}" );
+
+  TEST_EQUALITY_CONST( string, "{1,0}" );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, string, ",}" );
+
+  TEST_EQUALITY_CONST( string, "{-1,2}" );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, string, ",}" );
+
+  TEST_EQUALITY_CONST( string, " {a,b}" );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, string, ",}" );
+
+  TEST_EQUALITY_CONST( string, " {key, {a,b}}" );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
 }
 
 //---------------------------------------------------------------------------//

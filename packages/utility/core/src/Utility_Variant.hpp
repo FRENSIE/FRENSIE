@@ -23,6 +23,8 @@
 
 /*! \defgroup variant Variant.
  *
+ * The Utility::Variant class and many of the helper methods were inspired
+ * by the Qt::Variant class, which is part of the Qt library.
  */
 
 namespace Utility{
@@ -292,15 +294,20 @@ struct FromStringTraits<Variant>
   { return ReturnType( obj_rep ); }
 
   //! Extract a variant from a stream
-  static void fromStream( std::istream& is,
-                          Variant& obj,
-                          const std::string& delims = std::string() );
+  static inline void fromStream( std::istream& is,
+                                 Variant& obj,
+                                 const std::string& delims = std::string() )
+  {
+    std::string obj_rep;
 
-private:
+    try{
+      Utility::fromStream( is, obj_rep, delims );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                             "Could not extract a variant from the stream!" );
 
-  // Extract variant element string
-  static std::string extractVariantElementString( std::istream& is,
-                                                  const std::string& delims );
+    obj.setValue( obj_rep );
+  }
 };
   
 } // end Utility namespace

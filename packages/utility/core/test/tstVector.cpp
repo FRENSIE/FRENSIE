@@ -169,6 +169,7 @@ TEUCHOS_UNIT_TEST( Vector, fromString )
   // Extract vector of short
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{}" )),
                            std::vector<short>() );
+  
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2}" )),
                            std::vector<short>({-1, 2}) );
   TEST_COMPARE_CONTAINERS( (Utility::fromString<std::vector<short> >( "{-1, 2i, 2}" )),
