@@ -9,12 +9,9 @@
 #ifndef UTILITY_ELASTIC_ELECTRON_DISTRIBUTION_HPP
 #define UTILITY_ELASTIC_ELECTRON_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -22,8 +19,7 @@ namespace Utility{
 
 //! The interpolated distribution class declaration
 template<typename InterpolationPolicy>
-class ElasticElectronDistribution : public TabularOneDDistribution,
-	  public ParameterListCompatibleObject<ElasticElectronDistribution<InterpolationPolicy> >
+class ElasticElectronDistribution : public TabularOneDDistribution
 {
 
 public:
@@ -32,16 +28,16 @@ public:
   ElasticElectronDistribution();
 
   //! Constructor for ENDL tables data
-  ElasticElectronDistribution( const Teuchos::Array<double>& independent_values,
-		               const Teuchos::Array<double>& dependent_values,
-                       const double moliere_screening_constant,
-                       const double screened_rutherford_normalization_constant );
+  ElasticElectronDistribution( const std::vector<double>& independent_values,
+		               const std::vector<double>& dependent_values,
+                               const double moliere_screening_constant,
+                               const double screened_rutherford_normalization_constant );
 
   //! Constructor for ACE tables data
-  ElasticElectronDistribution( const Teuchos::Array<double>& independent_values,
-		               const Teuchos::Array<double>& dependent_values,
-                       const double energy,
-                       const int atomic_number );
+  ElasticElectronDistribution( const std::vector<double>& independent_values,
+		               const std::vector<double>& dependent_values,
+                               const double energy,
+                               const int atomic_number );
 
   //! Copy constructor
   ElasticElectronDistribution(
@@ -52,53 +48,74 @@ public:
 	       const ElasticElectronDistribution<InterpolationPolicy>& dist_instance );
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  double evaluate( const double indep_var_value ) const override;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  double evaluatePDF( const double indep_var_value ) const override;
 
   //! Evaluate the CDF
-  double evaluateCDF( const double indep_var_value ) const;
+  double evaluateCDF( const double indep_var_value ) const override;
 
   //! Return a random sample from the distribution
-  double sample() const;
+  double sample() const override;
 
   //! Return a random sample and record the number of trials
-  double sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
+  double sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample and bin index from the distribution
-  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
-  double sampleWithRandomNumber( const double random_number ) const;
+  double sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample from the distribution in a subrange
-  double sampleInSubrange( const double max_indep_var ) const;
+  double sampleInSubrange( const double max_indep_var ) const override;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
   double sampleWithRandomNumberInSubrange( const double random_number,
-					   const double max_indep_var ) const;
+					   const double max_indep_var ) const override;
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  double getUpperBoundOfIndepVar() const override;
 
   //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  double getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const;
+  OneDDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
-  bool isContinuous() const;
+  bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
-  void toStream( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const override;
 
   //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is );
+  void fromStream( std::istream& is, const std::string& delims ) override;
 
-  //! Method for testing if two objects are equivalent
-  bool isEqual( const ElasticElectronDistribution<InterpolationPolicy>& other ) const;
+  //! Method for initializing the object from an input stream
+  using IStreamableObject::fromStream;
+
+  //! Method for placing an object in the desired property tree node
+  void toNode( const std::string& node_key,
+               Utility::PropertyTree& ptree,
+               const bool inline_data ) const override;
+
+  //! Method for placing an object in the desired property tree node
+  using PropertyTreeCompatibleObject::toNode;
+
+  //! Method for initializing the object from a property tree node
+  void fromNode( const Utility::PropertyTree& node,
+                 std::vector<std::string>& unused_children ) override;
+
+  //! Method for initializing the object from a property tree node
+  using PropertyTreeCompatibleObject::fromNode;
+
+  //! Equality comparison operator
+  bool operator==( const ElasticElectronDistribution& other ) const;
+
+  //! Inequality comparison operator
+  bool operator!=( const ElasticElectronDistribution& other ) const;
 
   //! Return Moliere's screening constant
   double getMoliereScreeningConstant() const;
@@ -131,21 +148,46 @@ private:
 
   // Initialize the distribution for ACE tables data
   void initializeDistributionACE(
-        const Teuchos::Array<double>& independent_values,
-        const Teuchos::Array<double>& dependent_values );
+        const std::vector<double>& independent_values,
+        const std::vector<double>& dependent_values,
+        const double energy,
+        const double atomic_number );
 
   // Initialize the distribution for ENDL tables data
   void initializeDistributionENDL(
-        const Teuchos::Array<double>& independent_values,
-        const Teuchos::Array<double>& dependent_values );
+        const std::vector<double>& independent_values,
+        const std::vector<double>& dependent_values );
 
   // Return a random sample using the random number and record the bin index
   double sampleImplementation( double random_number,
 			       unsigned& sampled_bin_index ) const;
 
   // Set the first two PDF values
-  void setFirstTwoPDFs( const double& first_cdf,
-                        const double& second_cdf );
+  void setFirstTwoPDFs( const double first_cdf,
+                        const double second_cdf,
+                        const double energy,
+                        const double atomic_number );
+
+  // Verify that the distribution type is elastic electron
+  static void verifyDistributionType( const Utility::Variant& type_data );
+
+  // Set the independent values
+  void extractIndependentValues( const Utility::Variant& indep_data,
+                                 std::vector<double>& independent_values );
+
+  // Set the dependent values
+  void extractDependentValues( const Utility::Variant& dep_data,
+                               std::vector<double>& dependent_values );
+
+  // Set the moliere screening constant
+  void extractMoliereScreeningConstant( const Utility::Variant& dep_data );
+
+  // Set the screened rutherford normalization constant
+  void extractScreenedRutherfordNormalizationConstant( const Utility::Variant& dep_data );
+
+  // Verify that the values are valid
+  static void verifyValidValues( const std::vector<double>& independent_values,
+                                 const std::vector<double>& dependent_values );
 
   // The distribution type
   static const OneDDistributionType distribution_type =
@@ -153,20 +195,11 @@ private:
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = slope)
-  typedef Teuchos::Array<Quad<double,double,double,double> > DistributionArray;
+  typedef std::vector<std::tuple<double,double,double,double> > DistributionArray;
   DistributionArray d_distribution;
 
   // The normalization constant
   double d_norm_constant;
-
-  // The energy of the elastic angular distribution in MeV
-  double d_energy;
-
-  // Atomic number (Z) of the target atom
-  int d_atomic_number;
-
-  // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
-  double d_Z_two_thirds_power;
 
   // Moliere's screening constant
   double d_moliere_screening_constant;

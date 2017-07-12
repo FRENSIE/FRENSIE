@@ -36,7 +36,7 @@ struct GenericPTreeObjectTranslator
       }
       catch( const std::runtime_error& error )
       {
-        FRENSIE_LOG_TAGGED_ERROR( "VariantPtree", error.what() );
+        FRENSIE_LOG_TAGGED_ERROR( "PropertyTree", error.what() );
 
         return boost::optional<external_type>( boost::none );
       }

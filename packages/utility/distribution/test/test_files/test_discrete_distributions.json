@@ -12,7 +12,7 @@
     "Discrete Distribution D":
     {
         "comment": "optional comment example",
-        "dep vals": "{1.0, 3i, 1.0}",
+        "dep vals": "{1.0r5}",
         "indep vals": "{pi/2, 3i, pi}",
         "type": "discrete-dist",
         "dummy": ""

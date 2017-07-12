@@ -9,19 +9,16 @@
 #ifndef UTILITY_ELASTIC_ELECTRONDISTRIBUTION_DEF_HPP
 #define UTILITY_ELASTIC_ELECTRONDISTRIBUTION_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ArrayString.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_KinematicHelpers.hpp"
 
 namespace Utility{
@@ -43,14 +40,15 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution()
  */
 template<typename InterpolationPolicy>
 ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
-                       const Teuchos::Array<double>& independent_values,
-		               const Teuchos::Array<double>& dependent_values,
-                       const double moliere_screening_constant,
-                       const double screened_rutherford_normalization_constant )
-  : d_moliere_screening_constant( moliere_screening_constant ),
+                      const std::vector<double>& independent_values,
+                      const std::vector<double>& dependent_values,
+                      const double moliere_screening_constant,
+                      const double screened_rutherford_normalization_constant )
+  : d_distribution( independent_values.size() ),
+    d_norm_constant( 0.0 ),
+    d_moliere_screening_constant( moliere_screening_constant ),
     d_screened_rutherford_normalization_constant( screened_rutherford_normalization_constant ),
-    d_distribution( independent_values.size() ),
-    d_norm_constant( 0.0 )
+    d_screened_rutherford_cutoff_cdf( 0.0 )
 {
   // Make sure the screened_rutherford_normalization_constant
   testPrecondition( screened_rutherford_normalization_constant > 0 );
@@ -62,14 +60,14 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
   testPrecondition( independent_values.size() == dependent_values.size() );
   // Make sure that the bins are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-			       independent_values.end() ) );
+                                             independent_values.end() ) );
   // Make sure that the independent_values are valid
   testPrecondition( independent_values.front() >= 0.0 );
   testPrecondition( independent_values.back() <= 2.0 );
   // Make sure that the dependent values are valid
   testPrecondition( dependent_values.front() >= 0.0 );
 
-  initializeDistributionENDL( independent_values, dependent_values );
+  this->initializeDistributionENDL( independent_values, dependent_values );
 }
 
 
@@ -81,15 +79,15 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
    */
 template<typename InterpolationPolicy>
 ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
-			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values,
-                  const double energy,
-                  const int atomic_number )
-  : d_energy( energy ),
-    d_atomic_number( atomic_number ),
-    d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
-    d_distribution( independent_values.size() ),
-    d_norm_constant( 0.0 )
+			      const std::vector<double>& independent_values,
+			      const std::vector<double>& dependent_values,
+                              const double energy,
+                              const int atomic_number )
+  : d_distribution( independent_values.size() ),
+    d_norm_constant( 0.0 ),
+    d_moliere_screening_constant( 0.0 ),
+    d_screened_rutherford_normalization_constant( 0.0 ),
+    d_screened_rutherford_cutoff_cdf( 0.0 )
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0 );
@@ -104,10 +102,10 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
   testPrecondition( independent_values.size() == dependent_values.size() );
   // Make sure that the bins are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-			       independent_values.end() ) );
+                                             independent_values.end() ) );
   // Make sure that the bin values are sorted
   testPrecondition( Sort::isSortedAscending( dependent_values.begin(),
-			        dependent_values.end() ) );
+                                             dependent_values.end() ) );
   // Make sure that the independent values are valid
   testPrecondition( independent_values.front() >= -1.0 );
   testPrecondition( independent_values.back() <= 1.0 );
@@ -115,7 +113,10 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
   testPrecondition( dependent_values.front() >= 0.0 );
   testPrecondition( dependent_values.back() <= 1.0 );
 
-  initializeDistributionACE( independent_values, dependent_values );
+  this->initializeDistributionACE( independent_values,
+                                   dependent_values,
+                                   energy,
+                                   atomic_number );
 }
 
 // Copy constructor
@@ -123,7 +124,10 @@ template<typename InterpolationPolicy>
 ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
 		const ElasticElectronDistribution<InterpolationPolicy>& dist_instance )
   : d_distribution( dist_instance.d_distribution ),
-    d_norm_constant( dist_instance.d_norm_constant )
+    d_norm_constant( dist_instance.d_norm_constant ),
+    d_moliere_screening_constant( dist_instance.d_moliere_screening_constant ),
+    d_screened_rutherford_normalization_constant( dist_instance.d_screened_rutherford_normalization_constant ),
+    d_screened_rutherford_cutoff_cdf( dist_instance.d_screened_rutherford_cutoff_cdf )
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
@@ -142,6 +146,9 @@ ElasticElectronDistribution<InterpolationPolicy>::operator=(
   {
     d_distribution = dist_instance.d_distribution;
     d_norm_constant = dist_instance.d_norm_constant;
+    d_moliere_screening_constant = dist_instance.d_moliere_screening_constant;
+    d_screened_rutherford_normalization_constant = dist_instance.d_screened_rutherford_normalization_constant;
+    d_screened_rutherford_cutoff_cdf = dist_instance.d_screened_rutherford_cutoff_cdf;
   }
 
   return *this;
@@ -152,7 +159,7 @@ template<typename InterpolationPolicy>
 double ElasticElectronDistribution<InterpolationPolicy>::evaluate(
 					   const double indep_var_value ) const
 {
-  return evaluatePDF( indep_var_value );
+  return this->evaluatePDF( indep_var_value );
 }
 
 // Evaluate the PDF
@@ -369,7 +376,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation(
   }
 
   // Make sure the sample is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( sample ) );
   // Make sure the random number is valid
   testPrecondition( sample >= 0.0 );
   testPrecondition( sample <= 2.0 );
@@ -413,8 +420,8 @@ template<typename InterpolationPolicy>
 void ElasticElectronDistribution<InterpolationPolicy>::toStream(
 						       std::ostream& os ) const
 {
-  Teuchos::Array<double> independent_values( d_distribution.size() );
-  Teuchos::Array<double> dependent_values( d_distribution.size() );
+  std::vector<double> independent_values( d_distribution.size() );
+  std::vector<double> dependent_values( d_distribution.size() );
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
@@ -422,105 +429,432 @@ void ElasticElectronDistribution<InterpolationPolicy>::toStream(
     dependent_values[i] = Utility::get<2>( d_distribution[i] );
   }
 
-  os << "{" << independent_values << "," << dependent_values << "}";
+  os << "{" << Utility::convertOneDDistributionTypeToString( ElasticElectronDistribution<InterpolationPolicy>::distribution_type )
+     << " " << InterpolationPolicy::name()
+     << ", " << independent_values
+     << ", " << dependent_values
+     << ", " << d_moliere_screening_constant
+     << ", " << d_screened_rutherford_normalization_constant
+     << "}";
 }
 
 // Method for initializing the object from an input stream
 template<typename InterpolationPolicy>
-void ElasticElectronDistribution<InterpolationPolicy>::fromStream( std::istream& is )
+void ElasticElectronDistribution<InterpolationPolicy>::fromStream(
+                                                           std::istream& is,
+                                                           const std::string& )
 {
-  // Read the initial '{'
-  std::string start_bracket;
-  std::getline( is, start_bracket, '{' );
-  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
+  VariantVector distribution_data;
 
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the input stream is not a valid elastic electron "
-		      "distribution representation!" );
-
-  std::string independent_values_rep;
-  std::getline( is, independent_values_rep, '}' );
-  independent_values_rep += "}";
-
-  // Parse special characters
   try{
-    ArrayString::locateAndReplacePi( independent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( independent_values_rep );
+    Utility::fromStream( is, distribution_data );
   }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the elastic electron distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not extract the distribution data from the "
+                           "stream!" );
 
-  Teuchos::Array<double> independent_values;
-  try{
-    independent_values =
-      Teuchos::fromStringToArray<double>( independent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the elastic electron distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  // Verify that the correct amount of distribution data is present
+  TEST_FOR_EXCEPTION( distribution_data.size() != 5,
+                      Utility::StringConversionException,
+                      "The elastic electron distribution cannot be "
+                      "constructed because the string representation is not "
+                      "valid!" );
 
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
-						independent_values.end() ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the elastic electron distribution cannot be constructed "
-		      "because the bin boundaries "
-		      << independent_values_rep << " are not sorted!" );
+  // Verify that the distribution type is elastic electron
+  this->verifyDistributionType( distribution_data[0] );
 
-  // Read the ","
-  std::string separator;
-  std::getline( is, separator, ',' );
+  // Extract the independent values
+  std::vector<double> independent_values;
 
-  std::string dependent_values_rep;
-  std::getline( is, dependent_values_rep, '}' );
-  dependent_values_rep += "}";
+  this->extractIndependentValues( distribution_data[1], independent_values );
 
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dependent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the elastic electron distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  // Extract the dependent values
+  std::vector<double> dependent_values;
 
-  Teuchos::Array<double> dependent_values;
-  try{
-    dependent_values =
-      Teuchos::fromStringToArray<double>( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the elastic electron distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  this->extractDependentValues( distribution_data[2], dependent_values );
 
-  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the elastic electron distribution "
-		      "{" << independent_values_rep << "},{"
-		      << dependent_values_rep << "} "
-		      "cannot be constructed because the number of "
-		      "independent values does not equal the number of "
-		      "dependent values" );
+  // Extract the moliere screening constant
+  this->extractMoliereScreeningConstant( distribution_data[3] );
 
-  initializeDistributionENDL( independent_values, dependent_values );
+  // Extract the screened rutherford normalization constant
+  this->extractScreenedRutherfordNormalizationConstant( distribution_data[4] );
+
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values );
+
+  this->initializeDistributionENDL( independent_values, dependent_values );
 }
 
-// Method for testing if two objects are equivalent
+// Method for placing an object in the desired property tree node
 template<typename InterpolationPolicy>
-bool ElasticElectronDistribution<InterpolationPolicy>::isEqual(
-		  const ElasticElectronDistribution<InterpolationPolicy>& other ) const
+void ElasticElectronDistribution<InterpolationPolicy>::toNode(
+                                                 const std::string& node_key,
+                                                 Utility::PropertyTree& ptree,
+                                                 const bool inline_data ) const
+{
+  if( inline_data )
+  {
+    std::ostringstream oss;
+
+    this->toStream( oss );
+
+    ptree.put( node_key, oss.str() );
+  }
+  else
+  {
+    Utility::PropertyTree child_tree;
+
+    std::string type_name = 
+      Utility::convertOneDDistributionTypeToString( ElasticElectronDistribution<InterpolationPolicy>::distribution_type );
+
+    type_name += " ";
+    type_name += InterpolationPolicy::name();
+    
+    child_tree.put( "type", type_name );
+
+    std::vector<double> independent_values( d_distribution.size() );
+    std::vector<double> dependent_values( d_distribution.size() );
+
+    for( size_t i = 0; i < d_distribution.size(); ++i )
+    {
+      independent_values[i] = Utility::get<0>( d_distribution[i] );
+      dependent_values[i] = Utility::get<2>( d_distribution[i] );
+    }
+
+    child_tree.put( "independent values", independent_values );
+    child_tree.put( "dependent values", dependent_values );
+    child_tree.put( "moliere screening constant", d_moliere_screening_constant );
+    child_tree.put( "screened rutherford norm constant", d_screened_rutherford_normalization_constant );
+
+    ptree.put_child( node_key, child_tree );
+  }
+}
+
+// Method for initializing the object from a property tree node
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::fromNode(
+                                    const Utility::PropertyTree& node,
+                                    std::vector<std::string>& unused_children )
+{
+  // Initialize from inline data
+  if( node.size() == 0 )
+  {
+    std::istringstream iss( node.data().toString() );
+
+    try{
+      this->fromStream( iss );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PTreeNodeConversionException,
+                                "Could not create the elastic electron "
+                                "distribution!" );
+  }
+  // Initialize from child nodes
+  else
+  {
+    Utility::PropertyTree::const_iterator node_it, node_end;
+    node_it = node.begin();
+    node_end = node.end();
+
+    bool type_verified = false;
+    bool independent_vals_extracted = false;
+    bool dependent_vals_extracted = false;
+    bool moliere_screening_const_extracted = false;
+    bool screened_rutherford_norm_const_extracted = false;
+
+    std::vector<double> independent_values, dependent_values;
+
+    while( node_it != node_end )
+    {
+      std::string child_node_key =
+        boost::algorithm::to_lower_copy( node_it->first );
+
+      // Verify the distribution type
+      if( child_node_key.find( "type" ) < child_node_key.size() )
+      {
+        try{
+          this->verifyDistributionType( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the elastic electron "
+                                    "distribution!" );
+
+        type_verified = true;
+      }
+
+      // Extract the independent values
+      else if( child_node_key.find( "indep" ) < child_node_key.size() )
+      {
+        try{
+          this->extractIndependentValues( node_it->second.data(),
+                                          independent_values );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the elastic electron "
+                                    "distribution!" );
+
+        independent_vals_extracted = true;
+      }
+
+      // Extract the dependent values
+      else if( child_node_key.find( "dep" ) < child_node_key.size() )
+      {
+        try{
+          this->extractDependentValues( node_it->second.data(),
+                                        dependent_values );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the elastic electron "
+                                    "distribution!" );
+
+        dependent_vals_extracted = true;
+      }
+
+      // Extract the moliere screening constant
+      else if( child_node_key.find( "moliere" ) < child_node_key.size() )
+      {
+        try{
+          this->extractMoliereScreeningConstant( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the elastic electron "
+                                    "distribution!" );
+        
+        moliere_screening_const_extracted = true;
+      }
+
+      // Extract the screened rutherford normalization constant
+      else if( child_node_key.find( "rutherford" ) < child_node_key.size() )
+      {
+        try{
+          this->extractScreenedRutherfordNormalizationConstant( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PTreeNodeConversionException,
+                                    "Could not create the elastic electron "
+                                    "distribution!" );
+        
+        screened_rutherford_norm_const_extracted = true;
+      }
+
+      // This child node is unused (and is not a comment)
+      else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
+               child_node_key.size() )
+      {
+        unused_children.push_back( node_it->first );
+      }
+      
+      ++node_it;
+    }
+
+    // Make sure that the distribution type was verified
+    TEST_FOR_EXCEPTION( !type_verified,
+                        Utility::PTreeNodeConversionException,
+                        "The elastic electron distribution could not be "
+                        "constructed because the type could not be "
+                        "verified!" );
+
+    // Make sure that the independent values were set
+    TEST_FOR_EXCEPTION( !independent_vals_extracted,
+                        Utility::PTreeNodeConversionException,
+                        "The elastic electron distribution could not be "
+                        "constructed because the independent values were not "
+                        "specified!" );
+
+    // Make sure that the dependent values were set
+    TEST_FOR_EXCEPTION( !dependent_vals_extracted,
+                        Utility::PTreeNodeConversionException,
+                        "The elastic electron distribution could not be "
+                        "constructed because the dependent values were not "
+                        "specified!" );
+
+    // Make sure that the molier screening constant was set
+    TEST_FOR_EXCEPTION( !moliere_screening_const_extracted,
+                        Utility::PTreeNodeConversionException,
+                        "The elastic electron distribution could not be "
+                        "constructed because the moliere screening constant "
+                        "was not specified!" );
+    
+    // Make sure that the screened rutherford normalization constant was set
+    TEST_FOR_EXCEPTION( !screened_rutherford_norm_const_extracted,
+                        Utility::PTreeNodeConversionException,
+                        "The elastic electron distribution could not be "
+                        "constructed because the screened rutherford "
+                        "normalization constant was not specified!" );
+
+    // Verify that the values are valid
+    try{
+      this->verifyValidValues( independent_values, dependent_values );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PTreeNodeConversionException,
+                                "Could not create the elastic electron "
+                                "distribution!" );
+
+    this->initializeDistributionENDL( independent_values, dependent_values );
+  }
+}
+
+// Verify that the distribution type is elastic electron
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::verifyDistributionType(
+                                            const Utility::Variant& type_data )
+{
+  std::string distribution_type = type_data.toString();
+  boost::algorithm::to_lower( distribution_type );
+
+  TEST_FOR_EXCEPTION( distribution_type.find( "elastic electron" ) >=
+                      distribution_type.size(),
+                      Utility::StringConversionException,
+                      "The elastic electron distribution cannot be "
+                      "constructed because the distribution type ("
+                      << distribution_type << ") does not match!" );
+
+  TEST_FOR_EXCEPTION( distribution_type.find( boost::algorithm::to_lower_copy(InterpolationPolicy::name()) ) >=
+                      distribution_type.size(),
+                      Utility::StringConversionException,
+                      "The elastic electron distribution cannot be "
+                      "constructed because the interpolation type ("
+                      << InterpolationPolicy::name() << ") does not match!" );
+}
+
+// Set the independent values
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::extractIndependentValues(
+                                      const Utility::Variant& indep_data,
+                                      std::vector<double>& independent_values )
+{
+  try{
+    independent_values =
+      Utility::variant_cast<std::vector<double> >( indep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The elastic electron distribution cannot be "
+                           "constructed because the independent values are "
+                           "not valid!" );
+
+  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
+                                                independent_values.end() ),
+                      Utility::StringConversionException,
+                      "The elastic electron distribution cannot be "
+                      "constructed because the independent values "
+                      << indep_data.toString() << " are not sorted!" );
+
+  TEST_FOR_EXCEPTION( !InterpolationPolicy::isIndepVarInValidRange( independent_values.front() ),
+                      Utility::StringConversionException,
+                      "The elastic electron distribution cannot be "
+                      "constructed because the independent values "
+                      << indep_data.toString() << " are not compatible with "
+                      "the requested interpolation type ("
+                      << InterpolationPolicy::name() << ")!" );
+}
+
+// Set the dependent values
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::extractDependentValues(
+                                        const Utility::Variant& dep_data,
+                                        std::vector<double>& dependent_values )
+{
+  try{
+    dependent_values = Utility::variant_cast<std::vector<double> >( dep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The elastic electron distribution cannot be "
+                           "constructed because the dependent values are not "
+                           "valid!" );
+
+  for( size_t i = 0; i < dependent_values.size(); ++i )
+  {
+    TEST_FOR_EXCEPTION( !InterpolationPolicy::isDepVarInValidRange( dependent_values[i] ),
+                        Utility::StringConversionException,
+                        "The elastic electron distribution cannot be "
+                        "constructed because dependent value " << i << "("
+                        << dependent_values[i] << ") is not compatible with "
+                        "the requested interpolation type ("
+                        << InterpolationPolicy::name() << ")!" );
+  }
+}
+
+// Set the moliere screening constant
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::extractMoliereScreeningConstant( const Utility::Variant& dep_data )
+{
+  try{
+    d_moliere_screening_constant = Utility::variant_cast<double>( dep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The elastic electron distribution cannot be "
+                           "constructed because the moliere screening "
+                           "constant is not valid!" );
+}
+
+// Set the screened rutherford normalization constant
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::extractScreenedRutherfordNormalizationConstant( const Utility::Variant& dep_data )
+{
+  try{
+    d_screened_rutherford_normalization_constant =
+      Utility::variant_cast<double>( dep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The elastic electron distribution cannot be "
+                           "constructed because the screened rutherford "
+                           "normalization constant is not valid!" );
+
+  TEST_FOR_EXCEPTION( d_screened_rutherford_normalization_constant <= 0,
+                      Utility::StringConversionException,
+                      "The elastic electron distribution cannot be "
+                      "constructed because the screened rutherford "
+                      "normalization constant is not valid!" );
+}
+
+// Verify that the values are valid
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::verifyValidValues(
+                                 const std::vector<double>& independent_values,
+                                 const std::vector<double>& dependent_values )
+{
+  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
+		      Utility::StringConversionException,
+		      "The elastic electron distribution cannot be "
+                      "constructed because the number of independent values ("
+                      << independent_values.size() << ") does not match the "
+                      "number of dependent values ("
+		      << dependent_values.size() << ")!" );
+
+  TEST_FOR_EXCEPTION( independent_values.size() == 0,
+                      Utility::StringConversionException,
+                      "The elastic electron distribution cannot be "
+                      "constructed because no independent values have been "
+                      "specified!" );
+
+}
+
+// Equality comparison operator
+template<typename InterpolationPolicy>
+bool ElasticElectronDistribution<InterpolationPolicy>::operator==(
+                               const ElasticElectronDistribution& other ) const
 {
   return d_distribution == other.d_distribution &&
-    d_norm_constant == other.d_norm_constant;
+    d_norm_constant == other.d_norm_constant &&
+    d_moliere_screening_constant == other.d_moliere_screening_constant &&
+    d_screened_rutherford_normalization_constant == other.d_screened_rutherford_normalization_constant;
+}
+
+// Inequality comparison operator
+template<typename InterpolationPolicy>
+bool ElasticElectronDistribution<InterpolationPolicy>::operator!=(
+                               const ElasticElectronDistribution& other ) const
+{
+  return d_distribution != other.d_distribution ||
+    d_norm_constant != other.d_norm_constant ||
+    d_moliere_screening_constant != other.d_moliere_screening_constant ||
+    d_screened_rutherford_normalization_constant != other.d_screened_rutherford_normalization_constant;
+    d_norm_constant != other.d_norm_constant;
 }
 
 // Return Moliere's screening constant
@@ -540,8 +874,10 @@ double ElasticElectronDistribution<InterpolationPolicy>::getScreenedRutherfordNo
 // Initialize the distribution for ACE
 template<typename InterpolationPolicy>
 void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionACE(
-			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values )
+			      const std::vector<double>& independent_values,
+			      const std::vector<double>& dependent_values,
+                              const double energy,
+                              const double atomic_number )
 {
   unsigned size = independent_values.size();
 
@@ -553,8 +889,11 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionACE
   Utility::get<1>( d_distribution[0] ) = 1.0 - dependent_values[size-1];
   Utility::get<0>( d_distribution[1] ) = 1.0 - independent_values[size-2];
   Utility::get<1>( d_distribution[1] ) = 1.0 - dependent_values[size-2];
-  setFirstTwoPDFs( 1.0-dependent_values[size-1],
-                   1.0-dependent_values[size-2] );
+  
+  this->setFirstTwoPDFs( 1.0-dependent_values[size-1],
+                         1.0-dependent_values[size-2],
+                         energy,
+                         atomic_number );
 
   d_screened_rutherford_cutoff_cdf =  Utility::get<2>( d_distribution[1] );
 
@@ -599,8 +938,8 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionACE
 // Initialize the distribution for ENDL
 template<typename InterpolationPolicy>
 void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionENDL(
-			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values )
+			      const std::vector<double>& independent_values,
+			      const std::vector<double>& dependent_values )
 {
   // Make sure that at least two points of the distribution are specified
   testPrecondition( independent_values.size() > 1 );
@@ -648,8 +987,10 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
 // Set the first two PDF values
 template<typename InterpolationPolicy>
 void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs(
-        const double& first_cdf,
-        const double& second_cdf )
+        const double first_cdf,
+        const double second_cdf,
+        const double energy,
+        const double atomic_number )
 {
   // get size of array
   unsigned size = d_distribution.size();
@@ -658,46 +999,47 @@ void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs(
   double electron_momentum_squared =
            Utility::calculateDimensionlessRelativisticMomentumSquared(
                           Utility::PhysicalConstants::electron_rest_mass_energy,
-                          d_energy );
+                          energy );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared(
            Utility::PhysicalConstants::electron_rest_mass_energy,
-           d_energy );
+           energy );
 
   // The fine structure constant squared
-  double fine_structure_const_squared=
+  const double fine_structure_const_squared=
         Utility::PhysicalConstants::fine_structure_constant*
         Utility::PhysicalConstants::fine_structure_constant;
 
-  double screening_param1 = fine_structure_const_squared/( 2.0*0.885*0.885 );
+  const double screening_param1 =
+    fine_structure_const_squared/( 2.0*0.885*0.885 );
 
-  double screening_param2 = 3.76*fine_structure_const_squared*
-                            d_atomic_number*d_atomic_number;
+  const double screening_param2 = 3.76*fine_structure_const_squared*
+    atomic_number*atomic_number;
 
-  double screening_param3 = 1.0/beta_squared*sqrt( d_energy/
-          ( d_energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
-
-  // Calculate Moliere's atomic screening constant
+  const double screening_param3 = 1.0/beta_squared*sqrt( energy/
+          ( energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
+  
+  const double atomic_number_two_thirds_power = pow( atomic_number, 2.0/3.0 );
+  
+  // Calculate Moliere's atomic screening constant  
   d_moliere_screening_constant =
-            screening_param1 * 1.0/electron_momentum_squared *
-            d_Z_two_thirds_power * ( 1.13 + screening_param2*screening_param3 );
+    screening_param1 * 1.0/electron_momentum_squared *
+    atomic_number_two_thirds_power *
+    ( 1.13 + screening_param2*screening_param3 );
 
-  double var = (s_sr_angle + d_moliere_screening_constant);
+  const double var = (s_sr_angle + d_moliere_screening_constant);
 
   // Calculate the normalization constant
   d_screened_rutherford_normalization_constant =
-            ( second_cdf -first_cdf )*
-            d_moliere_screening_constant*var/s_sr_angle;
+    (second_cdf - first_cdf)*d_moliere_screening_constant*var/s_sr_angle;
 
   Utility::get<2>( d_distribution[1] ) =
     d_screened_rutherford_normalization_constant/( var*var );
+  
   Utility::get<2>( d_distribution[0] ) =
     d_screened_rutherford_normalization_constant/
     ( d_moliere_screening_constant*d_moliere_screening_constant );
-/*
-std::cout << std::setprecision(20)<<"d_moliere_screening_constant =\t"<<d_moliere_screening_constant<<std::endl;
-std::cout << std::setprecision(20)<<"d_screened_rutherford_normalization_constant =\t"<<d_screened_rutherford_normalization_constant<<std::endl;*/
 }
 
 // Test if the dependent variable can be zero within the indep bounds

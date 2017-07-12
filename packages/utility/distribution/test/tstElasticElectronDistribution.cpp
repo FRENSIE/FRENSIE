@@ -11,26 +11,21 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ElasticElectronDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
+std::shared_ptr<Utility::PropertyTree> test_dists_ptree;
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
-
-Teuchos::RCP<Utility::OneDDistribution> distribution;
-Teuchos::RCP<Utility::TabularOneDDistribution> elastic_distribution;
+std::shared_ptr<Utility::OneDDistribution> distribution;
+std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -46,36 +41,36 @@ Teuchos::RCP<Utility::TabularOneDDistribution> elastic_distribution;
 template<typename InterpolationPolicy>
 void initializeACEDistribution()
 {
-  Teuchos::Array<double> independent_values( 3 );
+  std::vector<double> independent_values( 3 );
   independent_values[0] = -1.0;
   independent_values[1] = 0.999999;
   independent_values[2] = 1.0;
 
-  Teuchos::Array<double> dependent_values( 3 );
+  std::vector<double> dependent_values( 3 );
   dependent_values[0] = 0.0;
   dependent_values[1] = 0.9999995;
   dependent_values[2] = 1.0;
 
   double energy = 1.0e-5;
 
-  elastic_distribution.reset(new Utility::ElasticElectronDistribution<InterpolationPolicy>(
+  tab_distribution.reset(new Utility::ElasticElectronDistribution<InterpolationPolicy>(
 							  independent_values,
 							  dependent_values,
                               energy,
                               82 ) );
-  distribution = elastic_distribution;
+  distribution = tab_distribution;
 }
 
 // Initialize the distribution
 template<typename InterpolationPolicy>
 void initializeENDLDistribution()
 {
-  Teuchos::Array<double> independent_values( 3 );
+  std::vector<double> independent_values( 3 );
   independent_values[2] = 2.0;
   independent_values[1] = 1.0E-6;
   independent_values[0] = 0.0;
 
-  Teuchos::Array<double> dependent_values( 3 );
+  std::vector<double> dependent_values( 3 );
   dependent_values[2] = 5.0000000019895100E-01;
   dependent_values[1] = 4.9999999980104900E-01;
   dependent_values[0] = 5.0000000019895100E-01;
@@ -83,13 +78,13 @@ void initializeENDLDistribution()
   double eta = 2.51317958942017E+03;
   double A = 3158035.826;
 
-  elastic_distribution.reset(new Utility::ElasticElectronDistribution<InterpolationPolicy>(
+  tab_distribution.reset(new Utility::ElasticElectronDistribution<InterpolationPolicy>(
 							  independent_values,
 							  dependent_values,
                               eta,
                               A ) );
 
-  distribution = elastic_distribution;
+  distribution = tab_distribution;
 }
 
 //---------------------------------------------------------------------------//
@@ -148,17 +143,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 {
   initializeACEDistribution<InterpolationPolicy>();
 
-  TEST_EQUALITY_CONST( elastic_distribution->evaluateCDF( 3.0 ), 1.0 );
-  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 2.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 3.0 ), 1.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 2.0 ),
 			  1.0000000000,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 0.000001 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.000001 ),
 			  0.0000005000,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.0 ),
 			  0.0000000000,
 			  1e-10 );
-  TEST_EQUALITY_CONST( elastic_distribution->evaluateCDF( -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -1.0 ), 0.0 );
 }
 
 UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, evaluateCDF );
@@ -244,18 +239,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 
   unsigned bin_index;
 
-  double sample = elastic_distribution->sampleAndRecordBinIndex( bin_index );
+  double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( bin_index, 0u );
 
-  sample = elastic_distribution->sampleAndRecordBinIndex( bin_index );
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_FLOATING_EQUALITY( sample, 2.0, 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 1u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
-  sample = elastic_distribution->sampleAndRecordBinIndex( bin_index );
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_COMPARE( sample, >=, 0.0 );
   TEST_COMPARE( sample, <=, 2.0 );
 }
@@ -270,10 +265,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 {
   initializeACEDistribution<InterpolationPolicy>();
 
-  double sample = elastic_distribution->sampleWithRandomNumber( 0.0 );
+  double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = elastic_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
+  sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
   TEST_FLOATING_EQUALITY( sample, 2.0, 1e-12 );
 }
 
@@ -293,16 +288,16 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double sample = elastic_distribution->sampleInSubrange( 0.000001 );
+  double sample = tab_distribution->sampleInSubrange( 0.000001 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = elastic_distribution->sampleInSubrange( 0.000001 );
+  sample = tab_distribution->sampleInSubrange( 0.000001 );
   TEST_FLOATING_EQUALITY( sample, 0.000001, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
-  sample = elastic_distribution->sampleInSubrange( 0.000001 );
+  sample = tab_distribution->sampleInSubrange( 0.000001 );
   TEST_COMPARE( sample, >=, 0.0 );
   TEST_COMPARE( sample, <=, 0.000001 );
 }
@@ -318,11 +313,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
   initializeACEDistribution<InterpolationPolicy>();
 
   double sample =
-    elastic_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.000001  );
+    tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.000001  );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample =
-        elastic_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.000001 );
+        tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.000001 );
   TEST_FLOATING_EQUALITY( sample, 0.000001, 1e-12 );
 }
 
@@ -406,128 +401,446 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
   initializeACEDistribution<InterpolationPolicy>();
 
   if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  {
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  }
   else
+  {
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  }
 
   if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  {
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  }
   else
+  {
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  }
 
   if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  {
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  }
   else
+  {
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  }
 
   if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  {
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  }
   else
+  {
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  }
 }
 
 UNIT_TEST_INSTANTIATION( ElasticElectronDistribution,
                          isCompatibleWithInterpType );
 
-/* !/todo Find out why test fails even though lists look correct
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
+// Check that the distribution can be converted to a string
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
-				   toParameterList,
-				   InterpolationPolicy )
+                                   toString,
+                                   InterpolationPolicy )
 {
+  initializeACEDistribution<InterpolationPolicy>();
+
+  std::string dist_name = "{Elastic Electron Distribution ";
+  dist_name += InterpolationPolicy::name();
+    
+  std::string dist_string = Utility::toString( *distribution );
+  
+  TEST_EQUALITY_CONST( dist_string, dist_name + ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}" );
+
   initializeENDLDistribution<InterpolationPolicy>();
 
-  typedef Utility::ElasticElectronDistribution<InterpolationPolicy> Distribution;
-
-  Teuchos::RCP<Distribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<Distribution>( distribution );
-
-  Teuchos::ParameterList parameter_list;
-
-  parameter_list.set<Distribution>( "test distribution",
-				      *true_distribution );
-
-  std::ostringstream xml_file_name;
-  xml_file_name << "elastic_electron_" << InterpolationPolicy::name()
-		<< "_dist_test_list.xml";
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					xml_file_name.str() );
-
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( xml_file_name.str() );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<Distribution>
-    copy_distribution( new Distribution );
-
-  *copy_distribution =
-    read_parameter_list->get<Distribution>("test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  dist_string = Utility::toString( *distribution );
+  
+  TEST_EQUALITY_CONST( dist_string, dist_name + ", {0.000000000000000000e+00, 9.999999999999999547e-07, 2.000000000000000000e+00}, {5.000000001989509668e-01, 4.999999998010489777e-01, 5.000000001989509668e-01}, 2.513179589420170032e+03, 3.158035825999999885e+06}" );
 }
 
-UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, toParameterList );
-*/
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( ElasticElectronDistribution, fromParameterList )
-{
-  Utility::ElasticElectronDistribution<Utility::LinLin> distribution_1 =
-    test_dists_list->get<Utility::ElasticElectronDistribution<Utility::LinLin> >( "Elastic Electron Distribution B" );
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, toString );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 2.0 );
+//---------------------------------------------------------------------------//
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   toStream,
+                                   InterpolationPolicy )
+{
+  initializeACEDistribution<InterpolationPolicy>();
+
+  std::string dist_name = "{Elastic Electron Distribution ";
+  dist_name += InterpolationPolicy::name();
+  
+  std::ostringstream oss;
+
+  Utility::toStream( oss, *distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), dist_name + ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}" );
+
+  initializeENDLDistribution<InterpolationPolicy>();
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, *distribution );
+  
+  TEST_EQUALITY_CONST( oss.str(), dist_name + ", {0.000000000000000000e+00, 9.999999999999999547e-07, 2.000000000000000000e+00}, {5.000000001989509668e-01, 4.999999998010489777e-01, 5.000000001989509668e-01}, 2.513179589420170032e+03, 3.158035825999999885e+06}" );
 }
 
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, toStream );
+
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   ostream_operator,
+                                   InterpolationPolicy )
 {
-  std::string test_dists_xml_file;
+  initializeACEDistribution<InterpolationPolicy>();
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  std::string dist_name = "{Elastic Electron Distribution ";
+  dist_name += InterpolationPolicy::name();
+  
+  std::ostringstream oss;
 
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
+  oss << *distribution;
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  TEST_EQUALITY_CONST( oss.str(), dist_name + ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}" );
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
+  initializeENDLDistribution<InterpolationPolicy>();
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
+  oss.str( "" );
+  oss.clear();
+
+  oss << *distribution;
+  
+  TEST_EQUALITY_CONST( oss.str(), dist_name + ", {0.000000000000000000e+00, 9.999999999999999547e-07, 2.000000000000000000e+00}, {5.000000001989509668e-01, 4.999999998010489777e-01, 5.000000001989509668e-01}, 2.513179589420170032e+03, 3.158035825999999885e+06}" );
+}
+
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, ostream_operator );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a string
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   fromString,
+                                   InterpolationPolicy )
+{
+  std::string dist_rep = "{Elastic Electron Distribution ";
+  dist_rep += InterpolationPolicy::name();
+  dist_rep += ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}";
+    
+  Utility::ElasticElectronDistribution<InterpolationPolicy> test_dist =
+    Utility::fromString<Utility::ElasticElectronDistribution<InterpolationPolicy> >( dist_rep );
+
+  TEST_EQUALITY_CONST( test_dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( test_dist.evaluate( -1.0 ), 0.0 );
+
+  // Check for robust type name handling
+  dist_rep = "{";
+  dist_rep += boost::algorithm::to_lower_copy( InterpolationPolicy::name() );
+  dist_rep += " ";
+  dist_rep += "elastic electron";
+  dist_rep += ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}";
+    
+  TEST_NOTHROW( Utility::fromString<Utility::ElasticElectronDistribution<InterpolationPolicy> >( dist_rep ) );
+}
+
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, fromString );
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   fromStream,
+                                   InterpolationPolicy )
+{
+  std::istringstream iss;
+
+  {
+    std::string dist_rep = "{Elastic Electron Distribution ";
+    dist_rep += InterpolationPolicy::name();
+    dist_rep += ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}";
+
+    iss.str( dist_rep );
+  }
+    
+  Utility::ElasticElectronDistribution<InterpolationPolicy> test_dist;
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( test_dist.evaluate( -1.0 ), 0.0 );
+
+  // Check for robust type name handling
+  {
+    std::string dist_rep = "{";
+    dist_rep += boost::algorithm::to_lower_copy( InterpolationPolicy::name() );
+    dist_rep += " ";
+    dist_rep += "elastic electron";
+    dist_rep += ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}";
+
+    iss.str( dist_rep );
+    iss.clear();
   }
 
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::ElasticElectronDistribution<Utility::LinLin> );
+  TEST_NOTHROW( Utility::fromStream( iss, test_dist ) );
+}
 
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, fromStream );
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   istream_operator,
+                                   InterpolationPolicy )
+{
+  std::istringstream iss;
+
+  {
+    std::string dist_rep = "{Elastic Electron Distribution ";
+    dist_rep += InterpolationPolicy::name();
+    dist_rep += ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}";
+
+    iss.str( dist_rep );
+  }
+    
+  Utility::ElasticElectronDistribution<InterpolationPolicy> test_dist;
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( test_dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( test_dist.evaluate( -1.0 ), 0.0 );
+
+  // Check for robust type name handling
+  {
+    std::string dist_rep = "{";
+    dist_rep += boost::algorithm::to_lower_copy( InterpolationPolicy::name() );
+    dist_rep += " ";
+    dist_rep += "elastic electron";
+    dist_rep += ", {0.000000000000000000e+00, 1.000000000028755665e-06, 2.000000000000000000e+00}, {5.000000001578178699e-01, 4.999999997599156032e-01, 5.000000002400846189e-01}, 2.513179589420172761e+03, 3.158035825335863046e+06}";
+
+    iss.str( dist_rep );
+    iss.clear();
+  }
+
+  TEST_NOTHROW( iss >> test_dist );
+}
+
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, istream_operator );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to a property tree node
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   toNode,
+                                   InterpolationPolicy )
+{
+  initializeACEDistribution<InterpolationPolicy>();
+  
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *distribution );
+
+  Utility::ElasticElectronDistribution<InterpolationPolicy> copy_dist =
+    ptree.get<Utility::ElasticElectronDistribution<InterpolationPolicy> >( "test distribution" );
+  
+  TEST_EQUALITY_CONST( copy_dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( copy_dist.evaluate( -1.0 ), 0.0 );
+
+  ptree.put( "test distribution", *tab_distribution );
+
+  copy_dist = ptree.get<Utility::ElasticElectronDistribution<InterpolationPolicy> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( copy_dist.evaluate( -1.0 ), 0.0 );
+
+  // Use the PropertyTreeCompatibleObject interface
+  distribution->toNode( "test distribution", ptree, true );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+
+  copy_dist = ptree.get<Utility::ElasticElectronDistribution<InterpolationPolicy> >( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( copy_dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( copy_dist.evaluate( -1.0 ), 0.0 );
+
+  distribution->toNode( "test distribution", ptree, false );
+
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 5 );
+  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).get<std::string>( "type" ), "Elastic Electron Distribution " + InterpolationPolicy::name() );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get_child( "test distribution" ).get<std::vector<double> >( "independent values" ),
+                                    std::vector<double>({0.0, 1e-6, 2.0}),
+                                    1e-10 );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get_child( "test distribution" ).get<std::vector<double> >( "dependent values" ),
+                                    std::vector<double>({5.0000000019895100E-01, 4.9999999980104900E-01, 5.0000000019895100E-01}),
+                                    1e-10 );
+  TEST_FLOATING_EQUALITY( ptree.get_child( "test distribution" ).get<double>( "moliere screening constant" ),
+                          2.513179589420172761e+03,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( ptree.get_child( "test distribution" ).get<double>( "screened rutherford norm constant" ),
+                          3.158035825335863046e+06,
+                          1e-15 );
+}
+
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, toNode );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be read from a property tree node
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
+                                   fromNode,
+                                   InterpolationPolicy )
+{
+  Utility::ElasticElectronDistribution<InterpolationPolicy> dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution A" ),
+                 unused_children );
+
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 0.0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution B" ),
+                 unused_children );
+  
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 0.0 );
+
+  dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution C" ),
+                 unused_children );
+  
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+  TEST_EQUALITY_CONST( dist.evaluate( 3.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 2.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.000001 ),
+                          4.9999999980104900E-01,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.0 ),
+                          5.0000000019895100E-01,
+                          1e-10 );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 0.0 );
+
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution D" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution E" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution F" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution G" ) ),
+              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Elastic Electron Distribution H" ) ),
+              Utility::PTreeNodeConversionException );
+} 
+
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, fromNode );
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_dists_json_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_dists_json_file",
+                   &test_dists_json_file_name,
+                   "Test distributions json file name" );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Load the property tree from the json file
+  test_dists_ptree.reset( new Utility::PropertyTree );
+
+  std::ifstream test_dists_json_file( test_dists_json_file_name );
+
+  test_dists_json_file >> *test_dists_ptree;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElasticElectronDistribution.cpp

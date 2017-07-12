@@ -825,7 +825,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndepe
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                            "The discrete distribution cannot be "
                            "constructed because the independent values are "
-                           "not valid!\n" );
+                           "not valid!" );
 
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
 						independent_values.end() ),
@@ -847,7 +847,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDepend
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                            "The discrete distribution cannot be "
                            "constructed because the dependent values are "
-                           "not valid!\n" );
+                           "not valid!" );
 }
 
 // Verify that the values are valid

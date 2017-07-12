@@ -1703,7 +1703,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, toNode )
 
   TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( tab_distribution.get() ) );
 
-  // Use the PropertTreeCompatibleObject interface
+  // Use the PropertyTreeCompatibleObject interface
   distribution->toNode( "test distribution", ptree, true );
 
   TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );

@@ -92,6 +92,13 @@ TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_dist)
 ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.xml")
 SET_PROPERTY(TEST PolynomialDistribution_test PROPERTY LABELS utility_dist)
 
+ADD_EXECUTABLE(tstElasticElectronDistribution
+  tstElasticElectronDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElasticElectronDistribution utility_dist)
+ADD_TEST(ElasticElectronDistribution_test tstElasticElectronDistribution --test_dists_json_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_elastic_electron_distributions.json")
+SET_PROPERTY(TEST ElasticElectronDistribution_test PROPERTY LABELS utility_dist)
+
 ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
