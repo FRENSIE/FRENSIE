@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Wed May 10 08:22:45 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Tue Jul 11 15:47:17 CDT 2017. It is for testing only!</notes>
 	<atomic_number>6</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -11,6 +11,7 @@
 	<occupation_number_evaluation_tolerance>1.00000000000000002e-03</occupation_number_evaluation_tolerance>
 	<subshell_incoherent_evaluation_tolerance>1.00000000000000002e-03</subshell_incoherent_evaluation_tolerance>
 	<photon_threshold_energy_nudge_factor>1.00009999999999999e+00</photon_threshold_energy_nudge_factor>
+	<electron_total_elastic_integrated_cross_section_mode_on>0</electron_total_elastic_integrated_cross_section_mode_on>
 	<cutoff_angle_cosine>1.00000000000000000e+00</cutoff_angle_cosine>
 	<number_of_moment_preserving_angles>0.00000000000000000e+00</number_of_moment_preserving_angles>
 	<electron_tabular_evaluation_tol>1.00000000000000008e-15</electron_tabular_evaluation_tol>
@@ -37488,6 +37489,10 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_weights>
+	<moment_preserving_cross_section_reductions>
+		<count>0</count>
+		<item_version>0</item_version>
+	</moment_preserving_cross_section_reductions>
 	<electroionization_energy_grid>
 		<count>4</count>
 		<item_version>0</item_version>

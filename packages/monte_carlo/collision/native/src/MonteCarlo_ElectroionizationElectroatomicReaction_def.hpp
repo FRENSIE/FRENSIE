@@ -81,6 +81,17 @@ unsigned ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_sec
     return 0u;
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+                const double incoming_energy,
+                const double outgoing_energy ) const
+{
+  THROW_EXCEPTION( std::logic_error,
+                   "Error! The total electroionization reaction differential "
+                   "cross section function has not been implemented");
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroatomicReactionType ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -91,17 +102,17 @@ ElectroatomicReactionType ElectroionizationElectroatomicReaction<InterpPolicy,pr
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     ElectronState& electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   electron.incrementCollisionNumber();
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   THROW_EXCEPTION( std::logic_error,
-        "Error! The total electroionization reaction scatter function has not been implemented");
-
+                   "Error! The total electroionization reaction scatter "
+                   "function has not been implemented");
 }
 
 } // end MonteCarlo namespace

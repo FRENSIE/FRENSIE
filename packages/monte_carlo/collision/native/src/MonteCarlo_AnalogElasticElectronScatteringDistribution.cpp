@@ -714,14 +714,13 @@ void AnalogElasticElectronScatteringDistribution::sampleBin(
   if ( random_number > d_cutoff_cdfs[bin_index] ) // Sample screened Rutherford
   {
     // Scale the random number
-    double scaled_random_number = s_cutoff_delta_mu*
+    double scaled_random_number = s_cutoff_delta_mu/d_etas[bin_index]*
     ( random_number - d_cutoff_cdfs[bin_index] )/( 1.0 - d_cutoff_cdfs[bin_index] );
 
     // calculate the screened Rutherford scattering angle
     scattering_angle_cosine = std::min( 1.0,
-        ( scaled_random_number*( 1.0 + d_etas[bin_index] )
-        + d_etas[bin_index]*s_cutoff_mu )/
-        ( scaled_random_number + d_etas[bin_index] ) );
+        ( scaled_random_number*( 1.0 + d_etas[bin_index] ) + s_cutoff_mu )/
+        ( scaled_random_number + 1.0 ) );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine >= s_cutoff_mu );

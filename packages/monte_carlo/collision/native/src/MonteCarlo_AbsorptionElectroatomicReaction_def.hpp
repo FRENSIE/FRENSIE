@@ -65,6 +65,18 @@ ElectroatomicReactionType AbsorptionElectroatomicReaction<InterpPolicy,processed
   return d_reaction;
 }
 
+// Return the differential cross section
+/*! \details It is assumed that the cross section and differential cross section
+ *  are equivalent.
+ */
+template<typename InterpPolicy, bool processed_cross_section>
+double AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const
+{
+  return this->getCrossSection( incoming_energy );
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::react(

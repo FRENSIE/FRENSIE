@@ -218,13 +218,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the electroionization subshell reactions can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createSubshellElectroelectricReactions )
+                   createSubshellElectroionizationReactions )
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
   bool correlated_sampling_mode_on = true;
   bool unit_based_interpolation_mode_on = true;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -240,7 +240,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
               reactions.front()->getReactionType(),
               MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
-                       8.82899999999999935e-2 );
+                       8.829e-2 );
 
   // Test the first shell's stored cross section is correct
   double cross_section = reactions.front()->getCrossSection( 8.829e-2 );

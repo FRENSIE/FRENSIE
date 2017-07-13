@@ -91,4 +91,9 @@ PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectronScatteringDistribution)
 ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectronScatteringDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
 SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
 
+# Add the MonteCarlo.Collision.ElectroatomicReaction unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectroatomicReaction)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml )
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
+
 

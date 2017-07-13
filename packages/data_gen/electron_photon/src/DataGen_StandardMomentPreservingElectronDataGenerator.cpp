@@ -50,6 +50,15 @@ StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronD
   // Make sure the evaluation tolerance is valid
   testPrecondition( tabular_evaluation_tol >= -1.0 );
   testPrecondition( tabular_evaluation_tol <= 1.0 );
+
+  // Create the moment evaluator of the elastic scattering distribution
+  d_moments_evaluator.reset(
+    new DataGen::ElasticElectronMomentsEvaluator(
+                                            *d_native_eedl_data,
+                                            d_cutoff_angle_cosine,
+                                            d_tabular_evaluation_tol,
+                                            d_linlinlog_interpolation_mode_on ) );
+
 }
 
 // Populate the moment preserving electron data container
@@ -81,22 +90,11 @@ void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronD
   // Set the elastic angular energy grid
   data_container.setElasticAngularEnergyGrid( angular_energy_grid );
 
-  // Create the moment evaluator of the elastic scattering distribution
-  std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
-  moments_evaluator.reset(
-    new DataGen::ElasticElectronMomentsEvaluator(
-                                            *d_native_eedl_data,
-                                            d_cutoff_angle_cosine,
-                                            d_tabular_evaluation_tol,
-                                            d_linlinlog_interpolation_mode_on ) );
-
-  std::vector<double> discrete_angles, weights;
-
   // iterate through all angular energy bins
+  std::vector<double> discrete_angles, weights;
   for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
-    evaluateDisceteAnglesAndWeights(
-        moments_evaluator,
+    evaluateDiscreteAnglesAndWeights(
         angular_energy_grid[i],
         number_of_discrete_angles,
         discrete_angles,
@@ -109,8 +107,7 @@ void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronD
 }
 
 // Generate elastic discrete angle cosines and weights
-void StandardMomentPreservingElectronDataGenerator::evaluateDisceteAnglesAndWeights(
-    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+void StandardMomentPreservingElectronDataGenerator::evaluateDiscreteAnglesAndWeights(
     const double& energy,
     const int& number_of_discrete_angles,
     std::vector<double>& discrete_angles,
@@ -119,13 +116,12 @@ void StandardMomentPreservingElectronDataGenerator::evaluateDisceteAnglesAndWeig
   std::vector<Utility::long_float> legendre_moments;
   double precision = 1e-13;
   int n = ( number_of_discrete_angles+1 )*2 -2;
-  //int n = ( number_of_discrete_angles+1 )*2 + 2+10;
 
   // Get the discrete angles and weights
-  moments_evaluator->evaluateElasticMoment( legendre_moments,
-                                            energy,
-                                            n,
-                                            precision );
+  d_moments_evaluator->evaluateElasticMoment( legendre_moments,
+                                              energy,
+                                              n,
+                                              precision );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
   std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(

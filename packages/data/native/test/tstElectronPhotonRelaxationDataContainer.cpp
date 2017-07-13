@@ -123,6 +123,18 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the electron total elastic integrated cross section mode can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   ElectronTotalElasticIntegratedCrossSectionModeOnOff )
+{
+  epr_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( true );
+  TEST_ASSERT( epr_data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
+
+  epr_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( false );
+  TEST_ASSERT( !epr_data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the Cutoff Angle can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
 {
@@ -1440,6 +1452,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-3 );
   TEST_EQUALITY_CONST( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
                        1.01 );
+  TEST_ASSERT( !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1533,6 +1546,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
 
   // Electron Tests
+  TEST_ASSERT(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST(
@@ -1664,6 +1679,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-3 );
   TEST_EQUALITY_CONST( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
                        1.01 );
+  TEST_ASSERT(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1757,6 +1774,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
 
   // Electron Tests
+  TEST_ASSERT(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST(
@@ -1885,6 +1904,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-3 );
   TEST_EQUALITY_CONST( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
                        1.01 );
+  TEST_ASSERT(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1978,6 +1999,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
 
   // Electron Tests
+  TEST_ASSERT(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST(

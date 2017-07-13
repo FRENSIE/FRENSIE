@@ -100,6 +100,12 @@ double ElectronPhotonRelaxationDataContainer::getPhotonThresholdEnergyNudgeFacto
   return d_photon_threshold_energy_nudge_factor;
 }
 
+// Return if electron total elastic integrated cross section mode is on
+bool ElectronPhotonRelaxationDataContainer::isElectronTotalElasticIntegratedCrossSectionModeOn() const
+{
+  return d_electron_total_elastic_integrated_cross_section_mode_on;
+}
+
 // Return the elastic cutoff angle
 double ElectronPhotonRelaxationDataContainer::getCutoffAngleCosine() const
 {
@@ -578,14 +584,14 @@ bool ElectronPhotonRelaxationDataContainer::hasMomentPreservingData() const
 }
 
 // Return the moment preserving elastic discrete angles
-const std::map<double,std::vector<double> >
+const std::map<double,std::vector<double> >&
 ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticDiscreteAngles() const
 {
   return d_moment_preserving_elastic_discrete_angles;
 }
 
 // Return the moment preserving elastic weights
-const std::map<double,std::vector<double> >
+const std::map<double,std::vector<double> >&
 ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights() const
 {
   return d_moment_preserving_elastic_weights;
@@ -613,6 +619,15 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights(
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
   return d_moment_preserving_elastic_weights.find( incoming_energy )->second;
+}
+
+// Return the moment preserving cross section reductions
+/*! \details The cross sections reductions are on the elastic angular energy grid.
+ */
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSectionReduction() const
+{
+  return d_moment_preserving_cross_section_reductions;
 }
 
 // Return the electroionization energy grid for a subshell
@@ -910,6 +925,13 @@ void ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor(
   d_photon_threshold_energy_nudge_factor = nudge_factor;
 }
 
+// Set the electron total elastic integrated cross section mode
+void ElectronPhotonRelaxationDataContainer::setElectronTotalElasticIntegratedCrossSectionModeOnOff(
+    const bool electron_total_elastic_integrated_cross_section_mode_on )
+{
+  d_electron_total_elastic_integrated_cross_section_mode_on =
+    electron_total_elastic_integrated_cross_section_mode_on;
+}
 
 // Set the elastic cutoff angle
 void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine(
@@ -917,7 +939,7 @@ void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine(
 {
   // Make sure the elastic cutoff angle cosine is valid
   testPrecondition( cutoff_angle_cosine <= 1.0 );
-  testPrecondition( cutoff_angle_cosine > -1.0 );
+  testPrecondition( cutoff_angle_cosine >= -1.0 );
 
   d_cutoff_angle_cosine = cutoff_angle_cosine;
 }
@@ -948,7 +970,7 @@ void ElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationMod
     const bool electron_linlinlog_interpolation_mode_on )
 {
   d_electron_linlinlog_interpolation_mode_on =
-                                    electron_linlinlog_interpolation_mode_on;
+    electron_linlinlog_interpolation_mode_on;
 }
 
 // Set the electron FullyTabularTwoDDistribution correlated sampling mode
@@ -963,7 +985,7 @@ void ElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationMod
     const bool electron_unit_based_interpolation_mode_on )
 {
   d_electron_unit_based_interpolation_mode_on =
-                                    electron_unit_based_interpolation_mode_on;
+    electron_unit_based_interpolation_mode_on;
 }
 
 // Set the union energy grid convergence tolerance
@@ -1640,6 +1662,20 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights(
                     moment_preserving_elastic_weights.end() );
 
   d_moment_preserving_elastic_weights[incoming_energy] = moment_preserving_elastic_weights;
+}
+
+// Set the moment preserving cross section reduction
+/*! \details The size of the cross sections reductions equal to the size of the
+ *  elastic angular energy grid.
+ */
+void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionReduction(
+    const std::vector<double>& cross_section_reduction )
+{
+  // Make sure the cross_section_reduction is valid
+  testPrecondition( cross_section_reduction.size() ==
+                    d_angular_energy_grid.size() );
+
+  d_moment_preserving_cross_section_reductions = cross_section_reduction;
 }
 
 // Set the electroionization energy grid for a subshell

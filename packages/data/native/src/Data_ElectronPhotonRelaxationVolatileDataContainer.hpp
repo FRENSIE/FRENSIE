@@ -38,6 +38,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationTolerance;
   using ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor;
+  using ElectronPhotonRelaxationDataContainer::setElectronTotalElasticIntegratedCrossSectionModeOnOff;
   using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
   using ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance;
@@ -98,6 +99,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::clearMomentPreservingData;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionReduction;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;

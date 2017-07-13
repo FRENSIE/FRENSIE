@@ -16,8 +16,7 @@
 namespace MonteCarlo{
 
 // Basic Constructor
-template<typename InterpPolicy,
-         bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
@@ -47,8 +46,7 @@ HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Hybrid
 }
 
 // Constructor
-template<typename InterpPolicy,
-         bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
@@ -84,32 +82,45 @@ HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Hybrid
 // Return the number of photons emitted from the rxn at the given energy
 /*! \details This does not include photons from atomic relaxation.
  */
-template<typename InterpPolicy,
-         bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section>
 unsigned HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
-template<typename InterpPolicy,
-         bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section>
 unsigned HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the reaction type
-template<typename InterpPolicy,
-         bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section>
 ElectroatomicReactionType HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
   return HYBRID_ELASTIC_ELECTROATOMIC_REACTION;
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+            const double incoming_energy,
+            const double scattering_angle_cosine ) const
+{
+  // Get the PDF
+  double pdf =
+    d_hybrid_distribution->evaluatePDF( incoming_energy,
+                                        scattering_angle_cosine );
+
+  // Get the cross section
+  double cross_section = this->getCrossSection( incoming_energy );
+
+  return pdf*cross_section;
+}
+
 // Simulate the reaction
-template<typename InterpPolicy,
-         bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section>
 void HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
          ElectronState& electron,
          ParticleBank& bank,
