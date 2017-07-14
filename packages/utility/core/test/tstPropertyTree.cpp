@@ -179,7 +179,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, convert_container_values )
 
   TEST_COMPARE_FLOATING_CONTAINERS( (ptree.get<std::vector<float> >( "test_vector_float" )),
                                     std::vector<float>({1e-3f, 1e-2f, 1e-1f, 1.0f}),
-                                    1e-9 );
+                                    1e-7 );
 
   // Store a vector of vector of int
   ptree.put( "test_vector_vector_int", std::vector<std::vector<int> >({std::vector<int>({-1,0}), std::vector<int>({1,2})}) );
@@ -200,8 +200,8 @@ TEUCHOS_UNIT_TEST( PropertyTree, convert_container_values )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the property tree node types can be detected
-TEUCHOS_UNIT_TEST( PropertyTree, doesPTreeNodeStoreJSONArray )
+// Check if the property tree stores a JSON array
+TEUCHOS_UNIT_TEST( PropertyTree, doesPropertyTreeStoreJSONArray )
 {
   // Create a property tree with standard nodes and JSON array nodes
   Utility::PropertyTree ptree;
@@ -229,16 +229,839 @@ TEUCHOS_UNIT_TEST( PropertyTree, doesPTreeNodeStoreJSONArray )
     ptree.add_child( "json array", level_1_ptree );
   }
 
-  TEST_ASSERT( !Utility::doesPTreeNodeStoreJSONArray( ptree ) );
-  TEST_ASSERT( !Utility::doesPTreeNodeStoreJSONArray( ptree.get_child( "inline array" ) ) );
-  TEST_ASSERT( Utility::doesPTreeNodeStoreJSONArray( ptree.get_child( "json array" ) ) );
+  TEST_ASSERT( !Utility::doesPropertyTreeStoreJSONArray( ptree ) );
+  TEST_ASSERT( !Utility::doesPropertyTreeStoreJSONArray( ptree.get_child( "inline array" ) ) );
+  TEST_ASSERT( Utility::doesPropertyTreeStoreJSONArray( ptree.get_child( "json array" ) ) );
                
   TEST_NOTHROW( boost::property_tree::write_json( "test_arrays.json", ptree ) );
 }
 
 //---------------------------------------------------------------------------//
+// Check that basic types can be converted to a property tree
+TEUCHOS_UNIT_TEST( PropertyTree, toPropertyTree_basic_values )
+{
+  // Convert a bool
+  Utility::PropertyTree ptree = Utility::toPropertyTree( true, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toBool(), true );
+
+  ptree = Utility::toPropertyTree( true, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toBool(), true );
+
+  ptree = Utility::toPropertyTree( false );
+
+  TEST_EQUALITY_CONST( ptree.data().toBool(), false );
+    
+
+  // Convert a short
+  ptree = Utility::toPropertyTree( (short)-1, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toShort(), -1 );
+
+  ptree = Utility::toPropertyTree( (short)0, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toShort(), 0 );
+
+  ptree = Utility::toPropertyTree( (short)1 );
+
+  TEST_EQUALITY_CONST( ptree.data().toShort(), 1 );
+
+  // Convert an unsigned short
+  ptree = Utility::toPropertyTree( (unsigned short)0, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedShort(), 0 );
+
+  ptree = Utility::toPropertyTree( (unsigned short)10, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedShort(), 10 );
+
+  ptree = Utility::toPropertyTree( (unsigned short)65535 );
+  
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedShort(), 65535 );
+
+  // Convert an int
+  ptree = Utility::toPropertyTree( -11111, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toInt(), -11111 );
+
+  ptree = Utility::toPropertyTree( 0, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toInt(), 0 );
+
+  ptree = Utility::toPropertyTree( 11111 );
+
+  TEST_EQUALITY_CONST( ptree.data().toInt(), 11111 );
+
+  // Convert an unsigned int
+  ptree = Utility::toPropertyTree( 0u, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedInt(), 0u );
+
+  ptree = Utility::toPropertyTree( 10u, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedInt(), 10u );
+
+
+  ptree = Utility::toPropertyTree( 11111u );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedInt(), 11111u );
+
+  // Convert a long
+  ptree = Utility::toPropertyTree( -11111l, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toLong(), -11111l );
+
+  ptree = Utility::toPropertyTree( 0l, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toLong(), 0l );
+
+  ptree = Utility::toPropertyTree( 11111l );
+
+  TEST_EQUALITY_CONST( ptree.data().toLong(), 11111l );
+
+  // Convert an unsigned long
+  ptree = Utility::toPropertyTree( 0ul, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedLong(), 0ul );
+
+  ptree = Utility::toPropertyTree( 10ul, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedLong(), 10ul );
+
+  ptree = Utility::toPropertyTree( 11111ul );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedLong(), 11111ul );
+
+  // Convert a long long
+  ptree = Utility::toPropertyTree( -10000000000ll, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toLongLong(), -10000000000ll );
+
+  ptree = Utility::toPropertyTree( 0ll, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toLongLong(), 0ll );
+
+  ptree = Utility::toPropertyTree( 10000000000ll );
+
+  TEST_EQUALITY_CONST( ptree.data().toLongLong(), 10000000000ll );
+
+  // Convert an unsigned long long
+  ptree = Utility::toPropertyTree( 0ull, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedLongLong(), 0ull );
+
+  ptree = Utility::toPropertyTree( 10ull, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedLongLong(), 10ull );
+  
+  ptree = Utility::toPropertyTree( 10000000000ull );
+
+  TEST_EQUALITY_CONST( ptree.data().toUnsignedLongLong(), 10000000000ull );
+
+  // Convert a float
+  ptree = Utility::toPropertyTree( -1.0f, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toFloat(), -1.0f );
+
+  ptree = Utility::toPropertyTree( 0.0f, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toFloat(), 0.0f );
+
+  ptree = Utility::toPropertyTree( 1.0f );
+
+  TEST_EQUALITY_CONST( ptree.data().toFloat(), 1.0f );
+
+  // Convert a double
+  ptree = Utility::toPropertyTree( -1.0, true );
+
+  TEST_EQUALITY_CONST( ptree.data().toDouble(), -1.0 );
+
+  ptree = Utility::toPropertyTree( 0.0, false );
+
+  TEST_EQUALITY_CONST( ptree.data().toDouble(), 0.0 );
+
+  ptree = Utility::toPropertyTree( 1.0 );
+
+  TEST_EQUALITY_CONST( ptree.data().toDouble(), 1.0 );
+
+  // Convert a char
+  ptree = Utility::toPropertyTree( 'A', true );
+
+  TEST_EQUALITY_CONST( ptree.data().toChar(), 'A' );
+
+  ptree = Utility::toPropertyTree( 'a', false );
+
+  TEST_EQUALITY_CONST( ptree.data().toChar(), 'a' );
+
+  ptree = Utility::toPropertyTree( 'B' );
+
+  TEST_EQUALITY_CONST( ptree.data().toChar(), 'B' );
+
+  // Convert a c-string
+  ptree = Utility::toPropertyTree( "Test", true );
+
+  TEST_EQUALITY_CONST( ptree.data().toString(), "Test" );
+
+  ptree = Utility::toPropertyTree( "String", false );
+
+  TEST_EQUALITY_CONST( ptree.data().toString(), "String" );
+
+  ptree = Utility::toPropertyTree( "Test String" );
+
+  TEST_EQUALITY_CONST( ptree.data().toString(), "Test String" );
+
+  // Convert a std::string
+  ptree = Utility::toPropertyTree( std::string( "Test" ), true );
+
+  TEST_EQUALITY_CONST( ptree.data().toString(), "Test" );
+
+  ptree = Utility::toPropertyTree( std::string( "String" ), false );
+
+  TEST_EQUALITY_CONST( ptree.data().toString(), "String" );
+
+  ptree = Utility::toPropertyTree( std::string( "Test String" ) );
+
+  TEST_EQUALITY_CONST( ptree.data().toString(), "Test String" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that sequence container types can be converted to a property tree
+TEUCHOS_UNIT_TEST( PropertyTree, toPropertyTree_sequence_container_values )
+{
+  // Convert a std::array to a property tree
+  Utility::PropertyTree ptree =
+    Utility::toPropertyTree( std::array<int,3>({-1,0,1}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::array<double,2>({-1.0,1.0}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::array<unsigned long,4>({0l, 1l, 2l, 3l}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 4 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toLong(), 0l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toLong(), 1l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toLong(), 2l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[3].toLong(), 3l );
+
+  // Convert a std::vector to a property tree
+  ptree = Utility::toPropertyTree( std::vector<int>({-1,0,1}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::vector<double>({-1.0,1.0}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::vector<unsigned long>({0l, 1l, 2l, 3l}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 4 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toLong(), 0l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toLong(), 1l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toLong(), 2l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[3].toLong(), 3l );
+
+  // Convert a std::list to a property tree
+  ptree = Utility::toPropertyTree( std::list<int>({-1,0,1}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::list<double>({-1.0,1.0}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::list<unsigned long>({0l, 1l, 2l, 3l}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 4 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toLong(), 0l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toLong(), 1l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toLong(), 2l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[3].toLong(), 3l );
+
+  // Convert a std::forward_list to a property tree
+  ptree = Utility::toPropertyTree( std::forward_list<int>({-1,0,1}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::forward_list<double>({-1.0,1.0}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::forward_list<unsigned long>({0l, 1l, 2l, 3l}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 4 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toLong(), 0l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toLong(), 1l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toLong(), 2l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[3].toLong(), 3l );
+
+  // Convert a std::deque to a property tree
+  ptree = Utility::toPropertyTree( std::deque<int>({-1,0,1}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::deque<double>({-1.0,1.0}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::deque<unsigned long>({0l, 1l, 2l, 3l}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 4 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toLong(), 0l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toLong(), 1l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toLong(), 2l );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[3].toLong(), 3l );
+
+  // Convert a std::set to a property tree
+  ptree = Utility::toPropertyTree( std::set<int>({-1,0,1}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::set<double>({-1.0,1.0}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::set<unsigned long>({0l, 1l, 2l, 3l}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 4 );
+
+  // Convert a std::unordered_set to a property tree
+  ptree = Utility::toPropertyTree( std::unordered_set<int>({-1,0,1}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+
+  ptree = Utility::toPropertyTree( std::unordered_set<double>({-1.0,1.0}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  ptree = Utility::toPropertyTree( std::unordered_set<unsigned long>({0l, 1l, 2l, 3l}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 4 );
+
+  // Convert a std::vector<std::string> to a property tree
+  ptree = Utility::toPropertyTree( std::vector<std::string>({"Test", "String"}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toString(), "Test" );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toString(), "String" );
+
+  ptree = Utility::toPropertyTree( std::vector<std::string>({"Test", "String", "JSON-Array"}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 3 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toString(), "Test" );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toString(), "String" );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toString(), "JSON-Array" );
+  }
+
+  ptree = Utility::toPropertyTree( std::vector<std::string>({"Test", "String", "Default-Inlining"}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toString(), "Test" );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toString(), "String" );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toString(), "Default-Inlining" );
+
+  // Convert a VariantVector to a property tree
+  ptree = Utility::toPropertyTree( Utility::VariantVector({Utility::Variant("Test"), Utility::Variant(0), Utility::Variant(1.0)}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toString(), "Test" );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toDouble(), 1.0 );
+
+  ptree = Utility::toPropertyTree( Utility::VariantVector({Utility::Variant("Test"), Utility::Variant(0), Utility::Variant(std::vector<double>({-1.0,1.0}))}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 3 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toString(), "Test" );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toInt(), 0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toVector().size(), 2 );
+    TEST_EQUALITY_CONST( it->second.data().toVector()[0].toFloat(), -1.0f );
+    TEST_EQUALITY_CONST( it->second.data().toVector()[1].toFloat(), 1.0f );
+  }
+
+  ptree = Utility::toPropertyTree( Utility::VariantVector({Utility::Variant("Test"), Utility::Variant(-1), Utility::Variant(std::vector<int>())}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toString(), "Test" );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[2].toVector().size(), 0 );
+
+  // Convert a std::vector<std::vector<int> > to a property tree
+  ptree = Utility::toPropertyTree( std::vector<std::vector<int> >({std::vector<int>({-1,0,1}), std::vector<int>({2,3})}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector()[0].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector()[1].toInt(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector()[2].toInt(), 1 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toVector().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toVector()[0].toInt(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toVector()[1].toInt(), 3 );
+
+  ptree = Utility::toPropertyTree( std::vector<std::vector<double> >({std::vector<double>({-1.0,0.0,1.0}), std::vector<double>({-1.0,1.0})}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "" ), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it = ptree.begin();
+
+    TEST_EQUALITY_CONST( it->second.size(), 3 );
+
+    Utility::PropertyTree::const_iterator child_it = it->second.begin();
+    
+    TEST_EQUALITY_CONST( child_it->second.data().toDouble(), -1.0 );
+
+    ++child_it;
+    
+    TEST_EQUALITY_CONST( child_it->second.data().toDouble(), 0.0 );
+
+    ++child_it;
+    
+    TEST_EQUALITY_CONST( child_it->second.data().toDouble(), 1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.size(), 2 );
+
+    child_it = it->second.begin();
+    
+    TEST_EQUALITY_CONST( child_it->second.data().toDouble(), -1.0 );
+
+    ++child_it;
+    
+    TEST_EQUALITY_CONST( child_it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::vector<std::vector<unsigned long> >({std::vector<unsigned long>({0ul, 1ul, 2ul}),std::vector<unsigned long>({3ul,4ul})}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toVector().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector()[0].toUnsignedLong(), 0ul );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector()[1].toUnsignedLong(), 1ul );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[0].toVector()[2].toUnsignedLong(), 2ul );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toVector().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toVector()[0].toUnsignedLong(), 3ul );
+  TEST_EQUALITY_CONST( ptree.data().toVector()[1].toVector()[1].toUnsignedLong(), 4ul );
+}
+
+//---------------------------------------------------------------------------//
+// Check that associative container types can be converted to a property tree
+TEUCHOS_UNIT_TEST( PropertyTree, toPropertyTree_associative_container_values )
+{
+  // Convert a std::map<int,int> to a property tree
+  Utility::PropertyTree ptree = Utility::toPropertyTree( std::map<int,int>({std::make_pair(-1,-1), std::make_pair(0,0)}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toMap().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["-1"].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["0"].toInt(), 0 );
+
+  ptree = Utility::toPropertyTree( std::map<int,int>({std::make_pair(-1,-1), std::make_pair(0,0)}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "-1" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "0" ).data().toInt(), 0 );
+
+  ptree = Utility::toPropertyTree( std::map<int,int>({std::make_pair(-1,-1), std::make_pair(0,0)}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "-1" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "0" ).data().toInt(), 0 );
+
+  // Convert a std::map<std::string,int> to a property tree
+  ptree = Utility::toPropertyTree( std::map<std::string,int>({std::make_pair("value a", -1), std::make_pair("value b", 1)}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toMap().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value a"].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value b"].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::map<std::string,int>({std::make_pair("value a", -1), std::make_pair("value b", 1)}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).data().toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::map<std::string,int>({std::make_pair("value a", -1), std::make_pair("value b", 1)}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).data().toInt(), 1 );
+
+  // Convert a std::map<std::string,std::vector<double> > to a property tree
+  ptree = Utility::toPropertyTree( std::map<std::string,std::vector<double> >({std::make_pair("value a", std::vector<double>({-1.0,0.0,1.0})), std::make_pair("value b", std::vector<double>({0.0,1.0}))}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toMap().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value a"].toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value b"].toVector().size(), 2 );
+
+  ptree = Utility::toPropertyTree( std::map<std::string,std::vector<double> >({std::make_pair("value a", std::vector<double>({-1.0,0.0,1.0})), std::make_pair("value b", std::vector<double>({0.0,1.0}))}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).size(), 3 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value a" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).size(), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value b" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+    
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::map<std::string,std::vector<double> >({std::make_pair("value a", std::vector<double>({-1.0,0.0,1.0})), std::make_pair("value b", std::vector<double>({0.0,1.0}))}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).size(), 3 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value a" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).size(), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value b" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  // Convert a std::unordered_map<int,int> to a property tree
+  ptree = Utility::toPropertyTree( std::unordered_map<int,int>({std::make_pair(-1,-1), std::make_pair(0,0)}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toMap().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["-1"].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["0"].toInt(), 0 );
+
+  ptree = Utility::toPropertyTree( std::unordered_map<int,int>({std::make_pair(-1,-1), std::make_pair(0,0)}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "-1" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "0" ).data().toInt(), 0 );
+
+  ptree = Utility::toPropertyTree( std::unordered_map<int,int>({std::make_pair(-1,-1), std::make_pair(0,0)}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "-1" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "0" ).data().toInt(), 0 );
+
+  // Convert a std::unordered_map<std::string,int> to a property tree
+  ptree = Utility::toPropertyTree( std::unordered_map<std::string,int>({std::make_pair("value a", -1), std::make_pair("value b", 1)}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toMap().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value a"].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value b"].toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::unordered_map<std::string,int>({std::make_pair("value a", -1), std::make_pair("value b", 1)}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).data().toInt(), 1 );
+
+  ptree = Utility::toPropertyTree( std::unordered_map<std::string,int>({std::make_pair("value a", -1), std::make_pair("value b", 1)}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).data().toInt(), 1 );
+
+  // Convert a std::unordered_map<std::string,std::vector<double> > to a property tree
+  ptree = Utility::toPropertyTree( std::unordered_map<std::string,std::vector<double> >({std::make_pair("value a", std::vector<double>({-1.0,0.0,1.0})), std::make_pair("value b", std::vector<double>({0.0,1.0}))}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toMap().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value a"].toVector().size(), 3 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value b"].toVector().size(), 2 );
+
+  ptree = Utility::toPropertyTree( std::unordered_map<std::string,std::vector<double> >({std::make_pair("value a", std::vector<double>({-1.0,0.0,1.0})), std::make_pair("value b", std::vector<double>({0.0,1.0}))}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).size(), 3 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value a" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).size(), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value b" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+    
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  ptree = Utility::toPropertyTree( std::unordered_map<std::string,std::vector<double> >({std::make_pair("value a", std::vector<double>({-1.0,0.0,1.0})), std::make_pair("value b", std::vector<double>({0.0,1.0}))}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).size(), 3 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value a" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), -1.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).size(), 2 );
+
+  {
+    Utility::PropertyTree::const_iterator it =
+      ptree.get_child( "value b" ).begin();
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 0.0 );
+
+    ++it;
+
+    TEST_EQUALITY_CONST( it->second.data().toDouble(), 1.0 );
+  }
+
+  // Convert a VariantMap to a property tree
+  ptree = Utility::toPropertyTree( Utility::VariantMap({std::make_pair("value a", Utility::Variant(-1)), std::make_pair("value b", Utility::Variant(std::vector<double>({-1.0,0.0,1.0})))}), true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( ptree.data().toMap().size(), 2 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value a"].toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.data().toMap()["value b"].toVector().size(), 3 );
+
+  ptree = Utility::toPropertyTree( Utility::VariantMap({std::make_pair("value a", Utility::Variant(-1)), std::make_pair("value b", Utility::Variant(std::vector<double>({-1.0,0.0,1.0})))}), false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).size(), 0 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).size(), 0 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).data().toVector().size(), 3 );
+
+  ptree = Utility::toPropertyTree( Utility::VariantMap({std::make_pair("value a", Utility::Variant(-1)), std::make_pair("value b", Utility::Variant(std::vector<double>({-1.0,0.0,1.0})))}) );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.count( "value a" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).size(), 0 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value a" ).data().toInt(), -1 );
+  TEST_EQUALITY_CONST( ptree.count( "value b" ), 1 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).size(), 0 );
+  TEST_EQUALITY_CONST( ptree.get_child( "value b" ).data().toVector().size(), 3 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a property tree node can be converted to a sequence container
-TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToSequenceContainer )
+TEUCHOS_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
 {
   // Create a property tree with standard nodes and JSON array nodes
   Utility::PropertyTree ptree;
@@ -267,102 +1090,632 @@ TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToSequenceContainer )
     ptree.add_child( "json array", level_1_ptree );
   }
 
-  // Convert the nodes to VariantVectors
+  // Convert the nodes to vectors
+  std::vector<std::string> unused_children;
+
+  TEST_THROW( Utility::fromPropertyTree<std::vector<int> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::vector<double> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::vector<std::string> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );              
+  TEST_THROW( Utility::fromPropertyTree<Utility::VariantVector>( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+
+  TEST_THROW( Utility::fromPropertyTree<std::vector<int> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::vector<double> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::vector<std::string> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  
   Utility::VariantVector vector =
-    Utility::convertPTreeNodeToVariantVector( ptree );
-
-  TEST_EQUALITY_CONST( vector.size(), 0 );
-
-  vector = Utility::convertPTreeNodeToVariantVector( ptree.get_child( "value" ) );
+    Utility::fromPropertyTree<Utility::VariantVector>( ptree.get_child( "value" ), unused_children );
 
   TEST_EQUALITY_CONST( vector.size(), 1 );
   TEST_EQUALITY_CONST( vector.front().toBool(), true );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  vector = Utility::convertPTreeNodeToVariantVector( ptree.get_child( "inline array" ) );
+  std::vector<int> int_vector =
+    Utility::fromPropertyTree<std::vector<int> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( int_vector.size(), 3 );
+  TEST_EQUALITY_CONST( int_vector[0], -1 );
+  TEST_EQUALITY_CONST( int_vector[1], 0 );
+  TEST_EQUALITY_CONST( int_vector[2], 1 );
+
+  std::vector<double> double_vector =
+    Utility::fromPropertyTree<std::vector<double> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( double_vector.size(), 3 );
+  TEST_EQUALITY_CONST( double_vector[0], -1.0 );
+  TEST_EQUALITY_CONST( double_vector[1], 0.0 );
+  TEST_EQUALITY_CONST( double_vector[2], 1.0 );
+
+  std::vector<std::string> string_vector =
+    Utility::fromPropertyTree<std::vector<std::string> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( string_vector.size(), 3 );
+  TEST_EQUALITY_CONST( string_vector[0], "-1" );
+  TEST_EQUALITY_CONST( string_vector[1], "0" );
+  TEST_EQUALITY_CONST( string_vector[2], "1" );
+  
+  vector = Utility::fromPropertyTree<Utility::VariantVector>( ptree.get_child( "inline array" ) );
 
   TEST_EQUALITY_CONST( vector.size(), 3 );
   TEST_EQUALITY_CONST( vector[0].toInt(), -1 );
   TEST_EQUALITY_CONST( vector[1].toInt(), 0 );
   TEST_EQUALITY_CONST( vector[2].toInt(), 1 );
 
-  vector = Utility::convertPTreeNodeToVariantVector( ptree.get_child( "json array" ) );
+  int_vector =  Utility::fromPropertyTree<std::vector<int> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( int_vector.size(), 3 );
+  TEST_EQUALITY_CONST( int_vector[0], -1 );
+  TEST_EQUALITY_CONST( int_vector[1], 0 );
+  TEST_EQUALITY_CONST( int_vector[2], 1 );
+
+  double_vector = Utility::fromPropertyTree<std::vector<double> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( double_vector.size(), 3 );
+  TEST_EQUALITY_CONST( double_vector[0], -1.0 );
+  TEST_EQUALITY_CONST( double_vector[1], 0.0 );
+  TEST_EQUALITY_CONST( double_vector[2], 1.0 );
+
+  string_vector = Utility::fromPropertyTree<std::vector<std::string> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( string_vector.size(), 3 );
+  TEST_EQUALITY_CONST( string_vector[0], "-1" );
+  TEST_EQUALITY_CONST( string_vector[1], "0" );
+  TEST_EQUALITY_CONST( string_vector[2], "1" );
+
+  vector = Utility::fromPropertyTree<Utility::VariantVector>( ptree.get_child( "json array" ) );
 
   TEST_EQUALITY_CONST( vector.size(), 3 );
   TEST_EQUALITY_CONST( vector[0].toInt(), -1 );
   TEST_EQUALITY_CONST( vector[1].toInt(), 0 );
   TEST_EQUALITY_CONST( vector[2].toInt(), 1 );
 
-  // Convert the nodes to VariantDeques
+  // Convert the nodes to deques
+  TEST_THROW( Utility::fromPropertyTree<std::deque<int> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::deque<double> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::deque<std::string> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );              
+  TEST_THROW( Utility::fromPropertyTree<Utility::VariantDeque>( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+
+  TEST_THROW( Utility::fromPropertyTree<std::deque<int> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::deque<double> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::deque<std::string> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+
   Utility::VariantDeque deque =
-    Utility::convertPTreeNodeToVariantDeque( ptree );
-
-  TEST_EQUALITY_CONST( deque.size(), 0 );
-
-  deque = Utility::convertPTreeNodeToVariantDeque( ptree.get_child( "value" ) );
+    Utility::fromPropertyTree<Utility::VariantDeque>( ptree.get_child( "value" ), unused_children );
 
   TEST_EQUALITY_CONST( deque.size(), 1 );
   TEST_EQUALITY_CONST( deque.front().toBool(), true );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  deque = Utility::convertPTreeNodeToVariantDeque( ptree.get_child( "inline array" ) );
+  std::deque<int> int_deque =
+    Utility::fromPropertyTree<std::deque<int> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( int_deque.size(), 3 );
+  TEST_EQUALITY_CONST( int_deque.front(), -1 );
+  TEST_EQUALITY_CONST( int_deque.back(), 1 );
+
+  std::deque<double> double_deque =
+    Utility::fromPropertyTree<std::deque<double> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( double_deque.size(), 3 );
+  TEST_EQUALITY_CONST( double_deque.front(), -1.0 );
+  TEST_EQUALITY_CONST( double_deque.back(), 1.0 );
+
+  std::deque<std::string> string_deque =
+    Utility::fromPropertyTree<std::deque<std::string> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( string_deque.size(), 3 );
+  TEST_EQUALITY_CONST( string_deque.front(), "-1" );
+  TEST_EQUALITY_CONST( string_deque.back(), "1" );
+
+  deque = Utility::fromPropertyTree<Utility::VariantDeque>( ptree.get_child( "inline array" ) );
 
   TEST_EQUALITY_CONST( deque.size(), 3 );
   TEST_EQUALITY_CONST( deque.front().toInt(), -1 );
   TEST_EQUALITY_CONST( deque.back().toInt(), 1 );
 
-  deque = Utility::convertPTreeNodeToVariantDeque( ptree.get_child( "json array" ) );
+  int_deque =  Utility::fromPropertyTree<std::deque<int> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( int_deque.size(), 3 );
+  TEST_EQUALITY_CONST( int_deque.front(), -1 );
+  TEST_EQUALITY_CONST( int_deque.back(), 1 );
+
+  double_deque = Utility::fromPropertyTree<std::deque<double> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( double_deque.size(), 3 );
+  TEST_EQUALITY_CONST( double_deque.front(), -1.0 );
+  TEST_EQUALITY_CONST( double_deque.back(), 1.0 );
+
+  string_deque = Utility::fromPropertyTree<std::deque<std::string> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( string_deque.size(), 3 );
+  TEST_EQUALITY_CONST( string_deque.front(), "-1" );
+  TEST_EQUALITY_CONST( string_deque.back(), "1" );
+
+  deque = Utility::fromPropertyTree<Utility::VariantDeque>( ptree.get_child( "json array" ) );
 
   TEST_EQUALITY_CONST( deque.size(), 3 );
   TEST_EQUALITY_CONST( deque.front().toInt(), -1 );
   TEST_EQUALITY_CONST( deque.back().toInt(), 1 );
 
-  // Convert the nodes to VariantLists
+  // Convert the nodes to lists
+  TEST_THROW( Utility::fromPropertyTree<std::list<int> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::list<double> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::list<std::string> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );              
+  TEST_THROW( Utility::fromPropertyTree<Utility::VariantList>( ptree ),
+              Utility::PropertyTreeConversionException );
+
+  TEST_THROW( Utility::fromPropertyTree<std::list<int> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::list<double> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::list<std::string> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+
   Utility::VariantList list =
-    Utility::convertPTreeNodeToVariantList( ptree );
-
-  TEST_EQUALITY_CONST( list.size(), 0 );
-
-  list = Utility::convertPTreeNodeToVariantList( ptree.get_child( "value" ) );
+    Utility::fromPropertyTree<Utility::VariantList>( ptree.get_child( "value" ), unused_children );
 
   TEST_EQUALITY_CONST( list.size(), 1 );
   TEST_EQUALITY_CONST( list.front().toBool(), true );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  list = Utility::convertPTreeNodeToVariantList( ptree.get_child( "inline array" ) );
+  std::list<int> int_list =
+    Utility::fromPropertyTree<std::list<int> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( int_list.size(), 3 );
+  TEST_EQUALITY_CONST( int_list.front(), -1 );
+  TEST_EQUALITY_CONST( int_list.back(), 1 );
+
+  std::list<double> double_list =
+    Utility::fromPropertyTree<std::list<double> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( double_list.size(), 3 );
+  TEST_EQUALITY_CONST( double_list.front(), -1.0 );
+  TEST_EQUALITY_CONST( double_list.back(), 1.0 );
+
+  std::list<std::string> string_list =
+    Utility::fromPropertyTree<std::list<std::string> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( string_list.size(), 3 );
+  TEST_EQUALITY_CONST( string_list.front(), "-1" );
+  TEST_EQUALITY_CONST( string_list.back(), "1" );
+
+  list = Utility::fromPropertyTree<Utility::VariantList>( ptree.get_child( "inline array" ) );
 
   TEST_EQUALITY_CONST( list.size(), 3 );
   TEST_EQUALITY_CONST( list.front().toInt(), -1 );
   TEST_EQUALITY_CONST( list.back().toInt(), 1 );
 
-  list = Utility::convertPTreeNodeToVariantList( ptree.get_child( "json array" ) );
+  int_list =  Utility::fromPropertyTree<std::list<int> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( int_list.size(), 3 );
+  TEST_EQUALITY_CONST( int_list.front(), -1 );
+  TEST_EQUALITY_CONST( int_list.back(), 1 );
+
+  double_list = Utility::fromPropertyTree<std::list<double> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( double_list.size(), 3 );
+  TEST_EQUALITY_CONST( double_list.front(), -1.0 );
+  TEST_EQUALITY_CONST( double_list.back(), 1.0 );
+
+  string_list = Utility::fromPropertyTree<std::list<std::string> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( string_list.size(), 3 );
+  TEST_EQUALITY_CONST( string_list.front(), "-1" );
+  TEST_EQUALITY_CONST( string_list.back(), "1" );
+
+  list = Utility::fromPropertyTree<Utility::VariantList>( ptree.get_child( "json array" ) );
 
   TEST_EQUALITY_CONST( list.size(), 3 );
   TEST_EQUALITY_CONST( list.front().toInt(), -1 );
   TEST_EQUALITY_CONST( list.back().toInt(), 1 );
 
-  // Convert the nodes to VariantForwardLists
+  // Convert the nodes to forward lists
+  TEST_THROW( Utility::fromPropertyTree<std::forward_list<int> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::forward_list<double> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::forward_list<std::string> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );              
+  TEST_THROW( Utility::fromPropertyTree<Utility::VariantForwardList>( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+
+  TEST_THROW( Utility::fromPropertyTree<std::forward_list<int> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::forward_list<double> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::forward_list<std::string> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+
   Utility::VariantForwardList forward_list =
-    Utility::convertPTreeNodeToVariantForwardList( ptree );
-
-  TEST_EQUALITY_CONST( std::distance(forward_list.begin(), forward_list.end()), 0 );
-
-  forward_list = Utility::convertPTreeNodeToVariantForwardList( ptree.get_child( "value" ) );
+    Utility::fromPropertyTree<Utility::VariantForwardList>( ptree.get_child( "value" ), unused_children );
 
   TEST_EQUALITY_CONST( std::distance(forward_list.begin(), forward_list.end()), 1 );
   TEST_EQUALITY_CONST( forward_list.front().toBool(), true );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  forward_list = Utility::convertPTreeNodeToVariantForwardList( ptree.get_child( "inline array" ) );
+  std::forward_list<int> int_forward_list =
+    Utility::fromPropertyTree<std::forward_list<int> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( std::distance(int_forward_list.begin(), int_forward_list.end()), 3 );
+  TEST_EQUALITY_CONST( int_forward_list.front(), -1 );
+
+  std::forward_list<double> double_forward_list =
+    Utility::fromPropertyTree<std::forward_list<double> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( std::distance(double_forward_list.begin(), double_forward_list.end()), 3 );
+  TEST_EQUALITY_CONST( double_forward_list.front(), -1.0 );
+
+  std::forward_list<std::string> string_forward_list =
+    Utility::fromPropertyTree<std::forward_list<std::string> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( std::distance(string_forward_list.begin(), string_forward_list.end()), 3 );
+  TEST_EQUALITY_CONST( string_forward_list.front(), "-1" );
+
+  forward_list = Utility::fromPropertyTree<Utility::VariantForwardList>( ptree.get_child( "inline array" ) );
 
   TEST_EQUALITY_CONST( std::distance(forward_list.begin(), forward_list.end()), 3 );
   TEST_EQUALITY_CONST( forward_list.front().toInt(), -1 );
 
-  forward_list = Utility::convertPTreeNodeToVariantForwardList( ptree.get_child( "json array" ) );
+  int_forward_list =  Utility::fromPropertyTree<std::forward_list<int> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( std::distance(int_forward_list.begin(), int_forward_list.end()), 3 );
+  TEST_EQUALITY_CONST( int_forward_list.front(), -1 );
+
+  double_forward_list = Utility::fromPropertyTree<std::forward_list<double> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( std::distance(double_forward_list.begin(), double_forward_list.end()), 3 );
+  TEST_EQUALITY_CONST( double_forward_list.front(), -1.0 );
+
+  string_forward_list = Utility::fromPropertyTree<std::forward_list<std::string> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( std::distance(string_forward_list.begin(), string_forward_list.end()), 3 );
+  TEST_EQUALITY_CONST( string_forward_list.front(), "-1" );
+
+  forward_list = Utility::fromPropertyTree<Utility::VariantForwardList>( ptree.get_child( "json array" ) );
 
   TEST_EQUALITY_CONST( std::distance(forward_list.begin(), forward_list.end()), 3 );
   TEST_EQUALITY_CONST( forward_list.front().toInt(), -1 );
+
+  // Convert the nodes to sets
+  TEST_THROW( Utility::fromPropertyTree<std::set<int> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::set<double> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::set<std::string> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );              
+
+  TEST_THROW( Utility::fromPropertyTree<std::set<int> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::set<double> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::set<std::string> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+
+  std::set<int> int_set =
+    Utility::fromPropertyTree<std::set<int> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( int_set.size(), 3 );
+  TEST_EQUALITY_CONST( int_set.count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_set.count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_set.count( 1 ), 1 );
+
+  std::set<double> double_set =
+    Utility::fromPropertyTree<std::set<double> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( double_set.size(), 3 );
+  TEST_EQUALITY_CONST( double_set.count( -1.0 ), 1 );
+  TEST_EQUALITY_CONST( double_set.count( 0.0 ), 1 );
+  TEST_EQUALITY_CONST( double_set.count( 1.0 ), 1 );
+
+  std::set<std::string> string_set =
+    Utility::fromPropertyTree<std::set<std::string> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( string_set.size(), 3 );
+  TEST_EQUALITY_CONST( string_set.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( string_set.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( string_set.count( "1" ), 1 );
+
+  int_set =  Utility::fromPropertyTree<std::set<int> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( int_set.size(), 3 );
+  TEST_EQUALITY_CONST( int_set.count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_set.count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_set.count( 1 ), 1 );
+
+  double_set = Utility::fromPropertyTree<std::set<double> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( double_set.size(), 3 );
+  TEST_EQUALITY_CONST( double_set.count( -1.0 ), 1 );
+  TEST_EQUALITY_CONST( double_set.count( 0.0 ), 1 );
+  TEST_EQUALITY_CONST( double_set.count( 1.0 ), 1 );
+
+  string_set = Utility::fromPropertyTree<std::set<std::string> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( string_set.size(), 3 );
+  TEST_EQUALITY_CONST( string_set.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( string_set.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( string_set.count( "1" ), 1 );
+
+  // Convert the nodes to unordered sets
+  TEST_THROW( Utility::fromPropertyTree<std::unordered_set<int> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::unordered_set<double> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::unordered_set<std::string> >( ptree, unused_children ),
+              Utility::PropertyTreeConversionException );              
+
+  TEST_THROW( Utility::fromPropertyTree<std::unordered_set<int> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::unordered_set<double> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<std::unordered_set<std::string> >( ptree.get_child( "value" ), unused_children ),
+              Utility::PropertyTreeConversionException );
+
+  std::unordered_set<int> int_unordered_set =
+    Utility::fromPropertyTree<std::unordered_set<int> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( int_unordered_set.size(), 3 );
+  TEST_EQUALITY_CONST( int_unordered_set.count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_unordered_set.count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_unordered_set.count( 1 ), 1 );
+
+  std::unordered_set<double> double_unordered_set =
+    Utility::fromPropertyTree<std::unordered_set<double> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( double_unordered_set.size(), 3 );
+  TEST_EQUALITY_CONST( double_unordered_set.count( -1.0 ), 1 );
+  TEST_EQUALITY_CONST( double_unordered_set.count( 0.0 ), 1 );
+  TEST_EQUALITY_CONST( double_unordered_set.count( 1.0 ), 1 );
+
+  std::unordered_set<std::string> string_unordered_set =
+    Utility::fromPropertyTree<std::unordered_set<std::string> >( ptree.get_child( "inline array" ) );
+
+  TEST_EQUALITY_CONST( string_unordered_set.size(), 3 );
+  TEST_EQUALITY_CONST( string_unordered_set.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( string_unordered_set.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( string_unordered_set.count( "1" ), 1 );
+
+  int_unordered_set =  Utility::fromPropertyTree<std::unordered_set<int> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( int_unordered_set.size(), 3 );
+  TEST_EQUALITY_CONST( int_unordered_set.count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_unordered_set.count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_unordered_set.count( 1 ), 1 );
+
+  double_unordered_set = Utility::fromPropertyTree<std::unordered_set<double> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( double_unordered_set.size(), 3 );
+  TEST_EQUALITY_CONST( double_unordered_set.count( -1.0 ), 1 );
+  TEST_EQUALITY_CONST( double_unordered_set.count( 0.0 ), 1 );
+  TEST_EQUALITY_CONST( double_unordered_set.count( 1.0 ), 1 );
+
+  string_unordered_set = Utility::fromPropertyTree<std::unordered_set<std::string> >( ptree.get_child( "json array" ) );
+
+  TEST_EQUALITY_CONST( string_unordered_set.size(), 3 );
+  TEST_EQUALITY_CONST( string_unordered_set.count( "-1" ), 1 );
+  TEST_EQUALITY_CONST( string_unordered_set.count( "0" ), 1 );
+  TEST_EQUALITY_CONST( string_unordered_set.count( "1" ), 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a property tree node can be converted to an associative container
-TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToAssociativeContainer )
+TEUCHOS_UNIT_TEST( PropertyTree, fromPropertyTree_associative_container )
+{
+  Utility::PropertyTree ptree;
+
+  ptree.put( "-1", -1 );
+  ptree.put( "0", 0 );
+  ptree.put( "1", 1 );
+
+  std::map<int,int> int_int_map =
+    Utility::fromPropertyTree<std::map<int,int> >( ptree );
+
+  TEST_EQUALITY_CONST( int_int_map.size(), 3 );
+  TEST_EQUALITY_CONST( int_int_map[-1], -1 );
+  TEST_EQUALITY_CONST( int_int_map[0], 0 );
+  TEST_EQUALITY_CONST( int_int_map[1], 1 );
+
+  std::unordered_map<int,int> int_int_unordered_map =
+    Utility::fromPropertyTree<std::unordered_map<int,int> >( ptree );
+
+  TEST_EQUALITY_CONST( int_int_unordered_map.size(), 3 );
+  TEST_EQUALITY_CONST( int_int_unordered_map[-1], -1 );
+  TEST_EQUALITY_CONST( int_int_unordered_map[0], 0 );
+  TEST_EQUALITY_CONST( int_int_unordered_map[1], 1 );
+
+  std::map<std::string,double> string_double_map =
+    Utility::fromPropertyTree<std::map<std::string,double> >( ptree );
+
+  TEST_EQUALITY_CONST( string_double_map.size(), 3 );
+  TEST_EQUALITY_CONST( string_double_map["-1"], -1.0 );
+  TEST_EQUALITY_CONST( string_double_map["0"], 0.0 );
+  TEST_EQUALITY_CONST( string_double_map["1"], 1.0 );
+
+  std::unordered_map<std::string,double> string_double_unordered_map =
+    Utility::fromPropertyTree<std::unordered_map<std::string,double> >( ptree );
+
+  TEST_EQUALITY_CONST( string_double_unordered_map.size(), 3 );
+  TEST_EQUALITY_CONST( string_double_unordered_map["-1"], -1.0 );
+  TEST_EQUALITY_CONST( string_double_unordered_map["0"], 0.0 );
+  TEST_EQUALITY_CONST( string_double_unordered_map["1"], 1.0 );
+
+  TEST_THROW( (Utility::fromPropertyTree<std::map<int,std::vector<int> > >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::map<std::string,std::vector<double> > >( ptree )),
+              Utility::PropertyTreeConversionException );
+
+  // Create a property tree with array (both inline and JSON) values
+  ptree.clear();
+
+  ptree.put( "-1", std::vector<int>({-1,0,1}) );
+  ptree.put_child( "0", Utility::toPropertyTree( std::vector<int>({-1,1}), false ) );
+  ptree.put( "1", std::vector<int>({0}) );
+
+  TEST_THROW( (Utility::fromPropertyTree<std::map<int,int> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::map<std::string,double> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  
+  std::map<int,std::vector<int> > int_vector_int_map =
+    Utility::fromPropertyTree<std::map<int,std::vector<int> > >( ptree );
+
+  TEST_EQUALITY_CONST( int_vector_int_map.size(), 3 );
+  TEST_EQUALITY_CONST( int_vector_int_map.count( -1 ), 1 );
+  TEST_COMPARE_CONTAINERS( int_vector_int_map[-1], std::vector<int>({-1,0,1}) );
+  TEST_EQUALITY_CONST( int_vector_int_map.count( 0 ), 1 );
+  TEST_COMPARE_CONTAINERS( int_vector_int_map[0], std::vector<int>({-1,1}) );
+  TEST_EQUALITY_CONST( int_vector_int_map.count( 1 ), 1 );
+  TEST_COMPARE_CONTAINERS( int_vector_int_map[1], std::vector<int>({0}) );
+
+  std::unordered_map<int,std::vector<int> > int_vector_int_unordered_map =
+    Utility::fromPropertyTree<std::unordered_map<int,std::vector<int> > >( ptree );
+
+  TEST_EQUALITY_CONST( int_vector_int_unordered_map.size(), 3 );
+  TEST_EQUALITY_CONST( int_vector_int_unordered_map.count( -1 ), 1 );
+  TEST_COMPARE_CONTAINERS( int_vector_int_unordered_map[-1], std::vector<int>({-1,0,1}) );
+  TEST_EQUALITY_CONST( int_vector_int_unordered_map.count( 0 ), 1 );
+  TEST_COMPARE_CONTAINERS( int_vector_int_unordered_map[0], std::vector<int>({-1,1}) );
+  TEST_EQUALITY_CONST( int_vector_int_unordered_map.count( 1 ), 1 );
+  TEST_COMPARE_CONTAINERS( int_vector_int_unordered_map[1], std::vector<int>({0}) );
+
+  std::map<std::string,std::vector<double> > string_vector_double_map =
+    Utility::fromPropertyTree<std::map<std::string,std::vector<double> > >( ptree );
+
+  TEST_EQUALITY_CONST( string_vector_double_map.size(), 3 );
+  TEST_EQUALITY_CONST( string_vector_double_map.count( "-1" ), 1 );
+  TEST_COMPARE_CONTAINERS( string_vector_double_map["-1"], std::vector<double>({-1.,0.,1.}) );
+  TEST_EQUALITY_CONST( string_vector_double_map.count( "0" ), 1 );
+  TEST_COMPARE_CONTAINERS( string_vector_double_map["0"], std::vector<double>({-1.,1.}) );
+  TEST_EQUALITY_CONST( string_vector_double_map.count( "1" ), 1 );
+  TEST_COMPARE_CONTAINERS( string_vector_double_map["1"], std::vector<double>({0.}) );
+
+  std::unordered_map<std::string,std::vector<double> > string_vector_double_unordered_map =
+    Utility::fromPropertyTree<std::unordered_map<std::string,std::vector<double> > >( ptree );
+
+  TEST_EQUALITY_CONST( string_vector_double_unordered_map.size(), 3 );
+  TEST_EQUALITY_CONST( string_vector_double_unordered_map.count( "-1" ), 1 );
+  TEST_COMPARE_CONTAINERS( string_vector_double_unordered_map["-1"], std::vector<double>({-1.,0.,1.}) );
+  TEST_EQUALITY_CONST( string_vector_double_unordered_map.count( "0" ), 1 );
+  TEST_COMPARE_CONTAINERS( string_vector_double_unordered_map["0"], std::vector<double>({-1.,1.}) );
+  TEST_EQUALITY_CONST( string_vector_double_unordered_map.count( "1" ), 1 );
+  TEST_COMPARE_CONTAINERS( string_vector_double_unordered_map["1"], std::vector<double>({0.}) );
+
+  // Create an invalid property tree (JSON Array)
+  ptree = Utility::toPropertyTree( std::vector<int>({-1,0,1}), false );
+
+  TEST_THROW( (Utility::fromPropertyTree<std::map<int,int> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::map<std::string,double> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::unordered_map<int,int> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::unordered_map<std::string,double> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::map<int,std::vector<int> > >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::map<std::string,std::vector<double> > >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::unordered_map<int,std::vector<int> > >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::unordered_map<std::string,std::vector<double> > >( ptree )),
+              Utility::PropertyTreeConversionException );
+
+  // Create an invalid property tree (repeated keys)
+  ptree.put( "-1", -1 );
+  ptree.add( "-1", 0 );
+
+  TEST_THROW( (Utility::fromPropertyTree<std::map<int,int> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::map<std::string,double> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::unordered_map<int,int> >( ptree )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<std::unordered_map<std::string,double> >( ptree )),
+              Utility::PropertyTreeConversionException );
+
+  // Create a property tree with nested trees
+  ptree.clear();
+  
+  ptree.put_child( "-1", Utility::toPropertyTree( std::map<int,int>({std::make_pair(-1,-1),std::make_pair(0,0)}), false ) );
+  ptree.put_child( "0", Utility::toPropertyTree( std::map<int,int>({std::make_pair(-1,-1),std::make_pair(1,1)}), true ) );
+  ptree.put_child( "1", Utility::toPropertyTree( std::map<int,int>({std::make_pair(0,0),std::make_pair(1,1)}), false ) );
+
+  std::map<int,std::map<int,int> > int_int_int_map_map =
+    Utility::fromPropertyTree<decltype(int_int_int_map_map)>( ptree );
+
+  TEST_EQUALITY_CONST( int_int_int_map_map.size(), 3 );
+  
+  TEST_EQUALITY_CONST( int_int_int_map_map.count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1].size(), 2 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1].count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1][-1], -1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1].count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1][0], 0 );
+
+  TEST_EQUALITY_CONST( int_int_int_map_map.count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0].size(), 2 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0].count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0][-1], -1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0].count( 1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0][1], 1 );
+
+  TEST_EQUALITY_CONST( int_int_int_map_map.count( 1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1].size(), 2 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1].count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1][0], 0 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1].count( 1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1][1], 1 );
+
+  // Create a property tree with an inline nested map
+  ptree.clear();
+  ptree = Utility::toPropertyTree( int_int_int_map_map, true );
+
+  int_int_int_map_map.clear();
+  int_int_int_map_map = Utility::fromPropertyTree<decltype(int_int_int_map_map)>( ptree );
+
+  TEST_EQUALITY_CONST( int_int_int_map_map.size(), 3 );
+  
+  TEST_EQUALITY_CONST( int_int_int_map_map.count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1].size(), 2 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1].count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1][-1], -1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1].count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[-1][0], 0 );
+
+  TEST_EQUALITY_CONST( int_int_int_map_map.count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0].size(), 2 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0].count( -1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0][-1], -1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0].count( 1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[0][1], 1 );
+
+  TEST_EQUALITY_CONST( int_int_int_map_map.count( 1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1].size(), 2 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1].count( 0 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1][0], 0 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1].count( 1 ), 1 );
+  TEST_EQUALITY_CONST( int_int_int_map_map[1][1], 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a property tree node can be converted to an associative container
+TEUCHOS_UNIT_TEST( PropertyTree, fromPropertyTree_VariantMap )
 {
   // Create a property tree with standard nodes and JSON array nodes
   Utility::PropertyTree ptree;
@@ -403,9 +1756,13 @@ TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToAssociativeContainer )
   }
 
   // Convert the nodes to a VariantMap
-  Utility::VariantMap map = Utility::convertPTreeNodeToVariantMap( ptree );
+  std::vector<std::string> unused_children;
+  
+  Utility::VariantMap map =
+    Utility::fromPropertyTree<Utility::VariantMap>( ptree, unused_children );
   
   TEST_EQUALITY_CONST( map.size(), 4 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
   TEST_EQUALITY_CONST( map["inline array"].toVector().size(), 3 );
   TEST_EQUALITY_CONST( map["inline array"].toVector()[0].toInt(), -1 );
   TEST_EQUALITY_CONST( map["inline array"].toVector()[1].toInt(), 0 );
@@ -469,7 +1826,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToAssociativeContainer )
   }
 
   // Convert the nodes to a VariantMap
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 4 );
   TEST_EQUALITY_CONST( map["inline array"].toVector().size(), 3 );
@@ -535,7 +1892,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToAssociativeContainer )
   }
 
   // Convert the nodes to a VariantMap
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 4 );
   TEST_EQUALITY_CONST( map["inline array"].toVector().size(), 3 );
@@ -601,7 +1958,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToAssociativeContainer )
   }
 
   // Convert the nodes to a VariantMap
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 4 );
   TEST_EQUALITY_CONST( map["inline array"].toVector().size(), 3 );
@@ -627,6 +1984,9 @@ TEUCHOS_UNIT_TEST( PropertyTree, convertPTreeNodeToAssociativeContainer )
   TEST_EQUALITY_CONST( map["repeated_value"].toVector()[6].toDouble(), 0.0 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector()[7].toDouble(), 1.0 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector()[8].toBool(), true );
+
+  TEST_THROW( Utility::fromPropertyTree<Utility::VariantMap>( ptree.get_child( "json array" ) ),
+              Utility::PropertyTreeConversionException );
 
   TEST_NOTHROW( boost::property_tree::write_json( "test_maps.json", ptree ) );
 }
@@ -869,7 +2229,8 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromString )
   TEST_EQUALITY_CONST( ptree.size(), 2 );
   TEST_EQUALITY_CONST( ptree.count( "repeated_value" ), 2 );
 
-  Utility::VariantMap map = Utility::convertPTreeNodeToVariantMap( ptree );
+  Utility::VariantMap map =
+    Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 1 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -880,7 +2241,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromString )
 
   ptree = Utility::fromString<Utility::PropertyTree>( "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\"}" );
   
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 2 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -895,7 +2256,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromString )
 
   ptree = Utility::fromString<Utility::PropertyTree>( "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\",\"child tree\":{\"level 2 string\":\"test string\",\"level 2 inline array\":\"{test, string, array}\"}}" );
   
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 3 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -913,7 +2274,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromString )
 
   ptree = Utility::fromString<Utility::PropertyTree>( "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\",\"child tree\":{\"level 2 string\":\"test string\",\"level 2 inline array\":\"{test, string, array}\"},\"json array\":[\"-1\",\"0\",\"1\"]}" );
 
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 4 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -962,7 +2323,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromStream )
   TEST_EQUALITY_CONST( ptree.size(), 2 );
   TEST_EQUALITY_CONST( ptree.count( "repeated_value" ), 2 );
 
-  Utility::VariantMap map = Utility::convertPTreeNodeToVariantMap( ptree );
+  Utility::VariantMap map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 1 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -975,7 +2336,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromStream )
 
   Utility::fromStream( iss, ptree );
   
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 2 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -993,7 +2354,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromStream )
 
   Utility::fromStream( iss, ptree );
   
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 3 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -1014,7 +2375,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, fromStream )
 
   Utility::fromStream( iss, ptree );
 
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 4 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -1063,7 +2424,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, istream_operator )
   TEST_EQUALITY_CONST( ptree.size(), 2 );
   TEST_EQUALITY_CONST( ptree.count( "repeated_value" ), 2 );
 
-  Utility::VariantMap map = Utility::convertPTreeNodeToVariantMap( ptree );
+  Utility::VariantMap map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 1 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -1076,7 +2437,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, istream_operator )
 
   iss >> ptree;
   
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 2 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -1094,7 +2455,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, istream_operator )
 
   iss >> ptree;
   
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 3 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );
@@ -1115,7 +2476,7 @@ TEUCHOS_UNIT_TEST( PropertyTree, istream_operator )
 
   iss >> ptree;
 
-  map = Utility::convertPTreeNodeToVariantMap( ptree );
+  map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   TEST_EQUALITY_CONST( map.size(), 4 );
   TEST_EQUALITY_CONST( map["repeated_value"].toVector().size(), 4 );

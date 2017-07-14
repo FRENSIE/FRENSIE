@@ -47,11 +47,33 @@ public:
 };
 
 /*! \brief Specialization of Utility::FromStringTraits for 
- * Utility::StreamableObject
+ * Utility::IStreamableObject
+ * \ingroup from_string_traits
+ */
+template<>
+struct FromStringTraits<IStreamableObject>
+{
+  //! Extract a Utility::StreamableObject object from a stream
+  static inline void fromStream( std::istream& is,
+                                 IStreamableObject& obj,
+                                 const std::string& delims = std::string() )
+  {
+    try{
+      obj.fromStream( is, delims );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not extract an IStreamableObject from "
+                                "the stream!" );
+  }
+};
+
+/*! \brief Specialization of Utility::FromStringTraits for types that 
+ * inherit from Utility::IStreamableObject
  * \ingroup from_string_traits
  */
 template<typename DerivedType>
-struct FromStringTraits<DerivedType,typename std::enable_if<std::is_base_of<IStreamableObject,DerivedType>::value && !std::is_abstract<DerivedType>::value>::type>
+struct FromStringTraits<DerivedType,typename std::enable_if<std::is_base_of<IStreamableObject,DerivedType>::value && !std::is_abstract<DerivedType>::value>::type> : public FromStringTraits<IStreamableObject>
 {
   //! The type that a string will be converted to
   typedef DerivedType ReturnType;
@@ -67,20 +89,6 @@ struct FromStringTraits<DerivedType,typename std::enable_if<std::is_base_of<IStr
 
     return obj;
   }
-
-  //! Extract a Utility::StreamableObject object from a stream
-  static inline void fromStream( std::istream& is,
-                                 DerivedType& obj,
-                                 const std::string& delims = std::string() )
-  {
-    try{
-      obj.fromStream( is, delims );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::StringConversionException,
-                                "Could not extract an IStreamableObject from "
-                                "the stream!" );
-  }
 };
   
 } // end Utility namespace
@@ -88,10 +96,7 @@ struct FromStringTraits<DerivedType,typename std::enable_if<std::is_base_of<IStr
 namespace std{
 
 //! Extract a Utility::IStreamableObject from a stream
-template<typename DerivedType>
-inline typename std::enable_if<std::is_base_of<Utility::IStreamableObject,DerivedType>::value && !std::is_abstract<DerivedType>::value,std::istream>::type& operator>>(
-                                                             std::istream& is,
-                                                             DerivedType& obj )
+inline std::istream& operator>>( std::istream& is, IstreamableObject& obj )
 {
   Utility::fromStream( is, obj );
 

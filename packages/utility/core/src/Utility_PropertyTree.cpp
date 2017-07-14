@@ -11,7 +11,7 @@
 
 namespace Utility{
 
-// Check if the property tree node stores a JSON array
+// Check if the property tree stores a JSON array
 /*! \details The property tree handles JSON array elements by simply creating 
  * child nodes with no name (no key value). It is also considered invalid 
  * property tree usage to create a node that has both named and unnamed child 
@@ -19,64 +19,53 @@ namespace Utility{
  * any unnamed child nodes.
  * \ingroup ptree
  */
-bool doesPTreeNodeStoreJSONArray( const Utility::PropertyTree& ptree )
+bool doesPropertyTreeStoreJSONArray( const Utility::PropertyTree& ptree )
 {
   return ptree.count( "" ) > 0;
 }
+
+// Convert a PropertyTree to a string
+std::string ToStringTraits<PropertyTree>::toString( const PropertyTree& obj )
+{
+  std::ostringstream oss;
   
-// Convert property tree node to a VariantVector
-/*! \details See Utility::Details::convertPTreeNodeToSequenceContainer details.
- */
-VariantVector convertPTreeNodeToVariantVector( const Utility::PropertyTree& ptree )
-{
-  return Details::convertPTreeNodeToSequenceContainer<std::vector>( ptree, (void (VariantVector::*)(const VariantVector::value_type&))&VariantVector::push_back );
+  ToStringTraits<PropertyTree>::toStream( oss, obj );
+  
+  return boost::algorithm::trim_copy(oss.str());
 }
 
-// Convert property tree node to a VariantDeque
-/*! \details See Utility::Details::convertPTreeNodeToSequenceContainer details.
- */
-VariantDeque convertPTreeNodeToVariantDeque( const Utility::PropertyTree& ptree )
+// Place the PropertyTree in a stream
+void ToStringTraits<PropertyTree>::toStream( std::ostream& os,
+                                             const PropertyTree& obj )
 {
-  return Details::convertPTreeNodeToSequenceContainer<std::deque>( ptree, (void (VariantDeque::*)(const VariantDeque::value_type&))&VariantDeque::push_back );
+  boost::property_tree::write_json( os, obj, false );
 }
 
-// Convert property tree node to a VariantList
-/*! \details See Utility::Details::convertPTreeNodeToSequenceContainer details.
- */
-VariantList convertPTreeNodeToVariantList( const Utility::PropertyTree& ptree )
+// Convert the string to a PropertyTree object
+auto FromStringTraits<PropertyTree>::fromString(
+                                     const std::string& obj_rep ) -> ReturnType
 {
-  return Details::convertPTreeNodeToSequenceContainer<std::list>( ptree, (void (VariantList::*)(const VariantList::value_type&))&VariantList::push_back );
+  std::istringstream iss( obj_rep );
+  
+  ReturnType ptree;
+  
+  FromStringTraits<PropertyTree>::fromStream( iss, ptree );
+  
+  return ptree;
 }
 
-// Convert property tree node to a VariantForwardList
-/*! \details See Utility::Details::convertPTreeNodeToSequenceContainer details.
- */
-VariantForwardList convertPTreeNodeToVariantForwardList( const Utility::PropertyTree& ptree )
+// Extract a ProperyTree from a stream
+void FromStringTraits<PropertyTree>::fromStream( std::istream& is,
+                                                 PropertyTree& obj,
+                                                 const std::string& delims )
 {
-  // This node stores an array
-  if( Utility::doesPTreeNodeStoreJSONArray( ptree ) )
-  {
-    VariantForwardList reversed_list = Details::convertJSONArrayPTreeNodeToSequenceContainer<std::forward_list>( ptree, (void (VariantForwardList::*)(const VariantForwardList::value_type&))&VariantForwardList::push_front );
-
-    reversed_list.reverse();
-
-    return reversed_list;
+  try{
+    boost::property_tree::read_json( is, obj );
   }
-  
-  // This is a leaf node
-  else if( ptree.size() == 0 )
-    return ptree.data().toForwardList();
-  else
-    return VariantForwardList();
-}
-
-// Convert property tree node to a VariantMap
-/*! \details See Utility::Details::convertPTreeNodeToAssociativeContainer
- * details.
- */
-VariantMap convertPTreeNodeToVariantMap( const Utility::PropertyTree& ptree )
-{
-  return Details::convertPTreeNodeToAssociativeContainer<std::map>( ptree );
+  EXCEPTION_CATCH_RETHROW_AS( boost::property_tree::json_parser_error,
+                              Utility::StringConversionException,
+                              "Could not extract a property tree from the "
+                              "stream!" );
 }
   
 } // end Utility namespace

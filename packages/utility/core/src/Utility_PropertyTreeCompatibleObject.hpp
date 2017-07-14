@@ -10,59 +10,71 @@
 #define UTILITY_PROPERTY_TREE_COMPATIBLE_OBJECT_HPP
 
 // FRENSIE Includes
-#include "Utility_StreamableObject.hpp"
 #include "Utility_PropertyTree.hpp"
-#include "Utility_LoggingMacros.hpp"
 
 namespace Utility{
 
 /*! The base class for Utility::PropertyTree compatible objects
  * \ingroup ptree
  */
-class PropertyTreeCompatibleObject : public StreamableObject
+class PropertyTreeCompatibleObject 
 {
 
 public:
 
-  //! Method for placing an object in the desired property tree node
-  virtual void toNode( const std::string& node_key,
-                       Utility::PropertyTree& ptree,
-                       const bool inline_data ) const = 0;
+  //! Check if data is inlined by default when converting to a property tree
+  virtual bool isDataInlinedByDefault() const = 0;
 
-  //! Method for placing an object in the desired property tree node
-  void toNode( const std::string& node_key,
-               Utility::PropertyTree& ptree ) const
-  { this->toNode( node_key, ptree, false ); }
+  //! Method for converting the type to a property tree
+  virtual Utility::PropertyTree toPropertyTree( const bool inline_data ) const = 0;
+
+  //! Method for converting the type to a property tree
+  Utility::PropertyTree toPropertyTree() const
+  { return this->toPropertyTree( this->isDataInlinedByDefault() ); }
   
-  //! Method for initializing the object from a property tree node
-  virtual void fromNode( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) = 0;
-
-  //! Method for initializing the object from a property tree node
-  void fromNode( const Utility::PropertyTree& node,
-                 const bool log_unused_children = true )
-  {
-    std::vector<std::string> unused_children;
-
-    this->fromNode( node, unused_children );
-
-    if( unused_children.size() > 0 && log_unused_children )
-    {
-      std::ostringstream oss;
-      
-      for( size_t i = 0; i < unused_children.size(); ++i )
-      {
-        oss << unused_children[i];
-        
-        if( i < unused_children.size() - 1 )
-          oss << ", ";
-      }
-    
-      FRENSIE_LOG_WARNING( "property tree nodes " << oss.str() <<
-                           " are unused!" );
-    }
-  }
+  //! Method for initializing the object from a property tree
+  virtual void fromPropertyTree( const Utility::PropertyTree& node,
+                                 std::vector<std::string>& unused_children ) = 0;
+  
 };
+
+/*! \brief Specialization of Utility::ToPropertyTreeTraits for 
+ * Utility::PropertyTreeCompatibleObject
+ * \ingroup ptree_traits
+ */
+template<>
+struct ToPropertyTreeTraits<PropertyTreeCompatibleObject>
+{
+  //! Convert an object of DerivedType to a Utility::PropertyTree
+  static inline PropertyTree toPropertyTree(
+                        const PropertyTreeCompatibleObject& obj,
+                        const bool inline_data = obj.isDataInlinedByDefault() )
+  { return obj.toPropertyTree( inline_data ); }
+};
+
+/*! \brief Specialization of Utility::ToPropertyTreeTraits for types that
+ * inherit from Utility::PropertyTreeCompatibleObject
+ * \ingroup ptree_traits
+ */
+template<typename DerivedType>
+struct ToPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_of<PropertyTreeCompatibleObject,DerivedType>::value && !std::is_abstract<DerivedType>::value>::type>
+{
+  //! The type that a property tree will be converted to
+  typedef DerivedType ReturnType;
+  
+  //! Convert the property tree to an object of type T
+  template<template<typename,typename...> class STLCompliantSequenceContainer>
+  static inline ReturnType fromPropertyTree(
+                  const PropertyTree& ptree,
+                  STLCompliantSequenceContainer<std::stirng>& unused_children )
+  { 
+    ReturnType obj;
+
+    obj.fromPropertyTree( ptree, unused_children );
+
+    return obj;
+  }
+}
   
 } // end Utility namespace
 

@@ -9,6 +9,10 @@
 #ifndef UTILITY_PROPERTY_TREE_DEF_HPP
 #define UTILITY_PROPERTY_TREE_DEF_HPP
 
+// FRENSIE Includes
+#include "Utility_LoggingMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
+
 namespace Utility{
 
 namespace Details{
@@ -74,89 +78,594 @@ struct GenericPTreeObjectTranslator<std::string>
   }
 };
 
-/*! \brief Convert property tree node that contains a JSON array to the desired
- * sequence container
- *
- * You must verify that the node actually contains a JSON array before calling
- * this method.
+/*! \brief Helper class for converting property tree nodes that contain a 
+ * JSON array to the desired sequence container
  * \ingroup ptree
  */
-template<template<typename,typename...> class STLCompliantSequenceContainer,
-         typename ElementInsertionMemberFunction>
-inline STLCompliantSequenceContainer<Utility::Variant>
-convertJSONArrayPTreeNodeToSequenceContainer(
-                                const Utility::PropertyTree& ptree,
-                                ElementInsertionMemberFunction insert_element )
+template<typename T, typename Enabled = void>
+struct JSONArrayPropertyTreeNodeToSequenceContainerHelper
 {
-  STLCompliantSequenceContainer<Utility::Variant> sequence_container;
+  /*! Convert json array property tree node to sequence container
+    *
+    * You must verify that the node actually contains a JSON array before 
+    * calling this method.
+    */
+  template<typename ElementInsertionMemberFunction,
+           typename FinalizeFunction>
+  static T convert( const Utility::PropertyTree& ptree,
+                    ElementInsertionMemberFunction insert_element,
+                    FinalizeFunction finalize_container );
+};
+
+/*! \brief Specialization of JSONArrayPropertyTreeNodeToSequenceContainerHelper for containers with a Utility::Variant value type
+ * \ingroup ptree
+ */
+template<typename T>
+struct JSONArrayPropertyTreeNodeToSequenceContainerHelper<T,typename std::enable_if<std::is_same<typename T::value_type, Utility::Variant>::value>::type>
+{
+  /*! Convert json array property tree node to sequence container
+    *
+    * You must verify that the node actually contains a JSON array before 
+    * calling this method.
+    */
+  template<typename ElementInsertionMemberFunction,
+           typename FinalizeFunction>
+  static T convert( const Utility::PropertyTree& ptree,
+                    ElementInsertionMemberFunction insert_element,
+                    FinalizeFunction finalize_container );
+};
+
+/*! Helper class for converting a sequence container to a Utility::PropertyTree
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct SequenceContainerToPropertyTreeHelper
+{
+  //! Inline data is the default
+  typedef std::true_type InlineDefault;
+
+  //! Convert a sequence container object object to a Utility::PropertyTree
+  static Utility::PropertyTree toPropertyTree(
+                             const T& container,
+                             const bool inline_data = InlineDefault::value );
+};
+
+/*! Helper class for converting a Utility::PropertyTree to a sequence container
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct SequenceContainerFromPropertyTreeBaseHelper
+{
+  //! The return type from a PropertyTree conversion
+  typedef T ReturnType;
+
+protected:
+  
+  //! Convert the property tree to a container object
+  template<typename ElementInsertionMemberFunction,
+           typename FinalizeFunction>
+  static ReturnType fromPropertyTreeImpl(
+                               const Utility::PropertyTree& ptree,
+                               ElementInsertionMemberFunction insert_element,
+                               FinalizeFunction finalize_container );
+};
+
+/*! \brief Helper class for converting a Utility::PropertyTree to a sequence 
+ * container with a push_back method
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct SequenceContainerFromPropertyTreePushBackHelper : public SequenceContainerFromPropertyTreeBaseHelper<T>
+{
+protected:
+  
+  //! The base helper class type
+  typedef SequenceContainerFromPropertyTreeBaseHelper<T> BaseType;
+
+public:
+  
+  //! The return type from a PropertyTree conversion
+  typedef typename BaseType::ReturnType ReturnType;
+
+  //! Convert the property tree to a container object
+  template<template<typename,typename...> class STLCompliantSequenceContainer>
+  static inline ReturnType fromPropertyTree(
+                             const PropertyTree& ptree,
+                             STLCompliantSequenceContainer<std::string>& )
+  {
+    return BaseType::fromPropertyTreeImpl( ptree,
+                                           (void (ReturnType::*)(const typename ReturnType::value_type&))&ReturnType::push_back,
+                                           &ReturnType::empty );
+  }
+};
+
+/*! \brief Helper class for converting a Utility::PropertyTree to a sequence 
+ * container with an insert method
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct SequenceContainerFromPropertyTreeInsertHelper : public SequenceContainerFromPropertyTreeBaseHelper<T>
+{
+protected:
+  
+  //! The base helper class type
+  typedef SequenceContainerFromPropertyTreeBaseHelper<T> BaseType;
+
+public:
+  
+  //! The return type from a PropertyTree conversion
+  typedef typename BaseType::ReturnType ReturnType;
+
+  //! Convert the property tree to a container object
+  template<template<typename,typename...> class STLCompliantSequenceContainer>
+  static inline ReturnType fromPropertyTree(
+                             const PropertyTree& ptree,
+                             STLCompliantSequenceContainer<std::string>& )
+  {
+    return BaseType::fromPropertyTreeImpl( ptree,
+                                           (std::pair<typename ReturnType::iterator,bool> (ReturnType::*)(const typename ReturnType::value_type&))&ReturnType::insert,
+                                           &ReturnType::empty );
+  }
+};
+
+/*! \brief Helper class for converting an associative container to a 
+ * Utility::PropertyTree
+ * \ingroup ptree_traits
+ */
+template<template<typename,typename,typename...> class STLCompliantAssociativeContainer,
+         typename Key,
+         typename T>
+struct AssociativeContainerToPropertyTreeHelper
+{
+  //! Inline data is not the default
+  typedef std::false_type InlineDefault;
+
+  //! Convert a sequence container object object to a Utility::PropertyTree
+  static inline Utility::PropertyTree toPropertyTree(
+                      const STLCompliantAssociativeContainer<Key,T>& container,
+                      const bool inline_data = InlineDefault::value );
+};
+
+/*! \brief Helper class for converting a Utility::PropertyTree to an 
+ * associative container
+ *
+ * This default template class assumes that the template type T is a basic
+ * type (e.g. int, double, etc.)
+ * \ingroup ptree_traits
+ */
+template<template<typename,typename,typename...> class STLCompliantAssociativeContainer,
+         typename Key,
+         typename T,
+         typename Enabled = void>
+struct AssociativeContainerFromPropertyTreeHelper
+{
+  //! The type that a property tree will be converted to
+  typedef STLCompliantAssociativeContainer<Key,T> ReturnType;
+
+  //! Convert the property tree to an associative container
+  template<template<typename,typename...> class STLCompliantSequenceContainer>
+  static ReturnType fromPropertyTree(
+                 const PropertyTree& ptree,
+                 STLCompliantSequenceContainer<std::string>& unused_children );
+};
+
+/*! \brief Partial specialization of AssociativeContainerFromPropertyTreeHelper
+ * for Utility::Variant value type
+ */
+template<template<typename,typename,typename...> class STLCompliantAssociativeContainer,
+         typename Key>
+struct AssociativeContainerFromPropertyTreeHelper<STLCompliantAssociativeContainer,Key,Utility::Variant>
+{
+  //! The type that a property tree will be converted to
+  typedef STLCompliantAssociativeContainer<Key,Utility::Variant> ReturnType;
+
+  //! Convert the property tree to an associative container
+  template<template<typename,typename...> class STLCompliantSequenceContainer>
+  static ReturnType fromPropertyTree(
+             const PropertyTree& ptree,
+             STLCompliantSequenceContainer<std::string>& unused_children );
+};
+
+} // end Details namespace
+
+// Convert an object of type T to a Utility::PropertyTree
+template<typename T, typename Enabled>
+inline PropertyTree ToPropertyTreeTraits<T,Enabled>::toPropertyTree(
+                                                                  const T& obj,
+                                                                  const bool )
+{
+  Utility::PropertyTree ptree;
+  ptree.data().setValue( obj );
+    
+  return ptree;
+}
+
+// Utility::ToPropetyTreeTraits class specialization for std::array
+template<typename T, size_t N>
+struct ToPropertyTreeTraits<std::array<T,N> > : public Details::SequenceContainerToPropertyTreeHelper<std::array<T,N> >
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::vector
+template<typename T>
+struct ToPropertyTreeTraits<std::vector<T> > : public Details::SequenceContainerToPropertyTreeHelper<std::vector<T> >
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::deque
+template<typename T>
+struct ToPropertyTreeTraits<std::deque<T> > : public Details::SequenceContainerToPropertyTreeHelper<std::deque<T> >
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::list
+template<typename T>
+struct ToPropertyTreeTraits<std::list<T> > : public Details::SequenceContainerToPropertyTreeHelper<std::list<T> >
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::forward_list
+template<typename T>
+struct ToPropertyTreeTraits<std::forward_list<T> > : public Details::SequenceContainerToPropertyTreeHelper<std::forward_list<T> >
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::set
+template<typename T>
+struct ToPropertyTreeTraits<std::set<T> > : public Details::SequenceContainerToPropertyTreeHelper<std::set<T> >
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::unordered_set
+template<typename T>
+struct ToPropertyTreeTraits<std::unordered_set<T> > : public Details::SequenceContainerToPropertyTreeHelper<std::unordered_set<T> >
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::map
+template<typename Key, typename T>
+struct ToPropertyTreeTraits<std::map<Key,T> > : public Details::AssociativeContainerToPropertyTreeHelper<std::map,Key,T>
+{ /* ... */ };
+
+// Utility::ToPropetyTreeTraits class specialization for std::unordered_map
+template<typename Key, typename T>
+struct ToPropertyTreeTraits<std::unordered_map<Key,T> > : public Details::AssociativeContainerToPropertyTreeHelper<std::unordered_map,Key,T>
+{ /* ... */ };
+
+// Convert the object to a property tree
+template<typename T>
+inline Utility::PropertyTree toPropertyTree( const T& obj,
+                                             const bool inline_data )
+{
+  return ToPropertyTreeTraits<T>::toPropertyTree( obj, inline_data );
+}
+
+// Convert the property tree to an object of type T
+template<typename T, typename Enabled>
+template<template<typename,typename...> class STLCompliantSequenceContainer>
+inline auto FromPropertyTreeTraits<T,Enabled>::fromPropertyTree(
+                    const PropertyTree& ptree,
+                    STLCompliantSequenceContainer<std::string>& ) -> ReturnType
+{
+  TEST_FOR_EXCEPTION( ptree.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not convert the property tree to the desired "
+                      "type (only inline data is allowed for this type)!" );
+
+  try{
+    return Utility::variant_cast<T>( ptree.data() );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                              Utility::PropertyTreeConversionException,
+                              "Could not convert the property tree data to "
+                              "the desired type!" );
+}
+
+/*! Utility::FromPropertyTreeTrais class specialization for std::vector
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct FromPropertyTreeTraits<std::vector<T> > : public Details::SequenceContainerFromPropertyTreePushBackHelper<std::vector<T> >
+{ /* ... */ };
+
+/*! Utility::FromPropertyTreeTrais class specialization for std::deque
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct FromPropertyTreeTraits<std::deque<T> > : public Details::SequenceContainerFromPropertyTreePushBackHelper<std::deque<T> >
+{ /* ... */ };
+
+/*! Utility::FromPropertyTreeTrais class specialization for std::list
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct FromPropertyTreeTraits<std::list<T> > : public Details::SequenceContainerFromPropertyTreePushBackHelper<std::list<T> >
+{ /* ... */ };
+
+/*! Utility::FromPropertyTreeTrais class specialization for std::forward_list
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct FromPropertyTreeTraits<std::forward_list<T> > : public Details::SequenceContainerFromPropertyTreeBaseHelper<std::forward_list<T> >
+{
+protected:
+  
+  //! The base helper class type
+  typedef Details::SequenceContainerFromPropertyTreeBaseHelper<std::forward_list<T> > BaseType;
+
+public:
+  
+  //! The return type from a PropertyTree conversion
+  typedef typename BaseType::ReturnType ReturnType;
+
+  //! Convert the property tree to a container object
+  template<template<typename,typename...> class STLCompliantSequenceContainer>
+  static inline ReturnType fromPropertyTree(
+                             const PropertyTree& ptree,
+                             STLCompliantSequenceContainer<std::string>& )
+  {
+    return BaseType::fromPropertyTreeImpl( ptree,
+                                           (void (ReturnType::*)(const typename ReturnType::value_type&))&ReturnType::push_front,
+                                           &ReturnType::reverse );
+  }
+};
+
+/*! Utility::FromPropertyTreeTrais class specialization for std::set
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct FromPropertyTreeTraits<std::set<T> > : public Details::SequenceContainerFromPropertyTreeInsertHelper<std::set<T> >
+{ /* ... */ };
+
+/*! Utility::FromPropertyTreeTrais class specialization for std::unordered_set
+ * \ingroup ptree_traits
+ */
+template<typename T>
+struct FromPropertyTreeTraits<std::unordered_set<T> > : public Details::SequenceContainerFromPropertyTreeInsertHelper<std::unordered_set<T> >
+{ /* ... */ };
+
+/*! Utility::FromPropertyTreeTraits class specialization for std::map
+ * \ingroup ptree_traits
+ */
+template<typename Key, typename T>
+struct FromPropertyTreeTraits<std::map<Key,T> > : public Details::AssociativeContainerFromPropertyTreeHelper<std::map,Key,T>
+{ /* ... */ };
+
+/*! Utility::FromPropertyTreeTraits class specialization for std::unordered_map
+ * \ingroup ptree_traits
+ */
+template<typename Key, typename T>
+struct FromPropertyTreeTraits<std::unordered_map<Key,T> > : public Details::AssociativeContainerFromPropertyTreeHelper<std::unordered_map,Key,T>
+{ /* ... */ };
+
+// Convert the property tree to an object of the desired type
+template<typename T,
+         template<typename,typename...> class STLCompliantSequenceContainer>
+inline typename FromPropertyTreeTraits<T>::ReturnType
+fromPropertyTree( const Utility::PropertyTree& ptree,
+                  STLCompliantSequenceContainer<std::string>& unused_children )
+{
+  return FromPropertyTreeTraits<T>::fromPropertyTree( ptree, unused_children );
+}
+
+// Convert the property tree to an object of the desired type
+template<typename T>
+typename FromPropertyTreeTraits<T>::ReturnType
+fromPropertyTree( const Utility::PropertyTree& ptree,
+                  const bool log_unused_children )
+{
+  std::vector<std::string> unused_children;
+
+  typename FromPropertyTreeTraits<T>::ReturnType obj =
+    Utility::fromPropertyTree<T>( ptree, unused_children );
+
+  // Check for unused children and log if requested
+  if( unused_children.size() > 0 && log_unused_children )
+  {
+    std::ostringstream oss;
+    
+    for( size_t i = 0; i < unused_children.size(); ++i )
+    {
+      oss << "\"" << unused_children[i] << "\"";
+
+      if( i < unused_children.size() - 2 )
+        oss << ", ";
+      else if( i == unused_children.size() - 2 )
+        oss << " and ";
+    }
+
+    FRENSIE_LOG_WARNING( "property tree nodes " << oss.str() <<
+                         " are unused!" );
+  }
+
+  return obj;
+}
+
+namespace Details{
+
+// Convert json array property tree node to sequence container
+template<typename T, typename Enabled>
+template<typename ElementInsertionMemberFunction,
+         typename FinalizeFunction>
+inline T JSONArrayPropertyTreeNodeToSequenceContainerHelper<T,Enabled>::convert(
+                                const Utility::PropertyTree& ptree,
+                                ElementInsertionMemberFunction insert_element,
+                                FinalizeFunction finalize_container )
+{
+  T sequence_container;
+    
+  Utility::PropertyTree::const_iterator node_it, node_end;
+  node_it = ptree.begin();
+  node_end = ptree.end();
+  
+  size_t i = 0;
+  
+  while( node_it != node_end )
+  {
+    try{
+      (sequence_container.*insert_element)( Utility::variant_cast<typename T::value_type>( node_it->second.data() ) );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Unable to convert JSON element " << i <<
+                                " to the desired type!" );
+    ++i;
+    ++node_it;
+  }
+
+  (sequence_container.*finalize_container)();
+  
+  return sequence_container;
+}
+
+
+// Convert json array property tree node to sequence container
+template<typename T>
+template<typename ElementInsertionMemberFunction,
+         typename FinalizeFunction>
+inline T JSONArrayPropertyTreeNodeToSequenceContainerHelper<T,typename std::enable_if<std::is_same<typename T::value_type, Utility::Variant>::value>::type>::convert(
+                                const Utility::PropertyTree& ptree,
+                                ElementInsertionMemberFunction insert_element,
+                                FinalizeFunction finalize_container )
+{ 
+  T sequence_container;
 
   Utility::PropertyTree::const_iterator node_it, node_end;
   node_it = ptree.begin();
   node_end = ptree.end();
-
+    
   while( node_it != node_end )
   {
     (sequence_container.*insert_element)( node_it->second.data() );
     
     ++node_it;
   }
+
+  (sequence_container.*finalize_container)();
   
   return sequence_container;
 }
 
-/*! Convert property tree node to the desired sequence container of Utility::Variant
- *
- * If a node does not store a JSON array and the node is not a leaf, an empty 
- * container will be returned (these types of nodes can only be converted to a 
- * Utility::VariantMap). Use the Utility::doesPTreeNodeStoreJSONArray helper 
- * function to test the node type. To test if the node is a leaf, simply
- * check if the size is equal to zero.
- * \ingroup ptree
- */
-template<template<typename,typename...> class STLCompliantSequenceContainer,
-         typename ElementInsertionMemberFunction>
-inline STLCompliantSequenceContainer<Utility::Variant> convertPTreeNodeToSequenceContainer(
-                                const Utility::PropertyTree& ptree,
-                                ElementInsertionMemberFunction insert_element )
+// Convert a sequence container object object to a Utility::PropertyTree
+template<typename T>
+inline Utility::PropertyTree
+SequenceContainerToPropertyTreeHelper<T>::toPropertyTree(
+                                                       const T& container,
+                                                       const bool inline_data )
 {
-  // This node stores an array
-  if( Utility::doesPTreeNodeStoreJSONArray( ptree ) )
+  Utility::PropertyTree ptree;
+    
+  if( inline_data )
+    ptree.data().setValue( container );
+  else
   {
-    return Details::convertJSONArrayPTreeNodeToSequenceContainer<STLCompliantSequenceContainer>( ptree, insert_element );
+    typename T::const_iterator
+      container_it, container_end;
+    container_it = container.begin();
+    container_end = container.end();
+    
+    // Create a JSON array
+    while( container_it != container_end )
+    {
+      ptree.push_back( std::make_pair("", Utility::toPropertyTree( *container_it, inline_data )) );
+        
+      ++container_it;
+    }
   }
+
+  return ptree;
+}
   
-  // This is a leaf node
+// Convert the property tree to a container object
+template<typename T>
+template<typename ElementInsertionMemberFunction,
+         typename FinalizeFunction>
+inline auto SequenceContainerFromPropertyTreeBaseHelper<T>::fromPropertyTreeImpl(
+                  const PropertyTree& ptree,
+                  ElementInsertionMemberFunction insert_element,
+                  FinalizeFunction finalize_container ) -> ReturnType
+{
+  // This property tree stores an array
+  if( Utility::doesPropertyTreeStoreJSONArray( ptree ) )
+  {
+    return JSONArrayPropertyTreeNodeToSequenceContainerHelper<ReturnType>::convert( ptree, insert_element, finalize_container );
+  }  
+  // This is a leaf node (the data is inline)
   else if( ptree.size() == 0 )
   {
     try{
-      return ptree.data().toType<STLCompliantSequenceContainer<Utility::Variant> >();
+      return Utility::variant_cast<ReturnType>( ptree.data() );
     }
     EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PTreeNodeConversionException,
-                                "Could not convert the node to a sequence "
-                                "container!" );
+                                Utility::PropertyTreeConversionException,
+                                "Could not convert the property tree to a "
+                                "sequence container!" );
   }
   else
-    return STLCompliantSequenceContainer<Utility::Variant>();
+  {
+    THROW_EXCEPTION( Utility::PropertyTreeConversionException,
+                     "Could not convert the property tree to a sequence "
+                     "container because the data is not stored inline or as "
+                     "a JSON array!" );
+    return ReturnType();
+  }
 }
 
-/*! Convert property tree node to the desired associated container of std::string and Utility::Variant
- *
- * If the node stores a JSON array, an empty associative container will be
- * returned. This is because of the way that JSON arrays are handled by the 
- * property tree - JSON array elements are simply child nodes with no name (no 
- * key value). Use the Utility::doesPTreeNodeStoreJSONArray helper function to 
- * test the node type.
- * \ingroup ptree
- */
-template<template<typename,typename,typename...> class STLCompliantAssociativeContainer>
-inline STLCompliantAssociativeContainer<std::string,Utility::Variant>
-convertPTreeNodeToAssociativeContainer( const Utility::PropertyTree& ptree )
+// Convert a sequence container object object to a Utility::PropertyTree
+template<template<typename,typename,typename...> class STLCompliantAssociativeContainer,
+         typename Key,
+         typename T>
+inline Utility::PropertyTree AssociativeContainerToPropertyTreeHelper<STLCompliantAssociativeContainer,Key,T>::toPropertyTree(
+                      const STLCompliantAssociativeContainer<Key,T>& container,
+                      const bool inline_data )
 {
-  // This node does not store an array
-  if( !Utility::doesPTreeNodeStoreJSONArray( ptree ) )
+  Utility::PropertyTree ptree;
+  
+  if( inline_data )
+    ptree.data().setValue( container );
+  else
   {
-    STLCompliantAssociativeContainer<std::string,Utility::Variant> map;
+    typename STLCompliantAssociativeContainer<Key,T>::const_iterator
+      container_it, container_end;
+    container_it = container.begin();
+    container_end = container.end();
+    
+    // Create child nodes
+    while( container_it != container_end )
+    {
+      ptree.put_child( Utility::toString(container_it->first),
+                       Utility::toPropertyTree( container_it->second, inline_data ) );
+        
+      ++container_it;
+    }
+  }
+
+  return ptree;
+}
+
+// Convert the property tree to an associative container
+template<template<typename,typename,typename...> class STLCompliantAssociativeContainer,
+         typename Key,
+         typename T,
+         typename Enabled>
+template<template<typename,typename...> class STLCompliantSequenceContainer>
+inline auto AssociativeContainerFromPropertyTreeHelper<STLCompliantAssociativeContainer,Key,T,Enabled>::fromPropertyTree(
+                    const PropertyTree& ptree,
+                    STLCompliantSequenceContainer<std::string>& ) -> ReturnType
+{
+  // Check that this node does not store an array
+  TEST_FOR_EXCEPTION( Utility::doesPropertyTreeStoreJSONArray( ptree ),
+                      Utility::PropertyTreeConversionException,
+                      "Could not convert the property tree to the "
+                      "associative container type because the property tree "
+                      "contains a JSON array!" );
+
+  if( ptree.size() == 0 )
+  {
+    try{
+      return Utility::variant_cast<ReturnType>( ptree.data() );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Could not convert the property tree to an "
+                                "associative container!" );
+  }
+  else
+  {
+    ReturnType map;
   
     Utility::PropertyTree::const_iterator node_it, node_end;
     node_it = ptree.begin();
@@ -164,63 +673,138 @@ convertPTreeNodeToAssociativeContainer( const Utility::PropertyTree& ptree )
     
     while( node_it != node_end )
     {
-      typename STLCompliantAssociativeContainer<std::string,Utility::Variant>::iterator child_node_map_element =
-        map.find( node_it->first );
-
-      // This child node does not have an associated key in the map
-      if( child_node_map_element == map.end() )
-      {
-        // Check if this is a leaf node
-        if( node_it->second.size() == 0 )
-          map.insert( std::make_pair(node_it->first, node_it->second.data()) );
-        // Check if this is a JSON array node
-        else if( Utility::doesPTreeNodeStoreJSONArray( node_it->second ) )
-        {
-          VariantVector vector =
-            convertJSONArrayPTreeNodeToSequenceContainer<std::vector>( node_it->second,
-                                                                       (void (VariantVector::*)(const VariantVector::value_type&))&VariantVector::push_back );
-
-          map.insert( std::make_pair(node_it->first, Utility::Variant(vector)) );
-        }
-        // This is not a leaf node or a JSON array node - insert the entire node
-        else
-        {
-          STLCompliantAssociativeContainer<std::string,Utility::Variant> sub_map = 
-            convertPTreeNodeToAssociativeContainer<STLCompliantAssociativeContainer>( node_it->second );
-          
-          map.insert( std::make_pair(node_it->first, Utility::Variant(sub_map)) );
-        }
-      }
+      Key map_key;
       
-      // Another child node with the same key has already been added to the
-      // map - append it to the key's Utility::Variant object
-      else
-      {
-        // Check if this is a leaf node
-        if( node_it->second.size() == 0 )
-          child_node_map_element->second += node_it->second.data();
-        // Check if this is a JSON array node
-        else if( Utility::doesPTreeNodeStoreJSONArray( node_it->second ) )
-        {
-          child_node_map_element->second +=
-            convertJSONArrayPTreeNodeToSequenceContainer<std::list>( node_it->second,
-                                                                     (void (VariantList::*)(const VariantVector::value_type&))&VariantList::push_back );
-        }
-        // This is not a leaf node or JSON array node - insert the entire node
-        else
-        {
-          child_node_map_element->second +=
-            convertPTreeNodeToAssociativeContainer<STLCompliantAssociativeContainer>( node_it->second );
-        }
+      try{
+        map_key = Utility::fromString<Key>( node_it->first );
       }
+      EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                  Utility::PropertyTreeConversionException,
+                                  "Could not convert property tree node key "
+                                  << node_it->first << " to the requested "
+                                  "map key type!" );
+      
+      typename ReturnType::const_iterator
+        child_node_map_element = map.find( map_key );
+      
+      // Check that this child node key is unique
+      TEST_FOR_EXCEPTION( child_node_map_element != map.end(),
+                          Utility::PropertyTreeConversionException,
+                          "Could not convert the property tree to the "
+                          "associative container type because child node "
+                          "key \"" << node_it->first << "\" appears "
+                          "multiple times!" );
+      
+      try{
+        map[map_key] = Utility::fromPropertyTree<T>( node_it->second );
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                  Utility::PropertyTreeConversionException,
+                                  "Could not convert property tree node \""
+                                  << node_it->first << "\" to the associative "
+                                  "container value type!" );
       
       ++node_it;
     }
-
+    
     return map;
   }
-  else
-    return STLCompliantAssociativeContainer<std::string,Utility::Variant>();  
+}
+
+// Convert the property tree to an associative container
+template<template<typename,typename,typename...> class STLCompliantAssociativeContainer,
+         typename Key>
+template<template<typename,typename...> class STLCompliantSequenceContainer>
+inline auto AssociativeContainerFromPropertyTreeHelper<STLCompliantAssociativeContainer,Key,Utility::Variant>::fromPropertyTree(
+    const Utility::PropertyTree& ptree,
+    STLCompliantSequenceContainer<std::string>& unused_children ) -> ReturnType
+{
+  // Check that this node does not store an array
+  TEST_FOR_EXCEPTION( Utility::doesPropertyTreeStoreJSONArray( ptree ),
+                      Utility::PropertyTreeConversionException,
+                      "Could not convert the property tree to the "
+                      "associative container type because the property tree "
+                      "contains a JSON array!" );
+  
+  ReturnType map;
+  
+  Utility::PropertyTree::const_iterator node_it, node_end;
+  node_it = ptree.begin();
+  node_end = ptree.end();
+  
+  while( node_it != node_end )
+  {
+    Key map_key;
+    
+    try{
+      map_key = Utility::fromString<Key>( node_it->first );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Could not convert property tree node key "
+                                << node_it->first << " to the requested "
+                                "map key type!" );
+    
+    typename ReturnType::iterator
+      child_node_map_element = map.find( map_key );
+    
+    // This child node does not have an associated key in the map
+    if( child_node_map_element == map.end() )
+    {
+      // Check if this is a leaf node
+      if( node_it->second.size() == 0 )
+        map.insert( std::make_pair(map_key, node_it->second.data()) );
+      
+      // Check if this is a JSON array node
+      else if( Utility::doesPropertyTreeStoreJSONArray( node_it->second ) )
+      {
+        VariantVector vector =
+          Utility::fromPropertyTree<VariantVector>( node_it->second,
+                                                    unused_children );
+        
+        map.insert( std::make_pair(node_it->first, Utility::Variant(vector)) );
+      }
+      
+      // This is not a leaf node or a JSON array node - insert entire node
+      else
+      {
+        VariantMap sub_map =
+          Utility::fromPropertyTree<VariantMap>( node_it->second,
+                                                 unused_children );
+        
+        map.insert( std::make_pair(node_it->first, Utility::Variant(sub_map)) );
+      }
+    }
+    
+    // Another child node with the same key has already been added to the
+    // map - append it to the key's Utility::Variant object
+    else
+    {
+      // Check if this is a leaf node
+      if( node_it->second.size() == 0 )
+        child_node_map_element->second += node_it->second.data();
+      
+      // Check if this is a JSON array node
+      else if( Utility::doesPropertyTreeStoreJSONArray( node_it->second ) )
+      {
+        child_node_map_element->second +=
+          Utility::fromPropertyTree<VariantVector>( node_it->second,
+                                                    unused_children );
+      }
+      
+      // This is not a leaf node or JSON array node - insert entire node
+      else
+      {
+        child_node_map_element->second +=
+          Utility::fromPropertyTree<VariantMap>( node_it->second,
+                                                 unused_children );
+      }
+    }
+    
+    ++node_it;
+  }
+  
+  return map;
 }
   
 } // end Details namespace
