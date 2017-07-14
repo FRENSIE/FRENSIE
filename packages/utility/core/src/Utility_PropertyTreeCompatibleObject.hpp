@@ -47,17 +47,37 @@ struct ToPropertyTreeTraits<PropertyTreeCompatibleObject>
 {
   //! Convert an object of DerivedType to a Utility::PropertyTree
   static inline PropertyTree toPropertyTree(
-                        const PropertyTreeCompatibleObject& obj,
-                        const bool inline_data = obj.isDataInlinedByDefault() )
+                                       const PropertyTreeCompatibleObject& obj,
+                                       const bool inline_data )
   { return obj.toPropertyTree( inline_data ); }
 };
 
-/*! \brief Specialization of Utility::ToPropertyTreeTraits for types that
+/*! \brief Partial specialization of Utility::ToPropertyTreeTraits for 
+ * types that inherit from Utility::PropertyTreeCompatibleObject
+ * \ingroup ptree_traits
+ */
+template<typename DerivedType>
+struct ToPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_of<PropertyTreeCompatibleObject,DerivedType>::value>::type> : public ToPropertyTreeTraits<PropertyTreeCompatibleObject>
+{ /* ... */ };
+
+/*! \brief Overload of Utility::toPropertyTree for
+ * Utility::PropertyTreeCompatibleObject
+ *
+ * The data inlining default value will be retrieved from the 
+ * Utility::PropertyTreeCompatibleObject that is passed in.
+ * \ingroup ptree
+ */
+inline Utility::PropertyTree toPropertyTree( const PropertyTreeCompatibleObject& obj )
+{
+  Utility::ToPropertyTreeTraits<PropertyTreeCompatibleObject>::toPropertyTree( obj, obj.isDataInlinedByDefault() );
+}
+
+/*! \brief Specialization of Utility::FromPropertyTreeTraits for types that
  * inherit from Utility::PropertyTreeCompatibleObject
  * \ingroup ptree_traits
  */
 template<typename DerivedType>
-struct ToPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_of<PropertyTreeCompatibleObject,DerivedType>::value && !std::is_abstract<DerivedType>::value>::type>
+struct FromPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_of<PropertyTreeCompatibleObject,DerivedType>::value && !std::is_abstract<DerivedType>::value>::type>
 {
   //! The type that a property tree will be converted to
   typedef DerivedType ReturnType;
@@ -66,7 +86,28 @@ struct ToPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_of<
   template<template<typename,typename...> class STLCompliantSequenceContainer>
   static inline ReturnType fromPropertyTree(
                   const PropertyTree& ptree,
-                  STLCompliantSequenceContainer<std::stirng>& unused_children )
+                  STLCompliantSequenceContainer<std::string>& unused_children )
+  { 
+    ReturnType obj;
+
+    std::vector<std::string> unused_children_copy;
+
+    obj.fromPropertyTree( ptree, unused_children );
+
+    if( unused_children_copy.size() > 0 )
+    {
+      unused_children.insert( unused_children.end(),
+                              unused_children_copy.begin(),
+                              unused_children_copy.end() );
+    }
+    
+    return obj;
+  }
+
+  //! Convert the property tree to an object of type T
+  static inline ReturnType fromPropertyTree(
+                                    const PropertyTree& ptree,
+                                    std::vector<std::string>& unused_children )
   { 
     ReturnType obj;
 
@@ -74,7 +115,7 @@ struct ToPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_of<
 
     return obj;
   }
-}
+};
   
 } // end Utility namespace
 

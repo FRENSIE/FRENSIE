@@ -127,20 +127,15 @@ public:
   //! Method for initializing the object from an input stream
   using IStreamableObject::fromStream;
 
-  //! Method for placing an object in the desired property tree node
-  void toNode( const std::string& node_key,
-               Utility::PropertyTree& ptree,
-               const bool inline_data ) const override;
+  //! Method for converting the type to a property tree
+  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
 
-  //! Method for placing an object in the desired property tree node
-  using PropertyTreeCompatibleObject::toNode;
+  //! Method for converting the type to a property tree
+  using PropertyTreeCompatibleObject::toPropertyTree;
 
-  //! Method for initializing the object from a property tree node
-  void fromNode( const Utility::PropertyTree& node,
-                 std::vector<std::string>& unused_children ) override;
-
-  //! Method for initializing the object from a property tree node
-  using PropertyTreeCompatibleObject::fromNode;
+  //! Method for initializing the object from a property tree 
+  void fromPropertyTree( const Utility::PropertyTree& node,
+                         std::vector<std::string>& unused_children ) override;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareDeltaDistribution& other ) const;
@@ -187,52 +182,6 @@ private:
 typedef UnitAwareDeltaDistribution<void,void> DeltaDistribution;
 
 } // end Utility namespace
-
-namespace Teuchos{
-
-/*! Type name traits specialization for the Utility::DeltaDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files.
- */
-template<>
-class TypeNameTraits<Utility::DeltaDistribution>
-{
-public:
-  static std::string name()
-  {
-    return "Delta Distribution";
-  }
-  static std::string concreteName( const Utility::DeltaDistribution& instance )
-  {
-    return name();
-  }
-};
-
-/*! \brief Type name traits partial specialization for the
- * Utility::UnitAwareDeltaDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files.
- */
-template<typename U, typename V>
-class TypeNameTraits<Utility::UnitAwareDeltaDistribution<U,V> >
-{
-public:
-  static std::string name()
-  {
-    return "Unit-Aware Delta Distribution (" +
-      Utility::UnitTraits<U>::symbol() + "," +
-      Utility::UnitTraits<V>::symbol() + ")";
-  }
-  static std::string concreteName(
-		     const Utility::UnitAwareDeltaDistribution<U,V>& instance )
-  {
-    return name();
-  }
-};
-
-} // end Teuchos namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes

@@ -40,27 +40,34 @@ class OStreamableObject
   virtual void toStream( std::ostream& os ) const = 0;
 };
 
-/*! \brief Partial specialization of Utility::ToStringTraits for 
- * Utility::OStreamableObject
+/*! Specialization of Utility::ToStringTraits for Utility::OStreamable object
  * \ingroup to_string_traits
  */
-template<typename DerivedType>
-struct ToStringTraits<DerivedType,typename std::enable_if<std::is_base_of<OStreamableObject,DerivedType>::value>::type>
+template<>
+struct ToStringTraits<OStreamableObject>
 {
   //! Convert a Utility::OStreamableObject to a string
-  static inline std::string toString( const DerivedType& obj )
+  static inline std::string toString( const OStreamableObject& obj )
   {
     std::ostringstream oss;
 
-    ToStringTraits<DerivedType>::toStream( oss, obj );
+    ToStringTraits<OStreamableObject>::toStream( oss, obj );
 
     return oss.str();
   }
 
   //! Place the Utility::OStreamableObject in a stream
-  static inline void toStream( std::ostream& os, const DerivedType& obj )
+  static inline void toStream( std::ostream& os, const OStreamableObject& obj )
   { obj.toStream( os ); }
 };
+
+/*! \brief Partial specialization of Utility::ToStringTraits for types that
+ * inherit from Utility::OStreamableObject
+ * \ingroup to_string_traits
+ */
+template<typename DerivedType>
+struct ToStringTraits<DerivedType,typename std::enable_if<std::is_base_of<OStreamableObject,DerivedType>::value>::type> : public ToStringTraits<OStreamableObject>
+{ /* ... */ };
   
 } // end Utility namespace
 

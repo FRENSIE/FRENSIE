@@ -406,35 +406,25 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream(
 
 // Method for placing the object in the desired property tree node
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toNode(
-                                                 const std::string& node_key,
-                                                 Utility::PropertyTree& ptree,
+Utility::PropertyTree UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
                                                  const bool inline_data ) const
 {
+  Utility::PropertyTree ptree;
+  
   if( inline_data )
-  {
-    std::ostringstream oss;
-
-    this->toStream( oss );
-
-    ptree.put( node_key, oss.str() );
-  }
+    ptree.data().setValue( *this );
   else
   {
-    Utility::PropertyTree child_tree;
-  
-    child_tree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareUniformDistribution::distribution_type ) );
-    child_tree.put( "min indep value", Utility::getRawQuantity( d_min_independent_value ) );
-    child_tree.put( "max indep value", Utility::getRawQuantity( d_max_independent_value ) );
-    child_tree.put( "dep value", Utility::getRawQuantity( d_dependent_value ) );
-    
-    ptree.put_child( node_key, child_tree );
+    ptree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareUniformDistribution::distribution_type ) );
+    ptree.put( "min indep value", Utility::getRawQuantity( d_min_independent_value ) );
+    ptree.put( "max indep value", Utility::getRawQuantity( d_max_independent_value ) );
+    ptree.put( "dep value", Utility::getRawQuantity( d_dependent_value ) );
   }
 }
 
 // Method for initializing the object from a property tree node
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
                                     const Utility::PropertyTree& node,
                                     std::vector<std::string>& unused_children )
 {
@@ -447,7 +437,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
       this->fromStream( iss );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PTreeNodeConversionException,
+                                Utility::PropertyTreeConversionException,
                                 "Could not create the uniform "
                                 "distribution!" );
   }
@@ -475,7 +465,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->verifyDistributionType( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the uniform "
                                     "distribution!" );
         
@@ -489,7 +479,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->setMinIndependentValue( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the uniform "
                                     "distribution!" );
         
@@ -503,7 +493,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->setMaxIndependentValue( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the uniform "
                                     "distribution!" );
         
@@ -517,7 +507,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->setDependentValue( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the uniform "
                                     "distribution!" );
         
@@ -536,20 +526,20 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
 
     // Make sure that the distribution type was verified
     TEST_FOR_EXCEPTION( !type_verified,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The uniform distribution could not be constructed "
                         "because the type could not be verified!" );
     
     // Make sure that the min indep value was set
     TEST_FOR_EXCEPTION( !min_indep_val_set,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The uniform distribution could not be constructed "
                         "because the min independent value was not "
                         "specified!" );
     
     // Make sure that the max indep value was set
     TEST_FOR_EXCEPTION( !max_indep_val_set,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The uniform distribution could not be constructed "
                         "because the max independent value was not "
                         "specified!" );
@@ -559,7 +549,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromNode(
       this->verifyValidIndependentValues();
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PTreeNodeConversionException,
+                                Utility::PropertyTreeConversionException,
                                 "Could not create the uniform "
                                 "distribution!" );
     

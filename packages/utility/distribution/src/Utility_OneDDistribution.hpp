@@ -22,6 +22,7 @@
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 #include "Utility_PropertyTreeCompatibleObject.hpp"
+#include "Utility_StreamableObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ComparisonTraits.hpp"
 #include "Utility_UnitTraits.hpp"
@@ -42,7 +43,8 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareOneDDistribution : public PropertyTreeCompatibleObject
+class UnitAwareOneDDistribution : public PropertyTreeCompatibleObject,
+                                  public StreamableObject
 {
 
 protected:
@@ -121,14 +123,14 @@ public:
   //! Test if the distribution has the same bounds
   bool hasSameBounds( const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const;
 
+  //! Check if data is inlined by default when converting to a property tree
+  bool isDataInlinedByDefault() const override;
+
   //! Method for initializing the object from an input stream
   using IStreamableObject::fromStream;
   
   //! Method for placing an object in the desired property tree node
-  using PropertyTreeCompatibleObject::toNode;
-
-  //! Method for initializing the object from a property tree node
-  using PropertyTreeCompatibleObject::fromNode;
+  using PropertyTreeCompatibleObject::toPropertyTree;
 
 protected:
 
@@ -258,6 +260,13 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBou
     Utility::relError( getRawQuantity( this->getLowerBoundOfIndepVar() ),
                        getRawQuantity( distribution.getLowerBoundOfIndepVar()))
     < 1e-9;
+}
+
+// Check if data is inlined by default when converting to a property tree
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDataInlinedByDefault() const
+{
+  return false;
 }
 
 /*! The one-dimensional distribution (unit-agnostic)

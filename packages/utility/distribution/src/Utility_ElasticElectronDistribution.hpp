@@ -96,20 +96,15 @@ public:
   //! Method for initializing the object from an input stream
   using IStreamableObject::fromStream;
 
-  //! Method for placing an object in the desired property tree node
-  void toNode( const std::string& node_key,
-               Utility::PropertyTree& ptree,
-               const bool inline_data ) const override;
+  //! Method for converting the type to a property tree
+  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
 
-  //! Method for placing an object in the desired property tree node
-  using PropertyTreeCompatibleObject::toNode;
+  //! Method for converting the type to a property tree
+  using PropertyTreeCompatibleObject::toPropertyTree;
 
   //! Method for initializing the object from a property tree node
-  void fromNode( const Utility::PropertyTree& node,
-                 std::vector<std::string>& unused_children ) override;
-
-  //! Method for initializing the object from a property tree node
-  using PropertyTreeCompatibleObject::fromNode;
+  void fromPropertyTree( const Utility::PropertyTree& node,
+                         std::vector<std::string>& unused_children ) override;
 
   //! Equality comparison operator
   bool operator==( const ElasticElectronDistribution& other ) const;

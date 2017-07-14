@@ -485,32 +485,24 @@ void ElasticElectronDistribution<InterpolationPolicy>::fromStream(
   this->initializeDistributionENDL( independent_values, dependent_values );
 }
 
-// Method for placing an object in the desired property tree node
+// Method for converting the type to a property tree
 template<typename InterpolationPolicy>
-void ElasticElectronDistribution<InterpolationPolicy>::toNode(
-                                                 const std::string& node_key,
-                                                 Utility::PropertyTree& ptree,
+Utility::PropertyTree ElasticElectronDistribution<InterpolationPolicy>::toNode(
                                                  const bool inline_data ) const
 {
+  Utility::PropertyTree ptree;
+  
   if( inline_data )
-  {
-    std::ostringstream oss;
-
-    this->toStream( oss );
-
-    ptree.put( node_key, oss.str() );
-  }
+    ptree.data().setValue( *this );
   else
   {
-    Utility::PropertyTree child_tree;
-
     std::string type_name = 
       Utility::convertOneDDistributionTypeToString( ElasticElectronDistribution<InterpolationPolicy>::distribution_type );
 
     type_name += " ";
     type_name += InterpolationPolicy::name();
     
-    child_tree.put( "type", type_name );
+    ptree.put( "type", type_name );
 
     std::vector<double> independent_values( d_distribution.size() );
     std::vector<double> dependent_values( d_distribution.size() );
@@ -521,18 +513,18 @@ void ElasticElectronDistribution<InterpolationPolicy>::toNode(
       dependent_values[i] = Utility::get<2>( d_distribution[i] );
     }
 
-    child_tree.put( "independent values", independent_values );
-    child_tree.put( "dependent values", dependent_values );
-    child_tree.put( "moliere screening constant", d_moliere_screening_constant );
-    child_tree.put( "screened rutherford norm constant", d_screened_rutherford_normalization_constant );
-
-    ptree.put_child( node_key, child_tree );
+    ptree.put( "independent values", independent_values );
+    ptree.put( "dependent values", dependent_values );
+    ptree.put( "moliere screening constant", d_moliere_screening_constant );
+    ptree.put( "screened rutherford norm constant", d_screened_rutherford_normalization_constant );
   }
+
+  return ptree;
 }
 
-// Method for initializing the object from a property tree node
+// Method for initializing the object from a property tree
 template<typename InterpolationPolicy>
-void ElasticElectronDistribution<InterpolationPolicy>::fromNode(
+void ElasticElectronDistribution<InterpolationPolicy>::fromPropertyTree(
                                     const Utility::PropertyTree& node,
                                     std::vector<std::string>& unused_children )
 {

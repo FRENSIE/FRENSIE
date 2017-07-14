@@ -330,36 +330,28 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
 
 // Method for placing the object in the desired property tree node
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toNode(
-                                                 const std::string& node_key,
-                                                 Utility::PropertyTree& ptree,
+Utility::PropertyTree UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
                                                  const bool inline_data ) const
 {
+  Utility::PropertyTree ptree;
+  
   if( inline_data )
-  {
-    std::ostringstream oss;
-
-    this->toStream( oss );
-
-    ptree.put( node_key, oss.str() );
-  }
+    ptree.data().setValue( *this );
   else
   {
-    Utility::PropertyTree child_tree;
-
-    child_tree.put( "type", Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) );
-    child_tree.put( "location", Utility::getRawQuantity( d_location ) );
+    ptree.put( "type", Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) );
+    ptree.put( "location", Utility::getRawQuantity( d_location ) );
 
     if( d_multiplier != DQT::one() )
-      child_tree.put( "multiplier", Utility::getRawQuantity( d_multiplier ) );
-
-    ptree.put_child( node_key, child_tree );
+      ptree.put( "multiplier", Utility::getRawQuantity( d_multiplier ) );
   }
+
+  return ptree;
 }
 
-// Method for initializing the object from a property tree node
+// Method for initializing the object from a property tree
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
                                     const Utility::PropertyTree& node,
                                     std::vector<std::string>& unused_children )
 {
@@ -372,7 +364,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
       this->fromStream( iss );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PTreeNodeConversionException,
+                                Utility::PropertyTreeConversionException,
                                 "Could not create the delta "
                                 "distribution!" );
   }
@@ -399,7 +391,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->verifyDistributionType( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the delta "
                                     "distribution!" );
 
@@ -413,7 +405,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->setLocationValue( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the delta "
                                     "distribution!" );
 
@@ -427,7 +419,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->setMultiplierValue( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the delta "
                                     "distribution!" );
 
@@ -446,13 +438,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromNode(
 
     // Make sure that the distribution type was verified
     TEST_FOR_EXCEPTION( !type_verified,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The delta distribution could not be constructed "
                         "because the type could not be verified!" );
 
     // Make sure that the location value was set
     TEST_FOR_EXCEPTION( !location_set,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The delta distribution could not be constructed "
                         "because the location value was not specified!" );
     

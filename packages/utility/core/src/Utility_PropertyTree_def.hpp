@@ -333,6 +333,13 @@ inline Utility::PropertyTree toPropertyTree( const T& obj,
   return ToPropertyTreeTraits<T>::toPropertyTree( obj, inline_data );
 }
 
+// Convert the object to a property tree
+template<typename T>
+inline Utility::PropertyTree toPropertyTree( const T& obj )
+{
+  return Utility::toPropertyTree( obj, ToPropertyTreeTraits<T>::InlineDefault::value );
+}
+
 // Convert the property tree to an object of type T
 template<typename T, typename Enabled>
 template<template<typename,typename...> class STLCompliantSequenceContainer>

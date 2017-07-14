@@ -433,42 +433,34 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
   this->initializeDistribution( independent_values, dependent_values, false );
 }
 
-// Method for placing the object in the desired property tree node
+// Method for converting the type to a property tree
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toNode(
-                                                 const std::string& node_key,
-                                                 Utility::PropertyTree& ptree,
+Utility::PropertyTree UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
                                                  const bool inline_data ) const
 {
+  Utility::PropertyTree ptree;
+  
   if( inline_data )
-  {
-    std::ostringstream oss;
-
-    this->toStream( oss );
-
-    ptree.put( node_key, oss.str() );
-  }
+    ptree.data().setValue( *this );
   else
   {
-    Utility::PropertyTree child_tree;
-
-    child_tree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareDiscreteDistribution::distribution_type ) );
+    ptree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareDiscreteDistribution::distribution_type ) );
 
     std::vector<double> independent_values, dependent_values;
 
     this->reconstructOriginalUnitlessDistribution( independent_values,
                                                    dependent_values );
     
-    child_tree.put( "independent values", independent_values );
-    child_tree.put( "dependent values", dependent_values );
-
-    ptree.put_child( node_key, child_tree );
+    ptree.put( "independent values", independent_values );
+    ptree.put( "dependent values", dependent_values );
   }
+
+  return ptree;
 }
 
 // Method for initializing the object from a property tree node
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
                                     const Utility::PropertyTree& node,
                                     std::vector<std::string>& unused_children )
 {
@@ -481,7 +473,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
       this->fromStream( iss );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PTreeNodeConversionException,
+                                Utility::PropertyTreeConversionException,
                                 "Could not create the discrete "
                                 "distribution!" );
   }
@@ -510,7 +502,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
           this->verifyDistributionType( node_it->second.data() );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the discrete "
                                     "distribution!" );
 
@@ -525,7 +517,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
                                           independent_values );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the discrete "
                                     "distribution!" );
 
@@ -540,7 +532,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
                                         dependent_values );
         }
         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PTreeNodeConversionException,
+                                    Utility::PropertyTreeConversionException,
                                     "Could not create the discrete "
                                     "distribution!" );
 
@@ -559,19 +551,19 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
 
     // Make sure that the distribution type was verified
     TEST_FOR_EXCEPTION( !type_verified,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The discrete distribution could not be constructed "
                         "because the type could not be verified!" );
 
     // Make sure that the independent values were set
     TEST_FOR_EXCEPTION( !independent_vals_extracted,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The discrete distribution could not be constructed "
                         "because the independent values were not specified!" );
 
     // Make sure that the dependent values were set
     TEST_FOR_EXCEPTION( !dependent_vals_extracted,
-                        Utility::PTreeNodeConversionException,
+                        Utility::PropertyTreeConversionException,
                         "The discrete distribution could not be constructed "
                         "because the dependent values were not specified!" );
 
@@ -580,7 +572,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromNode(
       this->verifyValidValues( independent_values, dependent_values );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PTreeNodeConversionException,
+                                Utility::PropertyTreeConversionException,
                                 "Could not create the discrete "
                                 "distribution!" );
 

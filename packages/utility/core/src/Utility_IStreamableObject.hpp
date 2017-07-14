@@ -96,7 +96,8 @@ struct FromStringTraits<DerivedType,typename std::enable_if<std::is_base_of<IStr
 namespace std{
 
 //! Extract a Utility::IStreamableObject from a stream
-inline std::istream& operator>>( std::istream& is, IstreamableObject& obj )
+inline std::istream& operator>>( std::istream& is,
+                                 Utility::IStreamableObject& obj )
 {
   Utility::fromStream( is, obj );
 

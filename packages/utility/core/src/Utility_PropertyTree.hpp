@@ -231,9 +231,19 @@ struct FromPropertyTreeTraits<std::unordered_map<Key,T> >;
  * \ingroup ptree
  */
 template<typename T>
-Utility::PropertyTree toPropertyTree(
-      const T& obj,
-      const bool inline_data = ToPropertyTreeTraits<T>::InlineDefault::value );
+Utility::PropertyTree toPropertyTree( const T& obj, const bool inline_data );
+
+/*! Convert the object to a property tree
+ *
+ * This method relies on the Utility::ToPropertyTreeTraits class associated
+ * with type T to do the conversion. It is possible to overload this method
+ * for a custom type, however it is recommended that a specialization of
+ * the Utility::ToPropertyTreeTraits class is created instead. The inline
+ * data default value for type T will be used.
+ * \ingroup ptree
+ */
+template<typename T>
+Utility::PropertyTree toPropertyTree( const T& obj );
 
 /*! Convert the property tree to an object of the desired type
  *
