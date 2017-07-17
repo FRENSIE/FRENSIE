@@ -274,17 +274,20 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isContinuous() c
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) << ", ";
+  os << Utility::container_start_char
+     << Utility::convertOneDDistributionTypeToString( ThisType::distribution_type )
+     << Utility::next_container_element_char << " ";
 
   Utility::toStream( os, Utility::getRawQuantity( d_location ) );
 
   if( d_multiplier != DQT::one() )
   {
-    os << ", ";
+    os << Utility::next_container_element_char << " ";
+    
     Utility::toStream( os, Utility::getRawQuantity( d_multiplier ) );
   }
 
-  os << "}";
+  os << Utility::container_end_char;
 }
 
 // Method for initializing the object from an input stream
@@ -295,8 +298,8 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
 {
   // Read in the distribution representation
   std::string dist_rep;
-  std::getline( is, dist_rep, '}' );
-  dist_rep += '}';
+  std::getline( is, dist_rep, Utility::container_end_char );
+  dist_rep += Utility::container_end_char;
 
   VariantVector distribution_data;
 
@@ -336,7 +339,7 @@ Utility::PropertyTree UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>:
   Utility::PropertyTree ptree;
   
   if( inline_data )
-    ptree.data().setValue( *this );
+    ptree.put_value( *this );
   else
   {
     ptree.put( "type", Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) );

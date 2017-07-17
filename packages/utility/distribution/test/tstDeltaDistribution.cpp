@@ -579,8 +579,8 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, istream_operator )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree node
-TEUCHOS_UNIT_TEST( DeltaDistribution, toNode )
+// Check that the distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( DeltaDistribution, toPropertyTree )
 {
   // Use the property tree interface directly
   Utility::PropertyTree ptree;
@@ -598,35 +598,75 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, toNode )
 
   TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( tab_distribution.get() ) );
 
+  ptree.clear();
+
   // Use the PropertyTreeCompatibleObject interface
-  distribution->toNode( "test distribution", ptree, true );
+  ptree = distribution->toPropertyTree( true );
 
-  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+  copy_dist = ptree.get_value<Utility::DeltaDistribution>();
 
-  copy_dist = ptree.get<Utility::DeltaDistribution>( "test distribution" );
-
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
   TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
-  distribution->toNode( "test distribution", ptree, false );
+  ptree = distribution->toPropertyTree( false );
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
 
   Utility::DeltaDistribution test_dist( -1.0, 0.5 );
 
-  test_dist.toNode( "test distribution", ptree, true );
+  ptree = test_dist.toPropertyTree( true );
 
-  copy_dist = ptree.get<Utility::DeltaDistribution>( "test distribution" );
+  copy_dist = ptree.get_value<Utility::DeltaDistribution>();
 
   TEST_EQUALITY_CONST( copy_dist, test_dist );
 
-  test_dist.toNode( "test distribution", ptree, false );
+  ptree = test_dist.toPropertyTree();
   
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), -1.0 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "multiplier" ), 0.5 );
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "multiplier" ), 0.5 );
+
+  // Use the PropertyTree helper methods
+  ptree = Utility::toPropertyTree( *distribution, true );
+
+  copy_dist = ptree.get_value<Utility::DeltaDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::DeltaDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+
+  ptree = Utility::toPropertyTree( *distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+
+  ptree = Utility::toPropertyTree( *tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -649,70 +689,110 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toNode )
 
   TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_tab_distribution.get() )) );
 
+  ptree.clear();
+  
   // Use the PropertyTreeCompatibleObject interface
-  unit_aware_distribution->toNode( "test distribution", ptree, true );
+  ptree = unit_aware_distribution->toPropertyTree( true );
 
-  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+  copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
 
-  copy_dist = ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
-
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
   TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
-  unit_aware_distribution->toNode( "test distribution", ptree, false );
+  ptree = unit_aware_distribution->toPropertyTree( false );
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), 3.0 );
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
 
   Utility::UnitAwareDeltaDistribution<si::time,si::length>
     test_dist( -1.0*si::seconds, 0.5*si::meters );
 
-  test_dist.toNode( "test distribution", ptree, true );
+  ptree = test_dist.toPropertyTree( true );
 
-  copy_dist = ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
+  copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
 
   TEST_EQUALITY_CONST( copy_dist, test_dist );
 
-  test_dist.toNode( "test distribution", ptree, false );
+  ptree = test_dist.toPropertyTree();
   
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "location" ), -1.0 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "multiplier" ), 0.5 );
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "multiplier" ), 0.5 );
+
+  // Use the PropertyTree helper methods
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be read from a property tree node
-TEUCHOS_UNIT_TEST( DeltaDistribution, fromNode )
+TEUCHOS_UNIT_TEST( DeltaDistribution, fromPropertyTree )
 {
   Utility::DeltaDistribution dist;
 
   std::vector<std::string> unused_children;
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution A" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution A" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
   TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution B" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution B" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi );
   TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution C" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution C" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 1.0 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution D" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution D" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        -2*Utility::PhysicalConstants::pi );
@@ -721,48 +801,96 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, fromNode )
   TEST_EQUALITY_CONST( unused_children.size(), 1 );
   TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+              std::runtime_error );
+
+  unused_children.clear();
+
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
+                         test_dists_ptree->get_child( "Delta Distribution A" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
+                         test_dists_ptree->get_child( "Delta Distribution B" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
+                         test_dists_ptree->get_child( "Delta Distribution C" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
+                         test_dists_ptree->get_child( "Delta Distribution D" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
+                       0.5 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution H" ) ),
               std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be read from a property tree node
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromNode )
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
 {
   Utility::UnitAwareDeltaDistribution<si::time,si::length> dist;
 
   std::vector<std::string> unused_children;
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution A" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution A" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
   TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution B" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution B" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi*si::seconds );
   TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution C" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution C" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
   TEST_EQUALITY_CONST( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Delta Distribution D" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution D" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        -2*Utility::PhysicalConstants::pi*si::seconds );
@@ -770,13 +898,60 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromNode )
   TEST_EQUALITY_CONST( unused_children.size(), 1 );
   TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+              std::runtime_error );
+
+  unused_children.clear();
+
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
+                         test_dists_ptree->get_child( "Delta Distribution A" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
+                         test_dists_ptree->get_child( "Delta Distribution B" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
+                         test_dists_ptree->get_child( "Delta Distribution C" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
+                         test_dists_ptree->get_child( "Delta Distribution D" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -2*Utility::PhysicalConstants::pi*si::seconds );
+  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution E" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution F" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution G" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution H" ) )),
               std::runtime_error );
 }
 
