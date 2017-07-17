@@ -26,18 +26,6 @@
 
 namespace Utility{
 
-//! Container element deliminators
-extern const char* container_element_delims;
-
-//! Container start character
-extern const char container_start_char;
-
-//! Next container element character
-extern const char next_container_element_char;
-
-//! Container end character
-extern const char container_end_char;
-
 namespace Details{
 
 // 9 = tab (\t), 10 = new line (\n), 32 = white space

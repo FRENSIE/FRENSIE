@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <string>
+#include <type_traits>
 #include <stdexcept>
 
 // Boost Includes
@@ -243,7 +244,7 @@ Utility::PropertyTree toPropertyTree( const T& obj, const bool inline_data );
  * \ingroup ptree
  */
 template<typename T>
-Utility::PropertyTree toPropertyTree( const T& obj );
+typename std::enable_if<std::is_same<typename Utility::ToPropertyTreeTraits<T>::InlineDefault::value_type,bool>::value,Utility::PropertyTree>::type toPropertyTree( const T& obj );
 
 /*! Convert the property tree to an object of the desired type
  *
@@ -263,11 +264,19 @@ fromPropertyTree( const Utility::PropertyTree& ptree,
  * This method relies on the Utility::FromPropertyTreeTraits class associated
  * with type T to do the conversion. Any unused children can be optionally
  * logged with the warning logger.
+ * \ingroup ptree
  */
 template<typename T>
 typename FromPropertyTreeTraits<T>::ReturnType
 fromPropertyTree( const Utility::PropertyTree& ptree,
                   const bool log_unused_children = true );
+
+/*! Log the unused children or property tree
+ * \ingroup ptree
+ */
+template<template<typename,typename...> class STLCompliantSequenceContainer>
+void logUnusedChildrenOfPropertyTree(
+                 STLCompliantSequenceContainer<std::string>& unused_children );
   
 /*! Specialization of Utility::ToStringTraits for Utility::PropertyTree
  * \ingroup ptree

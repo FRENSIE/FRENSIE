@@ -36,6 +36,9 @@ public:
   virtual void fromPropertyTree( const Utility::PropertyTree& node,
                                  std::vector<std::string>& unused_children ) = 0;
   
+  //! Method for initializing the object from a property tree
+  void fromPropertyTree( const Utility::PropertyTree& node,
+                         const bool log_unused_children = true );
 };
 
 /*! \brief Specialization of Utility::ToPropertyTreeTraits for 
@@ -67,9 +70,11 @@ struct ToPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_of<
  * Utility::PropertyTreeCompatibleObject that is passed in.
  * \ingroup ptree
  */
-inline Utility::PropertyTree toPropertyTree( const PropertyTreeCompatibleObject& obj )
+template<typename DerivedType>
+inline typename std::enable_if<std::is_base_of<PropertyTreeCompatibleObject,DerivedType>::value,Utility::PropertyTree>::type
+toPropertyTree( const DerivedType& obj )
 {
-  Utility::ToPropertyTreeTraits<PropertyTreeCompatibleObject>::toPropertyTree( obj, obj.isDataInlinedByDefault() );
+  return Utility::ToPropertyTreeTraits<PropertyTreeCompatibleObject>::toPropertyTree( obj, obj.isDataInlinedByDefault() );
 }
 
 /*! \brief Specialization of Utility::FromPropertyTreeTraits for types that
@@ -116,6 +121,19 @@ struct FromPropertyTreeTraits<DerivedType,typename std::enable_if<std::is_base_o
     return obj;
   }
 };
+
+// Method for initializing the object from a property tree
+inline void PropertyTreeCompatibleObject::fromPropertyTree(
+                                             const Utility::PropertyTree& node,
+                                             const bool log_unused_children )
+{
+  std::vector<std::string> unused_children;
+
+  this->fromPropertyTree( node, unused_children );
+
+  if( log_unused_children )
+    Utility::logUnusedChildrenOfPropertyTree( unused_children );
+}
   
 } // end Utility namespace
 

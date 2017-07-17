@@ -335,7 +335,7 @@ inline Utility::PropertyTree toPropertyTree( const T& obj,
 
 // Convert the object to a property tree
 template<typename T>
-inline Utility::PropertyTree toPropertyTree( const T& obj )
+inline typename std::enable_if<std::is_same<typename Utility::ToPropertyTreeTraits<T>::InlineDefault::value_type,bool>::value,Utility::PropertyTree>::type toPropertyTree( const T& obj )
 {
   return Utility::toPropertyTree( obj, ToPropertyTreeTraits<T>::InlineDefault::value );
 }
@@ -459,8 +459,21 @@ fromPropertyTree( const Utility::PropertyTree& ptree,
   typename FromPropertyTreeTraits<T>::ReturnType obj =
     Utility::fromPropertyTree<T>( ptree, unused_children );
 
-  // Check for unused children and log if requested
-  if( unused_children.size() > 0 && log_unused_children )
+  // Log the unused children requested
+  if(  log_unused_children )
+    Utility::logUnusedChildrenOfPropertyTree( unused_children );
+
+  return obj;
+}
+
+// Log the unused children or property tree
+/*! \details Logging will only occur if there is at least one unused child.
+ */
+template<template<typename,typename...> class STLCompliantSequenceContainer>
+void logUnusedChildrenOfPropertyTree(
+                  STLCompliantSequenceContainer<std::string>& unused_children )
+{
+  if( unused_children.size() > 0 )
   {
     std::ostringstream oss;
     
@@ -473,12 +486,11 @@ fromPropertyTree( const Utility::PropertyTree& ptree,
       else if( i == unused_children.size() - 2 )
         oss << " and ";
     }
-
-    FRENSIE_LOG_WARNING( "property tree nodes " << oss.str() <<
-                         " are unused!" );
+  
+    FRENSIE_LOG_TAGGED_WARNING( "PropertyTree",
+                                "property tree nodes " << oss.str() << 
+                                " are unused!" );
   }
-
-  return obj;
 }
 
 namespace Details{

@@ -1026,8 +1026,8 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, istream_operator )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree node
-TEUCHOS_UNIT_TEST( UniformDistribution, toNode )
+// Check that the distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( UniformDistribution, toPropertyTree )
 {
   // Use the property tree interface directly
   Utility::PropertyTree ptree;
@@ -1045,35 +1045,83 @@ TEUCHOS_UNIT_TEST( UniformDistribution, toNode )
 
   TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
 
+  ptree.clear();
+  
   // Use the PropertyTreeCompatibleObject interface
-  distribution->toNode( "test distribution", ptree, true );
+  ptree = distribution->toPropertyTree( true );
+  
+  copy_dist = ptree.get_value<Utility::UniformDistribution>();
 
-  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
-
-  copy_dist = ptree.get<Utility::UniformDistribution>( "test distribution" );
-
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
   TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
 
-  distribution->toNode( "test distribution", ptree, false );
+  ptree = distribution->toPropertyTree( false );
+  
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 2.0 );
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), -1.0 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 2.0 );
+  ptree = distribution->toPropertyTree();
 
-  distribution->toNode( "test distribution", ptree );
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 2.0 );
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), -1.0 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 2.0 );  
+  // Use the PropertyTree helper methods
+  ptree = Utility::toPropertyTree( *distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UniformDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UniformDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 2.0 );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 2.0 );
+
+  ptree = Utility::toPropertyTree( *distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 2.0 );
+
+  ptree = Utility::toPropertyTree( *tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), -1.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 2.0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be written to a property tree node
-TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toNode )
+// Check that a unit-aware distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toPropertyTree )
 {
   // Use the property tree interface directly
   Utility::PropertyTree ptree;
@@ -1091,50 +1139,97 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toNode )
 
   TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
 
+  ptree.clear();
+  
   // Use the PropertyTreeCompatibleObject interface
-  unit_aware_distribution->toNode( "test distribution", ptree, true );
+  ptree = unit_aware_distribution->toPropertyTree( true );
+  copy_dist = ptree.get_value<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >();
 
-  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
-
-  copy_dist = ptree.get<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "test distribution" );
-
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
   TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
 
-  unit_aware_distribution->toNode( "test distribution", ptree, false );
+  ptree = unit_aware_distribution->toPropertyTree( false );
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), 0.0 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 1.0 );
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 1.0 );
 
-  unit_aware_distribution->toNode( "test distribution", ptree );
+  ptree = unit_aware_distribution->toPropertyTree();
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 4 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Uniform Distribution" );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "min indep value" ), 0.0 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "max indep value" ), 1.0 );  
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<double>( "dep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 1.0 );
+
+  // Use the PropertyTree helper methods
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 1.0 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 1.0 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 1.0 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 4 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Uniform Distribution" );
+  TEST_EQUALITY_CONST( ptree.get<double>( "min indep value" ), 0.0 );
+  TEST_EQUALITY_CONST( ptree.get<double>( "max indep value" ), 1.0 );  
+  TEST_EQUALITY_CONST( ptree.get<double>( "dep value" ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a distribution can be read from a property tree node
-TEUCHOS_UNIT_TEST( UniformDistribution, fromNode )
+// Check that a distribution can be read from a property tree
+TEUCHOS_UNIT_TEST( UniformDistribution, fromPropertyTree )
 {
   Utility::UniformDistribution dist;
 
   std::vector<std::string> unused_children;
   
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution A" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution A" ),
+                         unused_children );
  
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
   TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution B" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution B" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
@@ -1142,16 +1237,16 @@ TEUCHOS_UNIT_TEST( UniformDistribution, fromNode )
   TEST_EQUALITY_CONST( dist.evaluate( 1.0 ), 1.0 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution C" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution C" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
   TEST_EQUALITY_CONST( dist.evaluate( 5.0 ), 3.0 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution D" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution D" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
@@ -1160,30 +1255,77 @@ TEUCHOS_UNIT_TEST( UniformDistribution, fromNode )
   TEST_EQUALITY_CONST( unused_children.size(), 1 );
   TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
+              std::runtime_error );
+
+  unused_children.clear();
+
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<Utility::UniformDistribution>(
+                       test_dists_ptree->get_child( "Uniform Distribution A" ),
+                       unused_children );
+ 
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UniformDistribution>(
+                       test_dists_ptree->get_child( "Uniform Distribution B" ),
+                       unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UniformDistribution>(
+                       test_dists_ptree->get_child( "Uniform Distribution C" ),
+                       unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 5.0 ), 3.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UniformDistribution>(
+                       test_dists_ptree->get_child( "Uniform Distribution D" ),
+                       unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
               std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be read from a property tree node
-TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromNode )
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromPropertyTree )
 {
   Utility::UnitAwareUniformDistribution<si::energy,si::amount> dist;
 
   std::vector<std::string> unused_children;
   
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution A" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution A" ),
+                         unused_children );
  
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::joule );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*si::joule );
   TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::joule ), 2.0*si::mole );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution B" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution B" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
@@ -1191,16 +1333,16 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromNode )
   TEST_EQUALITY_CONST( dist.evaluate( 1.0*si::joule ), 1.0*si::mole );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution C" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution C" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*si::joule );
   TEST_EQUALITY_CONST( dist.evaluate( 5.0*si::joule ), 3.0*si::mole );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution D" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution D" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
@@ -1209,9 +1351,56 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromNode )
   TEST_EQUALITY_CONST( unused_children.size(), 1 );
   TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
+              std::runtime_error );
+
+  unused_children.clear();
+
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >(
+                       test_dists_ptree->get_child( "Uniform Distribution A" ),
+                       unused_children );
+ 
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::joule ), 2.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >(
+                       test_dists_ptree->get_child( "Uniform Distribution B" ),
+                       unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0*si::joule ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >(
+                       test_dists_ptree->get_child( "Uniform Distribution C" ),
+                       unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 5.0*si::joule ), 3.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >(
+                       test_dists_ptree->get_child( "Uniform Distribution D" ),
+                       unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*si::joule );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.0*si::joule ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution E" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution F" ) )),
               std::runtime_error );
 }
 

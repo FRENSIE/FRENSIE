@@ -16,6 +16,7 @@
 #include <type_traits>
 
 // FRENSIE Includes
+#include "Utility_ToStringTraitsDecl.hpp"
 #include "Utility_UndefinedTraits.hpp"
 
 /*! \defgroup from_string_traits From String Traits

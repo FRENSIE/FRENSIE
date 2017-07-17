@@ -340,19 +340,21 @@ bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isContinuous()
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << Utility::convertOneDDistributionTypeToString( UnitAwareUniformDistribution::distribution_type ) << ", ";
+  os << Utility::container_start_char
+     << Utility::convertOneDDistributionTypeToString( UnitAwareUniformDistribution::distribution_type )
+     << Utility::next_container_element_char << " ";
 
   Utility::toStream( os, Utility::getRawQuantity( d_min_independent_value ) );
 
-  os << ", ";
+  os << Utility::next_container_element_char << " ";
 
   Utility::toStream( os, Utility::getRawQuantity( d_max_independent_value ) );
   
-  os << ", ";
+  os << Utility::next_container_element_char << " ";
 
   Utility::toStream( os, Utility::getRawQuantity( d_dependent_value ) );
   
-  os << "}";
+  os << Utility::container_end_char;
 }
 
 // Method for initializing the object from an input stream
@@ -362,8 +364,8 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream(
                                                            const std::string& )
 {
   std::string dist_rep;
-  std::getline( is, dist_rep, '}' );
-  dist_rep += '}';
+  std::getline( is, dist_rep, Utility::container_end_char );
+  dist_rep += Utility::container_end_char;
 
   VariantVector distribution_data;
 
@@ -412,7 +414,7 @@ Utility::PropertyTree UnitAwareUniformDistribution<IndependentUnit,DependentUnit
   Utility::PropertyTree ptree;
   
   if( inline_data )
-    ptree.data().setValue( *this );
+    ptree.put_value( *this );
   else
   {
     ptree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareUniformDistribution::distribution_type ) );
@@ -420,6 +422,8 @@ Utility::PropertyTree UnitAwareUniformDistribution<IndependentUnit,DependentUnit
     ptree.put( "max indep value", Utility::getRawQuantity( d_max_independent_value ) );
     ptree.put( "dep value", Utility::getRawQuantity( d_dependent_value ) );
   }
+
+  return ptree;
 }
 
 // Method for initializing the object from a property tree node

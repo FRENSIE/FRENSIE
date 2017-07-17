@@ -132,6 +132,9 @@ public:
   //! Method for placing an object in the desired property tree node
   using PropertyTreeCompatibleObject::toPropertyTree;
 
+  //! Method for initializing the object from a property tree
+  using PropertyTreeCompatibleObject::fromPropertyTree;
+
 protected:
 
   //! Test if the dependent variable can be zero within the indep bounds

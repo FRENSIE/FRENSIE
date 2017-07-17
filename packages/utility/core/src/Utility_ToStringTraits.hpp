@@ -181,7 +181,7 @@ struct ToStringTraitsIteratorHelper
   //! Place the object of type T in a stream
   static inline void toStream( std::ostream& os, const T& obj )
   {
-    os << "{";
+    os << Utility::container_start_char;
 
     typename T::const_iterator it, end;
     it = obj.begin();
@@ -194,10 +194,10 @@ struct ToStringTraitsIteratorHelper
       ++it;
 
       if( it != end )
-        os << ", ";
+        os << Utility::next_container_element_char << " ";
     }
 
-    os << "}";
+    os << Utility::container_end_char;
   }
 };
   
