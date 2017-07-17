@@ -148,6 +148,9 @@ public:
   void fromPropertyTree( const Utility::PropertyTree& node,
                          std::vector<std::string>& unused_children ) override;
 
+  //! Method for converting to a property tree
+  using PropertyTreeCompatibleObject::fromPropertyTree;
+
   //! Equality comparison operator
   bool operator==( const UnitAwareDiscreteDistribution& other ) const;
 

@@ -386,11 +386,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toStream( std
   this->reconstructOriginalUnitlessDistribution( independent_values,
 						 dependent_values );
 
-  os << "{"
+  os << Utility::container_start_char
      << Utility::convertOneDDistributionTypeToString( UnitAwareDiscreteDistribution::distribution_type )
-     << ", " << independent_values
-     << ", " << dependent_values
-     << "}";
+     << Utility::next_container_element_char << " "
+     << independent_values
+     << Utility::next_container_element_char << " "
+     << dependent_values
+     << Utility::container_end_char;
 }
 
 // Method for initializing the object from an input stream
@@ -441,7 +443,7 @@ Utility::PropertyTree UnitAwareDiscreteDistribution<IndependentUnit,DependentUni
   Utility::PropertyTree ptree;
   
   if( inline_data )
-    ptree.data().setValue( *this );
+    ptree.put_value( *this );
   else
   {
     ptree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareDiscreteDistribution::distribution_type ) );

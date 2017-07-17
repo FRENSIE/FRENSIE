@@ -1684,8 +1684,8 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, istream_operator )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree node
-TEUCHOS_UNIT_TEST( DiscreteDistribution, toNode )
+// Check that the distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( DiscreteDistribution, toPropertyTree )
 {
   // Use the property tree interface directly
   Utility::PropertyTree ptree;
@@ -1703,34 +1703,77 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, toNode )
 
   TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( tab_distribution.get() ) );
 
+  ptree.clear();
+  
   // Use the PropertyTreeCompatibleObject interface
-  distribution->toNode( "test distribution", ptree, true );
+  ptree = distribution->toPropertyTree( true );
 
-  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+  copy_dist = ptree.get_value<Utility::DiscreteDistribution>();
 
-  copy_dist = ptree.get<Utility::DiscreteDistribution>( "test distribution" );
-
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
   TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
 
-  distribution->toNode( "test distribution", ptree, false );
+  ptree = distribution->toPropertyTree( false );
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
-  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
 
-  distribution->toNode( "test distribution", ptree );
+  ptree = distribution->toPropertyTree();
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
-  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+
+  // Use the property tree helper methods
+  ptree = Utility::toPropertyTree( *distribution, true );
+
+  copy_dist = ptree.get_value<Utility::DiscreteDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::DiscreteDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+
+  ptree = Utility::toPropertyTree( *distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be written to a property tree
-// node
-TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toNode )
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toPropertyTree )
 {
   // Use the property tree interface directly
   Utility::PropertyTree ptree;
@@ -1748,46 +1791,90 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toNode )
 
   TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_tab_distribution.get() )) );
 
+  ptree.clear();
+  
   // Use the PropertTreeCompatibleObject interface
-  unit_aware_distribution->toNode( "test distribution", ptree, true );
+  ptree = unit_aware_distribution->toPropertyTree( true );
 
-  TEST_EQUALITY_CONST( ptree.get_child( "test distribution" ).size(), 0 );
+  copy_dist = ptree.get_value<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >();
 
-  copy_dist = ptree.get<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "test distribution" );
-
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
   TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
 
-   unit_aware_distribution->toNode( "test distribution", ptree, false );
+  ptree = unit_aware_distribution->toPropertyTree( false );
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
-  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
 
-  unit_aware_distribution->toNode( "test distribution", ptree );
+  ptree = unit_aware_distribution->toPropertyTree();
 
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get_child("test distribution").get<std::string>( "type" ), "Discrete Distribution" );
-  TEST_COMPARE_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get_child("test distribution").get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+
+  // Use the PropertyTree helper methods
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Discrete Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
+  TEST_COMPARE_FLOATING_CONTAINERS( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be read from a property tree
-TEUCHOS_UNIT_TEST( DiscreteDistribution, fromNode )
+TEUCHOS_UNIT_TEST( DiscreteDistribution, fromPropertyTree )
 {
   Utility::DiscreteDistribution dist;
 
   std::vector<std::string> unused_children;
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution A" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution A" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution B" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution B" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        -Utility::PhysicalConstants::pi/2 );
@@ -1797,8 +1884,8 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, fromNode )
   TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution C" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution C" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.1 );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
@@ -1807,8 +1894,8 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, fromNode )
   TEST_FLOATING_EQUALITY( dist.evaluate( 10.0 ), 2.0, 1e-15 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution D" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution D" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi/2 );
@@ -1819,33 +1906,88 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, fromNode )
   TEST_EQUALITY_CONST( unused_children.size(), 1 );
   TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
-              Utility::PTreeNodeConversionException );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
-              Utility::PTreeNodeConversionException );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
-              Utility::PTreeNodeConversionException );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
-              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+
+  unused_children.clear();
+  
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
+                      test_dists_ptree->get_child( "Discrete Distribution A" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
+                      test_dists_ptree->get_child( "Discrete Distribution B" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
+                      test_dists_ptree->get_child( "Discrete Distribution C" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.1 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 0.1 ), 2.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 1.0 ), 6.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( 10.0 ), 2.0, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
+                      test_dists_ptree->get_child( "Discrete Distribution D" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be read from a property tree
-TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromNode )
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromPropertyTree )
 {
   Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> dist;
 
   std::vector<std::string> unused_children;
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution A" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution A" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*eV );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*eV );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution B" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution B" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        -Utility::PhysicalConstants::pi/2*eV );
@@ -1855,8 +1997,8 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromNode )
   UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution C" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution C" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.1*eV );
   TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*eV );
@@ -1865,8 +2007,8 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromNode )
   UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( 10.0*eV ), 2.0*si::mole, 1e-15 );
   TEST_EQUALITY_CONST( unused_children.size(), 0 );
 
-  dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution D" ),
-                 unused_children );
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution D" ),
+                         unused_children );
 
   TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi/2*eV );
@@ -1877,14 +2019,70 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromNode )
   TEST_EQUALITY_CONST( unused_children.size(), 1 );
   TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
-              Utility::PTreeNodeConversionException );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
-              Utility::PTreeNodeConversionException );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
-              Utility::PTreeNodeConversionException );
-  TEST_THROW( dist.fromNode( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
-              Utility::PTreeNodeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+
+  unused_children.clear();
+
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
+                      test_dists_ptree->get_child( "Discrete Distribution A" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*eV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
+                      test_dists_ptree->get_child( "Discrete Distribution B" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       -Utility::PhysicalConstants::pi/2*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*eV );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
+                      test_dists_ptree->get_child( "Discrete Distribution C" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.1*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*eV );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( 0.1*eV ), 2.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( 1.0*eV ), 6.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( 10.0*eV ), 2.0*si::mole, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
+                      test_dists_ptree->get_child( "Discrete Distribution D" ),
+                      unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi/2*eV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*eV );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution E" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution F" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution G" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution H" ) )),
+              Utility::PropertyTreeConversionException );
 }
 
 //---------------------------------------------------------------------------//
