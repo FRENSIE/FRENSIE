@@ -108,7 +108,7 @@ public:
   virtual IndepQuantity getLowerBoundOfIndepVar() const = 0;
 
   //! Return the distribution type
-  virtual OneDDistributionType getDistributionType() const = 0;  
+  virtual OneDDistributionType getDistributionType() const = 0;
 
   //! Test if the distribution is tabular
   virtual bool isTabular() const;

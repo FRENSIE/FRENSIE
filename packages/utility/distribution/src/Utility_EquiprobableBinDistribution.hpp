@@ -19,22 +19,25 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>					     
+class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
 
 private:
+
+  // Typedef for base type
+  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
   // Typedef for QuantityTraits<IndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+  typedef QuantityTraits<typename BaseType::IndepQuantity> IQT;
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+  typedef QuantityTraits<typename BaseType::InverseIndepQuantity> IIQT;
 
   // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+  typedef QuantityTraits<typename BaseType::DepQuantity> DQT;
 
 public:
 
@@ -42,13 +45,13 @@ public:
   typedef UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+  typedef typename BaseType::IndepQuantity IndepQuantity;
 
   //! The inverse independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename BaseType::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+  typedef typename BaseType::DepQuantity DepQuantity;
 
   //! Default constructor
   UnitAwareEquiprobableBinDistribution();
@@ -113,6 +116,13 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
+
+  //! Return the distribution type name
+  static std::string getDistributionTypeName( const bool verbose_name = true,
+                                              const bool lowercase = false );
+
+  //! Check if the type name matches the distribution type name
+  static bool doesTypeNameMatch( const std::string type_name );
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;

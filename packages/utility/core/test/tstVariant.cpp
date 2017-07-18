@@ -48,10 +48,16 @@ TEUCHOS_UNIT_TEST( Variant, constructor_basic_types )
   TEST_ASSERT( !conversion_success );
 
   // Store a char[]
-  variant.reset( new Utility::Variant( "Test string" ) );
+  variant.reset( new Utility::Variant( "Test String" ) );
   
   TEST_ASSERT( !variant->isNull() );
-  TEST_EQUALITY_CONST( variant->toString( &conversion_success ), "Test string" );
+  TEST_EQUALITY_CONST( variant->toString( &conversion_success ), "Test String" );
+  TEST_ASSERT( conversion_success );
+
+  TEST_EQUALITY_CONST( variant->toLowerString( &conversion_success ), "test string" );
+  TEST_ASSERT( conversion_success );
+
+  TEST_EQUALITY_CONST( variant->toUpperString( &conversion_success ), "TEST STRING" );
   TEST_ASSERT( conversion_success );
 
   variant->toChar( &conversion_success );

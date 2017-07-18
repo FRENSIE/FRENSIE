@@ -302,7 +302,35 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getLowerBou
 template<typename IndependentUnit, typename DependentUnit>
 OneDDistributionType UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
-  return UnitAwareEquiprobableBinDistribution::distribution_type;
+  return ThisType::distribution_type;
+}
+
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
+                                                       const bool verbose_name,
+                                                       const bool lowercase )
+{
+  std::string name = "Equiprobable";
+
+  if( verbose_name )
+    name += " Bin Distribution";
+
+  if( lowercase )
+    boost::algorithm::to_lower( name );
+
+  return name;
+}
+
+// Check if the type name matches the distribution type name
+/*! \detail The type name comparison is case-insensitive. A positive match
+ * will be reported if the type name has a substring equal to "equiprobable".
+ */
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )
+{
+  std::string lower_type_name = boost::algorithm::to_lower_copy( type_name );
+  
+  return lower_type_name.find(ThisType::getDistributionTypeName( false, true )) < lower_type_name.size();
 }
 
 // Test if the distribution is continuous
@@ -322,7 +350,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::toStre
     raw_bin_boundaries[i] = Utility::getRawQuantity( d_bin_boundaries[i] );
 
   os << Utility::container_start_char
-     << Utility::convertOneDDistributionTypeToString( UnitAwareEquiprobableBinDistribution::distribution_type )
+     << this->getDistributionTypeName()
      << Utility::next_container_element_char << " "
      << raw_bin_boundaries
      << Utility::container_end_char;
@@ -376,7 +404,7 @@ Utility::PropertyTree UnitAwareEquiprobableBinDistribution<IndependentUnit,Depen
     ptree.put_value( *this );
   else
   {
-    ptree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareEquiprobableBinDistribution::distribution_type ) );
+    ptree.put( "type", Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) );
 
     std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
 
@@ -561,8 +589,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
 {
   std::string distribution_type = type_data.toLowerString();
 
-  TEST_FOR_EXCEPTION( distribution_type.find( "equiprobable" ) >=
-                      distribution_type.size(),
+  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( distribution_type ),
                       Utility::StringConversionException,
                       "The equiprobable bin distribution cannot be "
                       "constructed because the distribution type ("
@@ -594,9 +621,8 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extrac
   // Inline array
   if( bin_boundary_data.size() == 0 )
   {
-    UnitAwareEquiprobableBinDistribution::extractBinBoundaries(
-                                                      bin_boundary_data.data(),
-                                                      bin_boundaries );
+    ThisType::extractBinBoundaries( bin_boundary_data.data(),
+                                    bin_boundaries );
   }
   
   // JSON array

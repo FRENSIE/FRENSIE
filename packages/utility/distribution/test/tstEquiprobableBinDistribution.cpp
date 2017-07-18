@@ -1975,6 +1975,57 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type name can be returned
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( Utility::EquiprobableBinDistribution::getDistributionTypeName(),
+                       "Equiprobable Bin Distribution" );
+  TEST_EQUALITY_CONST( Utility::EquiprobableBinDistribution::getDistributionTypeName( false ),
+                       "Equiprobable" );
+  TEST_EQUALITY_CONST( Utility::EquiprobableBinDistribution::getDistributionTypeName( true, true ),
+                       "equiprobable bin distribution" );
+  TEST_EQUALITY_CONST( Utility::EquiprobableBinDistribution::getDistributionTypeName( false, true ),
+                       "equiprobable" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution type name can be returned
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
+                   getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName()),
+                       "Equiprobable Bin Distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName( false )),
+                       "Equiprobable" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName( true, true )),
+                       "equiprobable bin distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName( false, true )),
+                       "equiprobable" );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the distribution type name
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( Utility::EquiprobableBinDistribution::doesTypeNameMatch( "Equiprobable Bin Distribution" ) );
+  TEST_ASSERT( Utility::EquiprobableBinDistribution::doesTypeNameMatch( "Equiprobable" ) );
+  TEST_ASSERT( Utility::EquiprobableBinDistribution::doesTypeNameMatch( "equiprobable" ) );
+  TEST_ASSERT( Utility::EquiprobableBinDistribution::doesTypeNameMatch( "EQUIPROBABLE" ) );
+  TEST_ASSERT( !Utility::EquiprobableBinDistribution::doesTypeNameMatch( "EQUI" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the unit-aware distribution type name
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "Equiprobable Bin Distribution" )) );
+  TEST_ASSERT( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "Equiprobable" )) );
+  TEST_ASSERT( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "equiprobable" )) );
+  TEST_ASSERT( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "EQUIPROBABLE" )) );
+  TEST_ASSERT( !(Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "EQUI" )) );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, isTabular )
 {
