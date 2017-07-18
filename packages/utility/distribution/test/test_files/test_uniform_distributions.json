@@ -19,12 +19,71 @@
         "dummy": ""
     },
 
-    "comment": "This distribution is ill-formed",
+    "comment": "This distribution is ill-formed (invalid type)",
     "Uniform Distribution E": "{dummy, 0, 1}",
 
     "Uniform Distribution F":
     {
-        "comment": "This distribution is ill-formed",
+        "comment": "This distribution is ill-formed (invalid type)",
         "type": "dummy"
+    },
+
+    "Uniform Distribution G":
+    {
+        "comment": "This distribution is ill-formed (invalid min indep value)",
+        "type": "uniform",
+        "min": "-Inf",
+        "max": 0.0
+    },
+
+    "Uniform Distribution H":
+    {
+        "comment": "This distribution is ill-formed (invalid max indep value)",
+        "type": "uniform",
+        "min": 0.0,
+        "max": "Inf"
+    },
+
+    "Uniform Distribution I":
+    {
+        "comment": "This distribution is ill-formed (invalid indep values)",
+        "type": "uniform",
+        "min": 0.0,
+        "max": -1.0
+    },
+
+    "Uniform Distribution J":
+    {
+        "comment": "This distribution is ill-formed (invalid indep values)",
+        "type": "uniform",
+        "min": 0.0,
+        "max": 0.0
+    },
+
+    "Uniform Distribution K":
+    {
+        "comment": "This distribution is ill-formed (invalid dep value)",
+        "type": "uniform",
+        "min": 0.0,
+        "max": 1.0,
+        "dep value": 0.0
+    },
+
+    "Uniform Distribution L":
+    {
+        "comment": "This distribution is ill-formed (invalid dep value)",
+        "type": "uniform",
+        "min": 0.0,
+        "max": 1.0,
+        "dep value": -1.0
+    },
+
+    "Uniform Distribution M":
+    {
+        "comment": "This distribution is ill-formed (invalid dep value)",
+        "type": "uniform",
+        "min": 0.0,
+        "max": 1.0,
+        "dep value": "Inf"
     }
 }

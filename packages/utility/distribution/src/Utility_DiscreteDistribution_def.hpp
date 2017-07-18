@@ -389,7 +389,7 @@ std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDis
 
 // Check if the type name matches the distribution type name
 /*! \detail The type name comparison is case-insensitive. A positive match
- * will be reported if the type name has a substring equal to "equiprobable".
+ * will be reported if the type name has a substring equal to "discrete".
  */
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )

@@ -12,6 +12,8 @@
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 #include "Utility_DeltaDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
+#include "Utility_UniformDistribution.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -24,8 +26,7 @@ std::string convertOneDDistributionTypeToString(
   switch( type )
   {
   case DELTA_DISTRIBUTION: return DeltaDistribution::getDistributionTypeName();
-  case DISCRETE_DISTRIBUTION: return "Discrete Distribution";
-  case ELASTIC_ELECTRON_DISTRIBUTION: return "Elastic Electron Distribution";
+  case DISCRETE_DISTRIBUTION: return DiscreteDistribution::getDistributionTypeName();
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";
   case EVAPORATION_DISTRIBUTION: return "Evaporation Distribution";
   case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";
@@ -37,12 +38,12 @@ std::string convertOneDDistributionTypeToString(
   case POWER_2_DISTRIBUTION: return "Power 2 Distribution";
   case POWER_N_DISTRIBUTION: return "Power N Distribution";
   case TABULAR_DISTRIBUTION: return "Tabular Distribution";
-  case UNIFORM_DISTRIBUTION: return "Uniform Distribution";
+  case UNIFORM_DISTRIBUTION: return UniformDistribution::getDistributionTypeName();
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
   case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "The distribution type is missin a name. Please add it!");
+		     "The distribution type is missing a name. Please add it!");
   }
 }
 

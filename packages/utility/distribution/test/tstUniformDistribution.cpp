@@ -603,6 +603,57 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type name can be returned
+TEUCHOS_UNIT_TEST( UniformDistribution, getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( Utility::UniformDistribution::getDistributionTypeName(),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( Utility::UniformDistribution::getDistributionTypeName( false ),
+                       "Uniform" );
+  TEST_EQUALITY_CONST( Utility::UniformDistribution::getDistributionTypeName( true, true ),
+                       "uniform distribution" );
+  TEST_EQUALITY_CONST( Utility::UniformDistribution::getDistributionTypeName( false, true ),
+                       "uniform" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution type name can be returned
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution,
+                   getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::getDistributionTypeName()),
+                       "Uniform Distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::getDistributionTypeName( false )),
+                       "Uniform" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::getDistributionTypeName( true, true )),
+                       "uniform distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::getDistributionTypeName( false, true )),
+                       "uniform" );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the distribution type name
+TEUCHOS_UNIT_TEST( UniformDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( Utility::UniformDistribution::doesTypeNameMatch( "Uniform Distribution" ) );
+  TEST_ASSERT( Utility::UniformDistribution::doesTypeNameMatch( "Uniform" ) );
+  TEST_ASSERT( Utility::UniformDistribution::doesTypeNameMatch( "uniform" ) );
+  TEST_ASSERT( Utility::UniformDistribution::doesTypeNameMatch( "UNIFORM" ) );
+  TEST_ASSERT( !Utility::UniformDistribution::doesTypeNameMatch( "UNI" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the unit-aware distribution type name
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::doesTypeNameMatch( "Uniform Distribution" )) );
+  TEST_ASSERT( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::doesTypeNameMatch( "Uniform" )) );
+  TEST_ASSERT( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::doesTypeNameMatch( "uniform" )) );
+  TEST_ASSERT( (Utility::UnitAwareUniformDistribution<si::energy,si::amount>::doesTypeNameMatch( "UNIFORM" )) );
+  TEST_ASSERT( !(Utility::UnitAwareUniformDistribution<si::energy,si::amount>::doesTypeNameMatch( "UNI" )) );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 TEUCHOS_UNIT_TEST( UniformDistribution, isTabular )
 {
@@ -1259,6 +1310,20 @@ TEUCHOS_UNIT_TEST( UniformDistribution, fromPropertyTree )
               std::runtime_error );
   TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
               std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution G" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution H" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution I" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution J" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution K" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution L" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution M" ) ),
+              std::runtime_error );
 
   unused_children.clear();
 
@@ -1305,6 +1370,20 @@ TEUCHOS_UNIT_TEST( UniformDistribution, fromPropertyTree )
   TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution E" ) ),
               std::runtime_error );
   TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution G" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution H" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution I" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution J" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution K" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution L" ) ),
+              std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::UniformDistribution>( test_dists_ptree->get_child( "Uniform Distribution M" ) ),
               std::runtime_error );
 }
 
@@ -1355,6 +1434,20 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromPropertyTree )
               std::runtime_error );
   TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution F" ) ),
               std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution G" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution H" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution I" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution J" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution K" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution L" ) ),
+              std::runtime_error );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Uniform Distribution M" ) ),
+              std::runtime_error );
 
   unused_children.clear();
 
@@ -1401,6 +1494,20 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromPropertyTree )
   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution E" ) )),
               std::runtime_error );
   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution F" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution G" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution H" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution I" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution J" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution K" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution L" ) )),
+              std::runtime_error );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( test_dists_ptree->get_child( "Uniform Distribution M" ) )),
               std::runtime_error );
 }
 

@@ -25,17 +25,20 @@ class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<Ind
 
 private:
 
+  // Typedef for base type
+  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
   // Typedef for QuantityTraits<IndepQuantity>
-  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+  typedef QuantityTraits<typename BaseType::IndepQuantity> IQT;
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+  typedef QuantityTraits<typename BaseType::InverseIndepQuantity> IIQT;
 
   // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+  typedef QuantityTraits<typename BaseType::DepQuantity> DQT;
 
 public:
 
@@ -43,13 +46,13 @@ public:
   typedef UnitAwareUniformDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+  typedef typename BaseType::IndepQuantity IndepQuantity;
 
   //! The inverse independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename BaseType::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+  typedef typename BaseType::DepQuantity DepQuantity;
 
   //! Default constructor
   UnitAwareUniformDistribution();
@@ -128,6 +131,13 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
+  //! Return the distribution type name
+  static std::string getDistributionTypeName( const bool verbose_name = true,
+                                              const bool lowercase = false );
+
+  //! Check if the type name matches the distribution type name
+  static bool doesTypeNameMatch( const std::string type_name );
+
   // Test if the distribution is continuous
   bool isContinuous() const override;
 
@@ -178,8 +188,8 @@ private:
   // Set the max indep value
   void setMaxIndependentValue( const Utility::Variant& max_indep_data );
 
-  // Verify that the independent values are valid
-  void verifyValidIndependentValues();
+  // Verify that the distribution values are valid
+  void verifyValidValues();
 
   // Set the dependent indep value
   void setDependentValue( const Utility::Variant& dep_data );

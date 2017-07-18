@@ -25,7 +25,7 @@ class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<Indep
 
 private:
 
-  // Typedef for base tye
+  // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // Typedef for QuantityTraits<double>
