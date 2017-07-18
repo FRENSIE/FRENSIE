@@ -11,6 +11,9 @@
 #include <functional>
 #include <cctype>
 
+// Boost Includes
+#include <boost/algorithm/string.hpp>
+
 // FRENSIE Includes
 #include "Utility_Variant.hpp"
 #include "Utility_ContractException.hpp"
@@ -298,6 +301,30 @@ std::string Variant::toString( bool* success ) const noexcept
     *success = true;
   
   return d_stored_data;
+}
+
+// Convert the variant to a lowercase string
+/*! \details If an error occurs in the conversion the success boolean
+ * will be set to false (if it was passed in).
+ */
+std::string Variant::toLowerString( bool* success ) const noexcept
+{
+  if( success )
+    *success = true;
+  
+  return boost::algorithm::to_lower_copy( d_stored_data );
+}
+
+// Convert the variant to an uppercase string
+/*! \details If an error occurs in the conversion the success boolean
+ * will be set to false (if it was passed in).
+ */
+std::string Variant::toUpperString( bool* success ) const noexcept
+{
+  if( success )
+    *success = true;
+  
+  return boost::algorithm::to_upper_copy( d_stored_data );
 }
 
 // Convert the variant to a vector

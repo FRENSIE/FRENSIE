@@ -29,7 +29,7 @@ std::string convertOneDDistributionTypeToString(
   case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";
   case MAXWELLFISSION_DISTRIBUTION: return "Maxwell Fission Distribution";
   case WATT_DISTRIBUTION: return "Watt Distribution";
-  case EQUIPROBABLE_BIN_DISTRIBUTION: return "32 Equiprobable Bin Distribution";
+  case EQUIPROBABLE_BIN_DISTRIBUTION: return "Equiprobable Bin Distribution";
   case NORMAL_DISTRIBUTION: return "Normal Distribution";
   case POWER_1_DISTRIBUTION: return "Power 1 Distribution";
   case POWER_2_DISTRIBUTION: return "Power 2 Distribution";

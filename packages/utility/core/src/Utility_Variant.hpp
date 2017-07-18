@@ -198,6 +198,12 @@ public:
   //! Convert the variant to string
   std::string toString( bool* success = NULL ) const noexcept;
 
+  //! Convert the variant to a lowercase string
+  std::string toLowerString( bool* success = NULL ) const noexcept;
+
+  //! Convert the variant to an uppercase string
+  std::string toUpperString( bool* success = NULL ) const noexcept;
+
   //! Convert the variant to a vector
   VariantVector toVector( bool* success = NULL ) const noexcept;
 

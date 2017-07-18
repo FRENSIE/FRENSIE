@@ -703,7 +703,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::StringConversionException,
                                 "Unable to expand the interval keywords!" );
-
+    
     // Create a new stream from the extracted and potentially modified
     // object representation
     std::istringstream iss( obj_rep );
@@ -732,7 +732,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
         EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                                  "Element " << element_index << " was not "
                                  "successfully extracted from the stream!" );
-
+        
         // Check if the stream is still valid
         TEST_FOR_EXCEPTION( iss.eof(),
                             Utility::StringConversionException,
@@ -892,8 +892,25 @@ inline void expandIntervalKeywordInSubstring( const std::string& left_element,
                           "elements!" );
     }
 
-    T left_value = Utility::fromString<T>( left_element );
-    T right_value = Utility::fromString<T>( right_element );
+    T left_value, right_value;
+
+    try{
+      left_value = Utility::fromString<T>( left_element );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not convert the left sequence "
+                                "container element (" << left_element << ") "
+                                "to the desired type!" );
+
+    try{
+      right_value = Utility::fromString<T>( right_element );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not convert the right sequence "
+                                "container element (" << right_element << ") "
+                                "to the desired type!" );
 
     TEST_FOR_EXCEPTION( left_value > right_value,
 			std::runtime_error,
@@ -1020,11 +1037,20 @@ void expandIntervalKeywords( std::string& obj_rep )
   {
     // We want the 'i' and 'l' keywords to be case insensitive
     boost::algorithm::to_lower( array_elements[i] );
-    
-    Details::expandIntervalKeywordInSubstring<T>(
+
+    try{
+      Details::expandIntervalKeywordInSubstring<T>(
                       boost::algorithm::to_lower_copy( array_elements[i-1] ),
                       array_elements[i],
                       boost::algorithm::to_lower_copy( array_elements[i+1] ) );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Unable to expand the interval keyword in the "
+                                "sequence container sub-string (... "
+                                << array_elements[i-1] << ", "
+                                << array_elements[i] << ", "
+                                << array_elements[i+1] << " ...)!" );
   }
 
   // Reconstruct the array string
@@ -1074,11 +1100,33 @@ void expandRepeatKeywords( std::string& obj_rep )
 
     if( op_pos < array_elements[i].size() )
     {
-      T repeated_value =
-        Utility::fromString<T>( array_elements[i].substr( 0, op_pos ) );
+      T repeated_value;
+      
+      try{
+        repeated_value =
+          Utility::fromString<T>( array_elements[i].substr( 0, op_pos ) );
+      }
+      EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                  Utility::StringConversionException,
+                                  "Could not extract the repeated value from "
+                                  "the sequence container element ("
+                                  << array_elements[i] << ")!" );
 
-      size_t number_of_repeats =
-        Utility::fromString<size_t>( array_elements[i].substr( op_pos+1, array_elements[i].size() - op_pos - 1 ) );
+      size_t number_of_repeats;
+
+      try{
+        std::string number_of_repeats_string =
+          array_elements[i].substr( op_pos+1,
+                                    array_elements[i].size() - op_pos - 1 );
+        
+        number_of_repeats =
+          Utility::fromString<size_t>( number_of_repeats_string );
+      }
+      EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                  Utility::StringConversionException,
+                                  "Could not extract the number of repeats "
+                                  "from the sequence container element ("
+                                  << array_elements[i] << ")!" );
 
       TEST_FOR_EXCEPTION( number_of_repeats <= 0,
                           std::runtime_error,

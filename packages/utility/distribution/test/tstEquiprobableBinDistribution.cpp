@@ -16,11 +16,6 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -40,14 +35,14 @@ namespace cgs = boost::units::cgs;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
 
-Teuchos::RCP<Utility::OneDDistribution> distribution;
-Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
+std::shared_ptr<Utility::OneDDistribution> distribution;
+std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_distribution;
 
 //---------------------------------------------------------------------------//
@@ -2017,7 +2012,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, isCompatibleWithInterpType )
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Check an alternative distribution that is compatible with all interp types
-  Teuchos::Array<double> bin_boundaries( 4 );
+  std::vector<double> bin_boundaries( 4 );
 
   bin_boundaries[0] = 1.0;
   bin_boundaries[1] = 2.0;
@@ -2043,7 +2038,7 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Check an alternative distribution that is compatible with all interp types
-  Teuchos::Array<double> bin_boundaries( 4 );
+  std::vector<double> bin_boundaries( 4 );
 
   bin_boundaries[0] = 1.0;
   bin_boundaries[1] = 2.0;
@@ -2060,104 +2055,543 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toParameterList )
+// Check that the distribution can converted to a string
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toString )
 {
-  Teuchos::RCP<Utility::EquiprobableBinDistribution>
-    true_distribution = Teuchos::rcp_dynamic_cast<Utility::EquiprobableBinDistribution>( distribution );
+  std::string dist_string = Utility::toString( *distribution );
 
-  Teuchos::ParameterList parameter_list;
+  TEST_EQUALITY_CONST( dist_string, "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
 
-  parameter_list.set<Utility::EquiprobableBinDistribution>(
-							  "test distribution",
-							  *true_distribution );
+  dist_string = Utility::toString( *tab_distribution );
 
-  Teuchos::writeParameterListToXmlFile(parameter_list,
-				       "equiprobable_bin_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "equiprobable_bin_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<Utility::EquiprobableBinDistribution>
-    copy_distribution( new Utility::EquiprobableBinDistribution );
-
-  *copy_distribution =
-    read_parameter_list->get<Utility::EquiprobableBinDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toParameterList )
+// Check that the unit-aware distribution can be converted to a stream
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toString )
 {
-  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
+  std::string dist_string = Utility::toString( *unit_aware_distribution );
 
-  Teuchos::RCP<UnitAwareEquiprobableBinDistribution>
-    true_distribution = Teuchos::rcp_dynamic_cast<UnitAwareEquiprobableBinDistribution>( unit_aware_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
 
-  Teuchos::ParameterList parameter_list;
+  dist_string = Utility::toString( *unit_aware_tab_distribution );
 
-  parameter_list.set<UnitAwareEquiprobableBinDistribution>(
-							  "test distribution",
-							  *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile(parameter_list,
-				       "unit_aware_equiprobable_bin_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "unit_aware_equiprobable_bin_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<UnitAwareEquiprobableBinDistribution>
-    copy_distribution( new UnitAwareEquiprobableBinDistribution );
-
-  *copy_distribution =
-    read_parameter_list->get<UnitAwareEquiprobableBinDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from and xml file
-TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toStream )
 {
-  Utility::EquiprobableBinDistribution read_distribution =
-    test_dists_list->get<Utility::EquiprobableBinDistribution>( "Distribution A" );
+  std::ostringstream oss;
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
-		       2*Utility::PhysicalConstants::pi );
+  Utility::toStream( oss, *distribution );
 
-  read_distribution =
-    test_dists_list->get<Utility::EquiprobableBinDistribution>( "Distribution B" );
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), -1.0 );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 1.0 );
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, *tab_distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from and xml file
-TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromParameterList )
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toStream )
 {
-  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
+  std::ostringstream oss;
 
-  UnitAwareEquiprobableBinDistribution read_distribution =
-    test_dists_list->get<UnitAwareEquiprobableBinDistribution>( "Unit-Aware Distribution A" );
+  Utility::toStream( oss, *unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0*MeV );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 10.0*MeV );
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
 
-  read_distribution =
-    test_dists_list->get<UnitAwareEquiprobableBinDistribution>( "Unit-Aware Distribution B" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.001*MeV );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 20.0*MeV );
+  Utility::toStream( oss, *unit_aware_tab_distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+
+  oss << *distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *tab_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+
+  oss << *unit_aware_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *unit_aware_tab_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromString )
+{
+  Utility::EquiprobableBinDistribution test_dist =
+    Utility::fromString<Utility::EquiprobableBinDistribution>( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
+
+  TEST_THROW( Utility::fromString<Utility::EquiprobableBinDistribution>( "{Dummy Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" ),
+              Utility::StringConversionException );
+
+  TEST_THROW( Utility::fromString<Utility::EquiprobableBinDistribution>( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0r2, 0.5, 2.0, 13i, 16.0}}" ),
+              Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromString )
+{
+  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> test_dist =
+    Utility::fromString<decltype(test_dist)>( "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_distribution.get() ) );
+
+  TEST_THROW( Utility::fromString<decltype(test_dist)>( "{Dummy Distribution, {0.0, 3i, 10.0}}" ),
+              Utility::StringConversionException );
+
+  TEST_THROW( Utility::fromString<Utility::EquiprobableBinDistribution>( "{Equiprobable Bin Distribution, {0.0, 1.0r3, 10.0}}" ),
+              Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromStream )
+{
+  std::istringstream iss( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
+  
+  Utility::EquiprobableBinDistribution test_dist;
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
+
+  iss.str( "{Dummy Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
+  iss.clear();
+
+  TEST_THROW( Utility::fromStream( iss, test_dist ),
+              Utility::StringConversionException );
+
+  iss.str( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0r2, 0.5, 2.0, 13i, 16.0}}" );
+  iss.clear();
+
+  TEST_THROW( Utility::fromStream( iss, test_dist ),
+              Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromStream )
+{
+  std::istringstream iss( "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
+  
+  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> test_dist;
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_distribution.get() ) );
+
+  iss.str( "{Dummy Distribution, {0.0, 3i, 10.0}}" );
+  iss.clear();
+
+  TEST_THROW( Utility::fromStream( iss, test_dist ),
+              Utility::StringConversionException );
+
+  iss.str( "{Equiprobable Bin Distribution, {0.0, 1.0r3, 10.0}}" );
+  iss.clear();
+  
+  TEST_THROW( Utility::fromStream( iss, test_dist ),
+              Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, istream_operator )
+{
+  std::istringstream iss( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
+  
+  Utility::EquiprobableBinDistribution test_dist;
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
+
+  iss.str( "{Dummy Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
+  iss.clear();
+
+  TEST_THROW( iss >> test_dist, Utility::StringConversionException );
+
+  iss.str( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0r2, 0.5, 2.0, 13i, 16.0}}" );
+  iss.clear();
+
+  TEST_THROW( iss >> test_dist, Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, istream_operator )
+{
+  std::istringstream iss( "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
+  
+  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> test_dist;
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_distribution.get() ) );
+
+  iss.str( "{Dummy Distribution, {0.0, 3i, 10.0}}" );
+  iss.clear();
+
+  TEST_THROW( iss >> test_dist, Utility::StringConversionException );
+
+  iss.str( "{Equiprobable Bin Distribution, {0.0, 1.0r3, 10.0}}" );
+  iss.clear();
+  
+  TEST_THROW( iss >> test_dist, Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toPropertyTree )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *distribution );
+
+  Utility::EquiprobableBinDistribution copy_dist =
+    ptree.get<Utility::EquiprobableBinDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
+
+  ptree.put( "test distribution", *tab_distribution );
+
+  copy_dist = ptree.get<Utility::EquiprobableBinDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( tab_distribution.get() ) );
+
+  ptree.clear();
+
+  // Use the PropertyTreeCompatibleObject interface
+  ptree = distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::EquiprobableBinDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
+
+  ptree = distribution->toPropertyTree( false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
+
+  ptree = distribution->toPropertyTree();
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
+
+  // Use the property tree helper methods
+  ptree = Utility::toPropertyTree( *distribution, true );
+
+  copy_dist = ptree.get_value<Utility::EquiprobableBinDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::EquiprobableBinDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
+
+  ptree = Utility::toPropertyTree( *distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
+
+  ptree = Utility::toPropertyTree( *tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toPropertyTree )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *unit_aware_distribution );
+
+  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>
+    copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_distribution.get() ) );
+
+  ptree.put( "test distribution", *unit_aware_tab_distribution );
+
+  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_distribution.get() ) );
+
+  ptree.clear();
+
+  // Use the PropertyTreeCompatibleObject interface
+  ptree = unit_aware_distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<decltype(copy_dist)>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_distribution.get() ) );
+
+  ptree = unit_aware_distribution->toPropertyTree( false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_ARRAYS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
+
+  ptree = unit_aware_distribution->toPropertyTree();
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_ARRAYS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
+
+  // Use the property tree helper methds
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
+
+  copy_dist = ptree.get_value<decltype(copy_dist)>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_ARRAYS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_ARRAYS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_ARRAYS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 2 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ),
+                       "Equiprobable Bin Distribution" );
+  TEST_COMPARE_ARRAYS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be read from a property tree
+TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromPropertyTree )
+{
+  Utility::EquiprobableBinDistribution dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.001 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 20.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be read from a property tree
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromPropertyTree )
+{
+  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.001*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 20.0*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
 }
 
 //---------------------------------------------------------------------------//
@@ -2180,7 +2614,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareEquiprobableBinDistribution,
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwareEquiprobableBinDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareEquiprobableBinDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::EquiprobableBinDistribution>( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareEquiprobableBinDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwareEquiprobableBinDistribution<IndepUnitB,DepUnitB>
@@ -2396,25 +2830,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEquiprobableBinDistribution,
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_xml_file;
+std::string test_dists_json_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_dists_xml_file",
-                   &test_dists_xml_file,
-                   "Test distributions xml file name" );
+  clp().setOption( "test_dists_json_file",
+                   &test_dists_json_file_name,
+                   "Test distributions json file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::EquiprobableBinDistribution );
-  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareEquiprobableBinDistribution );
+  // Load the property tree from the json file
+  test_dists_ptree.reset( new Utility::PropertyTree );
 
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
+  std::ifstream test_dists_json_file( test_dists_json_file_name );
+
+  test_dists_json_file >> *test_dists_ptree;
 
   // Initialize the distribution
-  Teuchos::Array<double> bin_boundaries( 33 );
+  std::vector<double> bin_boundaries( 33 );
 
   bin_boundaries[0] = -16.0;
   bin_boundaries[1] = -15.0;
@@ -2456,7 +2891,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   distribution = tab_distribution;
 
   // Initialize the unit-aware distribution
-  Teuchos::Array<quantity<KiloElectronVolt> > bin_boundary_quantities( 5 );
+  std::vector<quantity<KiloElectronVolt> > bin_boundary_quantities( 5 );
   bin_boundary_quantities[0] = 0.0*keV;
   bin_boundary_quantities[1] = 1e2*keV;
   bin_boundary_quantities[2] = 1e3*keV;

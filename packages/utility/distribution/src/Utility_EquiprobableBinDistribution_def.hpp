@@ -9,11 +9,13 @@
 #ifndef UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_DEF_HPP
 #define UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_DEF_HPP
 
+// Std Lib Includes
+#include <algorithm>
+
 // FRENSIE Includes
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -31,7 +33,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 // Basic constructor
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
-				 const Teuchos::Array<double>& bin_boundaries )
+				 const std::vector<double>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
   this->initializeDistribution( bin_boundaries );
@@ -41,7 +43,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
-	           const Teuchos::Array<InputIndepQuantity>& bin_boundaries )
+	           const std::vector<InputIndepQuantity>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
   this->initializeDistribution( bin_boundaries );
@@ -122,7 +124,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluatePDF
     return QuantityTraits<InverseIndepQuantity>::zero();
   else
   {
-    typename Teuchos::Array<IndepQuantity>::const_iterator lower_bin_boundary,
+    typename std::vector<IndepQuantity>::const_iterator lower_bin_boundary,
       upper_bin_boundary;
 
     if( indep_var_value >= d_bin_boundaries.front() &&
@@ -314,71 +316,202 @@ bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::isCont
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  Teuchos::Array<double> raw_bin_boundaries( d_bin_boundaries.size() );
+  std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
 
-  for( unsigned i = 0; i < d_bin_boundaries.size(); ++i )
-    raw_bin_boundaries[i] = getRawQuantity( d_bin_boundaries[i] );
+  for( size_t i = 0; i < d_bin_boundaries.size(); ++i )
+    raw_bin_boundaries[i] = Utility::getRawQuantity( d_bin_boundaries[i] );
 
-  os << raw_bin_boundaries;
+  os << Utility::container_start_char
+     << Utility::convertOneDDistributionTypeToString( UnitAwareEquiprobableBinDistribution::distribution_type )
+     << Utility::next_container_element_char << " "
+     << raw_bin_boundaries
+     << Utility::container_end_char;
 }
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromStream(
+                                                           std::istream& is,
+                                                           const std::string& )
 {
-  std::string bin_boundaries_rep;
-  std::getline( is, bin_boundaries_rep, '}' );
-  bin_boundaries_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( bin_boundaries_rep );
-    ArrayString::locateAndReplaceIntervalOperator( bin_boundaries_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the equiprobable bin distribution "
-			      "cannot be constructed because the "
-			      "representation is not valid (see details "
-			      "below)!\n" );
+  VariantVector distribution_data;
 
   try{
-    this->initializeDistribution(
-		    Teuchos::fromStringToArray<double>( bin_boundaries_rep ) );
+    Utility::fromStream( is, distribution_data );
   }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the equiprobable bin distribution "
-			      "cannot be constructed because the "
-			      "representation is not valid (see details "
-			      "below)!\n" );
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not extract the distribution data from "
+                           "the stream!" );
 
-  TEST_FOR_EXCEPTION( d_bin_boundaries.size() <= 1,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the equiprobable bin distribution cannot be "
-		      "constructed because at least one bin (two boundaries) "
-		      "is required!\n" );
+  // Verify that the correct amount of distribution data is present
+  TEST_FOR_EXCEPTION( distribution_data.size() != 2,
+                      Utility::StringConversionException,
+                      "The equiprobable bin distribution cannot be "
+                      "constructed because the string representation is not "
+                      "valid!" );
 
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( d_bin_boundaries.begin(),
-						d_bin_boundaries.end() ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the equiprobable bin distribution cannot be "
-		      "constructed because the bin boundaries "
-		      << bin_boundaries_rep << " are not sorted!" );
+  // Verify that the distribution type is discrete
+  this->verifyDistributionType( distribution_data[0] );
+
+  // Extract the bin boundaries
+  std::vector<double> bin_boundaries;
+
+  this->extractBinBoundaries( distribution_data[1], bin_boundaries );
+
+  // Verify that the bin boundaries are valid
+  this->verifyValidBinBoundaries( bin_boundaries );
+
+  // Initialize the distribution
+  this->initializeDistribution( bin_boundaries );
 }
 
-// Method for testing if two objects are equivalent
+// Method for converting the type to a property tree
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::isEqual(
-		      const UnitAwareEquiprobableBinDistribution& other ) const
+Utility::PropertyTree UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
+                                                 const bool inline_data ) const
+{
+  Utility::PropertyTree ptree;
+
+  if( inline_data )
+    ptree.put_value( *this );
+  else
+  {
+    ptree.put( "type", Utility::convertOneDDistributionTypeToString( UnitAwareEquiprobableBinDistribution::distribution_type ) );
+
+    std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
+
+    for( size_t i = 0; i < d_bin_boundaries.size(); ++i )
+      raw_bin_boundaries[i] = Utility::getRawQuantity( d_bin_boundaries[i] );
+
+    ptree.put( "bin boundaries", raw_bin_boundaries );
+  }
+
+  return ptree;
+}
+
+// Method for initializing the object from a property tree
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
+                                    const Utility::PropertyTree& node,
+                                    std::vector<std::string>& unused_children )
+{
+  // Initialize from inline data
+  if( node.size() == 0 )
+  {
+    std::istringstream iss( node.data().toString() );
+
+    try{
+      this->fromStream( iss );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PropertyTreeConversionException,
+                                "Could not create the equiprobable bin "
+                                "distribution!" );
+  }
+  // Initialize from child nodes
+  else
+  {
+    Utility::PropertyTree::const_iterator node_it, node_end;
+    node_it = node.begin();
+    node_end = node.end();
+
+    bool type_verified = false;
+    bool bin_boundaries_extracted = false;
+
+    std::vector<double> bin_boundaries;
+
+    while( node_it != node_end )
+    {
+      std::string child_node_key =
+        boost::algorithm::to_lower_copy( node_it->first );
+
+      // Verify the distribution type
+      if( child_node_key.find( "type" ) < child_node_key.size() )
+      {
+        try{
+          this->verifyDistributionType( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PropertyTreeConversionException,
+                                    "Could not create the equiprobable bin "
+                                    "distribution!" );
+
+        type_verified = true;
+      }
+
+      // Extract the bin boundaries
+      else if( child_node_key.find( "bin" ) < child_node_key.size() )
+      {
+        try{
+          this->extractBinBoundaries( node_it->second, bin_boundaries );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PropertyTreeConversionException,
+                                    "Could not create the equiprobable bin "
+                                    "distribution!" );
+
+        bin_boundaries_extracted = true;
+      }
+
+      // This child node is unused (and is not a comment)
+      else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
+               child_node_key.size() )
+      {
+        unused_children.push_back( node_it->first );
+      }
+
+      ++node_it;
+    }
+
+    // Make sure that the distribution type was verified
+    TEST_FOR_EXCEPTION( !type_verified,
+                        Utility::PropertyTreeConversionException,
+                        "The equiprobable bin distribution could not be "
+                        "constructed because the type could not be "
+                        "verified!" );
+
+    // Make sure that the bin boundaries were set
+    TEST_FOR_EXCEPTION( !bin_boundaries_extracted,
+                        Utility::PropertyTreeConversionException,
+                        "The equiprobable bin distribution could not be "
+                        "constructed because the bin boundaries were not "
+                        "specified!" );
+
+    // Verify that the bin boundaries are valid
+    try{
+      this->verifyValidBinBoundaries( bin_boundaries );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PropertyTreeConversionException,
+                                "The equiprobable bin distribution could not "
+                                "be constructed because the bin boundaries "
+                                "are not valid!" );
+
+    // Initialize the distribution
+    this->initializeDistribution( bin_boundaries );
+  }
+}
+
+// Equality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::operator==(
+                      const UnitAwareEquiprobableBinDistribution& other ) const
 {
   return d_bin_boundaries == other.d_bin_boundaries;
+}
+
+// Inequality comparison operator
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::operator!=(
+                      const UnitAwareEquiprobableBinDistribution& other ) const
+{
+  return d_bin_boundaries != other.d_bin_boundaries;
 }
 
 // Initialize the distribution
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-				 const Teuchos::Array<double>& bin_boundaries )
+				 const std::vector<double>& bin_boundaries )
 {
   // Make sure there is at least one bin
   testPrecondition( bin_boundaries.size() > 1 );
@@ -398,7 +531,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initia
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-		     const Teuchos::Array<InputIndepQuantity>& bin_boundaries )
+		     const std::vector<InputIndepQuantity>& bin_boundaries )
 {
   // Make sure there is at least one bin
   testPrecondition( bin_boundaries.size() > 1 );
@@ -419,6 +552,107 @@ template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
 {
   return false;
+}
+
+// Verify that the distribution type is correct
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verifyDistributionType(
+                                            const Utility::Variant& type_data )
+{
+  std::string distribution_type = type_data.toLowerString();
+
+  TEST_FOR_EXCEPTION( distribution_type.find( "equiprobable" ) >=
+                      distribution_type.size(),
+                      Utility::StringConversionException,
+                      "The equiprobable bin distribution cannot be "
+                      "constructed because the distribution type ("
+                      << distribution_type << ") does not match!" );
+}
+
+// Set the bin boundaries
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extractBinBoundaries(
+                                     const Utility::Variant& bin_boundary_data,
+                                     std::vector<double>& bin_boundaries )
+{
+  try{
+    bin_boundaries =
+      Utility::variant_cast<std::vector<double> >( bin_boundary_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The equiprobable bin distribution cannot be "
+                           "constructed because the bin boundaries are not "
+                           "valid!" );                      
+}
+
+// Extract the bin boundaries
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extractBinBoundaries(
+                                const Utility::PropertyTree& bin_boundary_data,
+                                std::vector<double>& bin_boundaries )
+{
+  // Inline array
+  if( bin_boundary_data.size() == 0 )
+  {
+    UnitAwareEquiprobableBinDistribution::extractBinBoundaries(
+                                                      bin_boundary_data.data(),
+                                                      bin_boundaries );
+  }
+  
+  // JSON array
+  else
+  {
+    try{
+      bin_boundaries =
+        Utility::fromPropertyTree<std::vector<double> >( bin_boundary_data );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
+                             "The equiprobable bin distribution cannot be "
+                             "constructed because the bin boundary data "
+                             "is invalid!" );
+  }
+}
+
+// Verify that the bin boundaries are valid
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verifyValidBinBoundaries(
+                                    const std::vector<double>& bin_boundaries )
+{
+  TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
+		      Utility::StringConversionException,
+		      "The equiprobable bin distribution cannot be "
+		      "constructed because at least one bin (consisting of "
+                      "two boundaries) is required!" );
+
+  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
+						bin_boundaries.end() ),
+		      Utility::StringConversionException,
+		      "The equiprobable bin distribution cannot be "
+		      "constructed because the bin boundaries "
+		      << bin_boundaries << " are not sorted!" );
+
+  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.front() ),
+                      Utility::StringConversionException,
+                      "The equiprobable bin distribution cannot be "
+                      "constructed because the first bin boundary is "
+                      "invalid!" );
+
+  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.back() ),
+                      Utility::StringConversionException,
+                      "The equiprobable bin distribution cannot be "
+                      "constructed because the last bin boundary is "
+                      "invalid!" );
+
+  TEST_FOR_EXCEPTION( std::adjacent_find( bin_boundaries.begin(),
+                                          bin_boundaries.end() ) !=
+                      bin_boundaries.end(),
+                      Utility::StringConversionException,
+                      "The equiprobable bin distribution cannot be "
+                      "constructed because there are repeated bin boundaries ("
+                      "first repeated value found == "
+                      << *(std::adjacent_find( bin_boundaries.begin(),
+                                               bin_boundaries.end() ) ) <<
+                      ")!" );
 }
 
 } // end Utility namespace
