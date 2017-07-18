@@ -350,7 +350,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, doesTypeNameMatch )
   TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "Delta" ) );
   TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "delta" ) );
   TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "DELTA" ) );
-  TEST_ASSERT( !Utility::DeltaDistribution::doesTypeNameMatch( "EQUI" ) );
+  TEST_ASSERT( !Utility::DeltaDistribution::doesTypeNameMatch( "DELT" ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -361,7 +361,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, doesTypeNameMatch )
   TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta" )) );
   TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "delta" )) );
   TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELTA" )) );
-  TEST_ASSERT( !(Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "EQUI" )) );
+  TEST_ASSERT( !(Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELT" )) );
 }
 
 //---------------------------------------------------------------------------//

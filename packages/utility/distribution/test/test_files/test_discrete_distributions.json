@@ -18,7 +18,7 @@
         "dummy": ""
     },
 
-    "comment": "This distribution is ill-formed",
+    "comment": "This distribution is ill-formed (incorrect type)",
     "Discrete Distribution E": "{dummy, {}, {}}",
 
     "Discrete Distribution F":
@@ -29,7 +29,7 @@
 
     "Discrete Distribution G":
     {
-        "comment": "This distribution is ill-formed",
+        "comment": "This distribution is ill-formed (bad indep and dep values)",
         "type": "discrete",
         "independent values": "{}",
         "dependent values": "{}"
@@ -37,9 +37,57 @@
 
     "Discrete Distribution H":
     {
-        "comment": "This distribution is ill-formed",
+        "comment": "This distribution is ill-formed (bad indep and dep values)",
         "type": "Discrete",
         "independent values": "{0.0, 1.0, 2.0}",
-        "dependent values": "{1.0, 2.0}"
+         "dependent values": "{1.0, 2.0}"
+    },
+
+    "Discrete Distribution I":
+    {
+        "comment": "This distribution is ill-formed (indep values not sorted)",
+        "type": "Discrete",
+        "independent values": "{1.0, 0.0, 2.0}",
+        "dependent values": "{1.0, 2.0, 1.0}"
+    },
+
+    "Discrete Distribution J":
+    {
+        "comment": "This distribution is ill-formed (indep values not sorted)",
+        "type": "Discrete",
+        "independent values": "{1.0, 0.0, 2.0}",
+        "dependent values": "{1.0, 2.0, 1.0}"
+    },
+
+    "Discrete Distribution K":
+    {
+        "comment": "This distribution is ill-formed (invalid indep values)",
+        "type": "Discrete",
+        "independent values": "{-Inf, 1.0, 2.0}",
+        "dependent values": "{1.0, 2.0, 1.0}"
+    },
+
+    "Discrete Distribution L":
+    {
+        "comment": "This distribution is ill-formed (invalid indep values)",
+        "type": "Discrete",
+        "independent values": "{0.0, 1.0, Inf}",
+        "dependent values": "{1.0, 2.0, 1.0}"
+    },
+
+    "Discrete Distribution M":
+    {
+        "comment": "This distribution is ill-formed (invalid dep values)",
+        "type": "Discrete",
+        "independent values": "{0.0, 1.0, Inf}",
+        "dependent values": "{Inf, 2.0, 1.0}"
+    },
+
+    "Discrete Distribution N":
+    {
+        "comment": "This distribution is ill-formed (invalid dep values)",
+        "type": "Discrete",
+        "independent values": "{0.0, 1.0, Inf}",
+        "dependent values": "{1.0, 0.0, 1.0}"
     }
 }

@@ -405,7 +405,7 @@ Utility::PropertyTree UnitAwareEquiprobableBinDistribution<IndependentUnit,Depen
     ptree.put_value( *this );
   else
   {
-    ptree.put( "type", Utility::convertOneDDistributionTypeToString( ThisType::distribution_type ) );
+    ptree.put( "type", this->getDistributionTypeName() );
 
     std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
 
@@ -588,13 +588,11 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verifyDistributionType(
                                             const Utility::Variant& type_data )
 {
-  std::string distribution_type = type_data.toLowerString();
-
-  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( distribution_type ),
+  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( type_data.toString() ),
                       Utility::StringConversionException,
                       "The equiprobable bin distribution cannot be "
                       "constructed because the distribution type ("
-                      << distribution_type << ") does not match!" );
+                      << type_data.toString() << ") does not match!" );
 }
 
 // Set the bin boundaries

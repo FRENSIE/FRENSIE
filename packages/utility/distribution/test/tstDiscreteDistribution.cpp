@@ -1393,6 +1393,57 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type name can be returned
+TEUCHOS_UNIT_TEST( DiscreteDistribution, getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( Utility::DiscreteDistribution::getDistributionTypeName(),
+                       "Discrete Distribution" );
+  TEST_EQUALITY_CONST( Utility::DiscreteDistribution::getDistributionTypeName( false ),
+                       "Discrete" );
+  TEST_EQUALITY_CONST( Utility::DiscreteDistribution::getDistributionTypeName( true, true ),
+                       "discrete distribution" );
+  TEST_EQUALITY_CONST( Utility::DiscreteDistribution::getDistributionTypeName( false, true ),
+                       "discrete" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution type name can be returned
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution,
+                   getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName()),
+                       "Discrete Distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName( false )),
+                       "Discrete" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName( true, true )),
+                       "discrete distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName( false, true )),
+                       "discrete" );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the distribution type name
+TEUCHOS_UNIT_TEST( DiscreteDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( Utility::DiscreteDistribution::doesTypeNameMatch( "Discrete Distribution" ) );
+  TEST_ASSERT( Utility::DiscreteDistribution::doesTypeNameMatch( "Discrete" ) );
+  TEST_ASSERT( Utility::DiscreteDistribution::doesTypeNameMatch( "discrete" ) );
+  TEST_ASSERT( Utility::DiscreteDistribution::doesTypeNameMatch( "DISCRETE" ) );
+  TEST_ASSERT( !Utility::DiscreteDistribution::doesTypeNameMatch( "DISC" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the unit-aware distribution type name
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "Discrete Distribution" )) );
+  TEST_ASSERT( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "Discrete" )) );
+  TEST_ASSERT( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "discrete" )) );
+  TEST_ASSERT( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "DISCRETE" )) );
+  TEST_ASSERT( !(Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "DISC" )) );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 TEUCHOS_UNIT_TEST( DiscreteDistribution, isTabular )
 {
@@ -1914,6 +1965,18 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, fromPropertyTree )
               Utility::PropertyTreeConversionException );
   TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
               Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution N" ) ),
+              Utility::PropertyTreeConversionException );
 
   unused_children.clear();
   
@@ -1968,6 +2031,18 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, fromPropertyTree )
   TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
               Utility::PropertyTreeConversionException );
   TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution N" ) ),
               Utility::PropertyTreeConversionException );
 }
 
@@ -2027,6 +2102,18 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromPropertyTree )
               Utility::PropertyTreeConversionException );
   TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
               Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution N" ) ),
+              Utility::PropertyTreeConversionException );
 
   unused_children.clear();
 
@@ -2082,6 +2169,18 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromPropertyTree )
   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution G" ) )),
               Utility::PropertyTreeConversionException );
   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution H" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution I" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution J" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution K" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution L" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution M" ) )),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution N" ) )),
               Utility::PropertyTreeConversionException );
 }
 

@@ -2579,6 +2579,69 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromPropertyTree )
               Utility::PropertyTreeConversionException );
   TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
               Utility::PropertyTreeConversionException );
+
+  unused_children.clear();
+
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.001 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 20.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
 }
 
 //---------------------------------------------------------------------------//
@@ -2642,6 +2705,69 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromPropertyTree )
   TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
               Utility::PropertyTreeConversionException );
   TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+
+  unused_children.clear();
+
+  // Use the property tree helper methods
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       2*Utility::PhysicalConstants::pi*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 10.0*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+              test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
+              unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.001*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 20.0*MeV );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
               Utility::PropertyTreeConversionException );
 }
 
