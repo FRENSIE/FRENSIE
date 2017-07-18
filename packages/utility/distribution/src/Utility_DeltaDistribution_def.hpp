@@ -259,6 +259,35 @@ OneDDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::
   return ThisType::distribution_type;
 }
 
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
+                                                       const bool verbose_name,
+                                                       const bool lowercase )
+{
+  std::string name = "Delta";
+
+  if( verbose_name )
+    name += " Distribution";
+
+  if( lowercase )
+    boost::algorithm::to_lower( name );
+
+  return name;
+}
+
+// Check if the type name matches the distribution type name
+/*! \detail The type name comparison is case-insensitive. A positive match
+ * will be reported if the type name has a substring equal to "delta".
+ */
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )
+{
+  std::string lower_type_name = boost::algorithm::to_lower_copy( type_name );
+  
+  return lower_type_name.find(ThisType::getDistributionTypeName( false, true )) < lower_type_name.size();
+}
+
 // Test if the distribution is continuous
 /*! \details Though the delta distribution is technically continuous
  * because it is only non-zero at the specified point it will be treated as
@@ -461,11 +490,9 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
 {
-  std::string distribution_type = type_data.toString();
-  boost::algorithm::to_lower( distribution_type );
+  std::string distribution_type = type_data.toLowerString();
 
-  TEST_FOR_EXCEPTION( distribution_type.find( "delta" ) >=
-                      distribution_type.size(),
+  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( distribution_type ),
                       Utility::StringConversionException,
                       "The delta distribution cannot be constructed "
                       "because the distribution type ("

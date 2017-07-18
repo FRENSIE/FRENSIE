@@ -17,27 +17,35 @@
         "dummy": ""
     },
 
-    "comment": "This distribution is ill-formed",
+    "comment": "This distribution is ill-formed (bad type)",
     "Delta Distribution E": "{dummy, 0}",
 
     "Delta Distribution F":
     {
-        "comment": "This distribution is ill-formed",
+        "comment": "This distribution is ill-formed (bad type)",
         "type": "dummy"
     },
 
     "Delta Distribution G":
     {
-        "comment": "This distribution is ill-formed",
+        "comment": "This distribution is ill-formed (invalid location)",
         "type": "Delta",
         "location": "-Inf"
     },
 
     "Delta Distribution H":
     {
-        "comment": "This distribution is ill-formed",
+        "comment": "This distribution is ill-formed (invalid multiplier)",
         "type": "Delta",
         "location": 0.0,
         "multiplier": 0.0
+    },
+
+    "Delta Distribution I":
+    {
+        "comment": "This distribution is ill-formed (invalid multiplier)",
+        "type": "delta",
+        "location": 0.0,
+        "multiplier": "Inf"
     }
 }

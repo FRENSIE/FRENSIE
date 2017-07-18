@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
+#include "Utility_DeltaDistribution.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -22,7 +23,7 @@ std::string convertOneDDistributionTypeToString(
 {
   switch( type )
   {
-  case DELTA_DISTRIBUTION: return "Delta Distribution";
+  case DELTA_DISTRIBUTION: return DeltaDistribution::getDistributionTypeName();
   case DISCRETE_DISTRIBUTION: return "Discrete Distribution";
   case ELASTIC_ELECTRON_DISTRIBUTION: return "Elastic Electron Distribution";
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";

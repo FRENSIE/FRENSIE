@@ -305,6 +305,7 @@ OneDDistributionType UnitAwareEquiprobableBinDistribution<IndependentUnit,Depend
   return ThisType::distribution_type;
 }
 
+// Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
 std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
                                                        const bool verbose_name,

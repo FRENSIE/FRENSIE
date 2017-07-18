@@ -314,6 +314,57 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type name can be returned
+TEUCHOS_UNIT_TEST( DeltaDistribution, getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName(),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName( false ),
+                       "Delta" );
+  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName( true, true ),
+                       "delta distribution" );
+  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName( false, true ),
+                       "delta" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution type name can be returned
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution,
+                   getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName()),
+                       "Delta Distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false )),
+                       "Delta" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( true, true )),
+                       "delta distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false, true )),
+                       "delta" );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the distribution type name
+TEUCHOS_UNIT_TEST( DeltaDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "Delta Distribution" ) );
+  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "Delta" ) );
+  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "delta" ) );
+  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "DELTA" ) );
+  TEST_ASSERT( !Utility::DeltaDistribution::doesTypeNameMatch( "EQUI" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the unit-aware distribution type name
+TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta Distribution" )) );
+  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta" )) );
+  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "delta" )) );
+  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELTA" )) );
+  TEST_ASSERT( !(Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "EQUI" )) );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 TEUCHOS_UNIT_TEST( DeltaDistribution, isTabular )
 {
@@ -857,6 +908,8 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, fromPropertyTree )
               std::runtime_error );
   TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution H" ) ),
               std::runtime_error );
+  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution I" ) ),
+              std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
@@ -952,6 +1005,8 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution G" ) )),
               std::runtime_error );
   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution H" ) )),
+              std::runtime_error );
+   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution I" ) )),
               std::runtime_error );
 }
 
