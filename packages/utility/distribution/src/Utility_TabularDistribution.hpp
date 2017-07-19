@@ -61,9 +61,6 @@ private:
   // Typedef for QuantityTraits<DistNormQuantity>
   typedef QuantityTraits<DistNormQuantity> DNQT;
 
-  // Typedef for QuantityTraits<UnnormCDFQuantity>
-  typedef QuantityTraits<UnnormCDFQuantity> UCQT;
-
 public:
 
   //! This distribution type
@@ -86,24 +83,11 @@ public:
                         const Teuchos::Array<double>& independent_values,
                         const Teuchos::Array<double>& dependent_values );
 
-  //! Basic constructor with max cdf specified (potentially dangerous)
-  UnitAwareTabularDistribution(
-                        const Teuchos::Array<double>& independent_values,
-                        const Teuchos::Array<double>& dependent_values,
-                        const double max_cdf );
-
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareTabularDistribution(
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values );
-
-  //! Constructor with max cdf specified
-  template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareTabularDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values,
-                  const UnnormCDFQuantity max_cdf );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -194,12 +178,6 @@ protected:
   bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
 
-  //! Set the norm constant
-  void setNormConstant( const DistNormQuantity norm_constant );
-
-  //! Set the max CDF value
-  void setMaxCDF( const UnnormCDFQuantity max_cdf );
-
 private:
 
   // Initialize the distribution
@@ -250,9 +228,6 @@ private:
 
   // The normalization constant
   DistNormQuantity d_norm_constant;
-
-  // The max CDF value
-  UnnormCDFQuantity d_max_cdf;
 };
 
 /*! The tabular distribution (unit-agnostic)

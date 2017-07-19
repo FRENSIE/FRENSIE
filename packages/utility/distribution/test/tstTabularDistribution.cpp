@@ -90,34 +90,6 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist )
 							  dependent_values ) );
 }
 
-
-// Initialize the distribution with a max CDF value
-template<typename InterpolationPolicy, typename BaseDistribution>
-void initializeWithMaxCDF( Teuchos::RCP<BaseDistribution>& dist )
-{
-  // Use the constructor with max CDF specified
-  Teuchos::Array<typename BaseDistribution::IndepQuantity>
-    independent_values( 4 );
-  Utility::setQuantity( independent_values[0], 1e-3 );
-  Utility::setQuantity( independent_values[1], 1e-2 );
-  Utility::setQuantity( independent_values[2], 1e-1 );
-  Utility::setQuantity( independent_values[3], 1.0 );
-
-  Teuchos::Array<typename BaseDistribution::DepQuantity> dependent_values( 4 );
-  Utility::setQuantity( dependent_values[0], 1e2 );
-  Utility::setQuantity( dependent_values[1], 1e1 );
-  Utility::setQuantity( dependent_values[2], 1.0 );
-  Utility::setQuantity( dependent_values[3], 1e-1 );
-
-//  UnnormCDFQuantity
-  double max_cdf = 10.0;
-
-  dist.reset(new Utility::UnitAwareTabularDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
-							  independent_values,
-							  dependent_values,
-							  max_cdf ) );
-}
-
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -134,17 +106,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
   TEST_EQUALITY_CONST( distribution->evaluate( 1e-1 ), 1.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 1e-1 );
   TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 0.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-3 ), 1e2 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-2 ), 1e1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-1 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 1e-1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 0.0 );
-
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, evaluate );
@@ -193,24 +154,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 			  1e-6 );
   TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1.0 ),
 			  0.067340006734,
-			  1e-6 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-3 ),
-			  10.0,
-			  1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-2 ),
-			  1.0,
-			  1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-1 ),
-			  0.1,
-			  1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1.0 ),
-			  0.01,
 			  1e-6 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
 }
@@ -266,24 +209,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 			  1e-10 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ),
 			  0.66666666667,
-			  1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ),
-			  1.0000000000,
-			  1e-10 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ),
-			  0.0000000000,
-			  1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ),
-			  0.0495,
-			  1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ),
-			  0.099,
 			  1e-10 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ),
 			  1.0000000000,
@@ -347,33 +272,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
   sample = distribution->sample();
   TEST_COMPARE( sample, >=, 1e-3 );
   TEST_COMPARE( sample, <=, 1.0 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  fake_stream.resize( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.1;
-  fake_stream[2] = 1.0 - 1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
-  sample = distribution->sample();
-  TEST_COMPARE( sample, >=, 0.0 );
-  TEST_COMPARE( sample, <=, 0.11005050633883220468 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, sample );
@@ -439,36 +337,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
   TEST_COMPARE( sample, >=, 1e-3 );
   TEST_COMPARE( sample, <=, 1.0 );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  fake_stream.resize( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.1;
-  fake_stream[2] = 1.0 - 1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-  TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
-
-  sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-  TEST_EQUALITY_CONST( 5.0/trials, 1.0 );
-
-  sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( 6.0/trials, 1.0 );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
-  sample = distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 0.0 );
-  TEST_COMPARE( sample, <=, 0.11005050633883220468 );
-  TEST_EQUALITY_CONST( 7.0/trials, 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, sampleAndRecordTrials );
@@ -539,35 +407,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_COMPARE( sample, >=, 1e-3 );
   TEST_COMPARE( sample, <=, 1.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  fake_stream.resize( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.1;
-  fake_stream[2] = 1.0 - 1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 0.0 );
-  TEST_COMPARE( sample, <=, 0.11005050633883220468 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, sampleAndRecordBinIndex );
@@ -621,19 +460,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  sample = tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = tab_distribution->sampleWithRandomNumber( 0.1 );
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-
-  sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, sampleWithRandomNumber );
@@ -672,25 +498,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = tab_distribution->sampleInSubrange( 1e-1  );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1e-1 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
   TEST_EQUALITY_CONST( sample, 1e-3 );
 
   sample = tab_distribution->sampleInSubrange( 1e-1 );
@@ -751,16 +558,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
   TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
-
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution,
@@ -797,12 +594,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
   initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, getUpperBoundOfIndepVar );
@@ -831,12 +622,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( distribution );
-
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 1e-3 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
 
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 1e-3 );
 }

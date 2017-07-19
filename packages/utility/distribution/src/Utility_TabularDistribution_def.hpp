@@ -50,8 +50,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 		  const Teuchos::Array<double>& independent_values,
 		  const Teuchos::Array<double>& dependent_values )
   : d_distribution( independent_values.size() ),
-    d_norm_constant( DNQT::zero() ),
-    d_max_cdf( UCQT::zero() )
+    d_norm_constant( DNQT::zero() )
 {
   // Make sure there is at lease one bin
   testPrecondition( independent_values.size() > 1 );
@@ -63,39 +62,6 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
 }
-
-// Basic constructor with max cdf specified (potentially dangerous)
-/*! \details The independent values are assumed to be sorted (lowest to
- * highest). If cdf values are provided a pdf will be calculated. Because
- * information is lost when converting from a pdf to a cdf, only a first order
- * approximation of the pdf will be calculated. Evaluate the resulting
- * distribution with caution (there will be no difference when sampling from
- * the distribution)!
- */
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
-		  const Teuchos::Array<double>& independent_values,
-		  const Teuchos::Array<double>& dependent_values,
-		  const double max_cdf )
-  : d_distribution( independent_values.size() ),
-    d_norm_constant( DNQT::zero() ),
-    d_max_cdf( UCQT::zero() )
-{
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( dependent_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					     independent_values.end() ) );
-
-  this->initializeDistributionFromRawData( independent_values,
-                                           dependent_values );
-  this->setMaxCDF( max_cdf );
-  this->setNormConstant( 1.0/max_cdf );
-}
-
 
 // Constructor
 template<typename InterpolationPolicy,
@@ -106,8 +72,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 		  const Teuchos::Array<InputIndepQuantity>& independent_values,
 		  const Teuchos::Array<InputDepQuantity>& dependent_values )
   : d_distribution( independent_values.size() ),
-    d_norm_constant( DNQT::zero() ),
-    d_max_cdf( UCQT::zero() )
+    d_norm_constant( DNQT::zero() )
 {
   // Make sure there is at lease one bin
   testPrecondition( independent_values.size() > 1 );
@@ -117,31 +82,6 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 					     independent_values.end() ) );
 
   this->initializeDistribution( independent_values, dependent_values );
-}
-
-// Constructor with max cdf specified
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-template<typename InputIndepQuantity, typename InputDepQuantity>
-UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<InputDepQuantity>& dependent_values,
-		  const UnnormCDFQuantity max_cdf )
-  : d_distribution( independent_values.size() ),
-    d_norm_constant( DNQT::zero() ),
-    d_max_cdf( UCQT::zero() )
-{
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( dependent_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					     independent_values.end() ) );
-
-  this->initializeDistribution( independent_values, dependent_values );
-  this->setMaxCDF( max_cdf );
-  this->setNormConstant( 1.0/max_cdf );
 }
 
 // Copy constructor
@@ -158,8 +98,7 @@ template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
  const UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
   : d_distribution(),
-    d_norm_constant(),
-    d_max_cdf()
+    d_norm_constant()
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
@@ -184,8 +123,7 @@ template<typename InterpolationPolicy,
 	 typename DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
   : d_distribution(),
-    d_norm_constant(),
-    d_max_cdf()
+    d_norm_constant()
 {
   // Make sure the distribution is valid
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
@@ -231,7 +169,6 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   {
     d_distribution = dist_instance.d_distribution;
     d_norm_constant = dist_instance.d_norm_constant;
-    d_max_cdf = dist_instance.d_max_cdf;
   }
 
   return *this;
@@ -426,14 +363,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   testPrecondition( random_number <= 1.0 );
 
   // Scale the random number
-  UnnormCDFQuantity scaled_random_number = random_number*d_max_cdf;
-
-  // Check if the scaled random number is out of range
-  /*! \details If the max CDF has been modified then the scaled random number
-   *  could be out of range, in which case zero is returned.
-   */
-  if ( scaled_random_number > d_distribution.back().second )
-    return IQT::zero();
+  UnnormCDFQuantity scaled_random_number = random_number*
+    d_distribution.back().second;
 
   typename DistributionArray::const_iterator start, end, lower_bin_boundary;
   start = d_distribution.begin();
@@ -638,8 +569,7 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
  const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
-         d_norm_constant == other.d_norm_constant &&
-         d_max_cdf == other.d_max_cdf;
+    d_norm_constant == other.d_norm_constant;
 }
 
 // Initialize the distribution
@@ -700,36 +630,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_distribution,
 							       false );
 
-  d_max_cdf = d_distribution.back().second;
-
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
-}
-
-// Set the norm constant
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::setNormConstant(
-		  const DistNormQuantity norm_constant )
-{
-  // Make sure the norm constant is valid
-  testPrecondition( norm_constant > DNQT::zero() );
-
-  d_norm_constant = norm_constant;
-}
-
-// Set the max CDF value
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::setMaxCDF(
-		  const UnnormCDFQuantity max_cdf )
-{
-  // Make sure the CDF is valid
-  testPrecondition( max_cdf > UCQT::zero() );
-
-  d_max_cdf = max_cdf;
 }
 
 // Reconstruct original distribution
