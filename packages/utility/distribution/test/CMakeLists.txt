@@ -189,3 +189,11 @@ ADD_EXECUTABLE(tstDirectionalDistributionFactory
 TARGET_LINK_LIBRARIES(tstDirectionalDistributionFactory utility_dist)
 ADD_TEST(DirectionalDistributionFactory_test tstDirectionalDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_directional_distributions.xml")
 SET_PROPERTY(TEST DirectionalDistributionFactory_test PROPERTY LABELS utility_dist)
+
+ADD_EXECUTABLE(tstAnalogElasticDistribution
+  tstAnalogElasticDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAnalogElasticDistribution utility_dist)
+ADD_TEST(AnalogElasticDistribution_test tstAnalogElasticDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.xml")
+SET_PROPERTY(TEST AnalogElasticDistribution_test PROPERTY LABELS utility_dist)
+
