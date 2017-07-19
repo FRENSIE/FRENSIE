@@ -9,16 +9,10 @@
 #ifndef UTILITY_HISTOGRAM_DISTRIBUTION_HPP
 #define UTILITY_HISTOGRAM_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_QuantityTraits.hpp"
-#include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
@@ -26,17 +20,19 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-				       public ParameterListCompatibleObject<UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
 
 private:
 
+  // Typedef for base type
+  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+
   // The unnormalized cdf quantity
-  typedef typename QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
+  typedef typename QuantityTraits<typename BaseType::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
 
   // The distribution normalization quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+  typedef typename BaseType::DistNormQuantity DistNormQuantity;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -59,33 +55,33 @@ public:
   typedef UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+  typedef typename BaseType::IndepQuantity IndepQuantity;
 
   //! The inverse independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename BaseType::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+  typedef typename BaseType::DepQuantity DepQuantity;
 
   //! Default constructor
   UnitAwareHistogramDistribution();
 
   //! Basic constructor (potentially dangerous)
-  UnitAwareHistogramDistribution( const Teuchos::Array<double>& bin_boundaries,
-				  const Teuchos::Array<double>& bin_values,
+  UnitAwareHistogramDistribution( const std::vector<double>& bin_boundaries,
+				  const std::vector<double>& bin_values,
 				  const bool interpret_dependent_values_as_cdf = false );
 
   //! CDF constructor
   template<typename InputIndepQuantity>
   UnitAwareHistogramDistribution(
-		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		      const Teuchos::Array<double>& cdf_values );
+		      const std::vector<InputIndepQuantity>& bin_boundaries,
+		      const std::vector<double>& cdf_values );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareHistogramDistribution(
-		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		      const Teuchos::Array<InputDepQuantity>& bin_values );
+		      const std::vector<InputIndepQuantity>& bin_boundaries,
+		      const std::vector<InputDepQuantity>& bin_values );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -103,54 +99,80 @@ public:
   { /* ... */ }
 
   //! Evaluate the distribution
-  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const override;
 
   //! Evaluate the PDF
-  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const override;
 
   //! Evaluate the CDF
-  double evaluateCDF( const IndepQuantity indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const override;
 
   //! Return a random sample from the distribution
-  IndepQuantity sample() const;
+  IndepQuantity sample() const override;
 
   //! Return a random sample and record the number of trials
-  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample and bin index from the distribution
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
-  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample from the corresponding CDF in a subrange
-  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;
 
   //! Return a sample from the distribution at the given CDF value in a subrange
   IndepQuantity sampleWithRandomNumberInSubrange(
-				     const double random_number,
-				     const IndepQuantity max_indep_var ) const;
+			    const double random_number,
+			    const IndepQuantity max_indep_var ) const override;
 
   //! Return the upper bound of the distribution independent variable
-  IndepQuantity getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const override;
 
   //! Return the lower bound of the distribution independent variable
-  IndepQuantity getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const;
+  OneDDistributionType getDistributionType() const override;
+
+  //! Return the distribution type name
+  static std::string getDistributionTypeName( const bool verbose_name = true,
+                                              const bool lowercase = false );
+
+  //! Check if the type name matches the distribution type name
+  static bool doesTypeNameMatch( const std::string type_name );
 
   //! Test if the distribution is continuous
-  bool isContinuous() const;
+  bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
-  void toStream( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const override;
 
   //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is );
+  void fromStream( std::istream& is, const std::string& delims ) override;
 
-  //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareHistogramDistribution& other ) const;
+  //! Method for initializing the object from an input stream
+  using IStreamableObject::fromStream;
+
+  //! Method for converting the type to a property tree
+  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
+
+  //! Method for converting the type to a property tree
+  using PropertyTreeCompatibleObject::toPropertyTree;
+
+  //! Method for initializing the object from a property tree
+  void fromPropertyTree( const Utility::PropertyTree& node,
+                         std::vector<std::string>& unused_children ) override;
+
+  //! Method for converting to a property tree
+  using PropertyTreeCompatibleObject::fromPropertyTree;
+
+  //! Equality comparison operator
+  bool operator==( const UnitAwareEquiprobableBinDistribution& other ) const;
+
+  //! Inequality comparison operator
+  bool operator!=( const UnitAwareEquiprobableBinDistribution& other ) const;
 
 protected:
 
@@ -163,41 +185,64 @@ protected:
 private:
 
   // Initialize the distribution
-  void initializeDistribution( const Teuchos::Array<double>& bin_boundaries,
-			       const Teuchos::Array<double>& bin_values,
+  void initializeDistribution( const std::vector<double>& bin_boundaries,
+			       const std::vector<double>& bin_values,
 			       const bool interpret_dependent_values_as_cdf );
 
   // Initialize the distribution from a cdf
   template<typename InputIndepQuantity>
   void initializeDistributionFromCDF(
-		  const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		  const Teuchos::Array<double>& cdf_values );
+		  const std::vector<InputIndepQuantity>& bin_boundaries,
+		  const std::vector<double>& cdf_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
   void initializeDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		  const Teuchos::Array<InputDepQuantity>& bin_values );
+		  const std::vector<InputIndepQuantity>& bin_boundaries,
+		  const std::vector<InputDepQuantity>& bin_values );
 
   // Reconstruct original distribution
   void reconstructOriginalDistribution(
-			 Teuchos::Array<IndepQuantity>& bin_boundaries,
-			 Teuchos::Array<DepQuantity>& bin_values ) const;
+			 std::vector<IndepQuantity>& bin_boundaries,
+			 std::vector<DepQuantity>& bin_values ) const;
 
   // Reconstruct original distribution w/o units
   void reconstructOriginalUnitlessDistribution(
-			      Teuchos::Array<double>& bin_boundaries,
-			      Teuchos::Array<double>& bin_values ) const;
+			      std::vector<double>& bin_boundaries,
+			      std::vector<double>& bin_values ) const;
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
   static void convertUnitlessValues(
-		                 const Teuchos::Array<double>& unitless_values,
-				 Teuchos::Array<Quantity>& quantities );
+		                 const std::vector<double>& unitless_values,
+				 std::vector<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
 				      unsigned& sampled_bin_index ) const;
+
+  // Verify that the distribution type is discrete
+  static void verifyDistributionType( const Utility::Variant& type_data );
+
+  // Set the independent values
+  static void extractIndependentValues( const Utility::Variant& indep_data,
+                                        std::vector<double>& independent_values );
+
+  // Set the independent values
+  static void extractIndependentValues( const Utility::PropertyTree& indep_data,
+                                        std::vector<double>& independent_values );
+
+  // Set the dependent values
+  static void extractDependentValues( const Utility::Variant& dep_data,
+                                      std::vector<double>& dependent_values );
+
+  // Set the dependent values
+  static void extractDependentValues( const Utility::PropertyTree& dep_data,
+                                      std::vector<double>& dependent_values );
+
+  // Verify that the values are valid
+  static void verifyValidValues( const std::vector<double>& independent_values,
+                                 const std::vector<double>& dependent_values );
 
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
@@ -208,7 +253,7 @@ private:
 
   // The distribution (first = bin_min, second = bin_PDF, third = bin_CDF)
   // Note: The bin_CDF value is the value of the CDF at the lower bin boundary
-  typedef Teuchos::Array<Trip<IndepQuantity,DepQuantity,UnnormCDFQuantity> > DistributionArray;
+  typedef std::vector<std::tuple<IndepQuantity,DepQuantity,UnnormCDFQuantity> > DistributionArray;
   DistributionArray d_distribution;
 
   // The normalization constant
@@ -221,56 +266,6 @@ private:
 typedef UnitAwareHistogramDistribution<void,void> HistogramDistribution;
 
 } // end Utility namespace
-
-namespace Teuchos{
-
-/*! Type name traits specialization for the Utility::HistogramDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files.
- */
-template<>
-class TypeNameTraits<Utility::HistogramDistribution>
-{
-public:
-  static std::string name()
-  {
-    return "Histogram Distribution";
-  }
-  static std::string concreteName(
-			       const Utility::HistogramDistribution& instance )
-  {
-    return name();
-  }
-};
-
-/*! \brief Type name traits partial specialization for the
- * Utility::UnitAwareHistogramDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files
- */
-template<typename U, typename V>
-class TypeNameTraits<Utility::UnitAwareHistogramDistribution<U,V> >
-{
-public:
-  static std::string name()
-  {
-    std::ostringstream iss;
-    iss << "Unit-Aware Histogram Distribution ("
-	<< Utility::UnitTraits<U>::symbol() << ","
-	<< Utility::UnitTraits<V>::symbol() << ")";
-
-    return iss.str();
-  }
-  static std::string concreteName(
-		 const Utility::UnitAwareHistogramDistribution<U,V>& instance )
-  {
-    return name();
-  }
-};
-
-} // end Teuchos namespace
 
 //---------------------------------------------------------------------------//
 // Template includes.

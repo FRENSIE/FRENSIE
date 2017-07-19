@@ -439,7 +439,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
                            "Could not extract the distribution data from "
                            "the stream!" );
   
-  // Verifythat the correct amount of distribution data is present
+  // Verify that the correct amount of distribution data is present
   TEST_FOR_EXCEPTION( distribution_data.size() != 3,
                       Utility::StringConversionException,
                       "The discrete distribution cannot be constructed "

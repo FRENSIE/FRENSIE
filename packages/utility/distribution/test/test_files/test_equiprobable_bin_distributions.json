@@ -11,7 +11,7 @@
     "Equiprobable Bin Distribution D":
     {
         "type": "Equiprobable Bin Distribution",
-        "bin": ["0.0", "pi/4", "pi/2", "3*pi/4", "pi"],
+        "boundaries": ["0.0", "pi/4", "pi/2", "3*pi/4", "pi"],
         "comment": "JSON arrays can also be used to specify bin boundaries"
     },
 
@@ -36,14 +36,14 @@
     {
         "comment": "This distribution is ill-formed (zero bins)",
         "type": "Equiprobable Bin Distribution",
-        "bin": "{}"
+        "boundaries": "{}"
     },
 
     "Equiprobable Bin Distribution I":
     {
         "comment": "This distribution is ill-formed (incomplete bin)",
         "type": "Equiprobable",
-        "bin": "{1.0}"
+        "boundaries": "{1.0}"
     },
 
     "Equiprobable Bin Distribution J":

@@ -11,9 +11,9 @@
 
     "Discrete Distribution D":
     {
-        "comment": "optional comment example",
-        "dep vals": "{1.0r5}",
-        "indep vals": "{pi/2, 3i, pi}",
+        "comment": "JSON arrays can also be used to specify values"
+        "dep vals": ["1.0", "1.0", "1.0", "1.0", "1.0"],
+        "indep vals": ["pi/2", "5pi/8", "3pi/4", "7pi/8", "pi"],
         "type": "discrete-dist",
         "dummy": ""
     },
@@ -71,7 +71,7 @@
     {
         "comment": "This distribution is ill-formed (invalid indep values)",
         "type": "Discrete",
-        "independent values": "{0.0, 1.0, Inf}",
+        "independent values": ["0.0", "1.0", "Inf"],
         "dependent values": "{1.0, 2.0, 1.0}"
     },
 
@@ -80,7 +80,7 @@
         "comment": "This distribution is ill-formed (invalid dep values)",
         "type": "Discrete",
         "independent values": "{0.0, 1.0, Inf}",
-        "dependent values": "{Inf, 2.0, 1.0}"
+        "dependent values": ["Inf", "2.0", "1.0"]
     },
 
     "Discrete Distribution N":

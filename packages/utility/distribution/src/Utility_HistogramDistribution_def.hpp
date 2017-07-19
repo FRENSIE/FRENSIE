@@ -40,8 +40,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
  */
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
-				 const Teuchos::Array<double>& bin_boundaries,
-				 const Teuchos::Array<double>& bin_values,
+				 const std::vector<double>& bin_boundaries,
+				 const std::vector<double>& bin_values,
 				 const bool interpret_dependent_values_as_cdf )
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
@@ -67,8 +67,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
-		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		      const Teuchos::Array<double>& cdf_values )
+		      const std::vector<InputIndepQuantity>& bin_boundaries,
+		      const std::vector<double>& cdf_values )
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
@@ -90,8 +90,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
-		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		      const Teuchos::Array<InputDepQuantity>& bin_values )
+		      const std::vector<InputIndepQuantity>& bin_boundaries,
+		      const std::vector<InputDepQuantity>& bin_values )
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
@@ -128,8 +128,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   typedef typename UnitAwareHistogramDistribution<InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
   // Reconstruct the original input distribution
-  Teuchos::Array<InputIndepQuantity> input_bin_boundaries;
-  Teuchos::Array<InputDepQuantity> input_bin_values;
+  std::vector<InputIndepQuantity> input_bin_boundaries;
+  std::vector<InputDepQuantity> input_bin_values;
 
   dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 						 input_bin_values );
@@ -148,7 +148,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
 
   // Reconstruct the original input distribution
-  Teuchos::Array<double> input_bin_boundaries, input_bin_values;
+  std::vector<double> input_bin_boundaries, input_bin_values;
 
   unitless_dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 							  input_bin_values );
@@ -378,6 +378,35 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDistributionTy
   return UnitAwareHistogramDistribution::distribution_type;
 }
 
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
+                                                       const bool verbose_name,
+                                                       const bool lowercase )
+{
+  std::string name = "Histogram";
+
+  if( verbose_name )
+    name += " Distribution";
+
+  if( lowercase )
+    boost::algorithm::to_lower( name );
+
+  return name;
+}
+
+// Check if the type name matches the distribution type name
+/*! \detail The type name comparison is case-insensitive. A positive match
+ * will be reported if the type name has a substring equal to "histogram".
+ */
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )
+{
+  std::string lower_type_name = boost::algorithm::to_lower_copy( type_name );
+  
+  return lower_type_name.find(ThisType::getDistributionTypeName( false, true )) < lower_type_name.size();
+}
+
 //! Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::isContinuous() const
@@ -390,115 +419,227 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::toStream(
 						       std::ostream& os ) const
 {
-  Teuchos::Array<double> bin_boundaries, bin_values;
+  std::vector<double> bin_boundaries, bin_values;
 
   this->reconstructOriginalUnitlessDistribution( bin_boundaries,
 						 bin_values );
 
-  os << "{" << bin_boundaries << "," << bin_values << "}";
+  os << Utility::container_start_char
+     << this->getDistributionTypeName()
+     << Utility::next_container_element_char << " "
+     << bin_boundaries
+     << Utility::next_container_element_char << " "
+     << bin_values
+     << Utility::container_end_char;
 }
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
-							     std::istream& is )
+                                                           std::istream& is,
+                                                           const std::string& )
 {
-  // Read the initial '{'
-  std::string start_bracket;
-  std::getline( is, start_bracket, '{' );
-  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
+  VariantVector distribution_data;
 
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the input stream is not a valid histogram "
-		      "distribution representation!" );
-
-  std::string bin_boundaries_rep;
-  std::getline( is, bin_boundaries_rep, '}' );
-  bin_boundaries_rep += "}";
-
-  // Parse special characters
   try{
-    ArrayString::locateAndReplacePi( bin_boundaries_rep );
-    ArrayString::locateAndReplaceIntervalOperator( bin_boundaries_rep );
+    Utility::fromStream( is, distribution_data );
   }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the histogram distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not extract the distribution data from "
+                           "the stream!" );
 
-  Teuchos::Array<double> bin_boundaries;
-  try{
-    bin_boundaries = Teuchos::fromStringToArray<double>( bin_boundaries_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the histogram distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  // Verify that the correct amount of distribution data is present
+  TEST_FOR_EXCEPTION( distribution_data.size() != 3,
+                      Utility::StringConversionException,
+                      "The histogram distribution cannot be constructed "
+                      "because the string representation is not valid!" );
 
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
-						bin_boundaries.end() ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the histogram distribution cannot be "
-		      "constructed because the bin boundaries "
-		      << bin_boundaries_rep << " are not sorted!" );
+  // Verify that the distribution type is histogram
+  this->verifyDistributionType( distribution_data[0] );
 
-  // Read the ","
-  std::string separator;
-  std::getline( is, separator, ',' );
+  // Extract the independent values
+  std::vector<double> bin_boundaries;
 
-  std::string bin_values_rep;
-  std::getline( is, bin_values_rep, '}' );
-  bin_values_rep += "}";
+  this->extractIndependentValues( distribution_data[1], bin_boundaries );
 
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( bin_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( bin_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the histogram distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  // Extract the dependent values
+  std::vector<double> bin_values;
 
-  Teuchos::Array<double> bin_values;
-  try{
-    bin_values = Teuchos::fromStringToArray<double>( bin_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the histogram distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
+  this->extractDependentValues( distribution_data[2], bin_values );
 
-  TEST_FOR_EXCEPTION( bin_boundaries.size()-1 != bin_values.size(),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the histogram distribution "
-		      "{" << bin_boundaries_rep << "},{"
-		      << bin_values_rep << "} "
-		      "cannot be constructed because the number of bin values "
-		      "does not equal the number of bin boundaries - 1!" );
+  // Verify that the values are valid
+  this->verifyValidValues( bin_boundaries, bin_values );
 
   this->initializeDistribution( bin_boundaries, bin_values, false );
 }
 
-// Method for testing if two objects are equivalent
+// Method for converting the type to a property tree
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::isEqual(
- const UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>& other ) const
+Utility::PropertyTree UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
+                                                 const bool inline_data ) const
+{
+  Utility::PropertyTree ptree;
+  
+  if( inline_data )
+    ptree.put_value( *this );
+  else
+  {
+    ptree.put( "type", this->getDistributionTypeName() );
+
+    std::vector<double> bin_boundaries, bin_values;
+
+    this->reconstructOriginalUnitlessDistribution( bin_boundaries,
+                                                   bin_values );
+    
+    ptree.put( "bin boundaries", bin_boundaries );
+    ptree.put( "bin values", bin_values );
+  }
+
+  return ptree;
+}
+
+// Method for initializing the object from a property tree node
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
+                                    const Utility::PropertyTree& node,
+                                    std::vector<std::string>& unused_children )
+{
+  // Initialize from inline data
+  if( node.size() == 0 )
+  {
+    std::istringstream iss( node.data().toString() );
+
+    try{
+      this->fromStream( iss );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PropertyTreeConversionException,
+                                "Could not create the histogram "
+                                "distribution!" );
+  }
+  // Initialize from child nodes
+  else
+  {
+    Utility::PropertyTree::const_iterator node_it, node_end;
+    node_it = node.begin();
+    node_end = node.end();
+    
+    bool type_verified = false;
+    bool bin_boundary_vals_extracted = false;
+    bool bin_vals_extracted = false;
+
+    std::vector<double> bin_bounaries, bin_values;
+
+    while( node_it != node_end )
+    {
+      std::string child_node_key =
+        boost::algorithm::to_lower_copy( node_it->first );
+
+      // Verify the distribution type
+      if( child_node_key.find( "type" ) < child_node_key.size() )
+      {
+        try{
+          this->verifyDistributionType( node_it->second.data() );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PropertyTreeConversionException,
+                                    "Could not create the histogram "
+                                    "distribution!" );
+
+        type_verified = true;
+      }
+
+      // Extract the bin boundaries
+      else if( child_node_key.find( "boundaries" ) < child_node_key.size() )
+      {
+        try{
+          this->extractIndependentValues( node_it->second,
+                                          bin_bounaries );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PropertyTreeConversionException,
+                                    "Could not create the histogram "
+                                    "distribution!" );
+
+        bin_boundary_vals_extracted = true;
+      }
+
+      // Extract the bin values
+      else if( child_node_key.find( "values" ) < child_node_key.size() )
+      {
+        try{
+          this->extractDependentValues( node_it->second, bin_values );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PropertyTreeConversionException,
+                                    "Could not create the histogram "
+                                    "distribution!" );
+
+        bin_vals_extracted = true;
+      }
+
+      // This child node is unused (and is not a comment)
+      else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
+               child_node_key.size() )
+      {
+        unused_children.push_back( node_it->first );
+      }
+      
+      ++node_it;
+    }
+
+    // Make sure that the distribution type was verified
+    TEST_FOR_EXCEPTION( !type_verified,
+                        Utility::PropertyTreeConversionException,
+                        "The histogram distribution could not be constructed "
+                        "because the type could not be verified!" );
+
+    // Make sure that the independent values were set
+    TEST_FOR_EXCEPTION( !bin_boundary_vals_extracted,
+                        Utility::PropertyTreeConversionException,
+                        "The histogram distribution could not be constructed "
+                        "because the bin boundaries were not specified!" );
+
+    // Make sure that the dependent values were set
+    TEST_FOR_EXCEPTION( !bin_vals_extracted,
+                        Utility::PropertyTreeConversionException,
+                        "The discrete distribution could not be constructed "
+                        "because the bin values were not specified!" );
+
+    // Verify that the values are valid
+    try{
+      this->verifyValidValues( bin_bounaries, bin_values );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PropertyTreeConversionException,
+                                "Could not create the discrete "
+                                "distribution!" );
+
+    this->initializeDistribution( bin_bounaries, bin_values, false );
+  }
+}
+
+// Equality comparison operator
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::operator==( const UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
     d_norm_constant == other.d_norm_constant;
 }
 
+// Inequality comparison operator
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::operator!=( const UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>& other ) const
+{
+  return d_distribution != other.d_distribution ||
+    d_norm_constant != other.d_norm_constant;
+}  
+
 // Initialize the distribution
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-				  const Teuchos::Array<double>& bin_boundaries,
-				 const Teuchos::Array<double>& bin_values,
+				  const std::vector<double>& bin_boundaries,
+				 const std::vector<double>& bin_values,
 				 const bool interpret_dependent_values_as_cdf )
 {
   // Make sure that the bin boundaries are sorted
@@ -510,7 +651,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
 
   // Convert the raw independent values to quantities
-  Teuchos::Array<IndepQuantity> bin_boundary_quantities;
+  std::vector<IndepQuantity> bin_boundary_quantities;
 
   this->convertUnitlessValues( bin_boundaries, bin_boundary_quantities );
 
@@ -522,7 +663,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   else
   {
     // Convert the raw bin values to quantities
-    Teuchos::Array<DepQuantity> bin_quantities;
+    std::vector<DepQuantity> bin_quantities;
 
     this->convertUnitlessValues( bin_values, bin_quantities );
 
@@ -535,8 +676,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
-		     const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		     const Teuchos::Array<double>& cdf_values )
+		     const std::vector<InputIndepQuantity>& bin_boundaries,
+		     const std::vector<double>& cdf_values )
 {
   // Make sure that the bin boundaries are sorted
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
@@ -584,8 +725,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
-		      const Teuchos::Array<InputDepQuantity>& bin_values )
+		      const std::vector<InputIndepQuantity>& bin_boundaries,
+		      const std::vector<InputDepQuantity>& bin_values )
 {
   // Make sure that the bin boundaries are sorted
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
@@ -632,8 +773,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 // Reconstruct original distribution
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
-			 Teuchos::Array<IndepQuantity>& bin_boundaries,
-			 Teuchos::Array<DepQuantity>& bin_values ) const
+			 std::vector<IndepQuantity>& bin_boundaries,
+			 std::vector<DepQuantity>& bin_values ) const
 {
   // Resize the arrays
   bin_boundaries.resize( d_distribution.size() );
@@ -651,8 +792,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 // Reconstruct original distribution w/o units
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
-			      Teuchos::Array<double>& bin_boundaries,
-			      Teuchos::Array<double>& bin_values ) const
+			      std::vector<double>& bin_boundaries,
+			      std::vector<double>& bin_values ) const
 {
   // Resize the arrays
   bin_boundaries.resize( d_distribution.size() );
@@ -675,8 +816,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 template<typename IndependentUnit, typename DependentUnit>
 template<typename Quantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::convertUnitlessValues(
-		                 const Teuchos::Array<double>& unitless_values,
-				 Teuchos::Array<Quantity>& quantities )
+		                 const std::vector<double>& unitless_values,
+				 std::vector<Quantity>& quantities )
 {
   // Resize the quantity array
   quantities.resize( unitless_values.size() );
@@ -703,6 +844,149 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
   }
 
   return possible_zero;
+}
+
+// Verify that the distribution type is discrete
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
+{
+  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMactch( type_data.toString() ),
+                      Utility::StringConversionException,
+                      "The histogram distribution cannot be constructed "
+                      "because the distribution type ("
+                      << type_data.toString() < ") does not match!" );
+}
+
+// Set the independent values
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractIndependentValues(
+                                      const Utility::Variant& indep_data,
+                                      std::vector<double>& independent_values )
+{
+  try{
+    independent_value =
+      Utility::variant_cast<std::vector<double> >( indep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The histogram distribution cannot be "
+                           "constructed because the independent values are "
+                           "not valid!" );
+}
+
+// Set the independent values
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractIndependentValues(
+                                      const Utility::PropertyTree& indep_data,
+                                      std::vector<double>& independent_values )
+{
+  // Inline array
+  if( indep_data.size() == 0 )
+  {
+    ThisType::extractIndependentValues( indep_data.data(),
+                                        independent_values );
+  }
+
+  // JSON array
+  else
+  {
+    try{
+      independent_values =
+        Utility::fromPropertyTree<std::vector<double> >( indep_data );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
+                             "The histogram distribution cannot be "
+                             "constructed because the independent data "
+                             "is invalid!" );
+  }
+}
+
+// Set the dependent values
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractDependentValues(
+                                        const Utility::Variant& dep_data,
+                                        std::vector<double>& dependent_values )
+{
+  try{
+    dependent_value =
+      Utility::variant_cast<std::vector<double> >( dep_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The histogram distribution cannot be "
+                           "constructed because the dependent values are "
+                           "not valid!" );
+}
+
+// Set the dependent values
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractDependentValues(
+                                        const Utility::PropertyTree& dep_data,
+                                        std::vector<double>& dependent_values )
+{
+  // Inline array
+  if( dep_data.size() == 0 )
+    ThisType::extractDependentVlaues( dep_data.data(), dependent_values );
+
+  // JSON array
+  else
+  {
+    try{
+      dependent_values =
+        Utility::fromPropertyTree<std::vector<double> >( dep_data );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
+                             "The histogram distribution cannot be "
+                             "constructed because the dependent data "
+                             "is invalid!" );
+  }
+}
+
+// Verify that the values are valid
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void verifyValidValues(
+                                 const std::vector<double>& bin_boundaries,
+                                 const std::vector<double>& bin_values )
+{
+  TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
+                      Utility::StringConversionException,
+                      "The histogram distribution cannot be constructed "
+                      "because no full bins have been specified!" );
+  
+  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
+						bin_boundaries.end() ),
+		      Utility::StringConversionException,
+		      "The histogram distribution cannot be "
+		      "constructed because the bin boundaries "
+		      << bin_boundaries_rep << " are not sorted!" );
+
+  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.front() ),
+                      Utility::StringConversionException,
+                      "The histogram distribution cannot be constructed "
+                      "because the first bin boundary is invalid!" );
+
+  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.back() ),
+                      Utility::StringConversionException,
+                      "The histogram distribution cannot be constructed "
+                      "because the last bin boundary is invalid!" );
+
+  TEST_FOR_EXCEPTION( bin_boundaries.size() != bin_values.size()+1,
+		      Utility::StringConversionException,
+		      "The histogram distribution cannot be constructed "
+                      "because the number of bin boundaries ("
+                      << bin_boundaries.size() << ") does not match the "
+                      "number of bin values plus 1 ("
+                      << bin_values.size() + 1 << ")!" );
+
+  std::vector<double>::const_iterator bad_bin_value =
+    std::find_if( bin_values.begin(),
+                  bin_values.end(),
+                  [](double element){ return QT::isnaninf( element ) || element <= 0.0 } );
+
+  TEST_FOR_EXCEPTION(  bad_dependent_value != dependent_values.end(),
+                       Utility::StringConversionException,
+                      "The histogram distribution cannot be constructed "
+                      "because the bin value at index "
+                       << std::distance( bin_values.begin(), bad_bin_value ) <<
+                       " (" << *bad_bin_value << ") is not valid!" );
 }
 
 } // end Utility namespace

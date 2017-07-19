@@ -469,7 +469,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPr
       }
 
       // Extract the bin boundaries
-      else if( child_node_key.find( "bin" ) < child_node_key.size() )
+      else if( child_node_key.find( "boundaries" ) < child_node_key.size() )
       {
         try{
           this->extractBinBoundaries( node_it->second, bin_boundaries );
