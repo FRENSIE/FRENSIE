@@ -16,11 +16,6 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -41,23 +36,23 @@ namespace cgs = boost::units::cgs;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
 
-Teuchos::RCP<Utility::OneDDistribution> pdf_distribution;
-Teuchos::RCP<Utility::TabularOneDDistribution> tab_pdf_distribution;
+std::shared_ptr<Utility::OneDDistribution> pdf_distribution;
+std::shared_ptr<Utility::TabularOneDDistribution> tab_pdf_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_pdf_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_pdf_distribution;
 
 
-Teuchos::RCP<Utility::OneDDistribution> cdf_distribution;
-Teuchos::RCP<Utility::TabularOneDDistribution> tab_cdf_distribution;
+std::shared_ptr<Utility::OneDDistribution> cdf_distribution;
+std::shared_ptr<Utility::TabularOneDDistribution> tab_cdf_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_cdf_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_cdf_distribution;
 
 //---------------------------------------------------------------------------//
@@ -1349,6 +1344,57 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type name can be returned
+TEUCHOS_UNIT_TEST( HistogramDistribution, getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( Utility::HistogramDistribution::getDistributionTypeName(),
+                       "Histogram Distribution" );
+  TEST_EQUALITY_CONST( Utility::HistogramDistribution::getDistributionTypeName( false ),
+                       "Histogram" );
+  TEST_EQUALITY_CONST( Utility::HistogramDistribution::getDistributionTypeName( true, true ),
+                       "histogram distribution" );
+  TEST_EQUALITY_CONST( Utility::HistogramDistribution::getDistributionTypeName( false, true ),
+                       "histogram" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution type name can be returned
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution,
+                   getDistributionTypeName )
+{
+  TEST_EQUALITY_CONST( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName()),
+                       "Histogram Distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName( false )),
+                       "Histogram" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName( true, true )),
+                       "histogram distribution" );
+  TEST_EQUALITY_CONST( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::getDistributionTypeName( false, true )),
+                       "histogram" );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the distribution type name
+TEUCHOS_UNIT_TEST( HistogramDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( Utility::HistogramDistribution::doesTypeNameMatch( "Histogram Distribution" ) );
+  TEST_ASSERT( Utility::HistogramDistribution::doesTypeNameMatch( "Histogram" ) );
+  TEST_ASSERT( Utility::HistogramDistribution::doesTypeNameMatch( "histogram" ) );
+  TEST_ASSERT( Utility::HistogramDistribution::doesTypeNameMatch( "HISTOGRAM" ) );
+  TEST_ASSERT( !Utility::HistogramDistribution::doesTypeNameMatch( "HIST" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the type name matches the unit-aware distribution type name
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, doesTypeNameMatch )
+{
+  TEST_ASSERT( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "Histogram Distribution" )) );
+  TEST_ASSERT( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "Histogram" )) );
+  TEST_ASSERT( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "histogram" )) );
+  TEST_ASSERT( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "HISTOGRAM" )) );
+  TEST_ASSERT( !(Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::doesTypeNameMatch( "HIST" )) );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 TEUCHOS_UNIT_TEST( HistogramDistribution, isTabular )
 {
@@ -1432,105 +1478,984 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( HistogramDistribution, toParameterList )
+// Check that the distribution can be converted to a string
+TEUCHOS_UNIT_TEST( HistogramDistribution, toString )
 {
-  Teuchos::RCP<Utility::HistogramDistribution> true_distribution =
-  Teuchos::rcp_dynamic_cast<Utility::HistogramDistribution>( pdf_distribution );
+  std::string dist_string = Utility::toString( *pdf_distribution );
 
-  Teuchos::ParameterList parameter_list;
+  TEST_EQUALITY_CONST( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
 
-  parameter_list.set<Utility::HistogramDistribution>( "test distribution",
-						     *true_distribution );
+  dist_string = Utility::toString( *cdf_distribution );
 
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"histogram_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "histogram_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<Utility::HistogramDistribution>
-    copy_distribution( new Utility::HistogramDistribution );
-
-  *copy_distribution =
-    read_parameter_list->get<Utility::HistogramDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, toParameterList )
+// Check that the unit-aware distribution can be converted to a string
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, toString )
 {
-  typedef Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
-    UnitAwareHistogramDistribution;
+  std::string dist_string = Utility::toString( *unit_aware_pdf_distribution );
 
-  Teuchos::RCP<UnitAwareHistogramDistribution> true_distribution =
-  Teuchos::rcp_dynamic_cast<UnitAwareHistogramDistribution>( unit_aware_pdf_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
 
-  Teuchos::ParameterList parameter_list;
+  dist_string = Utility::toString( *unit_aware_cdf_distribution );
 
-  parameter_list.set<UnitAwareHistogramDistribution>( "test distribution",
-						      *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"unit_aware_histogram_dist_test_list.xml" );
-
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( "unit_aware_histogram_dist_test_list.xml" );
-
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<UnitAwareHistogramDistribution>
-    copy_distribution( new UnitAwareHistogramDistribution );
-
-  *copy_distribution =
-    read_parameter_list->get<UnitAwareHistogramDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  TEST_EQUALITY_CONST( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( HistogramDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( HistogramDistribution, toStream )
 {
-  Utility::HistogramDistribution distribution =
-    test_dists_list->get<Utility::HistogramDistribution>( "Histogram Distribution A" );
+  std::ostringstream oss;
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -2.0 );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi );
+  Utility::toStream( oss, *pdf_distribution );
 
-  distribution =
-    test_dists_list->get<Utility::HistogramDistribution>( "Histogram Distribution B" );
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
+  oss.str( "" );
+  oss.clear();
+  
+  Utility::toStream( oss, *cdf_distribution );
+
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, fromParameterList )
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, toStream )
 {
-  typedef Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
-    UnitAwareHistogramDistribution;
+  std::ostringstream oss;
+  
+  Utility::toStream( oss, *unit_aware_pdf_distribution );
 
-  UnitAwareHistogramDistribution distribution =
-    test_dists_list->get<UnitAwareHistogramDistribution>( "Unit-Aware Histogram Distribution A" );
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -2.0*MeV );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi*MeV );
+  oss.str( "" );
+  oss.clear();
 
-  distribution =
-    test_dists_list->get<UnitAwareHistogramDistribution>( "Unit-Aware Histogram Distribution B" );
+  Utility::toStream( oss, *unit_aware_cdf_distribution );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0*MeV );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( HistogramDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+
+  oss << *pdf_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+
+  oss.str( "" );
+  oss.clear();
+  
+  oss << *cdf_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be placed in a stream
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, ostream_operator )
+{
+  std::ostringstream oss;
+  
+  oss << *unit_aware_pdf_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *unit_aware_cdf_distribution;
+
+  TEST_EQUALITY_CONST( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( HistogramDistribution, fromString )
+{
+  Utility::HistogramDistribution test_dist =
+    Utility::fromString<Utility::HistogramDistribution>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::HistogramDistribution>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  test_dist = Utility::fromString<Utility::HistogramDistribution>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be initialized from a string
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, fromString )
+{
+  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> test_dist =
+    Utility::fromString<decltype(test_dist)>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  test_dist = Utility::fromString<decltype(test_dist)>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  test_dist = Utility::fromString<decltype(test_dist)>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( HistogramDistribution, fromStream )
+{
+  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+  Utility::HistogramDistribution test_dist;
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );  
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, fromStream )
+{
+  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
+    test_dist;
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( HistogramDistribution, istream_operator )
+{
+  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+  Utility::HistogramDistribution test_dist;
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be initialized from a stream
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, istream_operator )
+{
+  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
+    test_dist;
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( HistogramDistribution, toPropertyTree )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *pdf_distribution );
+
+  Utility::HistogramDistribution copy_dist =
+    ptree.get<Utility::HistogramDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+
+  ptree.put( "test distribution", *tab_pdf_distribution );
+
+  copy_dist = ptree.get<Utility::HistogramDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( tab_pdf_distribution.get() ) );
+
+  ptree.put( "test distribution", *cdf_distribution );
+
+  copy_dist = ptree.get<Utility::HistogramDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  ptree.put( "test distribution", *tab_cdf_distribution );
+
+  copy_dist = ptree.get<Utility::HistogramDistribution>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( tab_cdf_distribution.get() ) );
+
+  ptree.clear();
+
+  // Use the PropertyTreeCompatibleOjbect interface
+  ptree = pdf_distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+
+  ptree = pdf_distribution->toPropertyTree( false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = pdf_distribution->toPropertyTree();
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = cdf_distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
+
+  ptree = cdf_distribution->toPropertyTree( false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = cdf_distribution->toPropertyTree();
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  // Use the property tree helper methods
+  ptree = Utility::toPropertyTree( *pdf_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *pdf_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = Utility::toPropertyTree( *pdf_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = Utility::toPropertyTree( *tab_pdf_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( tab_pdf_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *tab_pdf_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = Utility::toPropertyTree( *tab_pdf_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be written to a property tree
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, toPropertyTree )
+{
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", *unit_aware_pdf_distribution );
+
+  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> copy_dist =
+    ptree.get<decltype(copy_dist)>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_pdf_distribution.get() ) );
+
+  ptree.put( "test distribution", *unit_aware_tab_pdf_distribution );
+
+  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_pdf_distribution.get() ) );
+
+  ptree.put( "test distribution", *unit_aware_cdf_distribution );
+
+  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  ptree.put( "test distribution", *unit_aware_tab_cdf_distribution );
+
+  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
+
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_cdf_distribution.get() ) );
+
+  ptree.clear();
+
+  // Use the PropertyTreeCompatibleOjbect interface
+  ptree = unit_aware_pdf_distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<decltype(copy_dist)>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_pdf_distribution.get() ) );
+
+  ptree = unit_aware_pdf_distribution->toPropertyTree( false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = unit_aware_pdf_distribution->toPropertyTree();
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = unit_aware_cdf_distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<decltype(copy_dist)>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_cdf_distribution.get() ) );
+
+  ptree = unit_aware_cdf_distribution->toPropertyTree( false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = unit_aware_cdf_distribution->toPropertyTree();
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  // Use the property tree helper methods
+  ptree = Utility::toPropertyTree( *unit_aware_pdf_distribution, true );
+
+  copy_dist = ptree.get_value<decltype(copy_dist)>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_pdf_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_pdf_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_pdf_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_pdf_distribution, true );
+
+  copy_dist = ptree.get_value<decltype(copy_dist)>();
+
+  TEST_EQUALITY_CONST( ptree.size(), 0 );
+  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_pdf_distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_pdf_distribution, false );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_tab_pdf_distribution );
+
+  TEST_EQUALITY_CONST( ptree.size(), 3 );
+  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Histogram Distribution" );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin boundaries" ),
+                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
+  TEST_COMPARE_CONTAINERS( ptree.get<std::vector<double> >( "bin values" ),
+                           std::vector<double>({2.0, 1.0, 2.0}) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be read from a property tree
+TEUCHOS_UNIT_TEST( HistogramDistribution, fromPropertyTree )
+{
+  Utility::HistogramDistribution dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution A" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution B" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution C" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution D" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -2.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.5 ), 2.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.5 ), 2.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution E" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  unused_children.clear();
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution F" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "Dummy" );
+
+  unused_children.clear();
+
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution N" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution O" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution P" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution Q" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution R" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution S" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution T" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution U" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution V" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution W" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution X" ) ),
+              Utility::PropertyTreeConversionException );  
+
+  // Use the property tree helper methds
+  dist = Utility::fromPropertyTree<Utility::HistogramDistribution>(
+                     test_dists_ptree->get_child( "Histogram Distribution A" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::HistogramDistribution>(
+                     test_dists_ptree->get_child( "Histogram Distribution B" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::HistogramDistribution>(
+                     test_dists_ptree->get_child( "Histogram Distribution C" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::HistogramDistribution>(
+                     test_dists_ptree->get_child( "Histogram Distribution D" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -2.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.5 ), 2.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.5 ), 2.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<Utility::HistogramDistribution>(
+                     test_dists_ptree->get_child( "Histogram Distribution E" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  unused_children.clear();
+
+  dist = Utility::fromPropertyTree<Utility::HistogramDistribution>(
+                     test_dists_ptree->get_child( "Histogram Distribution F" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6 ), 1.0 );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8 ), 1.0 );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "Dummy" );
+
+  unused_children.clear();
+
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution N" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution O" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution P" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution Q" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution R" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution S" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution T" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution U" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution V" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution W" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<Utility::HistogramDistribution>( test_dists_ptree->get_child( "Histogram Distribution X" ) ),
+              Utility::PropertyTreeConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be read from a property tree
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, fromPropertyTree )
+{
+  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> dist;
+
+  std::vector<std::string> unused_children;
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution A" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist, *dynamic_cast<decltype(dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution B" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution C" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution D" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -2.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.5*MeV ), 2.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.5*MeV ), 2.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution E" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  unused_children.clear();
+
+  dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution F" ),
+                         unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "Dummy" );
+
+  unused_children.clear();
+
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution N" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution O" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution P" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution Q" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution R" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution S" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution T" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution U" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution V" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution W" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Histogram Distribution X" ) ),
+              Utility::PropertyTreeConversionException );  
+
+  // Use the property tree helper methds
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+                     test_dists_ptree->get_child( "Histogram Distribution A" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist, *dynamic_cast<decltype(dist)*>( unit_aware_pdf_distribution.get() ) );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+                     test_dists_ptree->get_child( "Histogram Distribution B" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+                     test_dists_ptree->get_child( "Histogram Distribution C" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+                     test_dists_ptree->get_child( "Histogram Distribution D" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -2.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(),
+                       Utility::PhysicalConstants::pi*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( -1.5*MeV ), 2.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.0*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 1.5*MeV ), 2.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+                     test_dists_ptree->get_child( "Histogram Distribution E" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+
+  unused_children.clear();
+
+  dist = Utility::fromPropertyTree<decltype(dist)>(
+                     test_dists_ptree->get_child( "Histogram Distribution F" ),
+                     unused_children );
+
+  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.2*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.4*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.6*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( dist.evaluate( 0.8*MeV ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( unused_children.size(), 1 );
+  TEST_EQUALITY_CONST( unused_children.front(), "Dummy" );
+
+  unused_children.clear();
+
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution G" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution H" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution I" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution J" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution K" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution L" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution M" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution N" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution O" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution P" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution Q" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution R" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution S" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution T" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution U" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution V" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution W" ) ),
+              Utility::PropertyTreeConversionException );
+  TEST_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Histogram Distribution X" ) ),
+              Utility::PropertyTreeConversionException );
 }
 
 //---------------------------------------------------------------------------//
@@ -1553,7 +2478,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareHistogramDistribution,
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwareHistogramDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareHistogramDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::HistogramDistribution>( pdf_distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareHistogramDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwareHistogramDistribution<IndepUnitB,DepUnitB>
@@ -1767,33 +2692,33 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_xml_file;
+std::string test_dists_json_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_dists_xml_file",
-                   &test_dists_xml_file,
-                   "Test distributions xml file name" );
+  clp().setOption( "test_dists_json_file",
+                   &test_dists_json_file_name,
+                   "Test distributions json file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::HistogramDistribution );
-  typedef Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
-    UnitAwareHistogramDistribution;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareHistogramDistribution );
+  // Load the property tree from the json file
+  test_dists_ptree.reset( new Utility::PropertyTree );
 
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
+  std::ifstream test_dists_json_file( test_dists_json_file_name );
+
+  test_dists_json_file >> *test_dists_ptree;
 
   // Create a distribution using the standard constructor
   {
-    Teuchos::Array<double> bin_boundaries( 4 );
+    std::vector<double> bin_boundaries( 4 );
     bin_boundaries[0] = -2.0;
     bin_boundaries[1] = -1.0;
     bin_boundaries[2] = 1.0;
     bin_boundaries[3] = 2.0;
 
-    Teuchos::Array<double> bin_values( 3 );
+    std::vector<double> bin_values( 3 );
     bin_values[0] = 2.0;
     bin_values[1] = 1.0;
     bin_values[2] = 2.0;
@@ -1807,13 +2732,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create a distribution using the cdf constructor
   {
-    Teuchos::Array<double> bin_boundaries( 4 );
+    std::vector<double> bin_boundaries( 4 );
     bin_boundaries[0] = -2.0;
     bin_boundaries[1] = -1.0;
     bin_boundaries[2] = 1.0;
     bin_boundaries[3] = 2.0;
 
-    Teuchos::Array<double> cdf_values( 3 );
+    std::vector<double> cdf_values( 3 );
     cdf_values[0] = 2.0;
     cdf_values[1] = 4.0;
     cdf_values[2] = 6.0;
@@ -1828,13 +2753,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create a unit-aware distribution using the standard constructor
   {
-    Teuchos::Array<quantity<MegaElectronVolt> > bin_boundaries( 4 );
+    std::vector<quantity<MegaElectronVolt> > bin_boundaries( 4 );
     bin_boundaries[0] = -2.0*MeV;
     bin_boundaries[1] = -1.0*MeV;
     bin_boundaries[2] = 1.0*MeV;
     bin_boundaries[3] = 2.0*MeV;
 
-    Teuchos::Array<quantity<si::amount> > bin_values( 3 );
+    std::vector<quantity<si::amount> > bin_values( 3 );
     bin_values[0] = 2.0*si::mole;
     bin_values[1] = 1.0*si::mole;
     bin_values[2] = 2.0*si::mole;
@@ -1849,13 +2774,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create a unit-aware distribution using the cdf constructor
   {
-    Teuchos::Array<quantity<MegaElectronVolt> > bin_boundaries( 4 );
+    std::vector<quantity<MegaElectronVolt> > bin_boundaries( 4 );
     bin_boundaries[0] = -2.0*MeV;
     bin_boundaries[1] = -1.0*MeV;
     bin_boundaries[2] = 1.0*MeV;
     bin_boundaries[3] = 2.0*MeV;
 
-    Teuchos::Array<double> cdf_values( 3 );
+    std::vector<double> cdf_values( 3 );
     cdf_values[0] = 2.0;
     cdf_values[1] = 4.0;
     cdf_values[2] = 6.0;

@@ -668,16 +668,16 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
                       "constructed because the last bin boundary is "
                       "invalid!" );
 
-  TEST_FOR_EXCEPTION( std::adjacent_find( bin_boundaries.begin(),
-                                          bin_boundaries.end() ) !=
-                      bin_boundaries.end(),
+  std::vector<double>::const_iterator repeat_bin_boundary =
+    std::adjacent_find( bin_boundaries.begin(), bin_boundaries.end() );
+
+  TEST_FOR_EXCEPTION( repeat_bin_boundary != bin_boundaries.end(),
                       Utility::StringConversionException,
                       "The equiprobable bin distribution cannot be "
-                      "constructed because there are repeated bin boundaries ("
-                      "first repeated value found == "
-                      << *(std::adjacent_find( bin_boundaries.begin(),
-                                               bin_boundaries.end() ) ) <<
-                      ")!" );
+                      "constructed because there is a repeated bin boundary "
+                      "at index "
+                      << std::distance( bin_boundaries.begin(), repeat_bin_boundary ) <<
+                      " (" << *repeat_bin_boundary << ")!" );
 }
 
 } // end Utility namespace

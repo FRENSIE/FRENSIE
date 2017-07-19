@@ -1,40 +1,45 @@
 {
-    "Histogram Distribution A": "{histogram, {-2.0, -1.0, 1.0, pi},{2.0, 1.0, 2.0}}",
-    "Histogram Distribution B": "{Histogram, {0.0, 3i, 1.0},{1.0, 1.0, 1.0, 1.0}}",
-
-    "Histogram Distribution C":
-    {
-        "type": "Histogram Distribution",
-        "bin boundaries": "{-2.0, -1.0, 1.0, pi}",
-        "bin values:" "{2.0, 1.0, 2.0}"
-    },
+    "Histogram Distribution A": "{histogram, {-2.0, -1.0, 1.0, 2.0},{2.0, 1.0, 2.0}}",
+    "Histogram Distribution B": "{Histogram, {0.0, 3i, 1.0},{1.0r4}}, false}",
+    "Histogram Distribution C": "{histogram dist, {0.0, 3i, 1.0}, {0.25, 2i, 1.0}, true}",
 
     "Histogram Distribution D":
     {
-        "comment": "JSON arrays can also be used to specify values"
-        "values": "{1.0r4}",
-        "boundaries": ["0.0", "0.25", "0.5", "0.75", "1.0"],
-        "type": "histogram distribuiton"
+        "type": "Histogram Distribution",
+        "bin boundaries": "{-2.0, -1.0, 1.0, pi}",
+        "bin values": "{2.0, 1.0, 2.0}"
     },
 
     "Histogram Distribution E":
     {
-        "comment": "JSON arrays can also be used to specify values"
+        "comment": "JSON arrays can also be used to specify values",
+        "values": "{0.25, 2i, 1.0}",
+        "boundaries": ["0.0", "0.25", "0.5", "0.75", "1.0"],
+        "cdf specified": true,
+        "type": "histogram distribution",
+        "dummy": ""
+    },
+
+    "Histogram Distribution F":
+    {
+        "comment": "JSON arrays can also be used to specify values",
         "values": ["1.0", "1.0", "1.0", "1.0"],
         "boundaries": "{0.0, 3i, 1.0}",
-        "type": "histogram"
+        "cdf": false,
+        "type": "histogram",
+        "Dummy": ""
     },
 
     "comment": "This distribution is ill-formed (incorrect type)",
-    "Histogram Distribution E": "{dummy, {}, {}}",
+    "Histogram Distribution G": "{dummy, {}, {}}",
 
-    "Histogram Distribution F":
+    "Histogram Distribution H":
     {
         "comment": "This distribution is ill-formed (incorrect type)",
         "type": "dummy"
     },
 
-    "Histogram Distribution G":
+    "Histogram Distribution I":
     {
         "comment": "This distribution is ill-formed (bad indep and dep values)",
         "type": "Histogram",
@@ -42,7 +47,7 @@
         "values": "{}"
     },
 
-    "Histogram Distribution H":
+    "Histogram Distribution J":
     {
         "comment": "This distribution is ill-formed (bad indep and dep values)",
         "type": "Histogram",
@@ -50,7 +55,7 @@
         "values": "{1.0r3}"
     },
 
-    "Histogram Distribution I":
+    "Histogram Distribution K":
     {
         "comment": "This distribution is ill-formed (bad indep and dep values)",
         "type": "Histogram",
@@ -58,7 +63,7 @@
         "values": "{1.0}"
     },
 
-    "Histogram Distribution J":
+    "Histogram Distribution L":
     {
         "comment": "This distribution is ill-formed (indep values not sorted)",
         "type": "Histogram",
@@ -66,7 +71,7 @@
         "values": "{1.0r2}"
     },
 
-    "Histogram Distribution K":
+    "Histogram Distribution M":
     {
         "comment": "This distribution is ill-formed (invalid indep values)",
         "type": "Histogram",
@@ -74,7 +79,7 @@
         "values": "{1.0r2}"
     },
 
-    "Histogram Distribution L":
+    "Histogram Distribution N":
     {
         "comment": "This distribution is ill-formed (invalid indep values)",
         "type": "Histogram",
@@ -82,7 +87,7 @@
         "values": "{1.0r2}"
     },
 
-    "Histogram Distribution M":
+    "Histogram Distribution O":
     {
         "comment": "This distribution is ill-formed (invalid dep values)",
         "type": "Histogram",
@@ -90,7 +95,7 @@
         "values": "{1.0, Inf}"
     },
 
-    "Histogram Distribution N":
+    "Histogram Distribution P":
     {
         "comment": "This distribution is ill-formed (invalid dep values)",
         "type": "Histogram",
@@ -98,11 +103,76 @@
         "values": "{0.0, 1.0}"
     },
 
-    "Histogram Distribution N":
+    "Histogram Distribution Q":
     {
         "comment": "This distribution is ill-formed (invalid dep values)",
         "type": "Histogram",
         "boundaries": "{0.0, 1.0, 2.0}",
         "values": "{-1.0, 1.0}"
     },
+
+    "Histogram Distribution R":
+    {
+        "comment": "This distribution is ill-formed (invalid dep values)",
+        "type": "Histogram",
+        "boundaries": "{0.0, 1.0, 2.0}",
+        "values": "{0.0, 1.0}",
+        "cdf": true
+    },
+
+    "Histogram Distribution S":
+    {
+        "comment": "This distribution is ill-formed (invalid dep values)",
+        "type": "Histogram",
+        "boundaries": "{0.0, 1.0, 2.0}",
+        "values": "{1.0, 1.0}",
+        "cdf": true
+    },
+
+    "Histogram Distribution T":
+    {
+        "comment": "This distribution is ill-formed (invalid dep values)",
+        "type": "Histogram",
+        "boundaries": "{0.0, 1.0, 2.0}",
+        "values": "{2.0, 1.0}",
+        "cdf": true
+    },
+
+    "Histogram Distribution U":
+    {
+        "comment": "This distribution is ill-formed (multiple value keys)",
+        "type": "Histogram",
+        "boundaries": "{0.0, 1.0, 2.0}",
+        "values": "{1.0, 2.0}",
+        "Values again": "{1.0, 2.0}"
+    },
+
+    "Histogram Distribution V":
+    {
+        "comment": "This distribution is ill-formed (multiple boundary keys)",
+        "type": "Histogram",
+        "boundaries": "{0.0, 1.0, 2.0}",
+        "Boundaries again": "{0.0, 1.0, 2.0}",
+        "values": "{1.0, 2.0}"
+    },
+
+    "Histogram Distribution W":
+    {
+        "comment": "This distribution is ill-formed (multiple type keys)",
+        "type": "Histogram",
+        "Type again": "Dummy",
+        "boundaries": "{0.0, 1.0, 2.0}",
+        "values": "{1.0, 2.0}"
+    },
+
+    "Histogram Distribution X":
+    {
+        "comment": "This distribution is ill-formed (multiple cdf keys)",
+        "type": "Histogram",
+        "Type again": "Dummy",
+        "boundaries": "{0.0, 1.0, 2.0}",
+        "values": "{1.0, 2.0}",
+        "cdf": false,
+        "CDF again": false
+    }
 }

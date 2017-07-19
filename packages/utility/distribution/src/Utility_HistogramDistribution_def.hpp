@@ -16,7 +16,6 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
@@ -449,7 +448,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
                            "the stream!" );
 
   // Verify that the correct amount of distribution data is present
-  TEST_FOR_EXCEPTION( distribution_data.size() != 3,
+  TEST_FOR_EXCEPTION( distribution_data.size() < 3 ||
+                      distribution_data.size() > 4,
                       Utility::StringConversionException,
                       "The histogram distribution cannot be constructed "
                       "because the string representation is not valid!" );
@@ -467,10 +467,17 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   this->extractDependentValues( distribution_data[2], bin_values );
 
-  // Verify that the values are valid
-  this->verifyValidValues( bin_boundaries, bin_values );
+  // Extract the value that determines if the bin values should be treated
+  // as a CDF
+  bool cdf_bin_values = false;
+  
+  if( distribution_data.size() == 4 )
+    this->extractCDFBoolean( distribution_data[3], cdf_bin_values );
 
-  this->initializeDistribution( bin_boundaries, bin_values, false );
+  // Verify that the values are valid
+  this->verifyValidValues( bin_boundaries, bin_values, cdf_bin_values );
+
+  this->initializeDistribution( bin_boundaries, bin_values, cdf_bin_values );
 }
 
 // Method for converting the type to a property tree
@@ -500,7 +507,7 @@ Utility::PropertyTree UnitAwareHistogramDistribution<IndependentUnit,DependentUn
 
 // Method for initializing the object from a property tree node
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
                                     const Utility::PropertyTree& node,
                                     std::vector<std::string>& unused_children )
 {
@@ -527,8 +534,10 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
     bool type_verified = false;
     bool bin_boundary_vals_extracted = false;
     bool bin_vals_extracted = false;
+    bool cdf_boolean_extracted = false;
 
     std::vector<double> bin_bounaries, bin_values;
+    bool cdf_bin_values = false;
 
     while( node_it != node_end )
     {
@@ -538,6 +547,12 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
       // Verify the distribution type
       if( child_node_key.find( "type" ) < child_node_key.size() )
       {
+        TEST_FOR_EXCEPTION( type_verified,
+                            Utility::PropertyTreeConversionException,
+                            "The histogram distribution cannot be created "
+                            "because the distribution type is specified "
+                            "multiple types (second occurance == \""
+                            << node_it->first << "\")!" );
         try{
           this->verifyDistributionType( node_it->second.data() );
         }
@@ -552,6 +567,12 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
       // Extract the bin boundaries
       else if( child_node_key.find( "boundaries" ) < child_node_key.size() )
       {
+        TEST_FOR_EXCEPTION( bin_boundary_vals_extracted,
+                            Utility::PropertyTreeConversionException,
+                            "The histogram distribution cannot be created "
+                            "because the bin boundaries are specified "
+                            "multiple times (second occurance == \""
+                            << node_it->first << "\")!" );
         try{
           this->extractIndependentValues( node_it->second,
                                           bin_bounaries );
@@ -567,6 +588,12 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
       // Extract the bin values
       else if( child_node_key.find( "values" ) < child_node_key.size() )
       {
+        TEST_FOR_EXCEPTION( bin_vals_extracted,
+                            Utility::PropertyTreeConversionException,
+                            "The histogram distribution cannot be created "
+                            "because the bin values are specified multiple "
+                            "times (second occurance == \""
+                            << node_it->first << "\")!" );
         try{
           this->extractDependentValues( node_it->second, bin_values );
         }
@@ -576,6 +603,26 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
                                     "distribution!" );
 
         bin_vals_extracted = true;
+      }
+
+      // Extract the cdf bin values
+      else if( child_node_key.find( "cdf" ) < child_node_key.size() )
+      {
+        TEST_FOR_EXCEPTION( cdf_boolean_extracted,
+                            Utility::PropertyTreeConversionException,
+                            "The histogram distribution cannot be created "
+                            "because the cdf attribute has been specified "
+                            "multiple times (second occurance == \""
+                            << node_it->first << "\")!" );
+        try{
+          this->extractCDFBoolean( node_it->second.data(), cdf_bin_values );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PropertyTreeConversionException,
+                                    "Could not create the histogram "
+                                    "distribution!" );
+
+        cdf_boolean_extracted = true;
       }
 
       // This child node is unused (and is not a comment)
@@ -608,14 +655,14 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
 
     // Verify that the values are valid
     try{
-      this->verifyValidValues( bin_bounaries, bin_values );
+      this->verifyValidValues( bin_bounaries, bin_values, cdf_bin_values );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::PropertyTreeConversionException,
                                 "Could not create the discrete "
                                 "distribution!" );
 
-    this->initializeDistribution( bin_bounaries, bin_values, false );
+    this->initializeDistribution( bin_bounaries, bin_values, cdf_bin_values );
   }
 }
 
@@ -850,21 +897,21 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
 {
-  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMactch( type_data.toString() ),
+  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( type_data.toString() ),
                       Utility::StringConversionException,
                       "The histogram distribution cannot be constructed "
                       "because the distribution type ("
-                      << type_data.toString() < ") does not match!" );
+                      << type_data.toString() << ") does not match!" );
 }
 
 // Set the independent values
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractIndependentValues(
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractIndependentValues(
                                       const Utility::Variant& indep_data,
                                       std::vector<double>& independent_values )
 {
   try{
-    independent_value =
+    independent_values =
       Utility::variant_cast<std::vector<double> >( indep_data );
   }
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
@@ -875,7 +922,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extract
 
 // Set the independent values
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractIndependentValues(
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractIndependentValues(
                                       const Utility::PropertyTree& indep_data,
                                       std::vector<double>& independent_values )
 {
@@ -902,12 +949,12 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extract
 
 // Set the dependent values
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractDependentValues(
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractDependentValues(
                                         const Utility::Variant& dep_data,
                                         std::vector<double>& dependent_values )
 {
   try{
-    dependent_value =
+    dependent_values =
       Utility::variant_cast<std::vector<double> >( dep_data );
   }
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
@@ -918,13 +965,13 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extract
 
 // Set the dependent values
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extractDependentValues(
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractDependentValues(
                                         const Utility::PropertyTree& dep_data,
                                         std::vector<double>& dependent_values )
 {
   // Inline array
   if( dep_data.size() == 0 )
-    ThisType::extractDependentVlaues( dep_data.data(), dependent_values );
+    ThisType::extractDependentValues( dep_data.data(), dependent_values );
 
   // JSON array
   else
@@ -940,11 +987,28 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void extract
   }
 }
 
+// Set the cdf boolean
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractCDFBoolean(
+                                      const Utility::Variant& cdf_boolean_data,
+                                      bool& cdf_bin_values )
+{
+  try{
+    cdf_bin_values =
+      Utility::variant_cast<bool>( cdf_boolean_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The histogram distribution cannot be "
+                           "constructed because the cdf boolean value is "
+                           "not valid!" );
+}
+
 // Verify that the values are valid
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void verifyValidValues(
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidValues(
                                  const std::vector<double>& bin_boundaries,
-                                 const std::vector<double>& bin_values )
+                                 const std::vector<double>& bin_values,
+                                 const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
                       Utility::StringConversionException,
@@ -956,7 +1020,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void verifyV
 		      Utility::StringConversionException,
 		      "The histogram distribution cannot be "
 		      "constructed because the bin boundaries "
-		      << bin_boundaries_rep << " are not sorted!" );
+		      << bin_boundaries << " are not sorted!" );
 
   TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.front() ),
                       Utility::StringConversionException,
@@ -976,16 +1040,38 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::void verifyV
                       "number of bin values plus 1 ("
                       << bin_values.size() + 1 << ")!" );
 
+  if( cdf_bin_values )
+  {
+    TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_values.begin(),
+                                                  bin_values.end() ),
+                        Utility::StringConversionException,
+                        "The histogram distribution cannot be "
+                        "constructed because the bin cdf values "
+                        << bin_values << " are not sorted!" );
+
+    std::vector<double>::const_iterator repeat_bin_value =
+      std::adjacent_find( bin_values.begin(), bin_values.end() );
+    
+    TEST_FOR_EXCEPTION( repeat_bin_value != bin_values.end(),
+                        Utility::StringConversionException,
+                        "The histogram distribution cannot be "
+                        "constructed because there is a repeated bin cdf "
+                        "value at index "
+                        << std::distance( bin_values.begin(), repeat_bin_value ) <<
+                        " (" << *repeat_bin_value << ")!" );
+  }
+
+  
   std::vector<double>::const_iterator bad_bin_value =
     std::find_if( bin_values.begin(),
                   bin_values.end(),
-                  [](double element){ return QT::isnaninf( element ) || element <= 0.0 } );
+                  [](double element){ return QT::isnaninf( element ) || element <= 0.0; } );
 
-  TEST_FOR_EXCEPTION(  bad_dependent_value != dependent_values.end(),
+  TEST_FOR_EXCEPTION(  bad_bin_value != bin_values.end(),
                        Utility::StringConversionException,
-                      "The histogram distribution cannot be constructed "
-                      "because the bin value at index "
-                       << std::distance( bin_values.begin(), bad_bin_value ) <<
+                       "The histogram distribution cannot be constructed "
+                       "because the bin value at index "
+                         << std::distance( bin_values.begin(), bad_bin_value ) <<
                        " (" << *bad_bin_value << ") is not valid!" );
 }
 

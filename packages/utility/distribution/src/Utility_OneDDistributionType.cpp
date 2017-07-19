@@ -15,6 +15,7 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
+#include "Utility_HistogramDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
@@ -29,7 +30,7 @@ std::string convertOneDDistributionTypeToString(
   case DISCRETE_DISTRIBUTION: return DiscreteDistribution::getDistributionTypeName();
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";
   case EVAPORATION_DISTRIBUTION: return "Evaporation Distribution";
-  case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";
+  case HISTOGRAM_DISTRIBUTION: return HistogramDistribution::getDistributionTypeName();
   case MAXWELLFISSION_DISTRIBUTION: return "Maxwell Fission Distribution";
   case WATT_DISTRIBUTION: return "Watt Distribution";
   case EQUIPROBABLE_BIN_DISTRIBUTION: return EquiprobableBinDistribution::getDistributionTypeName();

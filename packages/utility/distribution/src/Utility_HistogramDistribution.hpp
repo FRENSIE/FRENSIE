@@ -169,10 +169,10 @@ public:
   using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
-  bool operator==( const UnitAwareEquiprobableBinDistribution& other ) const;
+  bool operator==( const UnitAwareHistogramDistribution& other ) const;
 
   //! Inequality comparison operator
-  bool operator!=( const UnitAwareEquiprobableBinDistribution& other ) const;
+  bool operator!=( const UnitAwareHistogramDistribution& other ) const;
 
 protected:
 
@@ -242,7 +242,12 @@ private:
 
   // Verify that the values are valid
   static void verifyValidValues( const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values );
+                                 const std::vector<double>& dependent_values,
+                                 const bool cdf_bin_values );
+
+  // Set the cdf boolean
+  static void extractCDFBoolean( const Utility::Variant& cdf_boolean_data,
+                                 bool& cdf_bin_values );
 
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>

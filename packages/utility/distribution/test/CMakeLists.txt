@@ -30,7 +30,7 @@ ADD_EXECUTABLE(tstHistogramDistribution
   tstHistogramDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_dist)
-ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.xml")
+ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_json_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.json")
 SET_PROPERTY(TEST HistogramDistribution_test PROPERTY LABELS utility_dist)
 
 ADD_EXECUTABLE(tstTabularDistribution
