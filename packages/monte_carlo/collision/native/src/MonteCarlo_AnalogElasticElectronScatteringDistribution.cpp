@@ -26,7 +26,7 @@ double AnalogElasticElectronScatteringDistribution::s_cutoff_delta_mu = 1.0e-6;
 double AnalogElasticElectronScatteringDistribution::s_cutoff_mu = 0.999999;
 
 // The fine structure constant squared
-double AnalogElasticElectronScatteringDistribution::s_fine_structure_const_squared=
+double AnalogElasticElectronScatteringDistribution::s_fsc_squared =
         Utility::PhysicalConstants::fine_structure_constant *
         Utility::PhysicalConstants::fine_structure_constant;
 
@@ -46,11 +46,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_cutoff_cdfs( cutoff_cdfs ),
     d_etas( etas ),
-    d_atomic_number( atomic_number ),
     d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on ),
-    d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
-    d_screening_param2( 3.76*s_fine_structure_const_squared*
-                              d_atomic_number*d_atomic_number )
 {
   // Make sure the array is valid
   testPrecondition( d_elastic_cutoff_distribution.use_count() > 0 );
@@ -59,8 +55,16 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
   testPrecondition( !d_etas.empty() );
   testPrecondition( d_cutoff_cdfs.size() == d_etas.size() );
   // Make sure the atomic number is valid
-  testPrecondition( d_atomic_number > 0 );
-  testPrecondition( d_atomic_number <= 100u );
+  testPrecondition( atomic_number > 0 );
+  testPrecondition( atomic_number <= 100u );
+
+  // Set parameter 1 for moliere screening constant ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
+  d_screening_param1 =
+                pow( atomic_number, 2.0/3.0 )*s_fsc_squared/( 1.56645 );
+
+
+  // Set parameter 2 for moliere screening constant ( 3.76*( fsc*Z )**2 )
+  d_screening_param2 = 3.76*s_fsc_squared*atomic_number*atomic_number;
 
   if ( d_linlinlog_interpolation_mode_on )
   {
@@ -360,7 +364,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCutoffCDF(
   return cdf;
 }
 
-// Evaluate the PDF
+// Evaluate the CDF
 double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
                                         const double incoming_energy,
                                         const double scattering_angle_cosine,
@@ -369,7 +373,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
   double cutoff_pdf = this->evaluatePDFAtCutoff( incoming_energy );
   double cutoff_cdf = ThisType::evaluateCDFAtCutoff( eta, cutoff_pdf );
 
-  return this->evaluateScreenedRutherfordPDF( scattering_angle_cosine,
+  return this->evaluateScreenedRutherfordCDF( scattering_angle_cosine,
                                               eta,
                                               cutoff_pdf,
                                               cutoff_cdf );
@@ -481,49 +485,40 @@ void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
 double AnalogElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant(
                                               const double energy ) const
 {
-  // get the energy-momentum**2 of the electron in units of electron_rest_mass_energy
-  double electron_energy_momentum_squared =
-           Utility::calculateDimensionlessRelativisticMomentumSquared(
-                          Utility::PhysicalConstants::electron_rest_mass_energy,
-                          energy );
+  // Calculate the energy in units of electron rest mass energy ( E / mc^2 )
+  double energy_in_mc =
+                energy/Utility::PhysicalConstants::electron_rest_mass_energy;
 
-  // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared(
-           Utility::PhysicalConstants::electron_rest_mass_energy,
-           energy );
-
-  double screening_param3 = 1.0/beta_squared*sqrt( energy/
-            ( energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
+  // Calculate the energy-momentum^2 in units of electron rest mass energy ( Pc / mc^2 )^2
+  double energy_momentum_squared = energy_in_mc*( energy_in_mc + 2.0 );
 
  // Calculate Moliere's atomic screening constant
- return s_screening_param1 * 1.0/electron_energy_momentum_squared *
-        d_Z_two_thirds_power * ( 1.13 + d_screening_param2*screening_param3 );
+ return d_screening_param1/energy_momentum_squared*( 1.13 +
+        d_screening_param2*pow(energy_in_mc + 1.0,2.0)/energy_momentum_squared );
 }
 
 // Evaluate Moliere's atomic screening constant (modified by Seltzer) at the given electron energy
 double AnalogElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant(
                                               const double energy,
-                                              const double Z_two_thirds_power,
-                                              const double parameter_1,
-                                              const double parameter_2 )
+                                              const double atomic_number )
 {
-  // get the energy-momentum**2 of the electron in units of electron_rest_mass_energy
-  double electron_energy_momentum_squared =
-           Utility::calculateDimensionlessRelativisticMomentumSquared(
-                          Utility::PhysicalConstants::electron_rest_mass_energy,
-                          energy );
+  // Calculate the energy in units of electron rest mass energy ( E / mc^2 )
+  double energy_in_mc =
+                energy/Utility::PhysicalConstants::electron_rest_mass_energy;
 
-  // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared(
-           Utility::PhysicalConstants::electron_rest_mass_energy,
-           energy );
+  // Calculate the energy-momentum^2 in units of electron rest mass energy ( Pc / mc^2 )^2
+  double energy_momentum_squared = energy_in_mc*( energy_in_mc + 2.0 );
 
-  double parameter_3 = 1.0/beta_squared*sqrt( energy/
-            ( energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
+  // Set parameter 1 for moliere screening constant ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
+  double screening_param1 =
+                pow( atomic_number, 2.0/3.0 )*s_fsc_squared/( 1.56645 );
+
+  // Set parameter 2 for moliere screening constant ( 3.76*( fsc*Z )**2 )
+  double screening_param2 = 3.76*s_fsc_squared*atomic_number*atomic_number;
 
  // Calculate Moliere's atomic screening constant
- return parameter_1 * 1.0/electron_energy_momentum_squared *
-        Z_two_thirds_power * ( 1.13 + parameter_2*parameter_3 );
+ return screening_param1/energy_momentum_squared*( 1.13 +
+        screening_param2*pow(energy_in_mc + 1.0,2.0)/energy_momentum_squared );
 }
 
 // Evaluate the distribution at the cutoff angle cosine

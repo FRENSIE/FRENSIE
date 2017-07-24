@@ -251,15 +251,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
-  double Z_two_thirds = pow( atomic_number, 2.0/3.0 );
-  double fine_structure_const_squared =
-        Utility::PhysicalConstants::fine_structure_constant *
-        Utility::PhysicalConstants::fine_structure_constant;
-
-  double paramter_1 = fine_structure_const_squared/( 2.0*0.885*0.885 );
-  double paramter_2 = 3.76*fine_structure_const_squared*
-                                            atomic_number*atomic_number;
-
   // Create the scattering function
   std::shared_ptr<TwoDDist> scattering_function;
 
@@ -280,9 +271,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
     etas[n] =
       AnalogElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant(
         angular_energy_grid[n],
-        Z_two_thirds,
-        paramter_1,
-        paramter_2 );
+        atomic_number );
 
     double cutoff_pdf =
             cutoff_elastic_pdf.find( angular_energy_grid[n] )->second.back();

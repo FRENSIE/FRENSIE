@@ -31,8 +31,6 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
-#include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_AngleCosineUnit.hpp"
 
 using boost::units::quantity;
 using namespace Utility::Units;
@@ -52,10 +50,11 @@ Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
 
 Teuchos::RCP<Utility::UnitAwareOneDDistribution<si::dimensionless,si::amount> >
   unit_aware_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<void,si::amount> >
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<si::dimensionless,si::amount> >
 unit_aware_tab_distribution;
 
-unsigned atomic_number = 1u;
+double eta = 1e-12;
+double cross_section_ratio = 0.1;
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -63,12 +62,8 @@ unsigned atomic_number = 1u;
 #define UNIT_TEST_INSTANTIATION( type, name )                                \
   typedef Utility::LinLin LinLin;                                        \
   typedef Utility::LogLin LogLin;                                        \
-  typedef Utility::LinLog LinLog;                                        \
-  typedef Utility::LogLog LogLog;                                        \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLin )                \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLin )                \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLog )                \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLog )
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLin )
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -80,10 +75,10 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist )
   // Use the basic constructor
   Teuchos::Array<typename BaseDistribution::IndepQuantity>
     independent_values( 4 );
-  Utility::setQuantity( independent_values[0], 1e-3 );
-  Utility::setQuantity( independent_values[1], 1e-2 );
-  Utility::setQuantity( independent_values[2], 1e-1 );
-  Utility::setQuantity( independent_values[3], 1.0 );
+  Utility::setQuantity( independent_values[0], -1.0 );
+  Utility::setQuantity( independent_values[1], 0.0 );
+  Utility::setQuantity( independent_values[2], 0.5 );
+  Utility::setQuantity( independent_values[3], 0.999999 );
 
   Teuchos::Array<typename BaseDistribution::DepQuantity> dependent_values( 4 );
   Utility::setQuantity( dependent_values[0], 1e2 );
@@ -92,42 +87,10 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist )
   Utility::setQuantity( dependent_values[3], 1e-1 );
 
   dist.reset(new Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
-                                                          independent_values,
-                                                          dependent_values,
-                                                          atomic_number ) );
-}
-
-
-// Initialize the distribution with a max CDF value
-template<typename InterpolationPolicy, typename BaseDistribution>
-void initializeWithMaxCDF( Teuchos::RCP<BaseDistribution>& dist )
-{
-  // Use the constructor with max CDF specified
-  Teuchos::Array<typename BaseDistribution::IndepQuantity>
-    independent_values( 4 );
-  Utility::setQuantity( independent_values[0], 1e-3 );
-  Utility::setQuantity( independent_values[1], 1e-2 );
-  Utility::setQuantity( independent_values[2], 1e-1 );
-  Utility::setQuantity( independent_values[3], 1.0 );
-
-  Teuchos::Array<typename BaseDistribution::DepQuantity> dependent_values( 4 );
-  Utility::setQuantity( dependent_values[0], 1e2 );
-  Utility::setQuantity( dependent_values[1], 1e1 );
-  Utility::setQuantity( dependent_values[2], 1.0 );
-  Utility::setQuantity( dependent_values[3], 1e-1 );
-
-////  UnnormCDFQuantity
-//  double max_cdf = 10.0;
-
-//  dist.reset(new Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
-//                                                          independent_values,
-//                                                          dependent_values,
-//                                                          max_cdf ) );
-
-  dist.reset(new Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
-                                                          independent_values,
-                                                          dependent_values,
-                                                          atomic_number ) );
+                                                      independent_values,
+                                                      dependent_values,
+                                                      eta,
+                                                      cross_section_ratio ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -140,23 +103,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-3 ), 1e2 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-2 ), 1e1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-1 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 1e-1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 0.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-3 ), 1e2 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-2 ), 1e1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1e-1 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 1e-1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 0.0 );
-
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 1e2 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 1e1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.999999 ), 1e-1 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 1.00000200000100021e+10 );
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, evaluate );
@@ -169,18 +120,16 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0 ),
-                       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-3 ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0 ),
                        1e2*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-2 ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0 ),
                        1e1*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-1 ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5 ),
                        1.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0 ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.999999 ),
                        1e-1*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0 ),
-                       0.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0 ),
+                       1.00000200000100021e+10*si::mole );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, evaluate );
@@ -193,38 +142,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-3 ),
-                          67.340006734,
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( -1.0 ),
+                          1.7233951046594968293e-1,
                           1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-2 ),
-                          6.7340006734,
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.0 ),
+                          1.7233951046594968293e-2,
                           1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-1 ),
-                          0.67340006734,
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.5 ),
+                          1.7233951046594968293e-3,
                           1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1.0 ),
-                          0.067340006734,
-                          1e-6 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-3 ),
-                          10.0,
-                          1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-2 ),
-                          1.0,
-                          1e-6 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-1 ),
-                          0.1,
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.999999 ),
+                          1.7233951046594968293e-4,
                           1e-6 );
   TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1.0 ),
-                          0.01,
+                          1.7233985514514300972e7,
                           1e-6 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
+std::cout << std::setprecision(20) << distribution->evaluatePDF( 1.0 ) << std::endl;
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, evaluatePDF );
@@ -237,26 +170,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*si::dimensionless() ),
-                       0.0/si::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY(
-                             unit_aware_distribution->evaluatePDF( 1e-3*si::dimensionless() ),
-                             67.340006734/si::dimensionless(),
+                             unit_aware_distribution->evaluatePDF( -1.0*si::dimensionless() ),
+                             1.7233951046594968293e-1/si::dimensionless(),
                              1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY(
-                             unit_aware_distribution->evaluatePDF( 1e-2*si::dimensionless() ),
-                             6.7340006734/si::dimensionless(),
+                             unit_aware_distribution->evaluatePDF( 0.0*si::dimensionless() ),
+                             1.7233951046594968293e-2/si::dimensionless(),
                              1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY(
-                             unit_aware_distribution->evaluatePDF( 1e-1*si::dimensionless() ),
-                             0.67340006734/si::dimensionless(),
+                             unit_aware_distribution->evaluatePDF( 0.5*si::dimensionless() ),
+                             1.7233951046594968293e-3/si::dimensionless(),
                              1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+                              unit_aware_distribution->evaluatePDF( 0.999999*si::dimensionless() ),
+                              1.7233951046594968293e-4/si::dimensionless(),
+                              1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY(
                               unit_aware_distribution->evaluatePDF( 1.0*si::dimensionless() ),
-                              0.067340006734/si::dimensionless(),
+                              1.7233985514514300972e7/si::dimensionless(),
                               1e-6 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.0*si::dimensionless() ),
-                       0.0/si::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, evaluatePDF );
@@ -269,38 +202,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( tab_distribution );
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( -1.0 ),
                           0.0000000000,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ),
-                          0.33333333333,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.0 ),
+                          0.094786730756272336018,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ),
-                          0.66666666667,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.5 ),
+                          0.09952606729408594588,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.999999 ),
+                          0.1,
                           1e-10 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ),
                           1.0000000000,
                           1e-10 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ),
-                          0.0000000000,
-                          1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ),
-                          0.0495,
-                          1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ),
-                          0.099,
-                          1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ),
-                          1.0000000000,
-                          1e-10 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, evaluateCDF );
@@ -313,22 +229,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*si::dimensionless() ),
-                       0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-3*si::dimensionless() ),
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( -1.0*si::dimensionless() ),
                           0.0000000000,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-2*si::dimensionless() ),
-                          0.33333333333,
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.0*si::dimensionless() ),
+                          0.094786730756272336018,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-1*si::dimensionless() ),
-                          0.66666666667,
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.5*si::dimensionless() ),
+                          0.09952606729408594588,
+                          1e-10 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.999999*si::dimensionless() ),
+                          0.1,
                           1e-10 );
   TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1.0*si::dimensionless() ),
-                          1.0000000000,
+                          1.0,
                           1e-10 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 2.0*si::dimensionless() ),
-                       1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, evaluateCDF );
@@ -341,14 +256,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[1] = cross_section_ratio;
+  fake_stream[2] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  sample = distribution->sample();
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
 
   sample = distribution->sample();
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
@@ -357,35 +276,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   Utility::RandomNumberGenerator::initialize();
 
   sample = distribution->sample();
-  TEST_COMPARE( sample, >=, 1e-3 );
+  TEST_COMPARE( sample, >=, -1.0 );
   TEST_COMPARE( sample, <=, 1.0 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  fake_stream.resize( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.1;
-  fake_stream[2] = 1.0 - 1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
-  sample = distribution->sample();
-  TEST_COMPARE( sample, >=, 0.0 );
-  TEST_COMPARE( sample, <=, 0.11005050633883220468 );
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sample );
@@ -398,14 +290,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[1] = cross_section_ratio;
+  fake_stream[2] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<si::dimensionless> sample = unit_aware_distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3*si::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*si::dimensionless() );
+
+  sample = unit_aware_distribution->sample();
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*si::dimensionless(), 1e-12 );
 
   sample = unit_aware_distribution->sample();
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::dimensionless(), 1e-12 );
@@ -414,7 +310,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_distribution->sample();
-  TEST_COMPARE( sample, >=, 1e-3*si::dimensionless() );
+  TEST_COMPARE( sample, >=, -1.0*si::dimensionless() );
   TEST_COMPARE( sample, <=, 1.0*si::dimensionless() );
 }
 
@@ -428,59 +324,34 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[1] = cross_section_ratio;
+  fake_stream[2] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( distribution );
-
-  fake_stream.resize( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.1;
-  fake_stream[2] = 1.0 - 1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-  TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
-
-  sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-  TEST_EQUALITY_CONST( 5.0/trials, 1.0 );
-
-  sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( 6.0/trials, 1.0 );
-
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 0.0 );
-  TEST_COMPARE( sample, <=, 0.11005050633883220468 );
-  TEST_EQUALITY_CONST( 7.0/trials, 1.0 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sampleAndRecordTrials );
@@ -493,9 +364,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[1] = cross_section_ratio;
+  fake_stream[2] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -503,20 +375,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 
   quantity<si::dimensionless> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3*si::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*si::dimensionless() );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*si::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::dimensionless(), 1e-12 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 1e-3*si::dimensionless() );
+  TEST_COMPARE( sample, >=, -1.0*si::dimensionless() );
   TEST_COMPARE( sample, <=, 1.0*si::dimensionless() );
-  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+  TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, sampleAndRecordTrials );
@@ -529,57 +405,33 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( tab_distribution );
 
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[1] = cross_section_ratio;
+  fake_stream[2] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned bin_index;
 
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( bin_index, 0u );
+
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
-  TEST_EQUALITY_CONST( bin_index, 2u );
+  TEST_EQUALITY_CONST( bin_index, 3u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 1e-3 );
+  TEST_COMPARE( sample, >=, -1.0 );
   TEST_COMPARE( sample, <=, 1.0 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  fake_stream.resize( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.1;
-  fake_stream[2] = 1.0 - 1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
-  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 0.0 );
-  TEST_COMPARE( sample, <=, 0.11005050633883220468 );
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sampleAndRecordBinIndex );
@@ -592,9 +444,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[1] = cross_section_ratio;
+  fake_stream[2] = 1.0 - 1e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -602,18 +455,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 
   quantity<si::dimensionless> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3*si::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*si::dimensionless() );
   TEST_EQUALITY_CONST( bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*si::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 2u );
+
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::dimensionless(), 1e-12 );
+  TEST_EQUALITY_CONST( bin_index, 3u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 1e-3*si::dimensionless() );
+  TEST_COMPARE( sample, >=, -1.0*si::dimensionless() );
   TEST_COMPARE( sample, <=, 1.0*si::dimensionless() );
 }
 
@@ -629,23 +486,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   initialize<InterpolationPolicy>( tab_distribution );
 
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  sample = tab_distribution->sampleWithRandomNumber( cross_section_ratio );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
 
   sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  sample = tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = tab_distribution->sampleWithRandomNumber( 0.1 );
-  TEST_FLOATING_EQUALITY( sample, 0.11005050633883220468, 1e-12 );
-
-  sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sampleWithRandomNumber );
@@ -660,10 +507,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 
   quantity<si::dimensionless> sample =
     unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3*si::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*si::dimensionless() );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( cross_section_ratio );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*si::dimensionless(), 1e-12 );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::dimensionless(), 1e-12 );
+
+  double random_number = cross_section_ratio/2.0;
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( random_number );
+  TEST_COMPARE( sample, >, -1.0 );
+  TEST_COMPARE( sample, <, 0.999999 );
+
+  random_number = (1.0 - cross_section_ratio)/2.0;
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( random_number );
+  TEST_COMPARE( sample, >, 0.999999 );
+  TEST_COMPARE( sample, <, 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
@@ -680,11 +540,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 1.0 - 1e-15;
-
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = tab_distribution->sampleInSubrange( 1e-1  );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleInSubrange( 1e-1 );
   TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
@@ -693,26 +552,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   Utility::RandomNumberGenerator::initialize();
 
   sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1e-1 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-  Utility::RandomNumberGenerator::initialize();
-
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_COMPARE( sample, >=, 1e-3 );
+  TEST_COMPARE( sample, >=, -1.0 );
   TEST_COMPARE( sample, <=, 1e-1 );
 }
 
@@ -734,7 +574,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 
   quantity<si::dimensionless> sample =
     unit_aware_tab_distribution->sampleInSubrange( 1e-1*si::dimensionless()  );
-  TEST_EQUALITY_CONST( sample, 1e-3*si::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*si::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*si::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*si::dimensionless(), 1e-12 );
@@ -743,7 +583,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*si::dimensionless() );
-  TEST_COMPARE( sample, >=, 1e-3*si::dimensionless() );
+  TEST_COMPARE( sample, >=, -1.0*si::dimensionless() );
   TEST_COMPARE( sample, <=, 1e-1*si::dimensionless() );
 }
 
@@ -759,20 +599,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 
   double sample =
     tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
   TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
-
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution,
@@ -789,7 +619,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   quantity<si::dimensionless> sample =
     unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
                                                                0.0, 1e-1*si::dimensionless() );
-  TEST_EQUALITY_CONST( sample, 1e-3*si::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*si::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
                                                                1.0, 1e-1*si::dimensionless() );
@@ -807,12 +637,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( distribution );
-
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
 
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
 }
@@ -836,6 +660,42 @@ UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
                          getUpperBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
+// Check that the cutoff bound of the distribution independent variable can be
+// returned
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+                                   getCutoffBoundOfIndepVar,
+                                   InterpolationPolicy )
+{
+  Teuchos::RCP<Utility::AnalogElasticDistribution<InterpolationPolicy> >
+                analog_distribution;
+
+  initialize<InterpolationPolicy>( analog_distribution );
+
+  TEST_EQUALITY_CONST( analog_distribution->getCutoffBoundOfIndepVar(), 0.999999 );
+}
+
+UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, getCutoffBoundOfIndepVar );
+
+//---------------------------------------------------------------------------//
+// Check that the cutoff bound of the unit-aware distribution independent
+// variable can be returned
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+                                   getCutoffBoundOfIndepVar,
+                                   InterpolationPolicy )
+{
+Teuchos::RCP<Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> >
+unit_aware_analog_distribution;
+
+  initialize<InterpolationPolicy>( unit_aware_analog_distribution );
+
+  TEST_EQUALITY_CONST( unit_aware_analog_distribution->getCutoffBoundOfIndepVar(),
+                       0.999999*si::dimensionless() );
+}
+
+UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+                         getCutoffBoundOfIndepVar );
+
+//---------------------------------------------------------------------------//
 // Check that the lower bound of the distribution independent variable can be
 // returned
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
@@ -844,13 +704,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 1e-3 );
-
-
-  // Initialize the distribution with max CDF specified
-  initializeWithMaxCDF<InterpolationPolicy>( tab_distribution );
-
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 1e-3 );
+  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), -1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, getLowerBoundOfIndepVar );
@@ -865,7 +719,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
-                       1e-3*si::dimensionless() );
+                       -1.0*si::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
@@ -970,7 +824,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 
   if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
   {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
   else
   {
@@ -988,7 +842,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
 
   if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
   {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
   else
   {
@@ -1017,7 +871,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 
   if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
   {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
   else
   {
@@ -1035,7 +889,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
 
   if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
   {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
   else
   {
@@ -1079,8 +933,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   Teuchos::RCP<Distribution>
     copy_distribution( new Distribution );
 
-  *copy_distribution = read_parameter_list->get<Distribution>(
-                                                          "test distribution");
+  *copy_distribution =
+        read_parameter_list->get<Distribution>( "test distribution");
 
   TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
@@ -1135,21 +989,26 @@ TEUCHOS_UNIT_TEST( AnalogElasticDistribution, fromParameterList )
   Utility::AnalogElasticDistribution<Utility::LinLin> distribution_1 =
     test_dists_list->get<Utility::AnalogElasticDistribution<Utility::LinLin> >( "Analog Elastic Distribution A" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getMoliereScreeningConstant(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getCutoffCrossSectionRatio(), 0.1 );
 
   distribution_1 =
     test_dists_list->get<Utility::AnalogElasticDistribution<Utility::LinLin> >( "Analog Elastic Distribution B" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getMoliereScreeningConstant(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getCutoffCrossSectionRatio(), 0.2 );
 
-  Utility::AnalogElasticDistribution<Utility::LogLog> distribution_2 =
-    test_dists_list->get<Utility::AnalogElasticDistribution<Utility::LogLog> >( "Analog Elastic Distribution C" );
+  Utility::AnalogElasticDistribution<Utility::LogLin> distribution_2 =
+    test_dists_list->get<Utility::AnalogElasticDistribution<Utility::LogLin> >( "Analog Elastic Distribution C" );
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_2.getMoliereScreeningConstant(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_2.getCutoffCrossSectionRatio(), 0.5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1160,22 +1019,42 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticDistribution, fromParameterList )
     distribution_1 =
     test_dists_list->get<Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >( "Unit-Aware Analog Elastic Distribution A" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getMoliereScreeningConstant(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getCutoffCrossSectionRatio(), 0.1 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+                        distribution_1.evaluateCDF( 0.99999911111120975971 ),
+                        0.2,
+                        1e-9 );
+  TEST_EQUALITY_CONST( distribution_1.sampleWithRandomNumber( 0.2 ),
+                       0.99999911111120975971 );
 
   distribution_1 =
     test_dists_list->get<Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >( "Unit-Aware Analog Elastic Distribution B" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getMoliereScreeningConstant(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getCutoffCrossSectionRatio(), 0.2 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+                        distribution_1.evaluateCDF( 0.99999912500010945671 ),
+                        0.3,
+                        1e-9 );
+  TEST_EQUALITY_CONST( distribution_1.sampleWithRandomNumber( 0.3 ), 0.99999912500010945671 );
 
-  Utility::UnitAwareAnalogElasticDistribution<Utility::LogLog,si::dimensionless,si::amount>
+  Utility::UnitAwareAnalogElasticDistribution<Utility::LogLin,si::dimensionless,si::amount>
     distribution_2 =
-    test_dists_list->get<Utility::UnitAwareAnalogElasticDistribution<Utility::LogLog,si::dimensionless,si::amount> >( "Unit-Aware Analog Elastic Distribution C" );
+    test_dists_list->get<Utility::UnitAwareAnalogElasticDistribution<Utility::LogLin,si::dimensionless,si::amount> >( "Unit-Aware Analog Elastic Distribution C" );
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_2.getMoliereScreeningConstant(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_2.getCutoffCrossSectionRatio(), 0.5 );
+  TEST_EQUALITY_CONST( distribution_2.evaluateCDF( 0.9999995 ),
+                       7.49999875035006980e-01 );
+  TEST_EQUALITY_CONST( distribution_2.sampleWithRandomNumber( 7.49999875035006980e-01 ),
+                       0.9999995 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1209,9 +1088,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareAnalogElasticDistribution,
   IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
   InverseIndepQuantityA inv_indep_quantity_a =
-    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
+    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.017233951046594968293 );
   DepQuantityA dep_quantity_a =
-    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
+    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 10.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
@@ -1234,8 +1113,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareAnalogElasticDistribution,
                         inv_indep_quantity_b,
                         1e-15 );
 
-  Utility::setQuantity( indep_quantity_a, 0.1 );
-  Utility::setQuantity( inv_indep_quantity_a, 0.67340006734 );
+  Utility::setQuantity( indep_quantity_a, 0.5 );
+  Utility::setQuantity( inv_indep_quantity_a, 0.0017233951046594968293 );
   Utility::setQuantity( dep_quantity_a, 1.0 );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
@@ -1330,84 +1209,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
                                       void,
                                       si_dimensionless,
                                       void );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      ElectronVolt,
-//                                      si_amount,
-//                                      si_energy,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      ElectronVolt,
-//                                      si_amount,
-//                                      cgs_energy,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      ElectronVolt,
-//                                      si_amount,
-//                                      KiloElectronVolt,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      ElectronVolt,
-//                                      si_amount,
-//                                      MegaElectronVolt,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      KiloElectronVolt,
-//                                      si_amount,
-//                                      si_energy,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      KiloElectronVolt,
-//                                      si_amount,
-//                                      cgs_energy,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      KiloElectronVolt,
-//                                      si_amount,
-//                                      ElectronVolt,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      KiloElectronVolt,
-//                                      si_amount,
-//                                      MegaElectronVolt,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      MegaElectronVolt,
-//                                      si_amount,
-//                                      si_energy,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      MegaElectronVolt,
-//                                      si_amount,
-//                                      cgs_energy,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      MegaElectronVolt,
-//                                      si_amount,
-//                                      ElectronVolt,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      MegaElectronVolt,
-//                                      si_amount,
-//                                      KiloElectronVolt,
-//                                      si_amount );
-//TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
-//                                      explicit_conversion,
-//                                      void,
-//                                      MegaElectronVolt,
-//                                      void,
-//                                      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
 // Custom setup
@@ -1427,16 +1228,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::AnalogElasticDistribution<Utility::LinLin> );
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::AnalogElasticDistribution<Utility::LogLin> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::AnalogElasticDistribution<Utility::LinLog> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::AnalogElasticDistribution<Utility::LogLog> );
+
   typedef Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> UnitAwareAnalogElasticLinLinDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareAnalogElasticLinLinDist );
   typedef Utility::UnitAwareAnalogElasticDistribution<Utility::LogLin,si::dimensionless,si::amount> UnitAwareAnalogElasticLogLinDist;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareAnalogElasticLogLinDist );
-  typedef Utility::UnitAwareAnalogElasticDistribution<Utility::LinLog,si::dimensionless,si::amount> UnitAwareAnalogElasticLinLogDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareAnalogElasticLinLogDist );
-  typedef Utility::UnitAwareAnalogElasticDistribution<Utility::LogLog,si::dimensionless,si::amount> UnitAwareAnalogElasticLogLogDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareAnalogElasticLogLogDist );
+
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 

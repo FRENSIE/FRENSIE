@@ -190,10 +190,13 @@ private:
   static double s_cutoff_mu;
 
   // The fine structure constant (fsc) squared
-  static double s_fine_structure_const_squared;
+  static double s_fsc_squared;
 
-  // A parameter for moliere's screening factor  (1/2*(fsc/0.885)**2)
-  static double s_screening_param1;
+  // A parameter for moliere's screening factor  ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
+  double d_screening_param1;
+
+  // A parameter for moliere's screening factor ( 3.76 * (fsc * Z)**2 )
+  double d_screening_param2;
 
   // Atomic number (Z) of the target atom
   int d_atomic_number;

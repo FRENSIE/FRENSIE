@@ -32,6 +32,9 @@ class UnitAwareAnalogElasticDistribution : public UnitAwareTabularOneDDistributi
                                      public ParameterListCompatibleObject<UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
 {
 
+  // Only allow construction when the independent unit dimensionless
+  RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, dimensionless_type );
+
 private:
 
   // The unnormalized cdf quantity
@@ -85,14 +88,16 @@ public:
   UnitAwareAnalogElasticDistribution(
                         const Teuchos::Array<double>& independent_values,
                         const Teuchos::Array<double>& dependent_values,
-                        const unsigned& atomic_number );
+                        const double& moliere_screening_constant,
+                        const double& cutoff_cross_section_ratio );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareAnalogElasticDistribution(
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values,
-                  const unsigned& atomic_number );
+                  const double& moliere_screening_constant,
+                  const double& cutoff_cross_section_ratio );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -141,11 +146,20 @@ public:
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
 
+  //! Return the cutoff bound of the distribution independent variable
+  IndepQuantity getCutoffBoundOfIndepVar() const;
+
   //! Return the lower bound of the distribution independent variable
   IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Return the moliere screening constant for the distribution
+  double getMoliereScreeningConstant() const;
+
+  //! Return the cutoff cross section ratio for the distribution
+  double getCutoffCrossSectionRatio() const;
 
   //! Test if the distribution is continuous
   bool isContinuous() const;
@@ -222,6 +236,13 @@ private:
   IndepQuantity sampleImplementation( double random_number,
                                       unsigned& sampled_bin_index ) const;
 
+  // Return a random sample of the screened Rutherford analytical peak using the random number
+  IndepQuantity sampleScreenedRutherford( double random_number ) const;
+
+  // Return a random sample of the cutoff tabular distribution using the random number and record the bin index
+  IndepQuantity sampleCutoff( double random_number,
+                              unsigned& sampled_bin_index ) const;
+
   // All possible instantiations are friends
   template<typename FriendInterpolationPolicy,
            typename FriendIndepUnit,
@@ -230,6 +251,12 @@ private:
 
   // The distribution type
   static const OneDDistributionType distribution_type = ANALOG_ELASTIC_DISTRIBUTION;
+
+  // The scattering angle cosine above which the screened Rutherford distribution is used
+  static double s_cutoff_mu;
+
+  // The change in scattering angle cosine below which the screened Rutherford distribution is used
+  static double s_cutoff_delta_mu;
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
@@ -242,6 +269,32 @@ private:
 
   // The max CDF value
   UnnormCDFQuantity d_max_cdf;
+
+  /* Moliere's atomic screening constant at the energy of the distribution
+   * eta = 1/4 ( alpha m c / 0.885 p )**2 Z**(2/3) ( 1.13 + 3.76 [ alpha Z / beta ]**2 sqrt{ E/ (E + 1)})
+   *
+   * The numerical value is the same as that of Seltzer
+   * (Chapter 7) in the "Orange Book"".
+   */
+  double d_moliere_eta;
+
+  // The ratio of the cutoff cross section to the total cross section at the energy of the distribution
+  double d_cutoff_cross_section_ratio;
+
+  /* Parameter for rescaling the random number to sample the
+   * screened Rutherford analytical peak ( 1/(1 - cutoff_cs_ratio) )
+   */
+  double d_scaling_parameter;
+
+  /* Parameter for evaluating the PDF of the screened Rutherford analytical peak
+   * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
+   */
+  DepQuantity d_pdf_parameter;
+
+  /* Parameter for evaluating the CDF of the screened Rutherford analytical peak
+   * ( (1 - cutoff_cs_ratio)*eta/mu_c )
+   */
+  double d_cdf_parameter;
 };
 
 /*! The analog elastic distribution (unit-agnostic)

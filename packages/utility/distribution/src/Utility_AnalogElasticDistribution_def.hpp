@@ -9,6 +9,12 @@
 #ifndef UTILITY_ANALOG_ELASTIC_DISTRIBUTION_DEF_HPP
 #define UTILITY_ANALOG_ELASTIC_DISTRIBUTION_DEF_HPP
 
+// Std Includes
+#include <iostream>
+#include <string>
+#include <stdlib.h>
+#include <cstdlib>
+
 // FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -21,6 +27,20 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
+
+// Initialize static member data
+
+// The change in scattering angle cosine below which the screened Rutherford distribution is used
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+double UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_cutoff_delta_mu = 1.0e-6;
+
+// The scattering angle cosine above which the screened Rutherford distribution is used
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+double UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_cutoff_mu = 0.999999;
 
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticDistribution<LinLin,void,void> );
@@ -49,8 +69,14 @@ template<typename InterpolationPolicy,
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution(
                   const Teuchos::Array<double>& independent_values,
                   const Teuchos::Array<double>& dependent_values,
-                  const unsigned& atomic_number )
+                  const double& moliere_screening_constant,
+                  const double& cutoff_cross_section_ratio )
   : d_distribution( independent_values.size() ),
+    d_moliere_eta( moliere_screening_constant ),
+    d_cutoff_cross_section_ratio( cutoff_cross_section_ratio ),
+    d_scaling_parameter( 1.0/( 1.0 - cutoff_cross_section_ratio ) ),
+    d_pdf_parameter( DQT::zero() ),
+    d_cdf_parameter( ( 1.0 - cutoff_cross_section_ratio )*moliere_screening_constant*1e6 ),
     d_norm_constant( DNQT::zero() ),
     d_max_cdf( UCQT::zero() )
 {
@@ -60,6 +86,9 @@ UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   // Make sure that the bins are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
                                              independent_values.end() ) );
+  // Make sure that the independent_values have the proper range
+  testPrecondition( independent_values.front() == -1.0 );
+  testPrecondition( independent_values.back() == 0.999999 );
 
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
@@ -74,8 +103,14 @@ template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution(
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values,
-                  const unsigned& atomic_number )
+                  const double& moliere_screening_constant,
+                  const double& cutoff_cross_section_ratio )
   : d_distribution( independent_values.size() ),
+    d_moliere_eta( moliere_screening_constant ),
+    d_cutoff_cross_section_ratio( cutoff_cross_section_ratio ),
+    d_scaling_parameter( 1.0/( 1.0 - cutoff_cross_section_ratio ) ),
+    d_pdf_parameter( DQT::zero() ),
+    d_cdf_parameter( ( 1.0 - cutoff_cross_section_ratio )*moliere_screening_constant*1e6 ),
     d_norm_constant( DNQT::zero() ),
     d_max_cdf( UCQT::zero() )
 {
@@ -85,6 +120,9 @@ UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   // Make sure that the bins are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
                                              independent_values.end() ) );
+  // Make sure that the independent_values have the proper range
+  testPrecondition( independent_values.front() == InputIndepQuantity(-1.0) );
+  testPrecondition( independent_values.back() == InputIndepQuantity(0.999999) );
 
   this->initializeDistribution( independent_values, dependent_values );
 }
@@ -103,11 +141,23 @@ template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution(
  const UnitAwareAnalogElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
   : d_distribution(),
+    d_moliere_eta(),
+    d_cutoff_cross_section_ratio(),
+    d_scaling_parameter(),
+    d_pdf_parameter(),
+    d_cdf_parameter(),
     d_norm_constant(),
     d_max_cdf()
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
+
+  // Assign unitless member data
+  d_moliere_eta = dist_instance.d_moliere_eta;
+  d_cutoff_cross_section_ratio = dist_instance.d_cutoff_cross_section_ratio;
+  d_scaling_parameter = dist_instance.d_scaling_parameter;
+  d_cdf_parameter = dist_instance.d_cdf_parameter;
+
 
   typedef typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
@@ -129,11 +179,24 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
   : d_distribution(),
+    d_moliere_eta(),
+    d_cutoff_cross_section_ratio(),
+    d_scaling_parameter(),
+    d_pdf_parameter(),
+    d_cdf_parameter(),
     d_norm_constant(),
     d_max_cdf()
 {
   // Make sure the distribution is valid
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
+
+  // Assign unitless member data
+  d_moliere_eta =
+        unitless_dist_instance.d_moliere_eta;
+  d_cutoff_cross_section_ratio =
+        unitless_dist_instance.d_cutoff_cross_section_ratio;
+  d_scaling_parameter = unitless_dist_instance.d_scaling_parameter;
+  d_cdf_parameter = unitless_dist_instance.d_cdf_parameter;
 
   // Reconstruct the original input distribution
   Teuchos::Array<double> input_indep_values, input_dep_values;
@@ -175,6 +238,11 @@ UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   if( this != &dist_instance )
   {
     d_distribution = dist_instance.d_distribution;
+    d_moliere_eta = dist_instance.d_moliere_eta;
+    d_cutoff_cross_section_ratio = dist_instance.d_cutoff_cross_section_ratio;
+    d_scaling_parameter = dist_instance.d_scaling_parameter;
+    d_pdf_parameter = dist_instance.d_pdf_parameter;
+    d_cdf_parameter = dist_instance.d_cdf_parameter;
     d_norm_constant = dist_instance.d_norm_constant;
     d_max_cdf = dist_instance.d_max_cdf;
   }
@@ -190,14 +258,26 @@ typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluate(
  const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < d_distribution.front().first )
-    return DQT::zero();
-  else if( indep_var_value > d_distribution.back().first )
-    return DQT::zero();
-  else if( indep_var_value == d_distribution.back().first )
+  // Make sure the indep var variable is within its limits
+  testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( indep_var_value <= this->getUpperBoundOfIndepVar() );
+
+  // Check to see if the tabular or analytical portion will be evaluated
+  if( indep_var_value > this->getCutoffBoundOfIndepVar() )
+  { // evaluate the screened Rutherford analytical peak
+
+    // Change in angle cosine
+    double delta_mu = ( 1.0L - indep_var_value );
+
+    // cutoff_cs_ratio*cutoff_pdf*( 1 - mu_c + eta )**2/ ( 1 - mu   + eta )**2;
+    return d_pdf_parameter/
+                ( ( delta_mu + d_moliere_eta )*( delta_mu + d_moliere_eta ) );
+  }
+  else if( indep_var_value == this->getCutoffBoundOfIndepVar() )
     return d_distribution.back().third;
   else
-  {
+  { // evaluate the cutoff tabular large angle distribution
+
     typename DistributionArray::const_iterator start, end, lower_bin_boundary,
       upper_bin_boundary;
     start = d_distribution.begin();
@@ -231,6 +311,10 @@ typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluatePDF(
  const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
+  // Make sure the indep var variable is within its limits
+  testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( indep_var_value <= this->getUpperBoundOfIndepVar() );
+
   return this->evaluate( indep_var_value )*d_norm_constant;
 }
 
@@ -241,11 +325,13 @@ template<typename InterpolationPolicy,
 double UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCDF(
   const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < d_distribution.front().first )
+  // Make sure the indep var variable is within its limits
+  testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( indep_var_value <= this->getUpperBoundOfIndepVar() );
+
+  if( indep_var_value == this->getLowerBoundOfIndepVar() )
     return 0.0;
-  else if( indep_var_value >= d_distribution.back().first )
-    return 1.0;
-  else
+  else if( indep_var_value < this->getCutoffBoundOfIndepVar() )
   {
     typename DistributionArray::const_iterator start, end, lower_bin_boundary;
     start = d_distribution.begin();
@@ -260,6 +346,17 @@ double UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,De
     return (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
             indep_diff*indep_diff*lower_bin_boundary->fourth/2.0)*
       d_norm_constant;
+  }
+  else if( indep_var_value == this->getCutoffBoundOfIndepVar() )
+    return d_cutoff_cross_section_ratio;
+  else if( indep_var_value == this->getUpperBoundOfIndepVar() )
+    return 1.0;
+  else // indep_var_value > Cutoff Bound Of Indep Var
+  {
+  // cutoff_cs_ratio + (1 - cutoff_cs_ratio)*eta/mu_c*( mu - mu_c )/( eta + 1 - mu )
+  return d_cutoff_cross_section_ratio +
+         d_cdf_parameter*( indep_var_value - s_cutoff_mu )/
+                         ( d_moliere_eta + (1.0 - indep_var_value) );
   }
 }
 
@@ -370,15 +467,76 @@ UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
 
+  // Calculate the sampled independent value
+  IndepQuantity sample;
+
+  // Sample the screened Rutherford analytical distribution
+  if ( random_number > d_cutoff_cross_section_ratio )
+  {
+    // Set the sampled bin index to the last bin
+    sampled_bin_index = d_distribution.size() - 1;
+
+    double scaled_random_number =
+        ( random_number - d_cutoff_cross_section_ratio )*d_scaling_parameter;
+
+    sample = this->sampleScreenedRutherford( scaled_random_number );
+  }
+  else
+  {
+    sample = this->sampleCutoff( random_number, sampled_bin_index );
+  }
+
+  return sample;
+}
+
+// Return a random sample of the screened Rutherford analytical peak using the random number
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleScreenedRutherford(
+                                            double random_number ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+
+  // Calculate the sampled independent value
+  IndepQuantity sample;
+
+  /* mu = ( mu_c eta + ( 1 + eta )( 1 - mu_c )*random_number )/
+   *      (      eta +            ( 1 - mu_c )*random_number )
+   */
+  sample = ( s_cutoff_mu*d_moliere_eta +
+           (1.0L + d_moliere_eta)*s_cutoff_delta_mu*random_number ) /
+           ( d_moliere_eta + s_cutoff_delta_mu*random_number );
+
+  // Make sure the sample is valid
+  testPostcondition( !IQT::isnaninf( sample ) );
+  testPostcondition( sample >= this->getCutoffBoundOfIndepVar() );
+  testPostcondition( sample <= this->getUpperBoundOfIndepVar() );
+
+  return sample;
+}
+
+// Return a random sample of the cutoff tabular distribution using the random number and record the bin index
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleCutoff(
+                                            double random_number,
+                                            unsigned& sampled_bin_index ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= d_cutoff_cross_section_ratio );
+
+  // Calculate the sampled independent value
+  IndepQuantity sample;
+
   // Scale the random number
   UnnormCDFQuantity scaled_random_number = random_number*d_max_cdf;
-
-  // Check if the scaled random number is out of range
-  /*! \details If the max CDF has been modified then the scaled random number
-   *  could be out of range, in which case zero is returned.
-   */
-  if ( scaled_random_number > d_distribution.back().second )
-    return IQT::zero();
 
   typename DistributionArray::const_iterator start, end, lower_bin_boundary;
   start = d_distribution.begin();
@@ -390,9 +548,6 @@ UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 
   // Calculate the sampled bin index
   sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
-
-  // Calculate the sampled independent value
-  IndepQuantity sample;
 
   IndepQuantity indep_value = lower_bin_boundary->first;
   UnnormCDFQuantity cdf_diff =
@@ -424,7 +579,7 @@ UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   // Make sure the sample is valid
   testPostcondition( !IQT::isnaninf( sample ) );
   testPostcondition( sample >= this->getLowerBoundOfIndepVar() );
-  testPostcondition( sample <= this->getUpperBoundOfIndepVar() );
+  testPostcondition( sample <= this->getCutoffBoundOfIndepVar() );
 
   return sample;
 }
@@ -436,6 +591,16 @@ template<typename InterpolationPolicy,
 typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
+  return IQT::one();
+}
+
+// Return the cutoff bound of the distribution independent variable
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffBoundOfIndepVar() const
+{
   return d_distribution.back().first;
 }
 
@@ -446,7 +611,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.front().first;
+  return -1.0*IQT::one();
 }
 
 // Return the distribution type
@@ -457,6 +622,27 @@ OneDDistributionType
 UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
+}
+
+
+// Return the moliere screening constant for the distribution
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+double
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getMoliereScreeningConstant() const
+{
+  return ThisType::d_moliere_eta;
+}
+
+// Return the cutoff cross section ratio for the distribution
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+double
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffCrossSectionRatio() const
+{
+  return ThisType::d_cutoff_cross_section_ratio;
 }
 
 // Test if the distribution is continuous
@@ -480,7 +666,10 @@ void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   this->reconstructOriginalUnitlessDistribution( independent_values,
                                                  dependent_values );
 
-  os << "{" << independent_values << "," << dependent_values << "}";
+  os << "{" << independent_values << ","
+            << dependent_values << ","
+            << d_moliere_eta << ","
+            << d_cutoff_cross_section_ratio << "}";
 }
 
 // Method for initializing the object from an input stream
@@ -571,6 +760,62 @@ void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
                       "independent values does not equal the number of "
                       "dependent values" );
 
+  // Read the ","
+  std::getline( is, separator, ',' );
+
+  std::string moliere_eta_rep;
+  std::getline( is, moliere_eta_rep, ',' );
+
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( moliere_eta_rep );
+//    ArrayString::locateAndReplaceIntervalOperator( moliere_eta_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                              InvalidDistributionStringRepresentation,
+                              "Error: the analog elastic distribution cannot be "
+                              "constructed because the representation is not "
+                              "valid (see details below)!\n" );
+
+  double moliere_eta;
+  try{
+    moliere_eta = std::stod( moliere_eta_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                              InvalidDistributionStringRepresentation,
+                              "Error: the analog elastic distribution cannot be "
+                              "constructed because the representation is not "
+                              "valid (see details below)!\n" );
+
+  std::string cutoff_ratio_value_rep;
+  std::getline( is, cutoff_ratio_value_rep, '}' );
+
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( cutoff_ratio_value_rep );
+//    ArrayString::locateAndReplaceIntervalOperator( cutoff_ratio_value_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                              InvalidDistributionStringRepresentation,
+                              "Error: the analog elastic distribution cannot be "
+                              "constructed because the representation is not "
+                              "valid (see details below)!\n" );
+
+  double cutoff_cross_section_ratio;
+  try{
+    cutoff_cross_section_ratio = std::stod( cutoff_ratio_value_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                              InvalidDistributionStringRepresentation,
+                              "Error: the analog elastic distribution cannot be "
+                              "constructed because the representation is not "
+                              "valid (see details below)!\n" );
+
+  // Set the member data
+  d_moliere_eta = moliere_eta;
+  d_cutoff_cross_section_ratio = cutoff_cross_section_ratio;
+  d_scaling_parameter = 1.0/( 1.0 - cutoff_cross_section_ratio );
+  d_cdf_parameter = ( 1.0 - cutoff_cross_section_ratio )*moliere_eta*1e6;
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
 }
@@ -583,6 +828,8 @@ bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
  const UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
+         d_moliere_eta == other.d_moliere_eta &&
+         d_cutoff_cross_section_ratio == other.d_cutoff_cross_section_ratio &&
          d_norm_constant == other.d_norm_constant &&
          d_max_cdf == other.d_max_cdf;
 }
@@ -598,6 +845,9 @@ void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   // Make sure there is at least one bin
   testPrecondition( independent_values.size() > 1 );
   testPrecondition( dependent_values.size() == independent_values.size() );
+  // Make sure that the independent_values have the proper range
+  testPrecondition( independent_values.front() == -1.0 );
+  testPrecondition( independent_values.back() == 0.999999 );
 
   // Convert the raw independent values to quantities
   Teuchos::Array<IndepQuantity> independent_quantities;
@@ -629,6 +879,9 @@ void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   // Make sure that the independent values are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
                                              independent_values.end() ) );
+  // Make sure that the independent_values have the proper range
+  testPrecondition( independent_values.front() == IndepQuantity(-1.0) );
+  testPrecondition( independent_values.back() == IndepQuantity(0.999999) );
 
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
@@ -645,7 +898,27 @@ void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_distribution,
                                                                false );
 
-  d_max_cdf = d_distribution.back().second;
+  // Scale norm constant by the cross section ratio
+  /*! \details The norm constant given by the calculateContinuousCDF function
+   *  is for the tabular cutoff elastic distribution and must be re-scaled for
+   *  the total elastic distribution.
+   */
+  d_norm_constant *= d_cutoff_cross_section_ratio;
+
+  // Set the max CDF for the total elastic distribution
+  d_max_cdf = 1.0/d_norm_constant;
+
+  /* Set the PDF evaluating parameter
+   * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
+   */
+  d_pdf_parameter =
+    d_cutoff_cross_section_ratio*d_distribution.back().third*
+    ( s_cutoff_delta_mu + d_moliere_eta )*( s_cutoff_delta_mu + d_moliere_eta );
+
+  /* Set the CDF evaluating parameter
+   * ( (1 - cutoff_cs_ratio)*eta/mu_c )
+   */
+  d_cdf_parameter = (1.0 - d_cutoff_cross_section_ratio )*d_moliere_eta*1e6;
 
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
