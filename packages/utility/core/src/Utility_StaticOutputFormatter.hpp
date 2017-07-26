@@ -57,17 +57,32 @@ typedef StaticOutputFormatter<ItalicizedTextFormat,DefaultTextColor,DefaultTextB
 //! Underlined formatter
 typedef StaticOutputFormatter<UnderlinedTextFormat,DefaultTextColor,DefaultTextBackgroundColor> Underlined;
 
+//! Red formatter
+typedef StaticOutputFormatter<DefaultTextFormat,RedTextColor,DefaultTextBackgroundColor> Red;
+
 //! Bold-red formatter
 typedef StaticOutputFormatter<BoldTextFormat,RedTextColor,DefaultTextBackgroundColor> BoldRed;
+
+//! Green formatter
+typedef StaticOutputFormatter<DefaultTextFormat,GreenTextColor,DefaultTextBackground> Green;
 
 //! Bold-green formatter
 typedef StaticOutputFormatter<BoldTextFormat,GreenTextColor,DefaultTextBackgroundColor> BoldGreen;
 
+//! Yellow formatter
+typedef StaticOutputFormatter<DefaultTextFormat,YellowTextColor,DefaultTextBackgroundColor> Yellow;
+
 //! Bold-yellow formatter
 typedef StaticOutputFormatter<BoldTextFormat,YellowTextColor,DefaultTextBackgroundColor> BoldYellow;
 
+//! Cyan formatter
+typedef StaticOutputFormatter<DefaultTextFormat,CyanTextColor,DefaultTextBackgroundColor> Cyan;  
+
 //! Bold-cyan formatter
 typedef StaticOutputFormatter<BoldTextFormat,CyanTextColor,DefaultTextBackgroundColor> BoldCyan;
+
+//! Magenta formatter
+typedef StaticOutputFormatter<DefaultTextFormat,MagentaTextColor,DefaultTextBackgroundColor> Magenta;
 
 //! Bold-magenta formatter
 typedef StaticOutputFormatter<BoldTextFormat,MagentaTextColor,DefaultTextBackgroundColor> BoldMagenta;

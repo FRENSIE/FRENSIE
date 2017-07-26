@@ -114,6 +114,9 @@ public:
 
   //! Format the Teuchos unit test keywords in the output
   void formatTeuchosUnitTestKeywords();
+
+  //! Format the unit test keywords in the output
+  void formatUnitTestKeywords();
 };
 
 // Format a keyword in the output
