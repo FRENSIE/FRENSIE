@@ -10,13 +10,13 @@
 #include <iostream>
 #include <stdexcept>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
 // FRENSIE Includes
 #include "FRENSIE_config.hpp"
 #include "Utility_ContractException.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing functions
@@ -64,7 +64,7 @@ double dummyInvariantFailTestFunction( const double, const double )
 //---------------------------------------------------------------------------//
 // Check that a Utility::ContractException looks different than a
 // std::runtime_error as it inherits from std::logic_error.
-TEUCHOS_UNIT_TEST( ContractException, differentiation_test )
+BOOST_AUTO_TEST_CASE( differentiation_test )
 {
   try
   {
@@ -72,18 +72,18 @@ TEUCHOS_UNIT_TEST( ContractException, differentiation_test )
   }
   catch( const std::runtime_error& exception )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
 }
 
 //---------------------------------------------------------------------------//
 // Check that a Utility::ContractException can be caught and the appropriate
 // error message is written
-TEUCHOS_UNIT_TEST( ContractException, message_test )
+BOOST_AUTO_TEST_CASE( message_test )
 {
   std::string message;
 
@@ -97,37 +97,37 @@ TEUCHOS_UNIT_TEST( ContractException, message_test )
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 
   const std::string true_message( "contract broken" );
-  TEST_ASSERT( 0 == message.compare( true_message ) );
+  BOOST_CHECK( 0 == message.compare( true_message ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that we can throw a Utility::ContractException with
-// TEUCHOS_TEST_FOR_EXCEPTION
-TEUCHOS_UNIT_TEST( ContractException, teuchos_throw_test )
+// TEST_FOR_EXCEPTION
+BOOST_AUTO_TEST_CASE( teuchos_throw_test )
 {
   try
   {
-    TEUCHOS_TEST_FOR_EXCEPTION( true,
-				Utility::ContractException,
-				"Utility assertion failed" << std::endl );
+    TEST_FOR_EXCEPTION( true,
+                        Utility::ContractException,
+                        "Utility assertion failed" << std::endl );
   }
   catch( const Utility::ContractException& assertion )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 }
 
 //---------------------------------------------------------------------------//
 // Test the precondition check for DBC
-TEUCHOS_UNIT_TEST( ContractException, precondition_test )
+BOOST_AUTO_TEST_CASE( precondition_test )
 {
 
   try
@@ -143,23 +143,23 @@ TEUCHOS_UNIT_TEST( ContractException, precondition_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 }
 
 //---------------------------------------------------------------------------//
 // Test the postcondition check for DBC.
-TEUCHOS_UNIT_TEST( ContractException, postcondition_test )
+BOOST_AUTO_TEST_CASE( postcondition_test )
 {
 
   try
@@ -175,23 +175,23 @@ TEUCHOS_UNIT_TEST( ContractException, postcondition_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 }
 
 //---------------------------------------------------------------------------//
 // Test the invariant check for DBC.
-TEUCHOS_UNIT_TEST( ContractException, invariant_test )
+BOOST_AUTO_TEST_CASE( invariant_test )
 {
 
   try
@@ -207,23 +207,23 @@ TEUCHOS_UNIT_TEST( ContractException, invariant_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 }
 
 //---------------------------------------------------------------------------//
 // Test that nested conditions of a function can be tested
-TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
+BOOST_AUTO_TEST_CASE( nested_function_conditions_test )
 {
   double dummy;
 
@@ -235,7 +235,7 @@ TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 
   // Check that nested function conditions can be caught
@@ -250,16 +250,16 @@ TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 
@@ -274,16 +274,16 @@ TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 
@@ -298,23 +298,23 @@ TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 }
 
 //---------------------------------------------------------------------------//
 // Test that nested conditions of all functions in a block can be tested
-TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
+BOOST_AUTO_TEST_CASE( nested_block_conditions_test )
 {
   double dummy;
 
@@ -330,7 +330,7 @@ TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 
   // Check that nested function conditions can be caught
@@ -349,16 +349,16 @@ TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 
@@ -377,16 +377,16 @@ TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 
@@ -409,23 +409,23 @@ TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
     std::string::size_type idx = message.find( partial_message );
     if( idx == std::string::npos )
     {
-      TEST_ASSERT( 0 );
+      BOOST_CHECK( 0 );
     }
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 }
 
 //---------------------------------------------------------------------------//
 // Test that we can remember a value and check it with DBC
-TEUCHOS_UNIT_TEST( ContractException, remember_test )
+BOOST_AUTO_TEST_CASE( remember_test )
 {
   remember( int test_value_1 = 0 );
   remember( int test_value_2 = 1 );
@@ -437,26 +437,26 @@ TEUCHOS_UNIT_TEST( ContractException, remember_test )
   catch( const Utility::ContractException& exception )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
 #else
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
   catch( ... )
   {
 #if HAVE_FRENSIE_DBC
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
 #endif
   }
 
   try
   {
     testInvariant( test_value_2 );
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 }
 

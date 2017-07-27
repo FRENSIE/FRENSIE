@@ -7,14 +7,12 @@ ADD_TEST(Assertion_test tstAssertion --report_level=detailed)
 SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstContractException tstContractException.cpp)
-TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY}))
+TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(ContractException_test tstContractException)
 SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstToStringTraits
-  tstToStringTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstToStringTraits utility_core)
+ADD_EXECUTABLE(tstToStringTraits tstToStringTraits.cpp)
+TARGET_LINK_LIBRARIES(tstToStringTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(ToStringTraits_test tstToStringTraits)
 SET_PROPERTY(TEST ToStringTraits_test PROPERTY LABELS utility_core)
 

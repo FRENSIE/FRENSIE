@@ -11,207 +11,229 @@
 #include <sstream>
 #include <type_traits>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+#include <boost/mpl/list.hpp>
 
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
-
-typedef long long longlong;
 
 //---------------------------------------------------------------------------//
-// Instantiation Macros
+// Template Test Types
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_TEMPLATE_1_INSTANT( type, name )      \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, short ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, int );   \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, long );  \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, longlong )
+typedef boost::mpl::list<int8_t, short, int16_t, int, long, int32_t, long long, int64_t> TestTypes;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a string can be converted to a string
-TEUCHOS_UNIT_TEST( ToStringTraits, string_toString )
+BOOST_AUTO_TEST_CASE( string_toString )
 {
-  TEST_EQUALITY_CONST( Utility::toString( std::string( " " ) ), " " );
-  TEST_EQUALITY_CONST( Utility::toString( std::string( "testing" ) ), "testing" );
-  TEST_EQUALITY_CONST( Utility::toString( "test c-string" ), "test c-string" );
+  BOOST_CHECK_EQUAL( Utility::toString( std::string( " " ) ), " " );
+  BOOST_CHECK_EQUAL( Utility::toString( std::string( "testing" ) ), "testing" );
+  BOOST_CHECK_EQUAL( Utility::toString( "test c-string" ), "test c-string" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a string can be placed in a stream
-TEUCHOS_UNIT_TEST( ToStringTraits, string_toStream )
+BOOST_AUTO_TEST_CASE( string_toStream )
 {
   std::ostringstream oss;
   Utility::toStream( oss, std::string( " " ) );
   
-  TEST_EQUALITY_CONST( oss.str(), " " );
+  BOOST_CHECK_EQUAL( oss.str(), " " );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, std::string( "testing" ) );
 
-  TEST_EQUALITY_CONST( oss.str(), "testing" );
+  BOOST_CHECK_EQUAL( oss.str(), "testing" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, "test c-string" );
 
-  TEST_EQUALITY_CONST( oss.str(), "test c-string" );
+  BOOST_CHECK_EQUAL( oss.str(), "test c-string" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a bool can be converted to a string
-TEUCHOS_UNIT_TEST( ToStringTraits, bool_toString )
+BOOST_AUTO_TEST_CASE( bool_toString )
 {
-  TEST_EQUALITY_CONST( Utility::toString( true ), "true" );
-  TEST_EQUALITY_CONST( Utility::toString( false ), "false" );
+  BOOST_CHECK_EQUAL( Utility::toString( true ), "true" );
+  BOOST_CHECK_EQUAL( Utility::toString( false ), "false" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a bool can be placed in a stream
-TEUCHOS_UNIT_TEST( ToStringTraits, bool_toStream )
+BOOST_AUTO_TEST_CASE( bool_toStream )
 {
   std::ostringstream oss;
 
   Utility::toStream( oss, true );
   
-  TEST_EQUALITY_CONST( oss.str(), "true" );
+  BOOST_CHECK_EQUAL( oss.str(), "true" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, false );
 
-  TEST_EQUALITY_CONST( oss.str(), "false" );
+  BOOST_CHECK_EQUAL( oss.str(), "false" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a float can be converted to a string
-TEUCHOS_UNIT_TEST( ToStringTraits, float_toString )
+BOOST_AUTO_TEST_CASE( float_toString )
 {
-  TEST_EQUALITY_CONST( Utility::toString( -1.0f ), "-1.000000000e+00" );
-  TEST_EQUALITY_CONST( Utility::toString( 0.0f ), "0.000000000e+00" );
-  TEST_EQUALITY_CONST( Utility::toString( 1.0f ), "1.000000000e+00" );
+  BOOST_CHECK_EQUAL( Utility::toString( -1.0f ), "-1.000000000e+00" );
+  BOOST_CHECK_EQUAL( Utility::toString( 0.0f ), "0.000000000e+00" );
+  BOOST_CHECK_EQUAL( Utility::toString( 1.0f ), "1.000000000e+00" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a float can be placed in a stream
-TEUCHOS_UNIT_TEST( ToStringTraits, float_toStream )
+BOOST_AUTO_TEST_CASE( float_toStream )
 {
   std::ostringstream oss;
 
   Utility::toStream( oss, -1.0f );
 
-  TEST_EQUALITY_CONST( oss.str(), "-1.000000000e+00" );
+  BOOST_CHECK_EQUAL( oss.str(), "-1.000000000e+00" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, 0.0f );
 
-  TEST_EQUALITY_CONST( oss.str(), "0.000000000e+00" );
+  BOOST_CHECK_EQUAL( oss.str(), "0.000000000e+00" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, 1.0f );
 
-  TEST_EQUALITY_CONST( oss.str(), "1.000000000e+00" );
+  BOOST_CHECK_EQUAL( oss.str(), "1.000000000e+00" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a double can be converted to a string
-TEUCHOS_UNIT_TEST( ToStringTraits, double_toString )
+BOOST_AUTO_TEST_CASE( double_toString )
 {
-  TEST_EQUALITY_CONST( Utility::toString( -1.0 ), "-1.000000000000000000e+00" );
-  TEST_EQUALITY_CONST( Utility::toString( 0.0 ), "0.000000000000000000e+00" );
-  TEST_EQUALITY_CONST( Utility::toString( 1.0 ), "1.000000000000000000e+00" );
+  BOOST_CHECK_EQUAL( Utility::toString( -1.0 ), "-1.000000000000000000e+00" );
+  BOOST_CHECK_EQUAL( Utility::toString( 0.0 ), "0.000000000000000000e+00" );
+  BOOST_CHECK_EQUAL( Utility::toString( 1.0 ), "1.000000000000000000e+00" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a double can be placed in a stream
-TEUCHOS_UNIT_TEST( ToStringTraits, double_toStream )
+BOOST_AUTO_TEST_CASE( double_toStream )
 {
   std::ostringstream oss;
 
   Utility::toStream( oss, -1.0 );
 
-  TEST_EQUALITY_CONST( oss.str(), "-1.000000000000000000e+00" );
+  BOOST_CHECK_EQUAL( oss.str(), "-1.000000000000000000e+00" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, 0.0 );
 
-  TEST_EQUALITY_CONST( oss.str(), "0.000000000000000000e+00" );
+  BOOST_CHECK_EQUAL( oss.str(), "0.000000000000000000e+00" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, 1.0 );
 
-  TEST_EQUALITY_CONST( oss.str(), "1.000000000000000000e+00" );
+  BOOST_CHECK_EQUAL( oss.str(), "1.000000000000000000e+00" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that signed integer types can be converted to a string
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ToStringTraits, toString, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( toString, T, TestTypes )
 {
-  TEST_EQUALITY_CONST( Utility::toString( static_cast<T>( -10 ) ), "-10" );
-  TEST_EQUALITY_CONST( Utility::toString( static_cast<T>( 0 ) ), "0" );
-  TEST_EQUALITY_CONST( Utility::toString( static_cast<T>( 10 ) ), "10" );
+  if( sizeof(T) > 1 )
+  {
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<T>( -10 ) ), "-10" );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<T>( 0 ) ), "0" );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<T>( 10 ) ), "10" );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<T>( -10 ) ),
+                       std::string( 1, -10 ) );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<T>( 0 ) ),
+                       std::string( 1, 0 ) );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<T>( 10 ) ),
+                       std::string( 1, 10 ) );
+  }
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( ToStringTraits, toString );
 
 //---------------------------------------------------------------------------//
 // Check that signed integer types can be placed in a stream
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ToStringTraits, toStream, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( toStream, T, TestTypes )
 {
   std::ostringstream oss;
 
   Utility::toStream( oss, static_cast<T>( -10 ) );
 
-  TEST_EQUALITY_CONST( oss.str(), "-10" );
+  if( sizeof(T) > 1 )
+    BOOST_CHECK_EQUAL( oss.str(), "-10" );
+  else
+    BOOST_CHECK_EQUAL( oss.str(), std::string( 1, -10 ) );      
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, static_cast<T>( 0 ) );
-  
-  TEST_EQUALITY_CONST( oss.str(), "0" );
+
+  if( sizeof(T) > 1 )
+    BOOST_CHECK_EQUAL( oss.str(), "0" );
+  else
+    BOOST_CHECK_EQUAL( oss.str(), std::string( 1, 0 ) );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, static_cast<T>( 10 ) );
-  
-  TEST_EQUALITY_CONST( oss.str(), "10" );
-}
 
-UNIT_TEST_TEMPLATE_1_INSTANT( ToStringTraits, toStream );
+  if( sizeof(T) > 1 )
+    BOOST_CHECK_EQUAL( oss.str(), "10" );
+  else
+    BOOST_CHECK_EQUAL( oss.str(), std::string( 1, 10 ) );
+}
 
 //---------------------------------------------------------------------------//
 // Check that unsigned integer types can be converted to a string
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ToStringTraits, unsigned_toString, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( unsigned_toString, T, TestTypes )
 {
   typedef typename std::make_unsigned<T>::type UnsignedT;
-  
-  TEST_EQUALITY_CONST( Utility::toString( static_cast<UnsignedT>( 0 ) ), "0" );
-  TEST_EQUALITY_CONST( Utility::toString( static_cast<UnsignedT>( 10 ) ), "10" );
-  TEST_EQUALITY_CONST( Utility::toString( static_cast<UnsignedT>( 255 ) ), "255" );
-}
 
-UNIT_TEST_TEMPLATE_1_INSTANT( ToStringTraits, unsigned_toString );
+  if( sizeof(T) > 1 )
+  {
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<UnsignedT>( 0 ) ), "0" );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<UnsignedT>( 10 ) ), "10" );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<UnsignedT>( 255 ) ), "255" );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<UnsignedT>( 0 ) ),
+                       std::string( 1, (char)0 ) );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<UnsignedT>( 10 ) ),
+                       std::string( 1, (char)10 ) );
+    BOOST_CHECK_EQUAL( Utility::toString( static_cast<UnsignedT>( 255 ) ),
+                       std::string( 1, (char)255 ) );
+  }
+}
 
 //---------------------------------------------------------------------------//
 // Check that unsigned integer types can be placed in a stream
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ToStringTraits, unsigned_toStream, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( unsigned_toStream, T, TestTypes )
 {
   typedef typename std::make_unsigned<T>::type UnsignedT;
   
@@ -219,24 +241,31 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ToStringTraits, unsigned_toStream, T )
 
   Utility::toStream( oss, static_cast<UnsignedT>( 0 ) );
 
-  TEST_EQUALITY_CONST( oss.str(), "0" );
+  if( sizeof(T) > 1 )
+    BOOST_CHECK_EQUAL( oss.str(), "0" );
+  else
+    BOOST_CHECK_EQUAL( oss.str(), std::string( 1, (char)0 ) );
   
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, static_cast<UnsignedT>( 10 ) );
-  
-  TEST_EQUALITY_CONST( oss.str(), "10" );
+
+  if( sizeof(T) > 1 )
+    BOOST_CHECK_EQUAL( oss.str(), "10" );
+  else
+    BOOST_CHECK_EQUAL( oss.str(), std::string( 1, (char)10 ) );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, static_cast<UnsignedT>( 255 ) );
-  
-  TEST_EQUALITY_CONST( oss.str(), "255" );
-}
 
-UNIT_TEST_TEMPLATE_1_INSTANT( ToStringTraits, unsigned_toStream );
+  if( sizeof(T) > 1 )
+    BOOST_CHECK_EQUAL( oss.str(), "255" );
+  else
+    BOOST_CHECK_EQUAL( oss.str(), std::string( 1, (char)255 ) );
+}
 
 //---------------------------------------------------------------------------//
 // end tstToStringTraits.cpp
