@@ -49,12 +49,33 @@ public:
   //! Make the keyword underlined in the output
   void underlinedKeyword( const std::string& keyword );
 
+  //! Make the keyword red in the output
+  void redKeyword( const std::string& keyword );
+  
   //! Make the keyword bold-red in the output
   void boldRedKeyword( const std::string& keyword );
 
+  //! Make the keyword green in the output
+  void greenKeyword( const std::string& keyword );
+  
+  //! Make the keyword bold-green in the output
+  void boldGreenKeyword( const std::string& keyword );
+
+  //! Make the keyword yellow in the output
+  void yellowKeyword( const std::string& keyword );
+  
+  //! Make the keyword bold-yellow in the output
+  void boldYellowKeyword( const std::string& keyword );
+
+  //! Make the keyword cyan in the output
+  void cyanKeyword( const std::string& keyword );
+  
   //! Make the keyword bold-cyan in the output
   void boldCyanKeyword( const std::string& keyword );
 
+  //! Make the keyword magenta in the output
+  void magentaKeyword( const std::string& keyword );
+  
   //! Make the keyword bold-magenta in the output
   void boldMagentaKeyword( const std::string& keyword );
 

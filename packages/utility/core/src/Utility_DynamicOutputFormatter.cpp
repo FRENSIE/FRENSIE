@@ -49,6 +49,16 @@ void DynamicOutputFormatter::underlinedKeyword( const std::string& keyword )
   this->formatKeyword<UnderlinedTextFormat,DefaultTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
+// Make the keyword red in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
+void DynamicOutputFormatter::redKeyword( const std::string& keyword )
+{
+  this->formatKeyword<DefaultTextFormat,RedTextColor,DefaultTextBackgroundColor>( keyword );
+}
+
 // Make the keyword bold-red in the output
 /*! \details A regex pattern can be used as the keyword. Multiple calls
  * with the same keyword or multiple regex patterns that match the same
@@ -57,6 +67,56 @@ void DynamicOutputFormatter::underlinedKeyword( const std::string& keyword )
 void DynamicOutputFormatter::boldRedKeyword( const std::string& keyword )
 {
   this->formatKeyword<BoldTextFormat,RedTextColor,DefaultTextBackgroundColor>( keyword );
+}
+
+// Make the keyword green in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
+void DynamicOutputFormatter::greenKeyword( const std::string& keyword )
+{
+  this->formatKeyword<DefaultTextFormat,GreenTextColor,DefaultTextBackgroundColor>( keyword );
+}
+
+// Make the keyword bold-green in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
+void DynamicOutputFormatter::boldGreenKeyword( const std::string& keyword )
+{
+  this->formatKeyword<BoldTextFormat,GreenTextColor,DefaultTextBackgroundColor>( keyword );
+}
+
+// Make the keyword yellow in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
+void DynamicOutputFormatter::yellowKeyword( const std::string& keyword )
+{
+  this->formatKeyword<DefaultTextFormat,YellowTextColor,DefaultTextBackgroundColor>( keyword );
+}
+
+// Make the keyword bold-yellow in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
+void DynamicOutputFormatter::boldYellowKeyword( const std::string& keyword )
+{
+  this->formatKeyword<BoldTextFormat,YellowTextColor,DefaultTextBackgroundColor>( keyword );
+}
+
+// Make the keyword cyan in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
+void DynamicOutputFormatter::cyanKeyword( const std::string& keyword )
+{
+  this->formatKeyword<DefaultTextFormat,CyanTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
 // Make the keyword bold-cyan in the output
@@ -69,6 +129,17 @@ void DynamicOutputFormatter::boldCyanKeyword( const std::string& keyword )
   this->formatKeyword<BoldTextFormat,CyanTextColor,DefaultTextBackgroundColor>( keyword );
 }
 
+
+// Make the keyword magenta in the output
+/*! \details A regex pattern can be used as the keyword. Multiple calls
+ * with the same keyword or multiple regex patterns that match the same
+ * section of output will be ignored.
+ */
+void DynamicOutputFormatter::magentaKeyword( const std::string& keyword )
+{
+  this->formatKeyword<DefaultTextFormat,MagentaTextColor,DefaultTextBackgroundColor>( keyword );
+}
+  
 // Make the keyword bold-magenta in the output
 /*! \details A regex pattern can be used as the keyword. Multiple calls
  * with the same keyword or multiple regex patterns that match the same

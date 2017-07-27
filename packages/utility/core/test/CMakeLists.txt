@@ -1,34 +1,6 @@
-# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because the
-# StaticOutputFormatter is used by the main function
-ADD_EXECUTABLE(tstStaticOutputFormatter tstStaticOutputFormatter.cpp)
-TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter)
-SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
-
-# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because the
-# DynamicOutputFormatter is used by the main function.
-ADD_EXECUTABLE(tstDynamicOutputFormatter
-  tstDynamicOutputFormatter.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core)
-ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter)
-SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
-
-# This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because the
-# LoggingMacros are used by the main function
-ADD_EXECUTABLE(tstLoggingMacros
-  tstLoggingMacros.cpp)
-TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core)
-ADD_TEST(LoggingMacros_test tstLoggingMacros)
-SET_PROPERTY(TEST LoggingMacros_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstExceptionCatchMacros
-  tstExceptionCatchMacros.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core)
-ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros)
-SET_PROPERTY(TEST ExceptionCatchMacros_test PROPERTY LABELS utility_core)
-
+# Before the FRENSIE unit test framework can be used we must test all of the
+# dependecies using another test framework. These first tests will all use
+# the Boost unit test framework.
 ADD_EXECUTABLE(tstLogRecordType
   tstLogRecordType.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -71,6 +43,32 @@ TARGET_LINK_LIBRARIES(tstTypeTraits utility_core)
 ADD_TEST(TypeTraits_test tstTypeTraits)
 SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstStaticOutputFormatter tstStaticOutputFormatter.cpp)
+TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter --report_level=detailed)
+SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstDynamicOutputFormatter
+  tstDynamicOutputFormatter.cpp)
+TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter --report_level=detailed)
+SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstLoggingMacros
+  tstLoggingMacros.cpp)
+TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core)
+ADD_TEST(LoggingMacros_test tstLoggingMacros)
+SET_PROPERTY(TEST LoggingMacros_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstExceptionCatchMacros
+  tstExceptionCatchMacros.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core)
+ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros)
+SET_PROPERTY(TEST ExceptionCatchMacros_test PROPERTY LABELS utility_core)
+
+# All FRENSIE unit test framework dependencies have been tested. All tests
+# beyond this point can use the FRENSIE unit tests framework.
 ADD_EXECUTABLE(tstIteratorTypeTraits
   tstIteratorTypeTraits.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
