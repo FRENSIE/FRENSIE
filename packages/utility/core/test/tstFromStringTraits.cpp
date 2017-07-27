@@ -19,10 +19,6 @@
 // FRENSIE Includes
 #include "Utility_FromStringTraits.hpp"
 
-typedef signed char schar;
-typedef unsigned char uchar;
-typedef long long longlong;
-
 //---------------------------------------------------------------------------//
 // Template Test Types
 //---------------------------------------------------------------------------//
@@ -642,9 +638,9 @@ BOOST_AUTO_TEST_CASE( float_fromString )
                        2*(float)Utility::PhysicalConstants::pi );
   BOOST_CHECK_EQUAL( Utility::fromString<float>( "-pI" ),
                        -(float)Utility::PhysicalConstants::pi );
-  BOOST_CHECK_CLOSE( Utility::fromString<float>( "-5*pi" ),
-                     -5*(float)Utility::PhysicalConstants::pi,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::fromString<float>( "-5*pi" ),
+                              -5*(float)Utility::PhysicalConstants::pi,
+                              1e-7 );
   BOOST_CHECK_EQUAL( Utility::fromString<float>( "pi/2" ),
                        (float)Utility::PhysicalConstants::pi/2 );
   BOOST_CHECK_EQUAL( Utility::fromString<float>( "-pi/2" ),
@@ -655,12 +651,12 @@ BOOST_AUTO_TEST_CASE( float_fromString )
                        2*(float)Utility::PhysicalConstants::pi/3 );
   BOOST_CHECK_EQUAL( Utility::fromString<float>( "-3pi/7" ),
                        -3*(float)Utility::PhysicalConstants::pi/7 );
-  BOOST_CHECK_CLOSE( Utility::fromString<float>( "5*pi/3" ),
-                     5*(float)Utility::PhysicalConstants::pi/3,
-                     1e-7 );
-  BOOST_CHECK_CLOSE( Utility::fromString<float>( "-5*PI/3" ),
-                     -5*(float)Utility::PhysicalConstants::pi/3,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::fromString<float>( "5*pi/3" ),
+                              5*(float)Utility::PhysicalConstants::pi/3,
+                              1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::fromString<float>( "-5*PI/3" ),
+                              -5*(float)Utility::PhysicalConstants::pi/3,
+                              1e-7 );
   
   BOOST_CHECK_THROW( Utility::fromString<float>( "1.0 1.0" ),
                      Utility::StringConversionException );
@@ -843,9 +839,9 @@ BOOST_AUTO_TEST_CASE( float_fromStream )
 
   Utility::fromStream( iss, test_float );
 
-  BOOST_CHECK_CLOSE( test_float,
-                     -5*(float)Utility::PhysicalConstants::pi,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( test_float,
+                              -5*(float)Utility::PhysicalConstants::pi,
+                              1e-7 );
 
   iss.str( "pi/2" );
   iss.clear();
@@ -889,18 +885,18 @@ BOOST_AUTO_TEST_CASE( float_fromStream )
 
   Utility::fromStream( iss, test_float );
 
-  BOOST_CHECK_CLOSE( test_float,
-                     5*(float)Utility::PhysicalConstants::pi/3,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( test_float,
+                              5*(float)Utility::PhysicalConstants::pi/3,
+                              1e-7 );
 
   iss.str( "-5*PI/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
   
-  BOOST_CHECK_CLOSE( test_float,
-                     -5*(float)Utility::PhysicalConstants::pi/3,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( test_float,
+                              -5*(float)Utility::PhysicalConstants::pi/3,
+                              1e-7 );
 
   // Multiple floats in the same stream with default deliminators
   iss.str( "-Pi/2 5*pi/3  -inf INFTY  1.0e+00 -1.00000e+00 0" );
@@ -908,15 +904,15 @@ BOOST_AUTO_TEST_CASE( float_fromStream )
 
   Utility::fromStream( iss, test_float );
   
-  BOOST_CHECK_CLOSE( test_float,
-                     -(float)Utility::PhysicalConstants::pi/2,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( test_float,
+                              -(float)Utility::PhysicalConstants::pi/2,
+                              1e-7 );
 
   Utility::fromStream( iss, test_float );
 
-  BOOST_CHECK_CLOSE( test_float,
-                     5*(float)Utility::PhysicalConstants::pi/3,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( test_float,
+                              5*(float)Utility::PhysicalConstants::pi/3,
+                              1e-7 );
 
   Utility::fromStream( iss, test_float );
 
@@ -928,11 +924,11 @@ BOOST_AUTO_TEST_CASE( float_fromStream )
 
   Utility::fromStream( iss, test_float );
 
-  BOOST_CHECK_CLOSE( test_float, 1.0f, 1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( test_float, 1.0f, 1e-7 );
 
   Utility::fromStream( iss, test_float );
 
-  BOOST_CHECK_CLOSE( test_float, -1.0f, 1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( test_float, -1.0f, 1e-7 );
 
   Utility::fromStream( iss, test_float );
 
@@ -1026,9 +1022,9 @@ BOOST_AUTO_TEST_CASE( double_fromString )
                        2*Utility::PhysicalConstants::pi );
   BOOST_CHECK_EQUAL( Utility::fromString<double>( "-pI" ),
                        -Utility::PhysicalConstants::pi );
-  BOOST_CHECK_CLOSE( Utility::fromString<double>( "-5*pi" ),
-                     -5*Utility::PhysicalConstants::pi,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::fromString<double>( "-5*pi" ),
+                              -5*Utility::PhysicalConstants::pi,
+                              1e-7 );
   BOOST_CHECK_EQUAL( Utility::fromString<double>( "pi/2" ),
                        Utility::PhysicalConstants::pi/2 );
   BOOST_CHECK_EQUAL( Utility::fromString<double>( "-pi/2" ),
@@ -1039,12 +1035,12 @@ BOOST_AUTO_TEST_CASE( double_fromString )
                        2*Utility::PhysicalConstants::pi/3 );
   BOOST_CHECK_EQUAL( Utility::fromString<double>( "-3pi/7" ),
                        -3*Utility::PhysicalConstants::pi/7 );
-  BOOST_CHECK_CLOSE( Utility::fromString<double>( "5*pi/3" ),
-                     5*Utility::PhysicalConstants::pi/3,
-                     1e-7 );
-  BOOST_CHECK_CLOSE( Utility::fromString<double>( "-5*PI/3" ),
-                     -5*Utility::PhysicalConstants::pi/3,
-                     1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::fromString<double>( "5*pi/3" ),
+                              5*Utility::PhysicalConstants::pi/3,
+                              1e-7 );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::fromString<double>( "-5*PI/3" ),
+                              -5*Utility::PhysicalConstants::pi/3,
+                              1e-7 );
 
   BOOST_CHECK_THROW( Utility::fromString<double>( "1.0 1.0" ),
                      Utility::StringConversionException );
@@ -1227,9 +1223,9 @@ BOOST_AUTO_TEST_CASE( double_fromStream )
 
   Utility::fromStream( iss, test_double );
 
-  BOOST_CHECK_CLOSE( test_double,
-                     -5*Utility::PhysicalConstants::pi,
-                     1e-14 );
+  BOOST_CHECK_CLOSE_FRACTION( test_double,
+                              -5*Utility::PhysicalConstants::pi,
+                              1e-14 );
 
   iss.str( "pi/2" );
   iss.clear();
@@ -1273,18 +1269,18 @@ BOOST_AUTO_TEST_CASE( double_fromStream )
 
   Utility::fromStream( iss, test_double );
 
-  BOOST_CHECK_CLOSE( test_double,
-                     5*Utility::PhysicalConstants::pi/3,
-                     1e-14 );
+  BOOST_CHECK_CLOSE_FRACTION( test_double,
+                              5*Utility::PhysicalConstants::pi/3,
+                              1e-14 );
 
   iss.str( "-5*PI/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
   
-  BOOST_CHECK_CLOSE( test_double,
-                     -5*Utility::PhysicalConstants::pi/3,
-                     1e-14 );
+  BOOST_CHECK_CLOSE_FRACTION( test_double,
+                              -5*Utility::PhysicalConstants::pi/3,
+                              1e-14 );
 
   // Multiple doubles in the same stream with default deliminators
   iss.str( "-Pi/2 5*pi/3  -inf INFTY  1.0e+00 -1.00000e+00 0" );
@@ -1292,15 +1288,15 @@ BOOST_AUTO_TEST_CASE( double_fromStream )
 
   Utility::fromStream( iss, test_double );
   
-  BOOST_CHECK_CLOSE( test_double,
-                     -Utility::PhysicalConstants::pi/2,
-                     1e-14 );
+  BOOST_CHECK_CLOSE_FRACTION( test_double,
+                              -Utility::PhysicalConstants::pi/2,
+                              1e-14 );
 
   Utility::fromStream( iss, test_double );
 
-  BOOST_CHECK_CLOSE( test_double,
-                     5*Utility::PhysicalConstants::pi/3,
-                     1e-14 );
+  BOOST_CHECK_CLOSE_FRACTION( test_double,
+                              5*Utility::PhysicalConstants::pi/3,
+                              1e-14 );
 
   Utility::fromStream( iss, test_double );
 
@@ -1312,11 +1308,11 @@ BOOST_AUTO_TEST_CASE( double_fromStream )
 
   Utility::fromStream( iss, test_double );
 
-  BOOST_CHECK_CLOSE( test_double, 1.0, 1e-14 );
+  BOOST_CHECK_CLOSE_FRACTION( test_double, 1.0, 1e-14 );
 
   Utility::fromStream( iss, test_double );
 
-  BOOST_CHECK_CLOSE( test_double, -1.0, 1e-14 );
+  BOOST_CHECK_CLOSE_FRACTION( test_double, -1.0, 1e-14 );
 
   Utility::fromStream( iss, test_double );
 

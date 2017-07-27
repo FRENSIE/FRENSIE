@@ -8,24 +8,22 @@ SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstContractException tstContractException.cpp)
 TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(ContractException_test tstContractException)
+ADD_TEST(ContractException_test tstContractException --report_level=detailed)
 SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstToStringTraits tstToStringTraits.cpp)
 TARGET_LINK_LIBRARIES(tstToStringTraits utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(ToStringTraits_test tstToStringTraits)
+ADD_TEST(ToStringTraits_test tstToStringTraits --report_level=detailed)
 SET_PROPERTY(TEST ToStringTraits_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstFromStringTraits tstFromStringTraits.cpp)
 TARGET_LINK_LIBRARIES(tstFromStringTraits utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(FromStringTraits_test tstFromStringTraits)
+ADD_TEST(FromStringTraits_test tstFromStringTraits --report_level=detailed)
 SET_PROPERTY(TEST FromStringTraits_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstTypeTraits
-  tstTypeTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTypeTraits utility_core)
-ADD_TEST(TypeTraits_test tstTypeTraits)
+ADD_EXECUTABLE(tstTypeTraits tstTypeTraits.cpp)
+TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(TypeTraits_test tstTypeTraits --report_level=detailed)
 SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstStaticOutputFormatter tstStaticOutputFormatter.cpp)
