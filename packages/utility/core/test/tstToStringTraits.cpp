@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------//
 // Template Test Types
 //---------------------------------------------------------------------------//
-typedef boost::mpl::list<int8_t, short, int16_t, int, long, int32_t, long long, int64_t> TestTypes;
+typedef boost::mpl::list<char, signed char, int8_t, short, int16_t, int, long, int32_t, long long, int64_t> TestTypes;
 
 //---------------------------------------------------------------------------//
 // Tests

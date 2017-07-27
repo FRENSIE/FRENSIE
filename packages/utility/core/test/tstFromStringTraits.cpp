@@ -11,46 +11,40 @@
 #include <sstream>
 #include <type_traits>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+#include <boost/mpl/list.hpp>
 
 // FRENSIE Includes
 #include "Utility_FromStringTraits.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 
 typedef signed char schar;
 typedef unsigned char uchar;
 typedef long long longlong;
 
 //---------------------------------------------------------------------------//
-// Instantiation Macros
+// Template Test Types
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_TEMPLATE_1_INSTANT( type, name )      \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, short );    \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, int );       \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, long );      \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, longlong )
+typedef boost::mpl::list<char, signed char, unsigned char, int8_t> SingleByteTypes;
 
-#define UNIT_TEST_TEMPLATE_1_BYTE_INSTANT( type, name ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, char ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, schar );    \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uchar )
+typedef boost::mpl::list<short, int16_t, int, long, int32_t, long long, int64_t> MultipleByteTypes;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a string can be created from a string
-TEUCHOS_UNIT_TEST( FromStringTraits, string_fromString )
+BOOST_AUTO_TEST_CASE( string_fromString )
 {
-  TEST_EQUALITY_CONST( Utility::fromString<std::string>( " " ), " " );
-  TEST_EQUALITY_CONST( Utility::fromString<std::string>( "testing" ), "testing" );
-  TEST_EQUALITY_CONST( Utility::fromString<std::string>( "{{1,0},{-1,2}}" ), "{{1,0},{-1,2}}" );
-  TEST_EQUALITY_CONST( Utility::fromString<std::string>( "{ {1,0}, {-1,2} }" ), "{ {1,0}, {-1,2} }" );
+  BOOST_CHECK_EQUAL( Utility::fromString<std::string>( " " ), " " );
+  BOOST_CHECK_EQUAL( Utility::fromString<std::string>( "testing" ), "testing" );
+  BOOST_CHECK_EQUAL( Utility::fromString<std::string>( "{{1,0},{-1,2}}" ), "{{1,0},{-1,2}}" );
+  BOOST_CHECK_EQUAL( Utility::fromString<std::string>( "{ {1,0}, {-1,2} }" ), "{ {1,0}, {-1,2} }" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a string can be extracted from a stream
-TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
+BOOST_AUTO_TEST_CASE( string_fromStream )
 {
   std::istringstream iss;
   iss.str( " " );
@@ -59,14 +53,14 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
   
   Utility::fromStream( iss, string );
 
-  TEST_EQUALITY_CONST( string, " " );
+  BOOST_CHECK_EQUAL( string, " " );
 
   iss.str( "testing" );
   iss.clear();
 
   Utility::fromStream( iss, string );
 
-  TEST_EQUALITY_CONST( string, "testing" );
+  BOOST_CHECK_EQUAL( string, "testing" );
 
   string.clear();
 
@@ -76,19 +70,19 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
 
   Utility::fromStream( iss, string );
 
-  TEST_EQUALITY_CONST( string, "testing-1" );
+  BOOST_CHECK_EQUAL( string, "testing-1" );
 
   Utility::fromStream( iss, string );
 
-  TEST_EQUALITY_CONST( string, "testing-2" );
+  BOOST_CHECK_EQUAL( string, "testing-2" );
 
   Utility::fromStream( iss, string );
 
-  TEST_EQUALITY_CONST( string, "testing-3" );
+  BOOST_CHECK_EQUAL( string, "testing-3" );
 
   Utility::fromStream( iss, string );
 
-  TEST_EQUALITY_CONST( string, "testing-4" );
+  BOOST_CHECK_EQUAL( string, "testing-4" );
 
   string.clear();
   
@@ -98,19 +92,19 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
 
   Utility::fromStream( iss, string, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( string, "testing-1" );
+  BOOST_CHECK_EQUAL( string, "testing-1" );
 
   Utility::fromStream( iss, string, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( string, "testing-2" );
+  BOOST_CHECK_EQUAL( string, "testing-2" );
 
   Utility::fromStream( iss, string, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( string, "testing-3" );
+  BOOST_CHECK_EQUAL( string, "testing-3" );
 
   Utility::fromStream( iss, string, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( string, "testing-4" );
+  BOOST_CHECK_EQUAL( string, "testing-4" );
 
   string.clear();
   
@@ -120,7 +114,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
 
   Utility::fromStream( iss, string, "," );
 
-  TEST_EQUALITY_CONST( string, "testing-1" );
+  BOOST_CHECK_EQUAL( string, "testing-1" );
 
   string.clear();
 
@@ -128,7 +122,7 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
 
   Utility::fromStream( iss, string );
 
-  TEST_EQUALITY_CONST( string, "testing-2" );
+  BOOST_CHECK_EQUAL( string, "testing-2" );
 
   // Multiple string elements in the same stream with container deliminators
   iss.str( "{1,0},{-1,2}, {a,b} , {key, {a,b}} }" );
@@ -136,58 +130,58 @@ TEUCHOS_UNIT_TEST( FromStringTraits, string_fromStream )
 
   Utility::fromStream( iss, string, ",}" );
 
-  TEST_EQUALITY_CONST( string, "{1,0}" );
+  BOOST_CHECK_EQUAL( string, "{1,0}" );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, string, ",}" );
 
-  TEST_EQUALITY_CONST( string, "{-1,2}" );
+  BOOST_CHECK_EQUAL( string, "{-1,2}" );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, string, ",}" );
 
-  TEST_EQUALITY_CONST( string, " {a,b}" );
+  BOOST_CHECK_EQUAL( string, " {a,b}" );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, string, ",}" );
 
-  TEST_EQUALITY_CONST( string, " {key, {a,b}}" );
+  BOOST_CHECK_EQUAL( string, " {key, {a,b}}" );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a boolean can be created from a string
-TEUCHOS_UNIT_TEST( FromStringTraits, bool_fromString )
+BOOST_AUTO_TEST_CASE( bool_fromString )
 {
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "0" ), false );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "false" ), false );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "False" ), false );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "FaLsE" ), false );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "FALSE" ), false );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "0" ), false );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "false" ), false );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "False" ), false );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "FaLsE" ), false );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "FALSE" ), false );
 
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "1" ), true );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "true" ), true );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "True" ), true );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "TrUe" ), true );
-  TEST_EQUALITY_CONST( Utility::fromString<bool>( "TRUE" ), true );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "1" ), true );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "true" ), true );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "True" ), true );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "TrUe" ), true );
+  BOOST_CHECK_EQUAL( Utility::fromString<bool>( "TRUE" ), true );
 
-  TEST_THROW( Utility::fromString<bool>( "0 1" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<bool>( "1 false" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<bool>( "2" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<bool>( "abc" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<bool>( "0 1" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<bool>( "1 false" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<bool>( "2" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<bool>( "abc" ),
+                     Utility::StringConversionException );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a boolean can be extracted from a stream
-TEUCHOS_UNIT_TEST( FromStringTraits, bool_fromStream )
+BOOST_AUTO_TEST_CASE( bool_fromStream )
 {
   std::istringstream iss( "0" );
 
@@ -195,28 +189,28 @@ TEUCHOS_UNIT_TEST( FromStringTraits, bool_fromStream )
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, false );
+  BOOST_CHECK_EQUAL( boolean, false );
 
   iss.str( "false" );
   iss.clear();
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, false );
+  BOOST_CHECK_EQUAL( boolean, false );
 
   iss.str( "1" );
   iss.clear();
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, true );
+  BOOST_CHECK_EQUAL( boolean, true );
 
   iss.str( "true" );
   iss.clear();
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, true );
+  BOOST_CHECK_EQUAL( boolean, true );
 
   // Multiple booleans in the same stream with default deliminators
   iss.str( "0 1  true   false  " );
@@ -224,19 +218,19 @@ TEUCHOS_UNIT_TEST( FromStringTraits, bool_fromStream )
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, false );
+  BOOST_CHECK_EQUAL( boolean, false );
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, true );
+  BOOST_CHECK_EQUAL( boolean, true );
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, true );
+  BOOST_CHECK_EQUAL( boolean, true );
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, false );
+  BOOST_CHECK_EQUAL( boolean, false );
   
   // Multiple booleans in the same stream with custom deliminators
   iss.str( "0, true" );
@@ -244,80 +238,78 @@ TEUCHOS_UNIT_TEST( FromStringTraits, bool_fromStream )
 
   Utility::fromStream( iss, boolean, "," );
 
-  TEST_EQUALITY_CONST( boolean, false );
+  BOOST_CHECK_EQUAL( boolean, false );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, boolean );
 
-  TEST_EQUALITY_CONST( boolean, true );
+  BOOST_CHECK_EQUAL( boolean, true );
 }
 
 //---------------------------------------------------------------------------//
 // Check that single byte integer types can be created from a string
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromString, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( byte_fromString, T, SingleByteTypes )
 {
-  TEST_EQUALITY_CONST( Utility::fromString<T>( " " ), (T)32 );
+  BOOST_CHECK_EQUAL( Utility::fromString<T>( " " ), (T)32 );
   
   std::string test_string;
   test_string.push_back( '\t' );
   
-  TEST_EQUALITY_CONST( Utility::fromString<T>( test_string ), (T)9 );
+  BOOST_CHECK_EQUAL( Utility::fromString<T>( test_string ), (T)9 );
 
   test_string.clear();
   test_string.push_back( '\n' );
   
-  TEST_EQUALITY_CONST( Utility::fromString<T>( test_string ), (T)10 );
+  BOOST_CHECK_EQUAL( Utility::fromString<T>( test_string ), (T)10 );
 
   test_string = "-128";
 
   if( std::is_signed<T>::value )
   {
-    TEST_EQUALITY_CONST( Utility::fromString<T>( test_string ), (T)-128 );
+    BOOST_CHECK_EQUAL( Utility::fromString<T>( test_string ), (T)-128 );
   }
   else
   {
-    TEST_THROW( Utility::fromString<T>( test_string ),
-                Utility::StringConversionException );
+    BOOST_CHECK_THROW( Utility::fromString<T>( test_string ),
+                       Utility::StringConversionException );
   }
 
   test_string = "127";
 
-  TEST_EQUALITY_CONST( Utility::fromString<T>( test_string ), (T)127 );
+  BOOST_CHECK_EQUAL( Utility::fromString<T>( test_string ), (T)127 );
 
   test_string = "255";
 
   if( std::is_signed<T>::value )
   {
-    TEST_THROW( Utility::fromString<T>( test_string ),
-                Utility::StringConversionException );
+    BOOST_CHECK_THROW( Utility::fromString<T>( test_string ),
+                       Utility::StringConversionException );
   }
   else
   {
-    TEST_EQUALITY_CONST( Utility::fromString<T>( test_string ), (T)255 );
+    BOOST_CHECK_EQUAL( Utility::fromString<T>( test_string ), (T)255 );
   }
 
   test_string.clear();
   
-  TEST_THROW( Utility::fromString<T>( "256" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "0.0" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "0.000000000e+00" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "0 0" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "ab" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "a b" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "256" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "0.0" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "0.000000000e+00" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "0 0" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "ab" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "a b" ),
+                     Utility::StringConversionException );
 }
-
-UNIT_TEST_TEMPLATE_1_BYTE_INSTANT( FromStringTraits, byte_fromString );
 
 //---------------------------------------------------------------------------//
 // Check that single byte integer types can be created from a stream
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromStream, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( byte_fromStream, T, SingleByteTypes )
 {
   std::istringstream iss( " " );
 
@@ -325,7 +317,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromStream, T )
 
   Utility::fromStream( iss, test_byte );
   
-  TEST_EQUALITY_CONST( test_byte, (T)32 );
+  BOOST_CHECK_EQUAL( test_byte, (T)32 );
 
   {
     std::string test_string;
@@ -337,7 +329,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromStream, T )
 
   Utility::fromStream( iss, test_byte );
   
-  TEST_EQUALITY_CONST( test_byte, (T)9 );
+  BOOST_CHECK_EQUAL( test_byte, (T)9 );
 
   {
     std::string test_string;
@@ -349,7 +341,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromStream, T )
 
   Utility::fromStream( iss, test_byte );
   
-  TEST_EQUALITY_CONST( test_byte, (T)10 );
+  BOOST_CHECK_EQUAL( test_byte, (T)10 );
 
   // Multiple bytes in the same stream with no deliminators
   iss.str( "-128" );
@@ -357,19 +349,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromStream, T )
 
   Utility::fromStream( iss, test_byte );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'-' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'-' );
 
   Utility::fromStream( iss, test_byte );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'1' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'1' );
 
   Utility::fromStream( iss, test_byte );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'2' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'2' );
 
   Utility::fromStream( iss, test_byte );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'8' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'8' );
 
   // Multiple bytes in the same stream with white space deliminators
   iss.str( "127" );
@@ -377,26 +369,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromStream, T )
 
   Utility::fromStream( iss, test_byte, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( test_byte, (T)127 );
+  BOOST_CHECK_EQUAL( test_byte, (T)127 );
 
   iss.str( "a 0\n127\t-" );
   iss.clear();
 
   Utility::fromStream( iss, test_byte, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'a' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'a' );
 
   Utility::fromStream( iss, test_byte, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'0' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'0' );
 
   Utility::fromStream( iss, test_byte, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( test_byte, (T)127 );
+  BOOST_CHECK_EQUAL( test_byte, (T)127 );
 
   Utility::fromStream( iss, test_byte, Utility::Details::white_space_delims );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'-' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'-' );
 
   // Multiple bytes in the same stream with custom deliminators
   iss.str( "a, b, c, d, 127, , -}" );
@@ -404,73 +396,69 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, byte_fromStream, T )
 
   Utility::fromStream( iss, test_byte, "," );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'a' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'a' );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_byte, "," );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'b' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'b' );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_byte, "," );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'c' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'c' );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_byte, "," );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'d' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'d' );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_byte, "," );
 
-  TEST_EQUALITY_CONST( test_byte, (T)127 );
+  BOOST_CHECK_EQUAL( test_byte, (T)127 );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_byte, "," );
 
-  TEST_EQUALITY_CONST( test_byte, (T)' ' );
+  BOOST_CHECK_EQUAL( test_byte, (T)' ' );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_byte, "}" );
 
-  TEST_EQUALITY_CONST( test_byte, (T)'-' );
+  BOOST_CHECK_EQUAL( test_byte, (T)'-' );
 }
-
-UNIT_TEST_TEMPLATE_1_BYTE_INSTANT( FromStringTraits, byte_fromStream );
 
 //---------------------------------------------------------------------------//
 // Check that signed integer types can be created from a string
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, fromString, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( fromString, T, MultipleByteTypes )
 {
-  TEST_EQUALITY_CONST( Utility::fromString<T>( "-10" ), -10 );
-  TEST_EQUALITY_CONST( Utility::fromString<T>( "0" ), 0 );
-  TEST_EQUALITY_CONST( Utility::fromString<T>( " 10 " ), 10 );
+  BOOST_CHECK_EQUAL( Utility::fromString<T>( "-10" ), -10 );
+  BOOST_CHECK_EQUAL( Utility::fromString<T>( "0" ), 0 );
+  BOOST_CHECK_EQUAL( Utility::fromString<T>( " 10 " ), 10 );
 
-  TEST_THROW( Utility::fromString<T>( "0.0" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "0.000000000e+00" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "0 0" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<T>( "abc" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "0.0" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "0.000000000e+00" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "0 0" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "abc" ),
+                     Utility::StringConversionException );
   // Overflow should result in an error: #(2^63) > 2^63 - 1
-  TEST_THROW( Utility::fromString<T>( "9223372036854775808" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<T>( "9223372036854775808" ),
+                     Utility::StringConversionException );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( FromStringTraits, fromString );
 
 //---------------------------------------------------------------------------//
 // Check that signed integer types can be extracted from a stream
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, fromStream, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( fromStream, T, MultipleByteTypes )
 {
   std::istringstream iss( "-10" );
 
@@ -478,21 +466,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, fromStream, T )
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, -10 );
+  BOOST_CHECK_EQUAL( test_int, -10 );
 
   iss.str( "0" );
   iss.clear();
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 0 );
+  BOOST_CHECK_EQUAL( test_int, 0 );
 
   iss.str( " 10 " );
   iss.clear();
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 10 );
+  BOOST_CHECK_EQUAL( test_int, 10 );
 
   // Multiple integers in the same stream with default deliminators
   iss.str( "-10 0   10 " );
@@ -500,15 +488,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, fromStream, T )
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, -10 );
+  BOOST_CHECK_EQUAL( test_int, -10 );
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 0 );
+  BOOST_CHECK_EQUAL( test_int, 0 );
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 10 );
+  BOOST_CHECK_EQUAL( test_int, 10 );
   
   // Multiple integers in the same stream with custom deliminators
   iss.str( "-10, 1" );
@@ -516,47 +504,43 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, fromStream, T )
   
   Utility::fromStream( iss, test_int, "," );
 
-  TEST_EQUALITY_CONST( test_int, -10 );
+  BOOST_CHECK_EQUAL( test_int, -10 );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 1 );
+  BOOST_CHECK_EQUAL( test_int, 1 );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( FromStringTraits, fromStream );
 
 //---------------------------------------------------------------------------//
 // Check that unsigned integer types can be created from a string
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, unsigned_fromString, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( unsigned_fromString, T, MultipleByteTypes )
 {
   typedef typename std::make_unsigned<T>::type UnsignedT;
   
-  TEST_EQUALITY_CONST( Utility::fromString<UnsignedT>( "0" ), 0 );
-  TEST_EQUALITY_CONST( Utility::fromString<UnsignedT>( "10" ), 10 );
-  TEST_EQUALITY_CONST( Utility::fromString<UnsignedT>( "255" ), 255 );
+  BOOST_CHECK_EQUAL( Utility::fromString<UnsignedT>( "0" ), 0 );
+  BOOST_CHECK_EQUAL( Utility::fromString<UnsignedT>( "10" ), 10 );
+  BOOST_CHECK_EQUAL( Utility::fromString<UnsignedT>( "255" ), 255 );
 
-  TEST_THROW( Utility::fromString<UnsignedT>( "-10" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<UnsignedT>( "0.0" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<UnsignedT>( "0.000000000e+00" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<UnsignedT>( "-1." ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<UnsignedT>( "1 1" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<UnsignedT>( "-10" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<UnsignedT>( "0.0" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<UnsignedT>( "0.000000000e+00" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<UnsignedT>( "-1." ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<UnsignedT>( "1 1" ),
+                     Utility::StringConversionException );
   // Overflow should result in an error: #(2^64) > 2^64 - 1
-  TEST_THROW( Utility::fromString<UnsignedT>( "18446744073709551616" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<UnsignedT>( "18446744073709551616" ),
+                     Utility::StringConversionException );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( FromStringTraits, unsigned_fromString );
 
 //---------------------------------------------------------------------------//
 // Check that unsigned integer types can be extracted from a stream
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, unsigned_fromStream, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( unsigned_fromStream, T, MultipleByteTypes )
 {
   std::istringstream iss( "0" );
 
@@ -564,21 +548,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, unsigned_fromStream, T )
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 0 );
+  BOOST_CHECK_EQUAL( test_int, 0 );
 
   iss.str( "10" );
   iss.clear();
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 10 );
+  BOOST_CHECK_EQUAL( test_int, 10 );
 
   iss.str( "255" );
   iss.clear();
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 255 );
+  BOOST_CHECK_EQUAL( test_int, 255 );
 
   // Multiple integers in the same stream with default deliminators
   iss.str( "0 10   255 " );
@@ -586,15 +570,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, unsigned_fromStream, T )
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 0 );
+  BOOST_CHECK_EQUAL( test_int, 0 );
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 10 );
+  BOOST_CHECK_EQUAL( test_int, 10 );
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 255 );
+  BOOST_CHECK_EQUAL( test_int, 255 );
   
   // Multiple integers in the same stream with custom deliminators
   iss.str( "255, 1" );
@@ -602,97 +586,95 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( FromStringTraits, unsigned_fromStream, T )
   
   Utility::fromStream( iss, test_int, "," );
 
-  TEST_EQUALITY_CONST( test_int, 255 );
+  BOOST_CHECK_EQUAL( test_int, 255 );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_int );
 
-  TEST_EQUALITY_CONST( test_int, 1 );
+  BOOST_CHECK_EQUAL( test_int, 1 );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( FromStringTraits, unsigned_fromStream );
 
 //---------------------------------------------------------------------------//
 // Check that a float can be created from a string
-TEUCHOS_UNIT_TEST( FromStringTraits, float_fromString )
+BOOST_AUTO_TEST_CASE( float_fromString )
 {
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "1" ), 1.0f );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-1.0" ), -1.0f );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "0.000000000e+00" ), 0.0f );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "1" ), 1.0f );
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-1.0" ), -1.0f );
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "0.000000000e+00" ), 0.0f );
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "inf" ),
                        std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "infinity" ),
                        std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "Inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "Inf" ),
                        std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "Infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "Infinity" ),
                        std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "InFiNiTy" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "InFiNiTy" ),
                        std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "INF" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "INF" ),
                        std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "INFINITY" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "INFINITY" ),
                        std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-inf" ),
                        -std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-infinity" ),
                        -std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-Inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-Inf" ),
                        -std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-Infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-Infinity" ),
                        -std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-InFiNiTy" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-InFiNiTy" ),
                        -std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-INF" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-INF" ),
                        -std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-INFINITY" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-INFINITY" ),
                        -std::numeric_limits<float>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "pi" ),
                        (float)Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( " Pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( " Pi" ),
                        (float)Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( " PI " ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( " PI " ),
                        (float)Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "1*pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "1*pi" ),
                        (float)Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "2Pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "2Pi" ),
                        2*(float)Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-pI" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-pI" ),
                        -(float)Utility::PhysicalConstants::pi );
-  TEST_FLOATING_EQUALITY( Utility::fromString<float>( "-5*pi" ),
-                          -5*(float)Utility::PhysicalConstants::pi,
-                          1e-7 );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "pi/2" ),
+  BOOST_CHECK_CLOSE( Utility::fromString<float>( "-5*pi" ),
+                     -5*(float)Utility::PhysicalConstants::pi,
+                     1e-7 );
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "pi/2" ),
                        (float)Utility::PhysicalConstants::pi/2 );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-pi/2" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-pi/2" ),
                        -(float)Utility::PhysicalConstants::pi/2 );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "pi/3" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "pi/3" ),
                        (float)Utility::PhysicalConstants::pi/3 );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "2pi/3" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "2pi/3" ),
                        2*(float)Utility::PhysicalConstants::pi/3 );
-  TEST_EQUALITY_CONST( Utility::fromString<float>( "-3pi/7" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<float>( "-3pi/7" ),
                        -3*(float)Utility::PhysicalConstants::pi/7 );
-  TEST_FLOATING_EQUALITY( Utility::fromString<float>( "5*pi/3" ),
-                          5*(float)Utility::PhysicalConstants::pi/3,
-                          1e-7 );
-  TEST_FLOATING_EQUALITY( Utility::fromString<float>( "-5*PI/3" ),
-                          -5*(float)Utility::PhysicalConstants::pi/3,
-                          1e-7 );
+  BOOST_CHECK_CLOSE( Utility::fromString<float>( "5*pi/3" ),
+                     5*(float)Utility::PhysicalConstants::pi/3,
+                     1e-7 );
+  BOOST_CHECK_CLOSE( Utility::fromString<float>( "-5*PI/3" ),
+                     -5*(float)Utility::PhysicalConstants::pi/3,
+                     1e-7 );
   
-  TEST_THROW( Utility::fromString<float>( "1.0 1.0" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<float>( "1 1" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<float>( "-pi / 2 5*pi/3" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<float>( "1.01.0" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<float>( "1.0 1.0" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<float>( "1 1" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<float>( "-pi / 2 5*pi/3" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<float>( "1.01.0" ),
+                     Utility::StringConversionException );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a float can be extracted from a stream
-TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
+BOOST_AUTO_TEST_CASE( float_fromStream )
 {
   std::istringstream iss( "1" );
 
@@ -700,170 +682,170 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, 1.0f );
+  BOOST_CHECK_EQUAL( test_float, 1.0f );
 
   iss.str( "-1.0" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -1.0f );
+  BOOST_CHECK_EQUAL( test_float, -1.0f );
 
   iss.str( "0.000000000e+00" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, 0.0f );
+  BOOST_CHECK_EQUAL( test_float, 0.0f );
 
   iss.str( "inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   iss.str( "infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   iss.str( "Inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   iss.str( "Infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   iss.str( "InFiNiTy" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   iss.str( "INF" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   iss.str( "INFINITY" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   iss.str( "-inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
 
   iss.str( "-infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
 
   iss.str( "-Inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
 
   iss.str( "-Infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
 
   iss.str( "-InFiNiTy" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
 
   iss.str( "-INF" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
 
   iss.str( "-INFINITY" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
   
   iss.str( "pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_float, (float)Utility::PhysicalConstants::pi );
 
   iss.str( " Pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_float, (float)Utility::PhysicalConstants::pi );
 
   iss.str( " PI " );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_float, (float)Utility::PhysicalConstants::pi );
                        
   iss.str( "1*pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_float, (float)Utility::PhysicalConstants::pi );
 
   iss.str( "2Pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, 2*(float)Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_float, 2*(float)Utility::PhysicalConstants::pi );
   
   iss.str( "-pI" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -(float)Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_float, -(float)Utility::PhysicalConstants::pi );
 
   iss.str( "-5*pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_FLOATING_EQUALITY( test_float,
-                          -5*(float)Utility::PhysicalConstants::pi,
-                          1e-7 );
+  BOOST_CHECK_CLOSE( test_float,
+                     -5*(float)Utility::PhysicalConstants::pi,
+                     1e-7 );
 
   iss.str( "pi/2" );
   iss.clear();
@@ -871,35 +853,35 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
   Utility::fromStream( iss, test_float );
 
   
-  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi/2 );
+  BOOST_CHECK_EQUAL( test_float, (float)Utility::PhysicalConstants::pi/2 );
 
   iss.str( "-pi/2" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -(float)Utility::PhysicalConstants::pi/2 );
+  BOOST_CHECK_EQUAL( test_float, -(float)Utility::PhysicalConstants::pi/2 );
 
   iss.str( "pi/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
   
-  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi/3 );
+  BOOST_CHECK_EQUAL( test_float, (float)Utility::PhysicalConstants::pi/3 );
 
   iss.str( "2pi/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, 2*(float)Utility::PhysicalConstants::pi/3 );
+  BOOST_CHECK_EQUAL( test_float, 2*(float)Utility::PhysicalConstants::pi/3 );
 
   iss.str( "-3pi/7" );
   iss.clear();
   
   Utility::fromStream( iss, test_float );
   
-  TEST_EQUALITY_CONST( test_float,
+  BOOST_CHECK_EQUAL( test_float,
                        -3*(float)Utility::PhysicalConstants::pi/7 );
 
   iss.str( "5*pi/3" );
@@ -907,18 +889,18 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
 
   Utility::fromStream( iss, test_float );
 
-  TEST_FLOATING_EQUALITY( test_float,
-                          5*(float)Utility::PhysicalConstants::pi/3,
-                          1e-7 );
+  BOOST_CHECK_CLOSE( test_float,
+                     5*(float)Utility::PhysicalConstants::pi/3,
+                     1e-7 );
 
   iss.str( "-5*PI/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_float );
   
-  TEST_FLOATING_EQUALITY( test_float,
-                          -5*(float)Utility::PhysicalConstants::pi/3,
-                          1e-7 );
+  BOOST_CHECK_CLOSE( test_float,
+                     -5*(float)Utility::PhysicalConstants::pi/3,
+                     1e-7 );
 
   // Multiple floats in the same stream with default deliminators
   iss.str( "-Pi/2 5*pi/3  -inf INFTY  1.0e+00 -1.00000e+00 0" );
@@ -926,35 +908,35 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
 
   Utility::fromStream( iss, test_float );
   
-  TEST_FLOATING_EQUALITY( test_float,
-                          -(float)Utility::PhysicalConstants::pi/2,
-                          1e-7 );
+  BOOST_CHECK_CLOSE( test_float,
+                     -(float)Utility::PhysicalConstants::pi/2,
+                     1e-7 );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_FLOATING_EQUALITY( test_float,
-                          5*(float)Utility::PhysicalConstants::pi/3,
-                          1e-7 );
+  BOOST_CHECK_CLOSE( test_float,
+                     5*(float)Utility::PhysicalConstants::pi/3,
+                     1e-7 );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, -std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, -std::numeric_limits<float>::infinity() );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, std::numeric_limits<float>::infinity() );
+  BOOST_CHECK_EQUAL( test_float, std::numeric_limits<float>::infinity() );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_FLOATING_EQUALITY( test_float, 1.0f, 1e-7 );
+  BOOST_CHECK_CLOSE( test_float, 1.0f, 1e-7 );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_FLOATING_EQUALITY( test_float, -1.0f, 1e-7 );
+  BOOST_CHECK_CLOSE( test_float, -1.0f, 1e-7 );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_FLOATING_EQUALITY( test_float, 0.0f, 1e-7 );
+  BOOST_CHECK_SMALL( test_float, 1e-7f );
 
   // Multiple floats in the same stream with custom deliminators
   iss.str( "-1, 1.000000000000000000e+00" );
@@ -962,121 +944,121 @@ TEUCHOS_UNIT_TEST( FromStringTraits, float_fromStream )
 
   Utility::fromStream( iss, test_float, "," );
 
-  TEST_EQUALITY_CONST( test_float, -1.0f );
+  BOOST_CHECK_EQUAL( test_float, -1.0f );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, 1.0f );
+  BOOST_CHECK_EQUAL( test_float, 1.0f );
 
   iss.str( "-1, 2*pi/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_float, "," );
 
-  TEST_EQUALITY_CONST( test_float, -1.0f );
+  BOOST_CHECK_EQUAL( test_float, -1.0f );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, 2*(float)Utility::PhysicalConstants::pi/3 );
+  BOOST_CHECK_EQUAL( test_float, 2*(float)Utility::PhysicalConstants::pi/3 );
 
   iss.str( "-PI, Pi/2" );
   iss.clear();
 
   Utility::fromStream( iss, test_float, "," );
 
-  TEST_EQUALITY_CONST( test_float, -(float)Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_float, -(float)Utility::PhysicalConstants::pi );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_float );
 
-  TEST_EQUALITY_CONST( test_float, (float)Utility::PhysicalConstants::pi/2 );
+  BOOST_CHECK_EQUAL( test_float, (float)Utility::PhysicalConstants::pi/2 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a double can be created from a string
-TEUCHOS_UNIT_TEST( FromStringTraits, double_fromString )
+BOOST_AUTO_TEST_CASE( double_fromString )
 {
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "1" ), 1.0 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-1.0" ), -1.0 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "0.000000000000000000e+00" ), 0.0 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "1" ), 1.0 );
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-1.0" ), -1.0 );
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "0.000000000000000000e+00" ), 0.0 );
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "inf" ),
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "infinity" ),
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "Inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "Inf" ),
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "Infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "Infinity" ),
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "InFiNiTy" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "InFiNiTy" ),
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "INF" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "INF" ),
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "INFINITY" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "INFINITY" ),
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-inf" ),
                        -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-infinity" ),
                        -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-Inf" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-Inf" ),
                        -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-Infinity" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-Infinity" ),
                        -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-InFiNiTy" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-InFiNiTy" ),
                        -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-INF" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-INF" ),
                        -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-INFINITY" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-INFINITY" ),
                        -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "pi" ),
                        Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( " Pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( " Pi" ),
                        Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( " PI " ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( " PI " ),
                        Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "1*pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "1*pi" ),
                        Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "2Pi" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "2Pi" ),
                        2*Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-pI" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-pI" ),
                        -Utility::PhysicalConstants::pi );
-  TEST_FLOATING_EQUALITY( Utility::fromString<double>( "-5*pi" ),
-                          -5*Utility::PhysicalConstants::pi,
-                          1e-7 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "pi/2" ),
+  BOOST_CHECK_CLOSE( Utility::fromString<double>( "-5*pi" ),
+                     -5*Utility::PhysicalConstants::pi,
+                     1e-7 );
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "pi/2" ),
                        Utility::PhysicalConstants::pi/2 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-pi/2" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-pi/2" ),
                        -Utility::PhysicalConstants::pi/2 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "pi/3" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "pi/3" ),
                        Utility::PhysicalConstants::pi/3 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "2pi/3" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "2pi/3" ),
                        2*Utility::PhysicalConstants::pi/3 );
-  TEST_EQUALITY_CONST( Utility::fromString<double>( "-3pi/7" ),
+  BOOST_CHECK_EQUAL( Utility::fromString<double>( "-3pi/7" ),
                        -3*Utility::PhysicalConstants::pi/7 );
-  TEST_FLOATING_EQUALITY( Utility::fromString<double>( "5*pi/3" ),
-                          5*Utility::PhysicalConstants::pi/3,
-                          1e-7 );
-  TEST_FLOATING_EQUALITY( Utility::fromString<double>( "-5*PI/3" ),
-                          -5*Utility::PhysicalConstants::pi/3,
-                          1e-7 );
+  BOOST_CHECK_CLOSE( Utility::fromString<double>( "5*pi/3" ),
+                     5*Utility::PhysicalConstants::pi/3,
+                     1e-7 );
+  BOOST_CHECK_CLOSE( Utility::fromString<double>( "-5*PI/3" ),
+                     -5*Utility::PhysicalConstants::pi/3,
+                     1e-7 );
 
-  TEST_THROW( Utility::fromString<double>( "1.0 1.0" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<double>( "1 1" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<double>( "-pi / 2 5*pi/3" ),
-              Utility::StringConversionException );
-  TEST_THROW( Utility::fromString<double>( "1.01.0" ),
-              Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<double>( "1.0 1.0" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<double>( "1 1" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<double>( "-pi / 2 5*pi/3" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<double>( "1.01.0" ),
+                     Utility::StringConversionException );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a double can be extracted from a stream
-TEUCHOS_UNIT_TEST( FromStringTraits, double_fromStream )
+BOOST_AUTO_TEST_CASE( double_fromStream )
 {
   std::istringstream iss( "1" );
 
@@ -1084,170 +1066,170 @@ TEUCHOS_UNIT_TEST( FromStringTraits, double_fromStream )
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, 1.0 );
+  BOOST_CHECK_EQUAL( test_double, 1.0 );
 
   iss.str( "-1.0" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -1.0 );
+  BOOST_CHECK_EQUAL( test_double, -1.0 );
 
   iss.str( "0.000000000000000000e+00" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, 0.0 );
+  BOOST_CHECK_EQUAL( test_double, 0.0 );
 
   iss.str( "inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   iss.str( "infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   iss.str( "Inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   iss.str( "Infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   iss.str( "InFiNiTy" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   iss.str( "INF" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   iss.str( "INFINITY" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   iss.str( "-inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
 
   iss.str( "-infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
 
   iss.str( "-Inf" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
 
   iss.str( "-Infinity" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
 
   iss.str( "-InFiNiTy" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
 
   iss.str( "-INF" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
 
   iss.str( "-INFINITY" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
   
   iss.str( "pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi );
 
   iss.str( " Pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi );
 
   iss.str( " PI " );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi );
                        
   iss.str( "1*pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi );
 
   iss.str( "2Pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, 2*Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_double, 2*Utility::PhysicalConstants::pi );
   
   iss.str( "-pI" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_double, -Utility::PhysicalConstants::pi );
 
   iss.str( "-5*pi" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_FLOATING_EQUALITY( test_double,
-                          -5*Utility::PhysicalConstants::pi,
-                          1e-14 );
+  BOOST_CHECK_CLOSE( test_double,
+                     -5*Utility::PhysicalConstants::pi,
+                     1e-14 );
 
   iss.str( "pi/2" );
   iss.clear();
@@ -1255,35 +1237,35 @@ TEUCHOS_UNIT_TEST( FromStringTraits, double_fromStream )
   Utility::fromStream( iss, test_double );
 
   
-  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi/2 );
+  BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi/2 );
 
   iss.str( "-pi/2" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -Utility::PhysicalConstants::pi/2 );
+  BOOST_CHECK_EQUAL( test_double, -Utility::PhysicalConstants::pi/2 );
 
   iss.str( "pi/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
   
-  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi/3 );
+  BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi/3 );
 
   iss.str( "2pi/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, 2*Utility::PhysicalConstants::pi/3 );
+  BOOST_CHECK_EQUAL( test_double, 2*Utility::PhysicalConstants::pi/3 );
 
   iss.str( "-3pi/7" );
   iss.clear();
   
   Utility::fromStream( iss, test_double );
   
-  TEST_EQUALITY_CONST( test_double,
+  BOOST_CHECK_EQUAL( test_double,
                        -3*Utility::PhysicalConstants::pi/7 );
 
   iss.str( "5*pi/3" );
@@ -1291,18 +1273,18 @@ TEUCHOS_UNIT_TEST( FromStringTraits, double_fromStream )
 
   Utility::fromStream( iss, test_double );
 
-  TEST_FLOATING_EQUALITY( test_double,
-                          5*Utility::PhysicalConstants::pi/3,
-                          1e-14 );
+  BOOST_CHECK_CLOSE( test_double,
+                     5*Utility::PhysicalConstants::pi/3,
+                     1e-14 );
 
   iss.str( "-5*PI/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_double );
   
-  TEST_FLOATING_EQUALITY( test_double,
-                          -5*Utility::PhysicalConstants::pi/3,
-                          1e-14 );
+  BOOST_CHECK_CLOSE( test_double,
+                     -5*Utility::PhysicalConstants::pi/3,
+                     1e-14 );
 
   // Multiple doubles in the same stream with default deliminators
   iss.str( "-Pi/2 5*pi/3  -inf INFTY  1.0e+00 -1.00000e+00 0" );
@@ -1310,35 +1292,35 @@ TEUCHOS_UNIT_TEST( FromStringTraits, double_fromStream )
 
   Utility::fromStream( iss, test_double );
   
-  TEST_FLOATING_EQUALITY( test_double,
-                          -Utility::PhysicalConstants::pi/2,
-                          1e-14 );
+  BOOST_CHECK_CLOSE( test_double,
+                     -Utility::PhysicalConstants::pi/2,
+                     1e-14 );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_FLOATING_EQUALITY( test_double,
-                          5*Utility::PhysicalConstants::pi/3,
-                          1e-14 );
+  BOOST_CHECK_CLOSE( test_double,
+                     5*Utility::PhysicalConstants::pi/3,
+                     1e-14 );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, -std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, -std::numeric_limits<double>::infinity() );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, std::numeric_limits<double>::infinity() );
+  BOOST_CHECK_EQUAL( test_double, std::numeric_limits<double>::infinity() );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_FLOATING_EQUALITY( test_double, 1.0, 1e-14 );
+  BOOST_CHECK_CLOSE( test_double, 1.0, 1e-14 );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_FLOATING_EQUALITY( test_double, -1.0, 1e-14 );
+  BOOST_CHECK_CLOSE( test_double, -1.0, 1e-14 );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_FLOATING_EQUALITY( test_double, 0.0, 1e-14 );
+  BOOST_CHECK_SMALL( test_double, 1e-14 );
 
   // Multiple floats in the same stream with custom deliminators
   iss.str( "-1, 1.000000000e+00" );
@@ -1346,39 +1328,39 @@ TEUCHOS_UNIT_TEST( FromStringTraits, double_fromStream )
 
   Utility::fromStream( iss, test_double, "," );
 
-  TEST_EQUALITY_CONST( test_double, -1.0 );
+  BOOST_CHECK_EQUAL( test_double, -1.0 );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, 1.0 );
+  BOOST_CHECK_EQUAL( test_double, 1.0 );
 
   iss.str( "-1, 2*pi/3" );
   iss.clear();
 
   Utility::fromStream( iss, test_double, "," );
 
-  TEST_EQUALITY_CONST( test_double, -1.0 );
+  BOOST_CHECK_EQUAL( test_double, -1.0 );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, 2*Utility::PhysicalConstants::pi/3 );
+  BOOST_CHECK_EQUAL( test_double, 2*Utility::PhysicalConstants::pi/3 );
 
   iss.str( "-PI, Pi/2" );
   iss.clear();
 
   Utility::fromStream( iss, test_double, "," );
 
-  TEST_EQUALITY_CONST( test_double, -Utility::PhysicalConstants::pi );
+  BOOST_CHECK_EQUAL( test_double, -Utility::PhysicalConstants::pi );
 
   Utility::moveInputStreamToNextElement( iss, ',', '}' );
 
   Utility::fromStream( iss, test_double );
 
-  TEST_EQUALITY_CONST( test_double, Utility::PhysicalConstants::pi/2 );
+  BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi/2 );
 }
 
 //---------------------------------------------------------------------------//
