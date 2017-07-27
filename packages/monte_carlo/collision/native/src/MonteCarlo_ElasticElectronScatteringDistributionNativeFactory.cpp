@@ -68,7 +68,7 @@ namespace MonteCarlo{
 //{
 //  testPostcondition( data_container.hasAdjointMomentPreservingData() );
 
-//ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+//ThisType::createHybridElasticDistribution(
 //    hybrid_elastic_distribution,
 //    grid_searcher,
 //    energy_grid,
@@ -107,7 +107,7 @@ namespace MonteCarlo{
 //{
 //  // Create the hybrid scattering functions and cross section ratio
 //  std::shared_ptr<HybridDistribution> hybrid_function;
-//  ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
+//  ThisType::createHybridScatteringFunction(
 //    grid_searcher,
 //    energy_grid,
 //    cutoff_cross_section,
@@ -256,7 +256,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
     }
   }
 
-  return ElasticElectronScatteringDistributionNativeFactory::getAngularGridAboveCutoff(
+  return ThisType::getAngularGridAboveCutoff(
             raw_grid,
             cutoff_angle_cosine );
 }
@@ -303,7 +303,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
 //  // Loop through all energies below the max energy
 //  for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
 //  {
-//    ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
+//    ThisType::createHybridScatteringFunction(
 //        grid_searcher,
 //        energy_grid,
 //        cutoff_cross_section,
@@ -429,7 +429,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
 
   // Get the angular grid and pdf below the cutoff
   std::vector<double> angles, pdf;
-  ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
+  ThisType::getAngularGridAndPDF(
     angles,
     pdf,
     raw_angles,

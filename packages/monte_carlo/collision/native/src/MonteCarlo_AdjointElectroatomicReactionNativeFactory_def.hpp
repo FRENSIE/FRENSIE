@@ -18,11 +18,8 @@
 #include "MonteCarlo_CutoffElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticAdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -50,76 +47,34 @@ void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
-  // Create the analog elastic scattering distribution
-  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
-
-  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<TwoDInterpPolicy>(
-    distribution,
-    raw_adjoint_electroatom_data,
-    correlated_sampling_mode_on,
-    evaluation_tol );
-
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSection().begin(),
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSection().end() );
 
-  // Cutoff elastic cross section threshold energy bin index
-  unsigned cutoff_threshold_energy_index =
-    raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
+  // Total elastic cross section
+  Teuchos::ArrayRCP<double> total_cross_section;
+  total_cross_section.assign(
+    raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection().begin(),
+    raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection().end() );
 
-  // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> sr_cross_section;
-  sr_cross_section.assign(
-    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSection().begin(),
-    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSection().end() );
-
-  // Screened Rutherford elastic cross section threshold energy bin index
-  unsigned sr_threshold_energy_index =
-    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
-
-  // Calculate the analog cross section
-  unsigned analog_threshold_energy_index =
-    std::min( sr_threshold_energy_index, cutoff_threshold_energy_index );
-
-  unsigned sr_threshold_diff =
-    sr_threshold_energy_index - analog_threshold_energy_index;
-  unsigned cutoff_threshold_diff =
-    cutoff_threshold_energy_index - analog_threshold_energy_index;
-
-  std::vector<double> combined_cross_section(
-                           energy_grid.size() - analog_threshold_energy_index );
-
-  for (unsigned i = 0; i < combined_cross_section.size(); ++i )
-  {
-    double energy = energy_grid[i + analog_threshold_energy_index];
-
-    if ( i < sr_threshold_diff )
-    {
-      combined_cross_section[i] = cutoff_cross_section[i];
-    }
-    else if ( i < cutoff_threshold_diff )
-    {
-      combined_cross_section[i] = sr_cross_section[i];
-    }
-    else
-    {
-      combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff] +
-        sr_cross_section[i-sr_threshold_diff];
-    }
-  }
-
-  Teuchos::ArrayRCP<double> analog_cross_section;
-  analog_cross_section.assign( combined_cross_section.begin(),
-                               combined_cross_section.end() );
+  // Create the analog elastic scattering distribution
+  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
+  ElasticFactory::createAnalogElasticDistribution<TwoDInterpPolicy>(
+    distribution,
+    cutoff_cross_section,
+    total_cross_section,
+    energy_grid,
+    raw_adjoint_electroatom_data,
+    correlated_sampling_mode_on,
+    evaluation_tol );
 
   elastic_reaction.reset(
     new AnalogElasticAdjointElectroatomicReaction<Utility::LinLin>(
       energy_grid,
-      analog_cross_section,
-      analog_threshold_energy_index,
+      total_cross_section,
+      raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSectionThresholdEnergyIndex(),
       grid_searcher,
       distribution ) );
 }
@@ -171,9 +126,8 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createHybridElasticDistribution<TwoDInterpPolicy>(
     distribution,
-    grid_searcher,
     energy_grid,
     cutoff_cross_section,
     mp_cross_section,
@@ -253,7 +207,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   // Create the cutoff elastic scattering distribution using the cutoff angle cosine
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -303,7 +257,7 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     cutoff_distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
     cutoff_distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -315,7 +269,7 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
   std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
+  ElasticFactory::createScreenedRutherfordElasticDistribution(
     distribution,
     cutoff_distribution,
     raw_adjoint_electroatom_data.getAtomicNumber() );
@@ -364,7 +318,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -423,7 +377,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
       electroionization_subshell_distribution;
 
   // Create the electroionization subshell distribution
-  ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+  ElectroionizationFactory::createElectroionizationSubshellDistribution(
         raw_adjoint_electroatom_data,
         subshell,
         raw_adjoint_electroatom_data.getSubshellBindingEnergy( subshell ),
@@ -516,7 +470,7 @@ void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>
     bremsstrahlung_distribution;
 
-  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
+  BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
         raw_adjoint_electroatom_data,
         raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid(),
         bremsstrahlung_distribution,

@@ -25,10 +25,25 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     distribution;
 
+  // Assign the cutoff and total elastic cross section and electron energy grid
+  Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
+  cutoff_cross_section.assign(
+    data_container.getAdjointCutoffElasticCrossSection().begin(),
+    data_container.getAdjointCutoffElasticCrossSection().end() );
+  total_cross_section.assign(
+    data_container.getAdjointTotalElasticCrossSection().begin(),
+    data_container.getAdjointTotalElasticCrossSection().end() );
+  energy_grid.assign(
+    data_container.getAdjointElectronEnergyGrid().begin(),
+    data_container.getAdjointElectronEnergyGrid().end() );
+
   if ( linlinlog_interpolation_mode_on )
   {
     ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         distribution,
+        cutoff_cross_section,
+        total_cross_section,
+        energy_grid,
         data_container,
         correlated_sampling_mode_on,
         evaluation_tol );
@@ -37,6 +52,9 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   {
     ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         distribution,
+        cutoff_cross_section,
+        total_cross_section,
+        energy_grid,
         data_container,
         correlated_sampling_mode_on,
         evaluation_tol );
@@ -57,12 +75,6 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.assign( data_container.getAdjointElectronEnergyGrid().begin(),
                       data_container.getAdjointElectronEnergyGrid().end() );
-
-  // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-                             energy_grid,
-                             100 ) );
 
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
@@ -92,7 +104,6 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   {
     ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
@@ -105,7 +116,6 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   {
     ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
         distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,

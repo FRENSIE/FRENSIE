@@ -232,7 +232,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         hybrid_elastic_distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
@@ -247,6 +246,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
+            grid_searcher,
             data_container.getCutoffAngleCosine(),
             hybrid_elastic_distribution ) );
 

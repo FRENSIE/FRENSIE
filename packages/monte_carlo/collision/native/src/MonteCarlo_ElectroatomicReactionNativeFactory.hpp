@@ -16,6 +16,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
@@ -27,6 +31,24 @@ class ElectroatomicReactionNativeFactory
 {
 
 public:
+
+  // Typedef for the Elastic Distribution Factory
+  using ElasticFactory = ElasticElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Bremsstrahlung Distribution Factory
+  using BremsstrahlungFactory =
+    BremsstrahlungElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Electroionization Subshell Distribution Factory
+  using ElectroionizationFactory =
+    ElectroionizationSubshellElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Atomic Excitation Distribution Factory
+  using ExcitationFactory =
+    AtomicExcitationElectronScatteringDistributionNativeFactory;
+
+  // Typedef for this type
+  using ThisType = ElectroatomicReactionNativeFactory;
 
   //! Create an analog elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LinLinLog>

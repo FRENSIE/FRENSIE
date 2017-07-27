@@ -19,7 +19,6 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ElasticElectronDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 

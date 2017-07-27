@@ -20,6 +20,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_FullyTabularTwoDDistribution.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
@@ -33,8 +36,19 @@ class AdjointElectroatomicReactionNativeFactory
 
 private:
 
+  // Typedef for the Elastic Distribution Factory
+  using ElasticFactory = ElasticElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Bremsstrahlung Adjoint Distribution Factory
+  using BremsstrahlungFactory =
+    BremsstrahlungAdjointElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Electroionization Subshell Adjoint Distribution Factory
+  using ElectroionizationFactory =
+    ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory;
+
   // Typedef for this type
-  typedef AdjointElectroatomicReactionNativeFactory ThisType;
+  using ThisType = AdjointElectroatomicReactionNativeFactory;
 
 public:
 

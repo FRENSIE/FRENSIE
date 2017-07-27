@@ -15,7 +15,9 @@
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_AnalogElasticDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "MonteCarlo_ScreenedRutherfordTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -29,16 +31,20 @@ public:
   //! Typedef for the this type
   typedef AnalogElasticElectronScatteringDistribution ThisType;
 
+  //! Typedef for the screened Rutherford traits
+  typedef ScreenedRutherfordTraits SRTraits;
+
+  //! Typedef for the one d distributions
+  typedef Utility::OneDDistribution OneDDist;
+
   //! Typedef for the two d distributions
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   AnalogElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& elastic_cutoff_distribution,
-    const std::vector<double> cutoff_cdfs,
-    const std::vector<double> etas,
-    const int atomic_number,
-    const bool linlinlog_interpolation_mode_on,
+    const std::shared_ptr<const TwoDDist>& analog_elastic_distribution,
+    const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
+    const std::shared_ptr<const SRTraits>& screened_rutherford_traits,
     const bool correlated_sampling_mode_on );
 
   //! Destructor
@@ -78,18 +84,6 @@ public:
                                MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
-  //! Evaluate Moliere's atomic screening constant at the given electron energy
-  double evaluateMoliereScreeningConstant( const double energy ) const;
-
-  //! Evaluate Moliere's atomic screening constant at the given electron energy
-  /*! \details parameter_1 = (1/2*(fsc/0.885)**2),
-   *           parameter_2 = 3.76*fsc^2*Z^2
-   */
-  static double evaluateMoliereScreeningConstant( const double energy,
-                                                  const double Z_two_thirds_power,
-                                                  const double parameter_1,
-                                                  const double parameter_2 );
-
   //! Evaluate the distribution at the cutoff angle cosine
   double evaluateAtCutoff( const double incoming_energy ) const;
 
@@ -98,27 +92,6 @@ public:
 
   //! Evaluate the CDF at the cutoff angle cosine
   double evaluateCDFAtCutoff( const double incoming_energy ) const;
-
-  //! Evaluate the CDF at the cutoff angle cosine
-  static double evaluateCDFAtCutoff( const double eta,
-                                     const double cutoff_pdf );
-
-  //! Evaluate the cutoff distribution at the angle cosine and energy
-  double evaluateCutoff( const double incoming_energy,
-                         const double scattering_angle_cosine ) const;
-
-  //! Evaluate the cutoff PDF at the angle cosine and energy
-  double evaluateCutoffPDF( const double incoming_energy,
-                            const double scattering_angle_cosine ) const;
-
-  //! Evaluate the cutoff CDF at the angle cosine and energy
-  double evaluateCutoffCDF( const double incoming_energy,
-                            const double scattering_angle_cosine ) const;
-
-  //! Evaluate the screened Rutherford Distribution
-  double evaluateScreenedRutherford( const double incoming_energy,
-                                     const double scattering_angle_cosine,
-                                     const double eta ) const;
 
   //! Evaluate the screened Rutherford PDF
   double evaluateScreenedRutherfordPDF( const double incoming_energy,
@@ -131,13 +104,6 @@ public:
                                         const double eta ) const;
 
 protected:
-
-   //! Sample an outgoing direction from the distribution
-  void sampleBin(
-            const TwoDDist::DistributionType::const_iterator& distribution_bin,
-            const unsigned bin_index,
-            const double random_number,
-            double& scattering_angle_cosine ) const;
 
    //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
@@ -160,86 +126,20 @@ protected:
 
 private:
 
-  // Sample an outgoing direction from the distribution
-  double correlatedSample(
-            const double incoming_energy,
-            const double random_number,
-            const TwoDDist::DistributionType::const_iterator lower_bin,
-            const TwoDDist::DistributionType::const_iterator upper_bin,
-            const unsigned lower_bin_index ) const;
-
-  // Sample an outgoing direction from the distribution
-  double stochasticSample(
-            const double incoming_energy,
-            const double random_number,
-            const TwoDDist::DistributionType::const_iterator lower_bin,
-            const TwoDDist::DistributionType::const_iterator upper_bin,
-            const unsigned lower_bin_index ) const;
-
-  template<bool linlinlog_interpolation_mode_on>
-  inline double interpolate( const double lower_energy,
-                             const double upper_energy,
-                             const double incoming_energy,
-                             const double lower_angle,
-                             const double upper_angle ) const;
-
-  // The change scattering angle cosine below which the screened Rutherford distribution is used
-  static double s_cutoff_delta_mu;
-
-  // The scattering angle cosine above which the screened Rutherford distribution is used
-  static double s_cutoff_mu;
-
-  // The fine structure constant (fsc) squared
-  static double s_fsc_squared;
-
-  // A parameter for moliere's screening factor  ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
-  double d_screening_param1;
-
-  // A parameter for moliere's screening factor ( 3.76 * (fsc * Z)**2 )
-  double d_screening_param2;
-
-  // Atomic number (Z) of the target atom
-  int d_atomic_number;
-
-  // Bool for linLinLog 2-D interpoaltion (true = LinLinLog, false = LinLinLin).
-  bool d_linlinlog_interpolation_mode_on;
-
-  // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
-  double d_Z_two_thirds_power;
-
-  // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
-  double d_screening_param2;
+  // Cutoff elastic scattering distribution
+  std::shared_ptr<const TwoDDist> d_analog_dist;
 
   // Cutoff elastic scattering distribution
-  std::shared_ptr<TwoDDist> d_elastic_cutoff_distribution;
+  std::shared_ptr<const OneDDist> d_cutoff_ratios;
 
-  // The cutoff cdf values at the tabulated energies
-  std::vector<double> d_cutoff_cdfs;
-
-  // The eta (screening parameter) values at the tabulated energies
-  std::vector<double> d_etas;
+  // Screened Rutherford traits
+  std::shared_ptr<const SRTraits> d_sr_traits;
 
   // The sample function pointer
-  std::function<double (
-            const double, const double,
-            const TwoDDist::DistributionType::const_iterator,
-            const TwoDDist::DistributionType::const_iterator,
-            const unsigned)> d_sample_func;
-
-  // The interplation function pointer
-  std::function<double ( const double, const double, const double,
-                         const double, const double )> d_interpolation_func;
+  std::function<double ( const double, const double )> d_sample_func;
 };
 
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ANALOG_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 

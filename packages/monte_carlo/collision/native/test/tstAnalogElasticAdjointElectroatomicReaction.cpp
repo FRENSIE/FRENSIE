@@ -139,15 +139,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bool correlated_sampling_mode_on = true;
     double evaluation_tol = 1e-7;
 
-    // Create analog distribution
-    std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
-        analog_elastic_distribution,
-        data_container,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(
         data_container.getAdjointElectronEnergyGrid().begin(),
@@ -158,62 +149,30 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getAdjointCutoffElasticCrossSection().begin(),
         data_container.getAdjointCutoffElasticCrossSection().end() );
 
-    // Cutoff elastic cross section threshold energy bin index
-    unsigned cutoff_threshold_energy_index =
-      data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
+    Teuchos::ArrayRCP<double> total_cross_section;
+    total_cross_section.assign(
+        data_container.getAdjointTotalElasticCrossSection().begin(),
+        data_container.getAdjointTotalElasticCrossSection().end() );
 
-    Teuchos::ArrayRCP<double> sr_cross_section;
-    sr_cross_section.assign(
-        data_container.getAdjointScreenedRutherfordElasticCrossSection().begin(),
-        data_container.getAdjointScreenedRutherfordElasticCrossSection().end() );
-
-    // Screened Rutherford elastic cross section threshold energy bin index
-    unsigned sr_threshold_energy_index =
-      data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
-
-    // Calculate the analog cross section
-    unsigned analog_threshold_energy_index =
-      std::min( sr_threshold_energy_index, cutoff_threshold_energy_index );
-
-    unsigned sr_threshold_diff =
-      sr_threshold_energy_index - analog_threshold_energy_index;
-    unsigned cutoff_threshold_diff =
-      cutoff_threshold_energy_index - analog_threshold_energy_index;
-
-    Teuchos::Array<double> combined_cross_section(
-                             energy_grid.size() - analog_threshold_energy_index );
-
-    for (unsigned i = 0; i < combined_cross_section.size(); ++i )
-    {
-      double energy = energy_grid[i + analog_threshold_energy_index];
-
-      if ( i < sr_threshold_diff )
-      {
-        combined_cross_section[i] = cutoff_cross_section[i];
-      }
-      else if ( i < cutoff_threshold_diff )
-      {
-        combined_cross_section[i] = sr_cross_section[i];
-      }
-      else
-      {
-        combined_cross_section[i] =
-          cutoff_cross_section[i-cutoff_threshold_diff] +
-          sr_cross_section[i-sr_threshold_diff];
-      }
-    }
-
-    Teuchos::ArrayRCP<double> analog_cross_section;
-    analog_cross_section.assign( combined_cross_section.begin(),
-                                 combined_cross_section.end() );
+    // Create analog distribution
+    std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_elastic_distribution;
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+        analog_elastic_distribution,
+        cutoff_cross_section,
+        total_cross_section,
+        energy_grid,
+        data_container,
+        correlated_sampling_mode_on,
+        evaluation_tol );
 
     // Create the reaction
     analog_elastic_reaction.reset(
       new MonteCarlo::AnalogElasticAdjointElectroatomicReaction<Utility::LinLin>(
-                energy_grid,
-                analog_cross_section,
-                analog_threshold_energy_index,
-                analog_elastic_distribution ) );
+        energy_grid,
+        total_cross_section,
+        data_container.getAdjointTotalElasticCrossSectionThresholdEnergyIndex(),
+        analog_elastic_distribution ) );
   }
 
   // Initialize the random number generator

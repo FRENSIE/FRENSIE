@@ -21,6 +21,7 @@
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
+#include "Utility_AnalogElasticDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -30,9 +31,15 @@ class ElasticElectronScatteringDistributionNativeFactory
 
 public:
 
+  typedef ElasticElectronScatteringDistributionNativeFactory ThisType;
+
+  typedef ScreenedRutherfordTraits SRTraits;
+
   typedef Utility::Pair<double, std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<void, void> > > TwoDFunction;
 
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+
+  typedef Utility::AnalogElasticDistribution<Utility::LinLin> AnalogDist;
 
   typedef Utility::TabularDistribution<Utility::LinLin> TabularDist;
 
@@ -47,6 +54,9 @@ public:
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
@@ -56,7 +66,6 @@ public:
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
@@ -94,6 +103,9 @@ public:
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
@@ -103,7 +115,6 @@ public:
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
@@ -141,6 +152,9 @@ public:
   static void createAnalogElasticDistribution(
     std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
+    const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
+    const Teuchos::ArrayRCP<const double>& total_cross_section,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
@@ -153,7 +167,6 @@ public:
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
@@ -233,6 +246,17 @@ public:
     const std::vector<double>& raw_angular_grid,
     const double cutoff_angle_cosine );
 
+  //! Create the analog elastic scattering function
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
+  static void createAnalogScatteringFunction(
+    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const std::shared_ptr<const SRTraits>& sr_traits,
+    const std::map<double,std::vector<double> >& angles,
+    const std::map<double,std::vector<double> >& pdf,
+    const std::vector<double>& energy_grid,
+    std::shared_ptr<TwoDDist>& scattering_function,
+    const double evaluation_tol );
+
   //! Create the cutoff elastic scattering function
   template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createScatteringFunction(
@@ -246,9 +270,17 @@ public:
 
 protected:
 
+  //! Create the cutoff to total preserving cross section ratios
+  template<typename TwoDInterpPolicy = Utility::LinLinLog>
+  static void createCutoffCrossSectionRatios(
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<const double> total_cross_section,
+    std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios );
+
   //! Create the cutoff to moment preserving cross section ratios
   template<typename TwoDInterpPolicy = Utility::LinLinLog>
-  static void createCrossSectionRatios(
+  static void createHybridCrossSectionRatios(
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,

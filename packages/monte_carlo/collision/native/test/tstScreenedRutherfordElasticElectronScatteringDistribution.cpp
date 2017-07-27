@@ -40,7 +40,7 @@ public:
 
   // Allow public access to the screened Rutherford scattering distribution protected member functions
   using MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl;
-  using MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant;
+//  using MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant;
 };
 
 //---------------------------------------------------------------------------//
@@ -298,66 +298,66 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   TEST_EQUALITY_CONST( trials, 11 );
 }
 
-//---------------------------------------------------------------------------//
-// Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
-                   evaluateMoliereScreeningConstant )
-{
-  MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.0e-5 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
+////---------------------------------------------------------------------------//
+//// Check that sampleAndRecordTrialsImpl can be evaluated
+//TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+//                   evaluateMoliereScreeningConstant )
+//{
+//  MonteCarlo::ElectronState electron( 0 );
+//  electron.setEnergy( 1.0e-5 );
+//  electron.setDirection( 0.0, 0.0, 1.0 );
 
-  double screening_constant;
+//  double screening_constant;
 
- // Test 1
-  screening_constant =
-    test_native_pb_elastic_distribution->evaluateMoliereScreeningConstant(
-                                                electron.getEnergy() );
-  TEST_FLOATING_EQUALITY( screening_constant, 2.5131795894201700E+03, 1e-12 );
+// // Test 1
+//  screening_constant =
+//    test_native_pb_elastic_distribution->evaluateMoliereScreeningConstant(
+//                                                electron.getEnergy() );
+//  TEST_FLOATING_EQUALITY( screening_constant, 2.5131795894201700E+03, 1e-12 );
 
- // Test 2
-  electron.setEnergy( 1.0e-3 );
-  screening_constant =
-    test_native_pb_elastic_distribution->evaluateMoliereScreeningConstant(
-                                                electron.getEnergy() );
-  TEST_FLOATING_EQUALITY( screening_constant, 2.6821367199800900, 1e-12 );
+// // Test 2
+//  electron.setEnergy( 1.0e-3 );
+//  screening_constant =
+//    test_native_pb_elastic_distribution->evaluateMoliereScreeningConstant(
+//                                                electron.getEnergy() );
+//  TEST_FLOATING_EQUALITY( screening_constant, 2.6821367199800900, 1e-12 );
 
- // Test 3
-  electron.setEnergy( 1.0e+5 );
-  screening_constant =
-    test_native_pb_elastic_distribution->evaluateMoliereScreeningConstant(
-                                                electron.getEnergy() );
-  TEST_FLOATING_EQUALITY( screening_constant, 4.1488769980623900E-14, 1e-12 );
+// // Test 3
+//  electron.setEnergy( 1.0e+5 );
+//  screening_constant =
+//    test_native_pb_elastic_distribution->evaluateMoliereScreeningConstant(
+//                                                electron.getEnergy() );
+//  TEST_FLOATING_EQUALITY( screening_constant, 4.1488769980623900E-14, 1e-12 );
 
 
- // Al Test 1
-  electron.setEnergy( 1.0e-5 );
-  screening_constant =
-    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
-                                                electron.getEnergy() );
-  TEST_FLOATING_EQUALITY( screening_constant, 2.3792675295299300E+01, 1e-12 );
+// // Al Test 1
+//  electron.setEnergy( 1.0e-5 );
+//  screening_constant =
+//    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
+//                                                electron.getEnergy() );
+//  TEST_FLOATING_EQUALITY( screening_constant, 2.3792675295299300E+01, 1e-12 );
 
- // Al Test 2
-  electron.setEnergy( 1.0e-3 );
-  screening_constant =
-    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
-                                                electron.getEnergy() );
-  TEST_FLOATING_EQUALITY( screening_constant, 7.2595008773036300E-02, 1e-12 );
+// // Al Test 2
+//  electron.setEnergy( 1.0e-3 );
+//  screening_constant =
+//    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
+//                                                electron.getEnergy() );
+//  TEST_FLOATING_EQUALITY( screening_constant, 7.2595008773036300E-02, 1e-12 );
 
- // Al Test 3
-  electron.setEnergy( 6.625e+1 );
-  screening_constant =
-    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
-                                                electron.getEnergy() );
-  TEST_FLOATING_EQUALITY( screening_constant, 1.2814675966081900E-08, 1e-12 );
+// // Al Test 3
+//  electron.setEnergy( 6.625e+1 );
+//  screening_constant =
+//    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
+//                                                electron.getEnergy() );
+//  TEST_FLOATING_EQUALITY( screening_constant, 1.2814675966081900E-08, 1e-12 );
 
- // Al Test 4
-  electron.setEnergy( 1.0e+5 );
-  screening_constant =
-    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
-                                                electron.getEnergy() );
-  TEST_FLOATING_EQUALITY( screening_constant, 5.7117744434411500E-15, 1e-12 );
-}
+// // Al Test 4
+//  electron.setEnergy( 1.0e+5 );
+//  screening_constant =
+//    test_native_al_elastic_distribution->evaluateMoliereScreeningConstant(
+//                                                electron.getEnergy() );
+//  TEST_FLOATING_EQUALITY( screening_constant, 5.7117744434411500E-15, 1e-12 );
+//}
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated

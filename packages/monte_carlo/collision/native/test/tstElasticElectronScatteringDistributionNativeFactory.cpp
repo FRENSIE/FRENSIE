@@ -29,7 +29,7 @@ class TestElasticElectronScatteringDistributionNativeFactory : public MonteCarlo
 public:
 
   // Allow public access to the protected member functions
-  using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCrossSectionRatios;
+  using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios;
   using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction;
   using MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctionInSubrange;
 };
@@ -51,7 +51,10 @@ std::shared_ptr< const MonteCarlo::MomentPreservingElasticElectronScatteringDist
 std::shared_ptr< const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   native_analog_elastic_distribution;
 
-  bool correlated_sampling_mode_on = true;
+Teuchos::ArrayRCP<double> energy_grid, cutoff_cross_section, total_cross_section,
+  adjoint_energy_grid, adjoint_cutoff_cross_section, adjoint_total_cross_section;
+
+bool correlated_sampling_mode_on = true;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -880,6 +883,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         native_analog_elastic_distribution,
+        cutoff_cross_section,
+        total_cross_section,
+        energy_grid,
         data_container->getCutoffElasticAngles(),
         data_container->getCutoffElasticPDF(),
         data_container->getElasticAngularEnergyGrid(),
@@ -971,6 +977,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         native_analog_elastic_distribution,
+        cutoff_cross_section,
+        total_cross_section,
+        energy_grid,
         data_container->getCutoffElasticAngles(),
         data_container->getCutoffElasticPDF(),
         data_container->getElasticAngularEnergyGrid(),
@@ -1062,6 +1071,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         native_analog_elastic_distribution,
+        adjoint_cutoff_cross_section,
+        adjoint_total_cross_section,
+        adjoint_energy_grid,
         adjoint_data_container->getAdjointCutoffElasticAngles(),
         adjoint_data_container->getAdjointCutoffElasticPDF(),
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
@@ -1155,6 +1167,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         native_analog_elastic_distribution,
+        adjoint_cutoff_cross_section,
+        adjoint_total_cross_section,
+        adjoint_energy_grid,
         adjoint_data_container->getAdjointCutoffElasticAngles(),
         adjoint_data_container->getAdjointCutoffElasticPDF(),
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
@@ -1250,13 +1265,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getElectronEnergyGrid().begin(),
     data_container->getElectronEnergyGrid().end() );
 
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(   
-    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-         energy_grid,
-         energy_grid[0],
-         energy_grid[energy_grid.size()-1],
-         100 ) );
-
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
     data_container->getCutoffElasticCrossSection().begin(),
@@ -1272,7 +1280,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         native_hybrid_elastic_distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
@@ -1425,13 +1432,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     data_container->getElectronEnergyGrid().begin(),
     data_container->getElectronEnergyGrid().end() );
 
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(   
-    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-         energy_grid,
-         energy_grid[0],
-         energy_grid[energy_grid.size()-1],
-         100 ) );
-
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
     data_container->getCutoffElasticCrossSection().begin(),
@@ -1447,7 +1447,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
         native_hybrid_elastic_distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
@@ -1600,13 +1599,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     adjoint_data_container->getAdjointElectronEnergyGrid().begin(),
     adjoint_data_container->getAdjointElectronEnergyGrid().end() );
 
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(   
-    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-         energy_grid,
-         energy_grid[0],
-         energy_grid[energy_grid.size()-1],
-         100 ) );
-
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
     adjoint_data_container->getAdjointCutoffElasticCrossSection().begin(),
@@ -1623,7 +1615,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         native_hybrid_elastic_distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
@@ -1763,7 +1754,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the hybrid distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createCrossSectionRatios )
+                   createHybridCrossSectionRatios )
 {
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-7;
@@ -1793,7 +1784,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     evaluation_tol );
 
   std::shared_ptr<const Utility::OneDDistribution> cross_section_ratios;
-  TestElasticElectronScatteringDistributionNativeFactory::createCrossSectionRatios<Utility::LinLinLog>(
+  TestElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios<Utility::LinLinLog>(
     energy_grid,
     cutoff_cross_section,
     mp_cross_section,
@@ -1832,9 +1823,40 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
                         test_native_file_name ) );
 
+  // Energy grid
+  energy_grid.assign( data_container->getElectronEnergyGrid().begin(),
+                      data_container->getElectronEnergyGrid().end() );
+
+  // Cutoff elastic cross section
+  cutoff_cross_section.assign(
+    data_container->getCutoffElasticCrossSection().begin(),
+    data_container->getCutoffElasticCrossSection().end() );
+
+  // Total elastic cross section
+  total_cross_section.assign(
+    data_container->getTotalElasticCrossSection().begin(),
+    data_container->getTotalElasticCrossSection().end() );
+
   // Create the native adjoint data file container
   adjoint_data_container.reset( new Data::AdjointElectronPhotonRelaxationDataContainer(
                                 test_adjoint_file_name ) );
+
+
+  // Energy grid
+  adjoint_energy_grid.assign(
+    adjoint_data_container->getAdjointElectronEnergyGrid().begin(),
+    adjoint_data_container->getAdjointElectronEnergyGrid().end() );
+
+  // Cutoff elastic cross section
+  adjoint_cutoff_cross_section.assign(
+    adjoint_data_container->getAdjointCutoffElasticCrossSection().begin(),
+    adjoint_data_container->getAdjointCutoffElasticCrossSection().end() );
+
+  // Total elastic cross section
+  adjoint_total_cross_section.assign(
+    adjoint_data_container->getAdjointTotalElasticCrossSection().begin(),
+    adjoint_data_container->getAdjointTotalElasticCrossSection().end() );
+
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

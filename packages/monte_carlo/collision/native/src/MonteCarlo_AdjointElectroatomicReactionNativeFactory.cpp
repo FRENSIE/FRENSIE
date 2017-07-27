@@ -431,7 +431,7 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 //      electroionization_subshell_distribution;
 
 //  // Create the electroionization subshell distribution
-//  ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+//  ElectroionizationFactory::createAdjointElectroionizationSubshellDistribution(
 //      raw_adjoint_electroatom_data,
 //      subshell,
 //      raw_adjoint_electroatom_data.getSubshellBindingEnergy( subshell ),

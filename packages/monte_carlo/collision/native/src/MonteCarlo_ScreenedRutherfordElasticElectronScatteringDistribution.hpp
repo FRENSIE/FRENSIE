@@ -18,6 +18,7 @@
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ScreenedRutherfordTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -30,6 +31,9 @@ public:
 
   typedef std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;
+
+  //! Typedef for the screened Rutherford traits
+  typedef ScreenedRutherfordTraits SRTraits;
 
   //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
@@ -87,9 +91,6 @@ public:
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
-  //! Evaluate Moliere's atomic screening constant at the given electron energy
-  double evaluateMoliereScreeningConstant( const double energy ) const;
-
   //! Evaluate the integrated PDF
   double evaluateIntegratedPDF( const double incoming_energy ) const;
 
@@ -106,26 +107,8 @@ protected:
 
 private:
 
-  // The change scattering angle cosine below which the screened Rutherford distribution is used
-  static double s_cutoff_delta_mu;
-
-  // The scattering angle cosine above which the screened Rutherford distribution is used
-  static double s_cutoff_mu;
-
-  // The fine structure constant (fsc) squared
-  static double s_fine_structure_const_squared;
-
-  // A parameter for moliere's screening factor  (1/2*(fsc/0.885)**2)
-  static double s_screening_param1;
-
-  // Atomic number (Z) of the target atom
-  int d_atomic_number;
-
-  // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
-  double d_Z_two_thirds_power;
-
-  // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
-  double d_screening_param2;
+  // Screened Rutherford traits
+  std::shared_ptr<SRTraits> d_sr_traits;
 
   // Cutoff elastic scattering distribution
   ElasticDistribution d_elastic_cutoff_distribution;

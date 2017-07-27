@@ -628,6 +628,15 @@ SET_PROPERTY(TEST AdjointPhotonCollisionHandler_test PROPERTY LABELS photon adjo
 ##---------------------------------------------------------------------------##
 ##      electron class tests
 ##---------------------------------------------------------------------------##
+
+
+ADD_EXECUTABLE(tstScreenedRutherfordTraits
+  tstScreenedRutherfordTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstScreenedRutherfordTraits monte_carlo_collision_native)
+ADD_TEST(ScreenedRutherfordTraits_test tstScreenedRutherfordTraits )
+SET_PROPERTY(TEST ScreenedRutherfordTraits_test PROPERTY LABELS electron)
+
 ##      electron distribution tests
 
 ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
