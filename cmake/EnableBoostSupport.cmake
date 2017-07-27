@@ -12,8 +12,20 @@ MACRO(ENABLE_BOOST_SUPPORT)
       SET(Boost_NO_SYSTEM_PATHS ON)
     ENDIF()
 
-    # Find the Boost package
-    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS ${ARGN})
+    # Find the Boost test component
+    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS test_exec_monitor)
+
+    IF(${CMAKE_BUILD_TYPE} EQUAL RELEASE)
+      SET(BOOST_TEST_LIBRARY ${Boost_TEST_EXEC_MONITOR_LIBRARY_RELEASE})
+    ELSE()
+      SET(BOOST_TEST_LIBRARY ${Boost_TEST_EXEC_MONITOR_LIBRARY_DEBUG})
+    ENDIF()
+    
+    UNSET(Boost_LIBRARIES)
+    UNSET(Boost_INCLUDE_DIRS)
+
+    # Find the Boost package and the required components
+    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS log program_options serialization)
 
     # Set the include paths for Boost
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
@@ -25,6 +37,7 @@ MACRO(ENABLE_BOOST_SUPPORT)
       MESSAGE("  BOOST_INCLUDE_DIRS = ${Boost_INCLUDE_DIRS}")
       MESSAGE("  BOOST_LIBRARY_DIRS = ${Boost_LIBRARY_DIRS}")
       MESSAGE("  BOOST_LIBRARIES = ${Boost_LIBRARIES}")
+      MESSAGE("  BOOST_TEST_LIBRARY = ${BOOST_TEST_LIBRARY}")
       MESSAGE("End of BOOST details\n")
     ENDIF()
 

@@ -193,7 +193,7 @@ ENABLE_TRILINOS_SUPPORT()
 # If the Boost package is in a non-standard location, set the BOOST_PREFIX
 # variable. The boost subpackages that must be found can be passed to
 # the ENABLE_BOOST_SUPPORT macro.
-ENABLE_BOOST_SUPPORT(serialization log)
+ENABLE_BOOST_SUPPORT()
 
 # NOTE: Boost still uses the std::auto_ptr class, which is now depricated.
 #       The newer GNU C++ compilers will generate a large number of warning

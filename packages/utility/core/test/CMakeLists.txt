@@ -1,9 +1,7 @@
 # This test cannot use the FRENSIE_STD_UNIT_TEST_MAIN because the
 # StaticOutputFormatter is used by the main function
-ADD_EXECUTABLE(tstStaticOutputFormatter
-  tstStaticOutputFormatter.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core)
+ADD_EXECUTABLE(tstStaticOutputFormatter tstStaticOutputFormatter.cpp)
+TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter)
 SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
 

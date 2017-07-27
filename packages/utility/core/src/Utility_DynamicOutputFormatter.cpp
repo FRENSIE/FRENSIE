@@ -257,7 +257,7 @@ void DynamicOutputFormatter::formatWarningLogKeywords()
 // Format the Teuchos unit test keywords in the output
 void DynamicOutputFormatter::formatTeuchosUnitTestKeywords()
 {
-  this->formatUnitTestKeywords()
+  this->formatUnitTestKeywords();
 }
 
 // Format the Teuchos unit test keywords in the output

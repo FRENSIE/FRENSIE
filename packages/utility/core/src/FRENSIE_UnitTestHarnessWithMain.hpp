@@ -10,6 +10,10 @@
 #ifndef FRENSIE_UNIT_TEST_HARNESS_WITH_MAIN_HPP
 #define FRENSIE_UNIT_TEST_HARNESS_WITH_MAIN_HPP
 
+// Std Lib Includes
+#include <csignal>
+
+// FRENSIE Includes
 #include "FRENSIE_UnitTestHarnessWithMain.hpp"
 
 //! A custom signal handler for seg faults

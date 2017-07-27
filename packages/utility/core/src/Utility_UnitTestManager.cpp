@@ -9,9 +9,18 @@
 // Std Lib Includes
 #include <list>
 
+// Boost Includes
+#include <boost/program_options/parsers.hpp>
+#include <boost/algorithm/string.hpp>
+
 // FRENSIE Includes
 #include "Utility_UnitTestManager.hpp"
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_FromStringTraits.hpp"
 #include "Utility_GlobalMPISession.hpp"
+#include "Utility_StaticOutputFormatter.hpp"
+#include "Utility_DynamicOutputFormatter.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "FRENSIE_config.hpp"
 
 //! Use this to indicate that logs on all processes should be added to the report
@@ -22,14 +31,21 @@ namespace Utility{
 //! The distributed unit test manager
 class DistributedUnitTestManager : public UnitTestManager
 {
-
-protected:
-
+  
+public:
+  
   // Constructor
   DistributedUnitTestManager();
 
+  // Destructor
+  ~DistributedUnitTestManager()
+  { /* ... */ }
+
+protected:
+
   //! Flush logs and add to report
   void flushLogsAndAddToReport( std::ostringstream& log,
+                                const std::string& log_header,
                                 const int proc ) override;
 
   //! Print the help message
@@ -45,7 +61,7 @@ protected:
   void printRunningTestsNotification() override;
 
   //! Print the unit test header
-  void printUnitTestHeader( const size_t unit_test_id,
+  void printUnitTestHeader( const int unit_test_id,
                             const UnitTest& unit_test ) override;
 
   //! Print the operation failed notification
@@ -83,16 +99,90 @@ protected:
   //! Print the program execution time header
   void printProgramExecutionTimeHeader(
                                 const double program_execution_time ) override;
+
+  // Print the test result header
+  void printTestResult( const std::string& header,
+                        const bool local_success,
+                        const bool global_success ) override;
 };
 
+/*! The report level
+ *
+ * This is not nested in the UnitTestManager::Data class so that we can
+ * define the operator<< for std::ostream.
+ */
+enum ReportLevel{ Detailed = 2, Basic = 1, Nothing = 0, Auto = -1 };
+
+/*! Specialization of ToStringTraits for ReportLevel
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<ReportLevel>
+{
+  //! Return the string
+  static inline std::string toString( const ReportLevel report_level )
+  {
+    switch( report_level )
+    {
+    case Detailed: return "detailed";
+    case Basic: return "basic";
+    case Nothing: return "nothing";
+    case Auto: return "auto";
+    default: return "auto";
+    }
+  }
+
+  //! Place the ReportLevel in a stream
+  static inline void toStream( std::ostream& os, const ReportLevel obj )
+  { os << ToStringTraits<ReportLevel>::toString( obj ); }
+};
+
+/*! Specialization of FromStringTraits for ReportLevel
+ * \ingroup from_string_traits
+ */
+template<>
+struct FromStringTraits<ReportLevel>
+{
+  //! The type that a string will be converted to
+  typedef ReportLevel ReturnType;
+
+  //! Convert the string to a ReportLevel object
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    std::string obj_rep_copy = boost::algorithm::to_lower_copy( obj_rep );
+
+    if( obj_rep.find( "detail" ) < obj_rep.size() )
+      return Detailed;
+    else if( obj_rep.find( "basic" ) < obj_rep.size() )
+      return Basic;
+    else if( obj_rep.find( "nothing" ) < obj_rep.size() )
+      return Nothing;
+    else if( obj_rep.find( "auto" ) < obj_rep.size() )
+      return Auto;
+    else
+      return Auto;
+  }
+
+  //! Extract a ReportLevel object from a stream
+  static inline void fromStream( std::istream& is,
+                                 ReportLevel& obj,
+                                 const std::string& )
+  {
+    std::string obj_rep;
+
+    // This loop will take care of consecutive white space characters
+    while( obj_rep.size() == 0 )
+      Utility::fromStream( is, obj_rep, Details::white_space_delims );
+
+    obj = FromStringTraits<ReportLevel>::fromString( obj_rep );
+  }
+};
+  
 //! The UnitTestManager private data class
 class UnitTestManager::Data
 {
   
 public:
-
-  //! The report level
-  enum ReportLevel{ Detailed = 2, Basic = 1, Nothing = 0, Auto = -1 };
 
   //! The unit tests type
   typedef std::list<UnitTest*> UnitTests;
@@ -128,10 +218,10 @@ public:
   void parseCommandLineOptions( int argc, char** argv );
 
   //! Redirect std::cout and std::cerr to the string stream
-  void redirectStdOutput( std::ostringstring& oss ) const;
+  void redirectStdOutput( std::ostringstream& oss );
 
   //! Restore std::cout and std::cerr
-  void restoreStdOutput() const;
+  void restoreStdOutput();
 
   //! Get the command line option
   boost::program_options::variable_value
@@ -159,7 +249,7 @@ public:
   bool dataListRequested() const;
 
   //! Print the data list
-  void printDataList() const;
+  void printDataList();
 
   //! Get the report level
   ReportLevel getReportLevel() const;
@@ -180,16 +270,16 @@ public:
   size_t getNumberOfBenchmarkSamples() const;
 
   //! Return the run test counter
-  size_t& getRunTestCounter();
+  int& getRunTestCounter();
 
   //! Return the run test counter
-  const size_t& getRunTestCounter() const;
+  const int& getRunTestCounter() const;
 
   //! Return the passed test counter
-  size_t& getPassedTestCounter();
+  int& getPassedTestCounter();
 
   //! Return the passed test counter
-  const size_t& getPassedTestCounter() const;
+  const int& getPassedTestCounter() const;
 
   //! Return the total unit test execution time
   double& getTotalUnitTestExecutionTime();
@@ -198,6 +288,52 @@ public:
   const double& getTotalUnitTestExecutionTime() const;
 
 private:
+
+  // The custom report sink deleter
+  struct CustomReportSinkDeleter
+  {
+    CustomReportSinkDeleter( const bool smart_pointer_has_ownership = true )
+      : d_smart_pointer_has_ownership( smart_pointer_has_ownership )
+    { /* ... */ }
+
+    CustomReportSinkDeleter( const CustomReportSinkDeleter& other )
+      : d_smart_pointer_has_ownership( other.d_smart_pointer_has_ownership )
+    { /* ... */ }
+
+    CustomReportSinkDeleter( CustomReportSinkDeleter& other )
+      : d_smart_pointer_has_ownership( other.d_smart_pointer_has_ownership )
+    { /* ... */ }
+
+    CustomReportSinkDeleter( CustomReportSinkDeleter&& other )
+      : d_smart_pointer_has_ownership( std::move(other.d_smart_pointer_has_ownership ) )
+    { /* ... */ }
+
+    CustomReportSinkDeleter& operator=( const CustomReportSinkDeleter& that )
+    {
+      if( this != &that )
+        d_smart_pointer_has_ownership = that.d_smart_pointer_has_ownership;
+
+      return *this;
+    }
+
+    CustomReportSinkDeleter& operator=( CustomReportSinkDeleter&& that )
+    {
+      d_smart_pointer_has_ownership =
+        std::move( that.d_smart_pointer_has_ownership );
+
+      return *this;
+    }
+
+    void operator()( std::ostream* report_sink_ptr ) const
+    {
+      if( d_smart_pointer_has_ownership )
+        delete report_sink_ptr;
+    }
+
+  private:
+
+    bool d_smart_pointer_has_ownership;
+  };
 
   // The unit tests
   UnitTests d_unit_tests;
@@ -218,7 +354,7 @@ private:
   ReportLevel d_report_level;
   
   // The report sink
-  std::unique_ptr<std::ostream> d_report_sink;
+  std::unique_ptr<std::ostream,CustomReportSinkDeleter> d_report_sink;
 
   // The report sink buffer
   std::streambuf* d_report_sink_buffer;
@@ -239,70 +375,27 @@ private:
   std::regex d_data_filter;
 
   // The number of benchmark samples
-  size_t d_number_of_benchmark_samples;
+  int d_number_of_benchmark_samples;
 
   // The run test counter
-  size_t d_run_test_counter;
+  int d_run_test_counter;
 
   // The passed test counter
-  size_t d_passed_test_counter;
+  int d_passed_test_counter;
 
   // The total unit test execution time (s)
   double d_total_unit_test_execution_time;
 };
-
-//! Less than comparison operator for UnitTest*
-inline bool operator<( const UnitTest* lhs, const UnitTest* rhs )
-{
-  return *lhs < *rhs;
-}
-
-/*! Output stream operator for UnitTestManager::Data::ReportLevel
- *
- * Required by boost::program_options.
- */
-std::ostream& operator<<( std::ostream& os,
-                          UnitTestManager::Data::ReportLevel report_level )
-{
-  switch( report_level )
-  {
-    case UnitTestManager::Data::Detailed:
-    {
-      os << "detailed";
-      return os;
-    }
-    case UnitTestManager::Data::Basic:
-    {
-      os << "basic";
-      return os;
-    }
-    case UnitTestManager::Data::Nothing:
-    {
-      os << "nothing";
-      return os;
-    }
-    case UnitTestManager::Data::Auto:
-    {
-      os << "auto";
-      return os;
-    }
-    default:
-    {
-      os << "auto";
-      return os;
-    }
-  }
-}
 
 // Get the report levels
 std::string UnitTestManager::Data::getReportLevels()
 {
   std::ostringstream oss;
   
-  oss << UnitTestManager::Data::Detailed << " "
-      << UnitTestManager::Data::Basic << " "
-      << UnitTestManager::Data::Nothing << " "
-      << UnitTestManager::Data::Auto;
+  oss << Detailed << " "
+      << Basic << " "
+      << Nothing << " "
+      << Auto;
 
   return oss.str();
 }
@@ -314,8 +407,8 @@ UnitTestManager::Data::Data()
     d_custom_command_line_options(),
     d_command_line_arguments(),
     d_initializer( NULL ),
-    d_report_level( Data::Auto ),
-    d_report_sink( &std::cout, [](std::ostream*){}),
+    d_report_level( Auto ),
+    d_report_sink( &std::cout, UnitTestManager::Data::CustomReportSinkDeleter( false ) ),
     d_report_sink_buffer( NULL ),
     d_stdout_buffer( NULL ),
     d_stderr_buffer( NULL ),
@@ -340,8 +433,8 @@ UnitTestManager::Data::Data()
      boost::program_options::value<bool>()->default_value( false ),
      "show the test data tables and exit")
     ("report_level,r",
-     boost::program_options::value<Data::ReportLevel>()->default_value( d_report_level ),
-     "set the report level (" + this->getReportLevels().c_str() + ")")
+     boost::program_options::value<std::string>()->default_value( Utility::toString( d_report_level ) ),
+     std::string(std::string("set the report level (") + this->getReportLevels() + ")").c_str())
     ("report_sink,o",
      boost::program_options::value<std::string>()->default_value( "stdout" ),
      "set the test report sink (stdout, stderr or file name)")
@@ -375,7 +468,7 @@ UnitTestManager::Initializer& UnitTestManager::Data::getInitializer()
     return *d_initializer;
   else
   {
-    static UnitTestManager::Initializer default_intializer;
+    static UnitTestManager::Initializer default_initializer;
     
     return default_initializer;
   }
@@ -389,13 +482,13 @@ void UnitTestManager::Data::setInitializer(
 }
 
 // Return the unit tests
-UnitTests& UnitTestManager::Data::getUnitTests()
+auto UnitTestManager::Data::getUnitTests() -> UnitTests&
 {
   return d_unit_tests;
 }
 
 // Return the unit tests
-const UnitTests& UnitTestManager::Data::getUnitTests() const
+auto UnitTestManager::Data::getUnitTests() const -> const UnitTests&
 {
   return d_unit_tests;
 }
@@ -427,13 +520,13 @@ void UnitTestManager::Data::parseCommandLineOptions( int argc, char** argv )
   // Parse the command line arguments
   boost::program_options::store(
        boost::program_options::command_line_parser(argc, argv).options(cmdline_options).run(),
-       d_command_line_arguments() );
+       d_command_line_arguments );
 
-  boost::program_options::notify( d_command_line_arguments() );
+  boost::program_options::notify( d_command_line_arguments );
 
   // Extract the report level
   d_report_level =
-    d_command_line_arguments["report_level"].as<Data::ReportLevel>();
+    Utility::fromString<ReportLevel>( d_command_line_arguments["report_level"].as<std::string>() );
 
   // Extract the report sink name and create the sink
   std::string report_sink_name =
@@ -442,22 +535,31 @@ void UnitTestManager::Data::parseCommandLineOptions( int argc, char** argv )
   boost::algorithm::to_lower(report_sink_name);
 
   if( report_sink_name == "stdout" )
-    d_report_sink.reset( &std::cout, [](std::ostream*){} );
+  {
+    d_report_sink.reset( &std::cout );
+    d_report_sink.get_deleter() = CustomReportSinkDeleter( false );
+  }
   else if( report_sink_name == "stderr" )
-    d_report_sink.reset( &std::cerr, [](std::ostream*){} );
+  {
+    d_report_sink.reset( &std::cerr );
+    d_report_sink.get_deleter() = CustomReportSinkDeleter( false );
+  }
   else
   {
-    d_report_sink.reset( new std::ofstream file_sink(
-                 d_command_line_arguments["report_sink"].as<std::string>() ) );
+    std::string report_sink_file_name =
+      d_command_line_arguments["report_sink"].as<std::string>();
+    
+    d_report_sink.reset( new std::ofstream( report_sink_file_name ) );
+    d_report_sink.get_deleter() = CustomReportSinkDeleter( true );
   }
   
   // Suppress all output
-  if( d_report_level == Data::Nothing )
+  if( d_report_level == Nothing )
   {
     if( d_report_sink->rdbuf() )
       d_report_sink_buffer = d_report_sink->rdbuf();
 
-    d_report_level->rdbuf( NULL );
+    d_report_sink->rdbuf( NULL );
   }
 
   // Extract the filters
@@ -471,17 +573,17 @@ void UnitTestManager::Data::parseCommandLineOptions( int argc, char** argv )
 }
 
 // Redirect std::cout and std::cerr to the string stream
-void UnitTestManager::Data::redirectStdOutput( std::ostringstring& oss ) const
+void UnitTestManager::Data::redirectStdOutput( std::ostringstream& oss )
 {
   d_stdout_buffer = std::cout.rdbuf();
   std::cout.rdbuf( oss.rdbuf() );
 
-  d_stdcerr_buffer = std::cerr.rdbuf();
+  d_stderr_buffer = std::cerr.rdbuf();
   std::cerr.rdbuf( oss.rdbuf() );
 }
 
 // Restore std::cout and std::cerr
-void UnitTestManager::Data::restoreStdOutput() const
+void UnitTestManager::Data::restoreStdOutput()
 {
   std::cout.rdbuf( d_stdout_buffer );
   std::cerr.rdbuf( d_stderr_buffer );
@@ -493,12 +595,12 @@ UnitTestManager::Data::getCommandLineOptionValue(
                                          const std::string& option_name ) const
 {
   if( d_command_line_arguments.count( option_name ) )
-    return d_command_line_arguments[option_name].as<T>();
+    return d_command_line_arguments[option_name];
   else
   {
     THROW_EXCEPTION( std::runtime_error,
                      "Command line option " << option_name <<
-                     " was not used!" );
+                     " does not exist!" );
   }
 }
 
@@ -512,7 +614,7 @@ bool UnitTestManager::Data::helpMessageRequested() const
 }
 
 // Print the help message
-bool UnitTestManager::Data::printHelpMessage()
+void UnitTestManager::Data::printHelpMessage()
 {
   boost::program_options::options_description
     cmdline_options( "Allowed options" );
@@ -574,7 +676,7 @@ void UnitTestManager::Data::printTestList()
   if( d_unit_tests.size() > 0 )
   {
     // Sort the tests
-    d_unit_tests.sort();
+    d_unit_tests.sort( &Utility::compareUnitTestPointers );
 
     std::string current_group_name( "" );
 
@@ -607,12 +709,12 @@ bool UnitTestManager::Data::dataListRequested() const
 }
 
 // Print the data list
-void UnitTestManager::Data::printDataList() const
+void UnitTestManager::Data::printDataList()
 {
   if( d_unit_tests.size() > 0 )
   {
     // Sort the tests
-    d_unit_tests.sort();
+    d_unit_tests.sort( &Utility::compareUnitTestPointers );
 
     std::string current_combined_name( "" );
 
@@ -642,7 +744,7 @@ void UnitTestManager::Data::printDataList() const
 }
   
 // Get the report level
-UnitTestManager::Data::ReportLevel UnitTestManager::Data::getReportLevel() const
+ReportLevel UnitTestManager::Data::getReportLevel() const
 {
   return d_report_level;
 }
@@ -678,7 +780,7 @@ size_t UnitTestManager::Data::getNumberOfBenchmarkSamples() const
 }
   
 // Return the run test counter
-size_t& UnitTestManager::Data::getRunTestCounter()
+int& UnitTestManager::Data::getRunTestCounter()
 {
   return d_run_test_counter;
 }
@@ -687,13 +789,13 @@ size_t& UnitTestManager::Data::getRunTestCounter()
 /*! \details A constant reference is returned so that any attempt to 
  * increment the return directly will result in a compilation error.
  */
-const size_t& UnitTestManager::Data::getRunTestCounter() const
+const int& UnitTestManager::Data::getRunTestCounter() const
 {
   return d_run_test_counter;
 }
 
 // Return the passed test counter
-size_t& UnitTestManager::Data::getPassedTestCounter()
+int& UnitTestManager::Data::getPassedTestCounter()
 {
   return d_passed_test_counter;
 }
@@ -702,7 +804,7 @@ size_t& UnitTestManager::Data::getPassedTestCounter()
 /*! \details A constant reference is returned so that any attempt to 
  * increment the return directly will result in a compilation error.
  */
-const size_t& UnitTestManager::Data::getPassedTestCounter() const
+const int& UnitTestManager::Data::getPassedTestCounter() const
 {
   return d_passed_test_counter;
 }
@@ -730,12 +832,13 @@ UnitTestManager& UnitTestManager::getInstance()
 {
   if( !s_instance )
   {
-    s_instance.reset( [](UnitTestManager*){
+    s_instance.reset( 
 #ifdef HAVE_FRENSIE_MPI
-                         return new DistributedUnitTestManager;
+                     new DistributedUnitTestManager
 #else
-                         return new UnitTestManager;
-                      } );
+                     new UnitTestManager
+#endif
+                      );
   }
       
   return *s_instance;
@@ -744,6 +847,10 @@ UnitTestManager& UnitTestManager::getInstance()
 // Constructor
 UnitTestManager::UnitTestManager()
   : d_data( new UnitTestManager::Data )
+{ /* ... */ }
+
+// Destructor
+UnitTestManager::~UnitTestManager()
 { /* ... */ }
 
 // Constructor
@@ -773,7 +880,7 @@ void UnitTestManager::addUnitTest( UnitTest& test )
 /*! \details This is all that needs be called from the main function (return
  * the value that is returned from this method).
  */
-int UnitTestManager::runUnitTests( int* argc, char*** argv ) const
+int UnitTestManager::runUnitTests( int* argc, char*** argv )
 {
   Utility::GlobalMPISession& mpi_session =
     Utility::GlobalMPISession::initialize( argc, argv, &d_data->getReportSink() );
@@ -812,7 +919,10 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv ) const
   // Make sure that every node initialized successfully
   bool global_success = mpi_session.isGloballyTrue( local_success );
     
-  this->summarizeInitializationResults( local_success, global_success, init_time );
+  this->summarizeInitializationResults( log,
+                                        init_time,
+                                        local_success,
+                                        global_success );
 
   // Initialization was globally successful - proceed to unit test execution
   if( global_success )
@@ -825,7 +935,7 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv ) const
     // Test details requested
     else if( d_data->groupListRequested() ||
              d_data->testListRequested() ||
-             d_data->dataListRequsted() )
+             d_data->dataListRequested() )
     {
       this->printTestDetails();
     }
@@ -851,6 +961,7 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv ) const
 
 // Flush logs and add to report
 void UnitTestManager::flushLogsAndAddToReport( std::ostringstream& log,
+                                               const std::string& log_header,
                                                const int )
 {
   // This will flush all pending log entries to the global log
@@ -860,6 +971,9 @@ void UnitTestManager::flushLogsAndAddToReport( std::ostringstream& log,
   {
     Utility::DynamicOutputFormatter formatter( log.str() );
     formatter.formatUnitTestKeywords();
+
+    if( log_header.size() > 0 )
+      d_data->getReportSink() << log_header << ":\n";
     
     d_data->getReportSink() << formatter << std::endl;
 
@@ -870,22 +984,21 @@ void UnitTestManager::flushLogsAndAddToReport( std::ostringstream& log,
 
 // Flush logs and add to report
 void DistributedUnitTestManager::flushLogsAndAddToReport(
-                                                       std::ostringstream& log,
-                                                       const int proc )
+                                                 std::ostringstream& log,
+                                                 const std::string&,
+                                                 const int proc )
 {
   // This will flush all pending log entries to the global log
   if( proc == REPORT_ON_ALL_PROCS )
   {
-    for( size_t i = 0; i < d_data->getMPISession().getNProc(); ++i )
+    for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
     {
-      if( i == d_data->getMPISession().getRank() )
+      if( i == Utility::GlobalMPISession::getRank() )
       {
-        if( log.str().size() > 0 )
-        {
-          d_data->getReportSink() << "proc " << i << " details:\n";
-
-          UnitTestManager::flushLogsAndAddToReport( log, proc );
-        }
+        std::ostringstream log_header_stream;
+        log_header_stream << "Proc " << i << " log";
+        
+        UnitTestManager::flushLogsAndAddToReport( log, log_header_stream.str(), proc );
       }
       
       Utility::GlobalMPISession::barrier();
@@ -894,7 +1007,7 @@ void DistributedUnitTestManager::flushLogsAndAddToReport(
   else
   {
     if( Utility::GlobalMPISession::getRank() == proc )
-      UnitTestManager::flushLogsAndAddToReport( log, proc );
+      UnitTestManager::flushLogsAndAddToReport( log, "", proc );
   }
 }
 
@@ -910,7 +1023,7 @@ void DistributedUnitTestManager::printHelpMessage()
   if( Utility::GlobalMPISession::getRank() == 0 )
     UnitTestManager::printHelpMessage();
 
-  Utility::GlobalMPISession::getRank().barrier();
+  Utility::GlobalMPISession::barrier();
 }
 
 // Print the test details
@@ -941,12 +1054,12 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
   bool local_success = true;
   
   std::vector<std::string> global_failed_tests;
-  std::set<size_t> local_failed_tests_set;
+  std::set<std::string> local_failed_tests_set;
 
   try{
     this->printSortingTestsNotification();
 
-    d_data->getUnitTests().sort();
+    d_data->getUnitTests().sort( &Utility::compareUnitTestPointers );
 
     this->printRunningTestsNotification();
 
@@ -954,7 +1067,7 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
          test_it != d_data->getUnitTests().end();
          ++test_it )
     {
-      Utility::UnitTests& unit_test = *(*test_it);
+      Utility::UnitTest& unit_test = *(*test_it);
       
       if( this->shouldUnitTestBeRun( unit_test ) )
       {
@@ -976,7 +1089,7 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
 
         // Update test stats
         if( local_test_success )
-          ++(d_data->getPassedTestCounter())
+          ++(d_data->getPassedTestCounter());
 
         d_data->getTotalUnitTestExecutionTime() += test_time;
 
@@ -999,7 +1112,7 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
   }
   FRENSIE_TEST_CATCH_STATEMENTS( log, true, local_success );
 
-  this->flushLogsAndAddToReport( log, REPORT_ON_ALL_PROCS );
+  this->flushLogsAndAddToReport( log, "", REPORT_ON_ALL_PROCS );
 
   // If there are any failed tests provide a summary of them now
   this->summarizeFailedTests( global_failed_tests, local_failed_tests_set );
@@ -1040,16 +1153,16 @@ void DistributedUnitTestManager::printRunningTestsNotification()
 }
 
 // Print the unit test header
-void UnitTestManager::printUnitTestHeader( const size_t unit_test_id,
+void UnitTestManager::printUnitTestHeader( const int unit_test_id,
                                            const UnitTest& unit_test )
 {
   d_data->getReportSink() << unit_test_id << ". "
-                          << unit_test.getFullName() " ... ";
+                          << unit_test.getFullName() << " ... ";
 }
 
 // Print the unit test header
 void DistributedUnitTestManager::printUnitTestHeader(
-                                                    const size_t unit_test_id,
+                                                    const int unit_test_id,
                                                     const UnitTest& unit_test )
 {
   if( Utility::GlobalMPISession::getRank() == 0 )
@@ -1065,7 +1178,7 @@ bool UnitTestManager::shouldUnitTestBeRun( const UnitTest& unit_test )
   {
     if( std::regex_search(unit_test.getTestName(), d_data->getTestFilter()) )
     {
-      if( unit_test.getDataName() == 0 ||
+      if( unit_test.getDataName().size() == 0 ||
           std::regex_search(unit_test.getDataName(), d_data->getDataFilter()) )
       {
         return true;
@@ -1080,8 +1193,8 @@ bool UnitTestManager::shouldUnitTestBeRun( const UnitTest& unit_test )
 bool UnitTestManager::shouldUnitTestDetailsBeReported(
                                                      const bool success ) const
 {
-  return d_data->getReportLevel() == Data::Detailed ||
-    (!success && d_data->getReportLevel() == Data::Auto)
+  return d_data->getReportLevel() == Detailed ||
+    (!success && d_data->getReportLevel() == Auto);
 }
 
 // Run a single unit tests
@@ -1104,13 +1217,13 @@ bool UnitTestManager::runUnitTest( const UnitTest& unit_test,
 
 // Report the test result
 void UnitTestManager::reportTestResult(
-                                 const UnitTest& unit_test,
-                                 const std::oststringstream& log,
-                                 const double test_run_time,
-                                 const bool local_success,
-                                 const bool global_success,
-                                 std::vector<std::string>& global_failed_tests,
-                                 std::set<size_t>& local_failed_test_set )
+                                const UnitTest& unit_test,
+                                std::ostringstream& log,
+                                const double test_run_time,
+                                const bool local_success,
+                                const bool global_success,
+                                std::vector<std::string>& global_failed_tests,
+                                std::set<std::string>& local_failed_tests_set )
 {
   // Record the tests that failed on this processes
   if( !local_success )
@@ -1121,13 +1234,13 @@ void UnitTestManager::reportTestResult(
   {
     global_failed_tests.push_back( unit_test.getFullName() );
 
-    this->printOperationFailedNofication();
+    this->printOperationFailedNotification();
   }
   else
     this->printOperationPassedNotification();
 
   // Report the time for each process
-  this->printOpertionTime( test_run_time, true );
+  this->printOperationTime( test_run_time, true, true );
   
   // Report the test details
   if( this->shouldUnitTestDetailsBeReported( global_success ) )
@@ -1172,12 +1285,12 @@ void UnitTestManager::printOperationTime( const double time_in_sec,
                                           const bool wrapped,
                                           const bool goto_newline )
 {
-  d_data->getReportSink().setPrecision( 6 );
+  d_data->getReportSink().precision( 6 );
 
   if( wrapped )
     d_data->getReportSink() << "(";
 
-  d_data->getReportSink() << test_time << " sec";
+  d_data->getReportSink() << time_in_sec << " sec";
 
   if( wrapped )
     d_data->getReportSink() << ")";
@@ -1218,7 +1331,7 @@ void UnitTestManager::printOperationLocation( const std::string& file_name,
 }
 
 // Print the operation location
-void DetailedUnitTestManager::printOperationLocation(
+void DistributedUnitTestManager::printOperationLocation(
                                                   const std::string& file_name,
                                                   const size_t line_number )
 {
@@ -1246,7 +1359,7 @@ void UnitTestManager::printOperationLog( const bool local_success,
     d_data->getReportSink() << std::endl;
   }
   
-  UnitTestManager::flushLogsAndAddToReport( log, Utility::GlobalMPISession::getRank() );
+  UnitTestManager::flushLogsAndAddToReport( log, "", Utility::GlobalMPISession::getRank() );
 }
 
 // Print the operation log
@@ -1258,7 +1371,7 @@ void DistributedUnitTestManager::printOperationLog( const bool local_success,
     UnitTestManager::printOperationLog( local_success, "", log );
   else
   {
-    for( size_t i = 0; i < Teuchos::GlobalMPISession::getNProcs(); ++i )
+    for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
     {
       if( Utility::GlobalMPISession::getRank() == i )
       {
@@ -1291,8 +1404,13 @@ void UnitTestManager::summarizeFailedTests(
   {
     this->printFailedTestSummaryHeader( "" );
     
-    for( size_t i = 0; i < failed_tests.size(); ++i )
-      this->printFailedTestName( test_name, "", local_failed_tests_set, true );
+    for( size_t i = 0; i < global_failed_tests.size(); ++i )
+    {
+      this->printFailedTestName( global_failed_tests[i],
+                                 "",
+                                 local_failed_tests_set,
+                                 true );
+    }
   }
 }
 
@@ -1321,7 +1439,7 @@ void DistributedUnitTestManager::printFailedTestSummaryHeader(
       UnitTestManager::printFailedTestSummaryHeader( "on at least one proc" );
   }
 
-  d_data->getMPISession().barrier();
+  Utility::GlobalMPISession::barrier();
 }
 
 // Print failed test name
@@ -1356,7 +1474,7 @@ void DistributedUnitTestManager::printFailedTestName(
   }
   else
   {
-    const bool report_line_started = false;
+    bool report_line_started = false;
     
     for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
     {
@@ -1422,7 +1540,7 @@ void UnitTestManager::summarizeInitializationResults(
     d_data->getReportSink() << Utility::Red("Failed");
 
   // Report the initialization time for each process
-  this->printOperationTime( initialization_time, true );
+  this->printOperationTime( initialization_time, true, true );
 
   // Report the initialization details
   if( this->shouldUnitTestDetailsBeReported( global_success ) )
@@ -1445,7 +1563,7 @@ void UnitTestManager::printUnitTestStats( const std::string& summary_header )
                                  d_data->getUnitTests().size(),
                                  d_data->getRunTestCounter(),
                                  d_data->getPassedTestCounter(),
-                                 d_data->getTotalUnitTestExecutionTime );
+                                 d_data->getTotalUnitTestExecutionTime() );
 }
 
 // Print the unit test stats
@@ -1470,10 +1588,12 @@ void DistributedUnitTestManager::printUnitTestStats(
     }
 
     // Reduce the test stats
-    size_t reduced_total = mpi_session.sum(this->getNumberOfTests());
-    size_t reduced_run_counter = mpi_session.sum(this->getNumberOfRunTests());
-    size_t reduced_passed_counter =
-      mpi_session.sum(this->getNumberOfPassedTests());
+    int reduced_total =
+      Utility::GlobalMPISession::sum(this->getNumberOfTests());
+    int reduced_run_counter =
+      Utility::GlobalMPISession::sum(this->getNumberOfRunTests());
+    int reduced_passed_counter =
+      Utility::GlobalMPISession::sum(this->getNumberOfPassedTests());
 
     if( Utility::GlobalMPISession::getRank() == 0 )
     {
@@ -1491,9 +1611,9 @@ void DistributedUnitTestManager::printUnitTestStats(
 // Print the unit test stats
 void UnitTestManager::printGivenUnitTestStats(
                                            const std::string& summary_header,
-                                           const size_t number_of_tests,
-                                           const size_t number_of_tests_run,
-                                           const size_t number_of_tests_passed,
+                                           const int number_of_tests,
+                                           const int number_of_tests_run,
+                                           const int number_of_tests_passed,
                                            const double total_test_exec_time )
 {
   d_data->getReportSink() << Utility::Bold(summary_header + ":") << " "
@@ -1532,28 +1652,28 @@ void DistributedUnitTestManager::printProgramExecutionTimeHeader(
 }
 
 // Return the number of tests
-size_t UnitTestManager::getNumberOfTests() const
+int UnitTestManager::getNumberOfTests() const
 {
   return d_data->getUnitTests().size();
 }
 
 // Return the current number of run tests
-size_t UnitTestManager::getNumberOfRunTests() const
+int UnitTestManager::getNumberOfRunTests() const
 {
   return d_data->getRunTestCounter();
 }
 
 // Return the current number of passed tests
-size_t UnitTestManager::getNumberOfPassedTests() const
+int UnitTestManager::getNumberOfPassedTests() const
 {
   return d_data->getPassedTestCounter();
 }
 
 // Summarize the results
 int UnitTestManager::summarizeResults( const bool local_success,
-                                       const bool global_success ) const
+                                       const bool global_success )
 {
-  this->printTestResult( "End Result", local_success )
+  this->printTestResult( "End Result", local_success, global_success );
 
   return (global_success ? 0 : 1);
 }
@@ -1599,13 +1719,13 @@ void DistributedUnitTestManager::printTestResult( const std::string& header,
     }
 
     // Print the overall result
-    UnitTestManager::PrintTestResult( "\n"+header, global_success, global_success );
+    UnitTestManager::printTestResult( "\n"+header, global_success, global_success );
   }
 }
 
 // Constructor
 UnitTestManager::Initializer::Initializer()
-  : setOption( UnitTestManager::getInstance().d_data->d_custom_command_line_options )
+  : setOption( UnitTestManager::getInstance().d_data->getCustomCommandLineOptions().add_options() )
 { /* ... */ }
 
 // Initialize the unit test manager
@@ -1623,7 +1743,7 @@ void UnitTestManager::Initializer::initializeUnitTestManager( int argc, char** a
 
 // Get command line option value
 boost::program_options::variable_value
-getOptionValue( const std::string& option_name ) const
+UnitTestManager::Initializer::getRawOptionValue( const std::string& option_name ) const
 {
   return UnitTestManager::getInstance().d_data->getCommandLineOptionValue( option_name );
 }    

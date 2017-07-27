@@ -10,15 +10,17 @@
 #define UTILITY_UNIT_TEST_MANAGER_HPP
 
 // Std Lib Includes
+#include <iostream>
 #include <memory>
-#include <signal.h>
 
 // Boost Includes
 #include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTest.hpp"
 #include "Utility_GlobalMPISession.hpp"
+#include "Utility_LoggingMacros.hpp"
 
 namespace Utility{
 
@@ -57,8 +59,8 @@ public:
     //! Custom manager initialization method
     virtual void customUnitTestManagerInitialization() const;
 
-    //! Shortcut for adding command line options
-    boost::program_options::options_description_easy_init& setOption;
+    //! Shortcut for adding command line options (functor)
+    boost::program_options::options_description_easy_init setOption;
 
   private:
 
@@ -70,6 +72,9 @@ public:
   //! Get the unit test manager instance
   static UnitTestManager& getInstance();
 
+  //! Destructor
+  virtual ~UnitTestManager();
+
   //! Set the initializer
   void setInitializer( UnitTestManager::Initializer& initializer );
 
@@ -77,7 +82,7 @@ public:
   void addUnitTest( UnitTest& test );
 
   //! Parse command-line options and run registered unit tests
-  int runUnitTests( int* argc, char*** argv ) const;
+  int runUnitTests( int* argc, char*** argv );
 
 protected:
 
@@ -86,6 +91,7 @@ protected:
 
   //! Flush logs and add to report
   virtual void flushLogsAndAddToReport( std::ostringstream& log,
+                                        const std::string& log_header,
                                         const int proc );
 
   //! Print the help message
@@ -101,7 +107,7 @@ protected:
   virtual void printRunningTestsNotification();
 
   //! Print the unit test header
-  virtual void printUnitTestHeader( const size_t unit_test_id,
+  virtual void printUnitTestHeader( const int unit_test_id,
                                     const UnitTest& unit_test );
 
   //! Print the operation failed notification
@@ -139,9 +145,9 @@ protected:
 
   //! Print the unit test stats
   void printGivenUnitTestStats( const std::string& summary_header,
-                                const size_t number_of_tests,
-                                const size_t number_of_tests_run,
-                                const size_t number_of_tests_passed,
+                                const int number_of_tests,
+                                const int number_of_tests_run,
+                                const int number_of_tests_passed,
                                 const double total_test_exec_time );
 
   //! Print the program execution time header
@@ -149,13 +155,13 @@ protected:
                                          const double program_execution_time );
 
   //! Return the number of tests
-  size_t getNumberOfTests() const;
+  int getNumberOfTests() const;
 
   //! Return the current number of run tests
-  size_t getNumberOfRunTests() const;
+  int getNumberOfRunTests() const;
 
   //! Return the current number of passed tests
-  size_t getNumberOfPassedTests() const;
+  int getNumberOfPassedTests() const;
 
   //! Print the test result header
   virtual void printTestResult( const std::string& header,
@@ -171,14 +177,14 @@ private:
   bool shouldUnitTestBeRun( const UnitTest& unit_test );
 
   // Run the registered unit tets
-  bool runUnitTests( std::ostringsstream& log );
+  bool runUnitTests( std::ostringstream& log );
 
   // Run a single unit tests
   bool runUnitTest( const UnitTest& unit_test, std::ostringstream& log );
 
   //! Report the test result
   void reportTestResult( const UnitTest& unit_test,
-                         const std::oststringstream& log,
+                         std::ostringstream& log,
                          const double test_run_time,
                          const bool local_success,
                          const bool global_success,
@@ -249,7 +255,7 @@ private:
       if( Utility::GlobalMPISession::getSize() > 1 )                  \
         LOG_STREAM << " on proc " << Utility::GlobalMPISession::getRank(); \
                                                                         \
-      LOG_STREAM << "!\n" << exception.what() << std::flush;         \
+      LOG_STREAM << "!"<< std::endl;                                   \
     }                                                                   \
   }
   

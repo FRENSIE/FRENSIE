@@ -33,16 +33,6 @@ public:
   template<typename T>
   StaticOutputFormatter( const T& raw_string_contents );
 
-  //! String constructor
-  StaticOutputFormatter( const std::string& raw_string_contents );
-
-  //! C-string constructor
-  StaticOutputFormatter( const char* raw_string_contents );
-
-  //! Double constructor
-  StaticOutputFormatter( const double& raw_string_contents,
-                           const unsigned precision = 18u );
-
   //! Destructor
   ~StaticOutputFormatter()
   { /* ... */ }
@@ -64,7 +54,7 @@ typedef StaticOutputFormatter<DefaultTextFormat,RedTextColor,DefaultTextBackgrou
 typedef StaticOutputFormatter<BoldTextFormat,RedTextColor,DefaultTextBackgroundColor> BoldRed;
 
 //! Green formatter
-typedef StaticOutputFormatter<DefaultTextFormat,GreenTextColor,DefaultTextBackground> Green;
+typedef StaticOutputFormatter<DefaultTextFormat,GreenTextColor,DefaultTextBackgroundColor> Green;
 
 //! Bold-green formatter
 typedef StaticOutputFormatter<BoldTextFormat,GreenTextColor,DefaultTextBackgroundColor> BoldGreen;

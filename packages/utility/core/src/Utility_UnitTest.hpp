@@ -9,6 +9,10 @@
 #ifndef UTILITY_UNIT_TEST_HPP
 #define UTILITY_UNIT_TEST_HPP
 
+// Std Lib Includes
+#include <iostream>
+#include <string>
+
 namespace Utility{
 
 /*! The unit test base class
@@ -58,7 +62,7 @@ protected:
 
 private:
 
-  // The less that operator is a friend
+  // The less than operator is a friend
   friend bool operator<( const UnitTest&, const UnitTest& );
 
   // The group name
@@ -88,6 +92,12 @@ inline bool operator<( const UnitTest& lhs, const UnitTest& rhs )
   // Group names are equal - compare creation order index
   else
     return lhs.d_creation_order_index < rhs.d_creation_order_index;
+}
+
+//! Comparison helper function for UnitTest*
+inline bool compareUnitTestPointers( const UnitTest* lhs, const UnitTest* rhs )
+{
+  return *lhs < *rhs;
 }
   
 } // end Utility namespace

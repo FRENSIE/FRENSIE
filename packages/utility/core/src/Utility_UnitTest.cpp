@@ -24,10 +24,10 @@ UnitTest::UnitTest( const std::string group_name,
   : d_group_name( group_name ),
     d_test_name( test_name ),
     d_data_name( data_name ),
-    d_creation_order_index( creation_counter++ );
+    d_creation_order_index( creation_counter++ )
 {
   // Register the test with the manager
-  UnitTestManager::getInstance().addUnitTest( this );
+  UnitTestManager::getInstance().addUnitTest( *this );
 }
 
 // Return the group name
