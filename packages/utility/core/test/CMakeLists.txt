@@ -1,24 +1,13 @@
 # Before the FRENSIE unit test framework can be used we must test all of the
 # dependecies using another test framework. These first tests will all use
 # the Boost unit test framework.
-ADD_EXECUTABLE(tstLogRecordType
-  tstLogRecordType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstLogRecordType utility_core)
-ADD_TEST(LogRecordType_test tstLogRecordType)
-SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstAssertion
-  tstAssertion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAssertion utility_core)
-ADD_TEST(Assertion_test tstAssertion)
+ADD_EXECUTABLE(tstAssertion tstAssertion.cpp)
+TARGET_LINK_LIBRARIES(tstAssertion utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(Assertion_test tstAssertion --report_level=detailed)
 SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstContractException
-  tstContractException.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstContractException utility_core)
+ADD_EXECUTABLE(tstContractException tstContractException.cpp)
+TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY}))
 ADD_TEST(ContractException_test tstContractException)
 SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
 
@@ -48,11 +37,17 @@ TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY
 ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter --report_level=detailed)
 SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstDynamicOutputFormatter
-  tstDynamicOutputFormatter.cpp)
+ADD_EXECUTABLE(tstDynamicOutputFormatter tstDynamicOutputFormatter.cpp)
 TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter --report_level=detailed)
 SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstLogRecordType
+  tstLogRecordType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogRecordType utility_core)
+ADD_TEST(LogRecordType_test tstLogRecordType)
+SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstLoggingMacros
   tstLoggingMacros.cpp)

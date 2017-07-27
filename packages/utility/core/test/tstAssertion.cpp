@@ -10,19 +10,23 @@
 #include <iostream>
 #include <stdexcept>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
 // FRENSIE Includes
 #include "Utility_Assertion.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_SUITE( Assertion )
+
+//---------------------------------------------------------------------------//
 // Check that a Utility::Assertion looks different than a
 // std::runtime_error as it inherits from std::logic_error.
-TEUCHOS_UNIT_TEST( Assertion, differentiation_test )
+BOOST_AUTO_TEST_CASE( differentiation_test )
 {
   try
   {
@@ -30,18 +34,18 @@ TEUCHOS_UNIT_TEST( Assertion, differentiation_test )
   }
   catch( const std::runtime_error& assertion )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
 }
 
 //---------------------------------------------------------------------------//
 // Check that a Utility::Assertion can be caught and the appropriate
 // error message is written.
-TEUCHOS_UNIT_TEST( Assertion, message_test )
+BOOST_AUTO_TEST_CASE( message_test )
 {
   std::string message;
 
@@ -55,36 +59,36 @@ TEUCHOS_UNIT_TEST( Assertion, message_test )
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 
   const std::string true_message( "failed assertion" );
-  TEST_ASSERT( 0 == message.compare( true_message ) );
+  BOOST_CHECK( 0 == message.compare( true_message ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that we can throw a Utility::Assertion with TEUCHOS_TEST_FOR_EXCEPTION
-TEUCHOS_UNIT_TEST( Assertion, teuchos_throw_test )
+// Check that we can throw a Utility::Assertion with TEST_FOR_EXCEPTION
+BOOST_AUTO_TEST_CASE( throw_test )
 {
   try
   {
-    TEUCHOS_TEST_FOR_EXCEPTION( true,
-				Utility::Assertion,
-				"Utility assertion failed" << std::endl );
+    TEST_FOR_EXCEPTION( true,
+                        Utility::Assertion,
+                        "Utility assertion failed" << std::endl );
   }
   catch( const Utility::Assertion& assertion )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 }
 
 //---------------------------------------------------------------------------//
 // Check that we can throw a Utility::Assertion with the assert macro
-TEUCHOS_UNIT_TEST( Assertion, assert_throw_test )
+BOOST_AUTO_TEST_CASE( assert_throw_test )
 {
   try
   {
@@ -92,18 +96,21 @@ TEUCHOS_UNIT_TEST( Assertion, assert_throw_test )
   }
   catch( const Utility::Assertion& assertion )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE( CriticalAssertion )
 
 //---------------------------------------------------------------------------//
 // Check that a Utility::CriticalAssertion looks different than a
 // std::logic_error as it inherits from std::runtime_error
-TEUCHOS_UNIT_TEST( CriticalAssertion, differentiation_test )
+BOOST_AUTO_TEST_CASE( differentiation_test )
 {
   try
   {
@@ -111,18 +118,18 @@ TEUCHOS_UNIT_TEST( CriticalAssertion, differentiation_test )
   }
   catch( const std::logic_error& assertion )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
 }
 
 //---------------------------------------------------------------------------//
 // Check that a Utility::CriticalAssertion can be caught and the appropriate
 // error message is written.
-TEUCHOS_UNIT_TEST( CriticalAssertion, message_test )
+BOOST_AUTO_TEST_CASE( message_test )
 {
   std::string message;
 
@@ -136,36 +143,36 @@ TEUCHOS_UNIT_TEST( CriticalAssertion, message_test )
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 
   const std::string true_message( "failed assertion" );
-  TEST_ASSERT( 0 == message.compare( true_message ) );
+  BOOST_CHECK( 0 == message.compare( true_message ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that we can throw a Utility::Assertion with TEUCHOS_TEST_FOR_EXCEPTION
-TEUCHOS_UNIT_TEST( CriticalAssertion, teuchos_throw_test )
+// Check that we can throw a Utility::Assertion with TEST_FOR_EXCEPTION
+BOOST_AUTO_TEST_CASE( throw_test )
 {
   try
   {
-    TEUCHOS_TEST_FOR_EXCEPTION( true,
-				Utility::CriticalAssertion,
-				"Utility assertion failed" << std::endl );
+    TEST_FOR_EXCEPTION( true,
+                        Utility::CriticalAssertion,
+                        "Utility assertion failed" << std::endl );
   }
   catch( const Utility::CriticalAssertion& assertion )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 }
 
 //---------------------------------------------------------------------------//
 // Check that we can throw a Utility::Assertion with the assert macro
-TEUCHOS_UNIT_TEST( CriticalAssertion, assert_throw_test )
+BOOST_AUTO_TEST_CASE( assert_throw_test )
 {
   try
   {
@@ -173,13 +180,15 @@ TEUCHOS_UNIT_TEST( CriticalAssertion, assert_throw_test )
   }
   catch( const Utility::CriticalAssertion& assertion )
   {
-    TEST_ASSERT( 1 );
+    BOOST_CHECK( 1 );
   }
   catch( ... )
   {
-    TEST_ASSERT( 0 );
+    BOOST_CHECK( 0 );
   }
 }
+
+BOOST_AUTO_TEST_SUITE_END()
 
 //---------------------------------------------------------------------------//
 // end tstAssertion.cpp
