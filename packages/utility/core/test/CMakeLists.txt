@@ -41,11 +41,9 @@ TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(LoggingMacros_test tstLoggingMacros --report_level=detailed)
 SET_PROPERTY(TEST LoggingMacros_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstExceptionCatchMacros
-  tstExceptionCatchMacros.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core)
-ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros)
+ADD_EXECUTABLE(tstExceptionCatchMacros tstExceptionCatchMacros.cpp)
+TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros --report_level=detailed)
 SET_PROPERTY(TEST ExceptionCatchMacros_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstContractException tstContractException.cpp)

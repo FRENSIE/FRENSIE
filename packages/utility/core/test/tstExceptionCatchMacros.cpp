@@ -9,10 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 #include <sstream>
+#include <vector>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_FancyOStream.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
 // FRENSIE Includes
 #include "Utility_LoggingMacros.hpp"
@@ -23,7 +24,7 @@
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the caught exception can be properly logged
-TEUCHOS_UNIT_TEST( LoggingMacros, std_exception_catch_error_logging )
+BOOST_AUTO_TEST_CASE( std_exception_catch_error_logging )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -31,13 +32,13 @@ TEUCHOS_UNIT_TEST( LoggingMacros, std_exception_catch_error_logging )
   // Setup the logs
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  Teuchos::Array<boost::shared_ptr<std::ostream> > os_array( 2 );
+  std::vector<boost::shared_ptr<std::ostream> > os_array( 2 );
   os_array[0] = os_ptr;
-  os_array[1].reset( &out, boost::null_deleter() );
+  os_array[1].reset( &std::cout, boost::null_deleter() );
 
-  FRENSIE_SETUP_STANDARD_LOGS( os_array );
+  FRENSIE_SETUP_STANDARD_SYNCHRONOUS_LOGS( os_array );
 
-  out << std::endl;
+  std::cout << std::endl;
   try{
     try{
       TEST_FOR_EXCEPTION( true, std::logic_error, "testing 1" );
@@ -48,25 +49,25 @@ TEUCHOS_UNIT_TEST( LoggingMacros, std_exception_catch_error_logging )
   }
   EXCEPTION_CATCH_AND_LOG( std::runtime_error, "testing 3" );
   
-  TEST_ASSERT( os_ptr->str().find( "Caught Exception Error: testing 3" ) <
+  BOOST_CHECK( os_ptr->str().find( "Caught Exception Error: testing 3" ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Exception Type: std::runtime_error" ) <
+  BOOST_CHECK( os_ptr->str().find( "Exception Type: std::runtime_error" ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Beginning nested errors..." ) <
+  BOOST_CHECK( os_ptr->str().find( "Beginning nested errors..." ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Error: testing 2" ) <
+  BOOST_CHECK( os_ptr->str().find( "Error: testing 2" ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Exception Type: std::logic_error  ->  std::runtime_error" ) <
+  BOOST_CHECK( os_ptr->str().find( "Exception Type: std::logic_error  ->  std::runtime_error" ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Error: testing 1" ) <
+  BOOST_CHECK( os_ptr->str().find( "Error: testing 1" ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Throw test that evaluated to true: true" ) <
+  BOOST_CHECK( os_ptr->str().find( "Throw test that evaluated to true: true" ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Exception Type: std::logic_error" ) <
+  BOOST_CHECK( os_ptr->str().find( "Exception Type: std::logic_error" ) <
                os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Location: " ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Stack: " ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "**" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Location: " ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Stack: " ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "**" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//

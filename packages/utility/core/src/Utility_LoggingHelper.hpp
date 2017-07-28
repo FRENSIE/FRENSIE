@@ -30,9 +30,6 @@
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/expressions/formatters/named_scope.hpp>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Utility_LogRecordType.hpp"
 #include "Utility_FancyTextOStreamBackend.hpp"

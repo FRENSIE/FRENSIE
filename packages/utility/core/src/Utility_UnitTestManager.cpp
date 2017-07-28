@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <list>
+#include <fstream>
 
 // Boost Includes
 #include <boost/program_options/parsers.hpp>
