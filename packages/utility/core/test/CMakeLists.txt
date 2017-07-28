@@ -36,10 +36,9 @@ TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core ${BOOST_TEST_LIBRAR
 ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter --report_level=detailed)
 SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstLoggingMacros
-  tstLoggingMacros.cpp)
-TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core)
-ADD_TEST(LoggingMacros_test tstLoggingMacros)
+ADD_EXECUTABLE(tstLoggingMacros tstLoggingMacros.cpp)
+TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(LoggingMacros_test tstLoggingMacros --report_level=detailed)
 SET_PROPERTY(TEST LoggingMacros_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstExceptionCatchMacros

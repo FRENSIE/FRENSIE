@@ -9,20 +9,29 @@
 // Std Lib Includes
 #include <iostream>
 #include <sstream>
+#include <vector>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_FancyOStream.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
 // FRENSIE Includes
 #include "Utility_LoggingMacros.hpp"
 #include "FRENSIE_config.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Structs.
+//---------------------------------------------------------------------------//
+struct InitFixture{ InitFixture() { FRENSIE_ADD_STANDARD_LOG_ATTRIBUTES(); } };
+
+// Register the InitFixture with the test suite
+BOOST_FIXTURE_TEST_SUITE( LoggingMacros, InitFixture )
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an error can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_error )
+BOOST_AUTO_TEST_CASE( log_error )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -39,13 +48,13 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_error )
   FRENSIE_FLUSH_ALL_LOGS();
   
   // Check that the error was logged
-  TEST_ASSERT( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a tagged error can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_error )
+BOOST_AUTO_TEST_CASE( log_tagged_error )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -62,13 +71,13 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_error )
   FRENSIE_FLUSH_ALL_LOGS();
   
   // Check that the error was logged
-  TEST_ASSERT( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a scope error can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_scope_error )
+BOOST_AUTO_TEST_CASE( log_scope_error )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -88,14 +97,14 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_scope_error )
   FRENSIE_FLUSH_ALL_LOGS();
   
   // Check that the error was logged
-  TEST_ASSERT( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a tagged scope error can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_scope_error )
+BOOST_AUTO_TEST_CASE( log_tagged_scope_error )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -103,7 +112,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_scope_error )
   // Setup the error log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  Teuchos::Array<boost::shared_ptr<std::ostream> > os_array( 2 );
+  std::vector<boost::shared_ptr<std::ostream> > os_array( 2 );
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
   
@@ -115,14 +124,14 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_scope_error )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the error was logged
-  TEST_ASSERT( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an error can be logged with the provided logger
-TEUCHOS_UNIT_TEST( LoggingMacros, log_error_with_logger )
+BOOST_AUTO_TEST_CASE( log_error_with_logger )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -145,13 +154,13 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_error_with_logger )
   FRENSIE_FLUSH_ALL_LOGS();
   
   // Check that the error was logged
-  TEST_ASSERT( os_ptr->str().find( "Custom Logger Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Custom Logger Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a scope error can be logged with the provided logger
-TEUCHOS_UNIT_TEST( LoggingMacros, log_scope_error_with_logger )
+BOOST_AUTO_TEST_CASE( log_scope_error_with_logger )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -174,14 +183,14 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_scope_error_with_logger )
   FRENSIE_FLUSH_ALL_LOGS();
   
   // Check that the error was logged
-  TEST_ASSERT( os_ptr->str().find( "Custom Logger Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Custom Logger Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an error with the __NESTED__ tag can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_nested_error )
+BOOST_AUTO_TEST_CASE( log_nested_error )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -198,14 +207,14 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_nested_error )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the nested error was logged
-  TEST_ASSERT( os_ptr->str().find( "Beginning nested errors..." ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "Error: testing" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "dummy.hpp:111" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Beginning nested errors..." ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Error: testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "dummy.hpp:111" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a warning can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_warning )
+BOOST_AUTO_TEST_CASE( log_warning )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -222,13 +231,13 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_warning )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the warning was logged
-  TEST_ASSERT( os_ptr->str().find( "Warning:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Warning:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a tagged warning can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_warning )
+BOOST_AUTO_TEST_CASE( log_tagged_warning )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -248,13 +257,13 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_warning )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the warning was logged
-  TEST_ASSERT( os_ptr->str().find( "Tag Warning:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag Warning:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a warning can be logged with the provided logger
-TEUCHOS_UNIT_TEST( LoggingMacros, log_warning_with_logger )
+BOOST_AUTO_TEST_CASE( log_warning_with_logger )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -262,7 +271,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_warning_with_logger )
   // Setup the warning log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  Teuchos::Array<boost::shared_ptr<std::ostream> > os_array( 2 );
+  std::vector<boost::shared_ptr<std::ostream> > os_array( 2 );
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
@@ -280,13 +289,13 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_warning_with_logger )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the warning was logged
-  TEST_ASSERT( os_ptr->str().find( "Custom Logger Warning:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Custom Logger Warning:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a notification can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_notification )
+BOOST_AUTO_TEST_CASE( log_notification )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -303,12 +312,12 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_notification )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the notification was logged
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a tagged notification can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_notification )
+BOOST_AUTO_TEST_CASE( log_tagged_notification )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -328,12 +337,12 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_notification )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the notification was logged
-  TEST_ASSERT( os_ptr->str().find( "Tag: testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag: testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a notification can be logged with the provided logger
-TEUCHOS_UNIT_TEST( LoggingMacros, log_notification_with_logger )
+BOOST_AUTO_TEST_CASE( log_notification_with_logger )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -341,7 +350,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_notification_with_logger )
   // Setup the notification log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  Teuchos::Array<boost::shared_ptr<std::ostream> > os_array( 2 );
+  std::vector<boost::shared_ptr<std::ostream> > os_array( 2 );
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
@@ -359,12 +368,12 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_notification_with_logger )
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the notification was logged
-  TEST_ASSERT( os_ptr->str().find( "Custom Logger: testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Custom Logger: testing" ) < os_ptr->str().size() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a detail can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_detail )
+BOOST_AUTO_TEST_CASE( log_detail )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -382,15 +391,15 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_detail )
 
   // Check that the detail was logged
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "testing detail" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing detail" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif 
 }
 
 //---------------------------------------------------------------------------//
 // Check that a tagged detail can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_detail )
+BOOST_AUTO_TEST_CASE( log_tagged_detail )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -411,15 +420,15 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_detail )
 
   // Check that the detail was logged
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "Tag: testing detail" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag: testing detail" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif 
 }
 
 //---------------------------------------------------------------------------//
 // Check that a detail can be logged with the provided logger
-TEUCHOS_UNIT_TEST( LoggingMacros, log_detail_with_logger )
+BOOST_AUTO_TEST_CASE( log_detail_with_logger )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -427,7 +436,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_detail_with_logger )
   // Setup the notification log
   boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
 
-  Teuchos::Array<boost::shared_ptr<std::ostream> > os_array( 2 );
+  std::vector<boost::shared_ptr<std::ostream> > os_array( 2 );
   os_array[0] = os_ptr;
   os_array[1].reset( &std::cout, boost::null_deleter() );
 
@@ -446,15 +455,15 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_detail_with_logger )
 
   // Check that the detail was logged
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "Custom Logger: testing detail" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Custom Logger: testing detail" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif 
 }
 
 //---------------------------------------------------------------------------//
 // Check that a pedantic detail can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_pedantic_detail )
+BOOST_AUTO_TEST_CASE( log_pedantic_detail )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -472,16 +481,16 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_pedantic_detail )
 
   // Check that the detail was logged
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "testing extra detail" ) <
+  BOOST_CHECK( os_ptr->str().find( "testing extra detail" ) <
                os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif 
 }
 
 //---------------------------------------------------------------------------//
 // Check that a tagged pedantic detail can be logged
-TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_pedantic_detail )
+BOOST_AUTO_TEST_CASE( log_tagged_pedantic_detail )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -502,16 +511,16 @@ TEUCHOS_UNIT_TEST( LoggingMacros, log_tagged_pedantic_detail )
 
   // Check that the detail was logged
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "Tag: testing extra detail" ) <
+  BOOST_CHECK( os_ptr->str().find( "Tag: testing extra detail" ) <
                os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif 
 }
 
 //---------------------------------------------------------------------------//
 // Check that all of the logs can be set simultaneously
-TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
+BOOST_AUTO_TEST_CASE( setup_all_logs )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -527,8 +536,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_ERROR( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -536,8 +545,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_TAGGED_ERROR( "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -545,9 +554,9 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_SCOPE_ERROR( "TestScope", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -555,9 +564,9 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_TAGGED_SCOPE_ERROR( "TestScope", "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -565,8 +574,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_WARNING( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Warning:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Warning:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -574,8 +583,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_TAGGED_WARNING( "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Tag Warning:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag Warning:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -583,7 +592,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_NOTIFICATION( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -591,8 +600,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_LOG_TAGGED_NOTIFICATION( "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Tag:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -601,9 +610,9 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_FLUSH_ALL_LOGS();
 
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr.str().size() == 0 );
+  BOOST_CHECK( os_ptr.str().size() == 0 );
 #endif
 
   os_ptr->str( "" );
@@ -613,10 +622,10 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_FLUSH_ALL_LOGS();
 
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "Tag:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif
 
   os_ptr->str( "" );
@@ -626,9 +635,9 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_FLUSH_ALL_LOGS();
 
 #if HAVE_FRENSIE_DETAILED_LOGGING 
-  TEST_ASSERT( os_ptr->str().find( "testing pedantic details" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing pedantic details" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif
 
   os_ptr->str( "" );
@@ -638,10 +647,10 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
   FRENSIE_FLUSH_ALL_LOGS();
 
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "Tag:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing pedantic details" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Tag:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing pedantic details" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif
   
   os_ptr->str( "" );
@@ -650,7 +659,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, setup_all_logs )
 
 //---------------------------------------------------------------------------//
 // Check that a global filter can be set
-TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
+BOOST_AUTO_TEST_CASE( set_global_filter )
 {
   // Make sure that all sinks have been removed from the log
   FRENSIE_REMOVE_ALL_LOGS();
@@ -672,8 +681,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_ERROR( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -681,8 +690,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_TAGGED_ERROR( "Fatal", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Fatal Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Fatal Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -690,9 +699,9 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_SCOPE_ERROR( "TestScope", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -700,9 +709,9 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_TAGGED_SCOPE_ERROR( "TestScope", "Fatal", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Fatal Error:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Fatal Error:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "TestScope" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -710,8 +719,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_WARNING( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Warning:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Warning:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -719,8 +728,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_TAGGED_WARNING( "Critical", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Critical Warning:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Critical Warning:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -728,7 +737,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_NOTIFICATION( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -736,8 +745,8 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_TAGGED_NOTIFICATION( "Important", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().find( "Important:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Important:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -745,7 +754,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_DETAILS( "testing details" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -753,7 +762,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_TAGGED_DETAILS( "Useless", "testing details" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -762,10 +771,10 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_FLUSH_ALL_LOGS();
 
 #if HAVE_FRENSIE_DETAILED_LOGGING
-  TEST_ASSERT( os_ptr->str().find( "Important:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Important:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 )
+  BOOST_CHECK( os_ptr->str().size() == 0 )
 #endif
     
   os_ptr->str( "" );
@@ -774,7 +783,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_PEDANTIC_DETAILS( "testing pedantic details" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -782,7 +791,7 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_LOG_TAGGED_PEDANTIC_DETAILS( "Useless", "testing pedantic details" );
   FRENSIE_FLUSH_ALL_LOGS();
 
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 
   os_ptr->str( "" );
   os_ptr->clear();
@@ -791,28 +800,17 @@ TEUCHOS_UNIT_TEST( LoggingMacros, set_global_filter )
   FRENSIE_FLUSH_ALL_LOGS();
 
 #if HAVE_FRENSIE_DETAILED_LOGGING  
-  TEST_ASSERT( os_ptr->str().find( "Important:" ) < os_ptr->str().size() );
-  TEST_ASSERT( os_ptr->str().find( "testing pedantic details" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "Important:" ) < os_ptr->str().size() );
+  BOOST_CHECK( os_ptr->str().find( "testing pedantic details" ) < os_ptr->str().size() );
 #else
-  TEST_ASSERT( os_ptr->str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif
 
   os_ptr->str( "" );
   os_ptr->clear();
 }
 
-//---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::GlobalMPISession mpi_session( &argc, &argv );
-
-  // Add the standard log attributes
-  FRENSIE_ADD_STANDARD_LOG_ATTRIBUTES();
-
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
-}
+BOOST_AUTO_TEST_SUITE_END()
 
 //---------------------------------------------------------------------------//
 // end tstLoggingMacros.cpp
