@@ -12,70 +12,21 @@
 // FRENSIE Includes
 #include "Utility_LogRecordType.hpp"
 #include "Utility_LoggingStaticConstants.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_FromStringTraits.hpp"
 
 namespace Utility{
 
-// Test if the log record type name is valid
-bool isValidLogRecordTypeName( const std::string& log_record_type_name )
+// Place a Utility::LogRecordType object in a stream
+std::ostream& operator<<( std::ostream& os, const LogRecordType record_type )
 {
-  if( log_record_type_name == FRENSIE_LOG_ERROR_MSG_BASIC )
-    return true;
-  else if( log_record_type_name == FRENSIE_LOG_WARNING_MSG_BASIC )
-    return true;
-  else if( log_record_type_name == FRENSIE_LOG_NOTIFICATION_MSG_BASIC )
-    return true;
-  else if( log_record_type_name == FRENSIE_LOG_DETAILS_MSG_BASIC )
-    return true;
-  else if( log_record_type_name == FRENSIE_LOG_PEDANTIC_DETAILS_MSG_BASIC )
-    return true;
-  else
-    return false;
+  Utility::toStream( os, record_type );
 }
 
-// Convert the log record type name to a log record type enum
-LogRecordType convertLogRecordTypeNameToEnum(
-                                      const std::string& log_record_type_name )
+// Extract a Utility::LogRecordType value from a stream
+std::istream& operator>>( std::istream& is, LogRecordType& record_type )
 {
-  if( log_record_type_name == FRENSIE_LOG_ERROR_MSG_BASIC )
-    return ERROR_RECORD;
-  else if( log_record_type_name == FRENSIE_LOG_WARNING_MSG_BASIC )
-    return WARNING_RECORD;
-  else if( log_record_type_name == FRENSIE_LOG_NOTIFICATION_MSG_BASIC )
-    return NOTIFICATION_RECORD;
-  else if( log_record_type_name == FRENSIE_LOG_DETAILS_MSG_BASIC )
-    return DETAILS_RECORD;
-  else if( log_record_type_name == FRENSIE_LOG_PEDANTIC_DETAILS_MSG_BASIC )
-    return PEDANTIC_DETAILS_RECORD;
-  else
-  {
-    THROW_EXCEPTION( std::runtime_error,
-                     "unknown log record type name ("
-                     << log_record_type_name << ")!" );
-  }
-}
-
-// Convert the log record type enum to a string
-std::string convertLogRecordTypeEnumToString( const LogRecordType type )
-{
-  switch( type )
-  {
-    case ERROR_RECORD:
-      return FRENSIE_LOG_ERROR_MSG_BASIC;
-    case WARNING_RECORD:
-      return FRENSIE_LOG_WARNING_MSG_BASIC;
-    case NOTIFICATION_RECORD:
-      return FRENSIE_LOG_NOTIFICATION_MSG_BASIC;
-    case DETAILS_RECORD:
-      return FRENSIE_LOG_DETAILS_MSG_BASIC;
-    case PEDANTIC_DETAILS_RECORD:
-      return FRENSIE_LOG_PEDANTIC_DETAILS_MSG_BASIC;
-    default:
-    {
-      THROW_EXCEPTION( std::logic_error,
-                       "unkown log record type (" << (unsigned)type << ")!" );
-    }
-  }
+  Utility::fromStream( is, record_type );
 }
   
 } // end Utility namespace

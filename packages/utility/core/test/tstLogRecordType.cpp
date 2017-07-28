@@ -11,8 +11,9 @@
 #include <sstream>
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -21,127 +22,152 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check if the log record type name is valid
-TEUCHOS_UNIT_TEST( LogRecordType, isValidLogRecordTypeName )
-{
-  std::string log_record_name = "Error";
-
-  TEST_ASSERT( Utility::isValidLogRecordTypeName( log_record_name ) );
-
-  log_record_name = "Warning";
-
-  TEST_ASSERT( Utility::isValidLogRecordTypeName( log_record_name ) );
-
-  log_record_name = "Notification";
-
-  TEST_ASSERT( Utility::isValidLogRecordTypeName( log_record_name ) );
-
-  log_record_name = "Details";
-
-  TEST_ASSERT( Utility::isValidLogRecordTypeName( log_record_name ) );
-
-  log_record_name = "Pedantic Details";
-
-  TEST_ASSERT( Utility::isValidLogRecordTypeName( log_record_name ) );
-
-  log_record_name = "Dummy";
-
-  TEST_ASSERT( !Utility::isValidLogRecordTypeName( log_record_name ) );
-}
-
-//---------------------------------------------------------------------------//
 // Check that a log record type name can be converted to a log record type
-TEUCHOS_UNIT_TEST( LogRecordType, convertLogRecordTypeNameToEnum )
+BOOST_AUTO_TEST_CASE( istream_operator )
 {
-  Utility::LogRecordType record_type =
-    Utility::convertLogRecordTypeNameToEnum( "Error" );
+  Utility::LogRecordType record_type;
+  std::istringstream iss( "Error" );
+  
+  iss >> record_type;
 
-  TEST_EQUALITY_CONST( record_type, Utility::ERROR_RECORD );
+  BOOST_CHECK_EQUAL( record_type, Utility::ERROR_RECORD );
 
-  record_type = Utility::convertLogRecordTypeNameToEnum( "Warning" );
+  iss.str( " Error " );
+  iss.clear();
 
-  TEST_EQUALITY_CONST( record_type, Utility::WARNING_RECORD );
+  iss >> record_type;
 
-  record_type = Utility::convertLogRecordTypeNameToEnum( "Notification" );
+  BOOST_CHECK_EQUAL( record_type, Utility::ERROR_RECORD );
 
-  TEST_EQUALITY_CONST( record_type, Utility::NOTIFICATION_RECORD );
+  iss.str( "error" );
+  iss.clear();
 
-  record_type = Utility::convertLogRecordTypeNameToEnum( "Details" );
+  BOOST_CHECK_THROW( iss >> record_type, std::runtime_error );
 
-  TEST_EQUALITY_CONST( record_type, Utility::DETAILS_RECORD );
+  iss.str( "Warning" );
+  iss.clear();
 
-  record_type = Utility::convertLogRecordTypeNameToEnum( "Pedantic Details" );
+  iss >> record_type;
 
-  TEST_EQUALITY_CONST( record_type, Utility::PEDANTIC_DETAILS_RECORD );
-}
+  BOOST_CHECK_EQUAL( record_type, Utility::WARNING_RECORD );
 
-//---------------------------------------------------------------------------//
-// Check that a log record type enum can be converted to a name
-TEUCHOS_UNIT_TEST( LogRecordType, convertLogRecordTypeEnumToString )
-{
-  std::string record_type_name =
-    Utility::convertLogRecordTypeEnumToString( Utility::ERROR_RECORD );
+  iss.str( " Warning " );
+  iss.clear();
 
-  TEST_EQUALITY_CONST( record_type_name, "Error" );
+  iss >> record_type;
 
-  record_type_name =
-    Utility::convertLogRecordTypeEnumToString( Utility::WARNING_RECORD );
+  BOOST_CHECK_EQUAL( record_type, Utility::WARNING_RECORD );
 
-  TEST_EQUALITY_CONST( record_type_name, "Warning" );
+  iss.str( "warning" );
+  iss.clear();
 
-  record_type_name =
-    Utility::convertLogRecordTypeEnumToString( Utility::NOTIFICATION_RECORD );
+  BOOST_CHECK_THROW( iss >> record_type, std::runtime_error );
 
-  TEST_EQUALITY_CONST( record_type_name, "Notification" );
+  iss.str( "Notification" );
+  iss.clear();
 
-  record_type_name =
-    Utility::convertLogRecordTypeEnumToString( Utility::DETAILS_RECORD );
+  iss >> record_type;
 
-  TEST_EQUALITY_CONST( record_type_name, "Details" );
+  BOOST_CHECK_EQUAL( record_type, Utility::NOTIFICATION_RECORD );
 
-  record_type_name =
-    Utility::convertLogRecordTypeEnumToString( Utility::PEDANTIC_DETAILS_RECORD );
+  iss.str( " Notification " );
+  iss.clear();
 
-  TEST_EQUALITY_CONST( record_type_name, "Pedantic Details" );
+  iss >> record_type;
+
+  BOOST_CHECK_EQUAL( record_type, Utility::NOTIFICATION_RECORD );
+
+  iss.str( "notification" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( iss >> record_type, std::runtime_error );
+
+  iss.str( "Details" );
+  iss.clear();
+
+  iss >> record_type;
+
+  BOOST_CHECK_EQUAL( record_type, Utility::DETAILS_RECORD );
+
+  iss.str( " Details " );
+  iss.clear();
+
+  iss >> record_type;
+
+  BOOST_CHECK_EQUAL( record_type, Utility::DETAILS_RECORD );
+
+  iss.str( "details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( iss >> record_type, std::runtime_error );
+
+  iss.str( "Pedantic Details" );
+  iss.clear();
+
+  iss >> record_type;
+
+  BOOST_CHECK_EQUAL( record_type, Utility::PEDANTIC_DETAILS_RECORD );
+
+  iss.str( " Pedantic  Details " );
+  iss.clear();
+
+  iss >> record_type;
+
+  BOOST_CHECK_EQUAL( record_type, Utility::PEDANTIC_DETAILS_RECORD );
+
+  iss.str( "pedantic Details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( iss >> record_type, std::runtime_error );
+
+  iss.str( "Pedantic details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( iss >> record_type, std::runtime_error );
+
+  iss.str( "pedantic details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( iss >> record_type, std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a log record type can be placed in a stream and formatted
-TEUCHOS_UNIT_TEST( LogRecordType, stream_operator )
+BOOST_AUTO_TEST_CASE( ostream_operator )
 {
   std::ostringstream oss;
 
   oss << Utility::ERROR_RECORD;
 
-  TEST_EQUALITY_CONST( oss.str(), "Error" );
+  BOOST_CHECK_EQUAL( oss.str(), "Error" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::WARNING_RECORD;
 
-  TEST_EQUALITY_CONST( oss.str(), "Warning" );
+  BOOST_CHECK_EQUAL( oss.str(), "Warning" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::NOTIFICATION_RECORD;
 
-  TEST_EQUALITY_CONST( oss.str(), "Notification" );
+  BOOST_CHECK_EQUAL( oss.str(), "Notification" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::DETAILS_RECORD;
 
-  TEST_EQUALITY_CONST( oss.str(), "Details" );
+  BOOST_CHECK_EQUAL( oss.str(), "Details" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::PEDANTIC_DETAILS_RECORD;
 
-  TEST_EQUALITY_CONST( oss.str(), "Pedantic Details" );
+  BOOST_CHECK_EQUAL( oss.str(), "Pedantic Details" );
 }
 
 //---------------------------------------------------------------------------//

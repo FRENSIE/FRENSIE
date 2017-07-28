@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "Utility_ToStringTraitsDecl.hpp"
+#include "Utility_LogRecordType.hpp"
 
 namespace Utility{
 
@@ -69,6 +70,25 @@ struct ToStringTraits<char[N]> : public ToStringTraits<const char*>
 template<size_t N>
 struct ToStringTraits<const char[N]> : public ToStringTraits<const char*>
 { /* ... */ };
+
+/*! Specialization of ToStringTraits for Utility::LogRecordType
+ *
+ * This specialization is not specified with the LogRecordType enum because
+ * of the potential for other ToStringTraits specializations to indirectly 
+ * depend on the enum. Declaring this specialization here prevents any 
+ * circular dependecies.
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<LogRecordType>
+{
+  //! Return the string
+  static std::string toString( const LogRecordType obj );
+
+  //! Place the LogRecordType in a stream
+  static inline void toStream( std::ostream& os, const LogRecordType obj )
+  { os << Utility::toString( obj ); }
+};
   
 /*! Specialization of ToStringTraits for bool
  * \ingroup to_string_traits

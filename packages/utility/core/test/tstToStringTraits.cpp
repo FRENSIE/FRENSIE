@@ -60,6 +60,58 @@ BOOST_AUTO_TEST_CASE( string_toStream )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a LogRecordType can be converted to a string
+BOOST_AUTO_TEST_CASE( LogRecordType_toString )
+{
+  BOOST_CHECK_EQUAL( Utility::toString( Utility::ERROR_RECORD ), "Error" );
+  BOOST_CHECK_EQUAL( Utility::toString( Utility::WARNING_RECORD ), "Warning" );
+  BOOST_CHECK_EQUAL( Utility::toString( Utility::NOTIFICATION_RECORD ),
+                     "Notification" );
+  BOOST_CHECK_EQUAL( Utility::toString( Utility::DETAILS_RECORD ), "Details" );
+  BOOST_CHECK_EQUAL( Utility::toString( Utility::PEDANTIC_DETAILS_RECORD ),
+                     "Pedantic Details" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a LogRecordType can be placed in a stream
+BOOST_AUTO_TEST_CASE( LogRecordType_toStream )
+{
+  std::ostringstream oss;
+
+  Utility::toStream( oss, Utility::ERROR_RECORD );
+
+  BOOST_CHECK_EQUAL( oss.str(), "Error" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::WARNING_RECORD );
+
+  BOOST_CHECK_EQUAL( oss.str(), "Warning" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::NOTIFICATION_RECORD );
+
+  BOOST_CHECK_EQUAL( oss.str(), "Notification" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::DETAILS_RECORD );
+
+  BOOST_CHECK_EQUAL( oss.str(), "Details" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::PEDANTIC_DETAILS_RECORD );
+
+  BOOST_CHECK_EQUAL( oss.str(), "Pedantic Details" );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a bool can be converted to a string
 BOOST_AUTO_TEST_CASE( bool_toString )
 {

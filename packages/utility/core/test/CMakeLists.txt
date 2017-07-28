@@ -6,11 +6,6 @@ TARGET_LINK_LIBRARIES(tstAssertion utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(Assertion_test tstAssertion --report_level=detailed)
 SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstContractException tstContractException.cpp)
-TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(ContractException_test tstContractException --report_level=detailed)
-SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
-
 ADD_EXECUTABLE(tstToStringTraits tstToStringTraits.cpp)
 TARGET_LINK_LIBRARIES(tstToStringTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(ToStringTraits_test tstToStringTraits --report_level=detailed)
@@ -20,6 +15,11 @@ ADD_EXECUTABLE(tstFromStringTraits tstFromStringTraits.cpp)
 TARGET_LINK_LIBRARIES(tstFromStringTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(FromStringTraits_test tstFromStringTraits --report_level=detailed)
 SET_PROPERTY(TEST FromStringTraits_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstLogRecordType tstLogRecordType.cpp)
+TARGET_LINK_LIBRARIES(tstLogRecordType utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(LogRecordType_test tstLogRecordType --report_level=detailed)
+SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstTypeTraits tstTypeTraits.cpp)
 TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
@@ -36,13 +36,6 @@ TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core ${BOOST_TEST_LIBRAR
 ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter --report_level=detailed)
 SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstLogRecordType
-  tstLogRecordType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstLogRecordType utility_core)
-ADD_TEST(LogRecordType_test tstLogRecordType)
-SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
-
 ADD_EXECUTABLE(tstLoggingMacros
   tstLoggingMacros.cpp)
 TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core)
@@ -55,6 +48,11 @@ ADD_EXECUTABLE(tstExceptionCatchMacros
 TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core)
 ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros)
 SET_PROPERTY(TEST ExceptionCatchMacros_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstContractException tstContractException.cpp)
+TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ContractException_test tstContractException --report_level=detailed)
+SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
 
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.

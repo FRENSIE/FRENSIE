@@ -20,6 +20,7 @@
 
 // FRENSIE Includes
 #include "Utility_FromStringTraitsDecl.hpp"
+#include "Utility_LogRecordType.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -79,6 +80,29 @@ private:
   // Extract a string element
   static std::string extractElementString( std::istream& is,
                                            const std::string& delims );
+};
+
+/*! Specialization of FromStringTraits for Utility::LogRecordType
+ *
+ * This specialization is not specified with the LogRecordType enum because
+ * many of the other FromStringTraits specializations indirectly depend on the
+ * enum (e.g. through the exception test macros). Declaring this specialization
+ * here prevents any circular dependecies.
+ * \ingroup from_string_traits
+ */
+template<>
+struct FromStringTraits<LogRecordType>
+{
+  //! The type that a string will be converted to
+  typedef LogRecordType ReturnType;
+
+  //! Convert the string to a Utility::LogRecordType
+  static ReturnType fromString( const std::string& obj_rep );
+
+  //! Extract the object from a stream
+  static void fromStream( std::istream& is,
+                          LogRecordType& obj,
+                          const std::string& delim = std::string() );
 };
 
 namespace Details{

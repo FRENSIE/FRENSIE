@@ -150,6 +150,164 @@ BOOST_AUTO_TEST_CASE( string_fromStream )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a LogRecordType can be created from a string
+BOOST_AUTO_TEST_CASE( LogRecordType_fromString )
+{
+  Utility::LogRecordType record_type;
+  
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( "Error" ),
+                     Utility::ERROR_RECORD );
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( " Error " ),
+                     Utility::ERROR_RECORD );
+  BOOST_CHECK_THROW( Utility::fromString<Utility::LogRecordType>( "error" ),
+                     Utility::StringConversionException );
+
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( "Warning" ),
+                     Utility::WARNING_RECORD );
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( " Warning " ),
+                     Utility::WARNING_RECORD );
+  BOOST_CHECK_THROW( Utility::fromString<Utility::LogRecordType>( "warning" ),
+                     Utility::StringConversionException );
+
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( "Notification" ),
+                     Utility::NOTIFICATION_RECORD );
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( " Notification " ),
+                     Utility::NOTIFICATION_RECORD );
+  BOOST_CHECK_THROW( Utility::fromString<Utility::LogRecordType>( "notification" ),
+                     Utility::StringConversionException );
+
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( "Details" ),
+                     Utility::DETAILS_RECORD );
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( " Details " ),
+                     Utility::DETAILS_RECORD );
+  BOOST_CHECK_THROW( Utility::fromString<Utility::LogRecordType>( "details" ),
+                     Utility::StringConversionException );
+
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( "Pedantic Details" ),
+                     Utility::PEDANTIC_DETAILS_RECORD );
+
+  BOOST_CHECK_EQUAL( Utility::fromString<Utility::LogRecordType>( " Pedantic Details " ),
+                     Utility::PEDANTIC_DETAILS_RECORD );
+
+  BOOST_CHECK_THROW( Utility::fromString<Utility::LogRecordType>( "pedantic Details" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<Utility::LogRecordType>( "Pedantic details" ),
+                     Utility::StringConversionException );
+  BOOST_CHECK_THROW( Utility::fromString<Utility::LogRecordType>( "pedantic details" ),
+                     Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a LogRecordType can be extracted from a stream
+BOOST_AUTO_TEST_CASE( LogRecordType_fromStream )
+{
+  Utility::LogRecordType record_type;
+  std::istringstream iss( "Error" );
+  
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::ERROR_RECORD );
+
+  iss.str( " Error " );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::ERROR_RECORD );
+
+  iss.str( "error" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, record_type ), std::runtime_error );
+
+  iss.str( "Warning" );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::WARNING_RECORD );
+
+  iss.str( " Warning " );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::WARNING_RECORD );
+
+  iss.str( "warning" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, record_type ), std::runtime_error );
+
+  iss.str( "Notification" );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::NOTIFICATION_RECORD );
+
+  iss.str( " Notification " );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::NOTIFICATION_RECORD );
+
+  iss.str( "notification" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, record_type ), std::runtime_error );
+
+  iss.str( "Details" );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::DETAILS_RECORD );
+
+  iss.str( " Details " );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::DETAILS_RECORD );
+
+  iss.str( "details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, record_type ), std::runtime_error );
+
+  iss.str( "Pedantic Details" );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::PEDANTIC_DETAILS_RECORD );
+
+  iss.str( " Pedantic  Details " );
+  iss.clear();
+
+  Utility::fromStream( iss, record_type );
+
+  BOOST_CHECK_EQUAL( record_type, Utility::PEDANTIC_DETAILS_RECORD );
+
+  iss.str( "pedantic Details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, record_type ), std::runtime_error );
+
+  iss.str( "Pedantic details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, record_type ), std::runtime_error );
+
+  iss.str( "pedantic details" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, record_type ), std::runtime_error );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a boolean can be created from a string
 BOOST_AUTO_TEST_CASE( bool_fromString )
 {

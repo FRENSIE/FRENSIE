@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_LoggingStaticConstants.hpp"
 
 namespace Utility{
 
@@ -381,6 +382,60 @@ void expandPiKeywords( std::string& obj_rep )
                                          elem_end_pos - 1,
                                          obj_rep );
   }while( elem_end_pos < obj_rep.size() );
+}
+
+// Convert the string to a Utility::LogRecordType
+auto FromStringTraits<LogRecordType>::fromString(
+                                     const std::string& obj_rep ) -> ReturnType
+{
+  std::string trimmed_obj_rep = boost::algorithm::trim_copy( obj_rep );
+  
+  if( trimmed_obj_rep == FRENSIE_LOG_ERROR_MSG_BASIC )
+    return ERROR_RECORD;
+  else if( trimmed_obj_rep == FRENSIE_LOG_WARNING_MSG_BASIC )
+    return WARNING_RECORD;
+  else if( trimmed_obj_rep == FRENSIE_LOG_NOTIFICATION_MSG_BASIC )
+    return NOTIFICATION_RECORD;
+  else if( trimmed_obj_rep == FRENSIE_LOG_DETAILS_MSG_BASIC )
+    return DETAILS_RECORD;
+  else if( trimmed_obj_rep == FRENSIE_LOG_PEDANTIC_DETAILS_MSG_BASIC )
+    return PEDANTIC_DETAILS_RECORD;
+  else
+  {
+    THROW_EXCEPTION( Utility::StringConversionException,
+                     "unknown log record type name ("
+                     << obj_rep << ")!" );
+  }
+}
+
+// Extract the object from a stream
+void FromStringTraits<LogRecordType>::fromStream( std::istream& is,
+                                                  LogRecordType& obj,
+                                                  const std::string& delim )
+{
+  std::string obj_rep;
+
+  std::string delim_copy = delim;
+  
+  if( delim.size() == 0 )
+    delim_copy = Details::white_space_delims;
+
+  while( obj_rep.size() == 0 )
+    Utility::fromStream( is, obj_rep, delim_copy );
+
+  // Handle the pedantic details special case
+  if( std::string( FRENSIE_LOG_PEDANTIC_DETAILS_MSG_BASIC ).find( obj_rep ) == 0 )
+  {
+    std::string obj_rep_end;
+
+    while( obj_rep_end.size() == 0 )
+      Utility::fromStream( is, obj_rep_end, delim_copy );
+
+    obj_rep += " ";
+    obj_rep += obj_rep_end;
+  }
+
+  obj = FromStringTraits<LogRecordType>::fromString( obj_rep );      
 }
   
 } // end Utility namespace

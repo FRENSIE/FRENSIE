@@ -24,24 +24,11 @@ enum LogRecordType{
   ERROR_RECORD
 };
 
-//! Test if the log record type name is valid
-bool isValidLogRecordTypeName( const std::string& log_record_type_name );
+//! Place a Utility::LogRecordType object in a stream
+std::ostream& operator<<( std::ostream& os, const LogRecordType record_type );
 
-//! Convert the log record type name to a log record type enum
-LogRecordType convertLogRecordTypeNameToEnum(
-                                     const std::string& log_record_type_name );
-
-//! Convert the log record type enum to a string
-std::string convertLogRecordTypeEnumToString( const LogRecordType type );
-
-//! Stream operator for printing log record type enums
-template<typename CharT, typename TraitsT>
-inline std::basic_ostream<CharT,TraitsT>& operator<<(
-                    std::basic_ostream<CharT,TraitsT>& os, LogRecordType type )
-{
-  os << convertLogRecordTypeEnumToString( type );
-  return os;
-}
+//! Extract a Utility::LogRecordType value from a stream
+std::istream& operator>>( std::istream& is, LogRecordType& record_type );
   
 } // end Utility namespace
 
