@@ -33,7 +33,7 @@ public:
 
   typedef ElasticElectronScatteringDistributionNativeFactory ThisType;
 
-  typedef ScreenedRutherfordTraits SRTraits;
+  typedef ElasticElectronTraits ElasticTraits;
 
   typedef Utility::Pair<double, std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<void, void> > > TwoDFunction;
 
@@ -250,7 +250,7 @@ public:
   template<typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createAnalogScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
-    const std::shared_ptr<const SRTraits>& sr_traits,
+    const std::shared_ptr<const ElasticTraits>& sr_traits,
     const std::map<double,std::vector<double> >& angles,
     const std::map<double,std::vector<double> >& pdf,
     const std::vector<double>& energy_grid,

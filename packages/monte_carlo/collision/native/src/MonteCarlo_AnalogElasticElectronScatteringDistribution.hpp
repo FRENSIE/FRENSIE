@@ -17,7 +17,7 @@
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_AnalogElasticDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
-#include "MonteCarlo_ScreenedRutherfordTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -32,7 +32,7 @@ public:
   typedef AnalogElasticElectronScatteringDistribution ThisType;
 
   //! Typedef for the screened Rutherford traits
-  typedef ScreenedRutherfordTraits SRTraits;
+  typedef ElasticElectronTraits ElasticTraits;
 
   //! Typedef for the one d distributions
   typedef Utility::OneDDistribution OneDDist;
@@ -44,7 +44,7 @@ public:
   AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<const TwoDDist>& analog_elastic_distribution,
     const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const SRTraits>& screened_rutherford_traits,
+    const std::shared_ptr<const ElasticTraits>& screened_rutherford_traits,
     const bool correlated_sampling_mode_on );
 
   //! Destructor
@@ -105,7 +105,21 @@ public:
 
 protected:
 
-   //! Sample an outgoing direction from the distribution
+  //! Sample the screened Rutherford peak
+  double sampleScreenedRutherfordPeak( const double incoming_energy,
+                                       const double random_number,
+                                       const double cutoff_ratio ) const;
+
+  //! Sample using the 1-D Union method
+  double sampleOneDUnion( const double incoming_energy ) const;
+
+  //! Sample using the 2-D Union method
+  double sampleTwoDUnion( const double incoming_energy ) const;
+
+  //! Sample using the Simplified Union method
+  double sampleSimplifiedUnion( const double incoming_energy ) const;
+
+  //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
@@ -133,10 +147,13 @@ private:
   std::shared_ptr<const OneDDist> d_cutoff_ratios;
 
   // Screened Rutherford traits
-  std::shared_ptr<const SRTraits> d_sr_traits;
+  std::shared_ptr<const ElasticTraits> d_sr_traits;
 
-  // The sample function pointer
-  std::function<double ( const double, const double )> d_sample_func;
+  // The sampling function pointer
+  std::function<double ( const double, const double )> d_sample_function;
+
+  // The sampling method pointer
+  std::function<double ( const double )> d_sample_method;
 };
 
 } // end MonteCarlo namespace

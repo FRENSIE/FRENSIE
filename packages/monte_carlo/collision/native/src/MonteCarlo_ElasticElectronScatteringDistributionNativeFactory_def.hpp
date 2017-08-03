@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ScreenedRutherfordTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -290,8 +290,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
                                   cross_section_ratios );
 
   // Create the screened Rutherford traits
-  std::shared_ptr<const SRTraits> sr_traits(
-    new SRTraits( atomic_number ) );
+  std::shared_ptr<const ElasticTraits> sr_traits(
+    new ElasticTraits( atomic_number ) );
 
   // Create the scattering function
   std::shared_ptr<TwoDDist> scattering_function;
@@ -870,7 +870,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
 template<typename TwoDInterpPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
-    const std::shared_ptr<const SRTraits>& sr_traits,
+    const std::shared_ptr<const ElasticTraits>& sr_traits,
     const std::map<double,std::vector<double> >& elastic_angles,
     const std::map<double,std::vector<double> >& elastic_pdf,
     const std::vector<double>& energy_grid,

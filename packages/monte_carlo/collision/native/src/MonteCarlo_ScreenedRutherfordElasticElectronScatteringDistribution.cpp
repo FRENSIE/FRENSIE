@@ -25,7 +25,7 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
   // Make sure the array is valid
   testPrecondition( d_elastic_cutoff_distribution.use_count() > 0 );
 
-  d_sr_traits.reset( new ScreenedRutherfordTraits( atomic_number ) );
+  d_sr_traits.reset( new ElasticElectronTraits( atomic_number ) );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
@@ -36,7 +36,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double eta = d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy );
@@ -53,17 +53,17 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
 {
   // Make sure the energy, eta and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
 
   double delta_mu = 1.0L - scattering_angle_cosine;
 
   double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluate( incoming_energy, SRTraits::mu_peak );
+    d_elastic_cutoff_distribution->evaluate( incoming_energy, ElasticTraits::mu_peak );
 
   double pdf = cutoff_pdf*
-            ( SRTraits::delta_mu_peak + eta )*( SRTraits::delta_mu_peak + eta )/(
+            ( ElasticTraits::delta_mu_peak + eta )*( ElasticTraits::delta_mu_peak + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
 
   return pdf;
@@ -77,7 +77,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
 {
   // Make sure the energy, eta and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double eta = d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy );
@@ -93,17 +93,17 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
 {
   // Make sure the energy, eta and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
 
   double delta_mu = 1.0L - scattering_angle_cosine;
 
   double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, SRTraits::mu_peak );
+    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, ElasticTraits::mu_peak );
 
   return cutoff_pdf*
-            ( SRTraits::delta_mu_peak + eta )*( SRTraits::delta_mu_peak + eta )/(
+            ( ElasticTraits::delta_mu_peak + eta )*( ElasticTraits::delta_mu_peak + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
 }
 
@@ -129,9 +129,9 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegrat
   testPrecondition( eta > 0.0 );
 
   double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, SRTraits::mu_peak );
+    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, ElasticTraits::mu_peak );
 
-  return cutoff_pdf*SRTraits::delta_mu_peak*( SRTraits::delta_mu_peak + eta )/( eta );
+  return cutoff_pdf*ElasticTraits::delta_mu_peak*( ElasticTraits::delta_mu_peak + eta )/( eta );
 }
 
 // Evaluate the CDF
@@ -141,7 +141,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double eta = d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy );
@@ -157,14 +157,14 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
 {
   // Make sure the energy, eta and angle cosine are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
 
   double delta_mu = 1.0L - scattering_angle_cosine;
 
-  return ( SRTraits::delta_mu_peak + eta )/( delta_mu + eta )*
-         ( delta_mu/SRTraits::delta_mu_peak );
+  return ( ElasticTraits::delta_mu_peak + eta )/( delta_mu + eta )*
+         ( delta_mu/ElasticTraits::delta_mu_peak );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -266,12 +266,12 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
   double eta = d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy );
 
   scattering_angle_cosine =
-        ( SRTraits::mu_peak * eta +
-        ( 1.0L + eta ) * SRTraits::delta_mu_peak * random_number )/
-        ( eta + SRTraits::delta_mu_peak * random_number );
+        ( ElasticTraits::mu_peak * eta +
+        ( 1.0L + eta ) * ElasticTraits::delta_mu_peak * random_number )/
+        ( eta + ElasticTraits::delta_mu_peak * random_number );
 
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPostcondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 

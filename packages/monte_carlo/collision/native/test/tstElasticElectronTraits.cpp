@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ScreenedRutherfordTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -23,22 +23,22 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-typedef MonteCarlo::ScreenedRutherfordTraits SRTraits;
+typedef MonteCarlo::ElasticElectronTraits ElasticTraits;
 
 double energy, eta;
 unsigned atomic_number;
-std::shared_ptr<SRTraits> traits;
+std::shared_ptr<ElasticTraits> traits;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the Seltzer modification can be turned on/off
-TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    setSeltzerModificationOnOff )
 {
   // Construct the traits
   atomic_number = 1u;
-  traits.reset( new SRTraits( atomic_number ) );
+  traits.reset( new ElasticTraits( atomic_number ) );
   TEST_ASSERT( traits->isSeltzerModificationOn() );
 
   // Set the Seltzer modification off
@@ -52,12 +52,12 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
 
 //---------------------------------------------------------------------------//
 // Check that the atomic number can be set
-TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    setAtomicNumber )
 {
   // Construct the traits
   atomic_number = 1u;
-  traits.reset( new SRTraits( atomic_number ) );
+  traits.reset( new ElasticTraits( atomic_number ) );
 
   TEST_EQUALITY_CONST( traits->getAtomicNumber(), atomic_number);
 
@@ -69,12 +69,12 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    evaluateMoliereScreeningConstant )
 {
   // Test with several energies
   atomic_number = 1u;
-  traits.reset( new SRTraits( atomic_number, false ) );
+  traits.reset( new ElasticTraits( atomic_number, false ) );
 
   energy = 1.0e-5;
   eta = traits->evaluateMoliereScreeningConstant( energy );
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
 
   // Test with different atomic number
   atomic_number = 82u;
-  traits.reset( new SRTraits( atomic_number, false ) );
+  traits.reset( new ElasticTraits( atomic_number, false ) );
 
   energy = 1.0e-5;
   eta = traits->evaluateMoliereScreeningConstant( energy );
@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
 
   // Test Seltzer modified with several energies
   atomic_number = 1u;
-  traits.reset( new SRTraits( atomic_number ) );
+  traits.reset( new ElasticTraits( atomic_number ) );
 
   energy = 1.0e-5;
   eta = traits->evaluateMoliereScreeningConstant( energy );
@@ -125,7 +125,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
 
   // Test Seltzer modified with different atomic number
   atomic_number = 82u;
-  traits.reset( new SRTraits( atomic_number ) );
+  traits.reset( new ElasticTraits( atomic_number ) );
 
   energy = 1.0e-5;
   eta = traits->evaluateMoliereScreeningConstant( energy );
@@ -142,39 +142,39 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    evaluateMoliereScreeningConstant_static )
 {
   // Test with several energies
   atomic_number = 1u;
 
   energy = 1.0e-5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
   TEST_FLOATING_EQUALITY( eta, 5.42493087843444, 1e-12 );
 
   energy = 1.0e-3;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
   TEST_FLOATING_EQUALITY( eta, 1.02504366714297E-02, 1e-12 );
 
   energy = 1.0e+5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
   TEST_FLOATING_EQUALITY( eta, 1.00324041890516E-15, 1e-12 );
 
 
   // Test with different atomic number
   atomic_number = 82u;
-  traits.reset( new SRTraits( atomic_number ) );
+  traits.reset( new ElasticTraits( atomic_number ) );
 
   energy = 1.0e-5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
   TEST_FLOATING_EQUALITY( eta, 5.63947861239777E+05, 1e-12 );
 
   energy = 1.0e-3;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
   TEST_FLOATING_EQUALITY( eta, 5.66872011748295E+01, 1e-12 );
 
   energy = 1.0e+5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number, false );
   TEST_FLOATING_EQUALITY( eta, 4.14888276121414E-14, 1e-12 );
 
 
@@ -182,15 +182,15 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
   atomic_number = 1u;
 
   energy = 1.0e-5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
   TEST_FLOATING_EQUALITY( eta, 1.00112938850683E+00, 1e-12 );
 
   energy = 1.0e-3;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
   TEST_FLOATING_EQUALITY( eta, 9.82490598654803E-03, 1e-12 );
 
   energy = 1.0e+5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
   TEST_FLOATING_EQUALITY( eta, 1.00324041845106E-15, 1e-12 );
 
 
@@ -198,15 +198,15 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordTraits,
   atomic_number = 82u;
 
   energy = 1.0e-5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
   TEST_FLOATING_EQUALITY( eta, 2.51317958941273E+03, 1e-12 );
 
   energy = 1.0e-3;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
   TEST_FLOATING_EQUALITY( eta, 2.68213671998008E+00, 1e-12 );
 
   energy = 1.0e+5;
-  eta = SRTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
+  eta = ElasticTraits::evaluateMoliereScreeningConstant( energy, atomic_number );
   TEST_FLOATING_EQUALITY( eta, 4.14887699806239E-14, 1e-12 );
 }
 //---------------------------------------------------------------------------//

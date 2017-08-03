@@ -20,7 +20,7 @@ namespace MonteCarlo{
 AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<const TwoDDist>& analog_elastic_distribution,
     const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const SRTraits>& screened_rutherford_traits,
+    const std::shared_ptr<const ElasticTraits>& screened_rutherford_traits,
     const bool correlated_sampling_mode_on )
   : d_analog_dist( analog_elastic_distribution ),
     d_cutoff_ratios( cutoff_cross_section_ratios ),
@@ -33,8 +33,8 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
 
   if( correlated_sampling_mode_on )
   {
-    // Set the correlated unit based sample routine
-    d_sample_func = std::bind<double>(
+    // Set the correlated exact sample routine
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
          std::cref( *d_analog_dist ),
          std::placeholders::_1,
@@ -43,12 +43,17 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
          std::cref( *d_analog_dist ),
          std::placeholders::_1,
          std::placeholders::_2 );
   }
+
+  d_sample_method = std::bind<double>(
+         &ThisType::sampleSimplifiedUnion,
+         std::cref( *this ),
+         std::placeholders::_1 );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
@@ -66,7 +71,7 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
        incoming_energy < d_analog_dist->getLowerBoundOfPrimaryIndepVar() )
     return 0.0;
 
-  if ( scattering_angle_cosine > SRTraits::mu_peak )
+  if ( scattering_angle_cosine > ElasticTraits::mu_peak )
   {
     // evaluate on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordPDF(
@@ -95,7 +100,7 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
        incoming_energy < d_analog_dist->getLowerBoundOfPrimaryIndepVar() )
     return 0.0;
 
-  if ( scattering_angle_cosine > SRTraits::mu_peak )
+  if ( scattering_angle_cosine > ElasticTraits::mu_peak )
   {
     // evaluate on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordPDF(
@@ -126,7 +131,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
        incoming_energy < d_analog_dist->getLowerBoundOfPrimaryIndepVar() )
     return 0.0;
 
-  if ( scattering_angle_cosine > SRTraits::mu_peak )
+  if ( scattering_angle_cosine > ElasticTraits::mu_peak )
   {
     // evaluate CDF on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordCDF(
@@ -150,7 +155,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
         const double cutoff_pdf ) const
 {
   // Make sure the energy, eta and angle are valid
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
   testPrecondition( cutoff_pdf > 0.0 );
@@ -158,7 +163,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
   double delta_mu = 1.0L - scattering_angle_cosine;
 
   return cutoff_pdf*
-        ( SRTraits::delta_mu_peak + eta )*( SRTraits::delta_mu_peak + eta )/(
+        ( ElasticTraits::delta_mu_peak + eta )*( ElasticTraits::delta_mu_peak + eta )/(
         ( delta_mu + eta )*( delta_mu + eta ) );
 }
 
@@ -169,19 +174,45 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
         const double cutoff_ratio ) const
 {
   // Make sure the energy, eta and angle cosine are valid
-  testPrecondition( scattering_angle_cosine >= SRTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
   testPrecondition( cutoff_ratio > 0.0 );
   testPrecondition( cutoff_ratio <= 1.0 );
 
   double delta_mu = 1.0L - scattering_angle_cosine;
-  double numerator = 1e6*eta*( scattering_angle_cosine - SRTraits::mu_peak );
+  double numerator = 1e6*eta*( scattering_angle_cosine - ElasticTraits::mu_peak );
   double denominator = eta + delta_mu;
 
 
   return std::min( 1.0,
                    cutoff_ratio + (1.0-cutoff_ratio)*numerator/denominator );
+}
+
+// Evaluate the distribution at the cutoff angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateAtCutoff(
+                    const double incoming_energy ) const
+{
+  return d_analog_dist->evaluateExact( incoming_energy, ElasticTraits::mu_peak );
+}
+
+// Evaluate the PDF at the cutoff angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
+                    const double incoming_energy ) const
+{
+  return this->evaluateAtCutoff( incoming_energy )*
+         this->evaluateCDFAtCutoff( incoming_energy );
+}
+
+// Evaluate the CDF at the cutoff angle cosine
+double AnalogElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
+                    const double incoming_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy >= d_cutoff_ratios->getLowerBoundOfIndepVar() );
+  testPrecondition( incoming_energy <= d_cutoff_ratios->getUpperBoundOfIndepVar() );
+
+  return d_cutoff_ratios->evaluate( incoming_energy );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -261,32 +292,6 @@ void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
                                     this->sampleAzimuthalAngle() );
 }
 
-// Evaluate the distribution at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateAtCutoff(
-                    const double incoming_energy ) const
-{
-  return d_analog_dist->evaluateExact( incoming_energy, SRTraits::mu_peak );
-}
-
-// Evaluate the PDF at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
-                    const double incoming_energy ) const
-{
-  return this->evaluateAtCutoff( incoming_energy )*
-         this->evaluateCDFAtCutoff( incoming_energy );
-}
-
-// Evaluate the CDF at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
-                    const double incoming_energy ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_cutoff_ratios->getLowerBoundOfIndepVar() );
-  testPrecondition( incoming_energy <= d_cutoff_ratios->getUpperBoundOfIndepVar() );
-
-  return d_cutoff_ratios->evaluate( incoming_energy );
-}
-
 // Sample an outgoing direction from the distribution
 void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
@@ -299,187 +304,141 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   // Increment the number of trials
   ++trials;
 
-  double cutoff_ratio = d_cutoff_ratios->evaluate( incoming_energy );
-
-  // Get a random number
-  double random_number =
-            Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  if ( random_number == cutoff_ratio )
-  {
-    // Set the scattering angle cosine to mu peak
-    scattering_angle_cosine = SRTraits::mu_peak;
-  }
-  else if ( random_number < cutoff_ratio )
-  {
-    // Sample the scattering angle cosine from the tabular part of the distribution
-    scattering_angle_cosine = d_sample_func( incoming_energy, random_number );
-
-    std::cout << std::setprecision(20) << "\t\tscattering_angle_cosine = " << scattering_angle_cosine << std::endl;
-    std::cout << std::setprecision(20) << "\t\tcutoff_ratio = " << cutoff_ratio << std::endl;
-
-    // Make sure the scattering angle cosine is valid
-    testPostcondition( scattering_angle_cosine <= SRTraits::mu_peak );
-  }
-  else
-  { // Sample the screened Rutherford analytical peak
-
-    // evaluate the moliere screening constant
-    double eta = d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy );
-
-    // Scale the random number 
-    double scaled_random_number = SRTraits::delta_mu_peak/eta*
-    ( random_number - cutoff_ratio )/( 1.0 - cutoff_ratio );
-
-    // calculate the screened Rutherford scattering angle
-    scattering_angle_cosine = std::min( 1.0L,
-        ( scaled_random_number*( 1.0L + eta ) + SRTraits::mu_peak )/
-        ( scaled_random_number + 1.0L ) );
-
-    // Scale the random number 
-    scaled_random_number =
-    ( random_number - cutoff_ratio )/( 1.0 - cutoff_ratio );
-
-    // calculate the screened Rutherford scattering angle 2
-    double scattering_angle_cosine2 =
-        ( scaled_random_number*SRTraits::delta_mu_peak*( 1.0L + eta ) + SRTraits::mu_peak*eta )/
-        ( scaled_random_number*SRTraits::delta_mu_peak + eta );
-
-    std::cout << std::setprecision(20) << "\nscattering_angle_cosine   = " << scattering_angle_cosine << std::endl;
-    std::cout << std::setprecision(20) <<   "scattering_angle_cosine 2 = " << scattering_angle_cosine2 << std::endl;
-    // Make sure the scattering angle cosine is valid
-    testPostcondition( scattering_angle_cosine >= SRTraits::mu_peak );
-  }
+  // Sample the scattering angle with the desired method
+  scattering_angle_cosine = d_sample_method( incoming_energy );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
-//// Sample an outgoing direction from the distribution
-//double AnalogElasticElectronScatteringDistribution::correlatedSample(
-//        const double incoming_energy,
-//        const double random_number,
-//        const TwoDDist::DistributionType::const_iterator lower_bin,
-//        const TwoDDist::DistributionType::const_iterator upper_bin,
-//        const unsigned lower_bin_index ) const
-//{
-//    // Sample lower bin
-//    double lower_angle;
-//    this->sampleBin( lower_bin, lower_bin_index, random_number, lower_angle );
+// Sample the screened Rutherford peak
+double AnalogElasticElectronScatteringDistribution::sampleScreenedRutherfordPeak(
+    const double incoming_energy,
+    const double random_number,
+    const double cutoff_ratio ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the random number is valid
+  testPrecondition( random_number >= cutoff_ratio );
 
-//    // Sample upper bin
-//    double upper_angle;
-//    this->sampleBin( upper_bin, lower_bin_index+1, random_number, upper_angle );
+  // evaluate the moliere screening constant
+  double eta = d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy );
 
-////  if( d_linlinlog_interpolation_mode_on )
-////  {
-////    // LinLinLog interpolation between energy bins
-////    return Utility::LinLog::interpolate( lower_bin->first,
-////                                 upper_bin->first,
-////                                 incoming_energy,
-////                                 lower_angle,
-////                                 upper_angle );
-////  }
-////  else
-////  {
-////    // LinLinLin interpolation between energy bins
-////    return Utility::LinLin::interpolate( lower_bin->first,
-////                                 upper_bin->first,
-////                                 incoming_energy,
-////                                 lower_angle,
-////                                 upper_angle );
-////  }
+  // Scale the random number 
+  double scaled_random_number = ElasticTraits::delta_mu_peak/eta*
+    ( random_number - cutoff_ratio )/( 1.0L - cutoff_ratio );
 
-//    // Interpolation between energy bins
-//    return d_interpolation_func( lower_bin->first,
-//                                 upper_bin->first,
-//                                 incoming_energy,
-//                                 lower_angle,
-//                                 upper_angle );
-//}
+  // calculate the screened Rutherford scattering angle
+  return ( scaled_random_number*( 1.0L + eta ) + ElasticTraits::mu_peak )/
+         ( scaled_random_number + 1.0L );
+}
 
-//// Sample an outgoing direction from the distribution
-//double AnalogElasticElectronScatteringDistribution::stochasticSample(
-//        const double incoming_energy,
-//        const double random_number,
-//        const TwoDDist::DistributionType::const_iterator lower_bin,
-//        const TwoDDist::DistributionType::const_iterator upper_bin,
-//        const unsigned lower_bin_index ) const
-//{
-//  double interpolation_fraction = (incoming_energy - lower_bin->first)/
-//                                  (upper_bin->first - lower_bin->first);
+// Sample using the 1-D Union method
+/*! \details The union of the 1-D tabular Cutoff distribution and the analytical
+ *  screened Rutherford distribution are sampled without taking into account
+ *  The interpolated value of the cutoff cross section ratio at the given
+ *  incoming energy. Because the secondary energy grid in very course, this
+ *  routine will likely lead to interpolation errors.
+ */
+double AnalogElasticElectronScatteringDistribution::sampleOneDUnion(
+    const double incoming_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
 
-//  // Sample to determine the distribution that will be used
-//  TwoDDist::DistributionType::const_iterator sampled_bin;
-//  unsigned sampled_bin_index;
-//  if( random_number < interpolation_fraction )
-//  {
-//    sampled_bin = upper_bin;
-//    sampled_bin_index = lower_bin_index +1;
-//  }
-//  else
-//  {
-//    sampled_bin = lower_bin;
-//    sampled_bin_index = lower_bin_index;
-//  }
+  // Get a random number
+  double random_number =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-//  double scattering_angle_cosine;
+  return d_sample_function( incoming_energy, random_number );
+}
 
-//  // Get a random number
-//  double random_number_2 =
-//            Utility::RandomNumberGenerator::getRandomNumber<double>();
+// Sample using the 2-D Union method
+/*! \details The elastic cutoff cross section ratios are used as the
+ *  boundary between the tabular Cutoff distribution and the analytical
+ *  screened Rutherford distribution. The energy grid for the cross section
+ *  ratios is much finer than the energy grid for the elastic secondary
+ *  distribution, resulting in a difference in the sample values below the
+ *  cuotff due to interpolation errors. This difference is handled by
+ *  normalizing the sampled values of the tabular Cuotff disitrbution to range
+ *  from -1 to 0.999999 exactly.
+ */
+double AnalogElasticElectronScatteringDistribution::sampleTwoDUnion(
+    const double incoming_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
 
-//  // Sample the bin
-//  sampleBin( sampled_bin, sampled_bin_index, random_number_2, scattering_angle_cosine );
+  // Get the ratio of the cutoff cross section to the total cross section
+  double cutoff_ratio = d_cutoff_ratios->evaluate( incoming_energy );
 
-//  testPostcondition( scattering_angle_cosine >= -1.0 );
-//  testPostcondition( scattering_angle_cosine <= 1.0 );
+  // Get a random number
+  double random_number =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-//  return scattering_angle_cosine;
-//}
+  if ( random_number == cutoff_ratio ) // Sample mu_peak
+    return ElasticTraits::mu_peak;
+  else if ( random_number < cutoff_ratio )
+  {
+    // Sample the scattering angle cosine from the tabular part of the distribution
+    double raw_angle_cosine = d_sample_function( incoming_energy,
+                                                 random_number );
 
-//// Sample an outgoing direction from the given distribution
-///*! \details Due to roundoff error, that algorithm used to calculate the
-// *  scattering angle cosine can sometimes return a number slightly greater that
-// *  1.0. If this is the case, the scattering angle cosine is set to 1.0.
-// */
-//void AnalogElasticElectronScatteringDistribution::sampleBin(
-//        const TwoDDist::DistributionType::const_iterator& distribution_bin,
-//        const unsigned bin_index,
-//        const double random_number,
-//        double& scattering_angle_cosine ) const
-//{
-//  if ( random_number > d_cutoff_cdfs[bin_index] ) // Sample screened Rutherford
-//  {
-//    // Scale the random number
-//    double scaled_random_number = SRTraits::delta_mu_peak/d_etas[bin_index]*
-//    ( random_number - d_cutoff_cdfs[bin_index] )/( 1.0 - d_cutoff_cdfs[bin_index] );
+    // Normalized the scattering angle cosine to the cosine at cutoff ratio
+    double max_angle_cosine = d_sample_function( incoming_energy,
+                                                 cutoff_ratio );
 
-//    // calculate the screened Rutherford scattering angle
-//    scattering_angle_cosine = std::min( 1.0,
-//        ( scaled_random_number*( 1.0 + d_etas[bin_index] ) + SRTraits::mu_peak )/
-//        ( scaled_random_number + 1.0 ) );
+    /* Normalize the sampled value to range of ( -1 <= mu <= mu_peak )
+     * ( mu_raw + 1 )*( mu_peak + 1 )/( mu_max + 1 ) -1 */
+    return ( ElasticTraits::mu_peak + 1.0L )*
+           ( raw_angle_cosine + 1.0L )/( max_angle_cosine + 1.0L) - 1.0L;
+  }
+  else
+  {
+    // Sample the screened Rutherford analytical peak
+    return this->sampleScreenedRutherfordPeak( incoming_energy,
+                                               random_number,
+                                               cutoff_ratio );
+  }
+}
 
-//    // Make sure the scattering angle cosine is valid
-//    testPostcondition( scattering_angle_cosine >= SRTraits::mu_peak );
-//  }
-//  else // Sample Cutoff
-//  {
-//    // Scale the random number to the cutoff cdf
-//    double scaled_random_number = random_number/d_cutoff_cdfs[bin_index];
+// Sample using the Simplified Union method
+/*! \details The elastic cutoff cross section ratios are used as the
+ *  boundary between the tabular Cutoff distribution and the analytical
+ *  screened Rutherford distribution. The energy grid for the cross section
+ *  ratios is much finer than the energy grid for the elastic secondary
+ *  distribution, resulting in a difference in the sample values below the
+ *  cuotff due to interpolation errors. This difference is assumed small and
+ *  ignored.
+ */
+double AnalogElasticElectronScatteringDistribution::sampleSimplifiedUnion(
+    const double incoming_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
 
-//    // calculate the cutoff distribution scattering angle
-//    scattering_angle_cosine =
-//      distribution_bin->second->sampleWithRandomNumber( scaled_random_number );
+  // Get the ratio of the cutoff cross section to the total cross section
+  double cutoff_ratio = d_cutoff_ratios->evaluate( incoming_energy );
 
-//    // Make sure the scattering angle cosine is valid
-//    testPostcondition( scattering_angle_cosine <= SRTraits::mu_peak );
-//  }
-//  // Make sure the scattering angle cosine is valid
-//  testPostcondition( scattering_angle_cosine >= -1.0 );
-//  testPostcondition( scattering_angle_cosine <= 1.0 );
-//}
+  // Get a random number
+  double random_number =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  if ( random_number == cutoff_ratio ) // Sample mu_peak
+    return ElasticTraits::mu_peak;
+  else if ( random_number < cutoff_ratio ) // Sample tabular Cutoff
+    return d_sample_function( incoming_energy, random_number );
+  else
+  {
+    // Sample the screened Rutherford analytical peak
+    return this->sampleScreenedRutherfordPeak( incoming_energy,
+                                               random_number,
+                                               cutoff_ratio );
+  }
+}
+
 
 } // end MonteCarlo namespace
 

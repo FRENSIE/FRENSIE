@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ScreenedRutherfordTraits.cpp
+//! \file   MonteCarlo_ElasticElectronTraits.cpp
 //! \author Luke Kersting
-//! \brief  Screened Rutherford traits def
+//! \brief  Electron Elastic traits def
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ScreenedRutherfordTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -15,24 +15,24 @@ namespace MonteCarlo{
 
 
 // The change scattering angle cosine below which the screened Rutherford distribution is used
-double ScreenedRutherfordTraits::delta_mu_peak = 1e-6;
+double ElasticElectronTraits::delta_mu_peak = 1e-6;
 
 // The scattering angle cosine above which the screened Rutherford distribution is used
-double ScreenedRutherfordTraits::mu_peak = 0.999999;
+double ElasticElectronTraits::mu_peak = 0.999999;
 
 // A parameter for moliere's screening factor  ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
-double ScreenedRutherfordTraits::s_screening_param1 =
+double ElasticElectronTraits::s_screening_param1 =
         Utility::PhysicalConstants::fine_structure_constant *
         Utility::PhysicalConstants::fine_structure_constant/( 1.56645L );
 
 // A parameter for moliere's screening factor ( 3.76 * fsc**2 )
-double ScreenedRutherfordTraits::s_screening_param2 = 3.76L*
+double ElasticElectronTraits::s_screening_param2 = 3.76L*
         Utility::PhysicalConstants::fine_structure_constant *
         Utility::PhysicalConstants::fine_structure_constant;
 
 
 // Constructor
-ScreenedRutherfordTraits::ScreenedRutherfordTraits(
+ElasticElectronTraits::ElasticElectronTraits(
     const unsigned atomic_number,
     const bool seltzer_modification_on )
   : d_atomic_number( atomic_number ),
@@ -47,31 +47,31 @@ ScreenedRutherfordTraits::ScreenedRutherfordTraits(
 }
 
 // Set the Seltzer modification of eta on (on by default)
-void ScreenedRutherfordTraits::setSeltzerModificationOn()
+void ElasticElectronTraits::setSeltzerModificationOn()
 {
   d_seltzer_modification_on = true;
 }
 
 // Set the Seltzer modification of eta off (on by default)
-void ScreenedRutherfordTraits::setSeltzerModificationOff()
+void ElasticElectronTraits::setSeltzerModificationOff()
 {
   d_seltzer_modification_on = false;
 }
 
 // Return if the the Seltzer modification of eta on (on by default)
-bool ScreenedRutherfordTraits::isSeltzerModificationOn() const
+bool ElasticElectronTraits::isSeltzerModificationOn() const
 {
   return d_seltzer_modification_on;
 }
 
 // Return the atomic number
-unsigned ScreenedRutherfordTraits::getAtomicNumber() const
+unsigned ElasticElectronTraits::getAtomicNumber() const
 {
   return d_atomic_number;
 }
 
 // Set the atomic number
-void ScreenedRutherfordTraits::setAtomicNumber( unsigned atomic_number )
+void ElasticElectronTraits::setAtomicNumber( unsigned atomic_number )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0 );
@@ -96,7 +96,7 @@ void ScreenedRutherfordTraits::setAtomicNumber( unsigned atomic_number )
  * eta = 1/2( 1/(Pc)^2 (fsc/0.885)^2 Z^(2/3) [ 1.13 +
  *        3.76(fsc Z)^2 ( (E/mc^2 + 1)/(Pc) )^2 ) ]
  */
-double ScreenedRutherfordTraits::evaluateMoliereScreeningConstant(
+double ElasticElectronTraits::evaluateMoliereScreeningConstant(
                                               const double energy ) const
 {
   // Calculate the energy in units of electron rest mass energy ( E / mc^2 )
@@ -137,7 +137,7 @@ double ScreenedRutherfordTraits::evaluateMoliereScreeningConstant(
  * eta = 1/2( 1/(Pc)^2 (fsc/0.885)^2 Z^(2/3) [ 1.13 +
  *        3.76(fsc Z)^2 ( (E/mc^2 + 1)/(Pc) )^2 ) ]
  */
-double ScreenedRutherfordTraits::evaluateMoliereScreeningConstant(
+double ElasticElectronTraits::evaluateMoliereScreeningConstant(
                                         const double energy,
                                         const unsigned atomic_number,
                                         const bool seltzer_modification_on )
@@ -176,7 +176,7 @@ double ScreenedRutherfordTraits::evaluateMoliereScreeningConstant(
 }
 
 // Set the screening parameters
-void ScreenedRutherfordTraits::setScreeningParameters()
+void ElasticElectronTraits::setScreeningParameters()
 {
   // Set parameter 1 for moliere screening constant ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
   d_screening_param1 = pow( d_atomic_number, 2.0/3.0 )*s_screening_param1;
@@ -190,5 +190,5 @@ void ScreenedRutherfordTraits::setScreeningParameters()
 
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ScreenedRutherfordTraits.cpp
+// end MonteCarlo_ElasticElectronTraits.cpp
 //---------------------------------------------------------------------------//

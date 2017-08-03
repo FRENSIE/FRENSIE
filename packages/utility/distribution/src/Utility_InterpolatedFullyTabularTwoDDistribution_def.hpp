@@ -886,7 +886,6 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
 
 // Return a random correlated sample from the secondary conditional PDF at the CDF val
 /*! \details A sample is made using a unit based correlated sampling technique.
-
  */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,

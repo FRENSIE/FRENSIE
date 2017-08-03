@@ -1,34 +1,34 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ScreenedRutherfordTraits.hpp
+//! \file   MonteCarlo_ElasticElectronTraits.hpp
 //! \author Luke Kersting
-//! \brief  Screened Rutherford traits
+//! \brief  ElectronElastic traits
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_SCREENED_RUTHERFORD_TRAITS_HPP
-#define MONTE_CARLO_SCREENED_RUTHERFORD_TRAITS_HPP
+#ifndef MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
+#define MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 
 namespace MonteCarlo{
 
-//! Screened Rutherford traits
-class ScreenedRutherfordTraits
+//! Electron elastic traits
+class ElasticElectronTraits
 {
 
 public:
 
   //! Typedef for the this type
-  typedef ScreenedRutherfordTraits ThisType;
+  typedef ElasticElectronTraits ThisType;
 
   //! Constructor
-  ScreenedRutherfordTraits( const unsigned atomic_number,
+  ElasticElectronTraits( const unsigned atomic_number,
                             const bool seltzer_modification_on = true );
 
   //! Destructor
-  virtual ~ScreenedRutherfordTraits()
+  virtual ~ElasticElectronTraits()
   { /* ... */ }
 
 
@@ -88,8 +88,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_SCREENED_RUTHERFORD_TRAITS_HPP
+#endif // end MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ScreenedRutherfordTraits.hpp
+// end MonteCarlo_ElasticElectronTraits.hpp
 //---------------------------------------------------------------------------//

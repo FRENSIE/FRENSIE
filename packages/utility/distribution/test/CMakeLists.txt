@@ -127,6 +127,20 @@ TARGET_LINK_LIBRARIES(tstLinLinLinInterpolatedFullyTabularTwoDDistribution utili
 ADD_TEST(LinLinLinInterpolatedFullyTabularTwoDDistribution_test tstLinLinLinInterpolatedFullyTabularTwoDDistribution)
 SET_PROPERTY(TEST LinLinLinInterpolatedFullyTabularTwoDDistribution_test PROPERTY LABELS utility_dist)
 
+#ADD_EXECUTABLE(tstLinLinLinAnalogElasticTwoDDistribution
+#  tstLinLinLinAnalogElasticTwoDDistribution.cpp
+#  ${FRENSIE_STD_UNIT_TEST_MAIN})
+#TARGET_LINK_LIBRARIES(tstLinLinLinAnalogElasticTwoDDistribution utility_dist)
+#ADD_TEST(LinLinLinAnalogElasticTwoDDistribution_test tstLinLinLinAnalogElasticTwoDDistribution)
+#SET_PROPERTY(TEST LinLinLinAnalogElasticTwoDDistribution_test PROPERTY LABELS utility_dist)
+
+#ADD_EXECUTABLE(tstLogLogLogAnalogElasticTwoDDistribution
+#  tstLogLogLogAnalogElasticTwoDDistribution.cpp
+#  ${FRENSIE_STD_UNIT_TEST_MAIN})
+#TARGET_LINK_LIBRARIES(tstLogLogLogAnalogElasticTwoDDistribution utility_dist)
+#ADD_TEST(LogLogLogAnalogElasticTwoDDistribution_test tstLogLogLogAnalogElasticTwoDDistribution)
+#SET_PROPERTY(TEST LogLogLogAnalogElasticTwoDDistribution_test PROPERTY LABELS utility_dist)
+
 ADD_EXECUTABLE(tstCartesianSpatialDistribution
   tstCartesianSpatialDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

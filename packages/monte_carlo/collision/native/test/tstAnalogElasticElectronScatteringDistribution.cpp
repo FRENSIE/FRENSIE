@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_ScreenedRutherfordTraits.hpp"
+#include "MonteCarlo_ElasticElectronTraits.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
@@ -34,7 +34,7 @@ public:
     const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         elastic_cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const MonteCarlo::ScreenedRutherfordTraits>& screened_rutherford_traits,
+    const std::shared_ptr<const MonteCarlo::ElasticElectronTraits>& screened_rutherford_traits,
     const bool correlated_sampling_mode_on )
     : MonteCarlo::AnalogElasticElectronScatteringDistribution(
         elastic_cutoff_distribution,
@@ -274,124 +274,136 @@ std::shared_ptr<TestAnalogElasticElectronScatteringDistribution>
 //  TEST_FLOATING_EQUALITY( pdf_value, 0.500001, tol );
 //}
 
-////---------------------------------------------------------------------------//
-//// Check that the cdf can be evaluated
-//TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
-//                   evaluateCDF )
-//{
-//  // Set energy in MeV
-//  double energy = 1.0e+5;
-//  double scattering_angle_cosine = -0.01;
-//  double value;
+//---------------------------------------------------------------------------//
+// Check that the cdf can be evaluated
+TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+                   evaluateCDF )
+{
+  // Set energy in MeV
+  double energy = 1.0e+5;
+  double scattering_angle_cosine = -0.01;
+  double value;
 
-//  // Test 1 energy 1
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 1.5291367543337785e-16, 1e-12 );
+  // Test 1 energy 1
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.5194151539596018523e-16, 1e-12 );
 
-//  // Test 2 energy 1
-//  scattering_angle_cosine = 0.71;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 2.0358032701152229e-15, 1e-12 );
+  // Test 2 energy 1
+  scattering_angle_cosine = 0.71;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 2.0228604997734523684e-15, 1e-12 );
 
-//  // Test 3 energy 1
-//  scattering_angle_cosine = 0.999999;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 1.0165109766322634e-09, 1e-12 );
+  // Test 3 energy 1
+  scattering_angle_cosine = 0.999995;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 2.0215493910276143181e-10, 1e-12 );
 
-//  // Test 4 energy 1
-//  scattering_angle_cosine = 1.0;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
+  // Test 4 energy 1
+  scattering_angle_cosine = 0.999999;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.0100484326755010891e-09, 1e-12 );
 
-//  // Test with a different energy
-//  energy = 6.625E+01;
+  // Test 5 energy 1
+  scattering_angle_cosine = 1.0;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
 
-//  // Test 1 energy 2
-//  scattering_angle_cosine = -0.01;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 3.4314213722037488e-10, 1e-12 );
+  // Test with a different energy
+  energy = 6.625E+01;
 
-//  // Test 2 energy 2
-//  scattering_angle_cosine = 0.71;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 4.5679232203476135e-09, 1e-12 );
+  // Test 1 energy 2
+  scattering_angle_cosine = -0.01;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 3.4087717596560064879e-10, 1e-12 );
 
-//  // Test 3 energy 2
-//  scattering_angle_cosine = 0.999999;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 2.2755999885892267e-03, 1e-12 );
+  // Test 2 energy 2
+  scattering_angle_cosine = 0.71;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 4.5377719565224249441e-09, 1e-12 );
 
-//  // Test 4 energy 2
-//  scattering_angle_cosine = 1.0;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
+  // Test 3 energy 2
+  scattering_angle_cosine = 0.999995;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 4.532637899374508195e-04, 1e-12 );
 
-//  // Test inbetween the two energies
-//  energy = 2.00E+02;
+  // Test 4 energy 2
+  scattering_angle_cosine = 0.999999;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 2.2605795488167450616e-03, 1e-12 );
+std::cout << std::setprecision(20) << "cdf (" << scattering_angle_cosine << ") = " << value << std::endl;
+  // Test 5 energy 2
+  scattering_angle_cosine = 1.0;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
 
-//  // Test 1 energy 3
-//  scattering_angle_cosine = -0.01;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 3.8164976387852747e-11, 1e-12 );
+  // Test inbetween the two energies
+  energy = 2.00E+02;
+std::cout << std::setprecision(20) << "\ncdf at cutoff = " << distribution->evaluateCDFAtCutoff( energy ) << std::endl;
+  // Test 1 energy 3
+  scattering_angle_cosine = -0.01;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value,  1.8586865689420059512e-10, 1e-12 );
+std::cout << std::setprecision(20) << "cdf (" << scattering_angle_cosine << ") = " << value << std::endl;
+  // Test 1 energy 3
+  scattering_angle_cosine = 0.0;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.9372483706177144234e-10, 1e-12 );
+std::cout << std::setprecision(20) << "cdf (" << scattering_angle_cosine << ") = " << value << std::endl;
+  // Test 2 energy 3
+  scattering_angle_cosine = 0.71;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 3.5347746472730750536e-09, 1e-12 );
+std::cout << std::setprecision(20) << "cdf (" << scattering_angle_cosine << ") = " << value << std::endl;
+  // Test 3 energy 3
+  scattering_angle_cosine = 0.999995;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 3.8487615166561635121e-04, 1e-12 );
+std::cout << std::setprecision(20) << "cdf (" << scattering_angle_cosine << ") = " << value << std::endl;
+  // Test 4 energy 3
+  scattering_angle_cosine = 0.999999;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 2.5106038136353921652e-04, 1e-12 );
+std::cout << std::setprecision(20) << "cdf (" << scattering_angle_cosine << ") = " << value << std::endl;
+  // Test 5 energy 3
+  scattering_angle_cosine = 1.0;
+  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
+}
 
-//  // Test 1 energy 3
-//  scattering_angle_cosine = 0.0;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 3.9414911020591796e-11, 1e-12 );
+//---------------------------------------------------------------------------//
+// Check that the screened Rutherford cdf can be evaluated
+TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+                   evaluateScreenedRutherfordCDF )
+{
+  double tol = 1e-10;
+  double eta = 1.0;
+  double cutoff_pdf = 1.0;
+  double cutoff_cdf = 0.5;
 
-//  // Test 2 energy 3
-//  scattering_angle_cosine = 0.71;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 5.0806185246835345e-10, 1e-12 );
+  // Test
+  double scattering_angle_cosine = 0.999999;
+  double cdf_value = test_distribution->evaluateScreenedRutherfordCDF(
+                        scattering_angle_cosine,
+                        eta,
+                        cutoff_pdf*cutoff_cdf );
+  TEST_FLOATING_EQUALITY( cdf_value, 0.5, tol );
 
-//  // Test 3 energy 3
-//  scattering_angle_cosine = 0.999999;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 2.5318875563449980e-04, 1e-12 );
+  // Test
+  scattering_angle_cosine = 0.9999995;
+  cdf_value = test_distribution->evaluateScreenedRutherfordCDF(
+                        scattering_angle_cosine,
+                        eta,
+                        cutoff_pdf*cutoff_cdf );
+  TEST_FLOATING_EQUALITY( cdf_value, 0.749999875000063, tol );
 
-//  // Test 4 energy 3
-//  scattering_angle_cosine = 1.0;
-//  value = distribution->evaluateCDF( energy, scattering_angle_cosine );
-//  TEST_FLOATING_EQUALITY( value, 1.0, 1e-12 );
-//}
-
-////---------------------------------------------------------------------------//
-//// Check that the screened Rutherford cdf can be evaluated
-//TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
-//                   evaluateScreenedRutherfordCDF )
-//{
-//  double tol = 1e-10;
-//  double eta = 1.0;
-//  double cutoff_pdf = 1.0;
-//  double cutoff_cdf = 0.5;
-
-//  // Test
-//  double scattering_angle_cosine = 0.999999;
-//  double cdf_value = test_distribution->evaluateScreenedRutherfordCDF(
-//                        scattering_angle_cosine,
-//                        eta,
-//                        cutoff_pdf,
-//                        cutoff_cdf );
-//  TEST_FLOATING_EQUALITY( cdf_value, 0.5, tol );
-
-//  // Test
-//  scattering_angle_cosine = 0.9999995;
-//  cdf_value = test_distribution->evaluateScreenedRutherfordCDF(
-//                        scattering_angle_cosine,
-//                        eta,
-//                        cutoff_pdf,
-//                        cutoff_cdf );
-//  TEST_FLOATING_EQUALITY( cdf_value, 0.749999875000063, tol );
-
-//  // Test with a different energy
-//  scattering_angle_cosine = 1.0;
-//  cdf_value = test_distribution->evaluateScreenedRutherfordCDF(
-//                        scattering_angle_cosine,
-//                        eta,
-//                        cutoff_pdf,
-//                        cutoff_cdf );
-//  TEST_FLOATING_EQUALITY( cdf_value, 1.0, tol );
-//}
+  // Test with a different energy
+  scattering_angle_cosine = 1.0;
+  cdf_value = test_distribution->evaluateScreenedRutherfordCDF(
+                        scattering_angle_cosine,
+                        eta,
+                        cutoff_pdf*cutoff_cdf );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, tol );
+}
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
@@ -399,11 +411,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 4 );
+  std::vector<double> fake_stream( 5 );
   fake_stream[0] = 1.0e-3; // sample mu = 9.9999773296016569724e-01
-  fake_stream[1] = 2.2605795488167450616e-3; // sample mu = 0.999999
-  fake_stream[2] = 0.5; // sample mu = 9.9999999774879678e-01
-  fake_stream[3] = 1.0 - 1e-15; // sample mu = 1.0
+  fake_stream[1] = 2.26e-3; // sample mu = 9.9999899973959993638e-01
+  fake_stream[2] = 2.2605795488167450616e-3; // sample mu = 0.999999
+  fake_stream[3] = 0.5; // sample mu = 9.9999999774879678e-01
+  fake_stream[4] = 1.0 - 1e-15; // sample mu = 1.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -429,17 +442,15 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                                     scattering_angle_cosine,
                                     trials );
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899973959993638e-01, 1e-12 );
   TEST_EQUALITY_CONST( trials, 12 );
-
   // sampleAndRecordTrialsImpl from distribution
   test_distribution->sampleAndRecordTrialsImpl(
                                     electron.getEnergy(),
                                     scattering_angle_cosine,
                                     trials );
-
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999774879678e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999e-01, 1e-12 );
   TEST_EQUALITY_CONST( trials, 13 );
 
   // sampleAndRecordTrialsImpl from distribution
@@ -448,8 +459,17 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                                     scattering_angle_cosine,
                                     trials );
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999774879678e-01, 1e-12 );
   TEST_EQUALITY_CONST( trials, 14 );
+
+  // sampleAndRecordTrialsImpl from distribution
+  test_distribution->sampleAndRecordTrialsImpl(
+                                    electron.getEnergy(),
+                                    scattering_angle_cosine,
+                                    trials );
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -465,11 +485,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   double scattering_angle_cosine, outgoing_energy;
 
   // Set fake random number stream
-  std::vector<double> fake_stream( 4 );
+  std::vector<double> fake_stream( 5 );
   fake_stream[0] = 1.0e-3; // sample mu = 9.9999773296016569724e-01
-  fake_stream[1] = 2.2605795488167450616e-3; // sample mu = 0.999999
-  fake_stream[2] = 0.5; // sample mu = 9.9999999774879678e-01
-  fake_stream[3] = 1.0 - 1e-15; // sample mu = 1.0
+  fake_stream[1] = 2.26e-3; // sample mu = 9.9999899973959993638e-01
+  fake_stream[2] = 2.2605795488167450616e-3; // sample mu = 0.999999
+  fake_stream[3] = 0.5; // sample mu = 9.9999999774879678e-01
+  fake_stream[4] = 1.0 - 1e-15; // sample mu = 1.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -477,6 +498,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                         outgoing_energy,
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999773296016569724e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999899973959993638e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );
 
   distribution->sample( electron.getEnergy(),
@@ -506,7 +533,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   fake_stream[0] = 1.0e-3; // sample mu = -0.85537934174508756247
   fake_stream[1] = 0.5; // sample mu = 0.49274826288429413035
   fake_stream[2] = 0.9; // sample mu = 0.999999
-  fake_stream[3] = 1.0 - 1e-15; // sample mu = 0.999999
+  fake_stream[3] = 0.999999; // sample mu = 0.999999
+  fake_stream[4] = 1.0 - 1e-15; // sample mu = 0.999999
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->sample( electron.getEnergy(),
@@ -532,6 +560,55 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                         scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1e-4, 1e-12 );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-4, 1e-12 );
+
+  // Test energy inbetween energy bins
+  electron.setEnergy( 2e2 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+std::cout << std::setprecision(20) << "\ncdf at cutoff = " << distribution->evaluateCDFAtCutoff( 2e2 ) << std::endl;
+  // Set fake random number stream
+  fake_stream[0] = 1.0e-5; // sample mu = 0.99980737913598205502
+  fake_stream[1] = 1.0e-4; // sample mu = 0.99998073331622627791
+  fake_stream[2] = 2.5106038136353917e-04; // sample mu = 0.999999
+  fake_stream[3] = 2.5106038136353921652e-04; // sample mu = 0.999999
+  fake_stream[4] = 2.5106038136353916e-04; //1.0 - 1e-15; // sample mu = 1.0
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.99980737913598205502, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
+std::cout << std::setprecision(20) << "angle = " << scattering_angle_cosine << std::endl;
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.99998073331622627791, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
+std::cout << std::setprecision(20) << "angle = " << scattering_angle_cosine << std::endl;
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
+std::cout << std::setprecision(20) << "angle = " << scattering_angle_cosine << std::endl;
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
+std::cout << std::setprecision(20) << "angle = " << scattering_angle_cosine << std::endl;
+  distribution->sample( electron.getEnergy(),
+                        outgoing_energy,
+                        scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, electron.getEnergy(), 1e-12 );
+std::cout << std::setprecision(20) << "angle = " << scattering_angle_cosine << std::endl;
 }
 
 //---------------------------------------------------------------------------//
@@ -1072,8 +1149,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
   // Get the screened Rutherford traits
-  std::shared_ptr<MonteCarlo::ScreenedRutherfordTraits> traits(
-    new MonteCarlo::ScreenedRutherfordTraits( data_container.getAtomicNumber() ) );
+  std::shared_ptr<MonteCarlo::ElasticElectronTraits> traits(
+    new MonteCarlo::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
   // Electron energy grid
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
