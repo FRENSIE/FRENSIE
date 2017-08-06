@@ -18,6 +18,8 @@
 #include <thread>
 #include <typeindex>
 #include <system_error>
+#include <tuple>
+#include <utility>
 
 // FRENSIE Includes
 #include "Utility_TypeTraitsDecl.hpp"
@@ -127,6 +129,48 @@ struct IsHashable<std::vector<bool> > : public std::true_type
  */
 template<>
 struct IsHashable<std::thread::id> : public std::true_type
+{ /* ... */ };
+
+/*! Partial specialization of IsTuple for std::tuple
+ * \ingroup type_traits
+ */
+template<template... Types>
+struct IsTuple<std::tuple<Types...> > : public std::true_type
+{ /* ... */ };
+
+/*! Partial specialization of IsTuple for std::pair
+ * \ingroup type_traits
+ */
+template<typename T1, typename T2>
+struct IsTuple<std::pair<T1,T2> > : public std::true_type
+{ /* ... */ };
+
+/*! Partial specialization of IsTuple for const types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsTuple<const T> : public IsTuple<T>
+{ /* ... */ };
+
+/*! Partial specialization of IsTuple for volatile types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsTuple<volatile T> : public IsTuple<T>
+{ /* ... */ };
+
+/*! Partial specialization of IsTuple for const volatile types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsTuple<const volatile T> : public IsTuple<T>
+{ /* ... */ };
+
+/*! Partial specialization of IsTuple for reference types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsTuple<T&> : public IsTuple<T>
 { /* ... */ };
 
 } // end Utility namespace

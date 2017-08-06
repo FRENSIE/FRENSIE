@@ -10,6 +10,7 @@
 #define UTILITY_COMPARISON_TRAITS_HPP
 
 // Std Lib Includes
+#include <sstream>
 #include <string>
 #include <utility>
 
@@ -17,15 +18,76 @@
 #include <boost/units/quantity.hpp>
 #include <boost/units/io.hpp>
 
-// Trilinos Includes
-#include <Teuchos_FancyOStream.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_ComparisonTraitsDecl.hpp"
-#include "Utility_Tuple.hpp"
+#include "Utility_ComparisonPolicy.hpp"
 
 namespace Utility{
+
+// Create a comparison header
+template<typename T, typename Enabled>
+template<typename ComparisonPolicy>
+inline std::string ComparisonTraits<T,Enabled>::createComparisonHeader(
+                                              const T& left_value,
+                                              const std::string& left_name,
+                                              const bool log_left_name,
+                                              const T& right_value,
+                                              const std::string& right_name,
+                                              const bool log_right_name,
+                                              const std::string& name_suffix,
+                                              const ExtraDataType& extra_data )
+{
+  std::string comparison_header =
+    ComparisonPolicy::createComparisonDetails( left_name,
+                                               log_left_name,
+                                               left_value,
+                                               right_name,
+                                               log_right_name,
+                                               right_value,
+                                               name_suffix,
+                                               extra_data );
+  comparison_header += ": ";
+
+  return comparison_header;
+}
+
+// Compare two values of a type (default)
+template<typename T, typename Enabled>
+template<typename ComparisonPolicy>
+inline bool ComparisonTraits<T,Enabled>::compare(
+                        const T& left_value,
+                        const std::string& left_name,
+                        const bool log_left_name,
+                        const T& right_value,
+                        const std::string& right_name,
+                        const bool log_right_name,
+                        const std::string& name_suffix,
+                        std::ostream& log,
+                        const bool log_comparison_details,
+                        const typename QuantityTraits<T>::RawType& extra_data )
+{
+  if( log_comparison_details )
+  {
+    log << ComparisonTraits<T,Enabled>::createComparisonHeader( left_value,
+                                                                left_name,
+                                                                log_left_name,
+                                                                right_value,
+                                                                right_name,
+                                                                name_suffix,
+                                                                extra_data )
+        << std::endl;
+  }
+
+  // Conduct the comparison
+  const bool success =
+    ComparisonPolicy::compare( left_value, right_value, extra_data );
+
+  if( log_comparison_details )
+    Utility::reportComparisonPassFail( success, log );
+
+  return success;
+}
+
 
 /*! The specialization of the Utility::ComparisonTraits for const types.
  * \ingroup comparison_traits
@@ -49,421 +111,434 @@ template<typename T>
 struct ComparisonTraits<T,typename std::enable_if<std::is_const<T>::value && std::is_volatile<T>::value>::type> : public ComparisonTraits<typename std::remove_cv<T>::type>
 { /* ... */ };
 
-/*! \brief The specialization of the Utility::ComparisonTraits for std::string
- * \ingroup comparison_traits
- */
-template<>
-struct ComparisonTraits<std::string>
-{
-  typedef const double scalarType;
-
-  static inline bool compare( const std::string& first_value,
-			      const std::string& first_name,
-			      const std::string& second_value,
-			      const std::string& second_name,
-			      Teuchos::FancyOStream& out,
-			      const int index = -1,
-			      const scalarType tol = 0 )
-  {
-    bool success = true;
-
-    // Array Element Compare
-    if( index >= 0 )
-    {
-      out << first_name << "[" << index << "]" << " = "
-	  << first_value << " == " << second_name << "[" << index << "]"
-	  << " = " << second_value << ": ";
-      if( first_value != second_value )
-      {
-	out << "failed!\n";
-
-	success = false;
-      }
-      else
-	out << "passed\n";
-    }
-    // Single Compare
-    else
-    {
-      out << first_name << " = " << first_value
-	  << " == " << second_name << " = " << second_value
-	  << ": ";
-      if( first_value != second_value )
-      {
-	out << "failed!\n";
-
-	success = false;
-      }
-      else
-	out << "passed\n";
-    }
-
-    return success;
-  }
-};
-
-/*! \brief The specialization of the Utility::ComparisonTraits for 
- * integral types
- * \ingroup comparison_traits
- */
-template<typename T>
-struct ComparisonTraits<T,typename std::enable_if<std::is_integral<T>::value>::type>
-{
-  typedef const T scalarType;
-
-  static inline bool compare( const T& first_value,
-			      const std::string& first_name,
-			      const T& second_value,
-			      const std::string& second_name,
-			      Teuchos::FancyOStream& out,
-			      const int index = -1,
-			      const scalarType tol = 0 )
-  {
-    bool success = true;
-
-    // Array Element Compare
-    if( index >= 0 )
-    {
-      out << first_name << "[" << index << "]" << " = "
-	  << first_value << " == " << second_name << "[" << index << "]"
-	  << " = " << second_value << ": ";
-      if( first_value != second_value )
-      {
-	out << "failed!\n";
-
-	success = false;
-      }
-      else
-	out << "passed\n";
-    }
-    // Single Compare
-    else
-    {
-      out << first_name << " = " << first_value
-	  << " == " << second_name << " = " << second_value
-	  << ": ";
-      if( first_value != second_value )
-      {
-	out << "failed!\n";
-
-	success = false;
-      }
-      else
-	out << "passed\n";
-    }
-
-    return success;
-  }
-};
-
-/*! \brief The specialization of the Utility::ComparisonTraits for 
- * floating point types
- * \ingroup comparison_traits
- */
-template<typename T>
-struct ComparisonTraits<T,typename std::enable_if<std::is_floating_point<T>::value>::type>
-{
-  typedef const T scalarType;
-  static inline bool compare( const T& first_value,
-			      const std::string& first_name,
-			      const T& second_value,
-			      const std::string& second_name,
-			      Teuchos::FancyOStream& out,
-			      const int index = -1,
-			      const scalarType tol = 0.0 )
-  {
-    bool success = true;
-
-    if( tol == 0.0 )
-    {
-      // Array Element Compare
-      if( index >= 0 )
-      {
-	out << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]"
-	    << " = " << second_value << ": ";
-	if( first_value != second_value )
-	{
-	  out << "failed!\n";
-
-	  success = false;
-	}
-	else
-	  out << "passed\n";
-      }
-      // Single Compare
-      else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value
-	    << ": ";
-	if( first_value != second_value )
-	{
-	  out << "failed!\n";
-
-	  success = false;
-	}
-	else
-	  out << "passed\n";
-      }
-    }
-    else
-    {
-      scalarType err = relError( first_value, second_value );
-
-      // Array Element Compare
-      if( index >= 0 )
-      {
-	out << "relErr(" << first_name << "[" << index << "],"
-	    << second_name << "[" << index << "])" << " = relErr("
-	    << first_value << "," << second_value << ") = " << err
-	    << " <= tol = " << tol << ": ";
-	if( err > tol )
-	{
-	  out << "failed!\n";
-
-	  success = false;
-	}
-	else
-	  out << "passed\n";
-      }
-      // Single Compare
-      else
-      {
-	out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
-	    << "\n= relErr(" << first_value << "," << second_value << ") = "
-	    << err << "\n<= tol = " << tol << ": ";
-	if( err > tol )
-	{
-	  out << "failed!\n";
-
-	  success = false;
-	}
-	else
-	  out << "passed\n";
-      }
-    }
-
-    return success;
-  }
-};
-
 namespace Details{
 
-// The helper class that is used to compare tuple members
-template<size_t I, typename TupleType, typename Enabled = void>
-struct TupleMemberCompareHelper
+//! The comparison traits helper for stl compliant sequence containers
+template<template<typename,typename...> class STLCompliantSequenceContainer,
+         typename T>
+struct ComparisonTraitsSequenceContainerHelper
 {
-  static inline bool compareTupleMembers(
-                     const TupleType& first_tuple,
-                     const std::string& first_name,
-                     const TupleType& second_tuple,
-                     const std::string& second_name,
-                     Teuchos::FancyOStream& out,
-                     const int index,
-                     const double tol )
-  {
-    std::ostringstream first_tuple_member_name;
-    std::ostringstream second_tuple_member_name;
+  //! The extra data type (usually a comparison tolerance)
+  typedef typename QuantityTraits<T>::RawType ExtraDataType;
 
-    // Array element compare
-    if( index >= 0 )
+  //! Create a comparison header
+  template<typename ComparisonPolicy>
+  static inline std::string createComparisonHeader(
+                            const T& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const T& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    std::string logged_left_name;
+
+    if( log_left_name )
     {
-      first_tuple_member_name << first_name << "[" << index << "]." << I;
-      second_tuple_member_name << second_name << "[" << index << "]." << I;
-    }
-    // Single tuple compare
-    else
-    {
-      first_tuple_member_name << first_name << "." << I;
-      second_tuple_member_name << second_name << "." << I;
-    }
-
-    bool local_success =
-      Utility::ComparisonTraits<typename Utility::TupleElement<I,TupleType>::type>::compare(
-                                              Utility::get<I>( first_tuple ),
-                                              first_tuple_member_name.str(),
-                                              Utility::get<I>( second_tuple ),
-                                              second_tuple_member_name.str(),
-                                              out,
-                                              -1,
-                                              tol );
-
-    return local_success &&
-      TupleMemberCompareHelper<I+1,TupleType>::compareTupleMembers(
-                                                                  first_tuple,
-                                                                  first_name,
-                                                                  second_tuple,
-                                                                  second_name,
-                                                                  out,
-                                                                  index,
-                                                                  tol );
-  }
-};
-
-// The helper class that is used to compare tuple members
-template<size_t I, typename TupleType>
-struct TupleMemberCompareHelper<I,TupleType,typename std::enable_if<I==TupleSize<TupleType>::value>::type>
-{
-  static inline bool compareTupleMembers(
-                     const TupleType& first_tuple,
-                     const std::string& first_name,
-                     const TupleType& second_tuple,
-                     const std::string& second_name,
-                     Teuchos::FancyOStream& out,
-                     const int index,
-                     const double tol )
-  { return true; }
-};
-
-} // end Details namespace
-
-/*! \brief The partial specialization of the Utility::ComparisonTraits for
- * const Utility::Tuple.
- * \ingroup comparison_traits
- */
-template<typename... Types>
-struct ComparisonTraits<std::tuple<Types...> >
-{
-  typedef const double scalarType;
-  static inline bool compare( const std::tuple<Types...>& first_value,
-			      const std::string& first_name,
-			      const std::tuple<Types...>& second_value,
-			      const std::string& second_name,
-			      Teuchos::FancyOStream& out,
-			      const int index = -1,
-			      const scalarType tol = 0.0 )
-  {
-    return Details::TupleMemberCompareHelper<0,std::tuple<Types...> >::compareTupleMembers(
-                                                                 first_value,
-                                                                 first_name,
-                                                                 second_value,
-                                                                 second_name,
-                                                                 out,
-                                                                 index,
-                                                                 tol );
-  }
-};
-
-/*! \brief The partial specialization of the Utility::ComparisonTraits for
- * const std::pair.
- * \ingroup comparison_traits
- */
-template<typename T1, typename T2>
-struct ComparisonTraits<std::pair<T1,T2> >
-{
-  typedef const double scalarType;
-  static inline bool compare( const std::pair<T1,T2>& first_value,
-			      const std::string& first_name,
-			      const std::pair<T1,T2>& second_value,
-			      const std::string& second_name,
-			      Teuchos::FancyOStream& out,
-			      const int index = -1,
-			      const scalarType tol = 0.0 )
-  {
-    return Details::TupleMemberCompareHelper<0,std::pair<T1,T2> >::compareTupleMembers(
-                                                                 first_value,
-                                                                 first_name,
-                                                                 second_value,
-                                                                 second_name,
-                                                                 out,
-                                                                 index,
-                                                                 tol );
-  }
-};
-
-/*! \brief The partial specialization of the Utility::ComparisonTraits for
- * boost::units::quantity.
- * \ingroup comparison_traits
- */
-template<typename Unit, typename T>
-struct ComparisonTraits<boost::units::quantity<Unit,T> >
-{
-  typedef const T scalarType;
-
-  static inline bool compare(const boost::units::quantity<Unit,T>& first_value,
-			     const std::string& first_name,
-			     const boost::units::quantity<Unit,T>& second_value,
-			     const std::string& second_name,
-			     Teuchos::FancyOStream &out,
-			     const int index = -1,
-			     const scalarType tol = 0.0 )
-  {
-    bool success = true;
-
-    if( tol == 0.0 )
-    {
-      // Array Element Compare
-      if( index >= 0 )
-      {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]"
-	    << " = " << second_value << ": ";
-	if( first_value != second_value )
-	{
-	  out << "failed!\n";
-
-	  success = false;
-	}
-	else
-	  out << "passed\n";
-      }
-      // Single Compare
-      else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value
-	    << ": ";
-	if( first_value != second_value )
-	{
-	  out << "failed!\n";
-
-	  success = false;
-	}
-	else
-	  out << "passed\n";
-      }
+      logged_left_name = left_name;
+    
+      if( !name_suffix.empty() )
+        logged_left_name += name_suffix;
     }
     else
+      logged_left_name = Utility::toString( left_value );
+
+    std::string logged_right_name;
+
+    if( log_right_name )
     {
-      double err = relError( first_value.value(), second_value.value() );
+      logged_right_name = right_name;
 
-      // Array Element Compare
-      if( index >= 0 )
+      if( !name_suffix.empty() )
+        logged_right_name += name_suffix;
+    }
+    else
+      logged_right_name = Utility::toString( right_value );
+    
+    std::ostringstream oss;
+
+    oss << "size(" << logged_left_name << ") == size(" << logged_right_name
+        << ") && for every index i, "
+        << logged_left_name << "[i]" << ComparisonPolicy::getOperatorName()
+        << logged_right_name << "[i]: "
+
+    return oss.str();
+  }
+
+  //! Compare two sequence containers
+  template<typename ComparisonPolicy>
+  static inline bool compare(
+                          const STLCompliantSequenceContainer<T>& left_value,
+                          const std::string& left_name,
+                          const bool log_left_name,
+                          const STLCompliantSequenceContainer<T>& right_value,
+                          const std::string& right_name,
+                          const bool log_right_name,
+                          const std::string& name_suffix
+                          std::ostream& log,
+                          const bool = false,
+                          const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    std::ostringstream detailed_name_suffix;
+    detailed_name_suffix << name_suffix << " size";
+
+    bool success =
+      Utility::ComparisonTraits<size_t>::compare<ComparisonPolicy>(
+                       std::distance( left_value.begin(), left_value.end() ),
+                       left_name,
+                       log_left_name,
+                       std::distance( right_value.begin(), right_value.end() ),
+                       right_name,
+                       log_right_name,
+                       detailed_name_suffix.str(),
+                       log,
+                       true,
+                       extra_data );
+
+    // Only test the individual container elements if the sizes are the same
+    if( success )
+    {
+      typename STLCompliantSequenceContainer<T>::const_iterator left_it, left_end;
+      left_it = left_value.begin();
+      left_end = left_value.end();
+
+      typename STLCompliantSequenceContainer<T>::const_iterator right_it, right_end;
+      right_it = right_value.begin();
+      right_end = right_value.end();
+
+      size_t index = 0;
+      
+      while( left_it != left_end )
       {
-	out << "\nError, relErr(" << first_name << "[" << index << "],"
-	    << second_name << "[" << index << "])" << " = relErr("
-	    << first_value << "," << second_value << ") = " << err
-	    << " <= tol = " << tol << ": ";
-	if( err > tol )
-	{
-	  out << "failed!\n";
+        detailed_name_suffix.str( "" );
+        detailed_name_suffix.clear();
 
-	  success = false;
-	}
-	else
-	  out << "passed\n";
-      }
-      // Single Compare
-      else
-      {
-	out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
-	    << "\n= relErr(" << first_value << "," << second_value << ") = "
-	    << err << "\n<= tol = " << tol << ": ";
-	if( err > tol )
-	{
-	  out << "failed!\n";
+        detailed_name_suffix << name_suffix << "[" << index << "]";
+          
+        bool local_success =
+          Utility::ComparisonTraits<T>::compare( *left_it,
+                                                 left_name,
+                                                 log_left_name,
+                                                 *right_it,
+                                                 right_name,
+                                                 log_right_name,
+                                                 detailed_name_suffix.str(),
+                                                 log,
+                                                 true,
+                                                 extra_data );
+        if( !local_success )
+          success = false;
 
-	  success = false;
-	}
-	else
-	  out << "passed\n";
+        ++left_it;
+        ++right_it;
+        ++index;
       }
     }
 
     return success;
   }
 };
+
+//! The comparison traits helper for stl compliant associative containers
+template<template<typename...> class STLCompliantAssociativeContainer,
+         typename... Types>
+struct ComparisonTraitsAssociativeContainerHelper
+{
+  //! The extra data type (usually a comparison tolerance)
+  typedef double ExtraDataType;
+
+  //! Create a comparison header
+  template<typename DummyPolicy>
+  static std::string createComparisonHeader(
+                           const T& left_value,
+                           const std::string& left_name,
+                           const bool log_left_name,
+                           const T& right_value,
+                           const std::string& right_name,
+                           const bool log_right_name,
+                           const std::string& name_suffix,
+                           const ExtraDataType& = ExtraDataType() )
+  {
+    std::ostringstream oss;
+
+    if( log_left_name )
+    {
+      oss << left_name;
+    
+      if( !name_suffix.empty() )
+        oss << name_suffix;
+    }
+    else
+      oss << Utility::toString( left_value );
+
+    oss << " has the same contents as ";
+
+    if( log_right_name )
+    {
+      oss << right_name;
+
+      if( !name_suffix.empty() )
+        oss << name_suffix;
+    }
+    else
+      oss << Utility::toString( right_value );
+
+    return oss.str();
+  }
+
+  //! Compare two sequence containers
+  template<typename DummyPolicy>
+  static inline bool compare(
+                 const STLCompliantAssociativeContainer<Types...>& left_value,
+                 const std::string& left_name,
+                 const bool log_left_name,
+                 const STLCompliantAssociativeContainer<Types...>& right_value,
+                 const std::string& right_name,
+                 const bool log_right_name,
+                 const std::string& name_suffix
+                 std::ostream& log,
+                 const bool = false,
+                 const ExtraDataType& = ExtraDataType() )
+  {
+    std::ostringstream detailed_name_suffix;
+    detailed_name_suffix << name_suffix << " size";
+
+    bool success =
+      Utility::ComparisonTraits<size_t>::compare<EqualityComparisonPolicy>(
+                       std::distance( left_value.begin(), left_value.end() ),
+                       left_name,
+                       log_left_name,
+                       std::distance( right_value.begin(), right_value.end() ),
+                       right_name,
+                       log_right_name,
+                       detailed_name_suffix.str(),
+                       log,
+                       true,
+                       extra_data );
+
+    // Only test the individual container elements if the sizes are the same
+    if( success )
+    {
+      typename STLCompliantAssociativeContainer<Types...>::const_iterator left_it, left_end;
+      left_it = left_value.begin();
+      left_end = left_value.end();
+      
+      while( left_it != left_end )
+      {
+        detailed_name_suffix.str( "" );
+        detailed_name_suffix.clear();
+
+        detailed_name_suffix << name_suffix << ".contains("
+                             << Utility::toString( *left_it ) << ")";
+          
+        bool local_success =
+          Utility::ComparisonTraits<bool>::compare<EqualityComparisonPolicy>(
+               true,
+               left_name,
+               log_left_name,
+               std::find( right_value.begin(), right_value.end(), *left_it ) !=
+               right_value.end()
+               right_name,
+               log_right_name,
+               detailed_name_suffix.str(),
+               log,
+               true,
+               extra_data );
+        
+        if( !local_success )
+          success = false;
+
+        ++left_it;
+      }
+    }
+
+    return success;
+  }
+};
+  
+} // end Details namespace
+
+// Create a comparison header
+template<typename ComparisonPolicy, typename T>
+inline std::string createComparisonHeader(
+                   const T& left_value,
+                   const std::string& left_name,
+                   const T& right_value,
+                   const std::string& right_name,
+                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
+                   const std::string& name_suffix )
+{
+  return ComparisonTraits<T>::createComparisonHeader<ComparePolicy>(
+                                                                  left_value,
+                                                                  left_name,
+                                                                  true,
+                                                                  right_value,
+                                                                  right_name,
+                                                                  true,
+                                                                  name_suffix,
+                                                                  extra_data );
+}
+
+// Compare two values and print the results (to the desired stream)
+template<typename ComparePolicy, typename T>
+inline bool compare(
+                   const T& left_value,
+                   const std::string& left_name,
+                   const T& right_value,
+                   const std::string& right_name,
+                   std::ostream& log,
+                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
+                   const bool log_comparison_details,
+                   const std::string& name_suffix )
+{
+  return ComparisonTraits<T>::compare<ComparePolicy>( left_value,
+                                                      left_name,
+                                                      true,
+                                                      right_value,
+                                                      right_name,
+                                                      true,
+                                                      name_suffix,
+                                                      log,
+                                                      log_comparison_details,
+                                                      extra_data );
+}
+
+// Create a comparison header
+template<typename ComparisonPolicy, typename T1, typename T2>
+inline std::string createComparisonHeader(
+                   T1&& left_value,
+                   const std::string& left_name,
+                   const T2& right_value,
+                   const std::string& right_name,
+                   const typename ComparePolicy<T2>::ExtraDataType& extra_data,
+                   const std::string& name_suffix )
+{
+  return ComparisonTraits<T2>::createComparisonHeader<ComparePolicy>(
+                                                                  left_value,
+                                                                  left_name,
+                                                                  false,
+                                                                  right_value,
+                                                                  right_name,
+                                                                  true,
+                                                                  name_suffix,
+                                                                  extra_data );
+}
+
+// Compare two values and print the results (to the desired stream)
+template<typename ComparePolicy, typename T1, typename T2>
+inline bool compare(
+                   T1&& left_value,
+                   const std::string& left_name,
+                   const T2& right_value,
+                   const std::string& right_name,
+                   std::ostream& log,
+                   const typename ComparePolicy<T2>::ExtraDataType& extra_data,
+                   const bool log_comparison_details,
+                   const std::string& name_suffix )
+{
+  return ComparisonTraits<T2>::compare<ComparePolicy>( left_value,
+                                                       left_name,
+                                                       false,
+                                                       right_value,
+                                                       right_name,
+                                                       true,
+                                                       name_suffix,
+                                                       log,
+                                                       log_comparison_details,
+                                                       extra_data );
+}
+
+// Create a comparison header
+template<typename ComparisonPolicy, typename T1, typename T2>
+inline std::string createComparisonHeader(
+                   const T1& left_value,
+                   const std::string& left_name,
+                   T2&& right_value,
+                   const std::string& right_name,
+                   const typename ComparePolicy<T1>::ExtraDataType& extra_data,
+                   const std::string& name_suffix )
+{
+  return ComparisonTraits<T1>::createComparisonHeader<ComparePolicy>(
+                                                                  left_value,
+                                                                  left_name,
+                                                                  true,
+                                                                  right_value,
+                                                                  right_name,
+                                                                  false,
+                                                                  name_suffix,
+                                                                  extra_data );
+}
+
+// Compare two values and print the results (to the desired stream)
+template<typename ComparePolicy, typename T1, typename T2>
+inline bool compare(
+                  const T1& left_value,
+                  const std::string& left_name,
+                  T2&& right_value,
+                  const std::string& right_name,
+                  std::ostream& log,
+                  const typename ComparePolicy<T1>::ExtraDataType& extra_data,
+                  const bool log_comparison_details,
+                  const std::string& name_suffix )
+{
+  return ComparisonTraits<T1>::compare( left_value,
+                                        left_name,
+                                        true,
+                                        right_value,
+                                        right_name,
+                                        false,
+                                        name_suffix,
+                                        log,
+                                        log_comparison_details,
+                                        extra_data );
+}
+
+// Create a comparison header
+template<typename ComparisonPolicy, typename T>
+inline std::string createComparisonHeader(
+                   T&& left_value,
+                   const std::string& left_name,
+                   T&& right_value,
+                   const std::string& right_name,
+                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
+                   const std::string& name_suffix )
+{
+  return ComparisonTraits<T>::createComparisonHeader<ComparePolicy>(
+                                                                  left_value,
+                                                                  left_name,
+                                                                  false,
+                                                                  right_value,
+                                                                  right_name,
+                                                                  false,
+                                                                  name_suffix,
+                                                                  extra_data );
+}
+
+// Compare two values and print the results (to the desired stream)
+template<typename ComparePolicy, typename T>
+inline bool compare(
+                   T&& left_value,
+                   const std::string& left_name,
+                   T&& right_value,
+                   const std::string& right_name,
+                   std::ostream& log,
+                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
+                   const bool log_comparison_details,
+                   const std::string& name_suffix )
+{
+  return ComparisonTraits<T>::compare( left_value,
+                                       left_name,
+                                       false,
+                                       right_value,
+                                       right_name,
+                                       false,
+                                       name_suffix,
+                                       log,
+                                       log_comparison_details,
+                                       extra_data );
+}
 
 } // end Utility namespace
 

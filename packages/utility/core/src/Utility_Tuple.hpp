@@ -14,10 +14,13 @@
 #include <sstream>
 #include <tuple>
 #include <utility>
+#include <type_traits>
 
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_ComparisonTraits.hpp"
+#include "Utility_TypeTraits.hpp"
 
 /*! \defgroup tuple Tuple.
  *
@@ -42,51 +45,158 @@ enum TupleMember{
   FOURTH
 };
 
-/*! The tuple element struct (see std::tuple_element)
- * \ingroup tuple
- */
-template<size_t I, typename T, typename Enabled = void>
-struct TupleElement : public std::tuple_element<I,T>
-{ /* ... */ };
-
-/*! The tuple size struct (see std::tuple_size)
+/*! The tuple size struct (the default is 1)
  * \ingroup tuple
  */
 template<typename T, typename Enabled = void>
-struct TupleSize : public std::tuple_size<T>
+struct TupleSize : public std::integral_constant<size_t,1>
 { /* ... */ };
 
+/*! \brief Partial specialization of TupleSize for all const types
+ * \ingroup tuple
+ */
+template<typename T>
+struct TupleSize<const T> : public TupleSize<T>
+{ /* ... */ };
+
+/*! \brief Partial specialization of TupleSize for all volatile types
+ * \ingroup tuple
+ */
+template<typename T>
+struct TupleSize<volatile T> : public TupleSize<T>
+{ /* ... */ };
+
+/*! \brief Partial specialization of TupleSize for all const volatile types
+ * \ingroup tuple
+ */
+template<typename T>
+struct TupleSize<const volatile T> : public TupleSize<T>
+{ /* ... */ };
+
+/*! \brief Partial specialization of TupleSize for std::tuple and std::pair types
+ * \ingroup tuple
+ */
+template<typename T>
+struct TupleSize<T,typename std::enable_if<Utility::IsTuple<T>::value>::type> : public std::tuple_size<T>
+{ /* ... */ };
+
+/*! The tuple element struct (the default is undefined)
+ * \ingroup tuple
+ */
+template<size_t I, typename T, typename Enabled = void>
+struct TupleElement 
+{ /* ... */ };
+
+/*! \brief Partial specialization of TupleElement for all const types
+ * \ingroup tuple
+ */
+template<size_t I, typename T>
+struct TupleElement<I, const T>
+{
+  typedef typename std::add_const<typename TupleElement<I,T>::type>::type type;
+};
+
+/*! \brief Partial specialization of TupleElement for all volatile types
+ * \ingroup tuple
+ */
+template<size_t I, typename T>
+struct TupleElement<I, volatile T>
+{
+  typedef typename std::add_volatile<typename TupleElement<I,T>::type>::type type;
+};
+
+/*! \brief Partial specialization of TupleElement for all const volatile types
+ * \ingroup tuple
+ */
+template<size_t I, typename T>
+struct TupleElement<I, const volatile T>
+{
+  typedef typename std::add_cv<typename TupleElement<I,T>::type>::type type;
+};
+
+/*! \brief Partial specialization of TupleElement for all non-tuple types (as 
+ * long as I == 0).
+ *
+ * Unlike std::tuple_element, this specialization allows one to create
+ * methods that take both std::tuple types and non-tuple types (Utility::get
+ * must also be used instead of std::get). See the 
+ * Utility::Search::binaryLowerBound method for an example.
+ * \ingroup tuple
+ */
+template<size_t I, typename T>
+struct TupleElement<I,T,typename std::enable_if<I==0 && !Utility::IsTuple<T>::value>::type>
+{ typedef T type; };
+
+/*! \brief Partial specialization of TupleElement for std::tuple and std::pair 
+ * types
+ * \ingroup tuple
+ */
+template<size_t I, typename T>
+struct TupleElement<I,T,typename std::enable_if<Utility::IsTuple<T>::value>::type> : public std::tuple_element<I,T>
+{ /* ... */ }
+
+/*! The tuple slice struct (the default is undefined)
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename TupleType, typename Enabled = void>
+struct TupleSlice
+{ /* ... */ };
+
+/*! Partial specialization of TupleSlice for all non-tuple types (as 
+ * long as offset == 0 and size == 1).
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename TupleType>
+struct TupleSlice<offset,size,TupleType,typename std::enable_if<offset==0 && size==1 && !Utility::IsTuple<TupleType>::value>::type>
+{
+  typedef typename std::remove_cv<TupleType>::type type;
+  typedef typename std::add_reference<TupleType>::type TiedType;
+  typedef typename std::add_const<TiedType>::type ConstTiedType;
+}
+
+/*! Partial specialization of TupleSlice for all tuple types
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename TupleType>
+struct TupleSlice<offset,size,TupleType,typename std::enable_if<offset < Utility::TupleSize<TupleType>::value-1 && offset+size <= Utility::TupleSize<TupleType>::value && Utility::IsTuple<TupleType>::value>::type>;
+
 /*! Return a reference to the desired tuple element (std::get)
  * \ingroup tuple
  */
-template<size_t I, typename... Types>
-inline typename TupleElement<I,std::tuple<Types...> >::type&
-get( std::tuple<Types...>& tuple ) noexcept
+template<size_t I, typename T>
+inline typename std::enable_if<Utility::IsTuple<T>::value,typename TupleElement<I,T>::type>::type&
+get( T& tuple ) noexcept
 { return std::get<I>( tuple ); }
 
 /*! Return a const reference to the desired tuple element (std::get)
  * \ingroup tuple
  */
-template<size_t I, typename... Types>
-inline const typename TupleElement<I,std::tuple<Types...> >::type&
-get( const std::tuple<Types...>& tuple ) noexcept
+template<size_t I, typename T>
+inline const typename std::enable_if<Utility::IsTuple<T>::value,typename TupleElement<I,T>::type>::type&
+get( const T& tuple ) noexcept
 { return std::get<I>( tuple ); }
 
-/*! Return a reference to the desired tuple element (std::get)
+/*! Return a reference to the desired tuple member 
+ *
+ * This can be used with all types 
+ * (e.g. double my_double = 1.0; Utility::get<0>( my_double ) == 1.0; }
  * \ingroup tuple
  */
-template<size_t I, typename T1, typename T2>
-inline typename TupleElement<I,std::pair<T1,T2> >::type&
-get( std::pair<T1,T2>& tuple ) noexcept
-{ return std::get<I>( tuple ); }
+template<size_t I, typename T>
+inline typename std::enable_if<I==0 && !Utility::IsTuple<T>::value,T>::type&
+get( T& value ) noexcept
+{ return value; }
 
-/*! Return a const reference to the desired tuple element (std::get)
+/*! Return a const reference to the desired tuple member 
+ *
+ * This can be used with all types 
+ * (e.g. double my_double = 1.0; Utility::get<0>( my_double ) == 1.0; }
  * \ingroup tuple
  */
-template<size_t I, typename T1, typename T2>
-inline const typename TupleElement<I,std::pair<T1,T2> >::type&
-get( const std::pair<T1,T2>& tuple ) noexcept
-{ return std::get<I>( tuple ); }
+template<size_t I, typename T>
+inline const typename std::enable_if<I==0 && !Utility::IsTuple<T>::value,T>::type&
+get( const T& value ) noexcept
+{ return value; }
 
 /*! Set the head tuple member value
  *
@@ -94,72 +204,100 @@ get( const std::pair<T1,T2>& tuple ) noexcept
  * \ingroup tuple
  */
 template<size_t I, typename TupleType, typename ValueType>
-void set( TupleType& tuple, ValueType value );
+inline void set( TupleType& tuple, ValueType value )
+{ Utility::get<I>( tuple ) = value; }
+
+/*! Create a slice of a tuple
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename TupleType>
+typename TupleSlice<offset,size,TupleType>::type slice( const TupleType& tuple );
+
+/*! Create a tied slice of a tuple
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename TupleType>
+typename TupleSlice<offset,size,TupleType>::ConstTiedType tiedSlice( const TupleType& tuple );
+
+/*! Create a tied slice of a tuple
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename TupleType>
+typename TupleSlice<offset,size,TupleType>::TiedType tiedSlice( TupleType& tuple );
+
+/*! Create a tied slice of a tuple
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename TupleType>
+typename TupleSlice<offset,size,const TupleType>::TiedType tiedSlice( const TupleType& tuple );
 
 /*! Partial specialization of ToStringTraits for tuple types
  * \ingroup tuple
  * \ingroup to_string_traits
  */
-template<typename... Types>
-struct ToStringTraits<std::tuple<Types...> >
+template<typename T>
+struct ToStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
 {
   //! Convert the tuple to a string
-  static std::string toString( const std::tuple<Types...>& tuple );
+  static std::string toString( const T& tuple );
 
   //! Place the tuple in a stream
-  static void toStream( std::ostream& os, const std::tuple<Types...>& tuple );
+  static void toStream( std::ostream& os, const T& tuple );
 };
 
 /*! Partial specialization of FromStringTraits for std::tuple
  * \ingroup tuple
  * \ingroup from_string_traits
  */
-template<typename... Types>
-struct FromStringTraits<std::tuple<Types...> >
+template<typename T>
+struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
 {
   //! The type that a string will be converted to
-  typedef std::tuple<typename std::remove_reference<Types>::type...> ReturnType;
+  typedef std::remove_reference<T>::type ReturnType;
   
   //! Convert the string to an object of type T
   static ReturnType fromString( const std::string& obj_rep );
 
   //! Extract the object from a stream
   static void fromStream( std::istream& is,
-                          std::tuple<Types...>& obj,
+                          T& obj,
                           const std::string& = std::string() );
 };
 
-/*! Partial specialization of ToStringTraits for std::pair types
- * \ingroup tuple
- * \ingroup to_string_traits
+/*! \brief The partial specialization of the Utility::ComparisonTraits for
+ * tuple types.
+ * \ingroup comparison_traits
  */
-template<typename T1, typename T2>
-struct ToStringTraits<std::pair<T1,T2> >
+template<typename T>
+struct ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
 {
-  //! Convert the tuple to a string
-  static std::string toString( const std::pair<T1,T2>& pair );
+  //! The extra data type (usually a comparison tolerance)
+  typedef double ExtraDataType;
 
-  //! Place the tuple in a stream
-  static void toStream( std::ostream& os, const std::pair<T1,T2>& pair );
-};
+  //! Create a comparison header
+  template<typename ComparisonPolicy>
+  static std::string createComparisonHeader(
+                           const T& left_value,
+                           const std::string& left_name,
+                           const bool log_left_name,
+                           const T& right_value,
+                           const std::string& right_name,
+                           const bool log_right_name,
+                           const std::string& name_suffix,
+                           const ExtraDataType& extra_data = ExtraDataType() );
 
-/*! Partial specialization of FromStringTraits for std::pair
- * \ingroup tuple
- * \ingroup from_string_traits
- */
-template<typename T1, typename T2>
-struct FromStringTraits<std::pair<T1,T2> >
-{
-  //! The type that a string will be converted to
-  typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> ReturnType;
-  
-  //! Convert the string to an object of type T
-  static ReturnType fromString( const std::string& obj_rep );
-
-  //! Extract the object from a stream
-  static void fromStream( std::istream& is,
-                          std::pair<T1,T2>& obj,
-                          const std::string& = std::string() );
+  //! Compare two tuples
+  template<typename ComparisonPolicy>
+  static bool compare( const T& left_value,
+                       const std::string& left_name,
+                       const bool log_left_name,
+                       const T& right_value,
+                       const std::string& right_name,
+                       const bool log_right_name,
+                       const std::string& name_suffix
+                       std::ostream& log,
+                       const bool log_comparison_header = false,
+                       const ExtraDataType& extra_data = ExtraDataType() );
 };
   
 } // end Utility namespace

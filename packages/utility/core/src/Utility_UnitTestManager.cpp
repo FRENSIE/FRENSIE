@@ -1205,7 +1205,10 @@ bool UnitTestManager::runUnitTest( const UnitTest& unit_test,
   // All output will be redirected to the log
   d_data->redirectStdOutput( log );
 
-  const bool result = unit_test.run( log );
+  size_t number_of_checks = 0, number_of_passed_checks = 0;
+
+  const bool result =
+    unit_test.run( log, number_of_checks, number_of_passed_checks );
   
   // Flush all logs
   FRENSIE_FLUSH_ALL_LOGS();

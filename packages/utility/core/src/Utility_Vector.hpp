@@ -17,6 +17,7 @@
 #include "Utility_ArrayView.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_ComparisonTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 /*! \defgroup vector Vector
@@ -41,6 +42,14 @@ struct ToStringTraits<std::vector<T> > : public Details::ToStringTraitsIteratorH
  */
 template<typename T>
 struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >
+{ /* ... */ };
+
+/*! Partial specialization of ComparisonTraits for std::vector
+ * \ingroup vector
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ComparisonTraits<std::vector<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::vector,T>
 { /* ... */ };
   
 } // end Utility namespace

@@ -9,11 +9,8 @@
 #ifndef UTILITY_TUPLE_DEF_HPP
 #define UTILITY_TUPLE_DEF_HPP
 
-// Std Lib Includes
-#include <type_traits>
-
-// Boost Includes
-#include <boost/units/quantity.hpp>
+// std Lib Includes
+#include <functional>
 
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
@@ -21,139 +18,213 @@
 
 namespace Utility{
 
-/*! \brief Specialization of TupleElement for all const types
- * \ingroup tuple
- */
-template<size_t I, typename T>
-struct TupleElement<I, const T>
+namespace Details{
+
+//! The tuple slice element extractor class
+template<size_t I, size_t N>
+struct TupleSliceElementExtractor
 {
-  typedef typename std::add_const<typename TupleElement<I,T>::type>::type type;
+  //! Extract the tuple slice element from the full type
+  template<size_t head, typename Tuple, typename TupleSlice>
+  static inline void extractSlice( const Tuple& tuple, TupleSlice& slice )
+  {
+    Utility::get<I>( slice ) = Utility::get<head+I>( tuple );
+
+    TupleSliceElementExtractor<I+1,N-1>::extractSlice<head>( tuple, slice );
+  }
+
+  //! Extract the tuple slice element from the full type
+  template<size_t head, typename Tuple, typename TupleSlice>
+  static inline void extractTiedSlice( const Tuple& tuple, TupleSlice& slice )
+  {
+    Utility::get<I>( slice ) = std::cref( Utility::get<head+I>( tuple ) );
+
+    TupleSliceElementExtractor<I+1,N-1>::extractTiedSlice<head>( tuple, slice );
+  }
+
+  //! Extract the tuple slice element from the full type
+  template<size_t head, typename Tuple, typename TupleSlice>
+  static inline void extractTiedSlice( Tuple& tuple, TupleSlice& slice )
+  {
+    Utility::get<I>( slice ) = std::ref( Utility::get<head+I>( tuple ) );
+
+    TupleSliceElementExtractor<I+1,N-1>::extractTiedSlice<head>( tuple, slice );
+  }
 };
 
-/*! \brief Specialization of TupleElement for all volatile types
- * \ingroup tuple
- */
-template<size_t I, typename T>
-struct TupleElement<I, volatile T>
+//! Partial specialization of TupleSliceElementExtractor N == 0
+template<size_t I>
+struct TupleSliceElementExtractor<I,0>
 {
-  typedef typename std::add_volatile<typename TupleElement<I,T>::type>::type type;
+  //! Extract the tuple slice element from the full type
+  template<size_t head, typename Tuple, typename TupleSlice>
+  static inline void extractSlice( const Tuple&, TupleSlice& )
+  { /* ... */ }
+
+  //! Extract the tuple slice element from the full type
+  template<size_t head, typename Tuple, typename TupleSlice>
+  static inline void extractTiedSlice( const Tuple&, TupleSlice& )
+  { /* ... */ }
+
+  //! Extract the tuple slice element from the full type
+  template<size_t head, typename Tuple, typename TupleSlice>
+  static inline void extractTiedSlice( Tuple&, TupleSlice& )
+  { /* ... */ }
 };
 
-/*! \brief Specialization of TupleElement for all const volatile types
- * \ingroup tuple
- */
-template<size_t I, typename T>
-struct TupleElement<I, const volatile T>
+//! The tuple slice helper class
+template<size_t offset, size_t size, typename StartT, typename... Types>
+struct TupleSliceHelper
 {
-  typedef typename std::add_cv<typename TupleElement<I,T>::type>::type type;
+  typedef TupleSliceHelper<offset-1,size,Types...>::type type;
+  typedef TupleSliceHelper<offset-1,size,Types...>::TiedType TiedType;
+  typedef TupleSliceHelper<offset-1,size,Types...>::ConstTiedType ConstTiedType;
+
+  //! Slice the tuple
+  template<size_t head, typename Tuple>
+  static inline type slice( const Tuple& tuple )
+  {
+    return TupleSliceHelper<offset-1,size,Types...>::slice<head+1>( tuple );
+  }
+
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline ConstTiedType tiedSlice( const Tuple& tuple )
+  {
+    return TupleSliceHelper<offset-1,size,Types...>::tiedSlice<head+1>( tuple );
+  }
+
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline TiedType tiedSlice( Tuple& tuple )
+  {
+    return TupleSliceHelper<offset-1,size,Types...>::tiedSlice<head+1>( tuple );
+  }
 };
 
-/*! \brief Specialization of TupleElement for all arithmetic types
- *
- * Unlike std::tuple_element, this specialization allows one to create
- * methods that take both std::tuple types and arithmetic types (Utility::get
- * must also be used instead of std::get). See the 
- * Utility::Search::binaryLowerBound method for an example.
- * \ingroup tuple
- */
-template<typename T>
-struct TupleElement<0,T,typename std::enable_if<std::is_arithmetic<T>::value>::type>
-{ typedef T type; };
+//! Partial specialization of the TupleSliceHelper for offset == 0
+template<size_t size, typename... Types, typename EndT>
+struct TupleSliceHelper<0, size, Types..., EndT>
+{
+  typedef TupleSliceHelper<0,size-1,Types...>::type type;
+  typedef TupleSliceHelper<0,size-1,Types...>::TiedType TiedType;
+  typedef TupleSliceHelper<0,size-1,Types...>::ConstTiedType ConstTiedType;
 
-/*! \brief Specialization of TupleElement for boost::units::quantity<Unit,T> 
- * types
- * \ingroup tuple
- */
-template<typename Unit, typename T>
-struct TupleElement<0,boost::units::quantity<Unit,T> >
-{ typedef boost::units::quantity<Unit,T> type; };
+  //! Slice the tuple
+  template<size_t head, typename Tuple>
+  static inline type slice( const Tuple& tuple )
+  {
+    return TupleSliceHelper<0,size-1,Types...>::slice<head>( tuple );
+  }
 
-/*! \brief Specialization of TupleSize for all const types
- * \ingroup tuple
- */
-template<typename T>
-struct TupleSize<const T> : public TupleSize<T>
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline ConstTiedType tiedSlice( const Tuple& tuple )
+  {
+    return TupleSliceHelper<0,size-1,Types...>::tiedSlice<head>( tuple );
+  }
+
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline TiedType tiedSlice( Tuple& tuple )
+  {
+    return TupleSliceHelper<0,size-1,Types...>::tiedSlice<head>( tuple );
+  }
+};
+
+//! Partial specialization of the TupleSliceHelper for offset == 0, size == 1
+template<typename... Types>
+struct TupleSliceHelper<0, 1, Types...>
+{
+  typedef std::tuple<std::remove_cv<Types...>::type> type;
+  typedef std::tuple<std::reference_wrapper<std::remove_const<Types...>::type> > TiedType;
+  typedef std::tuple<std::reference_wrapper<std::add_const<Types...>::type> > ConstTiedType;
+
+  //! Slice the tuple
+  template<size_t head, typename Tuple>
+  static inline type slice( const Tuple& tuple )
+  {
+    type tuple_slice;
+
+    TupleSliceElementExtractor<0,sizeof(Types...)>::extractSlice<head>( tuple, tuple_slice );
+
+    return tuple_slice;
+  }
+
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline ConstTiedType tiedSlice( const Tuple& tuple )
+  {
+    ConstTiedType tied_tuple_slice;
+
+    TupleSliceElementExtractor<0,sizeof(Types...)>::extractTiedSlice<head>( tuple, tied_tuple_slice );
+
+    return tied_tuple_slice;
+  }
+
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline TiedType tiedSlice( Tuple& tuple )
+  {
+    TiedType tied_tuple_slice;
+
+    TupleSliceElementExtractor<0,sizeof(Types...)>::extractTiedSlice<head>( tuple, tied_tuple_slice );
+
+    return tied_tuple_slice;
+  }
+};
+
+//! The tuple slice helper wrapper
+template<size_t offset, size_t size, typename T>
+struct TupleSliceHelperWrapper
 { /* ... */ };
 
-/*! \brief Specialization of TupleSize for all volatile types
- * \ingroup tuple
- */
-template<typename T>
-struct TupleSize<volatile T> : public TupleSize<T>
+//! The TupleSliceHelperWrapper partial specialization for std::tuple
+template<size_t offset, size_t size, typename... Types>
+struct TupleSliceHelperWrapper<offset,size,std::tuple<Types...> > : public TupleSliceHelper<offset,size,Types...>
 { /* ... */ };
 
-/*! \brief Specialization of TupleSize for all const volatile types
- * \ingroup tuple
- */
-template<typename T>
-struct TupleSize<const volatile T> : public TupleSize<T>
+//! The TupleSliceHelperWrapper partial specialization for std::pair
+template<size_t offset, size_t size, typename T1, typename T2>
+struct TupleSliceHelperWrapper<offset,size,std::pair<T1,T2> > : public TupleSliceHelper<offset,size,T1,T2>
+{ /* ... */ };
+  
+} // end Details namespace
+
+// Partial specialization of TupleSlice for all tuple types
+template<size_t offset, size_t size, typename TupleType>
+struct TupleSlice<offset,size,TupleType,typename std::enable_if<offset < Utility::TupleSize<TupleType>::value-1 && offset+size <= Utility::TupleSize<TupleType>::value && Utility::IsTuple<TupleType>::value>::type> : public Details::TupleSliceHelperWrapper<offset,size,TupleType>
 { /* ... */ };
 
-/*! \brief Specialization of TupleSize for all arithmetic types
- *
- * Unlike std::tuple_size, this specialization allows one to create
- * methods that take both std::tuple types and arithmetic types (Utility::get
- * must also be used instead of std::get). See the 
- * Utility::Search::binaryLowerBound method for an example.
+/*! Create a slice of a tuple
  * \ingroup tuple
  */
-template<typename T>
-struct TupleSize<T,typename std::enable_if<std::is_arithmetic<T>::value>::type> : public std::integral_constant<size_t,1>
-{ /* ... */ };
+template<size_t offset, size_t size, typename TupleType>
+inline typename TupleSlice<offset,size,TupleType>::type
+slice( const TupleType& tuple )
+{
+  return Details::TupleSliceHelperWrapper<offset,size,TupleType>::slice( tuple );
+}
 
-/*! \brief Specialization of TupleSize for boost::units::quantity<Unit,T> types
+/*! Create a tied slice of a tuple
  * \ingroup tuple
  */
-template<typename Unit,typename T>
-struct TupleSize<boost::units::quantity<Unit,T> > : public std::integral_constant<size_t,1>
-{ /* ... */ };
+template<size_t offset, size_t size, typename TupleType>
+inline typename TupleSlice<offset,size,TupleType>::ConstTiedType
+tiedSlice( const TupleType& tuple )
+{
+  return Details::TupleSliceHelperWrapper<offset,size,TupleType>::tiedSlice( tuple );
+}
 
-/*! Return a reference to the desired tuple member 
- *
- * This can be used with native (arithmetic) types 
- * (e.g. Utility::get<0>( double )).
+/*! Create a tied slice of a tuple
  * \ingroup tuple
  */
-template<size_t I, typename Tuple>
-inline typename std::enable_if<I==0 && std::is_arithmetic<Tuple>::value,Tuple&>::type
-get( Tuple& tuple )
-{ return tuple; }
-
-/*! Return a const reference to the desired tuple member 
- *
- * This can be used with native (arithmetic) types 
- * (e.g. Utility::get<0>( double )).
- * \ingroup tuple
- */
-template<size_t I, typename Tuple>
-inline typename std::enable_if<I==0 && std::is_arithmetic<Tuple>::value,const Tuple&>::type
-get( const Tuple& tuple )
-{ return tuple; }
-
-/*! Return a reference to the desired tuple member
- *
- * This can be used with boost::units::quantity<Unit,T>
- * \ingroup tuple
- */
-template<size_t I, typename Unit, typename T>
-inline typename std::enable_if<I==0,boost::units::quantity<Unit,T>&>::type
-get( boost::units::quantity<Unit,T>& tuple )
-{ return tuple; }
-
-/*! Return a const reference to the desired tuple member
- *
- * This can be used with boost::units::quantity<Unit,T>
- * \ingroup tuple
- */
-template<size_t I, typename Unit, typename T>
-inline typename std::enable_if<I==0,const boost::units::quantity<Unit,T>&>::type
-get( const boost::units::quantity<Unit,T>& tuple )
-{ return tuple; }
-
-// Set the head tuple member value
-template<size_t I, typename TupleType, typename ValueType>
-inline void set( TupleType& tuple, ValueType value )
-{ Utility::get<I>( tuple ) = value; }
+template<size_t offset, size_t size, typename TupleType>
+inline typename TupleSlice<offset,size,TupleType>::TiedType
+tiedSlice( TupleType& tuple )
+{
+  return Details::TupleSliceHelperWrapper<offset,size,TupleType>::tiedSlice( tuple );
+}
 
 namespace Details{
 
@@ -198,10 +269,10 @@ struct TupleStreamHelper
 };
 
 /*! \brief The tuple output stream helper class 
- * (specialization for I == std::tuple_size-1, which is for the last element)
+ * (specialization for I == Utility::TupleSize-1, which is for the last element)
  */
 template<size_t I, typename TupleType>
-struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_size<TupleType>::value-1>::type>
+struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==Utility::TupleSize<TupleType>::value-1>::type>
 {
   static inline void toStream( std::ostream& os, const TupleType& tuple )
   {
@@ -239,10 +310,10 @@ struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_siz
 };
 
 /*! \brief The tuple output stream helper class
- * (specialization for I == std::tuple_size, which is past the last element)
+ * (specialization for I == Utility::TupleSize, which is past the last element)
  */
 template<size_t I, typename TupleType>
-struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_size<TupleType>::value>::type>
+struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==Utility::TupleSize<TupleType>::value>::type>
 {
   static inline void toStream( std::ostream& os, const TupleType& tuple )
   { /* ... */ }
@@ -254,32 +325,32 @@ struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==std::tuple_siz
 } // end Details namespace
 
 // Convert the tuple to a string
-template<typename... Types>
-inline std::string ToStringTraits<std::tuple<Types...> >::toString(
-                                            const std::tuple<Types...>& tuple )
+template<typename T>
+inline std::string ToStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::toString(
+                                            const T& tuple )
 {
   std::ostringstream oss;
   
-  ToStringTraits<std::tuple<Types...> >::toStream( oss, tuple );
+  ToStringTraits<T>::toStream( oss, tuple );
   
   return oss.str();
 }
 
 // Place the tuple in a stream
-template<typename... Types>
-inline void ToStringTraits<std::tuple<Types...> >::toStream(
-                                            std::ostream& os,
-                                            const std::tuple<Types...>& tuple )
+template<typename T>
+inline void ToStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::toStream(
+                                                              std::ostream& os,
+                                                              const T& tuple )
 {
   os << '{';
-  Details::TupleStreamHelper<0,std::tuple<Types...> >::toStream( os, tuple);
+  Details::TupleStreamHelper<0,T>::toStream( os, tuple );
   os << '}';
 }
 
 
 // Convert the string to an object of type T
-template<typename... Types>
-inline auto FromStringTraits<std::tuple<Types...> >::fromString(
+template<typename T>
+inline auto FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::fromString(
                                      const std::string& obj_rep ) -> ReturnType
 {
   std::istringstream iss( obj_rep );
@@ -292,69 +363,177 @@ inline auto FromStringTraits<std::tuple<Types...> >::fromString(
 }
 
 // Extract the object from a stream
-template<typename... Types>
-inline void FromStringTraits<std::tuple<Types...> >::fromStream(
+template<typename T>
+inline void FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::fromStream(
                                                      std::istream& is,
-                                                     std::tuple<Types...>& obj,
+                                                     T& obj,
                                                      const std::string& )
 { 
   try{
     // Initialize the input stream
     Utility::initializeInputStream( is, '{' );
     
-    Details::TupleStreamHelper<0,std::tuple<Types...> >::fromStream( is, obj );
+    Details::TupleStreamHelper<0,T>::fromStream( is, obj );
   }
   EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                               Utility::StringConversionException,
                               "Could not extract a tuple from the stream!" );
 }
 
-// Convert the tuple to a string
-template<typename T1, typename T2>
-inline std::string ToStringTraits<std::pair<T1,T2> >::toString(
-                                                 const std::pair<T1,T2>& pair )
+namespace Details{
+
+//! The helper class for converting extra data to the desired type
+template<typename T, typename Enabled = void>
+struct ExtraDataConversionHelper
 {
-  auto pair_copy = std::tie( pair.first, pair.second );
+  //! Convert the extra data to the desired type
+  static inline T convert( const double extra_data )
+  { return static_cast<T>( extra_data ); }
+};
 
-  return Utility::toString( pair_copy );
-}
-
-// Place the tuple in a stream
-template<typename T1, typename T2>
-inline void ToStringTraits<std::pair<T1,T2> >::toStream(
-                                                 std::ostream& os,
-                                                 const std::pair<T1,T2>& pair )
+//! The ExtraDataConversionHelper specialization for std::string
+template<>
+struct ExtraDataConversionHelper<std::string>
 {
-  auto pair_copy = std::tie( pair.first, pair.second );
+  //! Convert the extra data to the desired type
+  static inline T convert( const double extra_data )
+  { return Utility::toString( extra_data ); }
+};
 
-  Utility::toStream( os, pair_copy );
-}
-
-
-// Convert the string to an object of type T
-template<typename T1, typename T2>
-inline auto FromStringTraits<std::pair<T1,T2> >::fromString(
-                                     const std::string& obj_rep ) -> ReturnType
+//! The ExtraDataConversionHelper partial specialization for non-arithmetic types
+template<typename T>
+struct ExtraDataConversionHelper<T,typename std::enable_if<!std::is_arithmetic<T>::value>::type>
 {
-  ReturnType pair;
+  //! Convert the extra data to the desired type
+  static inline T convert( const double extra_data )
+  { return T(); }
+};
 
-  std::istringstream iss( obj_rep );
+//! The helper class that is used to compare tuple members
+template<size_t I, typename TupleType, typename Enabled = void>
+struct TupleMemberCompareHelper
+{
+  //! Compare tuple members
+  template<typename ComparePolicy, typename T>
+  static inline bool compareTupleMembers(
+                     const TupleType& left_tuple,
+                     const std::string& left_name,
+                     const bool log_left_name,
+                     const TupleType& right_tuple,
+                     const std::string& right_name,
+                     const bool log_right_name,
+                     const std::string& name_suffix,
+                     std::ostream& log,
+                     const double extra_data )
+  {
+    std::ostringstream extended_name_suffix;
+    extended_name_suffix << name_suffix << "." << I;
 
-  Utility::fromStream( iss, pair );
+    typedef typename Utility::TupleElement<I,TupleType>::type
+      TupleElementIType;
+
+    typedef Details::ExtraDataConversionHelper<typename Utility::ComparisonTraits<TupleElementIType>::ExtraDataType>
+      TupleElementIExtraDataConversionHelper;
+
+    bool local_success =
+      Utility::ComparisonTraits<TupleElementIType>::compare<ComparePolicy>(
+               Utility::get<I>( left_tuple ),
+               left_name,
+               log_left_name;
+               Utility::get<I>( right_tuple ),
+               right_name,
+               log_right_name,
+               extended_name_suffix.str(),
+               log,
+               true,
+               TupleElementIExtraDataConversionHelper::convert( extra_data ) );
+
+    return local_success &&
+      TupleMemberCompareHelper<I+1,TupleType>::compareTupleMembers(
+                                                                left_tuple,
+                                                                left_name,
+                                                                log_left_name,
+                                                                right_tuple,
+                                                                right_name,
+                                                                log_right_name,
+                                                                name_suffix,
+                                                                log,
+                                                                extra_data );
+  }
+};
+
+// The helper class that is used to compare tuple members
+template<size_t I, typename TupleType>
+struct TupleMemberCompareHelper<I,TupleType,typename std::enable_if<I==TupleSize<TupleType>::value>::type>
+{
+  static inline bool compareTupleMembers(
+                          const TupleType& left_tuple,
+                          const std::string& left_name,
+                          const bool log_left_name,
+                          const TupleType& right_tuple,
+                          const std::string& right_name,
+                          const bool log_right_name,
+                          const std::string& name_suffix,
+                          const ComparisonOperatorWrapper<T>& compare_operator,
+                          std::ostream& log,
+                          const double extra_data )
+  { return true; }
+};
+
+} // end Details namespace
+
+// Create a comparison header
+template<typename T>
+template<typename ComparisonPolicy>
+inline std::string ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::createComparisonHeader(
+                                       const T& left_value,
+                                       const std::string& left_name,
+                                       const bool log_left_name,
+                                       const T& right_value,
+                                       const std::string& right_name,
+                                       const bool log_right_name,
+                                       const std::string& name_suffix,
+                                       const ExtraDataType& extra_data  )
+{
+  std::string comparison_header =
+    ComparisonPolicy::createComparisonDetails( left_name,
+                                               log_left_name,
+                                               left_value,
+                                               right_name,
+                                               log_right_name,
+                                               right_value,
+                                               name_suffix,
+                                               extra_data );
+  comparison_header += ": ";
   
-  return pair;
+  return comparison_header;
 }
 
-// Extract the object from a stream
-template<typename T1, typename T2>
-inline void FromStringTraits<std::pair<T1,T2> >::fromStream(
-                                                         std::istream& is,
-                                                         std::pair<T1,T2>& obj,
-                                                         const std::string& )
-{ 
-  auto pair_reference = std::tie( obj.first, obj.second );
-
-  Utility::fromStream( is, pair_reference );
+// Compare two tuples
+template<typename T>
+template<typename ComparisonPolicy>
+inline bool ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::compare(
+                                       const T& left_value,
+                                       const std::string& left_name,
+                                       const bool log_left_name,
+                                       const T& right_value,
+                                       const std::string& right_name,
+                                       const bool log_right_name,
+                                       const std::string& name_suffix
+                                       std::ostream& log,
+                                       const bool, 
+                                       const ExtraDataType& extra_data )
+{
+    return Details::TupleMemberCompareHelper<0,T>::compareTupleMembers<ComparisonPolicy>(
+                                                              left_value,
+                                                              left_name,
+                                                              log_left_name
+                                                              right_value,
+                                                              right_name,
+                                                              log_right_name,
+                                                              name_suffix,
+                                                              log,
+                                                              extra_data );
 }
   
 } // end Utility namespace

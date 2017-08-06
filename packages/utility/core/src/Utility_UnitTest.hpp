@@ -24,12 +24,18 @@ class UnitTest
 public:
 
   //! Constructor
-  UnitTest( const std::string group_name,
-            const std::string test_name,
-            const std::string data_name = "" );
+  UnitTest( const std::string& group_name,
+            const std::string& test_name,
+            const std::string& data_name = "" );
+
+  //! Destructor
+  virtual ~UnitTest()
+  { /* ... */ }
 
   //! Run the unit test and place report in output stream
-  bool run( std::ostream& os ) const;
+  bool run( std::ostream& os,
+            size_t& number_of_checks,
+            size_t& number_of_passed_checks ) const;
 
   //! Return the group name
   const std::string& getGroupName() const;
@@ -58,7 +64,11 @@ public:
 protected:
 
   //! Unit test definition
-  virtual void runImpl( std::ostream& os, bool& success ) const = 0;
+  virtual void runImpl( std::ostream& os,
+                        bool& success,
+                        size_t& number_of_checks,
+                        size_t& number_of_passed_checks,
+                        size_t& last_checkpoint_line_number ) const = 0;
 
 private:
 

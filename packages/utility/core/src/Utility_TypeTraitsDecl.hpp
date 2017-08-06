@@ -34,6 +34,13 @@ struct IsPointerToConst : public std::false_type
 template<typename T, typename Enabled = void>
 struct IsHashable : public std::false_type
 { /* ... */ };
+
+/*! Check if the type is a tuple (std::tuple or std::pair)
+ * \ingroup type_traits
+ */
+template<typename T, typename Enabled = void>
+struct IsTuple : public std::false_type
+{ /* ... */ };
   
 } // end Utility namespace
 

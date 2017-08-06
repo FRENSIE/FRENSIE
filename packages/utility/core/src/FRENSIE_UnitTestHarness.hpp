@@ -11,6 +11,7 @@
 
 #include "Utility_UnitTest.hpp"
 #include "Utility_UnitTestManager.hpp"
+#include "Utility_UnitTestMacros.hpp"
 
 #endif // end FRENSIE_UNIT_TEST_MAIN
 

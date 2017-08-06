@@ -16,7 +16,7 @@
 #include <Teuchos_FancyOStream.hpp>
 
 // FRENSIE Includes
-#include "Utility_TestingHelpers.hpp"
+#include "Utility_UnitTestHelpers.hpp"
 #include "Utility_TeuchosUnitTestInitializer.hpp"
 
 /*! \defgroup unit_test_harness_extensions Teuchos Unit Test Harness Extensions

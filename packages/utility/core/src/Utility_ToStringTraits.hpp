@@ -13,6 +13,7 @@
 #include <sstream>
 #include <type_traits>
 #include <iterator>
+#include <stdexcept>
 
 // FRENSIE Includes
 #include "Utility_ToStringTraitsDecl.hpp"
@@ -181,6 +182,21 @@ struct ToStringTraits<T,typename std::enable_if<std::is_integral<T>::value>::typ
   static inline void toStream( std::ostream& os, const T& obj )
   { os << obj; }
 };
+
+/*! Partial specialization of ToStringTraits for std::exception types
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<T,typename std::enable_if<std::is_base_of<std::exception,T>::value>::type>
+{
+  //! Convert the std::exception type to a string
+  static inline std::string toString( const std::exception& obj )
+  { return obj.what(); }
+
+  //! Place the std::exception type in a stream
+  static inline void toStream( std::ostream& os, const std::exception& obj )
+  { os << obj.what(); }
+}
 
 namespace Details{
 

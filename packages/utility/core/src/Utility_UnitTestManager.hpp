@@ -224,7 +224,7 @@ private:
   std::unique_ptr<Data> d_data;
 };
 
-#define FRENSIE_TEST_CATCH_STATEMENTS( LOG_STREAM, VERBOSE, SUCCESS_VALUE ) \
+#define FRENSIE_TEST_CATCH_STATEMENTS( LOG_STREAM, VERBOSE, SUCCESS_VALUE, CHECKPOINT_LINE_NUMBER ) \
   catch( const std::exception& exception )                              \
   {                                                                   \
     SUCCESS_VALUE = false;                                            \
@@ -238,6 +238,12 @@ private:
       if( Utility::GlobalMPISession::getSize() > 1 )                    \
         LOG_STREAM << " on proc " << Utility::GlobalMPISession::getRank(); \
                                                                         \
+      if( CHECKPOINT_LINE_NUMBER > 0 )                                  \
+      {                                                               \
+          LOG_STREAM << "(last checkpoint at line "                     \
+                     << CHECKPOINT_LINE_NUMBER << ")";               \
+      }                                                            \
+                                                                     \
       LOG_STREAM << "!\n" << exception.what() << std::flush;         \
     }                                                                   \
   }                                                                     \

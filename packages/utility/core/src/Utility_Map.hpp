@@ -19,6 +19,7 @@
 #include "Utility_Tuple.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_ComparisonTraits.hpp"
 
 /*! \defgroup map Map
  *
@@ -60,6 +61,22 @@ struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLC
 template<typename Key, typename T>
 struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_map<Key,T>, std::pair<Key,T>, std::unordered_map<Key,T>, std::pair<Key,T> >
 { /* ... */ };
+
+/*! Partial specialization of ComparisonTraits for std::map
+ * \ingroup map
+ * \ingroup comparison_traits
+ */
+template<typename Key, typename T>
+struct ComparisonTraits<std::map<Key,T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::map,Key,T>
+{ /* ... */ }
+
+/*! Partial specialization of ComparisonTraits for std::unordered_map
+ * \ingroup map
+ * \ingroup comparison_traits
+ */
+template<typename Key, typename T>
+struct ComparisonTraits<std::unordered_map<Key,T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::unordered_map,Key,T>
+{ /* ... */ }
   
 } // end Utility namespace
 

@@ -10,20 +10,20 @@
 #define UTILITY_COMPARISON_TRAITS_DECL_HPP
 
 // Std Lib Includes
+#include <iostream>
 #include <string>
-
-// Trilinos Includes
-#include <Teuchos_FancyOStream.hpp>
+#include <cmath>
+#include <type_traits>
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 /*! \defgroup comparison_traits Comparison Traits 
  * \ingroup traits
  * \ingroup testing
  *
- * The <em> Teuchos Unit Test Harness </em> only supports testing of basic
- * types. The Utility::ComparisonTraits allows testing equality of std::tuple
+ * The Utility::ComparisonTraits allows testing equality of td::tuple
  * and Utility::Tuple classes. The Utility::ComparisonTraits struct must be 
  * specialized in order to work properly. Attempting to use the struct without
  * a specialization will result in a compile time error. The compile time error
@@ -35,11 +35,9 @@ namespace Utility{
 /*! \brief This structure defines the comparison that can be used to compare
  * two values of arrays of values.
  *
- * The goal is to be able to test if the values of two generic types are equal
- * within the <em> Teuchos Unit Test Harness. </em> The functions in the
- * templated base unspecialized struct are designed not to compile (giving a
- * nice compile-time error message) and therefore specializations must be
- * written for each type that will be tested.
+ * The goal is to be able to test if the values of two generic types are equal.
+ * The default ComparisonTraits class will be used unless a specialization is
+ * made for your type. 
  * \tparam T A data type that will be tested.
  * \tparam Enabled A hidden data type that can be used with the std::enable_if
  * struct to help with template specializations (using SFINAE).
@@ -48,10 +46,22 @@ namespace Utility{
 template<typename T, typename Enabled = void>
 struct ComparisonTraits
 {
-  //! Typdef for scalar type
-  typedef typename UndefinedTraits<T>::DesiredTypeIsMissingSpecialization scalarType;
+  //! The extra data type (usually a comparison tolerance)
+  typedef typename QuantityTraits<T>::RawType ExtraDataType;
 
-  /*! Compare two values of a type.
+  //! Create a comparison header
+  template<typename ComparisonPolicy>
+  static std::string createComparisonHeader(
+                           const T& left_value,
+                           const std::string& left_name,
+                           const bool log_left_name,
+                           const T& right_value,
+                           const std::string& right_name,
+                           const bool log_right_name,
+                           const std::string& name_suffix,
+                           const ExtraDataType& extra_data = ExtraDataType() );
+  
+  /*! Compare two values of a type (default)
    *
    * \details To provide detailed output, it must be known whether the
    * values are elements in an array. If so, the optional index parameter
@@ -72,66 +82,151 @@ struct ComparisonTraits
    * \param[in] tol The testing tolerance used to compare floating point
    * values. This will be ignored with integer comparisons.
    */
-  static inline bool compare( const T& first_value,
-			      const std::string& first_name,
-			      const T& second_value,
-			      const std::string& second_name,
-			      Teuchos::FancyOStream& out,
-			      const int index = -1,
-			      const double tol = 0.0 )
-  { (void)UndefinedTraits<T>::notDefined(); }
+  template<typename ComparisonPolicy>
+  static bool compare( const T& left_value,
+                       const std::string& left_name,
+                       const bool log_left_name,
+                       const T& right_value,
+                       const std::string& right_name,
+                       const bool log_right_name,
+                       const std::string& name_suffix,
+                       std::ostream& log,
+                       const bool log_comparison_details = false,
+                       const ExtraDataType& extra_data = ExtraDataType() );
 };
+
+/*! Create a comparison header
+ *
+ * This function provides a shortcut to the 
+ * ComparisonTraits::createComparisonHeader method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy, typename T>
+std::string createComparisonHeader(
+                   const T& left_value,
+                   const std::string& left_name,
+                   const T& right_value,
+                   const std::string& right_name,
+                   const typename ComparePolicy<T>::ExtraDataType& extra_data =
+                   typename ComparePolicy<T>::ExtraDataType(),
+                   const std::string& name_suffix = "" );
 
 /*! Compare two values and print the results (to the desired stream)
  *
- * This function gives access to the ComparisonTraits::compare method.
+ * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename T>
-inline bool compare( const T& first_value,
-                     const std::string& first_name,
-                     const T& second_value,
-                     const std::string& second_name,
-                     Teuchos::FancyOStream& out,
-                     const int index = -1,
-                     const double tol = 0.0 )
-{
-  return ComparisonTraits<T>::compare( first_value,
-                                       first_name,
-                                       second_value,
-                                       second_name,
-                                       out,
-                                       index,
-                                       tol );
-}
+template<typename ComparePolicy, typename T>
+bool compare( const T& left_value,
+              const std::string& left_name,
+              const T& right_value,
+              const std::string& right_name,
+              std::ostream& log,
+              const typename ComparePolicy<T>::ExtraDataType& extra_data =
+              typename ComparePolicy<T>::ExtraDataType(),
+              const bool log_comparison_details = false,
+              const std::string& name_suffix = "" );
 
-/*! Relative error of two values
+/*! Create a comparison header
  *
- * This helper function is used in the implementation of the comparison traits
- * compare methods for many specializations. However, it can be used in
- * other contexts as well.
+ * This function provides a shortcut to the 
+ * ComparisonTraits::createComparisonHeader method.
  * \ingroup comparison_traits
  */
-template<typename ScalarType>
-ScalarType relError( const ScalarType first_value,
-		     const ScalarType second_value )
-{
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
-  typename ST::magnitudeType err;
-  if( first_value != ST::zero() && second_value != ST::zero() )
-  {
-    err = ST::magnitude( first_value - second_value )/
-      std::max( ST::magnitude( first_value ),
-		ST::magnitude( second_value ) );
-  }
-  else
-  {
-    err = std::max( ST::magnitude( first_value ),
-		    ST::magnitude( second_value ) );
-  }
+template<typename ComparisonPolicy, typename T1, typename T2>
+std::string createComparisonHeader(
+                  T1&& left_value,
+                  const std::string& left_name,
+                  const T2& right_value,
+                  const std::string& right_name,
+                  const typename ComparePolicy<T2>::ExtraDataType& extra_data =
+                  typename ComparePolicy<T2>::ExtraDataType(),
+                  const std::string& name_suffix = "" );
 
-  return err;
-}
+/*! Compare two values and print the results (to the desired stream)
+ *
+ * This function provides a shortcut to the ComparisonTraits::compare method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparePolicy, typename T1, typename T2>
+bool compare( T1&& left_value,
+              const std::string& left_name,
+              const T2& right_value,
+              const std::string& right_name,
+              std::ostream& log,
+              const typename ComparePolicy<T2>::ExtraDataType& extra_data =
+              typename ComparePolicy<T2>::ExtraDataType(),
+              const bool log_comparison_details = false,
+              const std::string& name_suffix = "" );
+
+/*! Create a comparison header
+ *
+ * This function provides a shortcut to the 
+ * ComparisonTraits::createComparisonHeader method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy, typename T1, typename T2>
+std::string createComparisonHeader(
+                  const T1& left_value,
+                  const std::string& left_name,
+                  T2&& right_value,
+                  const std::string& right_name,
+                  const typename ComparePolicy<T1>::ExtraDataType& extra_data =
+                  typename ComparePolicy<T1>::ExtraDataType(),
+                  const std::string& name_suffix = "" );
+  
+/*! Compare two values and print the results (to the desired stream)
+ *
+ * This function provides a shortcut to the ComparisonTraits::compare method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparePolicy, typename T1, typename T2>
+bool compare( const T1& left_value,
+              const std::string& left_name,
+              T2&& right_value,
+              const std::string& right_name,
+              std::ostream& log,
+              const typename ComparePolicy<T1>::ExtraDataType& extra_data =
+              typename ComparePolicy<T1>::ExtraDataType(),
+              const bool log_comparison_details = false,
+              const std::string& name_suffix = "" );
+
+/*! Create a comparison header
+ *
+ * This function provides a shortcut to the 
+ * ComparisonTraits::createComparisonHeader method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy, typename T>
+std::string createComparisonHeader(
+                   T&& left_value,
+                   const std::string& left_name,
+                   T&& right_value,
+                   const std::string& right_name,
+                   const typename ComparePolicy<T>::ExtraDataType& extra_data =
+                   typename ComparePolicy<T>::ExtraDataType(),
+                   const std::string& name_suffix = "" );
+
+/*! Compare two values and print the results (to the desired stream)
+ *
+ * This function provides a shortcut to the ComparisonTraits::compare method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparePolicy, typename T>
+bool compare( T&& left_value,
+              const std::string& left_name,
+              T&& right_value,
+              const std::string& right_name,
+              std::ostream& log,
+              const typename ComparePolicy<T>::ExtraDataType& extra_data =
+              typename ComparePolicy<T>::ExtraDataType(),
+              const bool log_comparison_details = false,
+              const std::string& name_suffix = "" );
+
+/*! Check the comparison result and add "passed" or "failed!" to the log
+ * \ingroup comparison_traits
+ */
+void reportComparisonPassFail( const bool result, std::ostream& log );
 
 } // end Utility namespace
 

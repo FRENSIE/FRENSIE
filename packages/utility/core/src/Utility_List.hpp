@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_ComparisonTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 /*! \defgroup list List
@@ -88,6 +89,22 @@ public:
     obj.reverse();
   }
 };
+
+/*! Partial specialization of ComparisonTraits for std::list
+ * \ingroup list
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ComparisonTraits<std::list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::list,T>
+{ /* ... */ };
+
+/*! Partial specialization of ComparisonTraits for std::forward_list
+ * \ingroup list
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ComparisonTraits<std::forward_list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::forward_list,T>
+{ /* ... */ };
   
 } // end Utility namespace
 

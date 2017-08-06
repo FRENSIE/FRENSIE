@@ -18,9 +18,9 @@ size_t creation_counter = 0u;
 }
 
 // Constructor
-UnitTest::UnitTest( const std::string group_name,
-                    const std::string test_name,
-                    const std::string data_name )
+UnitTest::UnitTest( const std::string& group_name,
+                    const std::string& test_name,
+                    const std::string& data_name )
   : d_group_name( group_name ),
     d_test_name( test_name ),
     d_data_name( data_name ),
@@ -70,14 +70,22 @@ size_t UnitTest::getCreationOrderIndex() const
 }
 
 // Run the unit test and place report in output stream
-bool UnitTest::run( std::ostream& os ) const
+bool UnitTest::run( std::ostream& os,
+                    size_t& number_of_checks,
+                    size_t& number_of_passed_checks ) const
 {
   bool success = true;
 
+  size_t checkpoint = this->getLineNumber();
+
   try{
-    this->runImpl( os, success );
+    this->runImpl( os,
+                   success,
+                   number_of_checks,
+                   number_of_passed_checks,
+                   checkpoint );
   }
-  FRENSIE_TEST_CATCH_STATEMENTS( os, true, success );
+  FRENSIE_TEST_CATCH_STATEMENTS( os, true, success, checkpoint );
 
   return success;
 }
