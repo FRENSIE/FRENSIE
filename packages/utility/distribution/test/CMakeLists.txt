@@ -134,12 +134,12 @@ SET_PROPERTY(TEST LinLinLinInterpolatedFullyTabularTwoDDistribution_test PROPERT
 #ADD_TEST(LinLinLinAnalogElasticTwoDDistribution_test tstLinLinLinAnalogElasticTwoDDistribution)
 #SET_PROPERTY(TEST LinLinLinAnalogElasticTwoDDistribution_test PROPERTY LABELS utility_dist)
 
-#ADD_EXECUTABLE(tstLogLogLogAnalogElasticTwoDDistribution
-#  tstLogLogLogAnalogElasticTwoDDistribution.cpp
-#  ${FRENSIE_STD_UNIT_TEST_MAIN})
-#TARGET_LINK_LIBRARIES(tstLogLogLogAnalogElasticTwoDDistribution utility_dist)
-#ADD_TEST(LogLogLogAnalogElasticTwoDDistribution_test tstLogLogLogAnalogElasticTwoDDistribution)
-#SET_PROPERTY(TEST LogLogLogAnalogElasticTwoDDistribution_test PROPERTY LABELS utility_dist)
+ADD_EXECUTABLE(tstLogLogLogAnalogElasticTwoDDistribution
+  tstLogLogLogAnalogElasticTwoDDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLogLogAnalogElasticTwoDDistribution utility_dist)
+ADD_TEST(LogLogLogAnalogElasticTwoDDistribution_test tstLogLogLogAnalogElasticTwoDDistribution)
+SET_PROPERTY(TEST LogLogLogAnalogElasticTwoDDistribution_test PROPERTY LABELS utility_dist)
 
 ADD_EXECUTABLE(tstCartesianSpatialDistribution
   tstCartesianSpatialDistribution.cpp
@@ -204,10 +204,10 @@ TARGET_LINK_LIBRARIES(tstDirectionalDistributionFactory utility_dist)
 ADD_TEST(DirectionalDistributionFactory_test tstDirectionalDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_directional_distributions.xml")
 SET_PROPERTY(TEST DirectionalDistributionFactory_test PROPERTY LABELS utility_dist)
 
-ADD_EXECUTABLE(tstAnalogElasticDistribution
-  tstAnalogElasticDistribution.cpp
+ADD_EXECUTABLE(tstAnalogElasticOneDDistribution
+  tstAnalogElasticOneDDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAnalogElasticDistribution utility_dist)
-ADD_TEST(AnalogElasticDistribution_test tstAnalogElasticDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_analog_elastic_distributions.xml")
-SET_PROPERTY(TEST AnalogElasticDistribution_test PROPERTY LABELS utility_dist)
+TARGET_LINK_LIBRARIES(tstAnalogElasticOneDDistribution utility_dist)
+ADD_TEST(AnalogElasticOneDDistribution_test tstAnalogElasticOneDDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_analog_elastic_distributions.xml")
+SET_PROPERTY(TEST AnalogElasticOneDDistribution_test PROPERTY LABELS utility_dist)
 

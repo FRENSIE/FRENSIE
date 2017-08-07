@@ -1,24 +1,22 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticDistribution.cpp
+//! \file   Utility_AnalogElasticOneDDistribution.cpp
 //! \author Luke Kersting
 //! \brief  The analog elastic distribution class template instantiations
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_AnalogElasticOneDDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticDistribution<LinLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticDistribution<LogLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticDistribution<LogLog,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticDistribution<LinLog,void,void> );
-  
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticOneDDistribution<LinLin,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticOneDDistribution<LogLin,void,void> );
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticDistribution.cpp
+// end Utility_AnalogElasticOneDDistribution.cpp
 //---------------------------------------------------------------------------//

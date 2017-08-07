@@ -22,7 +22,7 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_AnalogElasticOneDDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -1206,7 +1206,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create analog elastic distribution
   function_data[n].second.reset(
-    new const Utility::AnalogElasticDistribution<Utility::LinLin>( angles, pdf, eta, cutoff_ratio ) );
+    new const Utility::AnalogElasticOneDDistribution<Utility::LinLin>( angles, pdf, eta, cutoff_ratio ) );
   }
 
 

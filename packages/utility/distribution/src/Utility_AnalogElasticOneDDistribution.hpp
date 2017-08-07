@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticDistribution.hpp
+//! \file   Utility_AnalogElasticOneDDistribution.hpp
 //! \author Luke Kersting
 //! \brief  Analog elastic distribution class declaration
 //!
@@ -28,8 +28,8 @@ namespace Utility{
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-class UnitAwareAnalogElasticDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                     public ParameterListCompatibleObject<UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
+class UnitAwareAnalogElasticOneDDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+                                     public ParameterListCompatibleObject<UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
 {
 
   // Only allow construction when the independent unit dimensionless
@@ -70,7 +70,7 @@ private:
 public:
 
   //! This distribution type
-  typedef UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
@@ -82,36 +82,38 @@ public:
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
   //! Default constructor
-  UnitAwareAnalogElasticDistribution();
+  UnitAwareAnalogElasticOneDDistribution();
 
   //! Basic constructor (potentially dangerous)
-  UnitAwareAnalogElasticDistribution(
-                        const Teuchos::Array<double>& independent_values,
-                        const Teuchos::Array<double>& dependent_values,
-                        const double& moliere_screening_constant,
-                        const double& cutoff_cross_section_ratio );
+  UnitAwareAnalogElasticOneDDistribution(
+                    const Teuchos::Array<double>& independent_values,
+                    const Teuchos::Array<double>& dependent_values,
+                    const double& moliere_screening_constant,
+                    const double& cutoff_cross_section_ratio,
+                    const bool& convert_cosine_to_delta_cosine_mode = false );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareAnalogElasticDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values,
-                  const double& moliere_screening_constant,
-                  const double& cutoff_cross_section_ratio );
+  UnitAwareAnalogElasticOneDDistribution(
+                    const Teuchos::Array<InputIndepQuantity>& independent_values,
+                    const Teuchos::Array<InputDepQuantity>& dependent_values,
+                    const double& moliere_screening_constant,
+                    const double& cutoff_cross_section_ratio,
+                    const bool& convert_cosine_to_delta_cosine_mode = false );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
-  UnitAwareAnalogElasticDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
+  UnitAwareAnalogElasticOneDDistribution( const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)
-  static UnitAwareAnalogElasticDistribution fromUnitlessDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution );
+  static UnitAwareAnalogElasticOneDDistribution fromUnitlessDistribution( const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwareAnalogElasticDistribution& operator=(
-                           const UnitAwareAnalogElasticDistribution& dist_instance );
+  UnitAwareAnalogElasticOneDDistribution& operator=(
+                           const UnitAwareAnalogElasticOneDDistribution& dist_instance );
 
   //! Destructor
-  ~UnitAwareAnalogElasticDistribution()
+  ~UnitAwareAnalogElasticOneDDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -171,12 +173,12 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareAnalogElasticDistribution& other ) const;
+  bool isEqual( const UnitAwareAnalogElasticOneDDistribution& other ) const;
 
 protected:
 
   //! Copy constructor (copying from unitless distribution only)
-  UnitAwareAnalogElasticDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
+  UnitAwareAnalogElasticOneDDistribution( const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
@@ -216,6 +218,9 @@ private:
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values );
 
+  // Set the bounds of the independent variable
+  void setIndepVarBounds();
+
   // Reconstruct original distribution
   void reconstructOriginalDistribution(
                          Teuchos::Array<IndepQuantity>& independent_values,
@@ -247,7 +252,7 @@ private:
   template<typename FriendInterpolationPolicy,
            typename FriendIndepUnit,
            typename FriendDepUnit>
-  friend class UnitAwareAnalogElasticDistribution;
+  friend class UnitAwareAnalogElasticOneDDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = ANALOG_ELASTIC_DISTRIBUTION;
@@ -269,6 +274,12 @@ private:
 
   // The max CDF value
   UnnormCDFQuantity d_max_cdf;
+
+  // The lower bounds of the independent variable
+  IndepQuantity d_min_indep_var;
+
+  // The upper bounds of the independent variable
+  IndepQuantity d_max_indep_var;
 
   /* Moliere's atomic screening constant at the energy of the distribution
    * eta = 1/4 ( alpha m c / 0.885 p )**2 Z**(2/3) ( 1.13 + 3.76 [ alpha Z / beta ]**2 sqrt{ E/ (E + 1)})
@@ -295,25 +306,28 @@ private:
    * ( (1 - cutoff_cs_ratio)*eta/mu_c )
    */
   double d_cdf_parameter;
+
+  // Convert cosine to delta cosine (1-cosine) mode
+  bool d_convert_cosine_to_delta_cosine_mode;
 };
 
 /*! The analog elastic distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
-template<typename InterpolationPolicy> using AnalogElasticDistribution =
-  UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>;
+template<typename InterpolationPolicy> using AnalogElasticOneDDistribution =
+  UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,void,void>;
 
 } // end Utility namespace
 
 namespace Teuchos{
 
-/*! Type name traits specialization for the Utility::AnalogElasticDistribution
+/*! Type name traits specialization for the Utility::AnalogElasticOneDDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files.
  */
 template<typename InterpolationPolicy>
-class TypeNameTraits<Utility::AnalogElasticDistribution<InterpolationPolicy> >
+class TypeNameTraits<Utility::AnalogElasticOneDDistribution<InterpolationPolicy> >
 {
 public:
   static std::string name()
@@ -324,20 +338,20 @@ public:
     return iss.str();
   }
   static std::string concreteName(
-            const Utility::AnalogElasticDistribution<InterpolationPolicy>& instance )
+            const Utility::AnalogElasticOneDDistribution<InterpolationPolicy>& instance )
   {
     return name();
   }
 };
 
 /*! \brief Type name traits partial specialization for the
- * Utility::UnitAwareAnalogElasticDistribution
+ * Utility::UnitAwareAnalogElasticOneDDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files
  */
 template<typename InterpolationPolicy, typename U, typename V>
-class TypeNameTraits<Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,U,V> >
+class TypeNameTraits<Utility::UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,U,V> >
 {
   public:
   static std::string name()
@@ -350,7 +364,7 @@ class TypeNameTraits<Utility::UnitAwareAnalogElasticDistribution<InterpolationPo
 
     return iss.str();
   }
-  static std::string concreteName( const Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,U,V>& instance )
+  static std::string concreteName( const Utility::UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,U,V>& instance )
   {
     return name();
   }
@@ -362,12 +376,12 @@ class TypeNameTraits<Utility::UnitAwareAnalogElasticDistribution<InterpolationPo
 // Template inludes.
 //---------------------------------------------------------------------------//
 
-#include "Utility_AnalogElasticDistribution_def.hpp"
+#include "Utility_AnalogElasticOneDDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
 #endif // end UTILITY_ANALOG_ELASTIC_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticDistribution.hpp
+// end Utility_AnalogElasticOneDDistribution.hpp
 //---------------------------------------------------------------------------//

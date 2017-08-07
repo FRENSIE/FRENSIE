@@ -157,7 +157,7 @@ protected:
 private:
 
   // Check that the secondary dists are compatible with the requested interp
-  bool areSecondaryDistsCompatibleWithInterpType(
+  virtual bool areSecondaryDistsCompatibleWithInterpType(
                                   const DistributionType& distribution ) const;
 
   // Check that the secondary dists are compatible with the requested interp

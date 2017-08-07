@@ -145,7 +145,9 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
   if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
+    {
       return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+    }
     else 
       return QuantityTraits<ReturnType>::zero();
   }

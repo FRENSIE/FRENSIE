@@ -1,22 +1,22 @@
 <ParameterList name="Analog Elastic Distributions">
 
   <Parameter name="Analog Elastic Distribution A" type="Analog Elastic LinLin Distribution"
-	     value="{{-1.0,0.0,0.5,0.999999},{100,10,1,0.1},1.0,0.1}"/>
+	     value="{{-1.0,0.0,0.5,0.999999},{100,10,1,0.1},1.0,0.1,0}"/>
   <Parameter name="Analog Elastic Distribution B" type="Analog Elastic LinLin Distribution"
-	     value="{{-1.0, 2i, 0.999999},{100,10,1,0.1},1.0,0.2}"/>
+	     value="{{-1.0, 2i, 0.999999},{100,10,1,0.1},1.0,0.2,0}"/>
 
   <Parameter name="Analog Elastic Distribution C" type="Analog Elastic LogLin Distribution"
-	     value="{{-1.0, 0.5, 3l, 0.999999},{pi, 1.0, 10.0, 100.0, 1000.0, 10000.0},1.0,0.5}"/>
+	     value="{{-1.0, 0.5, 3l, 0.999999},{pi, 1.0, 10.0, 100.0, 1000.0, 10000.0},1.0,0.5,0}"/>
 
   <Parameter name="Unit-Aware Analog Elastic Distribution A"
 	     type="Unit-Aware Analog Elastic LinLin Distribution (dimensionless,mol)"
-	     value="{{-1.0,0.0,0.5,0.999999},{100,10,1,0.0},1.0,0.1}"/>
+	     value="{{-1.0,0.0,0.5,0.999999},{100,10,1,0.0},1.0,0.1,0}"/>
   <Parameter name="Unit-Aware Analog Elastic Distribution B"
 	     type="Unit-Aware Analog Elastic LinLin Distribution (dimensionless,mol)"
-	     value="{{-1.0, 2i, 0.999999},{100,10,1,0.1},1.0,0.2}"/>
+	     value="{{-1.0, 2i, 0.999999},{100,10,1,0.1},1.0,0.2,0}"/>
 
   <Parameter name="Unit-Aware Analog Elastic Distribution C"
 	     type="Unit-Aware Analog Elastic LogLin Distribution (dimensionless,mol)"
-	     value="{{-1.0, 0.5, 3l, 0.999999},{pi,1.0,10.0,100.0,1000.0,10000.0},1.0,0.5}"/>
+	     value="{{-1.0, 0.5, 3l, 0.999999},{pi,1.0,10.0,100.0,1000.0,10000.0},1.0,0.5,0}"/>
 
 </ParameterList>

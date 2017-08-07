@@ -15,7 +15,7 @@
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_AnalogElasticOneDDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 #include "MonteCarlo_ElasticElectronTraits.hpp"
 
