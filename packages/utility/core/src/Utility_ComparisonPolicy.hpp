@@ -60,6 +60,7 @@ protected:
 struct EqualityComparisonPolicy : public ComparisonPolicy<EqualityComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details
@@ -89,6 +90,7 @@ struct EqualityComparisonPolicy : public ComparisonPolicy<EqualityComparisonPoli
 struct InequalityComparisonPolicy : public ComparisonPolicy<InequalityComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details
@@ -118,6 +120,7 @@ struct InequalityComparisonPolicy : public ComparisonPolicy<InequalityComparison
 struct GreaterThanComparisonPolicy : public ComparisonPolicy<GreaterThanComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details
@@ -147,6 +150,7 @@ struct GreaterThanComparisonPolicy : public ComparisonPolicy<GreaterThanComparis
 struct GreaterThanOrEqualToComparisonPolicy : public ComparisonPolicy<GreaterThanOrEqualToComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details
@@ -176,6 +180,7 @@ struct GreaterThanOrEqualToComparisonPolicy : public ComparisonPolicy<GreaterTha
 struct LessThanComparisonPolicy : public ComparisonPolicy<LessThanComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details
@@ -205,6 +210,7 @@ struct LessThanComparisonPolicy : public ComparisonPolicy<LessThanComparisonPoli
 struct LessThanOrEqualToComparisonPolicy : public ComparisonPolicy<LessThanOrEqualToComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details
@@ -234,6 +240,7 @@ struct LessThanOrEqualToComparisonPolicy : public ComparisonPolicy<LessThanOrEqu
 struct CloseComparisonPolicy : public ComparisonPolicy<CloseComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details
@@ -256,12 +263,6 @@ struct CloseComparisonPolicy : public ComparisonPolicy<CloseComparisonPolicy>
                 const T& right_value,
                 const typename QuantityTraits<T>::RawType& distance_tolerance =
                 typename QuantityTraits<T>::RawType() );
-
-private:
-
-  // Calculate the distance between two values
-  template<typename T>
-  static T calculateDistance( const T& left_value, const T& right_value );
 };
 
 /*! The relative error comparison policy class
@@ -270,6 +271,7 @@ private:
 struct RelativeErrorComparisonPolicy : public ComparisonPolicy<RelativeErrorComparisonPolicy>
 {
   //! Get the comparison operator name
+  template<typename T>
   static std::string getOperatorName();
 
   //! Create the comparison details

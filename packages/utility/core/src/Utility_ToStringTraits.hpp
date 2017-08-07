@@ -15,6 +15,11 @@
 #include <iterator>
 #include <stdexcept>
 
+// Boost Includes
+#include <boost/units/quantity.hpp>
+#include <boost/units/systems/cgs/energy.hpp>
+#include <boost/units/systems/si/energy.hpp>
+
 // FRENSIE Includes
 #include "Utility_ToStringTraitsDecl.hpp"
 #include "Utility_LogRecordType.hpp"
@@ -196,6 +201,31 @@ struct ToStringTraits<T,typename std::enable_if<std::is_base_of<std::exception,T
   //! Place the std::exception type in a stream
   static inline void toStream( std::ostream& os, const std::exception& obj )
   { os << obj.what(); }
+};
+
+/*! Partial specialization of ToStringTraits for boost::units::quantity types
+ * \ingroup to_string_traits
+ */
+template<typename Unit, typename T>
+struct ToStringTraits<boost::units::quantity<Unit,T> >
+{
+  //! Convert the quantity type to a string
+  static inline std::string toString( const boost::units::quantity<Unit,T>& obj )
+  {
+    std::ostringstream oss;
+
+    ToStringTraits<boost::units::quantity<Unit,T> >::toStream( oss, obj );
+
+    return oss.str();
+  }
+
+  //! Place the quantity type in a stream
+  static inline void toStream( std::ostream& os,
+                               const boost::units::quantity<Unit,T>& obj )
+  {
+    Utility::toStream( os, obj.value() );
+    os << " " << Unit();
+  }
 };
   
 namespace Details{

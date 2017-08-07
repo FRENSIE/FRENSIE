@@ -91,7 +91,7 @@ std::string ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
   }
 
   oss << Utility::toString( left_value ) << " "
-      << DerivedType::getOperatorName() << " ";
+      << DerivedType::template getOperatorName<T>() << " ";
 
   if( report_right_name )
   {
@@ -109,6 +109,7 @@ std::string ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
 }
 
 // Get the comparison operator name
+template<typename T>
 inline std::string EqualityComparisonPolicy::getOperatorName()
 {
   return "==";
@@ -147,6 +148,7 @@ inline bool EqualityComparisonPolicy::compare(
 }
 
 // Get the comparison operator name
+template<typename T>
 inline std::string InequalityComparisonPolicy::getOperatorName()
 {
   return "!=";
@@ -185,6 +187,7 @@ inline bool InequalityComparisonPolicy::compare(
 }
 
 // Get the comparison operator name
+template<typename T>
 inline std::string GreaterThanComparisonPolicy::getOperatorName()
 {
   return ">";
@@ -223,6 +226,7 @@ inline bool GreaterThanComparisonPolicy::compare(
 }
 
 // Get the comparison operator name
+template<typename T>
 inline std::string GreaterThanOrEqualToComparisonPolicy::getOperatorName()
 {
   return ">=";
@@ -261,6 +265,7 @@ inline bool GreaterThanOrEqualToComparisonPolicy::compare(
 }
 
 // Get the comparison operator name
+template<typename T>
 inline std::string LessThanComparisonPolicy::getOperatorName()
 {
   return "<";
@@ -299,6 +304,7 @@ inline bool LessThanComparisonPolicy::compare(
 }
 
 // Get the comparison operator name
+template<typename T>
 inline std::string LessThanOrEqualToComparisonPolicy::getOperatorName()
 {
   return "<=";
@@ -336,10 +342,138 @@ inline bool LessThanOrEqualToComparisonPolicy::compare(
   return left_value <= right_value;
 }
 
+namespace Details{
+
+//! Close comparison policy helper for floating point types
+template<typename T, typename Enabled = void>
+class CloseComparisonPolicyHelper
+{
+  // Typedef for this type
+  typedef CloseComparisonPolicyHelper<T,Enabled> ThisType;
+
+public:
+
+  //! Get the comparison operator name
+  static inline std::string getOperatorName()
+  { return "~"; }
+
+  //! Create the comparison details
+  static std::string createComparisonDetails(
+          const std::string& left_name,
+          const bool report_left_name,
+          const T& left_value,
+          const std::string& right_name,
+          const bool report_right_name,
+          const T& right_value,
+          const std::string& name_suffix,
+          const typename QuantityTraits<T>::RawType& distance_tolerance )
+  {
+    std::ostringstream oss;
+
+    if( report_left_name || report_right_name )
+    {
+      oss << "distance(";
+      
+      if( report_left_name )
+      {
+        oss << left_name;
+        
+        if( !name_suffix.empty() )
+          oss << name_suffix;
+      }
+      else
+        oss << Utility::toString( left_value );
+
+      oss << ",";
+      
+      if( report_right_name )
+      {
+        oss << right_name;
+        
+        if( !name_suffix.empty() )
+          oss << name_suffix;
+      }
+      else
+        oss << Utility::toString( right_value );
+
+      oss << ") = ";
+    }
+
+    oss << "distance(" << Utility::toString( left_value )
+        << "," << Utility::toString( right_value ) << ") = "
+        << Utility::toString(ThisType::calculateDistance( left_value, right_value ))
+        << " <= " << Utility::toString( Utility::QuantityTraits<T>::initializeQuantity( distance_tolerance ) );
+    
+    return oss.str();
+  }
+
+  //! Compare two values
+  static inline bool compare(
+          const T& left_value,
+          const T& right_value,
+          const typename QuantityTraits<T>::RawType& distance_tolerance )
+  {
+    return ThisType::calculateDistance( left_value, right_value ) <=
+      QuantityTraits<T>::initializeQuantity( distance_tolerance );
+  }
+
+private:
+
+  // Compare two values
+  static inline T calculateDistance( const T& left_value,
+                                     const T& right_value )
+  {
+    return Details::AbsoluteValueHelper<T>::abs( left_value - right_value );
+  }
+};
+
+//! Close comparison policy helper for all types except floating point types
+template<typename T>
+class CloseComparisonPolicyHelper<T,typename std::enable_if<!std::is_floating_point<typename QuantityTraits<T>::RawType>::value>::type>
+{
+public:
+
+  //! Get the comparison operator name
+  static inline std::string getOperatorName()
+  { return Utility::EqualityComparisonPolicy::getOperatorName<T>(); }
+  
+  //! Create the comparison details
+  static inline std::string createComparisonDetails(
+                                   const std::string& left_name,
+                                   const bool report_left_name,
+                                   const T& left_value,
+                                   const std::string& right_name,
+                                   const bool report_right_name,
+                                   const T& right_value,
+                                   const std::string& name_suffix,
+                                   const typename QuantityTraits<T>::RawType& )
+  {
+    return Utility::EqualityComparisonPolicy::createComparisonDetails(
+                                                             left_name,
+                                                             report_left_name,
+                                                             left_value,
+                                                             right_name,
+                                                             report_right_name,
+                                                             right_value,
+                                                             name_suffix );
+  }
+
+  //! Compare two values
+  static inline bool compare( const T& left_value,
+                              const T& right_value,
+                              const typename QuantityTraits<T>::RawType& )
+  {
+    return Utility::EqualityComparisonPolicy::compare( left_value, right_value );
+  }
+};
+  
+} // end Details namespace
+
 // Get the comparison operator name
+template<typename T>
 inline std::string CloseComparisonPolicy::getOperatorName()
 {
-  return "~";
+  return Details::CloseComparisonPolicyHelper<T>::getOperatorName();
 }
 
 // Create the comparison details
@@ -354,43 +488,15 @@ inline std::string CloseComparisonPolicy::createComparisonDetails(
                 const std::string& name_suffix,
                 const typename QuantityTraits<T>::RawType& distance_tolerance )
 {
-  std::ostringstream oss;
-
-  if( report_left_name || report_right_name )
-  {
-    oss << "distance(";
-
-    if( report_left_name )
-    {
-      oss << left_name;
-
-      if( !name_suffix.empty() )
-        oss << name_suffix;
-    }
-    else
-      oss << Utility::toString( left_value );
-
-    oss << ",";
-
-    if( report_right_name )
-    {
-      oss << right_name;
-
-      if( !name_suffix.empty() )
-        oss << name_suffix;
-    }
-    else
-      oss << Utility::toString( right_value );
-
-    oss << ") = ";
-  }
-
-  oss << "distance(" << Utility::toString( left_value )
-      << "," << Utility::toString( right_value ) << ") = "
-      << Utility::toString(CloseComparisonPolicy::calculateDistance( left_value, right_value ))
-      << " <= " << Utility::toString( distance_tolerance );
-
-  return oss.str();
+  return Details::CloseComparisonPolicyHelper<T>::createComparisonDetails(
+                                                          left_name,
+                                                          report_left_name,
+                                                          left_value,
+                                                          right_name,
+                                                          report_right_name,
+                                                          right_value,
+                                                          name_suffix,
+                                                          distance_tolerance );
 }
 
 // Compare two values
@@ -400,16 +506,9 @@ inline bool CloseComparisonPolicy::compare(
                 const T& right_value,
                 const typename QuantityTraits<T>::RawType& distance_tolerance )
 {
-  return CloseComparisonPolicy::calculateDistance( left_value, right_value ) <=
-    QuantityTraits<T>::initializeQuantity( distance_tolerance );
-}
-
-// Compare two values
-template<typename T>
-inline T CloseComparisonPolicy::calculateDistance( const T& left_value,
-                                                   const T& right_value )
-{
-  return Details::AbsoluteValueHelper<T>::abs( left_value - right_value );
+  return Details::CloseComparisonPolicyHelper<T>::compare( left_value,
+                                                           right_value,
+                                                           distance_tolerance );
 }
 
 namespace Details{
@@ -422,6 +521,10 @@ class RelativeErrorComparisonPolicyHelper
   typedef RelativeErrorComparisonPolicyHelper<T,Enabled> ThisType;
 
 public:
+
+  //! Get the operator name
+  static inline std::string getOperatorName()
+  { return "~="; }
 
   //! Create the comparison details
   static std::string createComparisonDetails(
@@ -500,9 +603,13 @@ private:
 
 //! Relative error comparison policy helper for all types except floating point types
 template<typename T>
-class RelativeErrorComparisonPolicyHelper<T,typename std::enable_if<!std::is_floating_point<T>::value>::type>
+class RelativeErrorComparisonPolicyHelper<T,typename std::enable_if<!std::is_floating_point<typename QuantityTraits<T>::RawType>::value>::type>
 {
 public:
+
+  //! Get the operator name
+  static inline std::string getOperatorName()
+  { return Utility::EqualityComparisonPolicy::getOperatorName<T>(); }
   
   //! Create the comparison details
   static inline std::string createComparisonDetails(
@@ -537,9 +644,10 @@ public:
 } // end Details namespace
 
 // Get the comparison operator name
+template<typename T>
 inline std::string RelativeErrorComparisonPolicy::getOperatorName()
 {
-  return "~=";
+  return Details::RelativeErrorComparisonPolicyHelper<T>::getOperatorName();
 }
 
 // Create the comparison details

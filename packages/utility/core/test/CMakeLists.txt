@@ -26,6 +26,13 @@ TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(TypeTraits_test tstTypeTraits --report_level=detailed)
 SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstIteratorTypeTraits
+  tstIteratorTypeTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIteratorTypeTraits utility_core)
+ADD_TEST(IteratorTypeTraits_test tstIteratorTypeTraits)
+SET_PROPERTY(TEST IteratorTypeTraits_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstStaticOutputFormatter tstStaticOutputFormatter.cpp)
 TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter --report_level=detailed)
@@ -50,15 +57,6 @@ ADD_EXECUTABLE(tstContractException tstContractException.cpp)
 TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(ContractException_test tstContractException --report_level=detailed)
 SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
-
-# All FRENSIE unit test framework dependencies have been tested. All tests
-# beyond this point can use the FRENSIE unit tests framework.
-ADD_EXECUTABLE(tstIteratorTypeTraits
-  tstIteratorTypeTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstIteratorTypeTraits utility_core)
-ADD_TEST(IteratorTypeTraits_test tstIteratorTypeTraits)
-SET_PROPERTY(TEST IteratorTypeTraits_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstElectronVoltUnit
   tstElectronVoltUnit.cpp
@@ -186,6 +184,11 @@ TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_core)
 ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit)
 SET_PROPERTY(TEST AtomicMassUnit_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstComparisonPolicy tstComparisonPolicy.cpp)
+TARGET_LINK_LIBRARIES(tstComparisonPolicy utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ComparisonPolicy_test tstComparisonPolicy --report_level=detailed)
+SET_PROPERTY(TEST ComparisonPolicy_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstTuple
   tstTuple.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -255,6 +258,9 @@ ADD_EXECUTABLE(tstVariant
 TARGET_LINK_LIBRARIES(tstVariant utility_core)
 ADD_TEST(Variant_test tstVariant)
 SET_PROPERTY(TEST Variant_test PROPERTY LABELS utility_core)
+
+# All FRENSIE unit test framework dependencies have been tested. All tests
+# beyond this point can use the FRENSIE unit tests framework.
 
 ADD_EXECUTABLE(tstPropertyTree
   tstPropertyTree.cpp
