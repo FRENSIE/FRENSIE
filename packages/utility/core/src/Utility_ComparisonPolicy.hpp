@@ -36,6 +36,9 @@ struct ComparisonPolicy
                    typename QuantityTraits<T>::RawType() ) const;
   
 protected:
+
+  // The base comparison policy
+  typedef ComparisonPolicy<DerivedType> BaseComparisonPolicy;
   
   //! Create the comparison details (default implementation)
   template<typename T>

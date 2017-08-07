@@ -162,7 +162,7 @@ struct ComparisonTraitsSequenceContainerHelper
     oss << "size(" << logged_left_name << ") == size(" << logged_right_name
         << ") && for every index i, "
         << logged_left_name << "[i]" << ComparisonPolicy::getOperatorName()
-        << logged_right_name << "[i]: "
+        << logged_right_name << "[i]: ";
 
     return oss.str();
   }
@@ -176,7 +176,7 @@ struct ComparisonTraitsSequenceContainerHelper
                           const STLCompliantSequenceContainer<T>& right_value,
                           const std::string& right_name,
                           const bool log_right_name,
-                          const std::string& name_suffix
+                          const std::string& name_suffix,
                           std::ostream& log,
                           const bool = false,
                           const ExtraDataType& extra_data = ExtraDataType() )
@@ -247,19 +247,19 @@ template<template<typename...> class STLCompliantAssociativeContainer,
 struct ComparisonTraitsAssociativeContainerHelper
 {
   //! The extra data type (usually a comparison tolerance)
-  typedef double ExtraDataType;
+  typedef typename STLCompliantAssociativeContainer<Types...>::value_type ExtraDataType;
 
   //! Create a comparison header
   template<typename DummyPolicy>
   static std::string createComparisonHeader(
-                           const T& left_value,
-                           const std::string& left_name,
-                           const bool log_left_name,
-                           const T& right_value,
-                           const std::string& right_name,
-                           const bool log_right_name,
-                           const std::string& name_suffix,
-                           const ExtraDataType& = ExtraDataType() )
+                 const STLCompliantAssociativeContainer<Types...>& left_value,
+                 const std::string& left_name,
+                 const bool log_left_name,
+                 const STLCompliantAssociativeContainer<Types...>& right_value,
+                 const std::string& right_name,
+                 const bool log_right_name,
+                 const std::string& name_suffix,
+                 const ExtraDataType& = ExtraDataType() )
   {
     std::ostringstream oss;
 
@@ -288,7 +288,7 @@ struct ComparisonTraitsAssociativeContainerHelper
     return oss.str();
   }
 
-  //! Compare two sequence containers
+  //! Compare two associative containers
   template<typename DummyPolicy>
   static inline bool compare(
                  const STLCompliantAssociativeContainer<Types...>& left_value,
@@ -297,7 +297,7 @@ struct ComparisonTraitsAssociativeContainerHelper
                  const STLCompliantAssociativeContainer<Types...>& right_value,
                  const std::string& right_name,
                  const bool log_right_name,
-                 const std::string& name_suffix
+                 const std::string& name_suffix,
                  std::ostream& log,
                  const bool = false,
                  const ExtraDataType& = ExtraDataType() )
@@ -315,8 +315,7 @@ struct ComparisonTraitsAssociativeContainerHelper
                        log_right_name,
                        detailed_name_suffix.str(),
                        log,
-                       true,
-                       extra_data );
+                       true );
 
     // Only test the individual container elements if the sizes are the same
     if( success )
@@ -339,13 +338,12 @@ struct ComparisonTraitsAssociativeContainerHelper
                left_name,
                log_left_name,
                std::find( right_value.begin(), right_value.end(), *left_it ) !=
-               right_value.end()
+               right_value.end(),
                right_name,
                log_right_name,
                detailed_name_suffix.str(),
                log,
-               true,
-               extra_data );
+               true );
         
         if( !local_success )
           success = false;
@@ -363,14 +361,14 @@ struct ComparisonTraitsAssociativeContainerHelper
 // Create a comparison header
 template<typename ComparisonPolicy, typename T>
 inline std::string createComparisonHeader(
-                   const T& left_value,
-                   const std::string& left_name,
-                   const T& right_value,
-                   const std::string& right_name,
-                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
-                   const std::string& name_suffix )
+                 const T& left_value,
+                 const std::string& left_name,
+                 const T& right_value,
+                 const std::string& right_name,
+                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
+                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::createComparisonHeader<ComparePolicy>(
+  return ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy>(
                                                                   left_value,
                                                                   left_name,
                                                                   true,
@@ -382,18 +380,19 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparePolicy, typename T>
+template<typename ComparisonPolicy, typename T>
 inline bool compare(
-                   const T& left_value,
-                   const std::string& left_name,
-                   const T& right_value,
-                   const std::string& right_name,
-                   std::ostream& log,
-                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
-                   const bool log_comparison_details,
-                   const std::string& name_suffix )
+                 const T& left_value,
+                 const std::string& left_name,
+                 const T& right_value,
+                 const std::string& right_name,
+                 std::ostream& log,
+                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
+                 const bool log_comparison_details,
+                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::compare<ComparePolicy>( left_value,
+  return ComparisonTraits<T>::template compare<ComparisonPolicy>(
+                                                      left_value,
                                                       left_name,
                                                       true,
                                                       right_value,
@@ -408,14 +407,14 @@ inline bool compare(
 // Create a comparison header
 template<typename ComparisonPolicy, typename T1, typename T2>
 inline std::string createComparisonHeader(
-                   T1&& left_value,
-                   const std::string& left_name,
-                   const T2& right_value,
-                   const std::string& right_name,
-                   const typename ComparePolicy<T2>::ExtraDataType& extra_data,
-                   const std::string& name_suffix )
+                T1&& left_value,
+                const std::string& left_name,
+                const T2& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<T2>::ExtraDataType& extra_data,
+                const std::string& name_suffix )
 {
-  return ComparisonTraits<T2>::createComparisonHeader<ComparePolicy>(
+  return ComparisonTraits<T2>::template createComparisonHeader<ComparisonPolicy>(
                                                                   left_value,
                                                                   left_name,
                                                                   false,
@@ -427,18 +426,19 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparePolicy, typename T1, typename T2>
+template<typename ComparisonPolicy, typename T1, typename T2>
 inline bool compare(
-                   T1&& left_value,
-                   const std::string& left_name,
-                   const T2& right_value,
-                   const std::string& right_name,
-                   std::ostream& log,
-                   const typename ComparePolicy<T2>::ExtraDataType& extra_data,
-                   const bool log_comparison_details,
-                   const std::string& name_suffix )
+                T1&& left_value,
+                const std::string& left_name,
+                const T2& right_value,
+                const std::string& right_name,
+                std::ostream& log,
+                const typename ComparisonTraits<T2>::ExtraDataType& extra_data,
+                const bool log_comparison_details,
+                const std::string& name_suffix )
 {
-  return ComparisonTraits<T2>::compare<ComparePolicy>( left_value,
+  return ComparisonTraits<T2>::template compare<ComparisonPolicy>(
+                                                       left_value,
                                                        left_name,
                                                        false,
                                                        right_value,
@@ -453,14 +453,14 @@ inline bool compare(
 // Create a comparison header
 template<typename ComparisonPolicy, typename T1, typename T2>
 inline std::string createComparisonHeader(
-                   const T1& left_value,
-                   const std::string& left_name,
-                   T2&& right_value,
-                   const std::string& right_name,
-                   const typename ComparePolicy<T1>::ExtraDataType& extra_data,
-                   const std::string& name_suffix )
+                const T1& left_value,
+                const std::string& left_name,
+                T2&& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<T1>::ExtraDataType& extra_data,
+                const std::string& name_suffix )
 {
-  return ComparisonTraits<T1>::createComparisonHeader<ComparePolicy>(
+  return ComparisonTraits<T1>::template createComparisonHeader<ComparisonPolicy>(
                                                                   left_value,
                                                                   left_name,
                                                                   true,
@@ -472,40 +472,41 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparePolicy, typename T1, typename T2>
+template<typename ComparisonPolicy, typename T1, typename T2>
 inline bool compare(
-                  const T1& left_value,
-                  const std::string& left_name,
-                  T2&& right_value,
-                  const std::string& right_name,
-                  std::ostream& log,
-                  const typename ComparePolicy<T1>::ExtraDataType& extra_data,
-                  const bool log_comparison_details,
-                  const std::string& name_suffix )
+                const T1& left_value,
+                const std::string& left_name,
+                T2&& right_value,
+                const std::string& right_name,
+                std::ostream& log,
+                const typename ComparisonTraits<T1>::ExtraDataType& extra_data,
+                const bool log_comparison_details,
+                const std::string& name_suffix )
 {
-  return ComparisonTraits<T1>::compare( left_value,
-                                        left_name,
-                                        true,
-                                        right_value,
-                                        right_name,
-                                        false,
-                                        name_suffix,
-                                        log,
-                                        log_comparison_details,
-                                        extra_data );
+  return ComparisonTraits<T1>::template compare<ComparisonPolicy>(
+                                                      left_value,
+                                                      left_name,
+                                                      true,
+                                                      right_value,
+                                                      right_name,
+                                                      false,
+                                                      name_suffix,
+                                                      log,
+                                                      log_comparison_details,
+                                                      extra_data );
 }
 
 // Create a comparison header
 template<typename ComparisonPolicy, typename T>
 inline std::string createComparisonHeader(
-                   T&& left_value,
-                   const std::string& left_name,
-                   T&& right_value,
-                   const std::string& right_name,
-                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
-                   const std::string& name_suffix )
+                 T&& left_value,
+                 const std::string& left_name,
+                 T&& right_value,
+                 const std::string& right_name,
+                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
+                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::createComparisonHeader<ComparePolicy>(
+  return ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy>(
                                                                   left_value,
                                                                   left_name,
                                                                   false,
@@ -517,27 +518,28 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparePolicy, typename T>
+template<typename ComparisonPolicy, typename T>
 inline bool compare(
-                   T&& left_value,
-                   const std::string& left_name,
-                   T&& right_value,
-                   const std::string& right_name,
-                   std::ostream& log,
-                   const typename ComparePolicy<T>::ExtraDataType& extra_data,
-                   const bool log_comparison_details,
-                   const std::string& name_suffix )
+                 T&& left_value,
+                 const std::string& left_name,
+                 T&& right_value,
+                 const std::string& right_name,
+                 std::ostream& log,
+                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
+                 const bool log_comparison_details,
+                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::compare( left_value,
-                                       left_name,
-                                       false,
-                                       right_value,
-                                       right_name,
-                                       false,
-                                       name_suffix,
-                                       log,
-                                       log_comparison_details,
-                                       extra_data );
+  return ComparisonTraits<T>::template compare<ComparisonPolicy>(
+                                                        left_value,
+                                                        left_name,
+                                                        false,
+                                                        right_value,
+                                                        right_name,
+                                                        false,
+                                                        name_suffix,
+                                                        log,
+                                                        log_comparison_details,
+                                                        extra_data );
 }
 
 } // end Utility namespace

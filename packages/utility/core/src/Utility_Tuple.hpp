@@ -91,27 +91,27 @@ struct TupleElement
  * \ingroup tuple
  */
 template<size_t I, typename T>
-struct TupleElement<I, const T>
+struct TupleElement<I, T, typename std::enable_if<std::is_const<T>::value && !std::is_volatile<T>::value>::type> 
 {
-  typedef typename std::add_const<typename TupleElement<I,T>::type>::type type;
+  typedef typename std::add_const<typename TupleElement<I,typename std::remove_const<T>::type>::type>::type type;
 };
 
 /*! \brief Partial specialization of TupleElement for all volatile types
  * \ingroup tuple
  */
 template<size_t I, typename T>
-struct TupleElement<I, volatile T>
+struct TupleElement<I, T, typename std::enable_if<std::is_volatile<T>::value && !std::is_const<T>::value>::type>
 {
-  typedef typename std::add_volatile<typename TupleElement<I,T>::type>::type type;
+  typedef typename std::add_volatile<typename TupleElement<I,typename std::remove_volatile<T>::type>::type>::type type;
 };
 
 /*! \brief Partial specialization of TupleElement for all const volatile types
  * \ingroup tuple
  */
 template<size_t I, typename T>
-struct TupleElement<I, const volatile T>
+struct TupleElement<I, T, typename std::enable_if<std::is_const<T>::value && std::is_volatile<T>::value>::type>
 {
-  typedef typename std::add_cv<typename TupleElement<I,T>::type>::type type;
+  typedef typename std::add_cv<typename TupleElement<I,typename std::remove_cv<T>::type>::type>::type type;
 };
 
 /*! \brief Partial specialization of TupleElement for all non-tuple types (as 
@@ -124,7 +124,7 @@ struct TupleElement<I, const volatile T>
  * \ingroup tuple
  */
 template<size_t I, typename T>
-struct TupleElement<I,T,typename std::enable_if<I==0 && !Utility::IsTuple<T>::value>::type>
+struct TupleElement<I,T,typename std::enable_if<I==0 && !Utility::IsTuple<T>::value && !std::is_const<T>::value && !std::is_volatile<T>::value>::type>
 { typedef T type; };
 
 /*! \brief Partial specialization of TupleElement for std::tuple and std::pair 
@@ -132,33 +132,30 @@ struct TupleElement<I,T,typename std::enable_if<I==0 && !Utility::IsTuple<T>::va
  * \ingroup tuple
  */
 template<size_t I, typename T>
-struct TupleElement<I,T,typename std::enable_if<Utility::IsTuple<T>::value>::type> : public std::tuple_element<I,T>
-{ /* ... */ }
+struct TupleElement<I,T,typename std::enable_if<Utility::IsTuple<T>::value && !std::is_const<T>::value && !std::is_volatile<T>::value>::type> : public std::tuple_element<I,T>
+{ /* ... */ };
 
 /*! The tuple slice struct (the default is undefined)
  * \ingroup tuple
  */
-template<size_t offset, size_t size, typename TupleType, typename Enabled = void>
+template<size_t offset,
+         size_t size,
+         typename TupleType,
+         typename Enabled = void>
 struct TupleSlice
 { /* ... */ };
-
-/*! Partial specialization of TupleSlice for all non-tuple types (as 
- * long as offset == 0 and size == 1).
- * \ingroup tuple
- */
-template<size_t offset, size_t size, typename TupleType>
-struct TupleSlice<offset,size,TupleType,typename std::enable_if<offset==0 && size==1 && !Utility::IsTuple<TupleType>::value>::type>
-{
-  typedef typename std::remove_cv<TupleType>::type type;
-  typedef typename std::add_reference<TupleType>::type TiedType;
-  typedef typename std::add_const<TiedType>::type ConstTiedType;
-}
 
 /*! Partial specialization of TupleSlice for all tuple types
  * \ingroup tuple
  */
 template<size_t offset, size_t size, typename TupleType>
 struct TupleSlice<offset,size,TupleType,typename std::enable_if<offset < Utility::TupleSize<TupleType>::value-1 && offset+size <= Utility::TupleSize<TupleType>::value && Utility::IsTuple<TupleType>::value>::type>;
+
+/*! Partial specialization of TupleSlice for non-tuple types
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename T>
+struct TupleSlice<offset,size,T,typename std::enable_if<offset == 0 && size == 1 && !Utility::IsTuple<T>::value>::type>;
 
 /*! Return a reference to the desired tuple element (std::get)
  * \ingroup tuple
@@ -253,7 +250,7 @@ template<typename T>
 struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
 {
   //! The type that a string will be converted to
-  typedef std::remove_reference<T>::type ReturnType;
+  typedef typename std::remove_reference<T>::type ReturnType;
   
   //! Convert the string to an object of type T
   static ReturnType fromString( const std::string& obj_rep );
@@ -294,7 +291,7 @@ struct ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
                        const T& right_value,
                        const std::string& right_name,
                        const bool log_right_name,
-                       const std::string& name_suffix
+                       const std::string& name_suffix,
                        std::ostream& log,
                        const bool log_comparison_header = false,
                        const ExtraDataType& extra_data = ExtraDataType() );

@@ -16,9 +16,9 @@ namespace Utility{
 void reportComparisonPassFail( const bool result, std::ostream& log )
 {
   if( result )
-    out << Utility::Red("failed") << "!\n";
+    log << Utility::Red("failed") << "!\n";
   else
-    out << Utility::Green("passed") << "\n";
+    log << Utility::Green("passed") << "\n";
 }
   
 } // end Utility namespace

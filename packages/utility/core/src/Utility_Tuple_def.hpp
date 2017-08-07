@@ -11,6 +11,7 @@
 
 // std Lib Includes
 #include <functional>
+#include <utility>
 
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
@@ -20,7 +21,9 @@ namespace Utility{
 
 namespace Details{
 
-//! The tuple slice element extractor class
+/*! The tuple slice element extractor class
+ * \ingroup tuple
+ */
 template<size_t I, size_t N>
 struct TupleSliceElementExtractor
 {
@@ -52,7 +55,9 @@ struct TupleSliceElementExtractor
   }
 };
 
-//! Partial specialization of TupleSliceElementExtractor N == 0
+/*! Partial specialization of TupleSliceElementExtractor for N == 0
+ * \ingroup tuple
+ */
 template<size_t I>
 struct TupleSliceElementExtractor<I,0>
 {
@@ -72,13 +77,55 @@ struct TupleSliceElementExtractor<I,0>
   { /* ... */ }
 };
 
-//! The tuple slice helper class
-template<size_t offset, size_t size, typename StartT, typename... Types>
-struct TupleSliceHelper
+/*! The tuple front slice helper (the default is undefined)
+ * \ingroup tuple
+ */
+template<typename T, typename... Types>
+struct TupleFrontSliceHelper
+{ /* ... */ };
+
+/*! Specialization of tuple front slice helper for index sequence
+ * \ingroup tuple
+ */
+template<size_t... I, typename... Types>
+struct TupleFrontSliceHelper<std::index_sequence<I...>,Types...>
 {
-  typedef TupleSliceHelper<offset-1,size,Types...>::type type;
-  typedef TupleSliceHelper<offset-1,size,Types...>::TiedType TiedType;
-  typedef TupleSliceHelper<offset-1,size,Types...>::ConstTiedType ConstTiedType;
+protected:
+
+  //! The full tuple type
+  typedef std::tuple<Types...> FullTupleType;
+
+public:
+
+  //! The tuple slice type
+  typedef std::tuple<typename std::remove_cv<typename Utility::TupleElement<I,FullTupleType>::type>::type...> type;
+
+  //! The tied tuple slice type
+  typedef std::tuple<std::reference_wrapper<typename Utility::TupleElement<I,FullTupleType>::type>...> TiedType;
+
+  //! The const tied tuple slice type
+  typedef std::tuple<std::reference_wrapper<typename std::add_const<typename Utility::TupleElement<I,FullTupleType>::type>::type>...> ConstTiedType;
+};
+
+/*! The tuple slice helper class (the default is undefined)
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename... Types>
+struct TupleSliceHelper
+{ /* ... */ };
+
+/*! The tuple slice helper class
+ *
+ * The first type of the parameter pack will be popped off until the
+ * offset is 0 (see the specialization for offset == 0).
+ * \ingroup tuple
+ */
+template<size_t offset, size_t size, typename StartT, typename... Types>
+struct TupleSliceHelper<offset, size, StartT, Types...>
+{
+  typedef typename TupleSliceHelper<offset-1,size,Types...>::type type;
+  typedef typename TupleSliceHelper<offset-1,size,Types...>::TiedType TiedType;
+  typedef typename TupleSliceHelper<offset-1,size,Types...>::ConstTiedType ConstTiedType;
 
   //! Slice the tuple
   template<size_t head, typename Tuple>
@@ -102,43 +149,18 @@ struct TupleSliceHelper
   }
 };
 
-//! Partial specialization of the TupleSliceHelper for offset == 0
-template<size_t size, typename... Types, typename EndT>
-struct TupleSliceHelper<0, size, Types..., EndT>
+/*! Partial specialization of the TupleSliceHelper for offset == 0
+ *
+ * The tuple slice type will be constructed from the first "size" types of the
+ * parameter pack.
+ * \ingroup tuple
+ */
+template<size_t size, typename... Types>
+struct TupleSliceHelper<0, size, Types...>
 {
-  typedef TupleSliceHelper<0,size-1,Types...>::type type;
-  typedef TupleSliceHelper<0,size-1,Types...>::TiedType TiedType;
-  typedef TupleSliceHelper<0,size-1,Types...>::ConstTiedType ConstTiedType;
-
-  //! Slice the tuple
-  template<size_t head, typename Tuple>
-  static inline type slice( const Tuple& tuple )
-  {
-    return TupleSliceHelper<0,size-1,Types...>::slice<head>( tuple );
-  }
-
-  //! Slice and tie the tuple
-  template<size_t head, typename Tuple>
-  static inline ConstTiedType tiedSlice( const Tuple& tuple )
-  {
-    return TupleSliceHelper<0,size-1,Types...>::tiedSlice<head>( tuple );
-  }
-
-  //! Slice and tie the tuple
-  template<size_t head, typename Tuple>
-  static inline TiedType tiedSlice( Tuple& tuple )
-  {
-    return TupleSliceHelper<0,size-1,Types...>::tiedSlice<head>( tuple );
-  }
-};
-
-//! Partial specialization of the TupleSliceHelper for offset == 0, size == 1
-template<typename... Types>
-struct TupleSliceHelper<0, 1, Types...>
-{
-  typedef std::tuple<std::remove_cv<Types...>::type> type;
-  typedef std::tuple<std::reference_wrapper<std::remove_const<Types...>::type> > TiedType;
-  typedef std::tuple<std::reference_wrapper<std::add_const<Types...>::type> > ConstTiedType;
+  typedef typename TupleFrontSliceHelper<std::make_index_sequence<size>,Types...>::type type;
+  typedef typename TupleFrontSliceHelper<std::make_index_sequence<size>,Types...>::TiedType TiedType;
+  typedef typename TupleFrontSliceHelper<std::make_index_sequence<size>,Types...>::ConstTiedType ConstTiedType;
 
   //! Slice the tuple
   template<size_t head, typename Tuple>
@@ -146,7 +168,7 @@ struct TupleSliceHelper<0, 1, Types...>
   {
     type tuple_slice;
 
-    TupleSliceElementExtractor<0,sizeof(Types...)>::extractSlice<head>( tuple, tuple_slice );
+    TupleSliceElementExtractor<0,sizeof...(Types)>::extractSlice<head>( tuple, tuple_slice );
 
     return tuple_slice;
   }
@@ -157,7 +179,7 @@ struct TupleSliceHelper<0, 1, Types...>
   {
     ConstTiedType tied_tuple_slice;
 
-    TupleSliceElementExtractor<0,sizeof(Types...)>::extractTiedSlice<head>( tuple, tied_tuple_slice );
+    TupleSliceElementExtractor<0,sizeof...(Types)>::extractTiedSlice<head>( tuple, tied_tuple_slice );
 
     return tied_tuple_slice;
   }
@@ -168,23 +190,31 @@ struct TupleSliceHelper<0, 1, Types...>
   {
     TiedType tied_tuple_slice;
 
-    TupleSliceElementExtractor<0,sizeof(Types...)>::extractTiedSlice<head>( tuple, tied_tuple_slice );
+    TupleSliceElementExtractor<0,sizeof...(Types)>::extractTiedSlice<head>( tuple, tied_tuple_slice );
 
     return tied_tuple_slice;
   }
 };
 
-//! The tuple slice helper wrapper
+/*! The tuple slice helper wrapper (the default is undefined)
+ * \ingroup tuple
+ */
 template<size_t offset, size_t size, typename T>
 struct TupleSliceHelperWrapper
 { /* ... */ };
 
-//! The TupleSliceHelperWrapper partial specialization for std::tuple
+/*! The TupleSliceHelperWrapper partial specialization for std::tuple
+ *
+ * By specializating with std::tuple we can deduce the parameter pack.
+ * \ingroup tuple
+ */
 template<size_t offset, size_t size, typename... Types>
 struct TupleSliceHelperWrapper<offset,size,std::tuple<Types...> > : public TupleSliceHelper<offset,size,Types...>
 { /* ... */ };
 
-//! The TupleSliceHelperWrapper partial specialization for std::pair
+/*! The TupleSliceHelperWrapper partial specialization for std::pair
+ * \ingroup tuple
+ */
 template<size_t offset, size_t size, typename T1, typename T2>
 struct TupleSliceHelperWrapper<offset,size,std::pair<T1,T2> > : public TupleSliceHelper<offset,size,T1,T2>
 { /* ... */ };
@@ -196,34 +226,52 @@ template<size_t offset, size_t size, typename TupleType>
 struct TupleSlice<offset,size,TupleType,typename std::enable_if<offset < Utility::TupleSize<TupleType>::value-1 && offset+size <= Utility::TupleSize<TupleType>::value && Utility::IsTuple<TupleType>::value>::type> : public Details::TupleSliceHelperWrapper<offset,size,TupleType>
 { /* ... */ };
 
-/*! Create a slice of a tuple
- * \ingroup tuple
- */
+// Partial specialization of TupleSlice for non-tuple types
+template<size_t offset, size_t size, typename T>
+struct TupleSlice<offset,size,T,typename std::enable_if<offset == 0 && size == 1 && !Utility::IsTuple<T>::value>::type>
+{
+  typedef typename std::remove_const<T>::type type;
+  typedef std::reference_wrapper<type> TiedType;
+  typedef std::reference_wrapper<typename std::add_const<type>::type> ConstTiedType;
+
+  //! Slice the tuple
+  template<size_t head, typename Tuple>
+  static inline type slice( const Tuple& tuple )
+  { return Utility::get<head>( tuple ); }
+
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline ConstTiedType tiedSlice( const Tuple& tuple )
+  { return std::cref( Utility::get<head>( tuple ) ); }
+
+  //! Slice and tie the tuple
+  template<size_t head, typename Tuple>
+  static inline TiedType tiedSlice( Tuple& tuple )
+  { return std::ref( Utility::get<head>( tuple ) ); }
+};
+
+// Create a slice of a tuple
 template<size_t offset, size_t size, typename TupleType>
 inline typename TupleSlice<offset,size,TupleType>::type
 slice( const TupleType& tuple )
 {
-  return Details::TupleSliceHelperWrapper<offset,size,TupleType>::slice( tuple );
+  return TupleSlice<offset,size,TupleType>::slice( tuple );
 }
 
-/*! Create a tied slice of a tuple
- * \ingroup tuple
- */
+// Create a tied slice of a tuple
 template<size_t offset, size_t size, typename TupleType>
 inline typename TupleSlice<offset,size,TupleType>::ConstTiedType
 tiedSlice( const TupleType& tuple )
 {
-  return Details::TupleSliceHelperWrapper<offset,size,TupleType>::tiedSlice( tuple );
+  return TupleSlice<offset,size,TupleType>::tiedSlice( tuple );
 }
 
-/*! Create a tied slice of a tuple
- * \ingroup tuple
- */
+// Create a tied slice of a tuple
 template<size_t offset, size_t size, typename TupleType>
 inline typename TupleSlice<offset,size,TupleType>::TiedType
 tiedSlice( TupleType& tuple )
 {
-  return Details::TupleSliceHelperWrapper<offset,size,TupleType>::tiedSlice( tuple );
+  return TupleSlice<offset,size,TupleType>::tiedSlice( tuple );
 }
 
 namespace Details{
@@ -396,7 +444,7 @@ template<>
 struct ExtraDataConversionHelper<std::string>
 {
   //! Convert the extra data to the desired type
-  static inline T convert( const double extra_data )
+  static inline std::string convert( const double extra_data )
   { return Utility::toString( extra_data ); }
 };
 
@@ -414,7 +462,7 @@ template<size_t I, typename TupleType, typename Enabled = void>
 struct TupleMemberCompareHelper
 {
   //! Compare tuple members
-  template<typename ComparePolicy, typename T>
+  template<typename ComparePolicy>
   static inline bool compareTupleMembers(
                      const TupleType& left_tuple,
                      const std::string& left_name,
@@ -435,11 +483,10 @@ struct TupleMemberCompareHelper
     typedef Details::ExtraDataConversionHelper<typename Utility::ComparisonTraits<TupleElementIType>::ExtraDataType>
       TupleElementIExtraDataConversionHelper;
 
-    bool local_success =
-      Utility::ComparisonTraits<TupleElementIType>::compare<ComparePolicy>(
+    const bool local_success = Utility::ComparisonTraits<TupleElementIType>::template compare<ComparePolicy>(
                Utility::get<I>( left_tuple ),
                left_name,
-               log_left_name;
+               log_left_name,
                Utility::get<I>( right_tuple ),
                right_name,
                log_right_name,
@@ -466,17 +513,16 @@ struct TupleMemberCompareHelper
 template<size_t I, typename TupleType>
 struct TupleMemberCompareHelper<I,TupleType,typename std::enable_if<I==TupleSize<TupleType>::value>::type>
 {
-  static inline bool compareTupleMembers(
-                          const TupleType& left_tuple,
-                          const std::string& left_name,
-                          const bool log_left_name,
-                          const TupleType& right_tuple,
-                          const std::string& right_name,
-                          const bool log_right_name,
-                          const std::string& name_suffix,
-                          const ComparisonOperatorWrapper<T>& compare_operator,
-                          std::ostream& log,
-                          const double extra_data )
+  template<typename ComparePolicy>
+  static inline bool compareTupleMembers( const TupleType& left_tuple,
+                                          const std::string& left_name,
+                                          const bool log_left_name,
+                                          const TupleType& right_tuple,
+                                          const std::string& right_name,
+                                          const bool log_right_name,
+                                          const std::string& name_suffix,
+                                          std::ostream& log,
+                                          const double extra_data )
   { return true; }
 };
 
@@ -519,15 +565,15 @@ inline bool ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::valu
                                        const T& right_value,
                                        const std::string& right_name,
                                        const bool log_right_name,
-                                       const std::string& name_suffix
+                                       const std::string& name_suffix,
                                        std::ostream& log,
                                        const bool, 
                                        const ExtraDataType& extra_data )
 {
-    return Details::TupleMemberCompareHelper<0,T>::compareTupleMembers<ComparisonPolicy>(
+    return Details::TupleMemberCompareHelper<0,T>::template compareTupleMembers<ComparisonPolicy>(
                                                               left_value,
                                                               left_name,
-                                                              log_left_name
+                                                              log_left_name,
                                                               right_value,
                                                               right_name,
                                                               log_right_name,

@@ -22,8 +22,7 @@ public:
   Row( const std::string& name );
   
   //! Destructor
-  ~Row()
-  { /* ... */ }
+  ~Row();
 
   //! Get the row name
   const std::string& getName() const;
@@ -127,6 +126,9 @@ private:
   // The UnitTestDataTable is a friend
   friend class UnitTestDataTable;
 
+  // The ostream operator is a friend
+  friend ColumnInitializer& operator<<( ColumnInitializer&, const std::string& );
+
   // The data table
   UnitTestDataTable* d_data_table;
 };
@@ -183,7 +185,7 @@ bool UnitTestDataTable::doesColumnExist( const std::string& name ) const
 // Get the column index corresponding to the name
 size_t UnitTestDataTable::getColumnIndex( const std::string& name ) const
 {
-  TEST_FOR_EXCEPTION( !this->doesColumnExist( column_name ),
+  TEST_FOR_EXCEPTION( !this->doesColumnExist( name ),
                       Utility::BadUnitTestDataTable,
                       "Cannot get the index of column " << name << " because "
                       "it doesn't exist!" );
@@ -228,7 +230,7 @@ size_t UnitTestDataTable::getNumberOfRows() const
 }
 
 // Get the row names (in the order they were created)
-std::vector<std::string>& UnitTestDataTable::getRowNames() const
+const std::vector<std::string>& UnitTestDataTable::getRowNames() const
 {
   return d_row_order;
 }
@@ -254,7 +256,7 @@ UnitTestDataTable::getRow( const std::string& row_name ) const
                       "Cannot get row " << row_name << " from the test data "
                       "table because it does not exist!" );
 
-  return *d_row_name_map[row_name];
+  return *(d_row_name_map.find(row_name)->second);
 }
 
 // Get a table element

@@ -28,6 +28,52 @@
 #define __NUMBER_OF_PASSED_CHECKS__ number_of_passed_checks
 #define __CHECKPOINT__ last_checkpoint_line_number
 
+#define FRENSIE_CHECKPOINT() __CHECKPOINT__ = __LINE__
+
+//! Start the custom unit test setup
+#define FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN()  \
+  class CustomUnitTestManagerInitializer : public Utility::UnitTestManager::Initializer \
+  {                                                                     \
+  public:                                                               \
+    CustomUnitTestManagerInitializer()                                  \
+      : Utility::UnitTestManager::Initializer( __LINE__ )               \
+    { Utility::UnitTestManager::getInstance().setInitializer( *this ); } \
+    ~CustomUnitTestManagerInitializer() { /* ... */ }                   \
+  protected:                                                            \
+    void __dummy__()
+
+//! End the custom unit test setup
+#define FRENSIE_CUSTOM_UNIT_TEST_SETUP_END()    \
+  };                                            \
+  CustomUnitTestManagerInitializer custom_initializer_instance
+
+//! Set custom command line options for a unit test
+#define FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS() \
+  size_t getCustomCommandLineOptionsStartCheckpoint() const override \
+  { return __LINE__; }                                                \
+  void setCustomCommandLineOptions( size_t& __CHECKPOINT__ ) override     \
+
+//! Define a custom unit test initialization
+#define FRENSIE_CUSTOM_UNIT_TEST_INIT()         \
+  size_t getCustomUnitTestManagerInitializationCheckpoint() const override    \
+  { return __LINE__; }                                                  \
+  void customUnitTestManagerInitialization( size_t& __CHECKPOINT__ ) override
+
+//! Add a custom command line option
+#define ADD_OPTION()                             \
+  FRENSIE_CHECKPOINT();                          \
+  setOption
+
+//! Get a command line option
+#define GET_OPTION( type, name )                      \
+  FRENSIE_CHECKPOINT();                               \
+  this->getOptionValue<type>( name )
+
+//! Assign a command line option
+#define ASSIGN_OPTION( value, name )            \
+  FRENSIE_CHECKPOINT();                                         \
+  value = this->getOptionValue<decltype(value)>( name );
+
 //! Define a basic unit test
 #define FRENSIE_UNIT_TEST( TEST_GROUP, TEST_NAME )      \
   class TEST_GROUP##_##TEST_NAME##_UnitTest : public Utility::UnitTest \
@@ -133,8 +179,6 @@
                                          size_t& __NUMBER_OF_CHECKS__,  \
                                          size_t& __NUMBER_OF_PASSED_CHECKS__, \
                                          size_t& __CHECKPOINT__ ) const \
-
-#define FRENSIE_CHECKPOINT() __CHECKPOINT__ = __LINE__
 
 #define __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ) \
   if( !local_result )                                                   \

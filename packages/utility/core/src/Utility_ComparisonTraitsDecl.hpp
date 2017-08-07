@@ -103,13 +103,13 @@ struct ComparisonTraits
  */
 template<typename ComparisonPolicy, typename T>
 std::string createComparisonHeader(
-                   const T& left_value,
-                   const std::string& left_name,
-                   const T& right_value,
-                   const std::string& right_name,
-                   const typename ComparePolicy<T>::ExtraDataType& extra_data =
-                   typename ComparePolicy<T>::ExtraDataType(),
-                   const std::string& name_suffix = "" );
+                const T& left_value,
+                const std::string& left_name,
+                const T& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<T>::ExtraDataType& extra_data =
+                typename ComparisonTraits<T>::ExtraDataType(),
+                const std::string& name_suffix = "" );
 
 /*! Compare two values and print the results (to the desired stream)
  *
@@ -122,8 +122,8 @@ bool compare( const T& left_value,
               const T& right_value,
               const std::string& right_name,
               std::ostream& log,
-              const typename ComparePolicy<T>::ExtraDataType& extra_data =
-              typename ComparePolicy<T>::ExtraDataType(),
+              const typename ComparisonTraits<T>::ExtraDataType& extra_data =
+              typename ComparisonTraits<T>::ExtraDataType(),
               const bool log_comparison_details = false,
               const std::string& name_suffix = "" );
 
@@ -135,13 +135,13 @@ bool compare( const T& left_value,
  */
 template<typename ComparisonPolicy, typename T1, typename T2>
 std::string createComparisonHeader(
-                  T1&& left_value,
-                  const std::string& left_name,
-                  const T2& right_value,
-                  const std::string& right_name,
-                  const typename ComparePolicy<T2>::ExtraDataType& extra_data =
-                  typename ComparePolicy<T2>::ExtraDataType(),
-                  const std::string& name_suffix = "" );
+               T1&& left_value,
+               const std::string& left_name,
+               const T2& right_value,
+               const std::string& right_name,
+               const typename ComparisonTraits<T2>::ExtraDataType& extra_data =
+               typename ComparisonTraits<T2>::ExtraDataType(),
+               const std::string& name_suffix = "" );
 
 /*! Compare two values and print the results (to the desired stream)
  *
@@ -154,8 +154,8 @@ bool compare( T1&& left_value,
               const T2& right_value,
               const std::string& right_name,
               std::ostream& log,
-              const typename ComparePolicy<T2>::ExtraDataType& extra_data =
-              typename ComparePolicy<T2>::ExtraDataType(),
+              const typename ComparisonTraits<T2>::ExtraDataType& extra_data =
+              typename ComparisonTraits<T2>::ExtraDataType(),
               const bool log_comparison_details = false,
               const std::string& name_suffix = "" );
 
@@ -167,13 +167,13 @@ bool compare( T1&& left_value,
  */
 template<typename ComparisonPolicy, typename T1, typename T2>
 std::string createComparisonHeader(
-                  const T1& left_value,
-                  const std::string& left_name,
-                  T2&& right_value,
-                  const std::string& right_name,
-                  const typename ComparePolicy<T1>::ExtraDataType& extra_data =
-                  typename ComparePolicy<T1>::ExtraDataType(),
-                  const std::string& name_suffix = "" );
+               const T1& left_value,
+               const std::string& left_name,
+               T2&& right_value,
+               const std::string& right_name,
+               const typename ComparisonTraits<T1>::ExtraDataType& extra_data =
+               typename ComparisonTraits<T1>::ExtraDataType(),
+               const std::string& name_suffix = "" );
   
 /*! Compare two values and print the results (to the desired stream)
  *
@@ -186,8 +186,8 @@ bool compare( const T1& left_value,
               T2&& right_value,
               const std::string& right_name,
               std::ostream& log,
-              const typename ComparePolicy<T1>::ExtraDataType& extra_data =
-              typename ComparePolicy<T1>::ExtraDataType(),
+              const typename ComparisonTraits<T1>::ExtraDataType& extra_data =
+              typename ComparisonTraits<T1>::ExtraDataType(),
               const bool log_comparison_details = false,
               const std::string& name_suffix = "" );
 
@@ -199,13 +199,13 @@ bool compare( const T1& left_value,
  */
 template<typename ComparisonPolicy, typename T>
 std::string createComparisonHeader(
-                   T&& left_value,
-                   const std::string& left_name,
-                   T&& right_value,
-                   const std::string& right_name,
-                   const typename ComparePolicy<T>::ExtraDataType& extra_data =
-                   typename ComparePolicy<T>::ExtraDataType(),
-                   const std::string& name_suffix = "" );
+                T&& left_value,
+                const std::string& left_name,
+                T&& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<T>::ExtraDataType& extra_data =
+                typename ComparisonTraits<T>::ExtraDataType(),
+                const std::string& name_suffix = "" );
 
 /*! Compare two values and print the results (to the desired stream)
  *
@@ -218,8 +218,8 @@ bool compare( T&& left_value,
               T&& right_value,
               const std::string& right_name,
               std::ostream& log,
-              const typename ComparePolicy<T>::ExtraDataType& extra_data =
-              typename ComparePolicy<T>::ExtraDataType(),
+              const typename ComparisonTraits<T>::ExtraDataType& extra_data =
+              typename ComparisonTraits<T>::ExtraDataType(),
               const bool log_comparison_details = false,
               const std::string& name_suffix = "" );
 

@@ -9,6 +9,9 @@
 #ifndef UTILITY_UNIT_TEST_DATA_TABLE_HPP
 #define UTILITY_UNIT_TEST_DATA_TABLE_HPP
 
+// Std Lib Includes
+#include <stdexcept>
+
 // FRENSIE Includes
 #include "Utility_Variant.hpp"
 
@@ -40,7 +43,17 @@ public:
   void addColumn( const std::string& column_name );
 
   //! Create the columns
-  ColumnInitializer columns();  
+  ColumnInitializer columns();
+
+  //! Check if a column exists
+  bool doesColumnExist( const std::string& column_name ) const;
+
+  //! Get the column index
+  size_t getColumnIndex( const std::string& column_name ) const;
+
+  //! Get the number of columns
+  size_t getNumberOfColumns() const;
+  
   //! Create a new row
   Row& addRow( const std::string& row_name );
 
@@ -87,6 +100,20 @@ private:
   // The row name map
   typedef std::map<std::string,std::shared_ptr<Row> > RowNameMap;
   RowNameMap d_row_name_map;
+};
+
+/*! \brief Exception thrown by Utility::UnitTestDataTable when the table is
+ * ill-formed.
+ */
+class BadUnitTestDataTable : public std::logic_error
+{
+public:
+  BadUnitTestDataTable( const std::string& msg )
+    : std::logic_error( msg )
+  { /* ... */ }
+
+  ~BadUnitTestDataTable() throw()
+  { /* ... */ }
 };
 
 // Get a concrete table element

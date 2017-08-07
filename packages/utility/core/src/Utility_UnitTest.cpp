@@ -85,7 +85,7 @@ bool UnitTest::run( std::ostream& os,
                    number_of_passed_checks,
                    checkpoint );
   }
-  FRENSIE_TEST_CATCH_STATEMENTS( os, true, success, checkpoint );
+  __FRENSIE_TEST_CATCH_STATEMENTS__( os, true, success, checkpoint );
 
   return success;
 }

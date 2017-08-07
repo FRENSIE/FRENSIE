@@ -134,7 +134,7 @@ struct IsHashable<std::thread::id> : public std::true_type
 /*! Partial specialization of IsTuple for std::tuple
  * \ingroup type_traits
  */
-template<template... Types>
+template<typename... Types>
 struct IsTuple<std::tuple<Types...> > : public std::true_type
 { /* ... */ };
 

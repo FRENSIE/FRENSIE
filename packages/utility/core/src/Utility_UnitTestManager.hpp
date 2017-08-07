@@ -37,10 +37,10 @@ public:
   public:
 
     //! Constructor
-    Initializer();
+    Initializer( const size_t start_checkpoint = 0 );
 
     //! Initialize the unit test manager
-    void initializeUnitTestManager( int argc, char** argv );
+    void initializeUnitTestManager( int argc, char** argv, size_t& checkpoint );
 
     //! Destructor
     virtual ~Initializer()
@@ -53,11 +53,17 @@ public:
     T getOptionValue( const std::string& option_name ) const
     { return this->getRawOptionValue( option_name ).as<T>(); }
 
-    //! Set the custom command line options
-    virtual void setCustomCommandLineOptions();
+    //! Get the start checkpoint for the custom command line options method
+    virtual size_t getCustomCommandLineOptionsStartCheckpoint() const;
 
+    //! Set the custom command line options
+    virtual void setCustomCommandLineOptions( size_t& checkpoint );
+
+    //! Get the start checkpoint for the custom manager initialization method
+    virtual size_t getCustomUnitTestManagerInitializationCheckpoint() const;
+    
     //! Custom manager initialization method
-    virtual void customUnitTestManagerInitialization() const;
+    virtual void customUnitTestManagerInitialization( size_t& checkpoint );
 
     //! Shortcut for adding command line options (functor)
     boost::program_options::options_description_easy_init setOption;
@@ -67,6 +73,9 @@ public:
     //! Get command line option raw value
     boost::program_options::variable_value
     getRawOptionValue( const std::string& option_name ) const;
+
+    // The start checkpoint
+    size_t d_start_checkpoint;
   };
 
   //! Get the unit test manager instance
@@ -224,7 +233,7 @@ private:
   std::unique_ptr<Data> d_data;
 };
 
-#define FRENSIE_TEST_CATCH_STATEMENTS( LOG_STREAM, VERBOSE, SUCCESS_VALUE, CHECKPOINT_LINE_NUMBER ) \
+#define __FRENSIE_TEST_CATCH_STATEMENTS__( LOG_STREAM, VERBOSE, SUCCESS_VALUE, CHECKPOINT_LINE_NUMBER ) \
   catch( const std::exception& exception )                              \
   {                                                                   \
     SUCCESS_VALUE = false;                                            \

@@ -40,7 +40,7 @@ struct AbsoluteValueHelper<T,typename std::enable_if<std::is_floating_point<T>::
 {
   static inline T abs( const T& value )
   { return std::fabs( value ); }
-}
+};
 
 template<typename Unit, typename T>
 struct AbsoluteValueHelper<boost::units::quantity<Unit,T> >
@@ -50,7 +50,7 @@ struct AbsoluteValueHelper<boost::units::quantity<Unit,T> >
     return boost::units::quantity<Unit,T>::from_value(
                        Details::AbsoluteValueHelper<T>::abs( value.value() ) );
   }
-}
+};
   
 } // end Details namespace
 
@@ -126,7 +126,7 @@ inline std::string EqualityComparisonPolicy::createComparisonDetails(
                                    const std::string& name_suffix,
                                    const typename QuantityTraits<T>::RawType& )
 {
-  return ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
+  return BaseComparisonPolicy::createComparisonDetailsDefaultImpl(
                                                              left_name,
                                                              report_left_name,
                                                              left_value,
@@ -164,7 +164,7 @@ inline std::string InequalityComparisonPolicy::createComparisonDetails(
                                    const std::string& name_suffix,
                                    const typename QuantityTraits<T>::RawType& )
 {
-  return ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
+  return BaseComparisonPolicy::createComparisonDetailsDefaultImpl(
                                                              left_name,
                                                              report_left_name,
                                                              left_value,
@@ -202,7 +202,7 @@ inline std::string GreaterThanComparisonPolicy::createComparisonDetails(
                                    const std::string& name_suffix,
                                    const typename QuantityTraits<T>::RawType& )
 {
-  return ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
+  return BaseComparisonPolicy::createComparisonDetailsDefaultImpl(
                                                              left_name,
                                                              report_left_name,
                                                              left_value,
@@ -240,7 +240,7 @@ inline std::string GreaterThanOrEqualToComparisonPolicy::createComparisonDetails
                                    const std::string& name_suffix,
                                    const typename QuantityTraits<T>::RawType& )
 {
-  return ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
+  return BaseComparisonPolicy::createComparisonDetailsDefaultImpl(
                                                              left_name,
                                                              report_left_name,
                                                              left_value,
@@ -278,7 +278,7 @@ inline std::string LessThanComparisonPolicy::createComparisonDetails(
                                    const std::string& name_suffix,
                                    const typename QuantityTraits<T>::RawType& )
 {
-  return ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
+  return BaseComparisonPolicy::createComparisonDetailsDefaultImpl(
                                                              left_name,
                                                              report_left_name,
                                                              left_value,
@@ -316,7 +316,7 @@ inline std::string LessThanOrEqualToComparisonPolicy::createComparisonDetails(
                                    const std::string& name_suffix,
                                    const typename QuantityTraits<T>::RawType& )
 {
-  return ComparisonPolicy<DerivedType>::createComparisonDetailsDefaultImpl(
+  return BaseComparisonPolicy::createComparisonDetailsDefaultImpl(
                                                              left_name,
                                                              report_left_name,
                                                              left_value,
@@ -442,7 +442,7 @@ public:
       
       if( report_left_name )
       {
-        oss << first_name;
+        oss << left_name;
         
         if( !name_suffix.empty() )
           oss << name_suffix;
@@ -463,7 +463,7 @@ public:
 
     oss << "relErr(" << Utility::toString( left_value )
         << "," << Utility::toString( right_value ) 
-        << ") = " << Utility::toString( ThisType::calculateRelativeError( left_value, right_value );
+        << ") = " << Utility::toString( ThisType::calculateRelativeError( left_value, right_value ) )
         << " <= " << Utility::toString( relative_error_tolerance );
 
     return oss.str();
@@ -482,7 +482,6 @@ public:
 private:
 
   // Compute the relative error
-  template<typename T>
   static inline typename QuantityTraits<T>::RawType computeRelativeError(
                                                          const T& left_value,
                                                          const T& right_value )
@@ -490,9 +489,9 @@ private:
     if( left_value != QuantityTraits<T>::zero() &&
         right_value != QuantityTraits<T>::zero() )
     {
-      return Details::AbsoluteValueHelper::abs( left_value - right_value )/
-        std::max( Details::AbsoluteValueHelper::abs( left_value ),
-                  Details::AbsoluteValueHelper::abs( right_value ) );
+      return Details::AbsoluteValueHelper<T>::abs( left_value - right_value )/
+        std::max( Details::AbsoluteValueHelper<T>::abs( left_value ),
+                  Details::AbsoluteValueHelper<T>::abs( right_value ) );
     }
     else
       return QuantityTraits<typename QuantityTraits<T>::RawType>::zero();
@@ -549,16 +548,16 @@ inline std::string RelativeErrorComparisonPolicy::getOperatorName()
  */
 template<typename T>
 inline std::string RelativeErrorComparisonPolicy::createComparisonDetails(
-                                            const std::string& left_name,
-                                            const bool report_left_name,
-                                            const T& left_value,
-                                            const std::string& right_name,
-                                            const bool report_right_name,
-                                            const T& right_value,
-                                            const std::string& name_suffix,
-                                            const T& relative_error_tolerance )
+          const std::string& left_name,
+          const bool report_left_name,
+          const T& left_value,
+          const std::string& right_name,
+          const bool report_right_name,
+          const T& right_value,
+          const std::string& name_suffix,
+          const typename QuantityTraits<T>::RawType& relative_error_tolerance )
 {
-  return RelativeErrorComparisonPolicyHelper<T>::createComparisonDetails(
+  return Details::RelativeErrorComparisonPolicyHelper<T>::createComparisonDetails(
                                                     left_name,
                                                     report_left_name,
                                                     left_value,
@@ -575,13 +574,14 @@ inline std::string RelativeErrorComparisonPolicy::createComparisonDetails(
  */
 template<typename T>
 inline bool RelativeErrorComparisonPolicy::compare(
-                                            const T& left_value,
-                                            const T& right_value,
-                                            const T& relative_error_tolerance )
+          const T& left_value,
+          const T& right_value,
+          const typename QuantityTraits<T>::RawType& relative_error_tolerance )
 {
-  return RelativeErrorComparisonPolicyHelper<T>::compare( left_value,
-                                                          right_value,
-                                                          relative_error_tolerance );
+  return Details::RelativeErrorComparisonPolicyHelper<T>::compare(
+                                                    left_value,
+                                                    right_value,
+                                                    relative_error_tolerance );
 }
   
 } // end Utility namespace

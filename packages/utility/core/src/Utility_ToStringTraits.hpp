@@ -196,8 +196,8 @@ struct ToStringTraits<T,typename std::enable_if<std::is_base_of<std::exception,T
   //! Place the std::exception type in a stream
   static inline void toStream( std::ostream& os, const std::exception& obj )
   { os << obj.what(); }
-}
-
+};
+  
 namespace Details{
 
 //! ToStringTraits helper class for types with iterators

@@ -907,11 +907,12 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv )
   d_data->redirectStdOutput( log );
 
   const double init_start_time = mpi_session.getWallTime();
+  size_t init_checkpoint = 0;
   
   try{
-    d_data->getInitializer().initializeUnitTestManager( *argc, *argv );
+    d_data->getInitializer().initializeUnitTestManager( *argc, *argv, init_checkpoint );
   }
-  FRENSIE_TEST_CATCH_STATEMENTS( log, true, local_success );
+  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, init_checkpoint );
 
   const double init_time = mpi_session.getWallTime() - init_start_time;
 
@@ -1063,61 +1064,61 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
     d_data->getUnitTests().sort( &Utility::compareUnitTestPointers );
 
     this->printRunningTestsNotification();
+  }
+  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, 0 );
 
-    for( Data::UnitTests::const_iterator test_it = d_data->getUnitTests().begin();
-         test_it != d_data->getUnitTests().end();
-         ++test_it )
+  for( Data::UnitTests::const_iterator test_it = d_data->getUnitTests().begin();
+       test_it != d_data->getUnitTests().end();
+       ++test_it )
+  {
+    Utility::UnitTest& unit_test = *(*test_it);
+    
+    if( this->shouldUnitTestBeRun( unit_test ) )
     {
-      Utility::UnitTest& unit_test = *(*test_it);
+      // Increment the run test counter
+      ++(d_data->getRunTestCounter());
       
-      if( this->shouldUnitTestBeRun( unit_test ) )
-      {
-        // Increment the run test counter
-        ++(d_data->getRunTestCounter());
+      // Print the unit tests header
+      this->printUnitTestHeader( d_data->getRunTestCounter(), unit_test );
+      
+      // Run the test
+      const double test_start_time =
+        Utility::GlobalMPISession::getWallTime();
+      
+      const bool local_test_success =
+        this->runUnitTest( unit_test, log );
 
-        // Print the unit tests header
-        this->printUnitTestHeader( d_data->getRunTestCounter(), unit_test );
-
-        // Run the test
-        const double test_start_time =
-          Utility::GlobalMPISession::getWallTime();
-        
-        const bool local_test_success =
-          this->runUnitTest( unit_test, log );
-
-        const double test_time =
-          Utility::GlobalMPISession::getWallTime() - test_start_time;
-
-        // Update test stats
-        if( local_test_success )
-          ++(d_data->getPassedTestCounter());
-
-        d_data->getTotalUnitTestExecutionTime() += test_time;
-
-        // Report the test results
-        const bool global_test_success =
-          Utility::GlobalMPISession::isGloballyTrue( local_test_success );
-        
-        this->reportTestResult( unit_test,
-                                log,
-                                test_time,
-                                local_test_success,
-                                global_test_success,
-                                global_failed_tests,
-                                local_failed_tests_set );
-
-        if( !local_test_success )
-          local_success = false;
-      }
+      const double test_time =
+        Utility::GlobalMPISession::getWallTime() - test_start_time;
+      
+      // Update test stats
+      if( local_test_success )
+        ++(d_data->getPassedTestCounter());
+      
+      d_data->getTotalUnitTestExecutionTime() += test_time;
+      
+      // Report the test results
+      const bool global_test_success =
+        Utility::GlobalMPISession::isGloballyTrue( local_test_success );
+      
+      this->reportTestResult( unit_test,
+                              log,
+                              test_time,
+                              local_test_success,
+                              global_test_success,
+                              global_failed_tests,
+                              local_failed_tests_set );
+      
+      if( !local_test_success )
+        local_success = false;
     }
   }
-  FRENSIE_TEST_CATCH_STATEMENTS( log, true, local_success );
-
+  
   this->flushLogsAndAddToReport( log, "", REPORT_ON_ALL_PROCS );
-
+  
   // If there are any failed tests provide a summary of them now
   this->summarizeFailedTests( global_failed_tests, local_failed_tests_set );
-
+  
   return local_success;
 }
 
@@ -1728,21 +1729,32 @@ void DistributedUnitTestManager::printTestResult( const std::string& header,
 }
 
 // Constructor
-UnitTestManager::Initializer::Initializer()
-  : setOption( UnitTestManager::getInstance().d_data->getCustomCommandLineOptions().add_options() )
+UnitTestManager::Initializer::Initializer( const size_t checkpoint )
+  : setOption( UnitTestManager::getInstance().d_data->getCustomCommandLineOptions().add_options() ),
+    d_start_checkpoint( checkpoint )
 { /* ... */ }
 
 // Initialize the unit test manager
-void UnitTestManager::Initializer::initializeUnitTestManager( int argc, char** argv )
+void UnitTestManager::Initializer::initializeUnitTestManager( int argc,
+                                                              char** argv,
+                                                              size_t& checkpoint )
 {
+  checkpoint = d_start_checkpoint;
+
   // Set the custom command line options
-  this->setCustomCommandLineOptions();
+  if( this->getCustomCommandLineOptionsStartCheckpoint() > 0 )
+    checkpoint = this->getCustomCommandLineOptionsStartCheckpoint();
+  
+  this->setCustomCommandLineOptions( checkpoint );
 
   // Parse the command line options
   UnitTestManager::getInstance().d_data->parseCommandLineOptions( argc, argv );
 
   // Initialize the manager
-  this->customUnitTestManagerInitialization();
+  if( this->getCustomUnitTestManagerInitializationCheckpoint() > 0 )
+    checkpoint = this->getCustomUnitTestManagerInitializationCheckpoint();
+  
+  this->customUnitTestManagerInitialization( checkpoint );
 }
 
 // Get command line option value
@@ -1750,21 +1762,33 @@ boost::program_options::variable_value
 UnitTestManager::Initializer::getRawOptionValue( const std::string& option_name ) const
 {
   return UnitTestManager::getInstance().d_data->getCommandLineOptionValue( option_name );
-}    
+}
+
+//! Get the start checkpoint for the custom command line options method
+size_t  UnitTestManager::Initializer::getCustomCommandLineOptionsStartCheckpoint() const
+{
+  return d_start_checkpoint;
+}
 
 // Set the custom command line options
 /*! \details Derived classes can override this method if a unit test suite
  * needs additional command line options. Note: this method is non-const
  * because of how it can be used by derived classes.
  */
-void UnitTestManager::Initializer::setCustomCommandLineOptions()
+void UnitTestManager::Initializer::setCustomCommandLineOptions( size_t& checkpoint )
 { /* ... */ }
+
+// Get the start checkpoint for the custom manager initialization method
+size_t UnitTestManager::Initializer::getCustomUnitTestManagerInitializationCheckpoint() const
+{
+  return d_start_checkpoint;
+}
 
 // Custom manager initialization method
 /*! \details Derived classes can override this method if test data needs
  * to be initialized in a specific way.
  */
-void UnitTestManager::Initializer::customUnitTestManagerInitialization() const
+void UnitTestManager::Initializer::customUnitTestManagerInitialization( size_t& checkpoint )
 { /* ... */ }
   
 } // end Utility namespace
