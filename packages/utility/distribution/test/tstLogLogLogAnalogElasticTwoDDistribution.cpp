@@ -314,7 +314,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::AnalogElasticTwoDDistribution<Utility::LogLogLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
                                                          distribution_data ) );
   }
 
@@ -333,7 +333,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
     distribution_data[1].first = 3.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::AnalogElasticTwoDDistribution<Utility::LogLogLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
                                                          distribution_data ) );
   }
 
@@ -6694,7 +6694,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the two-dimensional distribution
   {
-    Utility::FullyTabularTwoDDistribution::DistributionType
+    Utility::AnalogElasticTwoDDistribution<Utility::LogLogLog>::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin

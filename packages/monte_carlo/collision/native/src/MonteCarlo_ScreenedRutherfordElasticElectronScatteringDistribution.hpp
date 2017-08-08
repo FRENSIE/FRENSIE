@@ -18,7 +18,7 @@
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_ElasticElectronTraits.hpp"
+#include "Utility_AnalogElasticTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -32,8 +32,8 @@ public:
   typedef std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;
 
-  //! Typedef for the screened Rutherford traits
-  typedef ElasticElectronTraits ElasticTraits;
+  //! Typedef for the Analog elastic traits
+  typedef Utility::AnalogElasticTraits ElasticTraits;
 
   //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
@@ -91,11 +91,14 @@ public:
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
+  //! Evaluate the integrated distribution
+  double evaluateIntegrated( const double incoming_energy ) const;
+
   //! Evaluate the integrated PDF
   double evaluateIntegratedPDF( const double incoming_energy ) const;
 
   //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy,
+  double evaluateIntegratedPDF( const double cutoff_pdf,
                                 const double eta ) const;
 
 protected:
@@ -107,8 +110,8 @@ protected:
 
 private:
 
-  // Screened Rutherford traits
-  std::shared_ptr<ElasticTraits> d_sr_traits;
+  // Analog elastic traits
+  std::shared_ptr<ElasticTraits> d_elastic_traits;
 
   // Cutoff elastic scattering distribution
   ElasticDistribution d_elastic_cutoff_distribution;

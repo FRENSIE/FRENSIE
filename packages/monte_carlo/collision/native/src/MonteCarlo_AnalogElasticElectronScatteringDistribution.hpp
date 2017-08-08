@@ -17,7 +17,7 @@
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_AnalogElasticOneDDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
-#include "MonteCarlo_ElasticElectronTraits.hpp"
+#include "Utility_AnalogElasticTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -31,8 +31,8 @@ public:
   //! Typedef for the this type
   typedef AnalogElasticElectronScatteringDistribution ThisType;
 
-  //! Typedef for the screened Rutherford traits
-  typedef ElasticElectronTraits ElasticTraits;
+  //! Typedef for the Analog elastic traits
+  typedef Utility::AnalogElasticTraits ElasticTraits;
 
   //! Typedef for the one d distributions
   typedef Utility::OneDDistribution OneDDist;
@@ -44,7 +44,7 @@ public:
   AnalogElasticElectronScatteringDistribution(
     const std::shared_ptr<const TwoDDist>& analog_elastic_distribution,
     const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const ElasticTraits>& screened_rutherford_traits,
+    const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const bool correlated_sampling_mode_on );
 
   //! Destructor
@@ -146,8 +146,8 @@ private:
   // Cutoff elastic scattering distribution
   std::shared_ptr<const OneDDist> d_cutoff_ratios;
 
-  // Screened Rutherford traits
-  std::shared_ptr<const ElasticTraits> d_sr_traits;
+  // Elastic electron traits
+  std::shared_ptr<const ElasticTraits> d_elastic_traits;
 
   // The sampling function pointer
   std::function<double ( const double, const double )> d_sample_function;

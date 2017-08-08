@@ -35,6 +35,9 @@ public:
   typedef Utility::GaussKronrodIntegrator<Utility::long_float>
   Integrator;
 
+  // Typedef for elastic electron traits
+  typedef Utility::AnalogElasticTraits ElasticTraits;
+
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
@@ -53,6 +56,7 @@ public:
     const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
+    const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const double cutoff_angle_cosine );
 
   //! Destructor
@@ -187,11 +191,8 @@ private:
   // The angle cosine cutoff between hard and soft scattering
   double d_cutoff_angle_cosine;
 
-  // The angle cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff_delta_angle_cosine;
-
-  // The angle cosine cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff_angle_cosine;
+  // Elastic electron traits
+  std::shared_ptr<const ElasticTraits> d_elastic_traits;
 };
 
 } // end DataGen namespace

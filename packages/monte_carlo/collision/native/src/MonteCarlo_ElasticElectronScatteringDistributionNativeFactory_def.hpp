@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ElasticElectronTraits.hpp"
+#include "Utility_AnalogElasticTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -29,6 +29,39 @@ struct TwoDInterpIsLinLinLog< Utility::LinLinLog >
 //----------------------------------------------------------------------------//
 //      ****FORWARD DATA PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
+
+// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+template<typename TwoDInterpPolicy>
+void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const bool correlated_sampling_mode_on,
+    const double evaluation_tol )
+{
+  Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
+
+  cutoff_cross_section.assign(
+        data_container.getCutoffElasticCrossSection().begin(),
+        data_container.getCutoffElasticCrossSection().end() );
+  total_cross_section.assign(
+        data_container.getTotalElasticCrossSection().begin(),
+        data_container.getTotalElasticCrossSection().end() );
+  energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
+                      data_container.getElectronEnergyGrid().end() );
+
+  ThisType::createAnalogElasticDistribution<TwoDInterpPolicy>(
+    analog_elastic_distribution,
+    cutoff_cross_section,
+    total_cross_section,
+    energy_grid,
+    data_container.getCutoffElasticAngles(),
+    data_container.getCutoffElasticPDF(),
+    data_container.getElasticAngularEnergyGrid(),
+    data_container.getAtomicNumber(),
+    correlated_sampling_mode_on,
+    evaluation_tol );
+}
 
 // Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 template<typename TwoDInterpPolicy>
@@ -289,15 +322,15 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
                                   total_cross_section,
                                   cross_section_ratios );
 
-  // Create the screened Rutherford traits
-  std::shared_ptr<const ElasticTraits> sr_traits(
+  // Create the Analog elastic traits
+  std::shared_ptr<const ElasticTraits> elastic_traits(
     new ElasticTraits( atomic_number ) );
 
   // Create the scattering function
   std::shared_ptr<TwoDDist> scattering_function;
-  ThisType::createAnalogScatteringFunction(
+  ThisType::createAnalogScatteringFunction<TwoDInterpPolicy>(
         cross_section_ratios,
-        sr_traits,
+        elastic_traits,
         cutoff_elastic_angles,
         cutoff_elastic_pdf,
         angular_energy_grid,
@@ -309,7 +342,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
       new AnalogElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
-                sr_traits,
+                elastic_traits,
                 correlated_sampling_mode_on ) );
 }
 
@@ -870,7 +903,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
 template<typename TwoDInterpPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
-    const std::shared_ptr<const ElasticTraits>& sr_traits,
+    const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const std::map<double,std::vector<double> >& elastic_angles,
     const std::map<double,std::vector<double> >& elastic_pdf,
     const std::vector<double>& energy_grid,
@@ -893,7 +926,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringF
     function_data[n].first = energy_grid[n];
 
     // Get the value of moliere's eta
-    double eta = sr_traits->evaluateMoliereScreeningConstant( energy_grid[n] );
+    double eta = elastic_traits->evaluateMoliereScreeningConstant( energy_grid[n] );
 
     // Get the ratio of the cutoff to total elastic cross section
     double cutoff_ratio = cross_section_ratios->evaluate( energy_grid[n] );

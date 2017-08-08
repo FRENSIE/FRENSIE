@@ -204,6 +204,13 @@ TARGET_LINK_LIBRARIES(tstDirectionalDistributionFactory utility_dist)
 ADD_TEST(DirectionalDistributionFactory_test tstDirectionalDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_directional_distributions.xml")
 SET_PROPERTY(TEST DirectionalDistributionFactory_test PROPERTY LABELS utility_dist)
 
+ADD_EXECUTABLE(tstAnalogElasticTraits
+  tstAnalogElasticTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAnalogElasticTraits utility_dist)
+ADD_TEST(AnalogElasticTraits_test tstAnalogElasticTraits )
+SET_PROPERTY(TEST AnalogElasticTraits_test PROPERTY LABELS utility_dist electron)
+
 ADD_EXECUTABLE(tstAnalogElasticOneDDistribution
   tstAnalogElasticOneDDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

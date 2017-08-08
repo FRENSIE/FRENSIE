@@ -20,6 +20,7 @@
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -336,8 +337,8 @@ private:
     const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_section,
     const unsigned cutoff_threshold_energy_index,
     const unsigned screened_rutherford_threshold_energy_index,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_distribution,
+    const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
     std::vector<double>& moment_preserving_cross_section );

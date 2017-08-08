@@ -1,38 +1,38 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElasticElectronTraits.cpp
+//! \file   Utility_AnalogElasticTraits.cpp
 //! \author Luke Kersting
-//! \brief  Electron Elastic traits def
+//! \brief  The Analog elastic electron traits def
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ElasticElectronTraits.hpp"
+#include "Utility_AnalogElasticTraits.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
-namespace MonteCarlo{
+namespace Utility{
 
 
 // The change scattering angle cosine below which the screened Rutherford distribution is used
-double ElasticElectronTraits::delta_mu_peak = 1e-6;
+double AnalogElasticTraits::delta_mu_peak = 1e-6;
 
 // The scattering angle cosine above which the screened Rutherford distribution is used
-double ElasticElectronTraits::mu_peak = 0.999999;
+double AnalogElasticTraits::mu_peak = 0.999999;
 
 // A parameter for moliere's screening factor  ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
-double ElasticElectronTraits::s_screening_param1 =
+double AnalogElasticTraits::s_screening_param1 =
         Utility::PhysicalConstants::fine_structure_constant *
         Utility::PhysicalConstants::fine_structure_constant/( 1.56645L );
 
 // A parameter for moliere's screening factor ( 3.76 * fsc**2 )
-double ElasticElectronTraits::s_screening_param2 = 3.76L*
+double AnalogElasticTraits::s_screening_param2 = 3.76L*
         Utility::PhysicalConstants::fine_structure_constant *
         Utility::PhysicalConstants::fine_structure_constant;
 
 
 // Constructor
-ElasticElectronTraits::ElasticElectronTraits(
+AnalogElasticTraits::AnalogElasticTraits(
     const unsigned atomic_number,
     const bool seltzer_modification_on )
   : d_atomic_number( atomic_number ),
@@ -47,31 +47,31 @@ ElasticElectronTraits::ElasticElectronTraits(
 }
 
 // Set the Seltzer modification of eta on (on by default)
-void ElasticElectronTraits::setSeltzerModificationOn()
+void AnalogElasticTraits::setSeltzerModificationOn()
 {
   d_seltzer_modification_on = true;
 }
 
 // Set the Seltzer modification of eta off (on by default)
-void ElasticElectronTraits::setSeltzerModificationOff()
+void AnalogElasticTraits::setSeltzerModificationOff()
 {
   d_seltzer_modification_on = false;
 }
 
 // Return if the the Seltzer modification of eta on (on by default)
-bool ElasticElectronTraits::isSeltzerModificationOn() const
+bool AnalogElasticTraits::isSeltzerModificationOn() const
 {
   return d_seltzer_modification_on;
 }
 
 // Return the atomic number
-unsigned ElasticElectronTraits::getAtomicNumber() const
+unsigned AnalogElasticTraits::getAtomicNumber() const
 {
   return d_atomic_number;
 }
 
 // Set the atomic number
-void ElasticElectronTraits::setAtomicNumber( unsigned atomic_number )
+void AnalogElasticTraits::setAtomicNumber( unsigned atomic_number )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0 );
@@ -96,7 +96,7 @@ void ElasticElectronTraits::setAtomicNumber( unsigned atomic_number )
  * eta = 1/2( 1/(Pc)^2 (fsc/0.885)^2 Z^(2/3) [ 1.13 +
  *        3.76(fsc Z)^2 ( (E/mc^2 + 1)/(Pc) )^2 ) ]
  */
-double ElasticElectronTraits::evaluateMoliereScreeningConstant(
+double AnalogElasticTraits::evaluateMoliereScreeningConstant(
                                               const double energy ) const
 {
   // Calculate the energy in units of electron rest mass energy ( E / mc^2 )
@@ -137,7 +137,7 @@ double ElasticElectronTraits::evaluateMoliereScreeningConstant(
  * eta = 1/2( 1/(Pc)^2 (fsc/0.885)^2 Z^(2/3) [ 1.13 +
  *        3.76(fsc Z)^2 ( (E/mc^2 + 1)/(Pc) )^2 ) ]
  */
-double ElasticElectronTraits::evaluateMoliereScreeningConstant(
+double AnalogElasticTraits::evaluateMoliereScreeningConstant(
                                         const double energy,
                                         const unsigned atomic_number,
                                         const bool seltzer_modification_on )
@@ -176,7 +176,7 @@ double ElasticElectronTraits::evaluateMoliereScreeningConstant(
 }
 
 // Set the screening parameters
-void ElasticElectronTraits::setScreeningParameters()
+void AnalogElasticTraits::setScreeningParameters()
 {
   // Set parameter 1 for moliere screening constant ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
   d_screening_param1 = pow( d_atomic_number, 2.0/3.0 )*s_screening_param1;
@@ -185,10 +185,10 @@ void ElasticElectronTraits::setScreeningParameters()
   d_screening_param2 = s_screening_param2*d_atomic_number*d_atomic_number;
 }
 
-} // end MonteCarlo namespace
+} // end Utility namespace
 
 
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElasticElectronTraits.cpp
+// end Utility_AnalogElasticTraits.cpp
 //---------------------------------------------------------------------------//

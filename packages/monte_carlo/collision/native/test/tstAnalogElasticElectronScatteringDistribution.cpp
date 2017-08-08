@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_ElasticElectronTraits.hpp"
+#include "Utility_AnalogElasticTraits.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
@@ -34,12 +34,12 @@ public:
     const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         elastic_cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const MonteCarlo::ElasticElectronTraits>& screened_rutherford_traits,
+    const std::shared_ptr<const Utility::AnalogElasticTraits>& elastic_traits,
     const bool correlated_sampling_mode_on )
     : MonteCarlo::AnalogElasticElectronScatteringDistribution(
         elastic_cutoff_distribution,
         cutoff_cross_section_ratios,
-        screened_rutherford_traits,
+        elastic_traits,
         correlated_sampling_mode_on )
   { /* ... */ }
 
@@ -570,7 +570,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test energy inbetween energy bins
   electron.setEnergy( 2e2 );
   electron.setDirection( 0.0, 0.0, 1.0 );
-std::cout << std::setprecision(20) << "\ncdf at cutoff = " << distribution->evaluateCDFAtCutoff( 2e2 ) << std::endl;
+
   // Set fake random number stream
   fake_stream[0] = 1.0e-5; // sample mu = 0.99980737913598205502
   fake_stream[1] = 1.0e-4; // sample mu = 0.99998073331622627791
@@ -1148,9 +1148,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Data::ElectronPhotonRelaxationDataContainer data_container =
     Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-  // Get the screened Rutherford traits
-  std::shared_ptr<MonteCarlo::ElasticElectronTraits> traits(
-    new MonteCarlo::ElasticElectronTraits( data_container.getAtomicNumber() ) );
+  // Get the Analog elastic traits
+  std::shared_ptr<Utility::AnalogElasticTraits> traits(
+    new Utility::AnalogElasticTraits( data_container.getAtomicNumber() ) );
 
   // Electron energy grid
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();

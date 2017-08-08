@@ -893,6 +893,21 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
   }
 }
 
+// Evaluate the distribution at a bin boundary using the desired evaluation method
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+template<typename ReturnType,
+         typename EvaluationMethod>
+inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateBinImpl(
+                        const typename DistributionType::const_iterator& bin_boundary,
+                        const SecondaryIndepQuantity angle_cosine,
+                        EvaluationMethod evaluate ) const
+{
+  return ((*bin_boundary->second).*evaluate)(angle_cosine);
+}
+
 // Evaluate the distribution using the desired evaluation method
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -922,7 +937,7 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
   {
     if( this->arePrimaryLimitsExtended() )
     {
-      return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
+      return this->evaluateBinImpl<ReturnType,EvaluationMethod>( lower_bin_boundary, angle_cosine, evaluate );
     }
     else 
       return QuantityTraits<ReturnType>::zero();
@@ -934,8 +949,8 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
               lower_bin_boundary->first,
               upper_bin_boundary->first,
               primary_indep_var_value,
-              ((*lower_bin_boundary->second).*evaluate)(angle_cosine),
-              ((*upper_bin_boundary->second).*evaluate)(angle_cosine) );
+              this->evaluateBinImpl<ReturnType,EvaluationMethod>( lower_bin_boundary, angle_cosine, evaluate ),
+              this->evaluateBinImpl<ReturnType,EvaluationMethod>( upper_bin_boundary, angle_cosine, evaluate ) );
   }
 }
 

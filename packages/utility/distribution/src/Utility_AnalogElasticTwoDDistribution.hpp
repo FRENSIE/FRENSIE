@@ -286,6 +286,14 @@ private:
             const SecondaryIndepQuantity min_secondary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
+  //! Evaluate the distribution at a bin boundary using the desired evaluation method
+  template<typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateBinImpl(
+                    const typename DistributionType::const_iterator& bin_boundary,
+                    const SecondaryIndepQuantity angle_cosine,
+                    EvaluationMethod evaluate ) const;
+
   //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,
            typename ReturnType,

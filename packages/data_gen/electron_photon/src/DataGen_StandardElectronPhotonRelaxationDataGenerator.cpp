@@ -1946,10 +1946,26 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   bool correlated_sampling_mode_on = true;
 
+  // Get the cutoff and total elastic cross sections and the energy grid
+  Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
+
+  cutoff_cross_section.assign(
+        data_container.getCutoffElasticCrossSection().begin(),
+        data_container.getCutoffElasticCrossSection().end() );
+  total_cross_section.assign(
+        data_container.getTotalElasticCrossSection().begin(),
+        data_container.getTotalElasticCrossSection().end() );
+  energy_grid.assign(
+        data_container.getElectronEnergyGrid().begin(),
+        data_container.getElectronEnergyGrid().end() );
+
   if ( linlinlog_interpolation_mode_on )
   {
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         analog_distribution,
+        cutoff_cross_section,
+        total_cross_section,
+        energy_grid,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1961,6 +1977,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   {
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         analog_distribution,
+        cutoff_cross_section,
+        total_cross_section,
+        energy_grid,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1970,26 +1989,20 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
 
   // Construct the hash-based grid searcher for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
-                      data_container.getElectronEnergyGrid().end() );
-
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
              energy_grid,
              100u ) );
 
-  // Construct the cutoff reaction
-  Teuchos::ArrayRCP<double> cutoff_cross_section;
-  cutoff_cross_section.assign(
-    data_container.getCutoffElasticCrossSection().begin(),
-    data_container.getCutoffElasticCrossSection().end() );
-
-  // Construct the screened Rutherford reaction
+  // Get the screened Rutherford cross section
   Teuchos::ArrayRCP<double> rutherford_cross_section;
   rutherford_cross_section.assign(
     data_container.getScreenedRutherfordElasticCrossSection().begin(),
     data_container.getScreenedRutherfordElasticCrossSection().end() );
+
+  // Create the elastic traits
+  std::shared_ptr<Utility::AnalogElasticTraits> elastic_traits(
+    new Utility::AnalogElasticTraits( data_container.getAtomicNumber() ) );
 
   // Create the moment evaluator of the elastic scattering distribution
   std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
@@ -2003,6 +2016,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
         data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         analog_distribution,
+        elastic_traits,
         data_container.getCutoffAngleCosine() ) );
 
   // Moment preserving discrete angles and weights
@@ -2034,6 +2048,10 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   data_container.setMomentPreservingCrossSectionReduction(
     cross_section_reduction );
 
+  // Create the cutoff elastic distribution
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution;
+
   // Generate a cross section reduction distribution
   std::shared_ptr<const Utility::OneDDistribution> reduction_distribution;
 
@@ -2044,6 +2062,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         new Utility::TabularDistribution<Utility::LinLog>(
             angular_energy_grid,
             cross_section_reduction ) );
+
+    // Create the cutoff elastic distribution
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+        cutoff_distribution,
+        data_container.getCutoffElasticAngles(),
+        data_container.getCutoffElasticPDF(),
+        angular_energy_grid,
+        data_container.getAtomicNumber(),
+        correlated_sampling_mode_on,
+        tabular_evaluation_tol );
   }
   else
   {
@@ -2052,6 +2080,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         new Utility::TabularDistribution<Utility::LinLin>(
             angular_energy_grid,
             cross_section_reduction ) );
+
+    // Create the cutoff elastic distribution
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+        cutoff_distribution,
+        data_container.getCutoffElasticAngles(),
+        data_container.getCutoffElasticPDF(),
+        angular_energy_grid,
+        data_container.getAtomicNumber(),
+        correlated_sampling_mode_on,
+        tabular_evaluation_tol );
   }
 
   // Calculate the moment preserving cross section
@@ -2062,7 +2100,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         rutherford_cross_section,
         data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
         data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-        analog_distribution,
+        cutoff_distribution,
         reduction_distribution,
         data_container.getCutoffAngleCosine(),
         moment_preserving_cross_section );
@@ -2754,31 +2792,42 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
   }
   else
   {
-    std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-            analog_endl_distribution;
+    std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_endl_distribution;
+
+    double mu_peak = 0.999999;
 
     if ( d_linlinlog_interpolation_mode_on )
     {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
-        analog_endl_distribution,
-        data_container.getCutoffElasticAngles(),
-        data_container.getCutoffElasticPDF(),
-        data_container.getElasticAngularEnergyGrid(),
-        data_container.getAtomicNumber(),
-        d_correlated_sampling_mode_on,
-        d_tabular_evaluation_tol );
-    }
-    else
-    {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
-            analog_endl_distribution,
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+            cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
-            data_container.getAtomicNumber(),
+            mu_peak,
             d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
+    else
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+            cutoff_endl_distribution,
+            data_container.getCutoffElasticAngles(),
+            data_container.getCutoffElasticPDF(),
+            data_container.getElasticAngularEnergyGrid(),
+            mu_peak,
+            d_correlated_sampling_mode_on,
+            d_tabular_evaluation_tol );
+    }
+
+    std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+        sr_endl_distribution;
+
+  // Create a screened Rutherford elastic distribution
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
+        sr_endl_distribution,
+        cutoff_endl_distribution,
+        data_container.getAtomicNumber() );
 
     std::vector<double> raw_elastic_cross_section =
         d_endl_data_container->getCutoffElasticCrossSection();
@@ -2789,11 +2838,11 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
       // Get the energy
       double energy = raw_energy_grid[n];
 
-      // Get the CDF value at the cutoff angle cosine
-      double cutoff_cdf = analog_endl_distribution->evaluateCDFAtCutoff( energy );
+      // Get the integrated PDF value at the cutoff angle cosine
+      double integrated_pdf = sr_endl_distribution->evaluateIntegrated( energy );
 
       // Evaluate the total analog cross section at the incoming energy
-      raw_elastic_cross_section[n] /= cutoff_cdf;
+      raw_elastic_cross_section[n] *= ( 1.0 +  integrated_pdf );
     }
 
     // Get total elastic cross section (same energy grid as cutoff)
@@ -2819,8 +2868,8 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateMomentPreservingCro
     const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_sections,
     const unsigned cutoff_threshold_energy_index,
     const unsigned screened_rutherford_threshold_energy_index,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_distribution,
+    const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
     std::vector<double>& moment_preserving_cross_section )
@@ -2835,8 +2884,8 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateMomentPreservingCro
   for( unsigned i = begin; i < cutoff_cross_sections.size(); i++ )
   {
     double cutoff_cdf =
-                analog_distribution->evaluateCutoffCDF( electron_energy_grid[i],
-                                                        cutoff_angle_cosine );
+                cutoff_distribution->evaluateCDF( electron_energy_grid[i],
+                                                  cutoff_angle_cosine );
 
     double cross_section_reduction =
         reduction_distribution->evaluate( electron_energy_grid[i] );
@@ -2855,6 +2904,9 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateMomentPreservingCro
 
     moment_preserving_cross_section[i] = cross_section_reduction*
         (rutherford_cross_section + (1.0 - cutoff_cdf)*cutoff_cross_section);
+
+//    moment_preserving_cross_section[i] =
+//        cross_section_reduction*total_cross_section*(1.0 - cutoff_cdf);
   }
 }
 

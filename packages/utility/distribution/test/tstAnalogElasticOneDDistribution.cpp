@@ -70,8 +70,7 @@ double cross_section_ratio = 0.1;
 //---------------------------------------------------------------------------//
 // Initialize the distribution
 template<typename InterpolationPolicy, typename BaseDistribution>
-void initialize( Teuchos::RCP<BaseDistribution>& dist,
-                 bool convert_cosine_mode )
+void initialize( Teuchos::RCP<BaseDistribution>& dist )
 {
   // Use the basic constructor
   Teuchos::Array<typename BaseDistribution::IndepQuantity>
@@ -91,8 +90,7 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist,
                                                       independent_values,
                                                       dependent_values,
                                                       eta,
-                                                      cross_section_ratio,
-                                                      convert_cosine_mode ) );
+                                                      cross_section_ratio ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -103,7 +101,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticOneDDistribution,
                                    evaluate,
                                    InterpolationPolicy )
 {
-  initialize<InterpolationPolicy>( distribution, false );
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 1e2 );
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 1e1 );
@@ -122,7 +120,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticOneDDistribution,
                                    evaluate,
                                    InterpolationPolicy )
 {
-  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+  initialize<InterpolationPolicy>( unit_aware_distribution );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0 ),
                        1e2*si::mole );
@@ -144,7 +142,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticOneDDistribution,
                                    evaluatePDF,
                                    InterpolationPolicy )
 {
-  initialize<InterpolationPolicy>( distribution, false );
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_FLOATING_EQUALITY( distribution->evaluatePDF( -1.0 ),
                           1.7233951046594968293e-1,
@@ -171,7 +169,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticOneDDistribution,
                                    evaluatePDF,
                                    InterpolationPolicy )
 {
-  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+  initialize<InterpolationPolicy>( unit_aware_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY(
                              unit_aware_distribution->evaluatePDF( -1.0*si::dimensionless() ),
@@ -203,7 +201,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticOneDDistribution,
                                    evaluateCDF,
                                    InterpolationPolicy )
 {
-  initialize<InterpolationPolicy>( tab_distribution, false );
+  initialize<InterpolationPolicy>( tab_distribution );
 
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( -1.0 ),
                           0.0000000000,
@@ -230,7 +228,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticOneDDistribution,
                                    evaluateCDF,
                                    InterpolationPolicy )
 {
-  initialize<InterpolationPolicy>( unit_aware_tab_distribution, false );
+  initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( -1.0*si::dimensionless() ),
                           0.0000000000,
@@ -257,7 +255,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticOneDDistribution,
                                    sample,
                                    InterpolationPolicy )
 {
-  initialize<InterpolationPolicy>( distribution, false );
+  initialize<InterpolationPolicy>( distribution );
 
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -291,7 +289,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sample,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  std::vector<double> fake_stream( 3 );
 //  fake_stream[0] = 0.0;
@@ -325,7 +323,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleAndRecordTrials,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  std::vector<double> fake_stream( 3 );
 //  fake_stream[0] = 0.0;
@@ -365,7 +363,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleAndRecordTrials,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  std::vector<double> fake_stream( 3 );
 //  fake_stream[0] = 0.0;
@@ -406,7 +404,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleAndRecordBinIndex,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( tab_distribution, false );
+//  initialize<InterpolationPolicy>( tab_distribution );
 
 //  std::vector<double> fake_stream( 3 );
 //  fake_stream[0] = 0.0;
@@ -445,7 +443,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleAndRecordBinIndex,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_tab_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
 //  std::vector<double> fake_stream( 3 );
 //  fake_stream[0] = 0.0;
@@ -486,7 +484,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleWithRandomNumber,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( tab_distribution, false );
+//  initialize<InterpolationPolicy>( tab_distribution );
 
 //  double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
 //  TEST_EQUALITY_CONST( sample, -1.0 );
@@ -506,7 +504,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleWithRandomNumber,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_tab_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
 //  quantity<si::dimensionless> sample =
 //    unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
@@ -538,7 +536,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleInSubrange,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( tab_distribution, false );
+//  initialize<InterpolationPolicy>( tab_distribution );
 
 //  std::vector<double> fake_stream( 2 );
 //  fake_stream[0] = 0.0;
@@ -567,7 +565,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleInSubrange,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_tab_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
 //  std::vector<double> fake_stream( 2 );
 //  fake_stream[0] = 0.0;
@@ -598,7 +596,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleWithRandomNumberInSubrange,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( tab_distribution, false );
+//  initialize<InterpolationPolicy>( tab_distribution );
 
 //  double sample =
 //    tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
@@ -617,7 +615,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   sampleWithRandomNumberInSubrange,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_tab_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
 //  quantity<si::dimensionless> sample =
 //    unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
@@ -639,7 +637,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   getUpperBoundOfIndepVar,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
 //}
@@ -653,7 +651,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   getUpperBoundOfIndepVar,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
 //                       1.0*si::dimensionless() );
@@ -672,7 +670,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //  Teuchos::RCP<Utility::AnalogElasticOneDDistribution<InterpolationPolicy> >
 //                analog_distribution;
 
-//  initialize<InterpolationPolicy>( analog_distribution, false );
+//  initialize<InterpolationPolicy>( analog_distribution );
 
 //  TEST_EQUALITY_CONST( analog_distribution->getCutoffBoundOfIndepVar(), 0.999999 );
 //}
@@ -689,7 +687,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //Teuchos::RCP<Utility::UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,si::dimensionless,si::amount> >
 //unit_aware_analog_distribution;
 
-//  initialize<InterpolationPolicy>( unit_aware_analog_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_analog_distribution );
 
 //  TEST_EQUALITY_CONST( unit_aware_analog_distribution->getCutoffBoundOfIndepVar(),
 //                       0.999999*si::dimensionless() );
@@ -705,7 +703,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   getLowerBoundOfIndepVar,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), -1.0 );
 //}
@@ -719,7 +717,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   getLowerBoundOfIndepVar,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
 //                       -1.0*si::dimensionless() );
@@ -734,7 +732,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   getDistributionType,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  TEST_EQUALITY_CONST( distribution->getDistributionType(),
 //                       Utility::ANALOG_ELASTIC_DISTRIBUTION );
@@ -748,7 +746,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   getDistributionType,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
 //                       Utility::ANALOG_ELASTIC_DISTRIBUTION );
@@ -762,7 +760,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   isTabular,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  TEST_ASSERT( distribution->isTabular() );
 //}
@@ -775,7 +773,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   isTabular,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  TEST_ASSERT( unit_aware_distribution->isTabular() );
 //}
@@ -788,7 +786,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   isContinuous,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  TEST_ASSERT( distribution->isContinuous() );
 //}
@@ -801,7 +799,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   isContinuous,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  TEST_ASSERT( unit_aware_distribution->isContinuous() );
 //}
@@ -814,7 +812,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   isCompatibleWithInterpType,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
 //  {
@@ -861,7 +859,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   isCompatibleWithInterpType,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
 //  {
@@ -909,7 +907,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   toParameterList,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( distribution, false );
+//  initialize<InterpolationPolicy>( distribution );
 
 //  typedef Utility::AnalogElasticOneDDistribution<InterpolationPolicy> Distribution;
 
@@ -950,7 +948,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //                                   toParameterList,
 //                                   InterpolationPolicy )
 //{
-//  initialize<InterpolationPolicy>( unit_aware_distribution, false );
+//  initialize<InterpolationPolicy>( unit_aware_distribution );
 
 //  typedef Utility::UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,si::dimensionless,si::amount> Distribution;
 
@@ -1078,7 +1076,7 @@ UNIT_TEST_INSTANTIATION( AnalogElasticOneDDistribution, sample );
 //  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
 //  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
-//  initialize<Utility::LinLin>( distribution, false );
+//  initialize<Utility::LinLin>( distribution );
 
 //  // Copy from unitless distribution to distribution type A
 //  Utility::UnitAwareAnalogElasticOneDDistribution<Utility::LinLin,IndepUnitA,DepUnitA>

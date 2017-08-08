@@ -68,12 +68,10 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
                   const Teuchos::Array<double>& independent_values,
                   const Teuchos::Array<double>& dependent_values,
                   const double& moliere_screening_constant,
-                  const double& cutoff_cross_section_ratio,
-                  const bool& convert_cosine_to_delta_cosine_mode )
+                  const double& cutoff_cross_section_ratio )
   : d_distribution( independent_values.size() ),
     d_moliere_eta( moliere_screening_constant ),
     d_cutoff_cross_section_ratio( cutoff_cross_section_ratio ),
-    d_convert_cosine_to_delta_cosine_mode( convert_cosine_to_delta_cosine_mode ),
     d_scaling_parameter( 1.0/( 1.0 - cutoff_cross_section_ratio ) ),
     d_pdf_parameter( DQT::zero() ),
     d_cdf_parameter( ( 1.0 - cutoff_cross_section_ratio )*moliere_screening_constant*1e6 ),
@@ -104,12 +102,10 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values,
                   const double& moliere_screening_constant,
-                  const double& cutoff_cross_section_ratio,
-                  const bool& convert_cosine_to_delta_cosine_mode )
+                  const double& cutoff_cross_section_ratio )
   : d_distribution( independent_values.size() ),
     d_moliere_eta( moliere_screening_constant ),
     d_cutoff_cross_section_ratio( cutoff_cross_section_ratio ),
-    d_convert_cosine_to_delta_cosine_mode( convert_cosine_to_delta_cosine_mode ),
     d_scaling_parameter( 1.0/( 1.0 - cutoff_cross_section_ratio ) ),
     d_pdf_parameter( DQT::zero() ),
     d_cdf_parameter( ( 1.0 - cutoff_cross_section_ratio )*moliere_screening_constant*1e6 ),
@@ -149,8 +145,7 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
     d_pdf_parameter(),
     d_cdf_parameter(),
     d_norm_constant(),
-    d_max_cdf(),
-    d_convert_cosine_to_delta_cosine_mode()
+    d_max_cdf()
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
@@ -160,8 +155,6 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
   d_cutoff_cross_section_ratio = dist_instance.d_cutoff_cross_section_ratio;
   d_scaling_parameter = dist_instance.d_scaling_parameter;
   d_cdf_parameter = dist_instance.d_cdf_parameter;
-  d_convert_cosine_to_delta_cosine_mode =
-                            dist_instance.d_convert_cosine_to_delta_cosine_mode;
 
   typedef typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
@@ -189,8 +182,7 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
     d_pdf_parameter(),
     d_cdf_parameter(),
     d_norm_constant(),
-    d_max_cdf(),
-    d_convert_cosine_to_delta_cosine_mode()
+    d_max_cdf()
 {
   // Make sure the distribution is valid
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
@@ -202,8 +194,6 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
         unitless_dist_instance.d_cutoff_cross_section_ratio;
   d_scaling_parameter = unitless_dist_instance.d_scaling_parameter;
   d_cdf_parameter = unitless_dist_instance.d_cdf_parameter;
-  d_convert_cosine_to_delta_cosine_mode =
-                unitless_dist_instance.d_convert_cosine_to_delta_cosine_mode;
 
   // Reconstruct the original input distribution
   Teuchos::Array<double> input_indep_values, input_dep_values;
@@ -252,21 +242,26 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
     d_cdf_parameter = dist_instance.d_cdf_parameter;
     d_norm_constant = dist_instance.d_norm_constant;
     d_max_cdf = dist_instance.d_max_cdf;
-    d_convert_cosine_to_delta_cosine_mode =
-                            dist_instance.d_convert_cosine_to_delta_cosine_mode;
   }
 
   return *this;
 }
 
 // Evaluate the distribution
-/*! \details When the distribution's indep variable is converted to units of
- *  delta cosine (ie: 1 - cosine), the lower and upper boundaries are fliped.
- *  When in the distribution uses delta cosines instead of cosines, the indep
- *  variable must be processed before evaluating the distribution. Special
- *  consideration must also be given to evaluating at the distribution at
- *  the lower and cutoff bounds.
- */
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::DepQuantity
+UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCutoff(
+ const typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
+{
+  // Make sure the indep var variable is within its limits
+  testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( indep_var_value <= this->getUpperBoundOfIndepVar() );
+
+  return d_distribution.back().third;
+}
+// Evaluate the distribution
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
@@ -291,25 +286,7 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
   }
   else if( indep_var_value == this->getCutoffBoundOfIndepVar() )
   {
-    if( d_convert_cosine_to_delta_cosine_mode )
-    {
-      return d_distribution.front().third;
-    }
-    else
-    {
-      return d_distribution.back().third;
-    }
-  }
-  else if( indep_var_value == this->getLowerBoundOfIndepVar() )
-  {
-    if( d_convert_cosine_to_delta_cosine_mode )
-    {
-      return d_distribution.back().third;
-    }
-    else
-    {
-      return d_distribution.front().third;
-    }
+    return d_distribution.back().third;
   }
   else
   { // evaluate the cutoff tabular large angle distribution
@@ -319,26 +296,18 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
     start = d_distribution.begin();
     end = d_distribution.end();
 
-    IndepQuantity processed_indep_var_value = indep_var_value;
-
-    lower_bin_boundary =
-                Search::binaryLowerBound<FIRST>( start,
-                                                 end,
-                                                 processed_indep_var_value );
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+                                                          end,
+                                                          indep_var_value );
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
 
-    IndepQuantity processed_lower_indep_value = lower_bin_boundary->first;
-    DepQuantity lower_dep_value = lower_bin_boundary->third;
-    IndepQuantity processed_upper_indep_value = upper_bin_boundary->first;
-    DepQuantity upper_dep_value = upper_bin_boundary->third;
-
-    return InterpolationPolicy::interpolate( processed_lower_indep_value,
-                                             processed_upper_indep_value,
-                                             processed_indep_var_value,
-                                             lower_dep_value,
-                                             upper_dep_value );
+    return InterpolationPolicy::interpolate( lower_bin_boundary->first,
+                                             upper_bin_boundary->first,
+                                             indep_var_value,
+                                             lower_bin_boundary->third,
+                                             upper_bin_boundary->third );
   }
 }
 
@@ -358,13 +327,6 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 }
 
 // Evaluate the CDF
-/*! \details When the distribution's indep variable is converted to units of
- *  delta cosine (ie: 1 - cosine), the lower and upper boundaries are fliped,
- *  causing the CDF to be integrated from a cosine of 1 to -1 (ie: delta cosine
- *  of 0 to 2). In order for the outputs to match, the CDF for the delta cosine
- *  variable is converted to the CDF for the cosine variable by subtracting it
- *  from the cutoff ratio (ie: cutoff_ratio - CDF_delta_cosine ).
- */
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
@@ -383,23 +345,14 @@ double UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUni
     start = d_distribution.begin();
     end = d_distribution.end();
 
-    IndepQuantity processed_indep_var_value = indep_var_value;
-
     lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
                                                           end,
-                                                          processed_indep_var_value );
+                                                          indep_var_value );
 
-    IndepQuantity indep_diff = processed_indep_var_value - lower_bin_boundary->first;
+    IndepQuantity indep_diff = indep_var_value - lower_bin_boundary->first;
 
-    double cdf =
-        (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
+    return (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
           indep_diff*indep_diff*lower_bin_boundary->fourth/2.0)*d_norm_constant;
-
-    // If delta cosine mode is on, convert CDF to same as cosine mode.
-    if( d_convert_cosine_to_delta_cosine_mode )
-      return d_cutoff_cross_section_ratio - cdf;
-    else
-      return cdf;
   }
   else if( indep_var_value == this->getCutoffBoundOfIndepVar() )
     return d_cutoff_cross_section_ratio;
@@ -525,7 +478,9 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
   IndepQuantity sample;
 
   // Sample the screened Rutherford analytical distribution
-  if ( random_number >= d_cutoff_cross_section_ratio )
+  if ( random_number == d_cutoff_cross_section_ratio )
+    return this->getCutoffBoundOfIndepVar();
+  else if ( random_number >= d_cutoff_cross_section_ratio )
   {
     // Set the sampled bin index to the last bin
     sampled_bin_index = d_distribution.size() - 1;
@@ -592,14 +547,7 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
   UnnormCDFQuantity scaled_random_number;
 
   // Scale the random number
-  if( d_convert_cosine_to_delta_cosine_mode )
-  {
-    // Scale the random number to properly sample using angle cosine units
-    scaled_random_number =
-        ( d_cutoff_cross_section_ratio - random_number )*d_max_cdf;
-  }
-  else
-    scaled_random_number = random_number*d_max_cdf;
+  scaled_random_number = random_number*d_max_cdf;
 
   typename DistributionArray::const_iterator start, end, lower_bin_boundary;
   start = d_distribution.begin();
@@ -732,8 +680,7 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
   os << "{" << independent_values << ","
             << dependent_values << ","
             << d_moliere_eta << ","
-            << d_cutoff_cross_section_ratio << ","
-            << d_convert_cosine_to_delta_cosine_mode << "}";
+            << d_cutoff_cross_section_ratio << "}";
 }
 
 // Method for initializing the object from an input stream
@@ -852,7 +799,7 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
                               "valid (see details below)!\n" );
 
   std::string cutoff_ratio_value_rep;
-  std::getline( is, cutoff_ratio_value_rep, ',' );
+  std::getline( is, cutoff_ratio_value_rep, '}' );
 
   // Parse special characters
   try{
@@ -875,36 +822,11 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
                               "constructed because the representation is not "
                               "valid (see details below)!\n" );
 
-  std::string convert_cosine_mode_rep;
-  std::getline( is, convert_cosine_mode_rep, '}' );
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( convert_cosine_mode_rep );
-//    ArrayString::locateAndReplaceIntervalOperator( convert_cosine_mode_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the analog elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  double convert_cosine_to_delta_cosine_mode;
-  try{
-    convert_cosine_to_delta_cosine_mode = std::stod( convert_cosine_mode_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the analog elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
   // Set the member data
   d_moliere_eta = moliere_eta;
   d_cutoff_cross_section_ratio = cutoff_cross_section_ratio;
   d_scaling_parameter = 1.0/( 1.0 - cutoff_cross_section_ratio );
   d_cdf_parameter = ( 1.0 - cutoff_cross_section_ratio )*moliere_eta*1e6;
-  d_convert_cosine_to_delta_cosine_mode = false;//convert_cosine_to_delta_cosine_mode;
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
 }
@@ -920,9 +842,7 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
          d_moliere_eta == other.d_moliere_eta &&
          d_cutoff_cross_section_ratio == other.d_cutoff_cross_section_ratio &&
          d_norm_constant == other.d_norm_constant &&
-         d_max_cdf == other.d_max_cdf &&
-         d_convert_cosine_to_delta_cosine_mode ==
-                            other.d_convert_cosine_to_delta_cosine_mode;
+         d_max_cdf == other.d_max_cdf;
 }
 
 // Initialize the distribution
@@ -977,44 +897,20 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
 
-  if( d_convert_cosine_to_delta_cosine_mode )
+
+  // Assign the raw distribution data
+  for( unsigned i = 0; i < independent_values.size(); ++i )
   {
-    unsigned r_bin = independent_values.size() - 1;
-
-    // Assign the raw distribution data
-    for( unsigned i = 0; i < independent_values.size(); ++i )
-    {
-      InputIndepQuantity processed_indep_value = 1.0L-independent_values[r_bin];
-
-      d_distribution[i].first = IndepQuantity( processed_indep_value );
-      d_distribution[i].third = DepQuantity( dependent_values[r_bin] );
-      r_bin--;
-    }
-
-    /* Set the PDF evaluating parameter
-     * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
-     */
-    d_pdf_parameter =
-      d_cutoff_cross_section_ratio*d_distribution.front().third*
-      ( s_cutoff_delta_mu + d_moliere_eta )*( s_cutoff_delta_mu + d_moliere_eta );
-
+    d_distribution[i].first = IndepQuantity( independent_values[i] );
+    d_distribution[i].third = DepQuantity( dependent_values[i] );
   }
-  else
-  {
-    // Assign the raw distribution data
-    for( unsigned i = 0; i < independent_values.size(); ++i )
-    {
-      d_distribution[i].first = IndepQuantity( independent_values[i] );
-      d_distribution[i].third = DepQuantity( dependent_values[i] );
-    }
 
-    /* Set the PDF evaluating parameter
-     * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
-     */
-    d_pdf_parameter =
-      d_cutoff_cross_section_ratio*d_distribution.back().third*
-      ( s_cutoff_delta_mu + d_moliere_eta )*( s_cutoff_delta_mu + d_moliere_eta );
-  }
+  /* Set the PDF evaluating parameter
+   * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
+   */
+  d_pdf_parameter =
+    d_cutoff_cross_section_ratio*d_distribution.back().third*
+    ( s_cutoff_delta_mu + d_moliere_eta )*( s_cutoff_delta_mu + d_moliere_eta );
 
   // Create a CDF from the raw distribution data
   d_norm_constant =
@@ -1098,26 +994,10 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
   independent_values.resize( d_distribution.size() );
   dependent_values.resize( d_distribution.size() );
 
-  if( d_convert_cosine_to_delta_cosine_mode )
+  for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    unsigned r_bin = independent_values.size() - 1;
-
-    for( unsigned i = 0; i < d_distribution.size(); ++i )
-    {
-      independent_values[i] = 1.0L - getRawQuantity( d_distribution[r_bin].first );
-
-      dependent_values[i] = getRawQuantity( d_distribution[r_bin].third );
-      r_bin--;
-    }
-  }
-  else
-  {
-    for( unsigned i = 0u; i < d_distribution.size(); ++i )
-    {
-      independent_values[i] = getRawQuantity( d_distribution[i].first );
-
-      dependent_values[i] = getRawQuantity( d_distribution[i].third );
-    }
+    independent_values[i] = getRawQuantity( d_distribution[i].first );
+    dependent_values[i] = getRawQuantity( d_distribution[i].third );
   }
 }
 

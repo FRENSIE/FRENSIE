@@ -89,8 +89,13 @@ public:
                     const Teuchos::Array<double>& independent_values,
                     const Teuchos::Array<double>& dependent_values,
                     const double& moliere_screening_constant,
-                    const double& cutoff_cross_section_ratio,
-                    const bool& convert_cosine_to_delta_cosine_mode = false );
+                    const double& cutoff_cross_section_ratio );
+
+//  //! Basic constructor (potentially dangerous)
+//  UnitAwareAnalogElasticOneDDistribution(
+//                    const Teuchos::Array<double>& independent_values,
+//                    const Teuchos::Array<double>& dependent_values,
+//                    const double& cutoff_cross_section_ratio );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
@@ -98,8 +103,7 @@ public:
                     const Teuchos::Array<InputIndepQuantity>& independent_values,
                     const Teuchos::Array<InputDepQuantity>& dependent_values,
                     const double& moliere_screening_constant,
-                    const double& cutoff_cross_section_ratio,
-                    const bool& convert_cosine_to_delta_cosine_mode = false );
+                    const double& cutoff_cross_section_ratio );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -118,6 +122,9 @@ public:
 
   //! Evaluate the distribution
   DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
+
+  //! Evaluate the distribution
+  DepQuantity evaluateCutoff( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
@@ -306,9 +313,6 @@ private:
    * ( (1 - cutoff_cs_ratio)*eta/mu_c )
    */
   double d_cdf_parameter;
-
-  // Convert cosine to delta cosine (1-cosine) mode
-  bool d_convert_cosine_to_delta_cosine_mode;
 };
 
 /*! The analog elastic distribution (unit-agnostic)

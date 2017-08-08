@@ -24,12 +24,12 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
     const bool correlated_sampling_mode_on )
   : d_analog_dist( analog_elastic_distribution ),
     d_cutoff_ratios( cutoff_cross_section_ratios ),
-    d_sr_traits( screened_rutherford_traits )
+    d_elastic_traits( screened_rutherford_traits )
 {
   // Make sure the arrays are valid
   testPrecondition( d_analog_dist.use_count() > 0 );
   testPrecondition( d_cutoff_ratios.use_count() > 0 );
-  testPrecondition( d_sr_traits.use_count() > 0 );
+  testPrecondition( d_elastic_traits.use_count() > 0 );
 
   if( correlated_sampling_mode_on )
   {
@@ -76,7 +76,7 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
     // evaluate on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordPDF(
                 scattering_angle_cosine,
-                d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy ),
+                d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy ),
                 this->evaluatePDFAtCutoff( incoming_energy ) );
   }
   else
@@ -105,7 +105,7 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
     // evaluate on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordPDF(
                 scattering_angle_cosine,
-                d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy ),
+                d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy ),
                 this->evaluatePDFAtCutoff( incoming_energy ) );
   }
   else
@@ -136,7 +136,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
     // evaluate CDF on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordCDF(
             scattering_angle_cosine,
-            d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy ),
+            d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy ),
             this->evaluateCDFAtCutoff( incoming_energy ) );
   }
   else
@@ -155,10 +155,13 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
         const double cutoff_pdf ) const
 {
   // Make sure the energy, eta and angle are valid
-  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
   testPrecondition( cutoff_pdf > 0.0 );
+
+  if ( scattering_angle_cosine < ElasticTraits::mu_peak )
+    return 0.0;
 
   double delta_mu = 1.0L - scattering_angle_cosine;
 
@@ -174,11 +177,14 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
         const double cutoff_ratio ) const
 {
   // Make sure the energy, eta and angle cosine are valid
-  testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
   testPrecondition( cutoff_ratio > 0.0 );
   testPrecondition( cutoff_ratio <= 1.0 );
+
+  if ( scattering_angle_cosine < ElasticTraits::mu_peak )
+    return 0.0;
 
   double delta_mu = 1.0L - scattering_angle_cosine;
   double numerator = 1e6*eta*( scattering_angle_cosine - ElasticTraits::mu_peak );
@@ -324,7 +330,7 @@ double AnalogElasticElectronScatteringDistribution::sampleScreenedRutherfordPeak
   testPrecondition( random_number >= cutoff_ratio );
 
   // evaluate the moliere screening constant
-  double eta = d_sr_traits->evaluateMoliereScreeningConstant( incoming_energy );
+  double eta = d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy );
 
   // Scale the random number 
   double scaled_random_number = ElasticTraits::delta_mu_peak/eta*

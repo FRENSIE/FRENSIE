@@ -1,34 +1,34 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElasticElectronTraits.hpp
+//! \file   Utility_AnalogElasticTraits.hpp
 //! \author Luke Kersting
-//! \brief  ElectronElastic traits
+//! \brief  The Analog elastic electron traits declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
-#define MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
+#ifndef UTILITY_ANALOG_ELASTIC_TRAITS_HPP
+#define UTILITY_ANALOG_ELASTIC_TRAITS_HPP
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 
-namespace MonteCarlo{
+namespace Utility{
 
 //! Electron elastic traits
-class ElasticElectronTraits
+class AnalogElasticTraits
 {
 
 public:
 
   //! Typedef for the this type
-  typedef ElasticElectronTraits ThisType;
+  typedef AnalogElasticTraits ThisType;
 
   //! Constructor
-  ElasticElectronTraits( const unsigned atomic_number,
+  AnalogElasticTraits( const unsigned atomic_number,
                             const bool seltzer_modification_on = true );
 
   //! Destructor
-  virtual ~ElasticElectronTraits()
+  virtual ~AnalogElasticTraits()
   { /* ... */ }
 
 
@@ -86,10 +86,10 @@ private:
   bool d_seltzer_modification_on;
 };
 
-} // end MonteCarlo namespace
+} // end Utility namespace
 
-#endif // end MONTE_CARLO_ELASTIC_ELECTRON_TRAITS_HPP
+#endif // end UTILITY_ANALOG_ELASTIC_TRAITS_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElasticElectronTraits.hpp
+// end Utility_AnalogElasticTraits.hpp
 //---------------------------------------------------------------------------//
