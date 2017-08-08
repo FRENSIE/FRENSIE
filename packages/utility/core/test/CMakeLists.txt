@@ -6,131 +6,105 @@ TARGET_LINK_LIBRARIES(tstAssertion utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(Assertion_test tstAssertion --report_level=detailed)
 SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstElectronVoltUnit
-  tstElectronVoltUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectronVoltUnit utility_core)
-ADD_TEST(ElectronVoltUnit_test tstElectronVoltUnit)
+ADD_EXECUTABLE(tstElectronVoltUnit tstElectronVoltUnit.cpp)
+TARGET_LINK_LIBRARIES(tstElectronVoltUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ElectronVoltUnit_test tstElectronVoltUnit --report_level=detailed)
 SET_PROPERTY(TEST ElectronVoltUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstAngstromUnit
-  tstAngstromUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAngstromUnit utility_core)
-ADD_TEST(AngstromUnit_test tstAngstromUnit)
+ADD_EXECUTABLE(tstAngstromUnit tstAngstromUnit.cpp)
+TARGET_LINK_LIBRARIES(tstAngstromUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(AngstromUnit_test tstAngstromUnit --report_level=detailed)
 SET_PROPERTY(TEST AngstromUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstBarnUnit
-  tstBarnUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstBarnUnit utility_core)
-ADD_TEST(BarnUnit_test tstBarnUnit)
+ADD_EXECUTABLE(tstBarnUnit tstBarnUnit.cpp)
+TARGET_LINK_LIBRARIES(tstBarnUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(BarnUnit_test tstBarnUnit --report_level=detailed)
 SET_PROPERTY(TEST BarnUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseAngstromUnit
-  tstInverseAngstromUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseAngstromUnit utility_core)
-ADD_TEST(InverseAngstromUnit_test tstInverseAngstromUnit)
+ADD_EXECUTABLE(tstInverseAngstromUnit tstInverseAngstromUnit.cpp)
+TARGET_LINK_LIBRARIES(tstInverseAngstromUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseAngstromUnit_test tstInverseAngstromUnit --report_level=detailed)
 SET_PROPERTY(TEST InverseAngstromUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseCentimeterUnit
-  tstInverseCentimeterUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseCentimeterUnit utility_core)
-ADD_TEST(InverseCentimeterUnit_test tstInverseCentimeterUnit)
+ADD_EXECUTABLE(tstInverseCentimeterUnit tstInverseCentimeterUnit.cpp)
+TARGET_LINK_LIBRARIES(tstInverseCentimeterUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseCentimeterUnit_test tstInverseCentimeterUnit --report_level=detailed)
 SET_PROPERTY(TEST InverseCentimeterUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseLengthConversion
-  tstInverseLengthConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseLengthConversion utility_core)
-ADD_TEST(InverseLengthConversion_test tstInverseLengthConversion)
+ADD_EXECUTABLE(tstInverseLengthConversion tstInverseLengthConversion.cpp)
+TARGET_LINK_LIBRARIES(tstInverseLengthConversion utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseLengthConversion_test tstInverseLengthConversion --report_level=detailed)
 SET_PROPERTY(TEST InverseLengthConversion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseSquareAngstromUnit
-  tstInverseSquareAngstromUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseSquareAngstromUnit utility_core)
-ADD_TEST(InverseSquareAngstromUnit_test tstInverseSquareAngstromUnit)
+ADD_EXECUTABLE(tstInverseSquareAngstromUnit tstInverseSquareAngstromUnit.cpp)
+TARGET_LINK_LIBRARIES(tstInverseSquareAngstromUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseSquareAngstromUnit_test tstInverseSquareAngstromUnit --report_level=detailed)
 SET_PROPERTY(TEST InverseSquareAngstromUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseSquareCentimeterUnit
-  tstInverseSquareCentimeterUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseSquareCentimeterUnit utility_core)
-ADD_TEST(InverseSquareCentimeterUnit_test tstInverseSquareCentimeterUnit)
+ADD_EXECUTABLE(tstInverseSquareCentimeterUnit tstInverseSquareCentimeterUnit.cpp)
+TARGET_LINK_LIBRARIES(tstInverseSquareCentimeterUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseSquareCentimeterUnit_test tstInverseSquareCentimeterUnit --report_level=detailed)
 SET_PROPERTY(TEST InverseSquareCentimeterUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseAreaConversion
-  tstInverseAreaConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseAreaConversion utility_core)
-ADD_TEST(InverseAreaConversion_test tstInverseAreaConversion)
+ADD_EXECUTABLE(tstInverseAreaConversion tstInverseAreaConversion.cpp)
+TARGET_LINK_LIBRARIES(tstInverseAreaConversion utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseAreaConversion_test tstInverseAreaConversion --report_level=detailed)
 SET_PROPERTY(TEST InverseAreaConversion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstAtomUnit
-  tstAtomUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAtomUnit utility_core)
-ADD_TEST(AtomUnit_test tstAtomUnit)
+ADD_EXECUTABLE(tstAtomUnit tstAtomUnit.cpp)
+TARGET_LINK_LIBRARIES(tstAtomUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(AtomUnit_test tstAtomUnit --report_level=detailed)
 SET_PROPERTY(TEST AtomUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstShakeUnit
-  tstShakeUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstShakeUnit utility_core)
-ADD_TEST(ShakeUnit_test tstShakeUnit)
+ADD_EXECUTABLE(tstShakeUnit tstShakeUnit.cpp)
+TARGET_LINK_LIBRARIES(tstShakeUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ShakeUnit_test tstShakeUnit --report_level=detailed)
 SET_PROPERTY(TEST ShakeUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstAtomicMomentumUnit
-  tstAtomicMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAtomicMomentumUnit utility_core)
-ADD_TEST(AtomicMomentumUnit_test tstAtomicMomentumUnit)
+ADD_EXECUTABLE(tstAtomicMomentumUnit tstAtomicMomentumUnit.cpp)
+TARGET_LINK_LIBRARIES(tstAtomicMomentumUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(AtomicMomentumUnit_test tstAtomicMomentumUnit --report_level=detailed)
 SET_PROPERTY(TEST AtomicMomentumUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstMeCMomentumUnit
-  tstMeCMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstMeCMomentumUnit utility_core)
-ADD_TEST(MeCMomentumUnit_test tstMeCMomentumUnit)
+ADD_EXECUTABLE(tstMeCMomentumUnit tstMeCMomentumUnit.cpp)
+TARGET_LINK_LIBRARIES(tstMeCMomentumUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(MeCMomentumUnit_test tstMeCMomentumUnit --report_level=detailed)
 SET_PROPERTY(TEST MeCMomentumUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstMomentumConversion
-  tstMomentumConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstMomentumConversion utility_core)
-ADD_TEST(MomentumConversion_test tstMomentumConversion)
+ADD_EXECUTABLE(tstMomentumConversion tstMomentumConversion.cpp)
+TARGET_LINK_LIBRARIES(tstMomentumConversion utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(MomentumConversion_test tstMomentumConversion --report_level=detailed)
 SET_PROPERTY(TEST MomentumConversion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseAtomicMomentumUnit
-  tstInverseAtomicMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseAtomicMomentumUnit utility_core)
-ADD_TEST(InverseAtomicMomentumUnit_test tstInverseAtomicMomentumUnit)
+ADD_EXECUTABLE(tstInverseAtomicMomentumUnit tstInverseAtomicMomentumUnit.cpp)
+TARGET_LINK_LIBRARIES(tstInverseAtomicMomentumUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseAtomicMomentumUnit_test tstInverseAtomicMomentumUnit --report_level=detailed)
 SET_PROPERTY(TEST InverseAtomicMomentumUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseMeCMomentumUnit
-  tstInverseMeCMomentumUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseMeCMomentumUnit utility_core)
-ADD_TEST(InverseMeCMomentumUnit_test tstInverseMeCMomentumUnit)
+ADD_EXECUTABLE(tstInverseMeCMomentumUnit tstInverseMeCMomentumUnit.cpp)
+TARGET_LINK_LIBRARIES(tstInverseMeCMomentumUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseMeCMomentumUnit_test tstInverseMeCMomentumUnit --report_level=detailed)
 SET_PROPERTY(TEST InverseMeCMomentumUnit_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstInverseMomentumConversion
-  tstInverseMomentumConversion.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstInverseMomentumConversion utility_core)
-ADD_TEST(InverseMomentumConversion_test tstInverseMomentumConversion)
+ADD_EXECUTABLE(tstInverseMomentumConversion tstInverseMomentumConversion.cpp)
+TARGET_LINK_LIBRARIES(tstInverseMomentumConversion utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(InverseMomentumConversion_test tstInverseMomentumConversion --report_level=detailed)
 SET_PROPERTY(TEST InverseMomentumConversion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstAtomicMassUnit
-  tstAtomicMassUnit.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_core)
-ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit)
+ADD_EXECUTABLE(tstAtomicMassUnit tstAtomicMassUnit.cpp)
+TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit --report_level=detailed)
 SET_PROPERTY(TEST AtomicMassUnit_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstUnitTraits tstUnitTraits.cpp)
+TARGET_LINK_LIBRARIES(tstUnitTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(UnitTraits_test tstUnitTraits --report_level=detailed)
+SET_PROPERTY(TEST UnitTraits_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstTypeTraits tstTypeTraits.cpp)
+TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(TypeTraits_test tstTypeTraits --report_level=detailed)
+SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstToStringTraits tstToStringTraits.cpp)
 TARGET_LINK_LIBRARIES(tstToStringTraits utility_core ${BOOST_TEST_LIBRARY})
@@ -146,11 +120,6 @@ ADD_EXECUTABLE(tstLogRecordType tstLogRecordType.cpp)
 TARGET_LINK_LIBRARIES(tstLogRecordType utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(LogRecordType_test tstLogRecordType --report_level=detailed)
 SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstTypeTraits tstTypeTraits.cpp)
-TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(TypeTraits_test tstTypeTraits --report_level=detailed)
-SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstIteratorTypeTraits
   tstIteratorTypeTraits.cpp

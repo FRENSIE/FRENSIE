@@ -6,56 +6,58 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <iostream>
+
 // Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
 #include <boost/units/quantity.hpp>
 #include <boost/units/systems/si/amount.hpp>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
 
 // FRENSIE Includes
 #include "Utility_AtomUnit.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 using namespace Utility::Units;
-using boost::units::quantity;
 namespace si = boost::units::si;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the atom unit can be initialized
-TEUCHOS_UNIT_TEST( AtomUnit, initialize )
+BOOST_AUTO_TEST_CASE( initialize )
 {
-  quantity<Atom> amount( 1.0*atom );
+  boost::units::quantity<Utility::Units::Atom> amount( 1.0*atom );
 
-  TEST_EQUALITY_CONST( amount.value(), 1.0 );
+  BOOST_CHECK_EQUAL( amount.value(), 1.0 );
 
   amount = 2.0*atom;
 
-  TEST_EQUALITY_CONST( amount.value(), 2.0 );
+  BOOST_CHECK_EQUAL( amount.value(), 2.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atom unit can be initialized from si units
-TEUCHOS_UNIT_TEST( AtomUnit, initialize_from_si )
+BOOST_AUTO_TEST_CASE( initialize_from_si )
 {
-  quantity<Atom> amount( 1.0*si::mole );
+  boost::units::quantity<Utility::Units::Atom> amount( 1.0*si::mole );
 
-  TEST_FLOATING_EQUALITY( amount.value(),
-			  Utility::PhysicalConstants::avogadro_constant,
-			  1e-15 );
+  BOOST_CHECK_CLOSE_FRACTION( amount.value(),
+                              Utility::PhysicalConstants::avogadro_constant,
+                              1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the si units can be initialized from the atom unit
-TEUCHOS_UNIT_TEST( AtomUnit, initialize_si )
+BOOST_AUTO_TEST_CASE( initialize_si )
 {
-  quantity<si::amount> amount( 1.0*atom );
+  boost::units::quantity<si::amount> amount( 1.0*atom );
 
-  TEST_FLOATING_EQUALITY( amount.value(),
-			  1.0/Utility::PhysicalConstants::avogadro_constant,
-			  1e-15 );
+  BOOST_CHECK_CLOSE_FRACTION( amount.value(),
+                              1.0/Utility::PhysicalConstants::avogadro_constant,
+                              1e-15 );
 }
 
 //---------------------------------------------------------------------------//

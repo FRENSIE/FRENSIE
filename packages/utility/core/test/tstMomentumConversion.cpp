@@ -6,36 +6,38 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <iostream>
+
 // Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
 #include <boost/units/quantity.hpp>
 #include <boost/units/systems/si.hpp>
 #include <boost/units/systems/cgs.hpp>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
 
 // FRENSIE Includes
 #include "Utility_MomentumUnits.hpp"
 #include "Utility_RawPhysicalConstants.hpp"
 
 using namespace Utility::Units;
-using boost::units::quantity;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the momentum units can be converted
-TEUCHOS_UNIT_TEST( MomentumConversion, convert )
+BOOST_AUTO_TEST_CASE( convert )
 {
-  quantity<AtomicMomentum> atomic_momentum_q( 1.0*mec_momentum );
+  boost::units::quantity<Utility::Units::AtomicMomentum> atomic_momentum_q( 1.0*mec_momentum );
 
-  quantity<MeCMomentum> mec_momentum_q( 1.0*atomic_momentum );
+  boost::units::quantity<Utility::Units::MeCMomentum> mec_momentum_q( 1.0*atomic_momentum );
 
-  TEST_FLOATING_EQUALITY(
+  BOOST_CHECK_CLOSE_FRACTION(
 		atomic_momentum_q.value(),
 		Utility::RawPhysicalConstants::inverse_fine_structure_constant,
 		1e-15 );
-  TEST_FLOATING_EQUALITY(
+  BOOST_CHECK_CLOSE_FRACTION(
 			mec_momentum_q.value(),
 			Utility::RawPhysicalConstants::fine_structure_constant,
 			1e-15 );

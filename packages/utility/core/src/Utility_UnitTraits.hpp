@@ -9,14 +9,15 @@
 #ifndef UTILITY_UNIT_TRAITS_HPP
 #define UTILITY_UNIT_TRAITS_HPP
 
+// Std Lib Includes
+#include <type_traits>
+
 // Boost Includes
 #include <boost/units/make_system.hpp>
 #include <boost/units/unit.hpp>
 #include <boost/units/quantity.hpp>
 #include <boost/units/io.hpp>
 #include <boost/units/dimensionless_unit.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTraitsDecl.hpp"
@@ -44,7 +45,7 @@ struct UnitTraits<boost::units::unit<Dim,Sys> >
   template<typename OtherUnit>
   struct GetMultipliedUnitType
   {
-    typedef typename boost::mpl::if_<boost::is_same<OtherUnit,void>,Unit,typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type>::type type;
+    typedef typename std::conditional<std::is_same<OtherUnit,void>::value,Unit,typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type>::type type;
   };
 
   template<typename T>

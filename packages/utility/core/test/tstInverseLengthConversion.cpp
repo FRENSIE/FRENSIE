@@ -6,31 +6,33 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/units/quantity.hpp>
+// Std Lib Includes
+#include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
+#include <boost/units/quantity.hpp>
 
 // FRENSIE Includes
 #include "Utility_InverseAngstromUnit.hpp"
 #include "Utility_InverseCentimeterUnit.hpp"
 
 using namespace Utility::Units;
-using boost::units::quantity;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the inverse length units can be converted
-TEUCHOS_UNIT_TEST( InverseLengthConversion, convert )
+BOOST_AUTO_TEST_CASE( convert )
 {
-  quantity<InverseAngstrom> inverse_angstrom_q( 1.0*inverse_centimeter );
+  boost::units::quantity<Utility::Units::InverseAngstrom> inverse_angstrom_q( 1.0*inverse_centimeter );
 
-  quantity<InverseCentimeter> inverse_centimeter_q( 1.0*inverse_angstrom );
+  boost::units::quantity<Utility::Units::InverseCentimeter> inverse_centimeter_q( 1.0*inverse_angstrom );
 
-  TEST_EQUALITY_CONST( inverse_angstrom_q.value(), 1e-8 );
-  TEST_EQUALITY_CONST( inverse_centimeter_q.value(), 1e8 );
+  BOOST_CHECK_EQUAL( inverse_angstrom_q.value(), 1e-8 );
+  BOOST_CHECK_EQUAL( inverse_centimeter_q.value(), 1e8 );
 }
 
 //---------------------------------------------------------------------------//
