@@ -2069,7 +2069,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
-        data_container.getAtomicNumber(),
+        Utility::AnalogElasticTraits::mu_peak,
         correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
@@ -2087,7 +2087,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
-        data_container.getAtomicNumber(),
+        Utility::AnalogElasticTraits::mu_peak,
         correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
@@ -2795,8 +2795,6 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_endl_distribution;
 
-    double mu_peak = 0.999999;
-
     if ( d_linlinlog_interpolation_mode_on )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
@@ -2804,7 +2802,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
-            mu_peak,
+            Utility::AnalogElasticTraits::mu_peak,
             d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
@@ -2815,7 +2813,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
-            mu_peak,
+            Utility::AnalogElasticTraits::mu_peak,
             d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
