@@ -810,9 +810,13 @@ BOOST_AUTO_TEST_SUITE( CloseComparisonPolicy )
 BOOST_AUTO_TEST_CASE_TEMPLATE( getOperatorName, T, TestTypes )
 {
   if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
     BOOST_CHECK_EQUAL( Utility::CloseComparisonPolicy::getOperatorName<T>(), "~" );
+  }
   else
+  {
     BOOST_CHECK_EQUAL( Utility::CloseComparisonPolicy::getOperatorName<T>(), "==" );
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -1212,6 +1216,434 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, T, TestTypes )
 
     BOOST_CHECK( (policy( zero(T()), smallOverTwo(T()), small(T()) )) );
     BOOST_CHECK( (policy( smallOverTwo(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( zero(T()), smallByTwo(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( smallByTwo(T()), zero(T()), small(T()) )) );
+
+    BOOST_CHECK( (policy( one(T()), (T)(one(T())+smallOverTwo(T())), small(T()) )) );
+    BOOST_CHECK( (policy( (T)(one(T())+smallOverTwo(T())), one(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( one(T()), (T)(one(T())+smallByTwo(T())), small(T()) )) );
+    BOOST_CHECK( !(policy( (T)(one(T())+smallByTwo(T())), one(T()), small(T()) )) );
+  }
+  else
+  {
+    BOOST_CHECK( (policy( zero(T()), zero(T()) )) );
+    BOOST_CHECK( !(policy( zero(T()), one(T()) )) );
+    BOOST_CHECK( !(policy( one(T()), zero(T()) )) );
+    BOOST_CHECK( (policy( one(T()), one(T()) )) );
+
+    BOOST_CHECK( (policy( zero(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( zero(T()), one(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( one(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( (policy( one(T()), one(T()), small(T()) )) );
+  }
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+//---------------------------------------------------------------------------//
+// RelativeErrorComparisonPolicy Test Suite
+//---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_SUITE( RelativeErrorComparisonPolicy )
+
+//---------------------------------------------------------------------------//
+// Check that the operator name can be returned
+BOOST_AUTO_TEST_CASE_TEMPLATE( getOperatorName, T, TestTypes )
+{
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( Utility::RelativeErrorComparisonPolicy::getOperatorName<T>(), "~=" );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( Utility::RelativeErrorComparisonPolicy::getOperatorName<T>(), "==" );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the comparison details can be created
+BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonDetails, T, TestTypes )
+{
+  std::string comparison_details =
+    Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", false, zero( T() ),
+                                                     "rhs", false, zero( T() ),
+                                                     "" );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(") +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       Utility::toString(zero( T() )) + " " +
+                       Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                       " " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", false, zero( T() ),
+                                                     "rhs", false, zero( T() ),
+                                                     "", small( T() ) );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(") +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(small( T() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       Utility::toString(zero( T() )) + " " +
+                       Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                       " " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", false, zero( T() ),
+                                                     "" );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs,") +
+                       Utility::toString(zero( T() )) + ") = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string( "lhs = " ) +
+                       Utility::toString(zero( T() )) + " " +
+                       Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                       " " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", false, zero( T() ),
+                                                     "", small( T() ) );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs,") +
+                       Utility::toString(zero( T() )) + ") = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(small( T() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string( "lhs = " ) +
+                       Utility::toString(zero( T() )) + " " +
+                       Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                       " " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", false, zero( T() ),
+                                                     "[0].first" );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs[0].first,") +
+                       Utility::toString(zero( T() )) + ") = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string( "lhs[0].first = " ) +
+                       Utility::toString(zero( T() )) + " " +
+                       Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                       " " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", false, zero( T() ),
+                                                     "[0].first", small(T()) );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs[0].first,") +
+                       Utility::toString(zero( T() )) + ") = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(small( T() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string( "lhs[0].first = " ) +
+                       Utility::toString(zero( T() )) + " " +
+                       Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                       " " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", false, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "" );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(") +
+                       Utility::toString(zero( T() )) + ",rhs) = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                        " rhs = " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", false, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "", small( T() ) );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(") +
+                       Utility::toString(zero( T() )) + ",rhs) = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(small( T() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                        " rhs = " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", false, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "[0].first" );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(") +
+                       Utility::toString(zero( T() )) + ",rhs[0].first) = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                        " rhs[0].first = " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", false, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "[0].first", small(T()) );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(") +
+                       Utility::toString(zero( T() )) + ",rhs[0].first) = relErr(" +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(small( T() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::RelativeErrorComparisonPolicy::getOperatorName<T>() +
+                        " rhs[0].first = " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "" );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs,rhs) = relErr(") +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        std::string( "lhs = " ) +
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::CloseComparisonPolicy::getOperatorName<T>() +
+                        " rhs = " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "", small( T() ) );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs,rhs) = relErr(") +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(small( T() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        std::string( "lhs = " ) +
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::CloseComparisonPolicy::getOperatorName<T>() +
+                        " rhs = " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "[0].first" );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs[0].first,rhs[0].first) = relErr(") +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        std::string( "lhs[0].first = " ) +
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::CloseComparisonPolicy::getOperatorName<T>() +
+                        " rhs[0].first = " + Utility::toString(zero( T() )) );
+  }
+
+  comparison_details = Utility::RelativeErrorComparisonPolicy::createComparisonDetails(
+                                                     "lhs", true, zero( T() ),
+                                                     "rhs", true, zero( T() ),
+                                                     "[0].first", small(T()) );
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                       std::string("relErr(lhs[0].first,rhs[0].first) = relErr(") +
+                       Utility::toString(zero( T() )) + "," +
+                       Utility::toString(zero( T() )) + ") = " +
+                       Utility::toString(zero( typename Utility::QuantityTraits<T>::RawType() )) + " <= " +
+                       Utility::toString(small( T() )) );
+  }
+  else
+  {
+    BOOST_CHECK_EQUAL( comparison_details,
+                        std::string( "lhs[0].first = " ) +
+                        Utility::toString(zero( T() )) + " " +
+                        Utility::CloseComparisonPolicy::getOperatorName<T>() +
+                        " rhs[0].first = " + Utility::toString(zero( T() )) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that two values can be compared
+BOOST_AUTO_TEST_CASE_TEMPLATE( compare, T, TestTypes )
+{
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( zero(T()), zero(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( zero(T()), one(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( one(T()), zero(T()) )) );
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( one(T()), one(T()) )) );
+
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( zero(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( zero(T()), one(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( one(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( one(T()), one(T()), small(T()) )) );
+
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( zero(T()), smallOverTwo(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( smallOverTwo(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( zero(T()), smallByTwo(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( smallByTwo(T()), zero(T()), small(T()) )) );
+
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( one(T()), (T)(one(T())+smallOverTwo(T())), small(T()) )) );
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( (T)(one(T())+smallOverTwo(T())), one(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( one(T()), (T)(one(T())+smallByTwo(T())), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( (T)(one(T())+smallByTwo(T())), one(T()), small(T()) )) );
+  }
+  else
+  {
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( zero(T()), zero(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( zero(T()), one(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( one(T()), zero(T()) )) );
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( one(T()), one(T()) )) );
+
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( zero(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( zero(T()), one(T()), small(T()) )) );
+    BOOST_CHECK( !(Utility::RelativeErrorComparisonPolicy::compare( one(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( (Utility::RelativeErrorComparisonPolicy::compare( one(T()), one(T()), small(T()) )) );
+  }
+
+  Utility::RelativeErrorComparisonPolicy policy;
+
+  if( std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value )
+  {
+    BOOST_CHECK( (policy( zero(T()), zero(T()) )) );
+    BOOST_CHECK( !(policy( zero(T()), one(T()) )) );
+    BOOST_CHECK( !(policy( one(T()), zero(T()) )) );
+    BOOST_CHECK( (policy( one(T()), one(T()) )) );
+
+    BOOST_CHECK( (policy( zero(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( zero(T()), one(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( one(T()), zero(T()), small(T()) )) );
+    BOOST_CHECK( (policy( one(T()), one(T()), small(T()) )) );
+
+    BOOST_CHECK( !(policy( zero(T()), smallOverTwo(T()), small(T()) )) );
+    BOOST_CHECK( !(policy( smallOverTwo(T()), zero(T()), small(T()) )) );
     BOOST_CHECK( !(policy( zero(T()), smallByTwo(T()), small(T()) )) );
     BOOST_CHECK( !(policy( smallByTwo(T()), zero(T()), small(T()) )) );
 

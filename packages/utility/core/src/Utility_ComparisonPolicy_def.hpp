@@ -550,6 +550,8 @@ public:
         if( !name_suffix.empty() )
           oss << name_suffix;
       }
+      else
+        oss << Utility::toString( left_value );
 
       oss << ",";
       
@@ -560,6 +562,8 @@ public:
         if( !name_suffix.empty() )
           oss << name_suffix;
       }
+      else
+        oss << Utility::toString( right_value );
       
       oss << ") = ";
     }
@@ -585,11 +589,11 @@ public:
 private:
 
   // Compute the relative error
-  static inline typename QuantityTraits<T>::RawType computeRelativeError(
+  static inline typename QuantityTraits<T>::RawType calculateRelativeError(
                                                          const T& left_value,
                                                          const T& right_value )
   {
-    if( left_value != QuantityTraits<T>::zero() &&
+    if( left_value != QuantityTraits<T>::zero() ||
         right_value != QuantityTraits<T>::zero() )
     {
       return Details::AbsoluteValueHelper<T>::abs( left_value - right_value )/

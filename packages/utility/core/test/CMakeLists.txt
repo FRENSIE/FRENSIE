@@ -6,58 +6,6 @@ TARGET_LINK_LIBRARIES(tstAssertion utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(Assertion_test tstAssertion --report_level=detailed)
 SET_PROPERTY(TEST Assertion_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstToStringTraits tstToStringTraits.cpp)
-TARGET_LINK_LIBRARIES(tstToStringTraits utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(ToStringTraits_test tstToStringTraits --report_level=detailed)
-SET_PROPERTY(TEST ToStringTraits_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstFromStringTraits tstFromStringTraits.cpp)
-TARGET_LINK_LIBRARIES(tstFromStringTraits utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(FromStringTraits_test tstFromStringTraits --report_level=detailed)
-SET_PROPERTY(TEST FromStringTraits_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstLogRecordType tstLogRecordType.cpp)
-TARGET_LINK_LIBRARIES(tstLogRecordType utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(LogRecordType_test tstLogRecordType --report_level=detailed)
-SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstTypeTraits tstTypeTraits.cpp)
-TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(TypeTraits_test tstTypeTraits --report_level=detailed)
-SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstIteratorTypeTraits
-  tstIteratorTypeTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstIteratorTypeTraits utility_core)
-ADD_TEST(IteratorTypeTraits_test tstIteratorTypeTraits)
-SET_PROPERTY(TEST IteratorTypeTraits_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstStaticOutputFormatter tstStaticOutputFormatter.cpp)
-TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter --report_level=detailed)
-SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstDynamicOutputFormatter tstDynamicOutputFormatter.cpp)
-TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter --report_level=detailed)
-SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstLoggingMacros tstLoggingMacros.cpp)
-TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(LoggingMacros_test tstLoggingMacros --report_level=detailed)
-SET_PROPERTY(TEST LoggingMacros_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstExceptionCatchMacros tstExceptionCatchMacros.cpp)
-TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros --report_level=detailed)
-SET_PROPERTY(TEST ExceptionCatchMacros_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstContractException tstContractException.cpp)
-TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(ContractException_test tstContractException --report_level=detailed)
-SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
-
 ADD_EXECUTABLE(tstElectronVoltUnit
   tstElectronVoltUnit.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -183,6 +131,58 @@ ADD_EXECUTABLE(tstAtomicMassUnit
 TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_core)
 ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit)
 SET_PROPERTY(TEST AtomicMassUnit_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstToStringTraits tstToStringTraits.cpp)
+TARGET_LINK_LIBRARIES(tstToStringTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ToStringTraits_test tstToStringTraits --report_level=detailed)
+SET_PROPERTY(TEST ToStringTraits_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstFromStringTraits tstFromStringTraits.cpp)
+TARGET_LINK_LIBRARIES(tstFromStringTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(FromStringTraits_test tstFromStringTraits --report_level=detailed)
+SET_PROPERTY(TEST FromStringTraits_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstLogRecordType tstLogRecordType.cpp)
+TARGET_LINK_LIBRARIES(tstLogRecordType utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(LogRecordType_test tstLogRecordType --report_level=detailed)
+SET_PROPERTY(TEST LogRecordType_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstTypeTraits tstTypeTraits.cpp)
+TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(TypeTraits_test tstTypeTraits --report_level=detailed)
+SET_PROPERTY(TEST TypeTraits_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstIteratorTypeTraits
+  tstIteratorTypeTraits.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIteratorTypeTraits utility_core)
+ADD_TEST(IteratorTypeTraits_test tstIteratorTypeTraits)
+SET_PROPERTY(TEST IteratorTypeTraits_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstStaticOutputFormatter tstStaticOutputFormatter.cpp)
+TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter --report_level=detailed)
+SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstDynamicOutputFormatter tstDynamicOutputFormatter.cpp)
+TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter --report_level=detailed)
+SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstLoggingMacros tstLoggingMacros.cpp)
+TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(LoggingMacros_test tstLoggingMacros --report_level=detailed)
+SET_PROPERTY(TEST LoggingMacros_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstExceptionCatchMacros tstExceptionCatchMacros.cpp)
+TARGET_LINK_LIBRARIES(tstExceptionCatchMacros utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ExceptionCatchMacros_test tstExceptionCatchMacros --report_level=detailed)
+SET_PROPERTY(TEST ExceptionCatchMacros_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstContractException tstContractException.cpp)
+TARGET_LINK_LIBRARIES(tstContractException utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ContractException_test tstContractException --report_level=detailed)
+SET_PROPERTY(TEST ContractException_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstComparisonPolicy tstComparisonPolicy.cpp)
 TARGET_LINK_LIBRARIES(tstComparisonPolicy utility_core ${BOOST_TEST_LIBRARY})
