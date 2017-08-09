@@ -76,6 +76,20 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( System, T, TestTypes )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the inverse unit type is defined
+BOOST_AUTO_TEST_CASE( InverseUnit_void )
+{
+  BOOST_CHECK( (std::is_same<Utility::UnitTraits<void>::InverseUnit,void>::value) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the inverse unit type is defined
+BOOST_AUTO_TEST_CASE_TEMPLATE( InverseUnit, T, TestTypes )
+{
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<T>::InverseUnit,decltype(T()/(T()*T()))>::value) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the unit to the desired power is defined
 BOOST_AUTO_TEST_CASE( GetUnitToPowerType_void )
 {
@@ -119,6 +133,25 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( GetUnitToPowerType, T, TestTypes )
   BOOST_CHECK( !(std::is_same<typename Utility::UnitTraits<T>::template GetUnitToPowerType<1,3>::type,void>::value) );
   BOOST_CHECK( !(std::is_same<typename Utility::UnitTraits<T>::template GetUnitToPowerType<1,4>::type,void>::value) );
   BOOST_CHECK( !(std::is_same<typename Utility::UnitTraits<T>::template GetUnitToPowerType<1,5>::type,void>::value) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a quantity with the desired base type is defined
+BOOST_AUTO_TEST_CASE( GetQuantityType_void )
+{
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<void>::template GetQuantityType<void>::type,void>::value) );
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<void>::template GetQuantityType<int>::type,int>::value) );
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<void>::template GetQuantityType<float>::type,float>::value) );
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<void>::template GetQuantityType<double>::type,double>::value) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a quantity with the desired base type is defined
+BOOST_AUTO_TEST_CASE_TEMPLATE( GetQuantityType, T, TestTypes )
+{
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<T>::template GetQuantityType<int>::type,boost::units::quantity<T,int> >::value) );
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<T>::template GetQuantityType<float>::type,boost::units::quantity<T,float> >::value) );
+  BOOST_CHECK( (std::is_same<typename Utility::UnitTraits<T>::template GetQuantityType<double>::type,boost::units::quantity<T,double> >::value) );
 }
 
 //---------------------------------------------------------------------------//

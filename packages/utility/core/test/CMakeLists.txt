@@ -101,6 +101,11 @@ TARGET_LINK_LIBRARIES(tstUnitTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(UnitTraits_test tstUnitTraits --report_level=detailed)
 SET_PROPERTY(TEST UnitTraits_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstQuantityTraits tstQuantityTraits.cpp)
+TARGET_LINK_LIBRARIES(tstQuantityTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(QuantityTraits_test tstQuantityTraits --report_level=detailed)
+SET_PROPERTY(TEST QuantityTraits_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstTypeTraits tstTypeTraits.cpp)
 TARGET_LINK_LIBRARIES(tstTypeTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(TypeTraits_test tstTypeTraits --report_level=detailed)
