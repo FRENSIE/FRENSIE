@@ -156,6 +156,7 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
   remember( typename QuantityTraits<IndepType>::RawType test_difference =
             ParentInterpolationType::processIndepVar(indep_var) -
             ParentInterpolationType::processIndepVar(indep_var_min) );
+
   testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
                                                     indep_grid_length, tol ) );
 

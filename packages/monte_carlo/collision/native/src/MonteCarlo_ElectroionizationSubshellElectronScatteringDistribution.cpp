@@ -239,11 +239,12 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   // calcualte the energy of the second outgoing electron
   double outgoing_energy_2 = incoming_energy - outgoing_energy_1 - this->getBindingEnergy();
 
-  if ( outgoing_energy_2 <= 0.0 )
-    return 0.0;
-
   // Assume the lower of the two outgoing energies is the knock-on electron
   double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
+
+  // Make sure the knock on energy is above the min outgoing energy
+  if ( knock_on_energy < this->getMinSecondaryEnergyAtIncomingEnergy( incoming_energy ) )
+    return 0.0;
 
   // evaluate the CDF
   return d_evaluate_pdf_func( incoming_energy, knock_on_energy );

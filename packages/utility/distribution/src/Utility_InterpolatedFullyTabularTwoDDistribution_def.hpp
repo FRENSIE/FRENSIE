@@ -618,22 +618,31 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       // Get the lower and upper boundaries of the evaluated cdf
       double lower_cdf_bound, upper_cdf_bound;
       {
+
+        SecondaryIndepQuantity min_secondary_indep_var_with_tol =
+            TwoDInterpPolicy::SecondaryBasePolicy::calculateFuzzyLowerBound(
+                        min_secondary_indep_var );
+
+        SecondaryIndepQuantity max_secondary_indep_var_with_tol =
+            TwoDInterpPolicy::SecondaryBasePolicy::calculateFuzzyUpperBound(
+                        max_secondary_indep_var );
+
         // Calculate the unit base variable on the intermediate grid
         typename QuantityTraits<SecondaryIndepQuantity>::RawType eta =
-            TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
+            TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
                 secondary_indep_var_value,
                 min_secondary_indep_var,
                 intermediate_grid_length );
 
         // Get the secondary indep var value for the upper and lower bin boundaries
         SecondaryIndepQuantity secondary_indep_var_value_0 =
-            TwoDInterpPolicy::PrimaryBasePolicy::calculateIndepVar(
+            TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
                         eta,
                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
                         grid_length_0 );
 
         SecondaryIndepQuantity secondary_indep_var_value_1 =
-            TwoDInterpPolicy::PrimaryBasePolicy::calculateIndepVar(
+            TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
                         eta,
                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
                         grid_length_1 );
@@ -691,13 +700,13 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
         eta_estimate, eta_0, eta_1;
 
       eta_0 =
-        TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
             lower_bin_sample,
             lower_bin_boundary->second->getLowerBoundOfIndepVar(),
             grid_length_0 );
 
       eta_1 =
-        TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
             upper_bin_sample,
             upper_bin_boundary->second->getLowerBoundOfIndepVar(),
             grid_length_1 );
@@ -713,7 +722,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
 
       // Scale the sample so that it preserves the intermediate limits.
       SecondaryIndepQuantity est_secondary_indep_var_value =
-        TwoDInterpPolicy::PrimaryBasePolicy::calculateIndepVar(
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
             eta_estimate,
             min_secondary_indep_var,
             intermediate_grid_length );
@@ -774,7 +783,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
       }
     }
     // Return the interpolated evaluation
-    return TwoDInterpPolicy::SecondaryBasePolicy::interpolate(
+    return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
                 lower_bin_boundary->first,
                 upper_bin_boundary->first,
                 primary_indep_var_value,
@@ -1534,7 +1543,7 @@ inline auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,P
                       lower_bin_boundary->second->getLowerBoundOfIndepVar(),
                       lower_bin_boundary->second->getUpperBoundOfIndepVar());
 
-        eta_0 = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+        eta_0 = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
                         sample_functor( *lower_bin_boundary->second ),
                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
                         grid_length_0 );
@@ -1546,7 +1555,7 @@ inline auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,P
                       upper_bin_boundary->second->getLowerBoundOfIndepVar(),
                       upper_bin_boundary->second->getUpperBoundOfIndepVar());
 
-        eta_1 = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+        eta_1 = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
                         sample_functor( *upper_bin_boundary->second ),
                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
                         grid_length_1 );
