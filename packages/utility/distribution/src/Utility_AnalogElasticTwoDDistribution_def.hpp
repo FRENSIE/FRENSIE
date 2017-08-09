@@ -18,62 +18,9 @@
 
 namespace Utility{
 
-  //! Constructor
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareAnalogElasticTwoDDistribution(
-                            const DistributionType& distribution,
-                            const double fuzzy_boundary_tol,
-                            const double evaluate_relative_error_tol,
-                            const double evaluate_error_tol )
-    : ParentType( distribution,
-                  fuzzy_boundary_tol,
-                  evaluate_relative_error_tol,
-                  evaluate_error_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol ),
-      d_error_tol( evaluate_error_tol ),
-      d_upper_bound_conditional_indep_var( 1.0*SIQT::one() ),
-      d_lower_bound_conditional_indep_var( -1.0*SIQT::one() ),
-      d_upper_bound_processed_indep_var(),
-      d_lower_bound_processed_indep_var(),
-      d_grid_length()
-{
-  // Calculate the unit based grid length
-  this->calculateUnitBaseGridLength();
-}
-
-  //! Constructor
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-template<template<typename T, typename... Args> class ArrayA,
-         template<typename T, typename... Args> class ArrayB>
-UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareAnalogElasticTwoDDistribution(
-                   const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                   const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
-                   const double fuzzy_boundary_tol,
-                   const double evaluate_relative_error_tol,
-                   const double evaluate_error_tol )
-    : ParentType( primary_indep_grid,
-                  secondary_distributions,
-                  fuzzy_boundary_tol,
-                  evaluate_relative_error_tol,
-                  evaluate_error_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol ),
-      d_error_tol( evaluate_error_tol ),
-      d_upper_bound_conditional_indep_var( 1.0*SIQT::one() ),
-      d_lower_bound_conditional_indep_var( -1.0*SIQT::one() ),
-      d_upper_bound_processed_indep_var(),
-      d_lower_bound_processed_indep_var(),
-      d_grid_length()
-{
-  // Calculate the unit based grid length
-  this->calculateUnitBaseGridLength();
-}
-
+////---------------------------------------------------------------------------//
+//// EVALUATING METHODS
+////---------------------------------------------------------------------------//
 
 // Evaluate the distribution using unit based interpolation
 template<typename TwoDInterpPolicy,
@@ -92,10 +39,11 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
 }
 
 // Correlated evaluate the distribution (unit based)
-/*! \details This method performs a type of binary search using a unit based
- *  correlated sampling to estimate the CDF to a relative error tolerance in
- *  order to find the proper interpolation. The result is consistent with the
- *  correlatedSampleSecondaryConditional methods.
+/*! \details This method performs a type of binary search using sampling to
+ *  estimate the CDF to a relative error tolerance to find the interpolation.
+ * The lower and upper bounds of the secondary independent variable
+ *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
+ *  necessary and an exact method is used to evaluate instead.
  */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -152,10 +100,11 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
 }
 
 // Correlated evaluate the secondary conditional PDF
-/*! \details This method performs a type of binary search using a unit based
- *  correlated sampling to estimate the CDF to a relative error tolerance in
- *  order to find the proper interpolation. The result is consistent with the
- *  correlatedSampleSecondaryConditional methods.
+/*! \details This method performs a type of binary search using sampling to
+ *  estimate the CDF to a relative error tolerance to find the interpolation.
+ * The lower and upper bounds of the secondary independent variable
+ *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
+ *  necessary and an exact method is used to evaluate instead.
  */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -211,9 +160,11 @@ double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependen
 }
 
 // Correlated evaluate the secondary conditional CDF
-/*! \details This method performs a type of binary search using a unit based
- *  correlated sampling to estimate the CDF to a relative error tolerance. The
- *  result is consistent with the correlatedSampleSecondaryConditional methods.
+/*! \details This method performs a type of binary search using sampling to
+ *  estimate the CDF to a relative error tolerance.
+ * The lower and upper bounds of the secondary independent variable
+ *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
+ *  necessary and an exact method is used to evaluate instead.
  */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -249,446 +200,6 @@ double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependen
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluateCDF );
 }
-
-// Return a random sample from the secondary conditional PDF
-/*! \details A stochastic sampling procedure is used. If the primary value
- * provided is outside of the primary grid limits the appropriate limiting
- * secondary distribution will be used to create the sample. The alternative
- * to this behavior is to throw an exception unless the distribution has 
- * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
- * this is a performance critical method we decided against this behavior.
- */
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
-                     const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                                             &BaseOneDDistributionType::sample,
-                                             std::placeholders::_1 );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample and record the number of trials
-/*! \details A stochastic sampling procedure is used. If the primary value
- * provided is outside of the primary grid limits the appropriate limiting
- * secondary distribution will be used to create the sample. The alternative
- * to this behavior is to throw an exception unless the distribution has 
- * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
- * this is a performance critical method we decided against this behavior.
- */
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                              &BaseOneDDistributionType::sampleAndRecordTrials,
-                              std::placeholders::_1,
-                              std::ref( trials ) );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF and the index
-/*! \details The primary_bin_index stores the index of the bin boundary that
- * was used to generate the sample.
- */
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
-  -> SecondaryIndepQuantity
-{
-  // Dummy variable
-  SecondaryIndepQuantity dummy_raw_sample;
-  
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseOneDDistributionType::sampleAndRecordBinIndex,
-                            std::placeholders::_1,
-                            std::ref( secondary_bin_index ) );
-
-  return this->sampleDetailedImpl( primary_indep_var_value,
-                                   sampling_functor,
-                                   dummy_raw_sample,
-                                   primary_bin_index );
-}
-
-// Return a random sample from the secondary conditional PDF and the index
-/*! \details The primary_bin_index stores the index of the bin boundary that
- * was used to generate the raw_sample. The raw_sample is the original sample
- * that was made before the scaling operation was done.
- */
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
-  -> SecondaryIndepQuantity
-{
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseOneDDistributionType::sampleAndRecordBinIndex,
-                            std::placeholders::_1,
-                            std::ref( secondary_bin_index ) );
-
-  return this->sampleDetailedImpl( primary_indep_var_value,
-                                   sampling_functor,
-                                   raw_sample,
-                                   primary_bin_index );
-}
-
-// Return a random sample from the secondary conditional PDF at the CDF val
-/*! \details A sample is made using an exact correlated sampling technique.
- */
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const
-  -> SecondaryIndepQuantity
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseOneDDistributionType::sampleWithRandomNumber,
-                             std::placeholders::_1,
-                             random_number );
-
-  return this->sampleExactImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF in the subrange
-/*! \details A sample is made using a correlated sampling technique.
- */
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const double random_number,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the secondary limit is valid
-  testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
-
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-      sampling_functor;
-
-  // Check if the max_secondary_indep_var_value is greater than the max indep value at the energy
-  if ( max_secondary_indep_var_value >
-       this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value ) )
-  {
-    // Create the sampling functor
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseOneDDistributionType::sampleWithRandomNumberInSubrange,
-                             std::placeholders::_1,
-                             random_number,
-                             this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value ) );
-  }
-  else
-  {
-    // Create the sampling functor
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseOneDDistributionType::sampleWithRandomNumberInSubrange,
-                             std::placeholders::_1,
-                             random_number,
-                             max_secondary_indep_var_value );
-  }
-
-  return this->sampleExactImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random correlated sample from the secondary conditional PDF at the CDF val
-/*! \details A sample is made using a unit based correlated sampling technique.
- */
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
-                    const PrimaryIndepQuantity primary_indep_var_value,
-                    const double random_number,
-                    const SecondaryIndepQuantity min_secondary_indep_var_value,
-                    const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the secondary limit is valid
-  testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
-  
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseOneDDistributionType::sampleWithRandomNumber,
-                             std::placeholders::_1,
-                             random_number );
-
-  return this->sampleExactImpl( primary_indep_var_value,
-                                     sampling_functor );
-}
-
-
-
-////---------------------------------------------------------------------------//
-//// EVALUATING METHODS
-////---------------------------------------------------------------------------//
-
-//// Correlated evaluate the distribution (unit based)
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance in
-// *  order to find the proper interpolation. The result is consistent with the
-// *  correlatedSampleSecondaryConditional methods.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateInBoundaries(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const SecondaryIndepQuantity angle_cosine,
-//                const SecondaryIndepQuantity min_secondary_indep_var,
-//                const SecondaryIndepQuantity max_secondary_indep_var ) const
-//  -> DepQuantity
-//{
-//  return this->template correlatedEvaluateImpl<TwoDInterpPolicy,DepQuantity>(
-//                                          incoming_energy,
-//                                          angle_cosine,
-//                                          min_secondary_indep_var,
-//                                          max_secondary_indep_var,
-//                                          &BaseOneDDistributionType::evaluate );
-//}
-
-//// Correlated evaluate the distribution (unit based)
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance in
-// *  order to find the proper interpolation. The result is consistent with the
-// *  correlatedSampleSecondaryConditional methods.
-// *  The lower and upper conditional boundaries will be use as the min and max
-// *  secondary independent variable values.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluate(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const SecondaryIndepQuantity angle_cosine ) const
-//  -> DepQuantity
-//{
-//  return this->correlatedEvaluateInBoundaries( incoming_energy,
-//                                               angle_cosine );
-//}
-
-//// Evaluate the distribution
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance in
-// *  order to find the proper interpolation. The result is consistent with the
-// *  sampleSecondaryConditionalExact methods.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExact(
-//                 const PrimaryIndepQuantity incoming_energy,
-//                 const SecondaryIndepQuantity angle_cosine ) const
-//  -> DepQuantity
-//{
-//  return this->template evaluateExactImpl<TwoDInterpPolicy,DepQuantity>(
-//                                          incoming_energy,
-//                                          angle_cosine,
-//                                          &BaseOneDDistributionType::evaluate );
-//}
-
-//// Correlated evaluate the secondary conditional PDF
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance in
-// *  order to find the proper interpolation. The result is consistent with the
-// *  correlatedSampleSecondaryConditional methods.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const SecondaryIndepQuantity angle_cosine,
-//                const SecondaryIndepQuantity min_secondary_indep_var,
-//                const SecondaryIndepQuantity max_secondary_indep_var ) const
-//  ->  InverseSecondaryIndepQuantity
-//{
-//  return this->template correlatedEvaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
-//                                    incoming_energy,
-//                                    angle_cosine,
-//                                    min_secondary_indep_var,
-//                                    max_secondary_indep_var,
-//                                    &BaseOneDDistributionType::evaluatePDF );
-//}
-
-//// Correlated evaluate the secondary conditional PDF
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance in
-// *  order to find the proper interpolation. The result is consistent with the
-// *  correlatedSampleSecondaryConditional methods.
-// *  The lower and upper conditional boundaries will be use as the min and max
-// *  secondary independent variable values.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDF(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const SecondaryIndepQuantity angle_cosine ) const
-//  ->  InverseSecondaryIndepQuantity
-//{
-//  return this->correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-//                                                    incoming_energy,
-//                                                    angle_cosine );
-//}
-
-//// Evaluate the secondary conditional PDF
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance in
-// *  order to find the proper interpolation. The result is consistent with the
-// *  sampleSecondaryConditionalExact methods.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDFExact(
-//                 const PrimaryIndepQuantity incoming_energy,
-//                 const SecondaryIndepQuantity angle_cosine ) const
-//  -> InverseSecondaryIndepQuantity
-//{
-//  return this->template evaluateExactImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
-//                                      incoming_energy,
-//                                      angle_cosine,
-//                                      &BaseOneDDistributionType::evaluatePDF );
-//}
-
-//// Evaluate the secondary conditional CDF
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
-//                 const PrimaryIndepQuantity incoming_energy,
-//                 const SecondaryIndepQuantity angle_cosine ) const
-//{
-//  return this->template evaluateImpl<CDFInterpPolicy,double>(
-//                                      incoming_energy,
-//                                      angle_cosine,
-//                                      &BaseOneDDistributionType::evaluateCDF,
-//                                      0.0,
-//                                      1.0 );
-//}
-
-//// Correlated evaluate the secondary conditional CDF
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance. The
-// *  result is consistent with the correlatedSampleSecondaryConditional methods.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const SecondaryIndepQuantity angle_cosine,
-//                const SecondaryIndepQuantity min_secondary_indep_var,
-//                const SecondaryIndepQuantity max_secondary_indep_var ) const
-//{
-//  return this->template correlatedEvaluateImpl<TwoDInterpPolicy,double>(
-//                                      incoming_energy,
-//                                      angle_cosine,
-//                                      min_secondary_indep_var,
-//                                      max_secondary_indep_var,
-//                                      &BaseOneDDistributionType::evaluateCDF,
-//                                      0.0,
-//                                      1.0 );
-//}
-
-//// Correlated evaluate the secondary conditional CDF
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance. The
-// *  result is consistent with the correlatedSampleSecondaryConditional methods.
-// *  The lower and upper conditional boundaries will be use as the min and max
-// *  secondary independent variable values.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDF(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const SecondaryIndepQuantity angle_cosine ) const
-//{
-//  return this->correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-//                                                    incoming_energy,
-//                                                    angle_cosine );
-//}
-
-//// Evaluate the secondary conditional CDF
-///*! \details This method performs a type of binary search using a unit based
-// *  correlated sampling to estimate the CDF to a relative error tolerance.
-// *  The result is consistent with the sampleSecondaryConditionalExact methods.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
-//                 const PrimaryIndepQuantity incoming_energy,
-//                 const SecondaryIndepQuantity angle_cosine ) const
-//{
-//  return this->template evaluateExactImpl<CDFInterpPolicy,double>(
-//                                      incoming_energy,
-//                                      angle_cosine,
-//                                      &BaseOneDDistributionType::evaluateCDF,
-//                                      0.0,
-//                                      1.0 );
-//}
 
 // Evaluate the distribution using the desired evaluation method
 /*! \details This method performs a type of binary search using an exact
@@ -769,7 +280,6 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
   }
   else
   {
-
     // Get the lower and upper boundaries of the evaluated cdf
     double lower_cdf_bound, upper_cdf_bound;
     {
@@ -893,21 +403,6 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
   }
 }
 
-// Evaluate the distribution at a bin boundary using the desired evaluation method
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-template<typename ReturnType,
-         typename EvaluationMethod>
-inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateBinImpl(
-                        const typename DistributionType::const_iterator& bin_boundary,
-                        const SecondaryIndepQuantity angle_cosine,
-                        EvaluationMethod evaluate ) const
-{
-  return ((*bin_boundary->second).*evaluate)(angle_cosine);
-}
-
 // Evaluate the distribution using the desired evaluation method
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -937,20 +432,29 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
   {
     if( this->arePrimaryLimitsExtended() )
     {
-      return this->evaluateBinImpl<ReturnType,EvaluationMethod>( lower_bin_boundary, angle_cosine, evaluate );
+      return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
     }
     else 
       return QuantityTraits<ReturnType>::zero();
   }
   else
   {
-    // Return the interpolated evaluation
-    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+    // Get the evaluation at the lower and upper bin boundaries
+    ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
+    ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
+
+    if ( min_eval_0 == min_eval_1 )
+      return min_eval_0;
+    else
+    {
+      // Return the interpolated evaluation
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
               lower_bin_boundary->first,
               upper_bin_boundary->first,
               primary_indep_var_value,
-              this->evaluateBinImpl<ReturnType,EvaluationMethod>( lower_bin_boundary, angle_cosine, evaluate ),
-              this->evaluateBinImpl<ReturnType,EvaluationMethod>( upper_bin_boundary, angle_cosine, evaluate ) );
+              min_eval_0,
+              min_eval_1 );
+    }
   }
 }
 
@@ -958,146 +462,325 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
 //// SAMPLING METHODS
 ////---------------------------------------------------------------------------//
 
-//// Return a random sample from the secondary conditional PDF
-///*! \details A sample is made using a unit based correlated sampling technique.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInCutoff(
-//             const PrimaryIndepQuantity incoming_energy ) const
-//  -> SecondaryIndepQuantity
-//{
-//  // Make sure the secondary limit is valid
-//  testPrecondition( max_angle_cosine > d_lower_bound_conditional_indep_var );
+// Return a random sample from the secondary conditional PDF
+/*! \details A stochastic sampling procedure is used. If the primary value
+ * provided is outside of the primary grid limits the appropriate limiting
+ * secondary distribution will be used to create the sample. The alternative
+ * to this behavior is to throw an exception unless the distribution has 
+ * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
+ * this is a performance critical method we decided against this behavior.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+                     const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                                             &BaseOneDDistributionType::sample,
+                                             std::placeholders::_1 );
 
-//  // Use this random number to do create the correlated sample
-//  const double random_number =
-//    Utility::RandomNumberGenerator::getRandomNumber<double>();
+  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+}
 
-//  return this->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
-//                                            incoming_energy,
-//                                            random_number );
-//}
+// Return a random sample and record the number of trials
+/*! \details A stochastic sampling procedure is used. If the primary value
+ * provided is outside of the primary grid limits the appropriate limiting
+ * secondary distribution will be used to create the sample. The alternative
+ * to this behavior is to throw an exception unless the distribution has 
+ * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
+ * this is a performance critical method we decided against this behavior.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& trials ) const
+  -> SecondaryIndepQuantity
+{
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                              &BaseOneDDistributionType::sampleAndRecordTrials,
+                              std::placeholders::_1,
+                              std::ref( trials ) );
 
-//// Return a random sample from the secondary conditional PDF
-///*! \details A sample is made using a unit based correlated sampling technique.
-// *  The lower and upper conditional boundaries will be use as the min and max
-// *  secondary independent variable values.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditional(
-//             const PrimaryIndepQuantity incoming_energy ) const
-//  -> SecondaryIndepQuantity
-//{
-//  return this->correlatedSampleSecondaryConditionalInBoundaries(
-//                                            incoming_energy );
-//}
+  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+}
 
-//// Return a random sample from the secondary conditional PDF
-///*! \details A sample is made using a correlated sampling technique.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExact(
-//                     const PrimaryIndepQuantity incoming_energy ) const
-//  -> SecondaryIndepQuantity
-//{
-//  // Use this random number to do create the correlated sample
-//  const double random_number =
-//    Utility::RandomNumberGenerator::getRandomNumber<double>();
+// Return a random sample from the secondary conditional PDF and the index
+/*! \details The primary_bin_index stores the index of the bin boundary that
+ * was used to generate the sample.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const
+  -> SecondaryIndepQuantity
+{
+  // Dummy variable
+  SecondaryIndepQuantity dummy_raw_sample;
+  
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                            &BaseOneDDistributionType::sampleAndRecordBinIndex,
+                            std::placeholders::_1,
+                            std::ref( secondary_bin_index ) );
 
-//  return this->sampleSecondaryConditionalExactWithRandomNumber(
-//                                      incoming_energy, random_number );
-//}
+  return this->sampleDetailedImpl( primary_indep_var_value,
+                                   sampling_functor,
+                                   dummy_raw_sample,
+                                   primary_bin_index );
+}
 
-//// Return a random sample from the secondary conditional PDF at the CDF val
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
-//                            const PrimaryIndepQuantity incoming_energy,
-//                            const double random_number ) const
-//  -> SecondaryIndepQuantity
-//{
-//  // Make sure the random number is valid
-//  testPrecondition( random_number >= 0.0 );
-//  testPrecondition( random_number <= 1.0 );
-//  
-//  // Create the sampling functor
-//  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-//    sampling_functor = std::bind<SecondaryIndepQuantity>(
-//                             &BaseOneDDistributionType::sampleWithRandomNumber,
-//                             std::placeholders::_1,
-//                             random_number );
+// Return a random sample from the secondary conditional PDF and the index
+/*! \details The primary_bin_index stores the index of the bin boundary that
+ * was used to generate the raw_sample. The raw_sample is the original sample
+ * that was made before the scaling operation was done.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SecondaryIndepQuantity& raw_sample,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const
+  -> SecondaryIndepQuantity
+{
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                            &BaseOneDDistributionType::sampleAndRecordBinIndex,
+                            std::placeholders::_1,
+                            std::ref( secondary_bin_index ) );
 
-//  return this->sampleImpl( incoming_energy, sampling_functor );
-//}
+  return this->sampleDetailedImpl( primary_indep_var_value,
+                                   sampling_functor,
+                                   raw_sample,
+                                   primary_bin_index );
+}
 
-//// Return a random correlated sample from the secondary conditional PDF at the CDF val
-///*! \details A sample is made using a unit based correlated sampling technique.
-// *  The lower and upper conditional boundaries will be use as the min and max
-// *  secondary independent variable values.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumber(
-//                    const PrimaryIndepQuantity incoming_energy,
-//                    const double random_number ) const
-//  -> SecondaryIndepQuantity
-//{
-//  // Make sure the random number is valid
-//  testPrecondition( random_number >= 0.0 );
-//  testPrecondition( random_number <= 1.0 );
+// Return a random sample from the secondary conditional PDF at the CDF val
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const
+  -> SecondaryIndepQuantity
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                             &BaseOneDDistributionType::sampleWithRandomNumber,
+                             std::placeholders::_1,
+                             random_number );
 
-//  // Create the sampling functor
-//  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-//    sampling_functor = std::bind<SecondaryIndepQuantity>(
-//                             &BaseOneDDistributionType::sampleWithRandomNumber,
-//                             std::placeholders::_1,
-//                             random_number );
+  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+}
 
-//  return this->correlatedSampleImpl(
-//            incoming_energy,
-//            d_lower_bound_conditional_indep_var,
-//            d_upper_bound_conditional_indep_var,
-//            sampling_functor );
-//}
+// Return a random sample from the secondary conditional PDF at the CDF val
+/*! \details A sample is made using an exact correlated sampling technique.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const
+  -> SecondaryIndepQuantity
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                             &BaseOneDDistributionType::sampleWithRandomNumber,
+                             std::placeholders::_1,
+                             random_number );
 
-//// Return a random sample from the secondary conditional PDF at the CDF val
-///*! \details A sample is made using an exact correlated sampling technique.
-// */
-//template<typename TwoDInterpPolicy,
-//         typename PrimaryIndependentUnit,
-//         typename SecondaryIndependentUnit,
-//         typename DependentUnit>
-//auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
-//                            const PrimaryIndepQuantity incoming_energy,
-//                            const double random_number ) const
-//  -> SecondaryIndepQuantity
-//{
-//  // Make sure the random number is valid
-//  testPrecondition( random_number >= 0.0 );
-//  testPrecondition( random_number <= 1.0 );
-//  
-//  // Create the sampling functor
-//  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-//    sampling_functor = std::bind<SecondaryIndepQuantity>(
-//                             &BaseOneDDistributionType::sampleWithRandomNumber,
-//                             std::placeholders::_1,
-//                             random_number );
+  return this->sampleExactImpl( primary_indep_var_value, sampling_functor );
+}
 
-//  return this->sampleExactImpl( incoming_energy, sampling_functor );
-//}
+// Return a random sample from the secondary conditional PDF in the subrange
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const double random_number,
+             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Make sure the max secondary independent variable is above the lower
+  // bound of the conditional independent variable
+  testPrecondition( max_secondary_indep_var_value >
+                    d_lower_bound_conditional_indep_var );
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+
+  // Generate a sample in the subrange
+  if( max_secondary_indep_var_value < d_upper_bound_conditional_indep_var )
+  {
+    // Find the bin boundaries
+    typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+    this->findBinBoundaries( primary_indep_var_value,
+                             lower_bin_boundary,
+                             upper_bin_boundary );
+
+    typename DistributionType::const_iterator sampled_bin_boundary =
+      this->sampleBinBoundary( primary_indep_var_value,
+                               lower_bin_boundary,
+                               upper_bin_boundary );
+
+    // Sample in the bin's subrange
+    return sampled_bin_boundary->second->sampleWithRandomNumberInSubrange(
+                                     random_number,
+                                     max_secondary_indep_var_value );
+  }
+  // Generate a sample in the full range
+  else
+  {
+    return this->sampleSecondaryConditionalWithRandomNumber(
+                                      primary_indep_var_value, random_number );
+  }
+}
+
+
+// Return a random sample from the secondary conditional PDF in the subrange
+/*! \details A sample is made using an exact correlated sampling technique.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const double random_number,
+             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the secondary limit is valid
+  testPrecondition( max_secondary_indep_var_value >
+                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+      sampling_functor;
+
+  // Check if the max_secondary_indep_var_value is greater than the max indep value at the energy
+  if ( max_secondary_indep_var_value >
+       this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value ) )
+  {
+    // Create the sampling functor
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                             &BaseOneDDistributionType::sampleWithRandomNumberInSubrange,
+                             std::placeholders::_1,
+                             random_number,
+                             this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value ) );
+  }
+  else
+  {
+    // Create the sampling functor
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                             &BaseOneDDistributionType::sampleWithRandomNumberInSubrange,
+                             std::placeholders::_1,
+                             random_number,
+                             max_secondary_indep_var_value );
+  }
+
+  return this->sampleExactImpl( primary_indep_var_value, sampling_functor );
+}
+
+// Return a random correlated sample from the secondary conditional PDF at the CDF val
+/*! \details The lower and upper bounds of the secondary independent variable
+ *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
+ *  necessary and an exact method is used to sample instead.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
+                    const PrimaryIndepQuantity primary_indep_var_value,
+                    const double random_number,
+                    const SecondaryIndepQuantity min_secondary_indep_var_value,
+                    const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the secondary limit is valid
+  testPrecondition( max_secondary_indep_var_value >
+                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+  
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                             &BaseOneDDistributionType::sampleWithRandomNumber,
+                             std::placeholders::_1,
+                             random_number );
+
+  return this->sampleExactImpl( primary_indep_var_value,
+                                     sampling_functor );
+}
+
+// Return a random sample from the secondary conditional PDF in the subrange
+/*! \details The lower and upper bounds of the secondary independent variable
+ *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
+ *  necessary and an exact method is used to sample instead.
+ */
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const double random_number,
+             const SecondaryIndepQuantity min_secondary_indep_var_value,
+             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the secondary limit is valid
+  testPrecondition( max_secondary_indep_var_value >
+                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+
+
+  return this->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+             primary_indep_var_value,
+             random_number,
+             max_secondary_indep_var_value );
+}
 
 // Sample from the distribution using the desired sampling functor
 template<typename TwoDInterpPolicy,
@@ -1219,6 +902,10 @@ inline auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
   }
 }
 
+////---------------------------------------------------------------------------//
+//// MISC. FUNCTIONS
+////---------------------------------------------------------------------------//
+
 // Return the lower bound of the conditional distribution
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -1283,39 +970,6 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
   }
   else
     return SIQT::one();
-}
-
-// Calculate the unit based grid length
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-void UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::calculateUnitBaseGridLength()
-{
-  // Process the lower and upper bounds of the conditional indep var
-  SecondaryIndepQuantity processed_min =
-    CosineProcessor::processCosineVar( d_lower_bound_conditional_indep_var );
-
-  SecondaryIndepQuantity processed_max =
-    CosineProcessor::processCosineVar( d_upper_bound_conditional_indep_var );
-
-  // Find the lower and upper bounds of the processed conditional indep var
-  if( processed_min < processed_max )
-  {
-    d_lower_bound_processed_indep_var = processed_min;
-    d_upper_bound_processed_indep_var = processed_max;
-  }
-  else
-  {
-    d_lower_bound_processed_indep_var = 1e-6*SIQT::one();//processed_max;
-    d_upper_bound_processed_indep_var = 2.0*SIQT::one();//processed_min;
-  }
-
-  // Calculate and set the grid length
-  d_grid_length =
-    TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                        d_lower_bound_processed_indep_var,
-                        d_upper_bound_processed_indep_var );
 }
 
 } // end Utility namespace

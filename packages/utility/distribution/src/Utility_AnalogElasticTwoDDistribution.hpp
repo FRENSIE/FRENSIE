@@ -119,7 +119,16 @@ public:
                             const DistributionType& distribution,
                             const double fuzzy_boundary_tol = 1e-3,
                             const double evaluate_relative_error_tol = 1e-7,
-                            const double evaluate_error_tol = 1e-16 );
+                            const double evaluate_error_tol = 1e-16 )
+    : ParentType( distribution,
+                  fuzzy_boundary_tol,
+                  evaluate_relative_error_tol,
+                  evaluate_error_tol ),
+      d_relative_error_tol( evaluate_relative_error_tol ),
+      d_error_tol( evaluate_error_tol ),
+      d_upper_bound_conditional_indep_var( 1.0*SIQT::one() ),
+      d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
+  {/* ... */ }
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -129,7 +138,17 @@ public:
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
                    const double fuzzy_boundary_tol = 1e-3,
                    const double evaluate_relative_error_tol = 1e-7,
-                   const double evaluate_error_tol = 1e-16 );
+                   const double evaluate_error_tol = 1e-16 )
+    : ParentType( primary_indep_grid,
+                  secondary_distributions,
+                  fuzzy_boundary_tol,
+                  evaluate_relative_error_tol,
+                  evaluate_error_tol ),
+      d_relative_error_tol( evaluate_relative_error_tol ),
+      d_error_tol( evaluate_error_tol ),
+      d_upper_bound_conditional_indep_var( 1.0*SIQT::one() ),
+      d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
+  {/* ... */ }
 
   //! Destructor
   ~UnitAwareAnalogElasticTwoDDistribution()
@@ -188,9 +207,20 @@ public:
             unsigned& secondary_bin_index ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
+  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const double random_number ) const;
+
+  //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInSubrange(
@@ -209,52 +239,6 @@ public:
   //! Return the upper bound of the conditional distribution
   SecondaryIndepQuantity getUpperBoundOfConditionalIndepVar(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
-
-//  //! Correlated evaluate the secondary conditional PDF (unit based) within the cutoff angle cosine
-//  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDFInCutoff(
-//            const PrimaryIndepQuantity incoming_energy,
-//            const SecondaryIndepQuantity angle_cosine,
-//            const double cutoff_ratio ) const;
-
-//  //! Correlated evaluate the secondary conditional PDF within the cutoff angle cosine
-//  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExactInCutoff(
-//            const PrimaryIndepQuantity incoming_energy,
-//            const SecondaryIndepQuantity angle_cosine,
-//            const double cutoff_ratio ) const;
-
-//  //! Correlated evaluate the secondary conditional CDF (unit based) within the cutoff angle cosine
-//  double correlatedEvaluateSecondaryConditionalCDFInCutoff(
-//            const PrimaryIndepQuantity incoming_energy,
-//            const SecondaryIndepQuantity angle_cosine,
-//            const double cutoff_ratio ) const;
-
-//  //! Correlated evaluate the secondary conditional CDF within the cutoff angle cosine
-//  double evaluateSecondaryConditionalCDFExactInCutoff(
-//            const PrimaryIndepQuantity incoming_energy,
-//            const SecondaryIndepQuantity angle_cosine,
-//            const double cutoff_ratio ) const;
-
-//  //! Return a random exact sample from the secondary conditional PDF within the cutoff angle cosine
-//  SecondaryIndepQuantity sampleSecondaryConditionalExactInCutoff(
-//                const PrimaryIndepQuantity incoming_energy ) const;
-
-//  //! Return a random correlated sample from the secondary conditional PDF within the cutoff angle cosine
-//  SecondaryIndepQuantity correlatedSampleSecondaryConditionalInCutoff(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const double cutoff_ratio ) const;
-
-
-//  //! Return a random correlated sample from the secondary conditional PDF at the CDF val within the cutoff angle cosine
-//  SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInCutoff(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const double random_number,
-//                const double cutoff_ratio ) const;
-
-//  //! Return a random sample from the secondary conditional PDF at the CDF val within the cutoff angle cosine
-//  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInCutoff(
-//                const PrimaryIndepQuantity incoming_energy,
-//                const double random_number,
-//                const double cutoff_ratio ) const;
 
 private:
 
@@ -286,13 +270,12 @@ private:
             const SecondaryIndepQuantity min_secondary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
-  //! Evaluate the distribution at a bin boundary using the desired evaluation method
-  template<typename ReturnType,
-           typename EvaluationMethod>
-  ReturnType evaluateBinImpl(
-                    const typename DistributionType::const_iterator& bin_boundary,
-                    const SecondaryIndepQuantity angle_cosine,
-                    EvaluationMethod evaluate ) const;
+  //! Return a random correlated sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity min_secondary_indep_var_value,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,
@@ -333,24 +316,11 @@ private:
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SampleFunctor sample_functor ) const;
 
-  // Calculate the unit based grid length
-  void calculateUnitBaseGridLength();
-
-
   // The upper bound of the conditional distribution ( 1.0 )
   SecondaryIndepQuantity d_upper_bound_conditional_indep_var;
 
   // The lower bound of the conditional distribution ( -1.0 )
   SecondaryIndepQuantity d_lower_bound_conditional_indep_var;
-
-  // The upper bound of the processed conditional distribution ( 1.0 or 2.0 )
-  SecondaryIndepQuantity d_upper_bound_processed_indep_var;
-
-  // The lower bound of the processed conditional distribution ( -1.0 or 0.0 )
-  SecondaryIndepQuantity d_lower_bound_processed_indep_var;
-
-  // The grid length of the conditional distribution
-  typename QuantityTraits<SecondaryIndepQuantity>::RawType d_grid_length;
 
   // The relative error tolerance for the evaluate impl schemes
   double d_relative_error_tol;
