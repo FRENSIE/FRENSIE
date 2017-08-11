@@ -24,19 +24,9 @@ template<typename BaseScalarType, typename ExponentOrdinalType>
 typename std::enable_if<std::is_arithmetic<BaseScalarType>::value,BaseScalarType>::type
 recursive( const BaseScalarType x, const ExponentOrdinalType y );
 
-//! Recursive exponentiation algorithm (static)
+//! Recursive exponentiation algorithm (compile-time)
 template<size_t N, typename BaseScalarType>
-typename std::enable_if<(N>0 && N%2 == 0),typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type>::type
-recursive( const BaseScalarType x );
-
-//! Recursive exponentiation algorithm (static)
-template<size_t N, typename BaseScalarType>
-typename std::enable_if<(N>0 && N%2 == 1),typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type>::type
-recursive( const BaseScalarType x );
-
-//! Recursive exponentiation algorithm (static)
-template<size_t N, typename BaseScalarType>
-typename std::enable_if<N==0,typename QuantityTraits<BaseScalarType>::RawType>::type
+typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type
 recursive( const BaseScalarType x );
 
 //! Recursive modular exponentiation algorithm

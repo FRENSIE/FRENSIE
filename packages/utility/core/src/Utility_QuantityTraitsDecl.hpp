@@ -52,15 +52,6 @@ struct QuantityTraits
   //! Used to check if the traits class for quantity type is specialized
   typedef std::false_type is_specialized;
 
-  //! The number of non-sign bits
-  typedef std::integral_constant<int,0> digits;
-
-  //! The number of digits (in decimal base) that can be represented
-  typedef std::integral_constant<int,0> digits10;
-
-  //! The number of digits (in decimal base) required to ensure that values that differ are always differentiated
-  typedef std::integral_constant<int,0> max_digits10;
-
   //! Used to check if the quantity is signed
   typedef std::false_type is_signed;
 
@@ -73,14 +64,14 @@ struct QuantityTraits
   //! Used to check if the quantity uses exact representations
   typedef std::false_type is_exact;
 
-  //! Base of the representation
-  typedef std::integral_constant<int,0> radix;
+  //! Used to check if a quantity adheres to IEC-559/IEEE-754 standard
+  typedef std::false_type is_iec559;
 
-  //! Min negative integer value such that radix raised to (this-1) generates a normalized floating-point quantity (only available for floating-point quantities)
-  typedef std::integral_constant<int,0> min_exponent;
+  //! Used to check if the set of values represented by the quantity is finite
+  typedef std::false_type is_bounded;
 
-  //! Min negative integer value such that 10 raised to that power generates a normalized floating-point quantity (only available for floating-point quantities)
-  typedef std::integral_constant<int,0> min_exponent10;
+  //! Used to check if the quantity is modulo
+  typedef std::false_type is_modulo;
 
   //! Used to check if the quantity has a representation for positive infinity
   typedef std::false_type has_infinity;
@@ -97,23 +88,38 @@ struct QuantityTraits
   //! Used to check if a loss of accuracy is detected as a denormalization loss instead of an inexact result
   typedef std::false_type has_denorm_loss;
 
-  //! Used to check if a quantity adheres to IEC-559/IEEE-754 standard
-  typedef std::false_type is_iec559;
-
-  //! Used to check if the set of values represented by the quantity is finite
-  typedef std::false_type is_bounded;
-
-  //! Used to check if the quantity is modulo
-  typedef std::false_type is_modulo;
-
   //! Used to check if trapping is implemented for the quantity
   typedef std::false_type traps;
 
   //! Used to check if tinyness is implemented before rounding
   typedef std::false_type tinyness_before;
 
-  //! Used to check the rounding style of floating-point quantities (only available for floating-point quantities)
+  //! Used to check the rounding style of floating-point quantities 
   typedef std::integral_constant<std::float_round_style,std::round_indeterminate> round_style;
+
+    //! The number of non-sign bits
+  typedef std::integral_constant<int,0> digits;
+
+  //! The number of digits (in decimal base) that can be represented
+  typedef std::integral_constant<int,0> digits10;
+
+  //! The number of digits (in decimal base) required to ensure that values that differ are always differentiated
+  typedef std::integral_constant<int,0> max_digits10;
+
+  //! Base of the representation
+  typedef std::integral_constant<int,0> radix;
+
+  //! Min negative integer value such that radix raised to (this-1) generates a normalized floating-point quantity 
+  typedef std::integral_constant<int,0> min_exponent;
+
+  //! Min negative integer value such that 10 raised to that power generates a normalized floating-point quantity 
+  typedef std::integral_constant<int,0> min_exponent10;
+
+  //! One more than the largest integer power of the radix that is a valid finite floating-point value
+  typedef std::integral_constant<int,0> max_exponent;
+
+  //! Max integer power of 10 that is a valid finite floating-point value
+  typedef std::integral_constant<int,0> max_exponent10;
 
   //! The quantity raised to power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
@@ -144,19 +150,19 @@ struct QuantityTraits
   static inline QuantityType lowest() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the machine epsilon (only available for floating-point quantities)
+  //! Get the machine epsilon 
   static inline QuantityType epsilon() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the maximum rounding error (only available for floating-point quantities)
+  //! Get the maximum rounding error
   static inline QuantityType roundError() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the inf quantity (only available for floating-point quantities)
+  //! Get the inf quantity 
   static inline QuantityType inf() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the quiet nan quantity (only available for floating-point quantities)
+  //! Get the quiet nan quantity 
   static inline QuantityType nan() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
@@ -165,33 +171,36 @@ struct QuantityTraits
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the absolute value of a quantity
-  static inline QuantityType abs( const QuantityType& a ) noexcept
+  static inline QuantityType abs( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the conjugate of a quantity
-  static inline QuantityType conjugate( const QuantityType& a ) noexcept
+  static inline QuantityType conj( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the real part of the quantity
-  static inline QuantityType real( const QuantityType& a ) noexcept
+  static inline QuantityType real( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the imaginary part of the quantity
-  static inline QuantityType imag( const QuantityType& a ) noexcept
+  static inline QuantityType imag( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  /*! Test if the quantity is a nan or inf (only available for floating-point quantities)
-   */
-  static inline bool isnaninf( const QuantityType& a ) noexcept
+  //! Test if the quantity is a nan or inf 
+  static inline bool isnaninf( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Take the square root of a quantity (possible bug in boost::units::sqrt)
-  static inline typename GetQuantityToPowerType<1,2>::type sqrt( const QuantityType& quantity ) noexcept
+  //! Take the square root of a quantity 
+  static inline typename GetQuantityToPowerType<1,2>::type sqrt( const QuantityType& quantity )
+  { return UndefinedQuantityTraits<T>::notDefined(); }
+
+  //! Take the cube root of a quantity
+  static inline typename GetQuantityToPowerType<1,3>::type cbrt( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Take a quantity to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
-  static inline typename GetQuantityToPowerType<N,D>::type rpow( const QuantityType& quantity ) noexcept
+  static inline typename GetQuantityToPowerType<N,D>::type rpow( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Initialize a quantity (potentially dangerous!)
@@ -217,7 +226,43 @@ inline Quantity abs( const Quantity& quantity )
   return QuantityTraits<Quantity>::abs( quantity );
 }
 
-/*! This function is a shortcut to the the sqrt QuantityTraits function
+/*! This function is a shortcut to the conj QuantityTraits function
+ * \ingroup quantity_traits
+ */
+template<typename Quantity>
+inline Quantity conj( const Quantity& a )
+{ 
+  return QuantityTraits<Quantity>::conj( a );
+}
+
+/*! This function is a shortcut to the real QuantityTraits function
+ * \ingroup quantity_traits
+ */
+template<typename Quantity>
+inline Quantity real( const Quantity& a )
+{
+  return QuantityTraits<Quantity>::real( a );
+}
+
+/*! This function is a shortcut to the imag QuantityTraits function
+ * \ingroup quantity_traits
+ */
+template<typename Quantity>
+inline Quantity imag( const Quantity& a )
+{
+  return QuantityTraits<Quantity>::imag( a );
+}
+
+/*! This function is a shortcut to the isnaninf QuantityTraits function
+ * \ingroup quantity_traits
+ */
+template<typename Quantity>
+inline bool isnaninf( const Quantity& a )
+{
+  return QuantityTraits<Quantity>::isnaninf( a );
+}
+
+/*! This function is a shortcut to the sqrt QuantityTraits function
  * \ingroup quantity_traits
  */
 template<typename Quantity>
@@ -226,6 +271,16 @@ sqrt( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::sqrt( quantity );
 }
+
+/*! This function is a shortcut to the cbrt QuantityTraits function
+ * \ingroup quantity_traits
+ */
+template<typename Quantity>
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,3>::type
+cbrt( const Quantity& quantity )
+{
+  return QuantityTraits<Quantity>::cbrt( quantity );
+}  
 
 /*! This function is a shortcut to the rpow QuantityTraits function (rational pow)
  * \ingroup quantity_traits

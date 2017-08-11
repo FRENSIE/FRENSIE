@@ -49,7 +49,7 @@ struct UnitTraits
   //! The inverse unit type
   typedef T InverseUnit;
 
-  //! The unit raised to power N/D type
+  //! The unit raised to rational power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
   {
@@ -67,6 +67,10 @@ struct UnitTraits
   template<typename U>
   struct GetQuantityType
   { typedef U type; };
+
+  //! Check if the unit is dimensionless
+  static inline bool isDimensionless()
+  { return UndefinedUnitTraits<T>::notDefined(); }
 
   //! The name string
   static inline std::string name()

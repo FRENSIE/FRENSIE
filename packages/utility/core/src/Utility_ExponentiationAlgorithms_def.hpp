@@ -50,32 +50,15 @@ recursive( const BaseScalarType x, const ExponentOrdinalType y )
 }
 
 // Recursive exponentiation algorithm (static)
+/*! \details The value x^N will be computed in log(N) multiplications.
+ */
 template<size_t N, typename BaseScalarType>
-typename std::enable_if<(N>0 && N%2 == 0),typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type>::type
+typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type
 recursive( const BaseScalarType x )
 {
-  auto z = recursive<N/2>( x );
-
-  return z*z;
-}
-
-//! Recursive exponentiation algorithm (static)
-template<size_t N, typename BaseScalarType>
-typename std::enable_if<(N>0 && N%2 == 1),typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type>::type
-recursive( const BaseScalarType x )
-{
-  auto z = recursive<N/2>( x );
-
-  return x*z*z;
-}
-  
-template<size_t N, typename BaseScalarType>
-typename std::enable_if<N==0,typename QuantityTraits<BaseScalarType>::RawType>::type
-recursive( const BaseScalarType x )
-{
-  typedef typename QuantityTraits<BaseScalarType>::RawType ReturnType;
-  
-  return QuantityTraits<ReturnType>::one();
+  // Recursive exponentiation hase been implemented by the rpow method for
+  // the special case of positive integer powers
+  return QuantityTraits<BaseScalarType>::rpow<N>( x );
 }
 
 // Recursive modular exponentiation algorithm

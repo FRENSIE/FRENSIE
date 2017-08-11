@@ -18,6 +18,7 @@
 #include <boost/units/quantity.hpp>
 #include <boost/units/io.hpp>
 #include <boost/units/dimensionless_unit.hpp>
+#include <boost/units/is_dimensionless.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTraitsDecl.hpp"
@@ -30,31 +31,42 @@ namespace Utility{
 template<typename Dim, typename Sys>
 struct UnitTraits<boost::units::unit<Dim,Sys> >
 {
+  //! The unit type
   typedef boost::units::unit<Dim,Sys> Unit;
+
+  //! The dimension of the unit
   typedef Dim Dimension;
+
+  //! The unit system that the unit belongs to
   typedef Sys System;
 
+  //! The inverse unit type
   typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<-1> >::type InverseUnit;
 
+  //! The unit raised to rational power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
   {
-    typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<N,D> >::type type;
+    typedef typename std::conditional<N!=0,typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<N,D> >::type,void>::type type;
   };
 
+  //! The unit multiplied by another unit type
   template<typename OtherUnit>
   struct GetMultipliedUnitType
   {
     typedef typename std::conditional<std::is_same<OtherUnit,void>::value,Unit,typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type>::type type;
   };
 
+  //! The wrapped quantity type associated with the unit and value type T
   template<typename T>
   struct GetQuantityType
   { typedef boost::units::quantity<Unit,T> type; };
 
+  //! The name string
   static inline std::string name()
   { return boost::units::name_string( Unit() ); }
 
+  //! The symbol string
   static inline std::string symbol()
   { return boost::units::symbol_string( Unit() ); }
 };
@@ -68,13 +80,13 @@ struct UnitTraits<boost::units::unit<Dim,Sys> >
 template<>
 struct UnitTraits<void>
 {
-  //! The dimensionless unit
+  // The dimensionless unit
   //typedef boost::units::dimensionless_unit<boost::units::make_system<>::type>::type UnitType;
   typedef void Unit;
   typedef void Dimension;
   typedef void System;
   typedef void InverseUnit;
-
+  
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
   {
