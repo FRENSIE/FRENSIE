@@ -29,6 +29,69 @@ namespace Utility{
 
 namespace Details{
 
+/*! The to floating-point helper
+ * \ingroup quantity_traits
+ */
+template<typename T, typename Enabled = void>
+struct ToFloatingPointHelper;
+
+/*! Partial specialization of the ToFloatingPointHelper for floating-point 
+ * types
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct ToFloatingPointHelper<T,typename std::enable_if<std::is_floating_point<T>::value>::type>
+{
+  typedef T type;
+};
+
+/*! Partial specialization of the ToFloatingPointHelper for <= 32-bit integral
+ * types
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct ToFloatingPointHelper<T,typename std::enable_if<sizeof(T)<=sizeof(float) && std::is_integral<T>::value>::type>
+{
+  typedef float type;
+};
+
+/*! \brief Partial specialization of the ToFloatingPointHelper for > 32-bit 
+ * integral types
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct ToFloatingPointHelper<T,typename std::enable_if<sizeof(T)>=sizeof(float) && std::is_integral<T>::value>::type>
+{
+  typedef double type;
+};
+
+/*! Partial specialization of the ToFloatingPointHelper for std::complex types
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct ToFloatingPointHelper<std::complex<T> >
+{
+  typedef std::complex<typename ToFloatingPointHelper<T>::type> type;
+};
+
+/*! The to basic type helper
+ * \ingroup quantity_traits
+ */
+template<typename T, typename Enabled = void>
+struct ToBasicTypeHelper
+{
+  typedef T BasicType;
+};
+
+/*! Partial specialization of ToBasicTypeHelper for std::complex
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct ToBasicTypeHelper<std::complex<T> >
+{
+  typedef T BasicType;
+};
+
 /*! The raw rational power helper
  * \ingroup quantity_traits
  */
@@ -38,9 +101,15 @@ template<boost::units::integer_type N,
          typename Enabled = void>
 struct RawRationalPowerHelper
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the value raised to the rational power N/D
-  static inline T calculateRationalPower( const T& value )
-  { return std::pow( value, static_cast<double>( N )/D ); }
+  static inline ReturnType calculateRationalPower( const T& value )
+  {
+    return std::pow( static_cast<ReturnType>( value ),
+                     static_cast<ReturnType>( N )/D );
+  }
 };
 
 /*! The partial specialization of the RawRationalPowerHelper for D==0
@@ -58,9 +127,12 @@ struct RawRationalPowerHelper<N,0,T>;
 template<boost::units::integer_type D, typename T>
 struct RawRationalPowerHelper<0,D,T, typename std::enable_if<D!=0>::type>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the value raised to 0
-  static inline T calculateRationalPower( const T& value )
-  { return T(1); }
+  static inline ReturnType calculateRationalPower( const T& value )
+  { return static_cast<ReturnType>(1); }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N==D, N!=0, D!=0
@@ -69,9 +141,12 @@ struct RawRationalPowerHelper<0,D,T, typename std::enable_if<D!=0>::type>
 template<boost::units::integer_type I, typename T>
 struct RawRationalPowerHelper<I, I, T, typename std::enable_if<I!=0>::type>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the value raised to the rational power N/D
-  static inline T calculateRationalPower( const T& value )
-  { return value; }
+  static inline ReturnType calculateRationalPower( const T& value )
+  { return static_cast<ReturnType>(value); }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N>1, N%2==0, D==1
@@ -84,10 +159,15 @@ struct RawRationalPowerHelper<I, I, T, typename std::enable_if<I!=0>::type>
 template<boost::units::integer_type N, typename T>
 struct RawRationalPowerHelper<N, 1, T, typename std::enable_if<(N>1 && N%2==0)>::type>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the value raised to the integer power N
-  static inline T calculateRationalPower( const T& value )
+  static inline ReturnType calculateRationalPower( const T& value )
   {
-    T tmp_value = RawRationalPowerHelper<N/2,1,T>::calculateRationalPower( value );
+    ReturnType tmp_value =
+      RawRationalPowerHelper<N/2,1,T>::calculateRationalPower( value );
+    
     return tmp_value*tmp_value;
   }
 };
@@ -102,10 +182,15 @@ struct RawRationalPowerHelper<N, 1, T, typename std::enable_if<(N>1 && N%2==0)>:
 template<boost::units::integer_type N, typename T>
 struct RawRationalPowerHelper<N, 1, T, typename std::enable_if<(N>1 && N%2==1)>::type>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the value raised to the integer power N
-  static inline T calculateRationalPower( const T& value )
+  static inline ReturnType calculateRationalPower( const T& value )
   {
-    T tmp_value = RawRationalPowerHelper<N/2,1,T>::calculateRationalPower( value );
+    ReturnType tmp_value =
+      RawRationalPowerHelper<N/2,1,T>::calculateRationalPower( value );
+    
     return tmp_value*tmp_value*value;
   }
 };
@@ -129,8 +214,11 @@ struct RawRationalPowerHelper<N, D, T, typename std::enable_if<(N>1 && D>1 && N>
 template<typename T>
 struct RawRationalPowerHelper<1,2,T>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the square root of the value
-  static inline T calculateRationalPower( const T& value )
+  static inline ReturnType calculateRationalPower( const T& value )
   { return std::sqrt( value ); }
 };
 
@@ -142,9 +230,12 @@ struct RawRationalPowerHelper<1,2,T>
 template<typename T>
 struct RawRationalPowerHelper<1,3,T>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the cubed root of the value
-  static inline T calculateRationalPower( const T& value )
-  { return std::cbrt( value ); }
+  static inline ReturnType calculateRationalPower( const T& value )
+  { return std::cbrt( static_cast<ReturnType>(value) ); }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N>1,D>1,N<D,N%D==0
@@ -170,9 +261,14 @@ template<boost::units::integer_type N,
          typename T>
 struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(N<0 && D>0)>::type>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the value raised to the rational power -(N/D)
-  static inline T calculateRationalPower( const T& value )
-  { return 1/RawRationalPowerHelper<-N,D,T>::calculateRationalPower( value ); }
+  static inline ReturnType calculateRationalPower( const T& value )
+  {
+    return static_cast<ReturnType>(1)/RawRationalPowerHelper<-N,D,T>::calculateRationalPower( value );
+  }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N>0, D<0
@@ -187,9 +283,14 @@ template<boost::units::integer_type N,
          typename T>
 struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(N>0 && D<0)>::type>
 {
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
   //! Calculate the value raised to the rational power -(N/D)
-  static inline T calculateRationalPower( const T& value )
-  { return 1/RawRationalPowerHelper<N,-D,T>::calculateRationalPower( value ); }
+  static inline ReturnType calculateRationalPower( const T& value )
+  {
+    return static_cast<ReturnType>(1)/RawRationalPowerHelper<N,-D,T>::calculateRationalPower( value );
+  }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N<0, D<0
@@ -216,7 +317,7 @@ struct TrueOrFalseType : public std::conditional<is_true,std::true_type,std::fal
  * Only use this struct with arithmetic types
  * \ingroup quantity_traits
  */
-template<typename T>
+template<typename T, typename Enabled = void>
 struct QuantityTraitsGeneralHelperBase
 {
   //! The traits class for this quantity is specialized
@@ -322,45 +423,33 @@ protected:
   static inline T rawLowest() noexcept
   { return std::numeric_limits<T>::lowest(); }
 
-  //! Get the machine epsilon 
-  static inline T rawEpsilon() noexcept
-  { return std::numeric_limits<T>::epsilon(); }
-
-  //! Get the maximum rounding error
-  static inline T rawRoundError() noexcept
-  { return std::numeric_limits<T>::round_error(); }
-
-  //! Get the quiet nan quantity 
-  static inline T rawNan() noexcept
-  { return std::numeric_limits<T>::quiet_NaN(); }
-
-  //! Get the signaling nan quantity (only available for floating-point quantities)
-  static inline T rawSignalingNan() noexcept
-  { return std::numeric_limits<T>::signaling_NaN(); }
+  //! Get the absolute value of the given value
+  static inline typename ToFloatingPointHelper<T>::type rawAbs( const T value )
+  { return std::fabs( value ); }
 
   //! Get the conjugate of a value
-  static inline T rawConj( const T a ) noexcept
-  { return a; }
+  static inline typename ToFloatingPointHelper<T>::type rawConj( const T a )
+  { return static_cast<typename ToFloatingPointHelper<T>::type>(a); }
 
   //! Get the real part of the value
-  static inline T rawReal( const T a ) noexcept
-  { return a; }
+  static inline typename ToFloatingPointHelper<T>::type rawReal( const T a ) noexcept
+  { return static_cast<typename ToFloatingPointHelper<T>::type>(a); }
 
   //! Get the imaginary part of the value
   static inline T rawImag( const T a ) noexcept
-  { return ThisType::zero(); }
+  { return static_cast<typename ToFloatingPointHelper<T>::type>(0); }
 
   //! Take the square root of a value 
-  static inline T rawSqrt( const T a )
-  { return std::sqrt( a ); }
+  static inline typename ToFloatingPointHelper<T>::type rawSqrt( const T a )
+  { return std::sqrt( static_cast<typename ToFloatingPointHelper<T>::type>(a) ); }
 
   //! Take the cube root of a value
-  static inline T rawCbrt( const T a )
-  { return std::cbrt( a ); }
+  static inline typename ToFloatingPointHelper<T>::type rawCbrt( const T a )
+  { return std::cbrt( static_cast<typename ToFloatingPointHelper<T>::type>(a) ); }
 
   //! Take a value to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
-  static inline T rawRpow( const T a )
+  static inline typename ToFloatingPointHelper<T>::type rawRpow( const T a )
   { return RawRationalPowerHelper<N,D,T>::calculateRationalPower( a ); }
 };
 
@@ -404,45 +493,33 @@ protected:
   static inline std::complex<T> rawLowest() noexcept
   { return std::complex<T>(BaseType::rawLowest(), BaseType::rawZero()); }
 
-  //! Get the machine epsilon 
-  static inline std::complex<T> rawEpsilon() noexcept
-  { return std::complex<T>(BaseType::rawEpsilon(), BaseType::rawZero()); }
+  //! Get the absolute value (magnitude) of the given complex value
+  static inline typename ToFloatingPointHelper<T>::type rawAbs( const std::complex<T>& a ) noexcept
+  { return std::abs( std::complex<typename ToFloatingPointHelper<T>::type>(a) ); }
 
-  //! Get the maximum rounding error
-  static inline std::complex<T> rawRoundError() noexcept
-  { return std::complex<T>(BaseType::rawRoundError(), BaseType::rawZero()); }
-
-  //! Get the quiet nan quantity 
-  static inline std::complex<T> rawNan() noexcept
-  { return std::complex<T>(BaseType::rawNan(), BaseType::rawZero()); }
-
-  //! Get the signaling nan quantity (only available for floating-point quantities)
-  static inline std::complex<T> rawSignalingNan() noexcept
-  { return std::complex<T>(BaseType::rawSignalingNan(), BaseType::rawZero()); }
-
-  //! Get the conjugate of a quantity
-  static inline std::complex<T> rawConj( const std::complex<T>& a )
-  { return std::conj( a ); }
+  //! Get the conjugate of a value
+  static inline std::complex<typename ToFloatingPointHelper<T>::type> rawConj( const std::complex<T>& a )
+  { return std::conj( std::complex<typename ToFloatingPointHelper<T>::type>(a) ); }
 
   //! Get the real part of the quantity
-  static inline std::complex<T> rawReal( const std::complex<T>& a )
-  { return std::complex<T>(std::real( a ), BaseType::rawZero()); }
+  static inline typename ToFloatingPointHelper<T>::type rawReal( const std::complex<T>& a )
+  { return std::real( a ); }
 
   //! Get the imaginary part of the quantity
-  static inline std::complex<T> rawImag( const std::complex<T>& a )
-  { return std::complex<T>(BaseType::rawZero(), std::imag( a )); }
+  static inline typename ToFloatingPointHelper<T>::type rawImag( const std::complex<T>& a )
+  { return std::imag( a ); }
 
   //! Take the square root of a value 
-  static inline std::complex<T> rawSqrt( const std::complex<T>& a )
-  { return std::sqrt( a ); }
-
+  static inline std::complex<typename ToFloatingPointHelper<T>::type> rawSqrt( const std::complex<T>& a )
+  { return std::sqrt( std::complex<typename ToFloatingPointHelper<T>::type>(a) ); }
+  
   //! Take the cube root of a value
-  static inline std::complex<T> rawCbrt( const std::complex<T>& a )
-  { return std::cbrt( a ); }
+  static inline std::complex<typename ToFloatingPointHelper<T>::type> rawCbrt( const std::complex<T>& a )
+  { return std::cbrt( std::complex<typename ToFloatingPointHelper<T>::type>(a) ); }
 
   //! Take a value to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
-  static inline std::complex<T> rawRpow( const std::complex<T>& a )
+  static inline std::complex<typename ToFloatingPointHelper<T>::type> rawRpow( const std::complex<T>& a )
   { return RawRationalPowerHelper<N,D,std::complex<T> >::calculateRationalPower( a ); }
 };
 
@@ -465,18 +542,32 @@ private:
   // Typedef for this type
   typedef QuantityTraitsHelperBase<T,typename std::enable_if<std::is_floating_point<T>::value>::type> ThisType;
 
+  // Friend class
+  friend class QuantityTraitsHelperBase<std::complex<T> >;
+
 protected:
+
+    //! Get the machine epsilon 
+  static inline T rawEpsilon() noexcept
+  { return std::numeric_limits<T>::epsilon(); }
+
+  //! Get the maximum rounding error
+  static inline T rawRoundError() noexcept
+  { return std::numeric_limits<T>::round_error(); }
 
   //! Get the inf value
   static inline T rawInf() noexcept
   { return std::numeric_limits<T>::infinity(); }
 
-  //! Get the absolute value of the given value
-  static inline T rawAbs( const T value )
-  { return fabs( value ); }
+  //! Get the quiet nan quantity 
+  static inline T rawNan() noexcept
+  { return std::numeric_limits<T>::quiet_NaN(); }
 
-  /*! Test if the value is a nan or inf (only available for floating-point quantities)
-   */
+  //! Get the signaling nan quantity (only available for floating-point quantities)
+  static inline T rawSignalingNan() noexcept
+  { return std::numeric_limits<T>::signaling_NaN(); }
+
+  //! Test if the value is a nan or inf 
   static inline bool rawIsnaninf( const T a )
   {
     // Check for nan
@@ -498,81 +589,66 @@ protected:
  */
 template<typename T>
 struct QuantityTraitsHelperBase<T,typename std::enable_if<std::is_integral<T>::value>::type> : public QuantityTraitsGeneralHelperBase<T>
-{
-private:
-
-  // Typedef for this type
-  typedef QuantityTraitsHelperBase<T,typename std::enable_if<std::is_integral<T>::value>::type> ThisType;
-  
-protected:
-
-  //! Get the inf value (simply the max value for integral types)
-  static inline T rawInf() noexcept
-  { return std::numeric_limits<T>::max(); }
-  
-  //! Get the absolute value of the given value
-  static inline T rawAbs( const T value )
-  { return std::abs( value ); }
-
-  //! Test if the quantity is a nan or inf
-  static inline bool rawIsnaninf( const T a )
-  {
-    // Check for nan
-    if( ThisType::has_quiet_nan::value )
-    {
-      if( a != a )
-        return true;
-    }
-
-    // Check for inf
-    if( ThisType::has_infinity::value )
-    {
-      if( ThisType::rawAbs( a ) == ThisType::rawInf() )
-        return true;
-    }
-
-    // Neither nan nor inf
-    return false;
-  }
-};
+{ /* ... */ };
 
 /*! \brief The QuantityTraitsHelperBase partial specialization for std::complex
- * types
+ * floating-point types
  * \ingroup quantity_traits
  */
 template<typename T>
-struct QuantityTraitsHelperBase<std::complex<T> > : public QuantityTraitsGeneralHelperBase<std::complex<T> >
+struct QuantityTraitsHelperBase<std::complex<T>, typename std::enable_if<std::is_floating_point<T>::value>::type> : public QuantityTraitsGeneralHelperBase<std::complex<T> >
 {
 private:
 
-  // Typedef for base type of T (parallel base type
+  // Typedef for base type of T (parallel base type)
   typedef QuantityTraitsHelperBase<T> ParallelBaseType;
   
 protected:
+
+  //! Get the machine epsilon 
+  static inline std::complex<T> rawEpsilon() noexcept
+  { return std::complex<T>(ParallelBaseType::rawEpsilon(), ParallelBaseType::rawZero()); }
+
+  //! Get the maximum rounding error
+  static inline std::complex<T> rawRoundError() noexcept
+  { return std::complex<T>(ParallelBaseType::rawRoundError(), ParallelBaseType::rawZero()); }
 
   //! Get the inf quantity
   static inline std::complex<T> rawInf() noexcept
   { return std::complex<T>(ParallelBaseType::rawInf(), ParallelBaseType::rawZero()); }
 
-  //! Get the absolute value (magnitude) of the given complex value
-  static inline std::complex<T> rawAbs( const std::complex<T>& a ) noexcept
-  { return std::complex<T>( std::abs( a ), ParallelBaseType::rawZero() ); }
+  //! Get the quiet nan quantity 
+  static inline std::complex<T> rawNan() noexcept
+  { return std::complex<T>(ParallelBaseType::rawNan(), ParallelBaseType::rawZero()); }
+
+  //! Get the signaling nan quantity (only available for floating-point quantities)
+  static inline std::complex<T> rawSignalingNan() noexcept
+  { return std::complex<T>(ParallelBaseType::rawSignalingNan(), ParallelBaseType::rawZero()); }
 
   //! Test if the either the real or complex component of the value is a nan or inf 
   static inline bool rawIsnaninf( const std::complex<T>& a )
   {
     return ParallelBaseType::rawIsnaninf( std::real( a ) ) ||
-      ParallelBaseType::rawIsNaninf( std::imag( a ) );
+      ParallelBaseType::rawIsnaninf( std::imag( a ) );
   }
 };
 
-/*! The QuantityTraitsRawTypeHelperBase
- * \details Only use this struct with raw (unitless) types
+/*! \brief The QuantityTraitsHelperBase partial specialization for std::complex
+ * signed integral types
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct QuantityTraitsHelperBase<std::complex<T>, typename std::enable_if<std::is_integral<T>::value>::type> : public QuantityTraitsGeneralHelperBase<std::complex<T> >
+{ /* ... */ };
+  
+/*! The QuantityTraitsRawTypeHelper
+ * \details Only use with raw (unitless) types.
  * \ingroup quantity_traits
  */
 template<typename T, typename Enabled = void>
 struct QuantityTraitsRawTypeHelper : public QuantityTraitsHelperBase<T>
 {
+
 private:
 
   // Typedef for the base type
@@ -586,13 +662,25 @@ public:
   //! The raw quantity type (no units)
   typedef T RawType;
 
+  //! The raw floating-point quantity type (no units)
+  typedef typename ToFloatingPointHelper<T>::type RawFloatingPointType;
+
+  //! The basic raw floating-point quantity type (no units)
+  typedef typename ToBasicType<RawFloatingPointType>::type BasicRawFloatingPointType;
+
   //! The quantity type
   typedef T QuantityType;
+
+  //! The floating-point quantity type
+  typedef RawFloatingPointType FloatingPointQuantityType;
+
+  //! The basic floating-point quantity type
+  typedef BasicRawFloatingPointType BasicFloatingPointQuantityType;
 
   //! The quantity raised to rational power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType
-  { typedef T type; };
+  { typedef FloatingPointQuantityType type; };
 
   //! Get the zero quantity
   static inline QuantityType zero() noexcept
@@ -618,56 +706,32 @@ public:
   static inline QuantityType lowest() noexcept
   { return BaseType::rawLowest(); }
 
-  //! Get the machine epsilon 
-  static inline QuantityType epsilon() noexcept
-  { return BaseType::rawEpsilon(); }
-
-  //! Get the maximum rounding error
-  static inline QuantityType roundError() noexcept
-  { return BaseType::rawRoundError(); }
-
-  //! Get the inf quantity 
-  static inline QuantityType inf() noexcept
-  { return BaseType::rawInf(); }
-
-  //! Get the quiet nan quantity 
-  static inline QuantityType nan() noexcept
-  { return BaseType::rawNan(); }
-
-  //! Get the signaling nan quantity (only available for floating-point quantities)
-  static inline QuantityType signalingNan() noexcept
-  { return BaseType::rawSignalingNan(); }
-
   //! Get the absolute value of a quantity
-  static inline QuantityType abs( const QuantityType& a )
-  { return BaseType::rawAbs( a.value() ); }
+  static inline BasicFloatingPointQuantityType abs( const QuantityType& a )
+  { return BaseType::rawAbs( a ); }
 
   //! Get the complex conjugate of the quantity
-  static inline QuantityType conj( const QuantityType& a )
-  { return BaseType::rawConj( a.value() ); }
+  static inline FloatingPointQuantityType conj( const QuantityType& a )
+  { return BaseType::rawConj( a ); }
 
   //! Get the real component of the quantity
-  static inline QuantityType real( const QuantityType& a )
-  { return BaseType::rawReal( a.value() ); }
+  static inline BasicFloatingPointQuantityType real( const QuantityType& a )
+  { return BaseType::rawReal( a ); }
 
   //! Get the imaginary component of the quantity
-  static inline QuantityType imag( const QuantityType& a )
-  { return BaseType::rawImag( a.value() ); }
-
-  //! Test if the quantity is a nan or inf 
-  static inline bool isnaninf( const QuantityType& a )
-  { return BaseType::rawIsnaninf( a ); }
+  static inline BasicFloatingPointQuantityType imag( const QuantityType& a )
+  { return BaseType::rawImag( a ); }
 
   //! Get the square root of the quantity
-  static inline QuantityType sqrt( const QuantityType& a )
+  static inline FloatingPointQuantityType sqrt( const QuantityType& a )
   { return BaseType::rawSqrt( a ); }
 
   //! Get the cube root of the quantity
-  static inline QuantityType cbrt( const QuantityType& a )
+  static inline FloatingPointQuantityType cbrt( const QuantityType& a )
   { return BaseType::rawCbrt( a ); }
 
   template<boost::units::integer_type N, boost::units::integer_type D>
-  static inline QuantityType rpow( const QuantityType& a ) noexcept
+  static inline FloatingPointQuantityType rpow( const QuantityType& a ) noexcept
   { return BaseType::rawRpow( a ); }
   
   //! Potentially dangerous to initialize quantities in this way!
@@ -756,22 +820,34 @@ private:
   typedef QuantityTraitsHelperBase<T> BaseType;
 
 public:
-  
+
   //! The unit type
   typedef Unit UnitType;
 
   //! The raw quantity type (no units)
   typedef T RawType;
 
+  //! The raw floating-point quantity type (no units)
+  typedef typename ToFloatingPointHelper<T>::type RawFloatingPointType;
+
+  //! The basic raw floating-point quantity type (no units)
+  typedef typename ToBasicType<RawFloatingPointType>::type BasicRawFloatingPointType;
+
   //! The quantity type
   typedef boost::units::quantity<Unit,T> QuantityType;
+
+  //! The floating-point quantity type
+  typedef boost::units::quantity<Unit,RawFloatingPointType> FloatingPointQuantityType;
+
+  //! The basic floating-point quantity type
+  typedef boost::units::quantity<Unit,BasicRawFloatingPointType> BasicFloatingPointQuantityType;
 
   //! The quantity raised to rational power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType
   {
     //typedef typename std::conditional<N==D,QuantityType,typename boost::units::power_typeof_helper<QuantityType,boost::units::static_rational<N,D> >::type>::type type;
-    typedef typename QuantityToPowerTypeHelper<N,D,QuantityType>::QuantityToRpowType type;
+    typedef typename QuantityToPowerTypeHelper<N,D,FloatingPointQuantityType>::QuantityToRpowType type;
   };
 
   //! Get the zero quantity
@@ -798,41 +874,21 @@ public:
   static inline QuantityType lowest() noexcept
   { return QuantityType::from_value( BaseType::rawLowest() ); }
 
-  //! Get the machine epsilon 
-  static inline QuantityType epsilon() noexcept
-  { return QuantityType::from_value( BaseType::rawEpsilon() ); }
-
-  //! Get the maximum rounding error
-  static inline QuantityType roundError() noexcept
-  { return QuantityType::from_value( BaseType::rawRoundError() ); }
-
-  //! Get the inf quantity 
-  static inline QuantityType inf() noexcept
-  { return QuantityType::from_value( BaseType::rawInf() ); }
-
-  //! Get the quiet nan quantity 
-  static inline QuantityType nan() noexcept
-  { return QuantityType::from_value( BaseType::rawNan() ); }
-
-  //! Get the signaling nan quantity (only available for floating-point quantities)
-  static inline QuantityType signalingNan() noexcept
-  { return QuantityType::from_value( BaseType::rawSignalingNan() ); }
-
   //! Get the absolute value of a quantity
-  static inline QuantityType abs( const QuantityType& a )
-  { return QuantityType::from_value( BaseType::rawAbs( a.value() ) ); }
+  static inline BasicFloatingPointQuantityType abs( const QuantityType& a )
+  { return BasicFloatingPointQuantityType::from_value( BaseType::rawAbs( a.value() ) ); }
 
   //! Get the complex conjugate of the quantity
-  static inline QuantityType conj( const QuantityType& a )
-  { return QuantityType::from_value( BaseType::rawConj( a.value() ) ); }
+  static inline FloatingPointQuantityType conj( const QuantityType& a )
+  { return FloatingPointQuantityType::from_value( BaseType::rawConj( a.value() ) ); }
 
   //! Get the real component of the quantity
-  static inline QuantityType real( const QuantityType& a )
-  { return QuantityType::from_value( BaseType::rawReal( a.value() ) ); }
+  static inline BasicFloatingPointQuantityType real( const QuantityType& a )
+  { return BasicFloatingPointQuantityType::from_value( BaseType::rawReal( a.value() ) ); }
 
   //! Get the imaginary component of the quantity
-  static inline QuantityType imag( const QuantityType& a )
-  { return QuantityType::from_value( BaseType::rawImag( a.value() ) ); }
+  static inline BasicFloatingPointQuantityType imag( const QuantityType& a )
+  { return BasicFloatingPointQuantityType::from_value( BaseType::rawImag( a.value() ) ); }
 
   //! Test if the quantity is a nan or inf 
   static inline bool isnaninf( const QuantityType& a )
@@ -856,7 +912,7 @@ public:
   //! Take the quantity to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
   static inline typename GetQuantityToPowerType<N,D>::type rpow( const QuantityType& quantity )
-  { return QuantityToPowerTypeHelper<N,D,QuantityType>::rpow( quantity ); }
+  { return QuantityToPowerTypeHelper<N,D,FloatingPointQuantityType>::rpow( quantity ); }
   
   //! Potentially dangerous to initialize quantities in this way!
   static inline QuantityType initializeQuantity( const RawType& raw_quantity ) noexcept
@@ -874,7 +930,7 @@ public:
 
 } // end Details namespace
 
-/*! \brief The partial specialization of QuantityTraits for all arithmetic 
+/*! \brief The partial specialization of QuantityTraits for all floating-point 
  * types (no units).
  *
  * Note: having no units is different than a dimensionless unit, which is a
@@ -882,26 +938,196 @@ public:
  * \ingroup quantity_traits
  */
 template<typename T>
-struct QuantityTraits<T,typename std::enable_if<std::is_arithmetic<T>::value>::type> : public Details::QuantityTraitsRawTypeHelper<T>
-{ /* ... */ };
+struct QuantityTraits<T,typename std::enable_if<std::is_floating_point<T>::value>::type> : public Details::QuantityTraitsRawTypeHelper<T>
+{
+private:
+  
+  // Typedef for the base type
+  typedef Details::QuantityTraitsRawTypeHelper<std::complex<T> > BaseType;
+  
+public:
+  
+  //! Get the machine epsilon 
+  static inline BaseType::QuantityType epsilon() noexcept
+  { return BaseType::rawEpsilon(); }
 
-/*! The partial specialization of QuantityTraits for all std::complex types 
- * (no units).
+  //! Get the maximum rounding error
+  static inline BaseType::QuantityType roundError() noexcept
+  { return BaseType::rawRoundError(); }
+
+  //! Get the inf quantity 
+  static inline BaseType::QuantityType inf() noexcept
+  { return BaseType::rawInf(); }
+
+  //! Get the quiet nan quantity 
+  static inline BaseType::QuantityType nan() noexcept
+  { return BaseType::rawNan(); }
+
+  //! Get the signaling nan quantity (only available for floating-point quantities)
+  static inline BaseType::QuantityType signalingNan() noexcept
+  { return BaseType::rawSignalingNan(); }
+
+  //! Test if the quantity is a nan or inf 
+  static inline bool isnaninf( const QuantityType& a )
+  { return BaseType::rawIsnaninf( a ); }
+};
+
+/*! \brief The partial specialization of QuantityTraits for all integral 
+ * types (no units).
  *
  * Note: having no units is different than a dimensionless unit, which is a
  * defined unit type in the boost::units package.
  * \ingroup quantity_traits
  */
 template<typename T>
-struct QuantityTraits<std::complex<T>,typename std::enable_if<std::is_arithmetic<T>::value>::type> : public Details::QuantityTraitsRawTypeHelper<std::complex<T> >
+struct QuantityTraits<T,typename std::enable_if<std::is_integral<T>::value>::type> : public Details::QuantityTraitsRawTypeHelper<T>
+{ /* ... */ };
+
+/*! The partial specialization of QuantityTraits for all std::complex 
+ * floating-point types (no units).
+ *
+ * Note: having no units is different than a dimensionless unit, which is a
+ * defined unit type in the boost::units package.
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct QuantityTraits<std::complex<T>,typename std::enable_if<std::is_floating_point<T>::value>::type> : public Details::QuantityTraitsRawTypeHelper<std::complex<T> >
+{
+private:
+  
+  // Typedef for the base type
+  typedef Details::QuantityTraitsRawTypeHelper<std::complex<T> > BaseType;
+  
+public:
+
+  //! Get the machine epsilon 
+  static inline BaseType::QuantityType epsilon() noexcept
+  { return BaseType::rawEpsilon(); }
+
+  //! Get the maximum rounding error
+  static inline BaseType::QuantityType roundError() noexcept
+  { return BaseType::rawRoundError(); }
+
+  //! Get the inf quantity 
+  static inline BaseType::QuantityType inf() noexcept
+  { return BaseType::rawInf(); }
+
+  //! Get the quiet nan quantity 
+  static inline BaseType::QuantityType nan() noexcept
+  { return BaseType::rawNan(); }
+
+  //! Get the signaling nan quantity (only available for floating-point quantities)
+  static inline BaseType::QuantityType signalingNan() noexcept
+  { return BaseType::rawSignalingNan(); }
+
+  //! Test if the quantity is a nan or inf 
+  static inline bool isnaninf( const QuantityType& a )
+  { return BaseType::rawIsnaninf( a ); }
+};
+
+/*! \brief The partial specialization of QuantityTraits for all std::complex 
+ * integral types (no units).
+ *
+ * Note: having no units is different than a dimensionless unit, which is a
+ * defined unit type in the boost::units package.
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct QuantityTraits<std::complex<T>,typename std::enable_if<std::is_integral<T>::value>::type> : public Details::QuantityTraitsRawTypeHelper<std::complex<T> >
 { /* ... */ };
 
 /*! \brief The partial specialization of QuantityTraits for all
- * boost::units::quantity types
+ * boost::units::quantity of floating-point types
  * \ingroup quantity_traits
  */
 template<typename Unit, typename T>
-struct QuantityTraits<boost::units::quantity<Unit,T> > : public Details::QuantityTraitsQuantityTypeHelper<boost::units::quantity<Unit,T> >
+struct QuantityTraits<boost::units::quantity<Unit,T>,typename std::enable_if<std::is_floating_point<T>::value>::type> : public Details::QuantityTraitsQuantityTypeHelper<boost::units::quantity<Unit,T> >
+{ 
+private:
+
+  // Typedef for the base type
+  typedef Details::QuantityTraitsQuantityTypeHelper<boost::units::quantity<Unit,T> > BaseType;
+
+public:
+
+  //! Get the machine epsilon 
+  static inline BaseType::QuantityType epsilon() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawEpsilon() ); }
+
+  //! Get the maximum rounding error
+  static inline BaseType::QuantityType roundError() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawRoundError() ); }
+
+  //! Get the inf quantity 
+  static inline BaseType::QuantityType inf() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawInf() ); }
+
+  //! Get the quiet nan quantity 
+  static inline BaseType::QuantityType nan() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawNan() ); }
+
+  //! Get the signaling nan quantity (only available for floating-point quantities)
+  static inline BaseType::QuantityType signalingNan() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawSignalingNan() ); }
+
+  //! Test if the quantity is a nan or inf 
+  static inline bool isnaninf( const QuantityType& a )
+  { return BaseType::rawIsnaninf( a.value() ); }
+};
+
+/*! \brief The partial specialization of QuantityTraits for all 
+ * boost::units::integral types.
+ * \ingroup quantity_traits
+ */
+template<typename Unit, typename T>
+struct QuantityTraits<boost::units::quantity<Unit,T>,typename std::enable_if<std::is_integral<T>::value>::type> : public Details::QuantityTraitsQuantityTypeHelper<boost::units::quantity<Unit,T> >
+{ /* ... */ };
+
+/*! The partial specialization of QuantityTraits for all boost::units::quantity
+ * std::complex floating-point types.
+ * \ingroup quantity_traits
+ */
+template<typename Unit, typename T>
+struct QuantityTraits<boost::units::quantity<Unit,std::complex<T> >,typename std::enable_if<std::is_floating_point<T>::value>::type> : public Details::QuantityTraitsQuantityTypeHelper<boost::units::quantity<Unit,std::complex<T> > >
+{ 
+private:
+
+  // Typedef for the base type
+  typedef Details::QuantityTraitsQuantityTypeHelper<boost::units::quantity<Unit,std::complex<T> > > BaseType;
+
+public:
+
+  //! Get the machine epsilon 
+  static inline BaseType::QuantityType epsilon() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawEpsilon() ); }
+
+  //! Get the maximum rounding error
+  static inline BaseType::QuantityType roundError() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawRoundError() ); }
+
+  //! Get the inf quantity 
+  static inline BaseType::QuantityType inf() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawInf() ); }
+
+  //! Get the quiet nan quantity 
+  static inline BaseType::QuantityType nan() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawNan() ); }
+
+  //! Get the signaling nan quantity (only available for floating-point quantities)
+  static inline BaseType::QuantityType signalingNan() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawSignalingNan() ); }
+
+  //! Test if the quantity is a nan or inf 
+  static inline bool isnaninf( const QuantityType& a )
+  { return BaseType::rawIsnaninf( a.value() ); }
+};
+
+/*! \brief The partial specialization of QuantityTraits for all 
+ * boost::units::quantity std::complex integral types
+ * \ingroup quantity_traits
+ */
+template<typename Unit, typename T>
+struct QuantityTraits<boost::units::quantity<Unit,std::complex<T> >,typename std::enable_if<std::is_integral<T>::value>::type> : public Details::QuantityTraitsQuantityTypeHelper<boost::units::quantity<Unit,std::complex<T> > >
 { /* ... */ };
 
 } // end Utility namespace
