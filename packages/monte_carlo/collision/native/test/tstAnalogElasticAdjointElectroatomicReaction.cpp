@@ -159,9 +159,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         analog_elastic_distribution;
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         analog_elastic_distribution,
+        energy_grid,
         cutoff_cross_section,
         total_cross_section,
-        energy_grid,
         data_container,
         correlated_sampling_mode_on,
         evaluation_tol );

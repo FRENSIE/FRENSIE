@@ -73,11 +73,15 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
 
   if ( scattering_angle_cosine > ElasticTraits::mu_peak )
   {
+    // Normalize cutoff eval to total elastic distribution
+    double normalized_cutoff_eval = this->evaluateAtCutoff( incoming_energy )*
+                                 this->evaluateCDFAtCutoff( incoming_energy );
+
     // evaluate on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordPDF(
-                scattering_angle_cosine,
-                d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy ),
-                this->evaluatePDFAtCutoff( incoming_energy ) );
+        scattering_angle_cosine,
+        d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy ),
+        normalized_cutoff_eval );
   }
   else
   {
@@ -131,7 +135,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
        incoming_energy < d_analog_dist->getLowerBoundOfPrimaryIndepVar() )
     return 0.0;
 
-  if ( scattering_angle_cosine > ElasticTraits::mu_peak )
+  if ( scattering_angle_cosine >= ElasticTraits::mu_peak )
   {
     // evaluate CDF on the screened Rutherford distribution
     return this->evaluateScreenedRutherfordCDF(
@@ -206,8 +210,11 @@ double AnalogElasticElectronScatteringDistribution::evaluateAtCutoff(
 double AnalogElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
                     const double incoming_energy ) const
 {
-  return this->evaluateAtCutoff( incoming_energy )*
-         this->evaluateCDFAtCutoff( incoming_energy );
+  return d_analog_dist->evaluateSecondaryConditionalPDFExact(
+                                    incoming_energy, ElasticTraits::mu_peak );
+
+//  return this->evaluateAtCutoff( incoming_energy )*
+//         this->evaluateCDFAtCutoff( incoming_energy );
 }
 
 // Evaluate the CDF at the cutoff angle cosine

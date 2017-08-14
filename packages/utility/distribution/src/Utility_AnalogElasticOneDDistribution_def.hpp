@@ -513,12 +513,22 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
   // Calculate the sampled independent value
   IndepQuantity sample;
 
+  // NOTE: This method gives and sampled angle > 1 for a random number of 1
   /* mu = ( mu_c eta + ( 1 + eta )( 1 - mu_c )*random_number )/
    *      (      eta +            ( 1 - mu_c )*random_number )
    */
-  sample = ( s_cutoff_mu*d_moliere_eta +
-           (1.0L + d_moliere_eta)*s_cutoff_delta_mu*random_number ) /
-           ( d_moliere_eta + s_cutoff_delta_mu*random_number );
+//  sample = ( s_cutoff_mu*d_moliere_eta +
+//           (1.0L + d_moliere_eta)*s_cutoff_delta_mu*random_number ) /
+//           ( d_moliere_eta + s_cutoff_delta_mu*random_number );
+
+
+  double delta_rand = s_cutoff_delta_mu*random_number;
+
+  /* mu = ( eta*( mu_c + ( 1 - mu_c )*random_number ) + ( 1 - mu_c )*random_number )/
+   *      ( eta +            ( 1 - mu_c )*random_number )
+   */
+  sample = ( d_moliere_eta*( s_cutoff_mu + delta_rand ) + delta_rand )/
+           ( d_moliere_eta                              + delta_rand );
 
   // Make sure the sample is valid
   testPostcondition( !IQT::isnaninf( sample ) );

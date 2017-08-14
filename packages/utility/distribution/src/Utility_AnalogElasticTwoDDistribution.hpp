@@ -119,7 +119,7 @@ public:
                             const DistributionType& distribution,
                             const double fuzzy_boundary_tol = 1e-3,
                             const double evaluate_relative_error_tol = 1e-7,
-                            const double evaluate_error_tol = 1e-16 )
+                            const double evaluate_error_tol = 1e-12 )
     : ParentType( distribution,
                   fuzzy_boundary_tol,
                   evaluate_relative_error_tol,
@@ -138,7 +138,7 @@ public:
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
                    const double fuzzy_boundary_tol = 1e-3,
                    const double evaluate_relative_error_tol = 1e-7,
-                   const double evaluate_error_tol = 1e-16 )
+                   const double evaluate_error_tol = 1e-12 )
     : ParentType( primary_indep_grid,
                   secondary_distributions,
                   fuzzy_boundary_tol,

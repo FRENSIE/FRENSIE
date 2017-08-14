@@ -311,9 +311,9 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
      *  will always zero or inf. When this is the case the error tolerance will
      *  be used instead of the relative error tolerance.
      */
-    if ( angle_cosine == QuantityTraits<SecondaryIndepQuantity>::zero() )
+    if ( angle_cosine == SIQT::zero() )
     {
-      error_norm_constant = QuantityTraits<SecondaryIndepQuantity>::one();
+      error_norm_constant = SIQT::one();
       tolerance = d_error_tol;
     }
 
@@ -340,7 +340,9 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
             CosineProcessor::processCosineVar( upper_bin_sample ) ) );
 
       if ( angle_cosine == est_angle_cosine )
+      {
         break;
+      }
 
       // Calculate the relative error between the angle_cosine and the estimate
       rel_error = (angle_cosine - est_angle_cosine )/error_norm_constant;
@@ -353,7 +355,9 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
 
       // If tolerance is met exit loop
       if ( rel_error <= tolerance )
+      {
         break;
+      }
 
       // Update the estimated_cdf estimate
       if ( est_angle_cosine < angle_cosine )
@@ -372,8 +376,7 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
       {
         // Get error in estimate
         double error =
-            (angle_cosine - est_angle_cosine )/
-                                QuantityTraits<SecondaryIndepQuantity>::one();
+            (angle_cosine - est_angle_cosine )/SIQT::one();
         error = error < 0 ? -error : error;
 
         // If error meets error tolerance accept estimate
@@ -388,11 +391,17 @@ inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,Primar
                            << ") was reached before the relative error ("
                            << rel_error
                            << ") reached the evaluation tolerance ("
-                           << d_relative_error_tol
+                           << tolerance
+                           << ")."
+                           << "or the error ("
+                           << error
+                           << ") reached the error tolerance ("
+                           << d_error_tol
                            << ")." );
         }
       }
     }
+
     // Return the interpolated evaluation
     return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
               lower_bin_boundary->first,

@@ -286,7 +286,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
         ( eta + ElasticTraits::delta_mu_peak * random_number );
 
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
+  testPostcondition( scattering_angle_cosine >= ElasticTraits::mu_peak - 1e-14 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 

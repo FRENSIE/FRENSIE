@@ -57,9 +57,9 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
   ElasticFactory::createAnalogElasticDistribution<TwoDInterpPolicy>(
     distribution,
+    energy_grid,
     cutoff_cross_section,
     total_cross_section,
-    energy_grid,
     raw_electroatom_data,
     correlated_sampling_mode_on,
     evaluation_tol );

@@ -94,14 +94,14 @@ public:
   double evaluateCDFAtCutoff( const double incoming_energy ) const;
 
   //! Evaluate the screened Rutherford PDF
-  double evaluateScreenedRutherfordPDF( const double incoming_energy,
-                                        const double scattering_angle_cosine,
-                                        const double eta ) const;
+  double evaluateScreenedRutherfordPDF( const double scattering_angle_cosine,
+                                        const double eta,
+                                        const double cutoff_pdf ) const;
 
   //! Evaluate the screened Rutherford CDF
-  double evaluateScreenedRutherfordCDF( const double incoming_energy,
-                                        const double scattering_angle_cosine,
-                                        const double eta ) const;
+  double evaluateScreenedRutherfordCDF( const double scattering_angle_cosine,
+                                        const double eta,
+                                        const double cutoff_ratio ) const;
 
 protected:
 

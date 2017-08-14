@@ -95,15 +95,15 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction,
 
   double ratio = 9.500004750002375431e-01;
   double cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-05 );
-  TEST_FLOATING_EQUALITY( cross_section, 3.62586e+09*ratio + 1.611494138359356821e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.62586e+09*ratio + 1.6114941383462184667e+08, 1e-12 );
 
   ratio = 1.500499711874552500e-01;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.23678e+08*ratio + 5.730253976136980951e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.23678e+08*ratio + 5.7302539762508958578e+07, 1e-12 );
 
   ratio = 8.686817246673364594e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E+05 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.2177e-03*ratio + 6.808061009771561886e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2177e-03*ratio + 6.80805965513897604069e-05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

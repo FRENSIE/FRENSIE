@@ -166,7 +166,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.size(), 90 );
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
-
 }
 
 //---------------------------------------------------------------------------//
@@ -589,9 +588,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Set fake random number stream
   std::vector<double> fake_stream( 3 );
   // Screened Rutherford
-  fake_stream[0] = 0.0; // sample angle cosine = 1.0
+  fake_stream[0] = 0.0; // sample angle cosine = 0.999999
   fake_stream[1] = 0.5; // sample angle cosine = 0.9999995
-  fake_stream[2] = 1.0 - 1.0e-15; // sample angle cosine = 0.999999
+  fake_stream[2] = 1.0 - 1.0e-15; // sample angle cosine = 1.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -604,7 +603,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // sample screened rutherford
@@ -622,7 +621,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
@@ -649,9 +648,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Set fake random number stream
   std::vector<double> fake_stream( 3 );
   // Screened Rutherford
-  fake_stream[0] = 0.0; // sample angle cosine = 1.0
+  fake_stream[0] = 0.0; // sample angle cosine = 0.999999
   fake_stream[1] = 0.5; // sample angle cosine = 0.9999995
-  fake_stream[2] = 1.0 - 1.0e-15; // sample angle cosine = 0.999999
+  fake_stream[2] = 1.0 - 1.0e-15; // sample angle cosine = 1.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -664,7 +663,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // sample screened rutherford
@@ -682,7 +681,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
@@ -896,9 +895,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0; // sample angle cosine = -1.0
-  fake_stream[1] = 0.5; // sample angle cosine = 0.98751141888536664304
-  fake_stream[2] = 0.9; // sample angle cosine = 0.99879780594178391162
-  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 1.0
+  fake_stream[1] = 0.5; // sample angle cosine = 9.87508387911182450303e-01
+  fake_stream[2] = 0.9; // sample angle cosine = 9.98796724798355461949e-01
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 0.999999
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -916,21 +915,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.98751141888536664304, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.87508387911182450303e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.99879780594178391162, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.98796724798355461949e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Set fake random number stream
@@ -950,21 +949,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.49375570944268343, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 4.93753943955591245718e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.8993989029708922, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.99397912399177767995e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 }
 
@@ -990,8 +989,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0; // sample angle cosine = -1.0
-  fake_stream[1] = 0.5; // sample angle cosine = 0.98751141888536664304
-  fake_stream[2] = 0.9; // sample angle cosine = 0.99879780594178391162
+  fake_stream[1] = 0.5; // sample angle cosine = 9.87508387911182450303e-01
+  fake_stream[2] = 0.9; // sample angle cosine = 9.98796724798355461949e-01
   fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 1.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -1010,21 +1009,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.98751141888536664304, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.87508387911182450303e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.99879780594178391162, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.98796724798355461949e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Set fake random number stream
@@ -1044,21 +1043,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.9773765352948329e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.97730352646528978466e-02, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.8180725278128899, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.18071611345305038654e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 }
 
@@ -1067,6 +1066,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createAnalogElasticDistribution_LinLinLog_adjoint )
 {
+
   double evaluation_tol = 1e-7;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
@@ -1084,9 +1084,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0; // sample angle cosine = -1.0
-  fake_stream[1] = 0.5; // sample angle cosine = 0.98751141888536664304
-  fake_stream[2] = 0.9; // sample angle cosine = 0.99879780594178391162
-  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 1.0
+  fake_stream[1] = 0.5; // sample angle cosine = 9.85497025768588219563e-01
+  fake_stream[2] = 0.9; // sample angle cosine = 9.98262783477907422736e-01
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 0.999999
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0e-3;
@@ -1103,21 +1103,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.98549871388816456808, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.85497025768588219563e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.99826383658664175069, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.98262783477907422736e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
 
@@ -1131,30 +1131,28 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
-                          -1.0,
-                          1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, -1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 2
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.4927493569443319, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 4.92748262884294130348e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.8991319182937703, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.99130941738953692877e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 }
 
@@ -1180,9 +1178,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0; // sample angle cosine = -1.0
-  fake_stream[1] = 0.5; // sample angle cosine = 0.98751141888536664304
-  fake_stream[2] = 0.9; // sample angle cosine = 0.99879780594178391162
-  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 1.0
+  fake_stream[1] = 0.5; // sample angle cosine = 9.85497025768588219563e-01
+  fake_stream[2] = 0.9; // sample angle cosine = 9.98262783477907422736e-01
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 0.999999
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0e-3;
@@ -1199,21 +1197,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.98549871388816456808, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.85497025768588219563e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.99826383658664175069, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.98262783477907422736e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
 
@@ -1234,21 +1232,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.9590792171902925e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.95901841607806975754e-02, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 3
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.8180239851450574, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.18023071225264297723e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 
   // Test 4
   native_analog_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, incoming_energy, 1e-12 );
 }
 
