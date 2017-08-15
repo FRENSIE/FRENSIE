@@ -46,8 +46,71 @@ struct QuantityTraits
   //! The raw quantity type
   typedef T RawType;
 
-  //! The quantity type
+  /*! The raw floating-point quantity type
+   * 
+   * This is the raw floating-point type that corresponds to the
+   * RawType. If RawType is a floating-point type or a complex floating-point
+   * type then this type is identical to the RawType.
+   * Examples: 
+   * <ul>
+   *  <li> RawType==int -> RawFloatingPointType==double </li>
+   *  <li> RawType==float -> RawFloatingPointType==float </li>
+   *  <li> RawType==double -> RawFloatingPointType==double </li>
+   *  <li> RawType==std::complex<int> -> RawFloatingPointType==std::complex<double> </li>
+   *  <li> RawType==std::complex<float> -> RawFloatingPointType==std::complex<float> </li>
+   *  <li> RawType==std::complex<double> -> RawFloatingPointType==std::complex<double> </li>
+   * </ul>
+   *
+   */
+  typedef T RawFloatingPointType;
+
+  /*! The real raw floating-point quantity type
+   *
+   * This is the real raw floating-point type that corresponds to
+   * the RawFloatingPointType. If RawFloatingPointType is not a complex
+   * floating-point type then this type is identical to the 
+   * RawFloatingPointType.
+   * Examples:
+   * <ul>
+   *  <li> RawFloatingPointType==float -> RealRawFloatingPointType==float </li>
+   *  <li> RawFloatingPointType==double -> RealRawFloatingPointType==double </li>
+   *  <li> RawFloatingPointType==std::complex<float> -> RealRawFloatingPointType==float </li>
+   *  <li> RawFloatingPointType==std::complex<double> -> RealRawFloatingPointType==double </li>
+   * </ul>
+   */
+  typedef T RealRawFloatingPointType;
+
+  /*! The quantity type
+   *
+   * If the UnitType is not void, this type will be 
+   * boost::units::quantity<Unit,RawType>. Otherwise, this type will be 
+   * the same as the RawType.
+   */
   typedef T QuantityType;
+
+  /*! The floating-point quantity type
+   *
+   * If the UnitType is not void, this type will be 
+   * boost::units::quantity<Unit,RawFloatingPointType>. Otherwise, this type
+   * will be the same as the RawFloatingPointType.
+   */
+  typedef T FloatingPointQuantityType;
+
+  /*! The real floating-point quantity type
+   *
+   * If the UnitType is not void, this type will be
+   * boost::units::quantity<Unit,RealRawFloatingPointType>. Otherwise, this
+   * type will be the same as the RealRawFloatingPointType.
+   */
+  typedef T RealFloatingPointQuantityType;
+
+  //! The quantity raised to power N/D type
+  template<boost::units::integer_type N, boost::units::integer_type D = 1>
+  struct GetQuantityToPowerType
+  {
+    typedef QuantityType type;
+    typedef FloatingPointQuantityType AsFloatingPointType;
+  };
 
   //! Used to check if the traits class for quantity type is specialized
   typedef std::false_type is_specialized;
@@ -121,11 +184,6 @@ struct QuantityTraits
   //! Max integer power of 10 that is a valid finite floating-point value
   typedef std::integral_constant<int,0> max_exponent10;
 
-  //! The quantity raised to power N/D type
-  template<boost::units::integer_type N, boost::units::integer_type D = 1>
-  struct GetQuantityToPowerType
-  { typedef QuantityType type; };
-
   //! Get the zero quantity
   static inline QuantityType zero() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
@@ -150,40 +208,40 @@ struct QuantityTraits
   static inline QuantityType lowest() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the machine epsilon 
+  //! Get the machine epsilon (only defined for floating-point types)
   static inline QuantityType epsilon() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the maximum rounding error
+  //! Get the maximum rounding error (only defined for floating-point types)
   static inline QuantityType roundError() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the inf quantity 
+  //! Get the inf quantity (only defined for floating-point types)
   static inline QuantityType inf() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the quiet nan quantity 
+  //! Get the quiet nan quantity (only defined for floating-point types)
   static inline QuantityType nan() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Get the signaling nan quantity (only available for floating-point quantities)
+  //! Get the signaling nan quantity (only defined for floating-point types)
   static inline QuantityType signalingNan() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the absolute value of a quantity
-  static inline QuantityType abs( const QuantityType& a )
+  static inline RealFloatingPointQuantityType abs( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the conjugate of a quantity
-  static inline QuantityType conj( const QuantityType& a )
+  static inline FloatingPointQuantityType conj( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the real part of the quantity
-  static inline QuantityType real( const QuantityType& a )
+  static inline RealFloatingPointQuantityType real( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the imaginary part of the quantity
-  static inline QuantityType imag( const QuantityType& a )
+  static inline RealFloatingPointQuantityType imag( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Test if the quantity is a nan or inf 
@@ -191,16 +249,16 @@ struct QuantityTraits
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Take the square root of a quantity 
-  static inline typename GetQuantityToPowerType<1,2>::type sqrt( const QuantityType& quantity )
+  static inline typename GetQuantityToPowerType<1,2>::AsFloatingPointType sqrt( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Take the cube root of a quantity
-  static inline typename GetQuantityToPowerType<1,3>::type cbrt( const QuantityType& quantity )
+  static inline typename GetQuantityToPowerType<1,3>::AsFloatingPointType cbrt( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Take a quantity to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
-  static inline typename GetQuantityToPowerType<N,D>::type rpow( const QuantityType& quantity )
+  static inline typename GetQuantityToPowerType<N,D>::AsFloatingPointType rpow( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Initialize a quantity (potentially dangerous!)
@@ -221,7 +279,8 @@ struct QuantityTraits
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline Quantity abs( const Quantity& quantity )
+inline typename QuantityTraits<Quantity>::RealFloatingPointQuantityType
+abs( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::abs( quantity );
 }
@@ -230,7 +289,8 @@ inline Quantity abs( const Quantity& quantity )
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline Quantity conj( const Quantity& a )
+inline typename QuantityTraits<Quantity>::FloatingPointQuantityType
+conj( const Quantity& a )
 { 
   return QuantityTraits<Quantity>::conj( a );
 }
@@ -239,7 +299,8 @@ inline Quantity conj( const Quantity& a )
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline Quantity real( const Quantity& a )
+inline typename QuantityTraits<Quantity>::RealFloatingPointQuantityType
+real( const Quantity& a )
 {
   return QuantityTraits<Quantity>::real( a );
 }
@@ -248,7 +309,8 @@ inline Quantity real( const Quantity& a )
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline Quantity imag( const Quantity& a )
+inline typename QuantityTraits<Quantity>::RealFloatingPointQuantityType
+imag( const Quantity& a )
 {
   return QuantityTraits<Quantity>::imag( a );
 }
@@ -266,7 +328,7 @@ inline bool isnaninf( const Quantity& a )
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,2>::type
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,2>::AsFloatingPointType
 sqrt( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::sqrt( quantity );
@@ -276,7 +338,7 @@ sqrt( const Quantity& quantity )
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,3>::type
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,3>::AsFloatingPointType
 cbrt( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::cbrt( quantity );
@@ -288,7 +350,7 @@ cbrt( const Quantity& quantity )
 template<boost::units::integer_type N,
 	 boost::units::integer_type D,
 	 typename Quantity>
-inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N,D>::type
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N,D>::AsFloatingPointType
 rpow( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::template rpow<N,D>( quantity );
