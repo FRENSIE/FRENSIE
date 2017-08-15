@@ -152,6 +152,38 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   }
 }
 
+
+
+// Evaluate the tabular cutoff distribution
+double AnalogElasticElectronScatteringDistribution::evaluateTabular(
+        const double incoming_energy,
+        const double scattering_angle_cosine ) const
+{
+  // Weight the PDF to the cutoff distribution
+  return this->evaluate( incoming_energy, scattering_angle_cosine )*
+         this->evaluateCDFAtCutoff( incoming_energy );
+}
+
+// Evaluate the PDF of the tabular cutoff distribution
+double AnalogElasticElectronScatteringDistribution::evaluateTabularPDF(
+        const double incoming_energy,
+        const double scattering_angle_cosine ) const
+{
+  // Weight the PDF to the cutoff distribution
+  return this->evaluatePDF( incoming_energy, scattering_angle_cosine )*
+         this->evaluateCDFAtCutoff( incoming_energy );
+}
+
+// Evaluate the CDF of the tabular cutoff distribution
+double AnalogElasticElectronScatteringDistribution::evaluateTabularCDF(
+        const double incoming_energy,
+    const double scattering_angle_cosine ) const
+{
+  // Weight the CDF to the cutoff distribution
+  return this->evaluateCDF( incoming_energy, scattering_angle_cosine )*
+         this->evaluateCDFAtCutoff( incoming_energy );
+}
+
 // Evaluate the PDF for an angle cosine above the cutoff
 double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
         const double scattering_angle_cosine,

@@ -704,8 +704,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.96835060876104406e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.96835060876104406e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.96835060894997071e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.96835060894997071e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
 
   std::vector<double> discrete_weights =
@@ -730,8 +730,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   cross_section =
     data_container.getMomentPreservingCrossSection();
 
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.0308605152240859345E+07, 1e-15 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 1.2828170667216016544e-07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.03086051522408649325e+07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 1.28281706991402224574e-07, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
 
   // Check the electroionization data
@@ -1269,15 +1269,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.33333333326666792e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.33333333326666792e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.33333333326667125e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.33333333326667125e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
 
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.96847743236807915e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.96847743236807915e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.96847743255635299e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.96847743255635299e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
 
   std::vector<double> discrete_weights =
@@ -1302,8 +1302,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   cross_section =
     data_container.getMomentPreservingCrossSection();
 
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.0308605152240859345E+07, 1e-15 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 1.2931601376759302151e-07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.03086051522409096360e+07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 1.29316014091644480779e-07, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
 
   // Check the electroionization data
@@ -1775,29 +1775,29 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.15505102564586393e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.64494897397770945e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.15505102565478457e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.64494897399291506e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.33299177902452315e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.99151923371477846e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.33299181282832291e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.99151923494383754e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
     data_container.getMomentPreservingElasticWeights( 1.0e-5 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 4.23453445527003425e-01 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 5.76546554472996520e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 4.23453445543248319e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 5.76546554456751736e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   discrete_weights =
     data_container.getMomentPreservingElasticWeights( 1.0e+5 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 4.60802064366427834e-04 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.99539197935633617e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 4.60802066127450477e-04 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.99539197933872470e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold =
@@ -1808,8 +1808,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> cross_section =
     data_container.getMomentPreservingCrossSection();
 
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.221760610323680751e+07, 1e-15 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 4.6405647144532439334e-07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.22176061033364161849e+07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 4.64056535497517578099e-07, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
 
   threshold =
@@ -2344,28 +2344,28 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.15505102564586393e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.64494897397770945e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.15505102565478457e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.64494897399291506e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32894493170465133e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98022691131841166e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32897955096369191e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98032097904586468e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
     data_container.getMomentPreservingElasticWeights( 1.0e-5 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 4.23453445527003425e-01 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 5.76546554472996520e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 4.23453445543248319e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 5.76546554456751736e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   discrete_weights = data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 2.35714777420541113e-03 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97642852225794630e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 2.33598553048858498e-03 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97664014469511473e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold =
@@ -2376,7 +2376,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> cross_section =
     data_container.getMomentPreservingCrossSection();
 
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.221760610323680751e+07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.22176061033364161849e+07, 1e-15 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
 
@@ -3738,8 +3738,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  std::vector<double> discrete_angles =
 //    data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
 
-//  TEST_EQUALITY_CONST( discrete_angles.front(), 9.15505102564586393e-01 );
-//  TEST_EQUALITY_CONST( discrete_angles.back(), 9.64494897397770945e-01 );
+//  TEST_EQUALITY_CONST( discrete_angles.front(), 9.15505102565478457e-01 );
+//  TEST_EQUALITY_CONST( discrete_angles.back(), 9.64494897399291506e-01 );
 //  TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
 //  discrete_angles =
@@ -3752,8 +3752,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  std::vector<double> discrete_weights =
 //    data_container.getMomentPreservingElasticWeights( 1.0e-5 );
 
-//  TEST_EQUALITY_CONST( discrete_weights.front(), 4.23453445527003425e-01 );
-//  TEST_EQUALITY_CONST( discrete_weights.back(), 5.76546554472996520e-01 );
+//  TEST_EQUALITY_CONST( discrete_weights.front(), 4.23453445543248319e-01 );
+//  TEST_EQUALITY_CONST( discrete_weights.back(), 5.76546554456751736e-01 );
 //  TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
 //  discrete_weights =

@@ -40,9 +40,9 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   {
     ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         distribution,
+        energy_grid,
         cutoff_cross_section,
         total_cross_section,
-        energy_grid,
         data_container,
         correlated_sampling_mode_on,
         evaluation_tol );
@@ -51,9 +51,9 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   {
     ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
         distribution,
+        energy_grid,
         cutoff_cross_section,
         total_cross_section,
-        energy_grid,
         data_container,
         correlated_sampling_mode_on,
         evaluation_tol );

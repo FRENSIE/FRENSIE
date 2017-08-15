@@ -82,22 +82,22 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   {
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( value, 4.8350599999999996216e-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 4.83506e-07, 1e-12 );
 
   scattering_angle_cosine = 0.71;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 2 energy 1
-  TEST_FLOATING_EQUALITY( value, 1.0097200000000000497e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.00972e-05, 1e-12 );
 
   scattering_angle_cosine = 0.999999;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 3 energy 1
-  TEST_FLOATING_EQUALITY( value, 986945.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 9.86945e5, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 4 energy 1
-  TEST_FLOATING_EQUALITY( value, 990433017681606.375, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 9.90433017681606375e14, 1e-12 );
   }
   {
   // Test with a different energy
@@ -106,22 +106,22 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   scattering_angle_cosine = -0.01;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 1 energy 2
-  TEST_FLOATING_EQUALITY( value, 4.8463499999999999828e-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 4.84635e-07, 1e-12 );
 
   scattering_angle_cosine = 0.71;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 2 energy 2
-  TEST_FLOATING_EQUALITY( value, 1.0120300000000000327e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 1.01203e-05, 1e-12 );
 
   scattering_angle_cosine = 0.999999;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 3 energy 2
-  TEST_FLOATING_EQUALITY( value, 984753.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 9.84753e5, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   value = distribution->evaluate( energy, scattering_angle_cosine );
   // Test 4 energy 2
-  TEST_FLOATING_EQUALITY( value, 441288126.46491110325, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 4.4128812646491110325e8, 1e-12 );
   }
   {
   // Test inbetween the two energies

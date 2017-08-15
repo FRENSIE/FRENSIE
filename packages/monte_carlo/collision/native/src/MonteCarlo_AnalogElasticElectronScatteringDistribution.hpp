@@ -93,6 +93,18 @@ public:
   //! Evaluate the CDF at the cutoff angle cosine
   double evaluateCDFAtCutoff( const double incoming_energy ) const;
 
+  //! Evaluate the tabular cutoff distribution
+  double evaluateTabular( const double incoming_energy,
+                             const double scattering_angle_cosine ) const;
+
+  //! Evaluate the PDF of the tabular cutoff distribution
+  double evaluateTabularPDF( const double incoming_energy,
+                             const double scattering_angle_cosine ) const;
+
+  //! Evaluate the CDF of the tabular cutoff distribution
+  double evaluateTabularCDF( const double incoming_energy,
+                             const double scattering_angle_cosine ) const;
+
   //! Evaluate the screened Rutherford PDF
   double evaluateScreenedRutherfordPDF( const double scattering_angle_cosine,
                                         const double eta,

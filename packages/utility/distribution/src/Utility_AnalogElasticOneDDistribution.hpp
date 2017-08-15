@@ -206,12 +206,6 @@ protected:
   bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
 
-  //! Set the norm constant
-  void setNormConstant( const DistNormQuantity norm_constant );
-
-  //! Set the max CDF value
-  void setMaxCDF( const UnnormCDFQuantity max_cdf );
-
 private:
 
   // Initialize the distribution
@@ -278,6 +272,9 @@ private:
 
   // The normalization constant
   DistNormQuantity d_norm_constant;
+
+  // The scaled_normalization constant
+  DistNormQuantity d_scaled_norm_constant;
 
   // The max CDF value
   UnnormCDFQuantity d_max_cdf;

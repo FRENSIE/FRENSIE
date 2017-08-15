@@ -392,37 +392,37 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluate )
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.999999 ), 1.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0, -1.0 ), 0.09, 1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 0.45 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0, 0.999999 ), 0.9, 1e-15 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, -1.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.999999 ), 1.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, -1.0 ), 0.09, 1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.0 ), 0.45 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, 0.999999 ), 0.9, 1e-15 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, -1.0 ),
-                          0.3845585757936910154,
-                          1e-16 );
+                          3.46102718214321869450e-01,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.0 ),
-                          1.9227928789684547439,
-                          1e-12 );
+                          1.73051359107160940276,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.999999 ),
-                          3.8455857579369099319,
-                          1e-16 );
+                          3.46102718214321880552,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 1.0 ),
                           3.4610341042010435153,
-                          1e-16 );
+                          1e-15 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, -1.0 ), 1.0);
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.999999 ), 10.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0, -1.0 ), 0.9, 1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0 ), 4.5 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0, 0.999999 ), 9.0, 1e-15 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0, 1.0 ), 9.00001800000899910, 1e-15 );
 
   // After the second bin - no extension
@@ -434,9 +434,9 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluate )
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.9 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 4.5 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.999999 ), 9.0 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 3.0, 1.0 ), 9.00001800000899910, 1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -464,9 +464,11 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.09*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.45*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.9*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.00001800000899910e-1*barn,
                                   1e-15 );
@@ -474,29 +476,33 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.09*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.45*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.999999*cgs::dimensionless() ), 0.9*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.0*MeV, 1.0*cgs::dimensionless() ), 9.00001800000899910e-1*barn, 1e-15 );
 
   // In the first bin
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, -1.0*cgs::dimensionless() ),
-                                  0.3845585757936910154*barn,
+                                  3.46102718214321869450e-01*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  1.9227928789684547439*barn,
+                                  1.73051359107160940276*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.999999*cgs::dimensionless() ),
-                                  3.8455857579369099319*barn,
+                                  3.46102718214321880552*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  3.4610341042010435153*barn,
+                                  3.46103410420104351530*barn,
                                   1e-15 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.9*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::dimensionless() ), 4.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.999999*cgs::dimensionless() ), 9.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 2.0*MeV, 1.0*cgs::dimensionless() ), 9.00001800000899910*barn, 1e-15 );
 
   // After the second bin - no extension
@@ -508,9 +514,9 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.9*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 4.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 9.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 3.0*MeV, 1.0*cgs::dimensionless() ), 9.00001800000899910*barn, 1e-15 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -535,40 +541,40 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluateExact )
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, -1.0 ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.999999 ), 1.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 0.0, 1.0 ), 9.00001800000899910e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 0.0, -1.0 ), 0.09, 1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.0 ), 0.45 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.999999 ), 0.9 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 0.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 1.0, -1.0 ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 1.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 1.0, 0.999999 ), 1.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.0, 1.0 ), 9.00001800000899910e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.0, -1.0 ), 0.09, 1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 1.0, 0.0 ), 0.45 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 1.0, 0.999999 ), 0.9 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, -1.0 ),
-                          0.3845585757936910154,
-                          1e-16 );
+                          3.46102718214321869450e-01,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.0 ),
-                          1.9227928789684547439,
-                          1e-12 );
+                          1.73051359107160940276,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.999999 ),
-                          3.8455857579369099319,
-                          1e-16 );
+                          3.46102718214321880552,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 1.0 ),
-                          3.4610341042010435153,
-                          1e-16 );
+                          3.46103410420104351530,
+                          1e-15 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 2.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 2.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 2.0, 0.999999 ), 10.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 2.0, -1.0 ), 0.9, 1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 2.0, 0.0 ), 4.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 2.0, 0.999999 ), 9.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 2.0, 1.0 ),
                           9.000018000008997987,
-                          1e-16 );
+                          1e-15 );
 
   // After the second bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, -1.0 ), 0.0 );
@@ -579,12 +585,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluateExact )
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, -1.0 ), 0.9 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.0 ), 4.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.999999 ), 9.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 3.0, 1.0 ),
                           9.000018000008997987,
-                          1e-16 );
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -611,9 +617,11 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.09*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.45*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.9*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987e-01*barn,
                                   1e-15 );
@@ -621,31 +629,35 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.09*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.45*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 0.999999*cgs::dimensionless() ), 0.9*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987e-01*barn,
                                   1e-15 );
 
   // In the first bin
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, -1.0*cgs::dimensionless() ),
-                                  0.3845585757936910154*barn,
+                                  3.46102718214321869450e-01*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  1.9227928789684547439*barn,
+                                  1.73051359107160940276*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 0.999999*cgs::dimensionless() ),
-                                  3.8455857579369099319*barn,
+                                  3.46102718214321880552*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  3.4610341042010435153*barn,
+                                  3.46103410420104351530*barn,
                                   1e-15 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.9*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 0.0*cgs::dimensionless() ), 4.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 0.999999*cgs::dimensionless() ), 9.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987*barn,
                                   1e-15 );
@@ -659,9 +671,9 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.9*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.0*cgs::dimensionless() ), 4.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 9.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987*barn,
                                   1e-15 );
@@ -688,40 +700,40 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, correlatedEvaluate )
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, -1.0 ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.999999 ), 1.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 0.0, 1.0 ), 9.00001800000899910e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 0.0, -1.0 ), 0.09, 1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.0 ), 0.45 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.999999 ), 0.9 );
+  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 0.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 1.0, -1.0 ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 1.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 1.0, 0.999999 ), 1.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.0, 1.0 ), 9.00001800000899910e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.0, -1.0 ), 0.09, 1e-15 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 1.0, 0.0 ), 0.45 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 1.0, 0.999999 ), 0.9 );
+  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, -1.0 ),
-                          0.3845585757936910154,
-                          1e-16 );
+                          3.46102718214321869450e-01,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 0.0 ),
-                          1.9227928789684547439,
-                          1e-12 );
+                          1.73051359107160940276,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 0.999999 ),
-                          3.8455857579369099319,
-                          1e-16 );
+                          3.46102718214321880552,
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 1.0 ),
-                          3.4610341042010435153,
-                          1e-16 );
+                          3.46103410420104351530,
+                          1e-15 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, -1.0 ), 0.9 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, 0.0 ), 4.5 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, 0.999999 ), 9.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 2.0, 1.0 ),
                           9.000018000008997987,
-                          1e-16 );
+                          1e-15 );
 
   // After the second bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, -1.0 ), 0.0 );
@@ -732,12 +744,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, correlatedEvaluate )
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, -1.0 ), 0.9 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.0 ), 4.5 );
+  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.999999 ), 9.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 3.0, 1.0 ),
                           9.000018000008997987,
-                          1e-16 );
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -764,9 +776,11 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.09*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.45*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.9*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987e-01*barn,
                                   1e-15 );
@@ -774,31 +788,33 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, -1.0*cgs::dimensionless() ),
+                                  0.09*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.45*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 0.999999*cgs::dimensionless() ), 0.9*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987e-01*barn,
                                   1e-15 );
 
   // In the first bin
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, -1.0*cgs::dimensionless() ),
-                                  0.3845585757936910154*barn,
+                                  3.46102718214321869450e-01*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  1.9227928789684547439*barn,
+                                  1.73051359107160940276*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 0.999999*cgs::dimensionless() ),
-                                  3.8455857579369099319*barn,
+                                  3.46102718214321880552*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  3.4610341042010435153*barn,
+                                  3.46103410420104351530*barn,
                                   1e-15 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, -1.0*cgs::dimensionless() ), 0.9*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, 0.0*cgs::dimensionless() ), 4.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, 0.999999*cgs::dimensionless() ), 9.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987*barn,
                                   1e-15 );
@@ -812,9 +828,9 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.9*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 4.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 9.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 1.0*cgs::dimensionless() ),
                                   9.000018000008997987*barn,
                                   1e-15 );
@@ -844,62 +860,60 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ),
                           4.28571734694096207e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999 ),
                           8.57143469388192414e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 1.0 ),
-                          0.7714306653083894405,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0 ),
                           8.57143469388192414e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0 ),
                           4.28571734694096207e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.999999 ),
                           8.57143469388192414e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 1.0 ),
-                          0.7714306653083894405,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0 ),
                           8.5714346938819227506e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0 ),
                           0.42857173469409620692,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.999999 ),
                           0.85714346938819230282,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
-
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   // On the upper bin boundary
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ),
                           8.57143469388192275e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0 ),
                           4.28571734694096151e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.999999 ),
                           8.57143469388192303e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
-
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   // After the second bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
@@ -912,16 +926,16 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ),
                           8.57143469388192275e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ),
                           4.28571734694096151e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999 ),
                           8.57143469388192303e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -958,7 +972,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192414e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.7714306653083894405/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -974,7 +988,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192414e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.7714306653083894405/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // In the first bin
@@ -988,7 +1002,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   0.85714346938819230282/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // On the upper bin boundary
@@ -1002,7 +1016,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192303e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // After the second bin - no extension
@@ -1024,7 +1038,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192303e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1052,61 +1066,61 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, -1.0 ),
                           8.57143469388192414e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.0 ),
                           4.28571734694096207e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.999999 ),
                           8.57143469388192414e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 1.0 ),
-                          0.7714306653083894405,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, -1.0 ),
                           8.57143469388192414e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, 0.0 ),
                           4.28571734694096207e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, 0.999999 ),
                           8.57143469388192414e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, 1.0 ),
-                          0.7714306653083894405,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5, -1.0 ),
                           8.5714346938819227506e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5, 0.0 ),
                           0.42857173469409620692,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5, 0.999999 ),
                           0.85714346938819230282,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
 
   // On the upper bin boundary
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0, -1.0 ),
                           8.57143469388192275e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0, 0.0 ),
                           4.28571734694096151e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0, 0.999999 ),
                           8.57143469388192303e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
 
   // After the second bin - no extension
@@ -1120,16 +1134,16 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, -1.0 ),
                           8.57143469388192275e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, 0.0 ),
                           4.28571734694096151e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, 0.999999 ),
                           8.57143469388192303e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1166,7 +1180,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192414e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.7714306653083894405/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1182,7 +1196,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192414e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.7714306653083894405/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // In the first bin
@@ -1196,7 +1210,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   0.85714346938819230282/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // On the upper bin boundary
@@ -1210,7 +1224,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192303e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // After the second bin - no extension
@@ -1232,7 +1246,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192303e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1260,61 +1274,61 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, -1.0 ),
                           8.57143469388192414e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.0 ),
                           4.28571734694096207e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.999999 ),
                           8.57143469388192414e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 1.0 ),
-                          0.7714306653083894405,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, -1.0 ),
                           8.57143469388192414e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, 0.0 ),
                           4.28571734694096207e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, 0.999999 ),
                           8.57143469388192414e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, 1.0 ),
-                          0.7714306653083894405,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5, -1.0 ),
                           8.5714346938819227506e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5, 0.0 ),
                           0.42857173469409620692,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5, 0.999999 ),
                           0.85714346938819230282,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
 
   // On the upper bin boundary
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0, -1.0 ),
                           8.57143469388192275e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0, 0.0 ),
                           4.28571734694096151e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0, 0.999999 ),
                           8.57143469388192303e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
 
   // After the second bin - no extension
@@ -1328,16 +1342,16 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, -1.0 ),
                           8.57143469388192275e-02,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, 0.0 ),
                           4.28571734694096151e-01,
-                          1e-12 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, 0.999999 ),
                           8.57143469388192303e-01,
-                          1e-16 );
+                          1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, 1.0 ),
-                          0.77143066530838921846,
-                          1e-16 );
+                          9.52383537417764602928e-01,
+                          1e-15 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1374,7 +1388,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192414e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.7714306653083894405/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1390,7 +1404,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192414e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.7714306653083894405/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // In the first bin
@@ -1404,7 +1418,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   0.85714346938819230282/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // On the upper bin boundary
@@ -1418,7 +1432,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192303e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   // After the second bin - no extension
@@ -1440,7 +1454,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
                                   8.57143469388192303e-01/cgs::dimensionless(),
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0*MeV, 1.0*cgs::dimensionless() ),
-                                  0.77143066530838921846/cgs::dimensionless(),
+                                  9.52383537417764602928e-01/cgs::dimensionless(),
                                   1e-15 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1468,8 +1482,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
-                          0.25714304081645777966,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 1.0 ), 1.0 );
 
@@ -1478,16 +1492,16 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   // On the first bin boundary
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.0 ),
-                          0.25714304081645777966,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 1.0 ), 1.0 );
 
   // In the first bin
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.0 ), 1.0 );
 
@@ -1495,8 +1509,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   // On the upper bin boundary
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 1.0 ), 1.0 );
 
@@ -1512,8 +1526,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 1.0 ), 1.0 );
 
@@ -1544,7 +1558,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645777966,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1554,7 +1568,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // On the first bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645777966,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1562,7 +1576,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // In the first bin
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1570,7 +1584,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1586,7 +1600,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1616,8 +1630,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.0 ),
-                          0.25714304081645777966,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 1.0 ), 1.0 );
 
@@ -1626,16 +1640,16 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   // On the first bin boundary
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 0.0 ),
-                          0.25714304081645777966,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 1.0 ), 1.0 );
 
   // In the first bin
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 1.0 ), 1.0 );
 
@@ -1643,8 +1657,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   // On the upper bin boundary
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 1.0 ), 1.0 );
 
@@ -1660,8 +1674,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 1.0 ), 1.0 );
 
@@ -1692,7 +1706,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645777966,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1702,7 +1716,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // On the first bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645777966,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1710,7 +1724,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // In the first bin
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1718,7 +1732,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1734,7 +1748,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1764,8 +1778,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.0 ),
-                          0.25714304081645777966,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 1.0 ), 1.0 );
 
@@ -1774,25 +1788,24 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   // On the first bin boundary
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, 0.0 ),
-                          0.25714304081645777966,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, 1.0 ), 1.0 );
 
   // In the first bin
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5, 1.0 ), 1.0 );
-
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 1.0 ), 1.0 );
 
@@ -1808,8 +1821,8 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.0 ),
-                          0.25714304081645766864,
-                          1e-12 );
+                          2.57143040816457724151e-01,
+                          1e-15 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 0.9 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 1.0 ), 1.0 );
 
@@ -1840,7 +1853,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645777966,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1850,7 +1863,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // On the first bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645777966,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1858,7 +1871,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // In the first bin
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1866,7 +1879,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1882,7 +1895,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless() ),
-                                  0.25714304081645766864,
+                                  2.57143040816457724151e-01,
                                   1e-15 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.9 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, 1.0*cgs::dimensionless() ), 1.0 );
@@ -1904,7 +1917,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -1929,7 +1942,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -1953,7 +1966,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -1961,7 +1974,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -1999,7 +2012,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2027,7 +2040,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -2064,7 +2077,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -2090,7 +2103,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2114,7 +2127,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -2122,7 +2135,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -2160,7 +2173,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2188,7 +2201,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -2228,7 +2241,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -2256,7 +2269,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2286,7 +2299,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -2294,7 +2307,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -2342,7 +2355,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2377,7 +2390,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -2422,7 +2435,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -2450,7 +2463,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2480,7 +2493,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -2488,7 +2501,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -2536,7 +2549,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2571,7 +2584,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -2618,7 +2631,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -2637,7 +2650,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.0, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.0, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -2651,7 +2664,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2671,7 +2684,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.0, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.0, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -2683,7 +2696,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -2691,7 +2704,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -2712,7 +2725,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -2728,12 +2741,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -2745,7 +2758,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2760,12 +2773,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -2781,7 +2794,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -2794,12 +2807,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -2829,7 +2842,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -2849,7 +2862,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.0*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.0*MeV, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -2863,7 +2876,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2883,7 +2896,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.0*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.0*MeV, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -2895,7 +2908,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -2903,7 +2916,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -2924,7 +2937,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -2940,12 +2953,12 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -2957,7 +2970,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -2972,12 +2985,12 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0*MeV, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -2993,7 +3006,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -3006,12 +3019,12 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0*MeV, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0*MeV, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -3042,7 +3055,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -3064,7 +3077,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( raw_sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.0, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -3079,7 +3092,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -3102,7 +3115,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( raw_sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.0, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -3115,7 +3128,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -3123,7 +3136,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -3147,7 +3160,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( raw_sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -3166,13 +3179,13 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( raw_sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( raw_sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -3185,7 +3198,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -3202,13 +3215,13 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( raw_sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( raw_sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -3225,7 +3238,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -3240,13 +3253,13 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( raw_sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999 );
   TEST_EQUALITY_CONST( raw_sample, 0.999999 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -3284,7 +3297,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
 
@@ -3307,7 +3320,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -3322,7 +3335,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -3345,7 +3358,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -3358,7 +3371,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.585; // use lower bin boundary
-  fake_stream[3] = 0.25714304081645777966;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.585; // use lower bin boundary
@@ -3366,7 +3379,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
   fake_stream[10] = 0.584; // use upper bin boundary
-  fake_stream[11] = 0.25714304081645766864;
+  fake_stream[11] = 2.57143040816457724151e-01;
   fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
   fake_stream[14] = 0.584; // use upper bin boundary
@@ -3390,7 +3403,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 0u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -3409,13 +3422,13 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -3428,7 +3441,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
-  fake_stream[3] = 0.25714304081645766864;
+  fake_stream[3] = 2.57143040816457724151e-01;
   fake_stream[4] = 0.0;
   fake_stream[5] = 0.9;
   fake_stream[6] = 0.0;
@@ -3445,13 +3458,13 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 2.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -3468,7 +3481,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   fake_stream.resize( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -3483,13 +3496,13 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   TEST_EQUALITY_CONST( sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( raw_sample, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
-  TEST_EQUALITY_CONST( secondary_bin_index, 1u );
+  TEST_EQUALITY_CONST( secondary_bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -3517,7 +3530,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.25714304081645777966 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.9 );
@@ -3539,7 +3552,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.25714304081645777966 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.9 );
@@ -3564,7 +3577,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.25714304081645777966 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.9 );
@@ -3577,7 +3590,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.25714304081645766864 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.9 );
@@ -3597,7 +3610,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.25714304081645766864 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.9 );
@@ -3618,7 +3631,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.25714304081645766864 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.9 );
@@ -3646,7 +3659,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
     unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.25714304081645777966 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.9 );
@@ -3668,7 +3681,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.25714304081645777966 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.9 );
@@ -3693,7 +3706,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.25714304081645777966 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.9 );
@@ -3706,7 +3719,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.9 );
@@ -3726,7 +3739,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.9 );
@@ -3747,7 +3760,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.9 );
@@ -3787,17 +3800,17 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // Beyond full range - check that expected range will be used
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -3805,10 +3818,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -3831,10 +3844,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -3864,10 +3877,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -3877,10 +3890,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -3901,10 +3914,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -3928,10 +3941,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -3966,17 +3979,17 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -3984,10 +3997,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -4010,10 +4023,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4043,10 +4056,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4056,10 +4069,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4080,10 +4093,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4107,10 +4120,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4137,10 +4150,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4149,11 +4162,11 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.25714304081645777966, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-16 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 2.57143040816457724151e-01, 2.0 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -4172,10 +4185,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4197,10 +4210,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4210,10 +4223,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4230,10 +4243,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4251,10 +4264,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4279,23 +4292,23 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV,0.0, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.25714304081645777966, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-16 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 2.57143040816457724151e-01, 2.0*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -4315,10 +4328,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4341,10 +4354,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4354,10 +4367,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4374,10 +4387,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4395,10 +4408,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4420,7 +4433,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -4456,7 +4469,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   // In the first bin
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -4528,7 +4541,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -4565,7 +4578,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   // In the first bin
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -4638,7 +4651,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   double sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.25714304081645777966 );
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.9 );
@@ -4653,7 +4666,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.25714304081645777966 );
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.9 );
@@ -4666,7 +4679,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.25714304081645766864 );
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.9 );
@@ -4678,7 +4691,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.25714304081645766864 );
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.9 );
@@ -4697,7 +4710,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.25714304081645766864 );
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.9 );
@@ -4725,7 +4738,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
     unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.25714304081645777966 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.9 );
@@ -4740,7 +4753,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 0.25714304081645777966 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 0.9 );
@@ -4753,7 +4766,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 0.9 );
@@ -4766,7 +4779,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 0.9 );
@@ -4785,7 +4798,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.9 );
@@ -4822,25 +4835,25 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // Beyond full range - check that expected range will be used
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -4855,10 +4868,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4870,10 +4883,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4885,10 +4898,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4906,10 +4919,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -4944,25 +4957,25 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -4977,10 +4990,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -4992,10 +5005,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5007,10 +5020,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5028,10 +5041,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5058,10 +5071,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5070,11 +5083,11 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.25714304081645777966, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-16 );
+  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 2.57143040816457724151e-01, 2.0 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.9, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -5086,10 +5099,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5099,10 +5112,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5112,10 +5125,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5131,10 +5144,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5159,23 +5172,23 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV,0.0, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.25714304081645777966, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-16 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 2.57143040816457724151e-01, 2.0*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.9, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -5187,10 +5200,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5200,10 +5213,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5213,10 +5226,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5232,10 +5245,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5257,7 +5270,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -5293,7 +5306,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
   // In the first bin
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -5365,7 +5378,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -5402,7 +5415,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
   // In the first bin
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.25714304081645766864;
+  fake_stream[1] = 2.57143040816457724151e-01;
   fake_stream[2] = 0.9;
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -5475,7 +5488,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   double sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 0.25714304081645777966 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 0.9 );
@@ -5490,7 +5503,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 0.25714304081645777966 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 0.9 );
@@ -5503,7 +5516,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 0.25714304081645766864 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 0.9 );
@@ -5515,7 +5528,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 0.25714304081645766864 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 0.9 );
@@ -5534,7 +5547,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 0.25714304081645766864 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 0.9 );
@@ -5562,7 +5575,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
     unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.25714304081645777966 );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.9 );
@@ -5577,7 +5590,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.25714304081645777966 );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.9 );
@@ -5590,7 +5603,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.9 );
@@ -5603,7 +5616,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.9 );
@@ -5622,7 +5635,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.25714304081645766864 );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.9 );
@@ -5659,25 +5672,25 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // Beyond full range - check that expected range will be used
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -5692,10 +5705,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5707,10 +5720,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5722,10 +5735,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5743,10 +5756,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5781,25 +5794,25 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
-  fake_stream[1] = 0.25714304081645777966;
+  fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -5814,10 +5827,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5829,10 +5842,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5844,10 +5857,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5865,10 +5878,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -5895,10 +5908,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5907,11 +5920,11 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.25714304081645777966, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-16 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 2.57143040816457724151e-01, 2.0 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 2.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -5923,10 +5936,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5936,10 +5949,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5949,10 +5962,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5968,10 +5981,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.2, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.9, 0.9 );
-  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-16 );
+  TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
   sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
@@ -5996,23 +6009,23 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV,0.0, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.25714304081645777966, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-16 );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 2.57143040816457724151e-01, 2.0*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 2.0*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
@@ -6024,10 +6037,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -6037,10 +6050,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -6050,10 +6063,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
@@ -6069,10 +6082,10 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.2, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.9, 0.9*cgs::dimensionless() );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-16 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );

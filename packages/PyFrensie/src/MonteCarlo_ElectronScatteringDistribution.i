@@ -58,6 +58,7 @@
 // Ignore scatter adjoint electron
 %ignore *::scatterAdjointElectron( AdjointElectronState&, ParticleBank&, Data::SubshellType& ) const;
 
+
 //---------------------------------------------------------------------------//
 // Add support for the electron scattering distribution native factory helpers
 //---------------------------------------------------------------------------//

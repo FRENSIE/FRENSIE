@@ -157,7 +157,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
     return 0.0;
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
-  double pdf_value = d_analog_distribution->evaluate(
+  double pdf_value = d_analog_distribution->evaluatePDF(
                             incoming_energy,
                             scattering_angle_cosine );
 
@@ -185,11 +185,10 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
     return 0.0;
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
-  double pdf_value =
-            d_analog_distribution->evaluateScreenedRutherfordPDF(
-                    scattering_angle_cosine,
-                    eta,
-                    d_analog_distribution->evaluatePDFAtCutoff( incoming_energy ) );
+  double pdf_value = d_analog_distribution->evaluateScreenedRutherfordPDF(
+                scattering_angle_cosine,
+                eta,
+                d_analog_distribution->evaluatePDFAtCutoff( incoming_energy ) );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =
@@ -210,8 +209,9 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
   testPrecondition( scattering_angle_cosine <= ElasticTraits::mu_peak );
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
-  double pdf_value = d_analog_distribution->evaluate( incoming_energy,
-                                                      scattering_angle_cosine );
+  double pdf_value =
+                d_analog_distribution->evaluatePDF( incoming_energy,
+                                                    scattering_angle_cosine );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =
@@ -350,6 +350,7 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffPDFMoment(
 
     cutoff_moment += moment_k;
   }
+  cutoff_moment /= d_analog_distribution->evaluateCDFAtCutoff( energy );
 }
 
 /* Evaluate the nth PDF moment of the screened Rutherford peak distribution
