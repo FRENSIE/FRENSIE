@@ -297,7 +297,7 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
   ++start_index;
 
   // Integrate through the energy bins above the given energy and below the max energy
-  for ( start_index; start_index < d_integration_points.size(); start_index++ )
+  for ( start_index; start_index < d_integration_points.size(); ++start_index )
   {
     cross_section_k = 0.0L;
     abs_error = 0.0L;

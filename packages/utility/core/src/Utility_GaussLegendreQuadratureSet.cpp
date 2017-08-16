@@ -24,13 +24,13 @@ void getLegendrePowerExpansionCoefficients(
 
     /* use recusion relationship to calculate the coefficients:
      * c_(n,l) = l/(2l-1) * c_(n-1,l-1) + (l+1)/(2l+3) * c_(n-1,l+1) */
-    for ( int n = 2; n <= power; n++ )
+    for ( int n = 2; n <= power; ++n )
     {
       // Set the 1st coefficient
       coefficients[n][0] = coefficients[n-1][1]/long_float(3);
 
       // Loop through the rest of the coefficients
-      for ( int l = 1; l <= n; l++ )
+      for ( int l = 1; l <= n; ++l )
       {
         coefficients[n][l] =
             l/( long_float(2)*l - long_float(1) )*coefficients[n-1][l-1] +
@@ -70,14 +70,14 @@ void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
 
   /* use recusion relationship to calculate the coefficients:
    * c_(n,l) = l/(2l-1) * c_(n-1,l-1) + (l+1)/(2l+3) * c_(n-1,l+1) */
-  for ( int n = 2; n < number_of_moments; n++ )
+  for ( int n = 2; n < number_of_moments; ++n )
   {
     // Set the 1st coefficient and its contribution to the gauss moment
     coef_n[0] = coef_n_minus_one[1]/long_float(3);
     moment_n = coef_n[0]*legendre_expansion_moments[0];
 
     // Loop through the rest of the coefficients and their contribution to the gauss moment
-    for ( int l = 1; l <= n; l++ )
+    for ( int l = 1; l <= n; ++l )
     {
       // Calculate coefficient n
       coef_n[l] = l/( long_float(2)*l - long_float(1) )*coef_n_minus_one[l-1] +

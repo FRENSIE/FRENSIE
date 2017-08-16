@@ -1902,7 +1902,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
   // Loop through electroionization evaluator for every subshell
-  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  for ( shell; shell != data_container.getSubshells().end(); ++shell )
   {
     this->createAdjointElectroionizationSubshellGridGenerator(
       forward_electron_energy_grid,
@@ -2090,7 +2090,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
 
     std::vector<double> reduced_cutoff_cross_section_ratio( energy_grid.size() );
-    for( unsigned i = 0; i < energy_grid.size(); i++ )
+    for( unsigned i = 0; i < energy_grid.size(); ++i )
     {
       reduced_cutoff_cross_section_ratio[i] =
         cutoff_distribution->evaluateCutoffCrossSectionRatio( energy_grid[i] );
@@ -2188,7 +2188,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Loop through the electroionization subshells
   shell = data_container.getSubshells().begin();
-  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  for ( shell; shell != data_container.getSubshells().end(); ++shell )
   {
     std::vector<double> cross_section;
     unsigned threshold;
@@ -2258,7 +2258,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
   // Loop through the electroionization subshells
     std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
-  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  for ( shell; shell != data_container.getSubshells().end(); ++shell )
   {
     i_cross_sections[*shell] =
       d_forward_epr_data->getElectroionizationCrossSection( *shell );
@@ -2288,7 +2288,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
     }
 
     shell = data_container.getSubshells().begin();
-    for ( shell; shell != data_container.getSubshells().end(); shell++ )
+    for ( shell; shell != data_container.getSubshells().end(); ++shell )
     {
       // Add electroionization subshell cross section if above threshold
       if ( i >= i_threshold_index[*shell] )
@@ -2382,7 +2382,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
     adjoint_excitation_energy_gain.size() );
 
   // Calcualte the adjoint icoming energy grid from the forward incoming energy grid and energy loss
-  for ( int i = 0; i < adjoint_excitation_energy_grid.size(); i++ )
+  for ( int i = 0; i < adjoint_excitation_energy_grid.size(); ++i )
   {
     // Evaluate the cross section at the forward energy
     adjoint_excitation_cross_section[i] =

@@ -109,7 +109,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
     }
 
     // Loop through the number of energie tables given.
-    for(int i = 0; i < d_number_energies_independent; i++)
+    for(int i = 0; i < d_number_energies_independent; ++i)
     {
 
         // Read the data header.
@@ -129,7 +129,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
                                   d_yield_std_independent[i].getRawPtr() );
 
         // Converts ZAID into SZAIDS
-        for(int j = 0; j < d_yield_zaid_independent[i].size(); j++)
+        for(int j = 0; j < d_yield_zaid_independent[i].size(); ++j)
         {
              d_yield_zaid_independent[i][j] = d_yield_zaid_independent[i][j] + 1000000 * d_yield_meta_state_independent[i][j];
         }
@@ -154,7 +154,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
     d_yield_std_cumulative.resize( d_number_energies_cumulative );
 
     // Loop through the number of energie tables given.
-    for(int i = 0; i < d_number_energies_cumulative; i++)
+    for(int i = 0; i < d_number_energies_cumulative; ++i)
     {
         // Read the data header.
         readEndfFissionYieldsDataHeader( d_file_id, &d_number_data_sets_cumulative[i], &d_energies_cumulative[i] );
@@ -173,7 +173,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
                                   d_yield_std_cumulative[i].getRawPtr() );
 
         // Converts ZAID into SZAIDS
-        for(int j = 0; j < d_yield_zaid_cumulative[i].size(); j++)
+        for(int j = 0; j < d_yield_zaid_cumulative[i].size(); ++j)
         {
              d_yield_zaid_cumulative[i][j] = d_yield_zaid_cumulative[i][j] + 1000000 * d_yield_meta_state_cumulative[i][j];
         }

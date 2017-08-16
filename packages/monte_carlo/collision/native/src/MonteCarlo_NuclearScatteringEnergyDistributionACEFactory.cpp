@@ -143,7 +143,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     energy_grid.resize(incoming_energies);
 
     // Loop through the incident energies
-    for(int i = 0; i != incoming_energies; i++)
+    for(int i = 0; i != incoming_energies; ++i)
     {
       energy_grid[i].first = dlw_block_array[ldat_start_index + 3 + i];
     }
@@ -152,12 +152,12 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     double outgoing_energies = dlw_block_array[ldat_start_index + 3 + incoming_energies];
 
     // Loop through the incoming energies
-    for(int i = 0; i != incoming_energies; i++)
+    for(int i = 0; i != incoming_energies; ++i)
     {
       energy_grid[i].second.resize(outgoing_energies,0);
 
       // Loop through the outgoing energies
-      for(int j = 0; i != outgoing_energies; j++)
+      for(int j = 0; i != outgoing_energies; ++j)
       {
         energy_grid[i].second[j] = dlw_block_array[ldat_start_index + 4 + incoming_energies +
                                         i * outgoing_energies + j];
@@ -263,7 +263,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
        energy_distribution( incoming_energies );
 
      // Loop through the incoming energies
-     for(int i = 0; i != incoming_energies; i++)
+     for(int i = 0; i != incoming_energies; ++i)
      {
        energy_distribution[i].first = incoming_energies_array[i];
 
@@ -418,7 +418,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
      probabilistic_distribution( prob_function_number );
 
   // Update random_variables_array
-  for(int i = 0; i != prob_function_number; i++)
+  for(int i = 0; i != prob_function_number; ++i)
   {
     probabilistic_distribution[i].first = prob_bin_width*i;
     probabilistic_distribution[i].second = probabilistic_function_array[i];
@@ -429,7 +429,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
      energy_distribution( incoming_energies );
 
   // Loop through incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     energy_distribution[i].first = incoming_energies_array[i];
     energy_distribution[i].second = tabulated_energy_function_array[i];
@@ -480,7 +480,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribut
      energy_distribution( incoming_energies );
 
   // Loop through incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     energy_distribution[i].first = incoming_energies_array[i];
     energy_distribution[i].second = tabulated_energy_function_array[i];
@@ -534,7 +534,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw9EnergyDistribut
      energy_distribution( incoming_energies );
 
   // Loop through incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     energy_distribution[i].first = incoming_energies_array[i];
     energy_distribution[i].second = tabulated_energy_function_array[i];
@@ -602,7 +602,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
      a_distribution( incoming_energies_a );
 
   // Loop through incoming energies (a)
-  for(int i = 0; i != incoming_energies_a; i++)
+  for(int i = 0; i != incoming_energies_a; ++i)
   {
     a_distribution[i].first = incoming_energies_array_a[i];
     a_distribution[i].second = tabulated_a[i];
@@ -613,7 +613,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
      b_distribution( incoming_energies_b );
 
   // Loop through incoming energies (b)
-  for(int i = 0; i != incoming_energies_b; i++)
+  for(int i = 0; i != incoming_energies_b; ++i)
   {
     b_distribution[i].first = incoming_energies_array_b[i];
     b_distribution[i].second = tabulated_b[i];

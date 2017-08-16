@@ -25,7 +25,7 @@ namespace MonteCarlo{
 //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 

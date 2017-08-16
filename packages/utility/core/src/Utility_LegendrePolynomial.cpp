@@ -34,7 +34,7 @@ double getLegendrePolynomial( const double value,
     double p_n_minus_1 = P1;
     double p_n;
 
-    for ( int i = 2; i <= polynomial_order; i++)
+    for ( int i = 2; i <= polynomial_order; ++i)
     {
       p_n = ( ( 2.0*i - 1.0 )*value*p_n_minus_1 - ( i - 1.0 )*p_n_minus_2 )/i;
 
@@ -68,7 +68,7 @@ long double getLegendrePolynomial( const long double value,
     long double p_n_minus_1 = P1;
     long double p_n;
 
-    for ( int i = 2; i <= polynomial_order; i++)
+    for ( int i = 2; i <= polynomial_order; ++i)
     {
       p_n = ( ( 2.0L*i - 1.0L )*value*p_n_minus_1 - ( i - 1.0L )*p_n_minus_2 )/i;
 

@@ -27,6 +27,14 @@ createAnalogElasticReaction(
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
+//! Create a joint elastic scattering electroatomic reaction
+std::shared_ptr<ElectroatomicReaction>
+createJointElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evaluation_tol );
+
 //! Create a hybrid elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
 createHybridElasticReaction(

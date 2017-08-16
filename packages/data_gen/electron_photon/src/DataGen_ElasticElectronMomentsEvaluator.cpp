@@ -266,7 +266,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   legendre_zero = rutherford_zero + cutoff_zero;
 
   // Iterate to get get all n moments
-  for ( int i = 0; i <= n; i++ )
+  for ( int i = 0; i <= n; ++i )
   {
     if ( d_cutoff_angle_cosine < ElasticTraits::mu_peak )
     {
@@ -335,7 +335,7 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffPDFMoment(
   grid_point = ++angular_grid.begin();
 
   cutoff_moment = Utility::long_float(0);
-  for ( grid_point; grid_point != angular_grid.end(); grid_point++ )
+  for ( grid_point; grid_point != angular_grid.end(); ++grid_point )
   {
     moment_k = Utility::long_float(0);
     abs_error = Utility::long_float(0);
@@ -384,7 +384,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByRecur
       coef_two[1] = ( Utility::long_float(1) - mu*mu )/
                       Utility::long_float(2);
 
-      for ( int i = 1; i < n; i++ )
+      for ( int i = 1; i < n; ++i )
       {
       coef_one[i+1] =
           ( Utility::long_float(2) + Utility::long_float(1)/i )*

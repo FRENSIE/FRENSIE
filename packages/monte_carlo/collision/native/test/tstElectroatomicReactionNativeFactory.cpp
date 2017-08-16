@@ -72,6 +72,82 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 }
 
 //---------------------------------------------------------------------------//
+// Check that an joint elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createJointElasticReaction )
+{
+  bool correlated_sampling_mode_on = true;
+
+  MonteCarlo::ElectroatomicReactionNativeFactory::createJointElasticReaction<Utility::LinLinLog>(
+                *data_container,
+                energy_grid,
+                grid_searcher,
+                reaction,
+                correlated_sampling_mode_on,
+                1e-7 );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an hybrid elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createHybridElasticReaction )
+{
+  bool correlated_sampling_mode_on = true;
+  double cutoff_angle_cosine = 0.9;
+
+  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog>(
+                *data_container,
+                energy_grid,
+                grid_searcher,
+                reaction,
+                cutoff_angle_cosine,
+                correlated_sampling_mode_on,
+                1e-7 );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction )
@@ -173,13 +249,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 1.1063294415585944e+08, 1e-12 );
 
-  energy = 4e-4;
+  energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
 
-  energy = 1e5;
+  energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.2037703049967248e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2037700886489448e-03, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -366,7 +442,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an analog elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createAnalogElasticReaction_lin )
+                   createAnalogElasticReaction_LinLinLin )
 {
   bool correlated_sampling_mode_on = true;
 
@@ -403,7 +479,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createCutoffElasticReaction_lin )
+                   createCutoffElasticReaction_LinLinLin )
 {
   bool correlated_sampling_mode_on = true;
 
@@ -441,7 +517,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an moment preserving elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createMomentPreservingElasticReaction_lin )
+                   createMomentPreservingElasticReaction_LinLinLin )
 {
   bool correlated_sampling_mode_on = true;
 
@@ -464,13 +540,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 1.1063294415585944e+08, 1e-12 );
 
-  energy = 4e-4;
+  energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
 
-  energy = 1e5;
+  energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.2037703049967248e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2037700886489448e-03, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -479,7 +555,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the electroionization subshell reactions can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createSubshellElectroionizationReactions_lin )
+                   createSubshellElectroionizationReactions_LinLinLin )
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
   bool correlated_sampling_mode_on = true;
@@ -538,7 +614,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that a basic (dipole distribution) bremsstrahlung reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createBremsstrahlungReaction_dipole_lin )
+                   createBremsstrahlungReaction_dipole_LinLinLin )
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
   bool correlated_sampling_mode_on = true;
@@ -582,7 +658,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
  * data can be created
  */
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createBremsstrahlungReaction_2bs_lin )
+                   createBremsstrahlungReaction_2bs_LinLinLin )
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
   bool correlated_sampling_mode_on = true;

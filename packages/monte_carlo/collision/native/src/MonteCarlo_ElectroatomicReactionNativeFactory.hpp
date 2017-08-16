@@ -71,6 +71,16 @@ public:
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
+  //! Create a joint elastic scattering electroatomic reaction
+  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  static void createJointElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const bool correlated_sampling_mode_on,
+    const double evaluation_tol );
+
   //! Create an cutoff elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createCutoffElasticReaction(

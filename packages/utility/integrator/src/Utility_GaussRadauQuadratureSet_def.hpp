@@ -64,7 +64,7 @@ void GaussRadauQuadratureSet::integrate(
 
   result = 0.0;
 
-  for (int i = 0; i < nodes.size(); i++)
+  for (int i = 0; i < nodes.size(); ++i)
   {
     result += integrand( nodes[i])*weights[i];
   }

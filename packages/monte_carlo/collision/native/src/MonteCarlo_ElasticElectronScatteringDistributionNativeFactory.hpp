@@ -22,6 +22,7 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_AnalogElasticOneDDistribution.hpp"
+#include "Utility_AnalogElasticTwoDDistribution.hpp"
 #include "Utility_AnalogElasticTraits.hpp"
 
 namespace MonteCarlo{

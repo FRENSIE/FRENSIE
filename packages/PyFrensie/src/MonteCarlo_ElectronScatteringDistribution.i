@@ -116,21 +116,21 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 // Add support for the extra analog electron scattering distribution functions
 //---------------------------------------------------------------------------//
 
-%feature("autodoc",
-"evaluateMoliereScreeningConstant(DISTRIBUTION self, const double incoming_energy ) -> double" )
-MonteCarlo::DISTRIBUTION::evaluateMoliereScreeningConstant;
+/*%feature("autodoc",*/
+/*"evaluateMoliereScreeningConstant(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
+/*MonteCarlo::DISTRIBUTION::evaluateMoliereScreeningConstant;*/
 
-%feature("autodoc",
-"evaluateAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )
-MonteCarlo::DISTRIBUTION::evaluateAtCutoff;
+/*%feature("autodoc",*/
+/*"evaluateAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
+/*MonteCarlo::DISTRIBUTION::evaluateAtCutoff;*/
 
-%feature("autodoc",
-"evaluatePDFAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )
-MonteCarlo::DISTRIBUTION::evaluatePDFAtCutoff;
+/*%feature("autodoc",*/
+/*"evaluatePDFAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
+/*MonteCarlo::DISTRIBUTION::evaluatePDFAtCutoff;*/
 
-%feature("autodoc",
-"evaluateCDFAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )
-MonteCarlo::DISTRIBUTION::evaluateCDFAtCutoff;
+/*%feature("autodoc",*/
+/*"evaluateCDFAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
+/*MonteCarlo::DISTRIBUTION::evaluateCDFAtCutoff;*/
 
 //---------------------------------------------------------------------------//
 // Add support for the bremsstrahlung electron scattering distribution

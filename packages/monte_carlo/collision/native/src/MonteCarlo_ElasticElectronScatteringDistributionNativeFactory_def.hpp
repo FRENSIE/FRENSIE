@@ -311,7 +311,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   testPrecondition( evaluation_tol < 1.0 );
 
   // Get the distribution data
-  TwoDDist::DistributionType function_data( angular_energy_grid.size() );
   std::vector<double> cutoff_ratios( angular_energy_grid.size() );
   std::vector<double> etas( angular_energy_grid.size() );
 
@@ -605,7 +604,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 //{
 //  // Find the first angle cosine above the cutoff angle cosine
 //  std::vector<double>::const_iterator start;
-//  for ( start = raw_cutoff_elastic_angles.begin(); start != raw_cutoff_elastic_angles.end(); start++ )
+//  for ( start = raw_cutoff_elastic_angles.begin(); start != raw_cutoff_elastic_angles.end(); ++start )
 //  {
 //    if ( *start > cutoff_angle_cosine )
 //    {
@@ -696,7 +695,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 
     // Evaluate the pdf on the angular grid
     evaluated_pdf.resize( angular_grid.size() );
-    for ( unsigned i = 0; i < angular_grid.size(); i++ )
+    for ( unsigned i = 0; i < angular_grid.size(); ++i )
     {
       evaluated_pdf[i] =
         scattering_function->evaluateSecondaryConditionalPDFExact(
@@ -942,7 +941,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringF
 
   // Set the scattering function
   scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
+    new Utility::AnalogElasticTwoDDistribution<TwoDInterpPolicy>(
         function_data,
         1e-6,
         evaluation_tol ) );

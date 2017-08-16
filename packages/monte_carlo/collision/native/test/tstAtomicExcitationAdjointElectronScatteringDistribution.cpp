@@ -230,7 +230,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Teuchos::Array<double> adjoint_energy_grid( size );
 
     // Loop through the energy grid
-    for ( unsigned n = 0; n < size; n++ )
+    for ( unsigned n = 0; n < size; ++n )
     {
       adjoint_energy_grid[n] = energy_grid[n] - energy_loss[n];
     }

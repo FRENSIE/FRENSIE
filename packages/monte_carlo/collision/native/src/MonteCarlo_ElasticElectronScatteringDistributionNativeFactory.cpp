@@ -159,7 +159,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
   if ( cutoff_angle_cosine < raw_angular_grid.back() )
   {
     std::vector<double>::const_iterator end_angle, end_pdf;
-    for ( end_angle = raw_angular_grid.begin(); end_angle != raw_angular_grid.end(); end_angle++ )
+    for ( end_angle = raw_angular_grid.begin(); end_angle != raw_angular_grid.end(); ++end_angle )
     {
       if ( *end_angle > cutoff_angle_cosine )
       {
@@ -204,7 +204,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
   if ( cutoff_angle_cosine < raw_angular_grid.back() )
   {
     std::vector<double>::const_iterator end_angle;
-    for ( end_angle = raw_angular_grid.begin(); end_angle != raw_angular_grid.end(); end_angle++ )
+    for ( end_angle = raw_angular_grid.begin(); end_angle != raw_angular_grid.end(); ++end_angle )
     {
       if ( *end_angle > cutoff_angle_cosine )
       {
@@ -268,7 +268,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
 {
   // Find the first angle cosine above the cutoff angle cosine
   std::vector<double>::const_iterator start;
-  for ( start = raw_angular_grid.begin(); start != raw_angular_grid.end(); start++ )
+  for ( start = raw_angular_grid.begin(); start != raw_angular_grid.end(); ++start )
   {
     if ( *start > cutoff_angle_cosine )
     {

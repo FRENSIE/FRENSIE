@@ -203,7 +203,7 @@ void CutoffElasticElectronScatteringDistribution::scatterElectron(
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine,
-              this->sampleAzimuthalAngle() );
+                            this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron

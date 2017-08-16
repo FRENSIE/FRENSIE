@@ -60,6 +60,51 @@ createAnalogElasticReaction(
   return reaction;
 }
 
+//! Create a joint elastic scattering electroatomic reaction
+std::shared_ptr<ElectroatomicReaction>
+createJointElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const bool linlinlog_interpolation_mode_on,
+    const bool correlated_sampling_mode_on,
+    const double evaluation_tol )
+{
+  // Extract the common energy grid
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign( raw_electroatom_data.getElectronEnergyGrid().begin(),
+                      raw_electroatom_data.getElectronEnergyGrid().end() );
+
+  // Construct the hash-based grid searcher
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+                              energy_grid,
+                              energy_grid.size()/10 ) );
+
+  // Create the reaction
+  std::shared_ptr<ElectroatomicReaction> reaction;
+
+  if ( linlinlog_interpolation_mode_on )
+  {
+    ElectroatomicReactionNativeFactory::createJointElasticReaction<Utility::LinLinLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else
+  {
+    ElectroatomicReactionNativeFactory::createJointElasticReaction<Utility::LinLinLin>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  return reaction;
+}
+
 //! Create a hybrid elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
 createHybridElasticReaction(

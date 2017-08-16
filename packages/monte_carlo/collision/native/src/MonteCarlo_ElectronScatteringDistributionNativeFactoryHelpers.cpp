@@ -18,46 +18,47 @@ namespace MonteCarlo{
 // Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     distribution;
 
-  // Assign the cutoff and total elastic cross section and electron energy grid
-  Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
-  cutoff_cross_section.assign(
-    data_container.getCutoffElasticCrossSection().begin(),
-    data_container.getCutoffElasticCrossSection().end() );
-  total_cross_section.assign(
-    data_container.getTotalElasticCrossSection().begin(),
-    data_container.getTotalElasticCrossSection().end() );
-  energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
-                      data_container.getElectronEnergyGrid().end() );
-
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
         distribution,
-        energy_grid,
-        cutoff_cross_section,
-        total_cross_section,
+        data_container,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LogLogLog>(
+        distribution,
+        data_container,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
+        distribution,
         data_container,
         correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
-        distribution,
-        energy_grid,
-        cutoff_cross_section,
-        total_cross_section,
-        data_container,
-        correlated_sampling_mode_on,
-        evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }

@@ -443,7 +443,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
     new_energy_grid.push_back( max_electron_energy );
 
     // Erase all distributions above the max electron energy
-    for( energy_bin; energy_bin != angular_energy_grid.end(); energy_bin++ )
+    for( energy_bin; energy_bin != angular_energy_grid.end(); ++energy_bin )
     {
       elastic_angle.erase( *energy_bin );
       elastic_pdf.erase( *energy_bin );
@@ -1417,7 +1417,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
                                        this->getMaxElectronEnergy() );
   end_energy++;
 
-  for ( energy; energy != end_energy; energy++ )
+  for ( energy; energy != end_energy; ++energy )
   {
     calculateElasticAngleCosine(
         d_endl_data_container->getCutoffElasticAnglesAtEnergy( *energy ),
@@ -1533,7 +1533,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
   // Loop through electroionization data for every subshell
-  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  for ( shell; shell != data_container.getSubshells().end(); ++shell )
   {
     data_container.setElectroionizationEnergyGrid(
         *shell,
@@ -1633,7 +1633,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
   unsigned i = 0;
   // Loop through electroionization data for every subshell
-  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  for ( shell; shell != data_container.getSubshells().end(); ++shell )
   {
     // Get the raw energy grid
     raw_energy_grid =
@@ -1655,7 +1655,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
     // Set the shell indentifier
     electroionization_cross_section[i].first = *shell;
-    i++;
+    ++i;
   }
 
 //---------------------------------------------------------------------------//
@@ -2026,7 +2026,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   std::vector<double> cross_section_reduction( angular_energy_grid.size() );
 
   // iterate through all angular energy bins
-  for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
+  for ( unsigned i = 0; i < angular_energy_grid.size(); ++i )
   {
     StandardElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWeights(
         moments_evaluator,
@@ -2716,7 +2716,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
   elastic_angle.resize( size );
   elastic_pdf.resize( size );
 
-  for ( int bin = 0; bin < size; bin++ )
+  for ( unsigned bin = 0; bin < size; ++bin )
   {
     elastic_pdf[r_bin] = raw_elastic_pdf[bin];
     long double angle_cosine = 1.0L - raw_elastic_angle[bin];
@@ -2758,12 +2758,12 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWe
 
   // Renormalize weights and set the cross_section_reduction to the sum of the weights 
   cross_section_reduction = 0.0;
-  for( int i = 0; i < weights.size(); i++ )
+  for( int i = 0; i < weights.size(); ++i )
   {
     cross_section_reduction += weights[i];
   }
 
-  for( int i = 0; i < weights.size(); i++ )
+  for( int i = 0; i < weights.size(); ++i )
   {
     weights[i] /= cross_section_reduction;
   }
@@ -2831,7 +2831,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
         d_endl_data_container->getCutoffElasticCrossSection();
 
     // Calculate the total elastic cross section
-    for (unsigned n = 0; n < raw_elastic_cross_section.size(); n++)
+    for (unsigned n = 0; n < raw_elastic_cross_section.size(); ++n)
     {
       // Get the energy
       double energy = raw_energy_grid[n];
@@ -2879,7 +2879,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateMomentPreservingCro
 
   unsigned begin = cutoff_threshold_energy_index;
 
-  for( unsigned i = begin; i < cutoff_cross_sections.size(); i++ )
+  for( unsigned i = begin; i < cutoff_cross_sections.size(); ++i )
   {
     double cutoff_cdf =
                 cutoff_distribution->evaluateCDF( electron_energy_grid[i],

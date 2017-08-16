@@ -44,6 +44,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionType,
   TEST_EQUALITY_CONST( reaction_name, "Hybrid Elastic Electroatomic Reaction" );
 
   reaction_name =
+    MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( reaction_name, "Joint Elastic Electroatomic Reaction" );
+
+  reaction_name =
     MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( reaction_name, "Cutoff Elastic Electroatomic Reaction" );
@@ -507,6 +512,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionType, ostream_operator )
   oss << MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION;
 
   TEST_EQUALITY_CONST( oss.str(), "Hybrid Elastic Electroatomic Reaction" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION;
+
+  TEST_EQUALITY_CONST( oss.str(), "Joint Elastic Electroatomic Reaction" );
 
   oss.str( "" );
   oss.clear();

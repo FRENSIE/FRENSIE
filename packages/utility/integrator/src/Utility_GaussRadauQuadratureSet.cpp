@@ -148,7 +148,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
   double root_k, s, jacobi, jacobi_derivative, delta_root;
 
   // Iterate through all n roots ( 0 < k < n )
-  for (int k = 0; k < n; k++)
+  for (int k = 0; k < n; ++k)
   {
     // Make an initial guess that the roots are equal to the roots of the Chebyshev Polynomial
     root_k = -cos( ( 2.0*k + 1.0 )/( 2.0 * n )* PhysicalConstants::pi );
@@ -166,7 +166,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
     {
       s = 0;
 
-      for (int i = 0; i < k; i++)
+      for (int i = 0; i < k; ++i)
       {
         s += 1.0/( root_k - roots[i] );
       }

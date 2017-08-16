@@ -92,7 +92,7 @@ void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronD
 
   // iterate through all angular energy bins
   std::vector<double> discrete_angles, weights;
-  for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
+  for ( unsigned i = 0; i < angular_energy_grid.size(); ++i )
   {
     evaluateDiscreteAnglesAndWeights(
         angular_energy_grid[i],

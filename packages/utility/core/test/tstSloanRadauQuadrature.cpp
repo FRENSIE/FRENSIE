@@ -369,9 +369,9 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   std::vector<Utility::long_float> legendres_4( 5 );
 
   legendres_4[0] = Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 5; m++ )
+    for ( int m = 1; m < 5; ++m )
     {
       legendres_4[m] +=
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
@@ -421,9 +421,9 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   std::vector<Utility::long_float>  legendres_8( 9 );
 
   legendres_8[0] = Utility::long_float(1)*Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 9; m++ )
+    for ( int m = 1; m < 9; ++m )
     {
       legendres_8[m] +=
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
@@ -497,9 +497,9 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   std::vector<Utility::long_float>  legendres_double( 9 );
 
   legendres_double[0] = Utility::long_float(1)*Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 9; m++ )
+    for ( int m = 1; m < 9; ++m )
     {
       legendres_double[m] +=
         Utility::getLegendrePolynomial( node[i], m )
@@ -544,9 +544,9 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   std::vector<Utility::long_float>  legendres_ld( 9 );
 
   legendres_ld[0] = Utility::long_float(1)*Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 9; m++ )
+    for ( int m = 1; m < 9; ++m )
     {
       legendres_ld[m] +=
         Utility::getLegendrePolynomial( node_ld[i], m )
@@ -590,9 +590,9 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   std::vector<Utility::long_float> legendres( test_legendre.size() );
 
   legendres[0] = Utility::long_float(1);
-  for ( int i = 0; i < nodes_preserved; i++ )
+  for ( int i = 0; i < nodes_preserved; ++i )
   {
-    for ( int m = 1; m < test_legendre.size(); m++ )
+    for ( int m = 1; m < test_legendre.size(); ++m )
     {
       legendres[m] +=
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
@@ -965,9 +965,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   test_weight = 1.0L/num_roots;
 
   test_legendre[0] = Utility::long_float(1);
-  for ( int i = 0; i < num_roots; i++ )
+  for ( int i = 0; i < num_roots; ++i )
   {
-    for ( int m = 1; m < num_moments; m++ )
+    for ( int m = 1; m < num_moments; ++m )
     {
       test_legendre[m] +=
         Utility::getLegendrePolynomial( test_roots[i].convert_to<long double>(),

@@ -65,6 +65,80 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a joint elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
+                   createJointElasticReaction )
+{
+  bool linlinlog_interpolation_mode_on = true;
+  bool correlated_sampling_mode_on = true;
+
+  reaction = MonteCarlo::createJointElasticReaction(
+                *data_container,
+                linlinlog_interpolation_mode_on,
+                correlated_sampling_mode_on,
+                eval_tol );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an hybrid elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createHybridElasticReaction )
+{
+  bool linlinlog_interpolation_mode_on = true;
+  bool correlated_sampling_mode_on = true;
+  double cutoff_angle_cosine = 0.9;
+
+    reaction = MonteCarlo::createHybridElasticReaction(
+                *data_container,
+                cutoff_angle_cosine,
+                linlinlog_interpolation_mode_on,
+                correlated_sampling_mode_on,
+                1e-7 );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createCutoffElasticReaction )
@@ -163,13 +237,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 1.1063294415585944e+08, 1e-12 );
 
-  energy = 4e-4;
+  energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
 
-  energy = 1e5;
+  energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.2037703049967248e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2037700886489448e-03, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -445,13 +519,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   double cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 1.1063294415585944e+08, 1e-12 );
 
-  energy = 4e-4;
+  energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
 
-  energy = 1e5;
+  energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.2037703049967248e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2037700886489448e-03, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

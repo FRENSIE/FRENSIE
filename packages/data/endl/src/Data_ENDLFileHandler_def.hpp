@@ -31,7 +31,7 @@ void ENDLFileHandler::mapTwoColumnSubshellData(
 
   // convert eadl subshell typ to endf subshell type
   subshells.resize( column_one.size() );
-  for ( int i = 0; i < column_one.size(); i++ )
+  for ( int i = 0; i < column_one.size(); ++i )
   {
     unsigned shell = convertEADLDesignatorToENDFDesignator( column_one[i] );
     subshells[i] = shell;

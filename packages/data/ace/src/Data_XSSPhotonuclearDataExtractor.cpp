@@ -31,7 +31,7 @@ namespace Data{
   testPrecondition( xss.size() == nxs[0] );
 
   //Adjust the indices in the JXS array so they are zero indexed
-  for( unsigned i = 0; i < d_jxs.size();i++)
+  for( unsigned i = 0; i < d_jxs.size();++i)
     d_jxs[i] -= 1;
 
   // Parse secondary partcle types
@@ -40,7 +40,7 @@ namespace Data{
 
   Teuchos::ArrayView<const double> ixs_array = extractIXSBlock();
 
-  for( unsigned i = 0; i < num_secondary_particle_types;i++)
+  for( unsigned i = 0; i < num_secondary_particle_types;++i)
   {
 
     unsigned particle_type = (unsigned)ixs_array[i*ixs_array_subsize];

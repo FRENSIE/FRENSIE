@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_JointElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
@@ -47,7 +48,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
     raw_electroatom_data.getCutoffElasticCrossSection().begin(),
     raw_electroatom_data.getCutoffElasticCrossSection().end() );
 
-  // Cutoff elastic cross section
+  // Total elastic cross section
   Teuchos::ArrayRCP<double> total_cross_section;
   total_cross_section.assign(
     raw_electroatom_data.getTotalElasticCrossSection().begin(),
@@ -71,6 +72,72 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
       raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex(),
       grid_searcher,
       distribution ) );
+}
+
+// Create the joint elastic scattering electroatomic reactions
+template<typename TwoDInterpPolicy>
+void ElectroatomicReactionNativeFactory::createJointElasticReaction(
+            const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+            const Teuchos::ArrayRCP<const double>& energy_grid,
+            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+            std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+            const bool correlated_sampling_mode_on,
+            const double evaluation_tol )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+
+  // Cutoff elastic cross section
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    raw_electroatom_data.getCutoffElasticCrossSection().begin(),
+    raw_electroatom_data.getCutoffElasticCrossSection().end() );
+
+  // Total elastic cross section
+  Teuchos::ArrayRCP<double> total_cross_section;
+  total_cross_section.assign(
+    raw_electroatom_data.getTotalElasticCrossSection().begin(),
+    raw_electroatom_data.getTotalElasticCrossSection().end() );
+
+  // Total elastic cross section threshold energy bin index
+  unsigned threshold_energy_index =
+    raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex();
+
+  // Calculate sampling ratios
+  Teuchos::ArrayRCP<double> sampling_ratios( total_cross_section.size() );
+  for( unsigned i = 0; i < sampling_ratios.size(); ++i )
+  {
+    sampling_ratios[i] = cutoff_cross_section[i]/total_cross_section[i];
+  }
+
+  // Create the tabular cutoff elastic scattering distribution
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+    tabular_distribution,
+    raw_electroatom_data,
+    Utility::AnalogElasticTraits::mu_peak,
+    correlated_sampling_mode_on,
+    evaluation_tol );
+
+  // Create the analytical screened Rutherford elastic scattering distribution
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution> analytical_distribution;
+  ElasticFactory::createScreenedRutherfordElasticDistribution(
+    analytical_distribution,
+    tabular_distribution,
+    raw_electroatom_data.getAtomicNumber() );
+
+  elastic_reaction.reset(
+    new JointElasticElectroatomicReaction<Utility::LinLin>(
+                                        energy_grid,
+                                        total_cross_section,
+                                        sampling_ratios,
+                                        threshold_energy_index,
+                                        grid_searcher,
+                                        tabular_distribution,
+                                        analytical_distribution ) );
 }
 
 // Create a hybrid elastic scattering electroatomic reaction

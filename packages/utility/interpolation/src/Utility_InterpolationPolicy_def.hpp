@@ -321,6 +321,10 @@ inline DepType LogLog::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_0,
 				    const DepType dep_var_1 )
 {
+//std::cout << std::setprecision(20) << "indep_var_1 =\t" << indep_var_1 << std::endl;
+//std::cout << std::setprecision(20) << "indep_var =\t" << indep_var << std::endl;
+//std::cout << std::setprecision(20) << "dep_var_0 =\t" << dep_var_0 << std::endl;
+//std::cout << std::setprecision(20) << "dep_var_1 =\t" << dep_var_1 << std::endl;
   // The IndepType must be a floating point type
   testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
   testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
