@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticOneDDistribution_def.hpp
+//! \file   Utility_AnalogElasticDistribution_def.hpp
 //! \author Luke Kersting
 //! \brief  Analog elastic distribution class declaration
 //!
@@ -34,23 +34,23 @@ namespace Utility{
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-double UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_cutoff_delta_mu = 1.0e-6;
+double UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_cutoff_delta_mu = 1.0e-6;
 
 // The scattering angle cosine above which the screened Rutherford distribution is used
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-double UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_cutoff_mu = 0.999999;
+double UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_cutoff_mu = 0.999999;
 
 // Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticOneDDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticOneDDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticDistribution<LogLin,void,void> );
 
 // Default constructor
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticOneDDistribution()
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution()
 { /* ... */ }
 
 // Basic constructor (potentially dangerous)
@@ -64,7 +64,7 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticOneDDistribution(
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution(
                   const Teuchos::Array<double>& independent_values,
                   const Teuchos::Array<double>& dependent_values,
                   const double& moliere_screening_constant,
@@ -99,7 +99,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticOneDDistribution(
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution(
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values,
                   const double& moliere_screening_constant,
@@ -138,8 +138,8 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 template<typename InputIndepUnit, typename InputDepUnit>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticOneDDistribution(
- const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution(
+ const UnitAwareAnalogElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
   : d_distribution(),
     d_moliere_eta(),
     d_cutoff_cross_section_ratio(),
@@ -159,9 +159,9 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
   d_scaling_parameter = dist_instance.d_scaling_parameter;
   d_cdf_parameter = dist_instance.d_cdf_parameter;
 
-  typedef typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
+  typedef typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
-  typedef typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
+  typedef typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
   // Reconstruct the original input distribution
   Teuchos::Array<InputIndepQuantity> input_indep_values;
@@ -177,7 +177,7 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticOneDDistribution( const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareAnalogElasticDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
   : d_distribution(),
     d_moliere_eta(),
     d_cutoff_cross_section_ratio(),
@@ -219,8 +219,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,void,void>& unitless_distribution )
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution )
 {
   return ThisType( unitless_distribution, 0 );
 }
@@ -229,9 +229,9 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>&
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator=(
-  const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& dist_instance )
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>&
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator=(
+  const UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
@@ -256,9 +256,9 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::DepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCutoff(
- const typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::DepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCutoff(
+ const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   // Make sure the indep var variable is within its limits
   testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
@@ -270,9 +270,9 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::DepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluate(
- const typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::DepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluate(
+ const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   // Make sure the indep var variable is within its limits
   testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
@@ -320,9 +320,9 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::InverseIndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluatePDF(
- const typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::InverseIndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluatePDF(
+ const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   // Make sure the indep var variable is within its limits
   testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
@@ -340,8 +340,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-double UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCDF(
-  const typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
+double UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCDF(
+  const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   // Make sure the indep var variable is within its limits
   testPrecondition( indep_var_value >= this->getLowerBoundOfIndepVar() );
@@ -381,8 +381,8 @@ double UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUni
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-inline typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sample() const
+inline typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -395,8 +395,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
                                                        unsigned& trials ) const
 {
   ++trials;
@@ -408,8 +408,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
                                             unsigned& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -421,8 +421,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumber(
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumber(
                                              const double random_number ) const
 {
   unsigned dummy_index;
@@ -434,9 +434,9 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleInSubrange(
- const typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleInSubrange(
+ const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the maximum indep var is valid
   testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
@@ -451,10 +451,10 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-inline typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
+inline typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
  const double random_number,
- const typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
+ const typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -475,8 +475,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleImplementation(
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleImplementation(
                                             double random_number,
                                             unsigned& sampled_bin_index ) const
 {
@@ -517,8 +517,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleScreenedRutherford(
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleScreenedRutherford(
                                             double random_number ) const
 {
   // Make sure the random number is valid
@@ -557,8 +557,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleCutoff(
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleCutoff(
                                             double random_number,
                                             unsigned& sampled_bin_index ) const
 {
@@ -624,8 +624,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
   return IQT::one();
 }
@@ -634,8 +634,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffBoundOfIndepVar() const
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffBoundOfIndepVar() const
 {
   return 0.999999*IQT::one();
 }
@@ -644,8 +644,8 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
+typename UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
   return -1.0*IQT::one();
 }
@@ -655,7 +655,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 OneDDistributionType
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
 }
@@ -666,7 +666,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 double
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getMoliereScreeningConstant() const
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getMoliereScreeningConstant() const
 {
   return ThisType::d_moliere_eta;
 }
@@ -676,7 +676,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 double
-UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffCrossSectionRatio() const
+UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffCrossSectionRatio() const
 {
   return ThisType::d_cutoff_cross_section_ratio;
 }
@@ -685,7 +685,7 @@ UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,Depen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isContinuous() const
+bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isContinuous() const
 {
   return true;
 }
@@ -694,7 +694,7 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toStream(
+void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toStream(
                                                        std::ostream& os ) const
 {
   Teuchos::Array<double> independent_values, dependent_values;
@@ -712,7 +712,7 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStream( std::istream& is )
 {
   // Read the initial '{'
   std::string start_bracket;
@@ -860,8 +860,8 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isEqual(
- const UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isEqual(
+ const UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
          d_moliere_eta == other.d_moliere_eta &&
@@ -875,7 +875,7 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromRawData(
+void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromRawData(
                               const Teuchos::Array<double>& independent_values,
                               const Teuchos::Array<double>& dependent_values )
 {
@@ -905,7 +905,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
-void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution(
+void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution(
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values )
 {
@@ -970,7 +970,7 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
+void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
                          Teuchos::Array<IndepQuantity>& independent_values,
                          Teuchos::Array<DepQuantity>& dependent_values ) const
 {
@@ -990,7 +990,7 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
+void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
                                Teuchos::Array<double>& independent_values,
                                Teuchos::Array<double>& dependent_values ) const
 {
@@ -1010,7 +1010,7 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 template<typename Quantity>
-void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues(
+void UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues(
                                  const Teuchos::Array<double>& unitless_values,
                                  Teuchos::Array<Quantity>& quantities )
 {
@@ -1026,7 +1026,7 @@ void UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
+bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
 {
   bool possible_zero = false;
 
@@ -1047,7 +1047,7 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
                                          const LinIndepVarProcessingTag ) const
 {
   return true;
@@ -1058,7 +1058,7 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
                                          const LogIndepVarProcessingTag ) const
 {
   return true;//boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LogIndepVarProcessingTag>::value;
@@ -1068,7 +1068,7 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                            const LinDepVarProcessingTag ) const
 {
   return true;//boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LinDepVarProcessingTag>::value;
@@ -1078,7 +1078,7 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+bool UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                            const LogDepVarProcessingTag ) const
 {
   return true;//boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
@@ -1089,5 +1089,5 @@ bool UnitAwareAnalogElasticOneDDistribution<InterpolationPolicy,IndependentUnit,
 #endif // end UTILITY_ANALOG_ELASTIC_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticOneDDistribution_def.hpp
+// end Utility_AnalogElasticDistribution_def.hpp
 //---------------------------------------------------------------------------//

@@ -38,6 +38,7 @@ std::string convertOneDDistributionTypeToString(
   case UNIFORM_DISTRIBUTION: return "Uniform Distribution";
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
   case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
+  case CUTOFF_ELASTIC_DISTRIBUTION: return "Cutoff Elastic Distribution";
   case ANALOG_ELASTIC_DISTRIBUTION: return "Analog Elastic Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,

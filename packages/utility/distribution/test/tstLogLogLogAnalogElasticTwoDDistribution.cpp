@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstLogLogLogAnalogElasticTwoDDistribution.cpp
-//! \author Alex Robinson
-//! \brief  The analog elastic two-dimensional dist. unit tests
-//!         (LogLogLog interpolation)
+//! \author Luke Kersting
+//! \brief  The elastic two-dimensional dist. unit tests
+//!         (Analog with LogLogLog interpolation)
 //!
 //---------------------------------------------------------------------------//
 
@@ -23,8 +23,8 @@
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DynamicOutputFormatter.hpp"
-#include "Utility_AnalogElasticOneDDistribution.hpp"
-#include "Utility_AnalogElasticTwoDDistribution.hpp"
+#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
@@ -56,7 +56,7 @@ std::shared_ptr<Utility::FullyTabularTwoDDistribution> tab_distribution;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution is tabular in the primary dimension
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    isPrimaryDimensionTabular )
 {
   TEST_ASSERT( distribution->isPrimaryDimensionTabular() );
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution is tabular in the primary dimension
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    isPrimaryDimensionTabular )
 {
   TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionTabular() );
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution is continuous in the primary dimension
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    isPrimaryDimensionContinuous )
 {
   TEST_ASSERT( distribution->isPrimaryDimensionContinuous() );
@@ -81,7 +81,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution is continuous in the primary
 // dimension
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    isPrimaryDimensionContinuous )
 {
   TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionContinuous() );
@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution's primary lower bound can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    getLowerBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfPrimaryIndepVar(), 1.0 );
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution's primary lower bound can be
 // returned
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getLowerBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfPrimaryIndepVar(), 1.0*MeV );
@@ -106,7 +106,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution's primary dimension upper bound can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    getUpperBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfPrimaryIndepVar(), 2.0 );
@@ -115,7 +115,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution's primary dimension upper bound can
 // be returned
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getUpperBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfPrimaryIndepVar(), 2.0*MeV );
@@ -123,7 +123,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the conditional distribution can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
@@ -166,7 +166,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the conditional unit-aware distribution can be
 // returned
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
@@ -208,7 +208,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the conditional distribution can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
@@ -251,7 +251,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the conditional unit-aware distribution can be
 // returned
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
@@ -293,7 +293,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the bounds of two distribution can be compared
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    hasSamePrimaryBounds )
 {
   // Self test
@@ -375,7 +375,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluate )
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
 {
   // Below lower bounds of conditional indep var
   TEST_THROW( distribution->evaluate( 1.0, -2.0 ), std::logic_error );
@@ -406,16 +406,16 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluate )
   TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, -1.0 ),
                           3.46102718214321869450e-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.0 ),
                           1.73051359107160940276,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.999999 ),
                           3.46102718214321880552,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 1.0 ),
                           3.4610341042010435153,
                           1e-15 );
 
@@ -444,7 +444,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluate )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluate )
 {
   // Below lower bounds of conditional indep var
@@ -524,7 +524,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluateExact )
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluateExact )
 {
   // Below lower bounds of conditional indep var
   TEST_THROW( tab_distribution->evaluateExact( 1.0, -2.0 ), std::logic_error );
@@ -597,7 +597,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, evaluateExact )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateExact )
 {
   // Below lower bounds of conditional indep var
@@ -683,7 +683,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, correlatedEvaluate )
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, correlatedEvaluate )
 {
   // Below lower bounds of conditional indep var
   TEST_THROW( tab_distribution->correlatedEvaluate( 1.0, -2.0 ), std::logic_error );
@@ -756,7 +756,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution, correlatedEvaluate )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluate )
 {
   // Below lower bounds of conditional indep var
@@ -840,7 +840,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
   // Below lower bounds of conditional indep var
@@ -942,7 +942,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
   // Below lower bounds of conditional indep var
@@ -1046,7 +1046,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
   // Below lower bounds of conditional indep var
@@ -1150,7 +1150,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
   // Below lower bounds of conditional indep var
@@ -1254,7 +1254,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
   // Below lower bounds of conditional indep var
@@ -1358,7 +1358,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
   // Below lower bounds of conditional indep var
@@ -1462,7 +1462,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional CDF can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
   // Below lower bounds of conditional indep var
@@ -1536,7 +1536,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional CDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
   // Below lower bounds of conditional indep var
@@ -1610,7 +1610,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional CDF can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
   // Below lower bounds of conditional indep var
@@ -1672,19 +1672,19 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, -1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.0 ),
                           2.57143040816457724151e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.999999 ), 0.9 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.999999 ), 0.9 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 1.0 ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional CDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
   // Below lower bounds of conditional indep var
@@ -1758,7 +1758,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional CDF can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
   // Below lower bounds of conditional indep var
@@ -1831,7 +1831,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional CDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
   // Below lower bounds of conditional indep var
@@ -1905,7 +1905,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditional )
 {
   // Before the first bin - no extension
@@ -2065,7 +2065,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditional )
 {
   // Before the first bin - no extension
@@ -2226,7 +2226,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
   unsigned trials = 0u;
@@ -2421,7 +2421,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {  unsigned trials = 0u;
 
@@ -2615,7 +2615,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
@@ -2826,7 +2826,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
@@ -3038,7 +3038,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices_with_raw )
 {
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
@@ -3274,7 +3274,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices_with_raw )
 {
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
@@ -3517,7 +3517,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumber )
 {
   // Before the first bin - no extension
@@ -3645,7 +3645,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumber )
 {
   // Before the first bin - no extension
@@ -3774,7 +3774,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalInSubrange )
 {
   // Before the first bin - no extension
@@ -3956,7 +3956,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalInSubrange )
 {
   // Before the first bin - no extension
@@ -4135,7 +4135,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
@@ -4277,7 +4277,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
@@ -4421,7 +4421,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExact )
 {
   // Before the first bin - no extension
@@ -4529,7 +4529,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExact )
 {
   // Before the first bin - no extension
@@ -4638,7 +4638,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumber )
 {
   // Before the first bin - no extension
@@ -4724,7 +4724,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumber )
 {
   // Before the first bin - no extension
@@ -4812,7 +4812,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExactInSubrange )
 {
   // Before the first bin - no extension
@@ -4934,7 +4934,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExactInSubrange )
 {
   // Before the first bin - no extension
@@ -5056,7 +5056,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF an be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
@@ -5157,7 +5157,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF an be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
@@ -5258,7 +5258,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditional )
 {
   // Before the first bin - no extension
@@ -5366,7 +5366,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditional )
 {
   // Before the first bin - no extension
@@ -5475,7 +5475,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumber )
 {
   // Before the first bin - no extension
@@ -5561,7 +5561,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumber )
 {
   // Before the first bin - no extension
@@ -5649,7 +5649,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalInSubrange )
 {
   // Before the first bin - no extension
@@ -5771,7 +5771,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalInSubrange )
 {
   // Before the first bin - no extension
@@ -5893,7 +5893,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
@@ -5994,7 +5994,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticTwoDDistribution,
+TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
@@ -6105,7 +6105,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the two-dimensional distribution
   {
-    Utility::AnalogElasticTwoDDistribution<Utility::LogLogLog>::DistributionType
+    Utility::ElasticTwoDDistribution<Utility::LogLogLog>::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
@@ -6115,7 +6115,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999; values[2] = 1.0;
 
     distribution_data[0].first = 1.0;
-    distribution_data[0].second.reset( new Utility::AnalogElasticOneDDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    distribution_data[0].second.reset( new Utility::AnalogElasticDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
     // Create the secondary distribution In the first bin
     bin_boundaries[0] = -1.0; values[0] = 1.0;
@@ -6123,12 +6123,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999; values[2] = 10.0;
 
     distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::AnalogElasticOneDDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    distribution_data[1].second.reset( new Utility::AnalogElasticDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-    tab_distribution.reset( new Utility::AnalogElasticTwoDDistribution<Utility::LogLogLog>(
-                                                            distribution_data,
-                                                            1e-3,
-                                                            1e-7 ) );
+    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogLog>( distribution_data, 1.0, 1e-3, 1e-7 ) );
     distribution = tab_distribution;
   }
 
@@ -6146,7 +6143,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 1.0*barn;
 
     primary_bins[0] = 1.0*MeV;
-    secondary_dists[0].reset( new Utility::UnitAwareAnalogElasticOneDDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    secondary_dists[0].reset( new Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
     // Create the secondary distribution In the first bin
     bin_boundaries[0] = -1.0*cgs::dimensionless(); values[0] = 1.0*barn;
@@ -6154,9 +6151,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 10.0*barn;
 
     primary_bins[1] = 2.0*MeV;
-    secondary_dists[1].reset( new Utility::UnitAwareAnalogElasticOneDDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    secondary_dists[1].reset( new Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareAnalogElasticTwoDDistribution<Utility::LogLogLog,MegaElectronVolt,cgs::dimensionless,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogLog,MegaElectronVolt,cgs::dimensionless,Barn>(
+        primary_bins, secondary_dists, 1.0*cgs::dimensionless(), 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;
   }

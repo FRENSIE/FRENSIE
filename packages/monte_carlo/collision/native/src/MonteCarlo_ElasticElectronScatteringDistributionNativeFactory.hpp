@@ -21,8 +21,8 @@
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
-#include "Utility_AnalogElasticOneDDistribution.hpp"
-#include "Utility_AnalogElasticTwoDDistribution.hpp"
+#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_AnalogElasticTraits.hpp"
 
 namespace MonteCarlo{
@@ -41,7 +41,7 @@ public:
 
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
-  typedef Utility::AnalogElasticOneDDistribution<Utility::LinLin> AnalogDist;
+  typedef Utility::AnalogElasticDistribution<Utility::LinLin> AnalogDist;
 
   typedef Utility::TabularDistribution<Utility::LinLin> TabularDist;
 

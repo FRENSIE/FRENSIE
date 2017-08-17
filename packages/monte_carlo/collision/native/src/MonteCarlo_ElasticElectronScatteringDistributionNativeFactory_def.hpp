@@ -941,7 +941,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringF
 
   // Set the scattering function
   scattering_function.reset(
-    new Utility::AnalogElasticTwoDDistribution<TwoDInterpPolicy>(
+    new Utility::ElasticTwoDDistribution<TwoDInterpPolicy>(
         function_data,
         1e-6,
         evaluation_tol ) );

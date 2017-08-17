@@ -1,22 +1,22 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticOneDDistribution.cpp
+//! \file   Utility_CutoffElasticDistribution.cpp
 //! \author Luke Kersting
-//! \brief  The analog elastic distribution class template instantiations
+//! \brief  The cutoff elastic distribution class template instantiations
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_AnalogElasticOneDDistribution.hpp"
+#include "Utility_CutoffElasticDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticOneDDistribution<LinLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareAnalogElasticOneDDistribution<LogLin,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCutoffElasticDistribution<LinLin,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCutoffElasticDistribution<LogLin,void,void> );
 
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticOneDDistribution.cpp
+// end Utility_CutoffElasticDistribution.cpp
 //---------------------------------------------------------------------------//

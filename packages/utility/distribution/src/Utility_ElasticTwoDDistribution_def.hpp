@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticTwoDDistribution_def.hpp
+//! \file   Utility_ElasticTwoDDistribution_def.hpp
 //! \author Luke Kersting
-//! \brief  The interpolated fully tabular two-dimensional dist. class def.
+//! \brief  The elastic two-dimensional dist. class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_ANALOG_ELASTIC_TWO_D_DISTRIBUTION_DEF_HPP
-#define UTILITY_ANALOG_ELASTIC_TWO_D_DISTRIBUTION_DEF_HPP
+#ifndef UTILITY_ELASTIC_TWO_D_DISTRIBUTION_DEF_HPP
+#define UTILITY_ELASTIC_TWO_D_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_TabularDistribution.hpp"
@@ -27,7 +27,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> DepQuantity
@@ -49,7 +49,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateInBoundaries(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
@@ -72,7 +72,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExact(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExact(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> DepQuantity
@@ -88,7 +88,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
@@ -110,7 +110,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDFInBoundaries(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDFInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
@@ -133,7 +133,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDFExact(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDFExact(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
@@ -149,7 +149,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
@@ -170,7 +170,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDFInBoundaries(
+double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDFInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
@@ -191,7 +191,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
+double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
@@ -217,7 +217,7 @@ template<typename TwoDInterpPolicy,
 template<typename LocalTwoDInterpPolicy,
          typename ReturnType,
          typename EvaluationMethod>
-inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExactImpl(
+inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExactImpl(
                         const PrimaryIndepQuantity incoming_energy,
                         const SecondaryIndepQuantity angle_cosine,
                         EvaluationMethod evaluate,
@@ -420,7 +420,7 @@ template<typename TwoDInterpPolicy,
 template<typename LocalTwoDInterpPolicy,
          typename ReturnType,
          typename EvaluationMethod>
-inline ReturnType UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
+inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         const SecondaryIndepQuantity angle_cosine,
                         EvaluationMethod evaluate ) const
@@ -483,7 +483,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -508,7 +508,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             unsigned& trials ) const
   -> SecondaryIndepQuantity
@@ -531,7 +531,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             unsigned& primary_bin_index,
                             unsigned& secondary_bin_index ) const
@@ -562,7 +562,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
                             unsigned& primary_bin_index,
@@ -587,7 +587,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const
   -> SecondaryIndepQuantity
@@ -613,7 +613,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const
   -> SecondaryIndepQuantity
@@ -637,7 +637,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -687,7 +687,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -698,21 +698,21 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
   testPrecondition( random_number <= 1.0 );
   // Make sure the secondary limit is valid
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    d_lower_bound_conditional_indep_var );
 
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
       sampling_functor;
 
   // Check if the max_secondary_indep_var_value is greater than the max indep value at the energy
   if ( max_secondary_indep_var_value >
-       this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value ) )
+       d_upper_bound_conditional_indep_var )
   {
     // Create the sampling functor
     sampling_functor = std::bind<SecondaryIndepQuantity>(
                              &BaseOneDDistributionType::sampleWithRandomNumberInSubrange,
                              std::placeholders::_1,
                              random_number,
-                             this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                             d_upper_bound_conditional_indep_var );
   }
   else
   {
@@ -736,7 +736,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
                     const PrimaryIndepQuantity primary_indep_var_value,
                     const double random_number,
                     const SecondaryIndepQuantity min_secondary_indep_var_value,
@@ -748,7 +748,7 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
   testPrecondition( random_number <= 1.0 );
   // Make sure the secondary limit is valid
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    d_lower_bound_conditional_indep_var );
   
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
@@ -770,7 +770,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity min_secondary_indep_var_value,
@@ -782,7 +782,7 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
   testPrecondition( random_number <= 1.0 );
   // Make sure the secondary limit is valid
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    d_lower_bound_conditional_indep_var );
 
 
   return this->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
@@ -797,7 +797,7 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename SampleFunctor>
-inline auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleImpl(
+inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
@@ -818,7 +818,7 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename SampleFunctor>
-inline auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleDetailedImpl(
+inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleDetailedImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
@@ -854,7 +854,7 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename SampleFunctor>
-inline auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleExactImpl(
+inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleExactImpl(
                             const PrimaryIndepQuantity incoming_energy,
                             SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
@@ -920,7 +920,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getLowerBoundOfConditionalIndepVar(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getLowerBoundOfConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -929,34 +929,12 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
       primary_indep_var_value > this->getUpperBoundOfPrimaryIndepVar() )
   {
     if( this->arePrimaryLimitsExtended() )
-      return -1.0*SIQT::one();
+      return d_lower_bound_conditional_indep_var;
     else
       return SIQT::zero();
   }
   else
-    return -1.0*SIQT::one();
-}
-
-// Return the cutoff bound of the conditional distribution
-template<typename TwoDInterpPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getCutoffBoundOfConditionalIndepVar(
-                     const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Check for a primary value outside of the primary grid limits
-  if( primary_indep_var_value < this->getLowerBoundOfPrimaryIndepVar() ||
-      primary_indep_var_value > this->getUpperBoundOfPrimaryIndepVar() )
-  {
-    if( this->arePrimaryLimitsExtended() )
-      return -0.999999*SIQT::one();
-    else
-      return SIQT::zero();
-  }
-  else
-    return 0.999999*SIQT::one();
+    return d_lower_bound_conditional_indep_var;
 }
 
 // Return the upper bound of the conditional distribution
@@ -964,7 +942,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getUpperBoundOfConditionalIndepVar(
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getUpperBoundOfConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -973,18 +951,18 @@ auto UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentU
       primary_indep_var_value > this->getUpperBoundOfPrimaryIndepVar() )
   {
     if( this->arePrimaryLimitsExtended() )
-      return SIQT::one();
+      return d_upper_bound_conditional_indep_var;
     else
       return SIQT::zero();
   }
   else
-    return SIQT::one();
+    return d_upper_bound_conditional_indep_var;
 }
 
 } // end Utility namespace
 
-#endif // UTILITY_ANALOG_ELASTIC_TWO_D_DISTRIBUTION_DEF_HPP
+#endif // UTILITY_ELASTIC_TWO_D_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticTwoDDistribution_def.hpp
+// end Utility_ElasticTwoDDistribution_def.hpp
 //---------------------------------------------------------------------------//

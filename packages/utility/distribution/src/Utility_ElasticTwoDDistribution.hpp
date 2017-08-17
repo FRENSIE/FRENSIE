@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticTwoDDistribution.hpp
+//! \file   Utility_ElasticTwoDDistribution.hpp
 //! \author Luke Kersting
-//! \brief  The analog elastic two-dimensional dist. class decl.
+//! \brief  The elastic two-dimensional dist. class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_ANALOG_ELASTIC_TWO_D_DISTRIBUTION_HPP
-#define UTILITY_ANALOG_ELASTIC_TWO_D_DISTRIBUTION_HPP
+#ifndef UTILITY_ELASTIC_TWO_D_DISTRIBUTION_HPP
+#define UTILITY_ELASTIC_TWO_D_DISTRIBUTION_HPP
 
 // Boost Includes
 #include <boost/units/physical_dimensions/energy.hpp>
@@ -57,7 +57,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareAnalogElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the primary independent unit corresponds to energy
@@ -115,30 +115,32 @@ public:
   typedef typename ParentType::DistributionType DistributionType;
 
   //! Constructor
-  UnitAwareAnalogElasticTwoDDistribution(
-                            const DistributionType& distribution,
-                            const double fuzzy_boundary_tol = 1e-3,
-                            const double evaluate_relative_error_tol = 1e-7,
-                            const double evaluate_error_tol = 1e-12 )
+  UnitAwareElasticTwoDDistribution(
+        const DistributionType& distribution,
+        const SecondaryIndepQuantity upper_bound_conditional_indep_var = SIQT::one(),
+        const double fuzzy_boundary_tol = 1e-3,
+        const double evaluate_relative_error_tol = 1e-7,
+        const double evaluate_error_tol = 1e-12 )
     : ParentType( distribution,
                   fuzzy_boundary_tol,
                   evaluate_relative_error_tol,
                   evaluate_error_tol ),
       d_relative_error_tol( evaluate_relative_error_tol ),
       d_error_tol( evaluate_error_tol ),
-      d_upper_bound_conditional_indep_var( 1.0*SIQT::one() ),
+      d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
       d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
   {/* ... */ }
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
-  UnitAwareAnalogElasticTwoDDistribution(
-                   const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                   const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
-                   const double fuzzy_boundary_tol = 1e-3,
-                   const double evaluate_relative_error_tol = 1e-7,
-                   const double evaluate_error_tol = 1e-12 )
+  UnitAwareElasticTwoDDistribution(
+        const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+        const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
+        const SecondaryIndepQuantity upper_bound_conditional_indep_var = SIQT::one(),
+        const double fuzzy_boundary_tol = 1e-3,
+        const double evaluate_relative_error_tol = 1e-7,
+        const double evaluate_error_tol = 1e-12 )
     : ParentType( primary_indep_grid,
                   secondary_distributions,
                   fuzzy_boundary_tol,
@@ -146,12 +148,12 @@ public:
                   evaluate_error_tol ),
       d_relative_error_tol( evaluate_relative_error_tol ),
       d_error_tol( evaluate_error_tol ),
-      d_upper_bound_conditional_indep_var( 1.0*SIQT::one() ),
+      d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
       d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
   {/* ... */ }
 
   //! Destructor
-  ~UnitAwareAnalogElasticTwoDDistribution()
+  ~UnitAwareElasticTwoDDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -230,10 +232,6 @@ public:
 
   //! Return the lower bound of the conditional distribution
   SecondaryIndepQuantity getLowerBoundOfConditionalIndepVar(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
-
-  //! Return the cutoff bound of the conditional distribution
-  SecondaryIndepQuantity getCutoffBoundOfConditionalIndepVar(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
   //! Return the upper bound of the conditional distribution
@@ -333,8 +331,8 @@ private:
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename TwoDInterpPolicy> using AnalogElasticTwoDDistribution =
-  UnitAwareAnalogElasticTwoDDistribution<TwoDInterpPolicy,void,void,void>;
+template<typename TwoDInterpPolicy> using ElasticTwoDDistribution =
+  UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,void,void,void>;
   
 } // end Utility namespace
 
@@ -342,12 +340,12 @@ template<typename TwoDInterpPolicy> using AnalogElasticTwoDDistribution =
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_AnalogElasticTwoDDistribution_def.hpp"
+#include "Utility_ElasticTwoDDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_ANALOG_ELASTIC_TWO_D_DISTRIBUTION_HPP
+#endif // end UTILITY_ELASTIC_TWO_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticTwoDDistribution.hpp
+// end Utility_ElasticTwoDDistribution.hpp
 //---------------------------------------------------------------------------//
