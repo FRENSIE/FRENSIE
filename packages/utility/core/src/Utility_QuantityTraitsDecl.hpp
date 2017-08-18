@@ -248,11 +248,11 @@ struct QuantityTraits
   static inline bool isnaninf( const QuantityType& a )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Take the square root of a quantity 
+  //! Take the square root of a quantity (only one root will be calculated)
   static inline typename GetQuantityToPowerType<1,2>::AsFloatingPointType sqrt( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
-  //! Take the cube root of a quantity
+  //! Take the cube root of a quantity (only one root will be calculated)
   static inline typename GetQuantityToPowerType<1,3>::AsFloatingPointType cbrt( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
@@ -354,6 +354,17 @@ inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N,D>::
 rpow( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::template rpow<N,D>( quantity );
+}
+
+/*! This function is a shortcut to the rpow QuantityTraits function (rational pow)
+ * \ingroup quantity_traits
+ */
+template<boost::units::integer_type N,
+	 typename Quantity>
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N,1>::AsFloatingPointType
+rpow( const Quantity& quantity )
+{
+  return QuantityTraits<Quantity>::template rpow<N,1>( quantity );
 }
 
 /*! This function is a shortcut to the getRawQuantity QuantityTraits function

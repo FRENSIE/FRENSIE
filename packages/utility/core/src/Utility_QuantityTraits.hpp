@@ -10,6 +10,7 @@
 #define UTILITY_QUANTITY_TRAITS_HPP
 
 // Std Lib Includes
+#include <iostream>
 #include <type_traits>
 #include <cmath>
 #include <complex>
@@ -81,6 +82,98 @@ struct ToRealTypeHelper<std::complex<T> >
   typedef T type;
 };
 
+/*! The raw cube root helper
+ * \ingroup quantity_traits
+ */
+template<typename T, typename Enabled = void>
+struct RawCubeRootHelper
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+
+  //! Calculate the cube root of a value
+  static inline ReturnType calculateCubeRoot( const T& value )
+  { return std::cbrt( static_cast<ReturnType>( value ) ); }
+};
+
+/*! Partial specialization of RawCubeRootHelper for std::complex types 
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct RawCubeRootHelper<std::complex<T>,typename std::enable_if<std::is_floating_point<typename std::complex<T>::value_type>::value>::type>
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<std::complex<T> >::type ReturnType;
+
+  //! The real return type
+  typedef typename ReturnType::value_type RealReturnType;
+
+  //! Calculate the cube root of a value
+  static inline ReturnType calculateCubeRoot( const std::complex<T>& value )
+  { return std::pow( value, static_cast<RealReturnType>(1.0/3.0) ); }
+};
+
+/*! Partial specialization of RawCubeRootHelper for std::complex integral types
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct RawCubeRootHelper<std::complex<T>,typename std::enable_if<std::is_integral<typename std::complex<T>::value_type>::value>::type>
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<std::complex<T> >::type ReturnType;
+
+  //! The real return type
+  typedef typename ReturnType::value_type RealReturnType;
+
+  //! Calculate the cube root of a value
+  static inline ReturnType calculateCubeRoot( const std::complex<T>& value )
+  {
+    ReturnType tmp_value( static_cast<RealReturnType>( value.real() ),
+                          static_cast<RealReturnType>( value.imag() ) );
+
+    return RawCubeRootHelper<ReturnType>::calculateCubeRoot( tmp_value );
+  }
+};
+
+/*! The floating-point initialization helper
+ * \ingroup quantity_traits
+ */
+template<typename T, typename Enabled = void>
+struct FloatingPointInitializationHelper
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+
+  //! Initialize a floating-point type
+  static inline ReturnType init( const T value )
+  { return ReturnType( value ); }
+
+  //! Initialize a floating-point type from a general input value
+  template<typename T2>
+  static inline ReturnType initBasic( const T2& general_value )
+  { return FloatingPointInitializationHelper<T>::init( (T)general_value ); }
+};
+
+/*! \brief The partial specialization of FloatingPointInitializationHelper for
+ * std::complex types
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct FloatingPointInitializationHelper<std::complex<T> >
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<std::complex<T> >::type ReturnType;
+
+  //! Initialize a floating-point type
+  static inline ReturnType init( const std::complex<T>& value )
+  { return ReturnType(value.real(), value.imag()); }
+
+  //! Initialize a floating-point type from a general input value
+  template<typename T2>
+  static inline typename ReturnType::value_type initBasic( const T2& general_value )
+  { return typename ReturnType::value_type( general_value ); }
+};
+
 /*! The raw rational power helper
  * \ingroup quantity_traits
  */
@@ -96,8 +189,41 @@ struct RawRationalPowerHelper
   //! Calculate the value raised to the rational power N/D
   static inline ReturnType calculateRationalPower( const T& value )
   {
-    return std::pow( static_cast<ReturnType>( value ),
-                     static_cast<ReturnType>( N )/D );
+    return std::pow( FloatingPointInitializationHelper<T>::init( value ),
+                     FloatingPointInitializationHelper<T>::initBasic( N )/D );
+  }
+};
+
+/*! The partial specialization of the RawRationalPowerHelper for D%2==1
+ * \ingroup quantity_traits
+ */
+template<boost::units::integer_type N,
+         boost::units::integer_type D,
+         typename T>
+struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(D%2==1 && ((N==1 && D>3) || (D>1 && N>D && N%D!=0) || (D>2 && N<D && D%N!=0)) && std::is_signed<T>::value)>::type>
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<T>::type ReturnType;
+  
+  //! Calculate the value raised to the rational power N/D
+  static inline ReturnType calculateRationalPower( const T& value )
+  {
+    if( value < 0 )
+    {
+      ReturnType tmp_value_to_n_over_d = 
+        std::pow( -static_cast<ReturnType>( value ),
+                  static_cast<ReturnType>( N )/D );
+      std::cout << "value^(N/D) = " << value << "^(" << N << "/" << D << "): " << tmp_value_to_n_over_d << std::endl;
+      if( N%2 == 1 )
+        return -tmp_value_to_n_over_d;
+      else
+        return tmp_value_to_n_over_d;
+    }
+    else
+    {
+      return std::pow( static_cast<ReturnType>( value ),
+                       static_cast<ReturnType>( N )/D );
+    }
   }
 };
 
@@ -121,21 +247,35 @@ struct RawRationalPowerHelper<0,D,T, typename std::enable_if<D!=0>::type>
   
   //! Calculate the value raised to 0
   static inline ReturnType calculateRationalPower( const T& value )
-  { return static_cast<ReturnType>(1); }
-};
+  { return ReturnType(1); }
+};  
 
 /*! The partial specialization of RawRationalPowerHelper for N==D, N!=0, D!=0
  * \ingroup quantity_traits
  */
 template<boost::units::integer_type I, typename T>
-struct RawRationalPowerHelper<I, I, T, typename std::enable_if<I!=0>::type>
+struct RawRationalPowerHelper<I, I, T, typename std::enable_if<I!=0 && std::is_arithmetic<T>::value>::type>
 {
   //! The return type
   typedef typename ToFloatingPointHelper<T>::type ReturnType;
   
   //! Calculate the value raised to the rational power N/D
   static inline ReturnType calculateRationalPower( const T& value )
-  { return static_cast<ReturnType>(value); }
+  { return ReturnType(value); }
+};
+
+/*! The partial specialization of RawRationalPowerHelper for N==D, N!=0, D!=0
+ * \ingroup quantity_traits
+ */
+template<boost::units::integer_type I, typename T>
+struct RawRationalPowerHelper<I, I, std::complex<T>, typename std::enable_if<I!=0>::type>
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<std::complex<T> >::type ReturnType;
+  
+  //! Calculate the value raised to the rational power N/D
+  static inline ReturnType calculateRationalPower( const std::complex<T>& value )
+  { return ReturnType(value.real(), value.imag()); }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N>1, N%2==0, D==1
@@ -169,7 +309,7 @@ struct RawRationalPowerHelper<N, 1, T, typename std::enable_if<(N>1 && N%2==0)>:
  * \ingroup quantity_traits
  */
 template<boost::units::integer_type N, typename T>
-struct RawRationalPowerHelper<N, 1, T, typename std::enable_if<(N>1 && N%2==1)>::type>
+struct RawRationalPowerHelper<N, 1, T, typename std::enable_if<(N>1 && N%2==1) && std::is_arithmetic<T>::value>::type>
 {
   //! The return type
   typedef typename ToFloatingPointHelper<T>::type ReturnType;
@@ -181,6 +321,29 @@ struct RawRationalPowerHelper<N, 1, T, typename std::enable_if<(N>1 && N%2==1)>:
       RawRationalPowerHelper<N/2,1,T>::calculateRationalPower( value );
     
     return tmp_value*tmp_value*value;
+  }
+};
+
+/*! The partial specialization of RawRationalPowerHelper for N>1, N%2==1, D==1
+ *
+ * When the rational power is a positive integer value we can use an efficient
+ * recusive exponentiation algorithm which calculates the value raised to N in 
+ * log(N) multiplications.
+ * \ingroup quantity_traits
+ */
+template<boost::units::integer_type N, typename T>
+struct RawRationalPowerHelper<N, 1, std::complex<T>, typename std::enable_if<(N>1 && N%2==1)>::type>
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<std::complex<T> >::type ReturnType;
+  
+  //! Calculate the value raised to the integer power N
+  static inline ReturnType calculateRationalPower( const std::complex<T>& value )
+  {
+    ReturnType tmp_value =
+      RawRationalPowerHelper<N/2,1,std::complex<T>>::calculateRationalPower( value );
+    
+    return tmp_value*tmp_value*ReturnType(value.real(), value.imag());
   }
 };
 
@@ -201,7 +364,7 @@ struct RawRationalPowerHelper<N, D, T, typename std::enable_if<(N>1 && D>1 && N>
  * \ingroup quantity_traits
  */
 template<typename T>
-struct RawRationalPowerHelper<1,2,T>
+struct RawRationalPowerHelper<1,2,T,typename std::enable_if<std::is_arithmetic<T>::value>::type>
 {
   //! The return type
   typedef typename ToFloatingPointHelper<T>::type ReturnType;
@@ -209,6 +372,22 @@ struct RawRationalPowerHelper<1,2,T>
   //! Calculate the square root of the value
   static inline ReturnType calculateRationalPower( const T& value )
   { return std::sqrt( value ); }
+};
+
+/*! The partial specialization of RawRationalPowerHelper for N==1, D==2
+ *
+ * The std::sqrt method will be used instead of std::pow.
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct RawRationalPowerHelper<1,2,std::complex<T> >
+{
+  //! The return type
+  typedef typename ToFloatingPointHelper<std::complex<T> >::type ReturnType;
+  
+  //! Calculate the square root of the value
+  static inline ReturnType calculateRationalPower( const std::complex<T>& value )
+  { return std::sqrt( ReturnType(value.real(), value.imag()) ); }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N==1, D==3
@@ -224,7 +403,7 @@ struct RawRationalPowerHelper<1,3,T>
   
   //! Calculate the cubed root of the value
   static inline ReturnType calculateRationalPower( const T& value )
-  { return std::cbrt( static_cast<ReturnType>(value) ); }
+  { return RawCubeRootHelper<T>::calculateCubeRoot( value ); }
 };
 
 /*! The partial specialization of RawRationalPowerHelper for N>1,D>1,N<D,N%D==0
@@ -434,7 +613,7 @@ protected:
 
   //! Take the cube root of a value
   static inline typename ToFloatingPointHelper<T>::type rawCbrt( const T a )
-  { return std::cbrt( static_cast<typename ToFloatingPointHelper<T>::type>(a) ); }
+  { return RawCubeRootHelper<T>::calculateCubeRoot( a ); }
 
   //! Take a value to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
@@ -504,7 +683,7 @@ protected:
   
   //! Take the cube root of a value
   static inline std::complex<typename ToFloatingPointHelper<T>::type> rawCbrt( const std::complex<T>& a )
-  { return std::cbrt( std::complex<typename ToFloatingPointHelper<T>::type>(a.real(), a.imag()) ); }
+  { return RawCubeRootHelper<std::complex<T> >::calculateCubeRoot( a ); }
 
   //! Take a value to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
@@ -736,7 +915,7 @@ public:
 
   template<boost::units::integer_type N, boost::units::integer_type D>
   static inline FloatingPointQuantityType rpow( const QuantityType& a ) noexcept
-  { return BaseType::rawRpow( a ); }
+  { return BaseType::template rawRpow<N,D>( a ); }
   
   //! Potentially dangerous to initialize quantities in this way!
   static inline QuantityType initializeQuantity( const RawType& raw_quantity ) noexcept
@@ -770,7 +949,7 @@ struct QuantityToPowerTypeHelper<N,D,boost::units::quantity<Unit,T>, typename st
   //! Compute the quantity raised to the rational power N/D
   static inline QuantityToRpowType rpow( const boost::units::quantity<Unit,T>& a )
   {
-    return QuantityToRpowType::from_value( QuantityTraitsHelperBase<T>::rawRpow( a.value() ) );
+    return QuantityToRpowType::from_value( QuantityTraitsHelperBase<T>::template rawRpow<N,D>( a.value() ) );
   }
 };
 
@@ -786,7 +965,7 @@ struct QuantityToPowerTypeHelper<0,D,boost::units::quantity<Unit,T>, typename st
   //! Compute the quantity raised to the rational power N/D
   static inline QuantityToRpowType rpow( const boost::units::quantity<Unit,T>& a )
   {
-    return QuantityTraitsHelperBase<T>::rawRpow<0,D>( a.value() );
+    return QuantityTraitsHelperBase<T>::template rawRpow<0,D>( a.value() );
   }
 }; 
 

@@ -1702,70 +1702,98 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( signalingNan,
 BOOST_AUTO_TEST_CASE_TEMPLATE( abs_basic, T, TestTypes )
 {
   typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(0) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::abs( T(0) ), RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(1) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::abs( T(1) ), RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(2) ),
+                     RawFloatingPointType(2) );
+  BOOST_CHECK_EQUAL( Utility::abs( T(2) ), RawFloatingPointType(2) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 0 ) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 0, 0 ) ),
+                     RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 1, 0 ) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 1, 0 ) ),
+                     RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 2, 0 ) ),
+                     RawFloatingPointType(2) );
+  BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 2, 0 ) ),
+                     RawFloatingPointType(2) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 1 ) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 0, 1 ) ),
+                     RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 2 ) ),
+                     RawFloatingPointType(2) );
+  BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 0, 2 ) ),
+                     RawFloatingPointType(2) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 1, 1 ) ),
+                     RawFloatingPointType(std::sqrt(2)) );
+  BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 1, 1 ) ),
+                     RawFloatingPointType(std::sqrt(2)) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 2, 2 ) ),
+                     RawFloatingPointType(std::sqrt(8)) );
+  BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 2, 2 ) ),
+                     RawFloatingPointType(std::sqrt(8)) );
   
   if( Utility::QuantityTraits<T>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(-2) ),
                        RawFloatingPointType(2) );
+    BOOST_CHECK_EQUAL( Utility::abs( T(-2) ), RawFloatingPointType(2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(-1) ),
                        RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(1) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(2) ),
-                       RawFloatingPointType(2) );
-
+    BOOST_CHECK_EQUAL( Utility::abs( T(-1) ), RawFloatingPointType(1) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( -2, 0 ) ),
                        RawFloatingPointType(2) );
+    BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( -2, 0 ) ),
+                       RawFloatingPointType(2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( -1, 0 ) ),
                        RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 1, 0 ) ),
+    BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( -1, 0 ) ),
                        RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 2, 0 ) ),
-                       RawFloatingPointType(2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, -2 ) ),
                        RawFloatingPointType(2) );
+    BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 0, -2 ) ),
+                       RawFloatingPointType(2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, -1 ) ),
                        RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 1 ) ),
+    BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 0, -1 ) ),
                        RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 2 ) ),
-                       RawFloatingPointType(2) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 1, 1 ) ),
-                       RawFloatingPointType(std::sqrt(2)) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( -1, 1 ) ),
                        RawFloatingPointType(std::sqrt(2)) );
+    BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( -1, 1 ) ),
+                       RawFloatingPointType(std::sqrt(2)) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 1, -1 ) ),
                        RawFloatingPointType(std::sqrt(2)) );
+    BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( 1, -1 ) ),
+                       RawFloatingPointType(std::sqrt(2)) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( -1, -1 ) ),
                        RawFloatingPointType(std::sqrt(2)) );
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(1) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::abs( T(2) ),
-                       RawFloatingPointType(2) );
-
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 1, 0 ) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 2, 0 ) ),
-                       RawFloatingPointType(2) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 1 ) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 0, 2 ) ),
-                       RawFloatingPointType(2) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 1, 1 ) ),
+    BOOST_CHECK_EQUAL( Utility::abs( std::complex<T>( -1, -1 ) ),
                        RawFloatingPointType(std::sqrt(2)) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::abs( std::complex<T>( 2, 2 ) ),
-                       RawFloatingPointType(std::sqrt(8)) );
   }
 }
 
@@ -1773,82 +1801,108 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( abs_basic, T, TestTypes )
 // Check that the absolute value of a quantity can be computed
 BOOST_AUTO_TEST_CASE_TEMPLATE( _abs, QuantityType, TestBasicQuantityTypes )
 {
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
   typedef typename Utility::QuantityTraits<QuantityType>::RealFloatingPointQuantityType RealFloatingPointQuantityType;
+  typedef std::complex<RawType> ComplexRawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<ComplexRawType>::type ComplexQuantityType;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 0 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( QuantityType::from_value( 0 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 1 ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( QuantityType::from_value( 1 ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 2 ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( QuantityType::from_value( 2 ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
+  BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( std::sqrt(8) ) );
+  BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( std::sqrt(8) ) );
 
   if( Utility::QuantityTraits<QuantityType>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( -2 ) ),
                        RealFloatingPointQuantityType::from_value( 2 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( -1 ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 0 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 1 ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 2 ) ),
+    BOOST_CHECK_EQUAL( Utility::abs( QuantityType::from_value( -2 ) ),
                        RealFloatingPointQuantityType::from_value( 2 ) );
     
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 0 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 1 ) ),
+    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( -1 ) ),
                        RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::abs( QuantityType::from_value( 2 ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
-  }
-
-  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
-  typedef std::complex<RawType> ComplexRawType;
-  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
-  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<ComplexRawType>::type ComplexQuantityType;
-  
-  if( Utility::QuantityTraits<ComplexQuantityType>::is_signed::value )
-  {
+    BOOST_CHECK_EQUAL( Utility::abs( QuantityType::from_value( -1 ) ),
+                       RealFloatingPointQuantityType::from_value( 1 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( 2 ) );
+    BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
+                       RealFloatingPointQuantityType::from_value( 2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+    BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
                        RealFloatingPointQuantityType::from_value( 2 ) );
+    BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
+                       RealFloatingPointQuantityType::from_value( 2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
                        RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+    BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
                        RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
-                       RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( -1, 1 ) ) ),
                        RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
+    BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( -1, 1 ) ) ),
+                       RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 1, -1 ) ) ),
                        RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
+    BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( 1, -1 ) ) ),
+                       RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) ),
                        RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
+    BOOST_CHECK_EQUAL( Utility::abs( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) ),
                        RealFloatingPointQuantityType::from_value( std::sqrt(2) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::abs( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) ),
-                       RealFloatingPointQuantityType::from_value( std::sqrt(8) ) );
   }
 }
 
@@ -1858,68 +1912,93 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( conj_basic, T, TestTypes )
 {
   typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
   typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(0) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::conj( T(0) ), RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(1) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::conj( T(1) ), RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(2) ),
+                     RawFloatingPointType(2) );
+  BOOST_CHECK_EQUAL( Utility::conj( T(2) ), RawFloatingPointType(2) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 0 ) ),
+                     ComplexRawFloatingPointType( 0, 0 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 0, 0 ) ),
+                     ComplexRawFloatingPointType( 0, 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 1, 0 ) ),
+                     ComplexRawFloatingPointType( 1, 0 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 1, 0 ) ),
+                     ComplexRawFloatingPointType( 1, 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 2, 0 ) ),
+                     ComplexRawFloatingPointType( 2, 0 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 2, 0 ) ),
+                     ComplexRawFloatingPointType( 2, 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 1 ) ),
+                     ComplexRawFloatingPointType( 0, -1 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 0, 1 ) ),
+                     ComplexRawFloatingPointType( 0, -1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 2 ) ),
+                     ComplexRawFloatingPointType( 0, -2 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 0, 2 ) ),
+                     ComplexRawFloatingPointType( 0, -2 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 1, 1 ) ),
+                     ComplexRawFloatingPointType( 1, -1 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 1, 1 ) ),
+                     ComplexRawFloatingPointType( 1, -1 ) );
   
   if( Utility::QuantityTraits<T>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(-2) ),
                        RawFloatingPointType(-2) );
+    BOOST_CHECK_EQUAL( Utility::conj( T(-2) ), RawFloatingPointType(-2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(-1) ),
                        RawFloatingPointType(-1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(1) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(2) ),
-                       RawFloatingPointType(2) );
-
+    BOOST_CHECK_EQUAL( Utility::conj( T(-1) ), RawFloatingPointType(-1) );
+  
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( -2, 0 ) ),
                        ComplexRawFloatingPointType( -2, 0 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( -2, 0 ) ),
+                       ComplexRawFloatingPointType( -2, 0 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( -1, 0 ) ),
                        ComplexRawFloatingPointType( -1, 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 0 ) ),
-                       ComplexRawFloatingPointType( 0, 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 1, 0 ) ),
-                       ComplexRawFloatingPointType( 1, 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 2, 0 ) ),
-                       ComplexRawFloatingPointType( 2, 0 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( -1, 0 ) ),
+                       ComplexRawFloatingPointType( -1, 0 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, -2 ) ),
                        ComplexRawFloatingPointType( 0, 2 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 0, -2 ) ),
+                       ComplexRawFloatingPointType( 0, 2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, -1 ) ),
                        ComplexRawFloatingPointType( 0, 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 1 ) ),
-                       ComplexRawFloatingPointType( 0, -1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 2 ) ),
-                       ComplexRawFloatingPointType( 0, -2 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 1, 1 ) ),
-                       ComplexRawFloatingPointType( 1, -1 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 0, -1 ) ),
+                       ComplexRawFloatingPointType( 0, 1 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 1, -1 ) ),
                        ComplexRawFloatingPointType( 1, 1 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( 1, -1 ) ),
+                       ComplexRawFloatingPointType( 1, 1 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( -1, 1 ) ),
                        ComplexRawFloatingPointType( -1, -1 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( -1, 1 ) ),
+                       ComplexRawFloatingPointType( -1, -1 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( -1, -1 ) ),
                        ComplexRawFloatingPointType( -1, 1 ) );
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(1) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::conj( T(2) ),
-                       RawFloatingPointType(2) );
-
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 0 ) ),
-                       ComplexRawFloatingPointType( 0, 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 1, 0 ) ),
-                       ComplexRawFloatingPointType( 1, 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 2, 0 ) ),
-                       ComplexRawFloatingPointType( 2, 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 1 ) ),
-                       ComplexRawFloatingPointType( 0, -1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 0, 2 ) ),
-                       ComplexRawFloatingPointType( 0, -2 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::conj( std::complex<T>( 1, 1 ) ),
-                       ComplexRawFloatingPointType( 1, -1 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( std::complex<T>( -1, -1 ) ),
+                       ComplexRawFloatingPointType( -1, 1 ) );
   }
 }
 
@@ -1935,67 +2014,97 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( _conj, QuantityType, TestBasicQuantityTypes )
   typedef typename Utility::QuantityTraits<ComplexQuantityType>::RawFloatingPointType ComplexRawFloatingPointType;
   typedef typename Utility::QuantityTraits<ComplexQuantityType>::FloatingPointQuantityType ComplexFloatingPointQuantityType;
 
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value(  0 ) ),
+                     FloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( QuantityType::from_value(  0 ) ),
+                     FloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( 1 ) ),
+                     FloatingPointQuantityType::from_value( 1 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( QuantityType::from_value( 1 ) ),
+                     FloatingPointQuantityType::from_value( 1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( 2 ) ),
+                     FloatingPointQuantityType::from_value( 2 ) );
+  BOOST_CHECK_EQUAL( Utility::conj( QuantityType::from_value( 2 ) ),
+                     FloatingPointQuantityType::from_value( 2 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 0 ) ) );
+  BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 0 ) ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, 0 ) ) );
+  BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, 0 ) ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 2, 0 ) ) );
+  BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 2, 0 ) ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -1 ) ) );
+  BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -1 ) ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -2 ) ) );
+  BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -2 ) ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, -1 ) ) );
+  BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
+                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, -1 ) ) );
+  
   if( Utility::QuantityTraits<QuantityType>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( -2 ) ),
                        FloatingPointQuantityType::from_value( -2 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( QuantityType::from_value( -2 ) ),
+                       FloatingPointQuantityType::from_value( -2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( -1 ) ),
                        FloatingPointQuantityType::from_value( -1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value(  0 ) ),
-                       FloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( 1 ) ),
-                       FloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( 2 ) ),
-                       FloatingPointQuantityType::from_value( 2 ) );
+    BOOST_CHECK_EQUAL( Utility::conj( QuantityType::from_value( -1 ) ),
+                       FloatingPointQuantityType::from_value( -1 ) );
     
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
                        ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -2, 0 ) ) );
+    BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
+                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -2, 0 ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
                        ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, 0 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 0 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, 0 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 2, 0 ) ) );
+    BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
+                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, 0 ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
                        ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 2 ) ) );
+    BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
+                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 2 ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
                        ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 1 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -1 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -2 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, -1 ) ) );
+    BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
+                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 1 ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( -1, 1 ) ) ),
                        ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, -1 ) ) );
+    BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( -1, 1 ) ) ),
+                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, -1 ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 1, -1 ) ) ),
                        ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, 1 ) ) );
+    BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( 1, -1 ) ) ),
+                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, 1 ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) ),
                        ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, 1 ) ) );
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value(  0 ) ),
-                       FloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( 1 ) ),
-                       FloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::conj( QuantityType::from_value( 2 ) ),
-                       FloatingPointQuantityType::from_value( 2 ) );
-
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 0 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, 0 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 2, 0 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -1 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -2 ) ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::conj( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, -1 ) ) );
+    BOOST_CHECK_EQUAL( Utility::conj( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) ),
+                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, 1 ) ) );
   }
 }
 
@@ -2004,57 +2113,74 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( _conj, QuantityType, TestBasicQuantityTypes )
 BOOST_AUTO_TEST_CASE_TEMPLATE( real_basic, T, TestTypes )
 {
   typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(0) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::real( T(0) ), RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(1) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::real( T(1) ), RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(2) ),
+                     RawFloatingPointType(2) );
+  BOOST_CHECK_EQUAL( Utility::real( T(2) ), RawFloatingPointType(2) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 0 ) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( 0, 0 ) ),
+                     RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 1, 0 ) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( 1, 0 ) ),
+                     RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 2, 0 ) ),
+                     RawFloatingPointType(2) );
+  BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( 2, 0 ) ),
+                     RawFloatingPointType(2) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 1 ) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( 0, 1 ) ),
+                     RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 2 ) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( 0, 2 ) ),
+                     RawFloatingPointType(0) );
   
   if( Utility::QuantityTraits<T>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(-2) ),
                        RawFloatingPointType(-2) );
+    BOOST_CHECK_EQUAL( Utility::real( T(-2) ),
+                       RawFloatingPointType(-2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(-1) ),
                        RawFloatingPointType(-1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(1) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(2) ),
-                       RawFloatingPointType(2) );
+    BOOST_CHECK_EQUAL( Utility::real( T(-1) ),
+                       RawFloatingPointType(-1) );
 
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( -2, 0 ) ),
                        RawFloatingPointType(-2) );
+    BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( -2, 0 ) ),
+                       RawFloatingPointType(-2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( -1, 0 ) ),
                        RawFloatingPointType(-1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 1, 0 ) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 2, 0 ) ),
-                       RawFloatingPointType(2) );
+    BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( -1, 0 ) ),
+                       RawFloatingPointType(-1) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, -2 ) ),
                        RawFloatingPointType(0) );
+    BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( 0, -2 ) ),
+                       RawFloatingPointType(0) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, -1 ) ),
                        RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 1 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 2 ) ),
-                       RawFloatingPointType(0) );
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(1) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::real( T(2) ),
-                       RawFloatingPointType(2) );
-
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 1, 0 ) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 2, 0 ) ),
-                       RawFloatingPointType(2) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 1 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::real( std::complex<T>( 0, 2 ) ),
+    BOOST_CHECK_EQUAL( Utility::real( std::complex<T>( 0, -1 ) ),
                        RawFloatingPointType(0) );
   }
 }
@@ -2069,58 +2195,77 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( _real, QuantityType, TestBasicQuantityTypes )
   typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
   typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
 
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 0 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::real( QuantityType::from_value( 0 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 1 ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  BOOST_CHECK_EQUAL( Utility::real( QuantityType::from_value( 1 ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 2 ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  BOOST_CHECK_EQUAL( Utility::real( QuantityType::from_value( 2 ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+
   if( Utility::QuantityTraits<QuantityType>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( -2 ) ),
                        RealFloatingPointQuantityType::from_value( -2 ) );
+    BOOST_CHECK_EQUAL( Utility::real( QuantityType::from_value( -2 ) ),
+                       RealFloatingPointQuantityType::from_value( -2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( -1 ) ),
                        RealFloatingPointQuantityType::from_value( -1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 0 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 1 ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 2 ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
+    BOOST_CHECK_EQUAL( Utility::real( QuantityType::from_value( -1 ) ),
+                       RealFloatingPointQuantityType::from_value( -1 ) );
 
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( -2 ) );
+    BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
+                       RealFloatingPointQuantityType::from_value( -2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( -1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
+    BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
+                       RealFloatingPointQuantityType::from_value( -1 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+    BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
     
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 0 ) ),
+    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 1 ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::real( QuantityType::from_value( 2 ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
-
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::real( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
+    BOOST_CHECK_EQUAL( Utility::real( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
+                       RealFloatingPointQuantityType::from_value( 0 ) );    
   }
 }
 
@@ -2129,58 +2274,73 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( _real, QuantityType, TestBasicQuantityTypes )
 BOOST_AUTO_TEST_CASE_TEMPLATE( imag_basic, T, TestTypes )
 {
   typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(0) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::imag( T(0) ), RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(1) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::imag( T(1) ), RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(2) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::imag( T(2) ), RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 0 ) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( 0, 0 ) ),
+                     RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 1, 0 ) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( 1, 0 ) ),
+                     RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 2, 0 ) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( 2, 0 ) ),
+                     RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 1 ) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( 0, 1 ) ),
+                     RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 2 ) ),
+                     RawFloatingPointType(2) );
+  BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( 0, 2 ) ),
+                     RawFloatingPointType(2) );
   
   if( Utility::QuantityTraits<T>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(-2) ),
                        RawFloatingPointType(0) );
+    BOOST_CHECK_EQUAL( Utility::imag( T(-2) ), RawFloatingPointType(0) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(-1) ),
                        RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(1) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(2) ),
-                       RawFloatingPointType(0) );
-
+    BOOST_CHECK_EQUAL( Utility::imag( T(-1) ), RawFloatingPointType(0) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( -2, 0 ) ),
                        RawFloatingPointType(0) );
+    BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( -2, 0 ) ),
+                       RawFloatingPointType(0) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( -1, 0 ) ),
                        RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 0 ) ),
+    BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( -1, 0 ) ),
                        RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 1, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 2, 0 ) ),
-                       RawFloatingPointType(0) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, -2 ) ),
                        RawFloatingPointType(-2) );
+    BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( 0, -2 ) ),
+                       RawFloatingPointType(-2) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, -1 ) ),
                        RawFloatingPointType(-1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 1 ) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 2 ) ),
-                       RawFloatingPointType(2) );
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(0) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(1) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::imag( T(2) ),
-                       RawFloatingPointType(0) );
-
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 1, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 2, 0 ) ),
-                       RawFloatingPointType(0) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 1 ) ),
-                       RawFloatingPointType(1) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::imag( std::complex<T>( 0, 2 ) ),
-                       RawFloatingPointType(2) );
+    BOOST_CHECK_EQUAL( Utility::imag( std::complex<T>( 0, -1 ) ),
+                       RawFloatingPointType(-1) );
   }
 }
 
@@ -2194,57 +2354,78 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( _imag, QuantityType, TestBasicQuantityTypes )
   typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
   typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
 
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 0 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( QuantityType::from_value( 0 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 1 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( QuantityType::from_value( 1 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 2 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( QuantityType::from_value( 2 ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 0 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 1 ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+  BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
+                     RealFloatingPointQuantityType::from_value( 2 ) );
+
   if( Utility::QuantityTraits<QuantityType>::is_signed::value )
   {
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( -2 ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
+    BOOST_CHECK_EQUAL( Utility::imag( QuantityType::from_value( -2 ) ),
+                       RealFloatingPointQuantityType::from_value( 0 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( -1 ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 0 ) ),
+    BOOST_CHECK_EQUAL( Utility::imag( QuantityType::from_value( -1 ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 1 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 2 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
+    BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( -2, 0 ) ) ),
+                       RealFloatingPointQuantityType::from_value( 0 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
+    BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
                        RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
                        RealFloatingPointQuantityType::from_value( -2 ) );
+    BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( 0, -2 ) ) ),
+                       RealFloatingPointQuantityType::from_value( -2 ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
                        RealFloatingPointQuantityType::from_value( -1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
-  }
-  else
-  {
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 0 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 1 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::imag( QuantityType::from_value( 2 ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 2, 0 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 0 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 1 ) );
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::imag( ComplexQuantityType::from_value( ComplexRawType( 0, 2 ) ) ),
-                       RealFloatingPointQuantityType::from_value( 2 ) );
+    BOOST_CHECK_EQUAL( Utility::imag( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
+                       RealFloatingPointQuantityType::from_value( -1 ) );
+    
   }
 }
 
@@ -2257,65 +2438,87 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( isnaninf_float_basic, T, TestFloatingPointTypes )
     Utility::QuantityTraits<std::complex<T> >::inf();
     
   BOOST_CHECK( Utility::QuantityTraits<T>::isnaninf( infinity ) );
+  BOOST_CHECK( Utility::isnaninf( infinity ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   complex_infinity = std::complex<T>( T(0), infinity );
 
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   complex_infinity = std::complex<T>( infinity, infinity );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   infinity *= -1;
   complex_infinity = std::complex<T>( -infinity, T(0) );
 
   BOOST_CHECK( Utility::QuantityTraits<T>::isnaninf( infinity ) );
+  BOOST_CHECK( Utility::isnaninf( infinity ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
   
   complex_infinity = std::complex<T>( T(0), -infinity );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
   
   complex_infinity = std::complex<T>( infinity, -infinity );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
   
   complex_infinity = std::complex<T>( -infinity, infinity );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   complex_infinity = std::complex<T>( -infinity, -infinity );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   T quiet_nan = Utility::QuantityTraits<T>::nan();
   std::complex<T> complex_quiet_nan = Utility::QuantityTraits<std::complex<T> >::nan();
 
   BOOST_CHECK( Utility::QuantityTraits<T>::isnaninf( quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( quiet_nan ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_quiet_nan ) );
   
   complex_quiet_nan = std::complex<T>( T(0), quiet_nan );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_quiet_nan ) );
   
   complex_quiet_nan = std::complex<T>( quiet_nan, quiet_nan );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_quiet_nan ) );
   
   T signaling_nan = Utility::QuantityTraits<T>::signalingNan();
   std::complex<T> complex_signaling_nan = Utility::QuantityTraits<std::complex<T> >::signalingNan();
 
   BOOST_CHECK( Utility::QuantityTraits<T>::isnaninf( signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( signaling_nan ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_signaling_nan ) );
   
   complex_signaling_nan = std::complex<T>( T(0), signaling_nan );
   
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_signaling_nan ) );
   
   complex_signaling_nan = std::complex<T>( signaling_nan, signaling_nan );
 
   BOOST_CHECK( Utility::QuantityTraits<std::complex<T> >::isnaninf( complex_signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_signaling_nan ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2323,13 +2526,22 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( isnaninf_float_basic, T, TestFloatingPointTypes )
 BOOST_AUTO_TEST_CASE_TEMPLATE( isnaninf_basic, T, TestTypes )
 {
   BOOST_CHECK( !Utility::QuantityTraits<T>::isnaninf( Utility::QuantityTraits<T>::max() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<T>::max() ) );
+  
   BOOST_CHECK( !Utility::QuantityTraits<std::complex<T> >::isnaninf( Utility::QuantityTraits<std::complex<T> >::max() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<std::complex<T> >::max() ) );
 
   BOOST_CHECK( !Utility::QuantityTraits<T>::isnaninf( Utility::QuantityTraits<T>::min() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<T>::min() ) );
+  
   BOOST_CHECK( !Utility::QuantityTraits<std::complex<T> >::isnaninf( Utility::QuantityTraits<std::complex<T> >::min() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<std::complex<T> >::min() ) );
   
   BOOST_CHECK( !Utility::QuantityTraits<T>::isnaninf( Utility::QuantityTraits<T>::lowest() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<T>::lowest() ) );
+  
   BOOST_CHECK( !Utility::QuantityTraits<std::complex<T> >::isnaninf( Utility::QuantityTraits<std::complex<T> >::lowest() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<std::complex<T> >::lowest() ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2348,65 +2560,87 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( isnaninf_float,
     Utility::QuantityTraits<ComplexQuantityType>::inf();
     
   BOOST_CHECK( Utility::QuantityTraits<QuantityType>::isnaninf( infinity ) );
+  BOOST_CHECK( Utility::isnaninf( infinity ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   complex_infinity = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::zero(), Utility::QuantityTraits<RawType>::inf() ) );
 
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
     
   complex_infinity = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::inf(), Utility::QuantityTraits<RawType>::inf() ) );
 
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   infinity = -Utility::QuantityTraits<QuantityType>::inf();
   complex_infinity = ComplexQuantityType::from_value( ComplexRawType( -Utility::QuantityTraits<RawType>::inf(), Utility::QuantityTraits<RawType>::zero() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<QuantityType>::isnaninf( infinity ) );
+  BOOST_CHECK( Utility::isnaninf( infinity ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
   
   complex_infinity = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::zero(), -Utility::QuantityTraits<RawType>::inf() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
   
   complex_infinity = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::inf(), -Utility::QuantityTraits<RawType>::inf() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
   
   complex_infinity = ComplexQuantityType::from_value( -ComplexRawType( Utility::QuantityTraits<RawType>::inf(), Utility::QuantityTraits<RawType>::inf() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   complex_infinity = ComplexQuantityType::from_value( -ComplexRawType( Utility::QuantityTraits<RawType>::inf(), -Utility::QuantityTraits<RawType>::inf() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_infinity ) );
+  BOOST_CHECK( Utility::isnaninf( complex_infinity ) );
 
   QuantityType quiet_nan = Utility::QuantityTraits<QuantityType>::nan();
   ComplexQuantityType complex_quiet_nan = Utility::QuantityTraits<ComplexQuantityType>::nan();
 
   BOOST_CHECK( Utility::QuantityTraits<QuantityType>::isnaninf( quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( quiet_nan ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_quiet_nan ) );
   
   complex_quiet_nan = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::zero(), Utility::QuantityTraits<RawType>::nan() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_quiet_nan ) );
   
   complex_quiet_nan = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::nan(), Utility::QuantityTraits<RawType>::nan() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_quiet_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_quiet_nan ) );
   
   QuantityType signaling_nan = Utility::QuantityTraits<QuantityType>::nan();
   ComplexQuantityType complex_signaling_nan = Utility::QuantityTraits<ComplexQuantityType>::nan();
 
   BOOST_CHECK( Utility::QuantityTraits<QuantityType>::isnaninf( signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( signaling_nan ) );
+  
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_signaling_nan ) );
   
   complex_signaling_nan = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::zero(), Utility::QuantityTraits<RawType>::nan() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_signaling_nan ) );
   
   complex_signaling_nan = ComplexQuantityType::from_value( ComplexRawType( Utility::QuantityTraits<RawType>::nan(), Utility::QuantityTraits<RawType>::nan() ) );
   
   BOOST_CHECK( Utility::QuantityTraits<ComplexQuantityType>::isnaninf( complex_signaling_nan ) );
+  BOOST_CHECK( Utility::isnaninf( complex_signaling_nan ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2419,13 +2653,22 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( isnaninf, QuantityType, TestBasicQuantityTypes )
   typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<ComplexRawType>::type ComplexQuantityType;
 
   BOOST_CHECK( !Utility::QuantityTraits<QuantityType>::isnaninf( Utility::QuantityTraits<QuantityType>::max() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<QuantityType>::max() ) );
+  
   BOOST_CHECK( !Utility::QuantityTraits<ComplexQuantityType>::isnaninf( Utility::QuantityTraits<ComplexQuantityType>::max() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<ComplexQuantityType>::max() ) );
 
   BOOST_CHECK( !Utility::QuantityTraits<QuantityType>::isnaninf( Utility::QuantityTraits<QuantityType>::min() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<QuantityType>::min() ) );
+  
   BOOST_CHECK( !Utility::QuantityTraits<ComplexQuantityType>::isnaninf( Utility::QuantityTraits<ComplexQuantityType>::min() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<ComplexQuantityType>::min() ) );
   
   BOOST_CHECK( !Utility::QuantityTraits<QuantityType>::isnaninf( Utility::QuantityTraits<QuantityType>::lowest() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<QuantityType>::lowest() ) );
+  
   BOOST_CHECK( !Utility::QuantityTraits<ComplexQuantityType>::isnaninf( Utility::QuantityTraits<ComplexQuantityType>::lowest() ) );
+  BOOST_CHECK( !Utility::isnaninf( Utility::QuantityTraits<ComplexQuantityType>::lowest() ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2437,50 +2680,108 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( sqrt_basic, T, TestTypes )
   
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::sqrt( T(0) ),
                      RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( T(0) ), RawFloatingPointType(0) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::sqrt( T(1) ),
                      RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( T(1) ), RawFloatingPointType(1) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::sqrt( T(2) ),
                      RawFloatingPointType(std::sqrt(2)) );
+  BOOST_CHECK_EQUAL( Utility::sqrt(T(2)), RawFloatingPointType(std::sqrt(2)) );
 
+  // Check that the sqrt of complex types can be calculated
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(0), T(0) ) ),
                      std::sqrt( ComplexRawFloatingPointType( T(0), T(0) ) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(0), T(0) ) ),
+                     std::sqrt( ComplexRawFloatingPointType( T(0), T(0) ) ) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(1), T(0) ) ),
                      std::sqrt( ComplexRawFloatingPointType( T(1), T(0) ) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(1), T(0) ) ),
+                     std::sqrt( ComplexRawFloatingPointType( T(1), T(0) ) ) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(0), T(1) ) ),
                      std::sqrt( ComplexRawFloatingPointType( T(0), T(1) ) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(0), T(1) ) ),
+                     std::sqrt( ComplexRawFloatingPointType( T(0), T(1) ) ) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(1), T(1) ) ),
                      std::sqrt( ComplexRawFloatingPointType( T(1), T(1) ) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(1), T(1) ) ),
+                     std::sqrt( ComplexRawFloatingPointType( T(1), T(1) ) ) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(2), T(0) ) ),
                      std::sqrt( ComplexRawFloatingPointType( T(2), T(0) ) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(2), T(0) ) ),
+                     std::sqrt( ComplexRawFloatingPointType( T(2), T(0) ) ) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(0), T(2) ) ),
                      std::sqrt( ComplexRawFloatingPointType( T(0), T(2) ) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(0), T(2) ) ),
+                     std::sqrt( ComplexRawFloatingPointType( T(0), T(2) ) ) );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(2), T(2) ) ),
+                     std::sqrt( ComplexRawFloatingPointType( T(2), T(2) ) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(2), T(2) ) ),
                      std::sqrt( ComplexRawFloatingPointType( T(2), T(2) ) ) );
 
   if( Utility::QuantityTraits<T>::is_signed::value )
   {
     BOOST_CHECK( Utility::isnaninf( Utility::QuantityTraits<T>::sqrt( T(-1) ) ) );
+    BOOST_CHECK( Utility::isnaninf( Utility::sqrt( T(-1) ) ) );
+    
     BOOST_CHECK( Utility::isnaninf( Utility::QuantityTraits<T>::sqrt( T(-2) ) ) );
+    BOOST_CHECK( Utility::isnaninf( Utility::sqrt( T(-2) ) ) );
 
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(-1), T(0) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(-1), T(0) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(-1), T(0) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(-1), T(0) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(0), T(-1) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(0), T(-1) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(0), T(-1) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(0), T(-1) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(-1), T(1) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(-1), T(1) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(-1), T(1) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(-1), T(1) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(1), T(-1) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(1), T(-1) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(1), T(-1) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(1), T(-1) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(-1), T(-1) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(-1), T(-1) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(-1), T(-1) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(-1), T(-1) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(-2), T(0) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(-2), T(0) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(-2), T(0) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(-2), T(0) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(0), T(-2) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(0), T(-2) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(0), T(-2) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(0), T(-2) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(-2), T(2) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(-2), T(2) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(-2), T(2) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(-2), T(2) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(2), T(-2) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(2), T(-2) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(2), T(-2) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(2), T(-2) ) ) );
+    
     BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::sqrt( std::complex<T>( T(-2), T(-2) ) ),
+                       std::sqrt( ComplexRawFloatingPointType( T(-2), T(-2) ) ) );
+    BOOST_CHECK_EQUAL( Utility::sqrt( std::complex<T>( T(-2), T(-2) ) ),
                        std::sqrt( ComplexRawFloatingPointType( T(-2), T(-2) ) ) );
   }
 }
@@ -2497,51 +2798,112 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( _sqrt, QuantityType, TestBasicQuantityTypes )
   typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
   typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
   typedef typename Utility::QuantityTraits<ComplexQuantityType>::FloatingPointQuantityType ComplexFloatingPointQuantityType;
+  typedef std::is_same<RawFloatingPointType,float> IsRawFloatingPointTypeFloat;
+  
+  RawFloatingPointType tolerance = IsRawFloatingPointTypeFloat::value ? 1e-6 : 1e-12;
+  
+  // Check that the returned type from the sqrt method is correct
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::sqrt( Utility::QuantityTraits<QuantityType>::zero() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<1,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::sqrt( Utility::QuantityTraits<QuantityType>::zero() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<1,2>::AsFloatingPointType>::value) );
 
+  // Check that the sqrt method calculates the correct value
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::sqrt( Utility::QuantityTraits<QuantityType>::zero() )*
                      Utility::QuantityTraits<QuantityType>::sqrt( Utility::QuantityTraits<QuantityType>::zero() ),
                      Utility::QuantityTraits<FloatingPointQuantityType>::zero() );
+  BOOST_CHECK_EQUAL( Utility::sqrt( Utility::QuantityTraits<QuantityType>::zero() )*
+                     Utility::sqrt( Utility::QuantityTraits<QuantityType>::zero() ),
+                     Utility::QuantityTraits<FloatingPointQuantityType>::zero() );
+  
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::sqrt( Utility::QuantityTraits<QuantityType>::one() )*
                      Utility::QuantityTraits<QuantityType>::sqrt( Utility::QuantityTraits<QuantityType>::one() ),
                      Utility::QuantityTraits<FloatingPointQuantityType>::one() );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::sqrt( QuantityType::from_value( 2 ) )*
-                     Utility::QuantityTraits<QuantityType>::sqrt( QuantityType::from_value( 2 ) ),
-                     FloatingPointQuantityType::from_value( std::sqrt(2)*std::sqrt(2) ) );
+  BOOST_CHECK_EQUAL( Utility::sqrt( Utility::QuantityTraits<QuantityType>::one() )*
+                     Utility::sqrt( Utility::QuantityTraits<QuantityType>::one() ),
+                     Utility::QuantityTraits<FloatingPointQuantityType>::one() );
   
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) ),
-                     Utility::QuantityTraits<ComplexFloatingPointQuantityType>::zero() );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) ),
-                     Utility::QuantityTraits<ComplexFloatingPointQuantityType>::one() );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) ),
-                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, 1 ) ) );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) ),
-                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 1, 1 ) ) );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) ),
-                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 2, 2 ) ) );
+  // We can't do floating-point comparisons with quantity types in the boost
+  // test framework so we will compare raw values instead
+  BOOST_CHECK_CLOSE_FRACTION( Utility::QuantityTraits<QuantityType>::sqrt( QuantityType::from_value( 2 ) ).value(),
+                              std::sqrt(2),
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::sqrt( QuantityType::from_value( 2 ) ).value(),
+                              std::sqrt(2),
+                              tolerance );
+
+  // Check that the returned type from the sqrt method is correct (when using
+  // complex types)
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<1,2>::AsFloatingPointType>::value) );
+               
+  ComplexFloatingPointQuantityType complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) );
   
-    
+  BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+  BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 1.0, tolerance );
+  BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) );
+
+  BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 1.0, tolerance );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 1.0, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 1.0, tolerance );
+
+  complex_quantity =
+    Utility::sqrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) )*
+    Utility::sqrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 2.0, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 2.0, tolerance );
+      
   if( Utility::QuantityTraits<QuantityType>::is_signed::value )
   {
     BOOST_CHECK( Utility::isnaninf( Utility::QuantityTraits<QuantityType>::sqrt( QuantityType::from_value( -1 ) ) ) );
+    BOOST_CHECK( Utility::isnaninf( Utility::sqrt( QuantityType::from_value( -1 ) ) ) );
+    
     BOOST_CHECK( Utility::isnaninf( Utility::QuantityTraits<QuantityType>::sqrt( QuantityType::from_value( -2 ) ) ) );
+    BOOST_CHECK( Utility::isnaninf( Utility::sqrt( QuantityType::from_value( -2 ) ) ) );
 
-    BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) )*
-                       Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) ),
-                       ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, 0 ) ) );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) ),
-                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( 0, -1 ) ) );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) ),
-                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -1, -1 ) ) );
-  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) )*
-                     Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) ),
-                     ComplexFloatingPointQuantityType::from_value( ComplexRawFloatingPointType( -2, -2 ) ) );
+    complex_quantity = 
+      Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) );
+
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -1.0, tolerance );
+    BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+
+    complex_quantity =
+      Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) );
+
+    BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -1.0, tolerance );
+
+    complex_quantity =
+      Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::sqrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) );
+
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -1.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -1.0, tolerance );
+
+    complex_quantity =
+      Utility::sqrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) )*
+      Utility::sqrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) );
+
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -2.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -2.0, tolerance );
   }
 }
 
@@ -2549,28 +2911,4223 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( _sqrt, QuantityType, TestBasicQuantityTypes )
 // Check that the cube root of a quantity can be computed
 BOOST_AUTO_TEST_CASE_TEMPLATE( cbrt_basic, T, TestTypes )
 {
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+  typedef std::is_same<RawFloatingPointType,float> IsRawFloatingPointTypeFloat;
 
+  typename std::conditional<IsRawFloatingPointTypeFloat::value,float,double>::type tolerance = IsRawFloatingPointTypeFloat::value ? 1e-6 : 1e-12;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::cbrt( T(0) ),
+                     RawFloatingPointType(0) );
+  BOOST_CHECK_EQUAL( Utility::cbrt( T(0) ), RawFloatingPointType(0) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::cbrt( T(1) ),
+                     RawFloatingPointType(1) );
+  BOOST_CHECK_EQUAL( Utility::cbrt( T(1) ), RawFloatingPointType(1) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::cbrt( T(2) ),
+                     RawFloatingPointType(std::cbrt(2)) );
+  BOOST_CHECK_EQUAL( Utility::cbrt(T(2)), RawFloatingPointType(std::cbrt(2)) );
+
+  // Check that the cbrt of complex types can be calculated
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(0), T(0) ) ),
+                     ComplexRawFloatingPointType( T(0), T(0) ) );
+  BOOST_CHECK_EQUAL( Utility::cbrt( std::complex<T>( T(0), T(0) ) ),
+                     ComplexRawFloatingPointType( T(0), T(0) ) );
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(1), T(0) ) ),
+                     ComplexRawFloatingPointType( T(1), T(0) ) );
+  BOOST_CHECK_EQUAL( Utility::cbrt( std::complex<T>( T(1), T(0) ) ),
+                     ComplexRawFloatingPointType( T(1), T(0) ) );
+
+  ComplexRawFloatingPointType complex_value =
+    Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(0), T(1) ) );
+  
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), std::sqrt(3.0)/2, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(), 0.5, tolerance );
+
+  complex_value = Utility::cbrt( std::complex<T>( T(0), T(1) ) );
+  
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), std::sqrt(3.0)/2, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(), 0.5, tolerance );
+
+  complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(1), T(1) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                              (std::pow(2.0,2.0/3)/4)*(1+std::sqrt(3.0)),
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                              (std::pow(2.0,2.0/3)/4)*(-1+std::sqrt(3.0)),
+                              tolerance );
+
+  complex_value = Utility::cbrt( std::complex<T>( T(1), T(1) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                              (std::pow(2.0,2.0/3)/4)*(1+std::sqrt(3.0)),
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                              (std::pow(2.0,2.0/3)/4)*(-1+std::sqrt(3.0)),
+                              tolerance );
+
+  complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(2), T(0) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), std::cbrt(2.0), tolerance );
+  BOOST_CHECK_SMALL( complex_value.imag(), tolerance );
+
+  complex_value = Utility::cbrt( std::complex<T>( T(2), T(0) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), std::cbrt(2.0), tolerance );
+  BOOST_CHECK_SMALL( complex_value.imag(), tolerance );
+
+  complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(0), T(2) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                              std::cbrt(2.0)*std::sqrt(3.0)/2,
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                              std::cbrt(2.0)/2,
+                              tolerance );
+
+  complex_value = Utility::cbrt( std::complex<T>( T(0), T(2) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                              std::cbrt(2.0)*std::sqrt(3.0)/2,
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                              std::cbrt(2.0)/2,
+                              tolerance );
+
+  complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(2), T(2) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                              0.5*(1+std::sqrt(3.0)),
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                              0.5*(-1+std::sqrt(3.0)),
+                              tolerance );
+
+  complex_value = Utility::cbrt( std::complex<T>( T(2), T(2) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                              0.5*(1+std::sqrt(3.0)),
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                              0.5*(-1+std::sqrt(3.0)),
+                              tolerance );
+  
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::cbrt( T(-1) ),
+                       RawFloatingPointType(-1) );
+    BOOST_CHECK_EQUAL( Utility::cbrt( T(-1) ), RawFloatingPointType(-1) );
+  
+    BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::cbrt( T(-2) ),
+                       RawFloatingPointType(std::cbrt(-2)) );
+    BOOST_CHECK_EQUAL( Utility::cbrt(T(-2)), RawFloatingPointType(std::cbrt(-2)) );
+
+    ComplexRawFloatingPointType complex_value =
+      Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(-1), T(0) ) );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), 0.5, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                std::sqrt(3.0)/2,
+                                tolerance );
+
+    complex_value = Utility::cbrt( std::complex<T>( T(-1), T(0) ) );
+
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), 0.5, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                std::sqrt(3.0)/2,
+                                tolerance );
+
+    complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(0), T(-1) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::sqrt(3.0)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(), -0.5, tolerance );
+
+    complex_value = Utility::cbrt( std::complex<T>( T(0), T(-1) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::sqrt(3.0)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(), -0.5, tolerance );
+    
+    complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(-1), T(-1) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::pow(2.0,2.0/3)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                -std::pow(2.0,2.0/3)/2,
+                                tolerance );
+
+    complex_value = Utility::cbrt( std::complex<T>( T(-1), T(-1) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::pow(2.0,2.0/3)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                -std::pow(2.0,2.0/3)/2,
+                                tolerance );
+    
+    complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(-2), T(0) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::cbrt(2.0)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                std::cbrt(2.0)*std::sqrt(3.0)/2,
+                                tolerance );
+
+    complex_value = Utility::cbrt( std::complex<T>( T(-2), T(0) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::cbrt(2.0)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                std::cbrt(2.0)*std::sqrt(3.0)/2,
+                                tolerance );
+    
+    complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(0), T(-2) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::cbrt(2.0)*std::sqrt(3.0)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                -std::cbrt(2.0)/2,
+                                tolerance );
+
+    complex_value = Utility::cbrt( std::complex<T>( T(0), T(-2) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(),
+                                std::cbrt(2.0)*std::sqrt(3.0)/2,
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(),
+                                -std::cbrt(2.0)/2,
+                                tolerance );
+    
+    complex_value = Utility::QuantityTraits<std::complex<T> >::cbrt( std::complex<T>( T(-2), T(-2) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), 1.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(), -1.0, tolerance );
+
+    complex_value = Utility::cbrt( std::complex<T>( T(-2), T(-2) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.real(), 1.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( complex_value.imag(), -1.0, tolerance );
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cube root of a quantity can be computed
-BOOST_AUTO_TEST_CASE_TEMPLATE( _cbrt, QuantityType, TestQuantityTypes )
+BOOST_AUTO_TEST_CASE_TEMPLATE( _cbrt, QuantityType, TestBasicQuantityTypes )
 {
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<QuantityType>::FloatingPointQuantityType FloatingPointQuantityType;
+  typedef std::complex<RawType> ComplexRawType;
+  typedef std::complex<RawFloatingPointType> ComplexRawFloatingPointType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
+  typedef typename Utility::QuantityTraits<ComplexQuantityType>::FloatingPointQuantityType ComplexFloatingPointQuantityType;
+  typedef std::is_same<RawFloatingPointType,float> IsRawFloatingPointTypeFloat;
+  
+  RawFloatingPointType tolerance = IsRawFloatingPointTypeFloat::value ? 1e-6 : 1e-12;
 
+  // Check that the returned type from the cbrt method is correct
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::cbrt( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<1,3>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::cbrt( Utility::QuantityTraits<QuantityType>::one() ) ),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<1,3>::AsFloatingPointType>::value) );
+
+  // Check that the cbrt method calculates the correct value (of one root)
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::cbrt( Utility::QuantityTraits<QuantityType>::zero() )*
+                     Utility::QuantityTraits<QuantityType>::cbrt( Utility::QuantityTraits<QuantityType>::zero() )*
+                     Utility::QuantityTraits<QuantityType>::cbrt( Utility::QuantityTraits<QuantityType>::zero() ),
+                     Utility::QuantityTraits<FloatingPointQuantityType>::zero() );
+  BOOST_CHECK_EQUAL( Utility::cbrt( Utility::QuantityTraits<QuantityType>::zero() )*
+                     Utility::cbrt( Utility::QuantityTraits<QuantityType>::zero() )*
+                     Utility::cbrt( Utility::QuantityTraits<QuantityType>::zero() ),
+                     Utility::QuantityTraits<FloatingPointQuantityType>::zero() );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::cbrt( Utility::QuantityTraits<QuantityType>::one() )*
+                     Utility::QuantityTraits<QuantityType>::cbrt( Utility::QuantityTraits<QuantityType>::one() )*
+                     Utility::QuantityTraits<QuantityType>::cbrt( Utility::QuantityTraits<QuantityType>::one() ),
+                     Utility::QuantityTraits<FloatingPointQuantityType>::one() );
+  BOOST_CHECK_EQUAL( Utility::cbrt( Utility::QuantityTraits<QuantityType>::one() )*
+                     Utility::cbrt( Utility::QuantityTraits<QuantityType>::one() )*
+                     Utility::cbrt( Utility::QuantityTraits<QuantityType>::one() ),
+                     Utility::QuantityTraits<FloatingPointQuantityType>::one() );
+
+  // We can't do floating-point comparisons with quantity types in the boost
+  // test framework so we will compare raw values instead
+  BOOST_CHECK_CLOSE_FRACTION( Utility::QuantityTraits<QuantityType>::cbrt( QuantityType::from_value( 2 ) ).value(),
+                              std::cbrt( 2.0 ),
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::cbrt( QuantityType::from_value( 2 ) ).value(),
+                              std::cbrt( 2.0 ),
+                              tolerance );
+
+  // Check that the returned type from the cbrt method is correct (when
+  // using complex types)
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::cbrt( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<1,3>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::cbrt( Utility::QuantityTraits<ComplexQuantityType>::one() ) ),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<1,3>::AsFloatingPointType>::value) );
+
+  ComplexFloatingPointQuantityType complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) );
+
+  BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+  BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+  
+  complex_quantity =
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 0 ) ) );
+
+  BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+  BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 1.0, tolerance );
+  BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+
+  complex_quantity =
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 0 ) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 1.0, tolerance );
+  BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) );
+
+  BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 1.0, tolerance );
+
+  complex_quantity =
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, 1 ) ) );
+  
+  BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 1.0, tolerance );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 1.0, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 1.0, tolerance );
+
+  complex_quantity =
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 1, 1 ) ) );
+  
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 1.0, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 1.0, tolerance );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) )*
+    Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 2.0, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 2.0, tolerance );
+
+  complex_quantity =
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) )*
+    Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 2, 2 ) ) );
+  
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), 2.0, tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), 2.0, tolerance );
+
+  if( Utility::QuantityTraits<QuantityType>::is_signed::value )
+  {
+    BOOST_CHECK_CLOSE_FRACTION( Utility::QuantityTraits<QuantityType>::cbrt( QuantityType::from_value( -1 ) ).value(),
+                                std::cbrt( -1.0 ),
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::cbrt( QuantityType::from_value( -1 ) ).value(),
+                                std::cbrt( -1.0 ),
+                                tolerance );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::QuantityTraits<QuantityType>::cbrt( QuantityType::from_value( -2 ) ).value(),
+                                std::cbrt( -2.0 ),
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::cbrt( QuantityType::from_value( -2 ) ).value(),
+                                std::cbrt( -2.0 ),
+                                tolerance );
+
+    complex_quantity =
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -1.0, tolerance );
+    BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+    
+    complex_quantity =
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, 0 ) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -1.0, tolerance );
+    BOOST_CHECK_SMALL( Utility::imag(complex_quantity).value(), tolerance );
+    
+    complex_quantity =
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) );
+    
+    BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -1.0, tolerance );
+    
+    complex_quantity =
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( 0, -1 ) ) );
+    
+    BOOST_CHECK_SMALL( Utility::real(complex_quantity).value(), tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -1.0, tolerance );
+    
+    complex_quantity =
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -1.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -1.0, tolerance );
+    
+    complex_quantity =
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -1, -1 ) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -1.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -1.0, tolerance );
+    
+    complex_quantity =
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) )*
+      Utility::QuantityTraits<ComplexQuantityType>::cbrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -2.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -2.0, tolerance );
+    
+    complex_quantity =
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) )*
+      Utility::cbrt( ComplexQuantityType::from_value( ComplexRawType( -2, -2 ) ) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(), -2.0, tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(), -2.0, tolerance );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a quantity to the zeroth power can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_0_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  // Special case: 0^0 -> we've defined this to be one
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( T(0) ), 1.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(0, 0) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,1>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-1>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,2>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-2>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,3>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-3>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,10>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-10>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( T(0) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  // Power = 0
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( T(1) ), 1.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( T(2) ), 1.0 );
+
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(1, 0) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(0, 1) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(1, 1) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(2, 0) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(0, 2) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(2, 2) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,1>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-1>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,2>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-2>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,3>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-3>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,10>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-10>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( T(2) )), 1.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(2, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(0, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( Utility::rpow<0>( T(-1) ), 1.0 );
+    BOOST_CHECK_EQUAL( Utility::rpow<0>( T(-2) ), 1.0 );
+    
+    BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(-1, 0) ),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(0, -1) ),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(-1, -1) ),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<0>( std::complex<T>(-2, -2) ),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,1>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-1>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(0, 1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,2>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-2>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,3>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-3>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,10>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,10>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,10>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,10>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-10>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<0,-10>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<0,-10>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( T(-2) )), 1.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<0,-10>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Check that rational power of a quantity can be computed
-BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_basic, T, TestTypes )
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_1_basic, T, TestTypes )
 {
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+  
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( T(0) ), 0.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( T(1) ), 1.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( T(2) ), 2.0 );
 
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(0, 0)),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(1, 0)),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(0, 1)),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(1, 1)),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(2, 2)),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,1>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-1>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,2>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-2>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,3>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+  
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-3>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( T(2) )), 2.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(1.0, 1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(2.0, 2.0) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( Utility::rpow<1>( T(-1) ), -1.0 );
+    BOOST_CHECK_EQUAL( Utility::rpow<1>( T(-2) ), -2.0 );
+    
+    BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(-1, 0)),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(0, -1)),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(-1, -1)),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<1>( std::complex<T>(-2, -2)),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,1>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-1>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,2>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,2>( std::complex<T>(-2, -2) )),
+                     ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-2>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,3>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-3>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( T(-2) )), -2.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(-1.0, -1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(-2.0, -2.0) );
+  }
 }
 
 //---------------------------------------------------------------------------//
-// Check that the rational power of a quantity can be computed
-BOOST_AUTO_TEST_CASE_TEMPLATE( rpow, QuantityType, TestQuantityTypes )
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_basic, T, TestTypes )
 {
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+  
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( T(0) ), 0.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( T(1) ), 1.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( T(2) ), 4.0 );
 
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(0, 0) ),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(1, 0) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(0, 1) ),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(1, 1) ),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(2, 2) ),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,1>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-1>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,2>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-2>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,3>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-3>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( T(2) )), 4.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(0.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(0.0, 8.0) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( Utility::rpow<2>( T(-1) ), 1.0 );
+    BOOST_CHECK_EQUAL( Utility::rpow<2>( T(-2) ), 4.0 );
+    
+    BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(-1, 0) ),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(0, -1) ),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(-1, -1) ),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<2>( std::complex<T>(-2, -2) ),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,1>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(0, -1) )),
+                     ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-1>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( T(-2) )), 4.0 );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,2>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-2>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,3>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-3>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( T(-1) )), 1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( T(-2) )), 4.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(0.0, 2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(0.0, 8.0) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_3_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+  
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( T(0) ), 0.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( T(1) ), 1.0 );
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( T(2) ), 8.0 );
+
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(0, 0) ),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(1, 0) ),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(0, 1) ),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(1, 1) ),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(2, 2) ),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,1>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-1>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,2>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+  
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-2>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,3>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-3>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+  
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( T(2) )), 8.0 );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(1, 0) )),
+                     ComplexRawFloatingPointType(1.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(0, 1) )),
+                     ComplexRawFloatingPointType(0.0, -1.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(1, 1) )),
+                     ComplexRawFloatingPointType(-2.0, 2.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(2, 2) )),
+                     ComplexRawFloatingPointType(-16.0, 16.0) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( Utility::rpow<3>( T(-1) ), -1.0 );
+    BOOST_CHECK_EQUAL( Utility::rpow<3>( T(-2) ), -8.0 );
+    
+    BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(-1, 0) ),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(0, -1) ),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(-1, -1) ),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( Utility::rpow<3>( std::complex<T>(-2, -2) ),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,1>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-1>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-1>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,2>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-2>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-2>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,3>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-3>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( T(-1) )), -1.0 );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( T(-2) )), -8.0 );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(-1, 0) )),
+                       ComplexRawFloatingPointType(-1.0, 0.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(0, -1) )),
+                       ComplexRawFloatingPointType(0.0, 1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(-1, -1) )),
+                       ComplexRawFloatingPointType(2.0, -2.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-3>( std::complex<T>(-2, -2) )),
+                       ComplexRawFloatingPointType(16.0, -16.0) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_1_over_2_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,2>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-2>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,4>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-4>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,6>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-6>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( T(2) )),
+                     RawFloatingPointType(std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(1, 0) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(0, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(1, 1) )),
+                     std::sqrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(2, 2) )),
+                     std::sqrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<1,2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<1,2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,2>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<1,2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<1,2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,2>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-1,-2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-1,-2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-2>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-1,-2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-1,-2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-2>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<2,4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<2,4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,4>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<2,4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<2,4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,4>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-2,-4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-2,-4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-4>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-2,-4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-2,-4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-4>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<3,6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<3,6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,6>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<3,6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<3,6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,6>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-3,-6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-3,-6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-6>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-3,-6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-3,-6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(-1, 0) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(0, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(-1, -1) )),
+                       std::sqrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-6>( std::complex<T>(-2, -2) )),
+                       std::sqrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_1_over_3_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,3>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-3>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,6>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-6>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,9>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-9>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( T(2) )),
+                     RawFloatingPointType(Utility::cbrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(1, 0) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 0.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(0, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(0.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(1, 1) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(1.0, 1.0) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(2, 2) )),
+                     Utility::cbrt( ComplexRawFloatingPointType(2.0, 2.0) ) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,3>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,3>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,3>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,3>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-3>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-3>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-3>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-3>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,6>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,6>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,6>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,6>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-6>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-6>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-6>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+        
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-6>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,9>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,9>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,9>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,9>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-9>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-9>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-9>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( T(-1) )),
+                       RawFloatingPointType(Utility::cbrt( -1.0 )) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(-1, 0) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, 0.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(0, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(0.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(-1, -1) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-1.0, -1.0) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-9>( std::complex<T>(-2, -2) )),
+                       Utility::cbrt( ComplexRawFloatingPointType(-2.0, -2.0) ) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_1_over_4_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,4>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-4>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,8>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,8>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,8>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-8>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-8>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-8>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,12>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,12>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,12>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-12>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-12>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-12>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.25)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.25) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.25) ) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<1,4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<1,4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<1,4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<1,4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-1,-4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-1,-4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-1,-4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-1,-4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<2,8>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<2,8>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,8>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<2,8>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<2,8>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,8>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-2,-8>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-2,-8>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-8>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-2,-8>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-2,-8>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-8>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<3,12>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<3,12>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,12>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<3,12>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<3,12>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,12>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-3,-12>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-3,-12>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-12>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-3,-12>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-3,-12>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.25) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-12>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.25) ) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_1_over_5_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,5>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,5>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,5>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-5>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-5>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-5>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,10>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,10>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-10>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-10>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,15>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,15>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,15>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-15>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-15>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-15>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 0.2)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(0.2) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(0.2) ) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,5>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<1,5>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<1,5>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<1,5>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-5>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-1,-5>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-1,-5>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-1,-5>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,10>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,10>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,10>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,10>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-10>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-10>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-10>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+        
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-10>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,15>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,15>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,15>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,15>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-15>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-15>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-15>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( T(-1) )),
+                       RawFloatingPointType(-std::pow(1.0, 0.2)) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( T(-2) )),
+                       RawFloatingPointType(-std::pow(2.0, 0.2)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType( 0.0, -1.0 ), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(0.2) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-15>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(0.2) ) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_3_over_2_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<3,2>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-3,-2>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,4>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-4>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<9,6>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-9,-6>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( T(2) )),
+                     RawFloatingPointType(2*std::sqrt(2.0)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(1.5) ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(1.5) ) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<3,2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<3,2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<3,2>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<3,2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<3,2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<3,2>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-3,-2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-3,-2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-3,-2>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-3,-2>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-3,-2>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-3,-2>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<6,4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<6,4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<6,4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<6,4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-6,-4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-6,-4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-6,-4>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-6,-4>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-4>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<9,6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<9,6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<9,6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<9,6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<9,6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<9,6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-9,-6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<T>::template rpow<-9,-6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-9,-6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+    
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-9,-6>( T(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::rpow<-9,-6>( T(-2) )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(1.5) ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-9,-6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(1.5) ) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that rational power of a quantity can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
+{
+  typedef typename Utility::QuantityTraits<T>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<std::complex<T> >::RawFloatingPointType ComplexRawFloatingPointType;
+
+  typedef std::is_same<RawFloatingPointType,float> IsRawFloatingPointTypeFloat;
+  
+  RawFloatingPointType tolerance = IsRawFloatingPointTypeFloat::value ? 1e-6 : 1e-12;
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(0) )), 0.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(1) )), 1.0 );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(2) )),
+                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(0, 0) )),
+                     ComplexRawFloatingPointType(0.0, 0.0) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(1, 0) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(0, 1) )),
+                     std::pow( ComplexRawFloatingPointType(0.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(1, 1) )),
+                     std::pow( ComplexRawFloatingPointType(1.0, 1.0), RawFloatingPointType(2.0)/3 ) );
+  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(2, 2) )),
+                     std::pow( ComplexRawFloatingPointType(2.0, 2.0), RawFloatingPointType(2.0)/3 ) );
+
+  if( Utility::QuantityTraits<T>::is_signed::value )
+  {
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(-2) )),
+                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+        
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(-1) )),
+                       RawFloatingPointType(1.0) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(-2) )),
+                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(-1, 0) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(0, -1) )),
+                       std::pow( ComplexRawFloatingPointType(0.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(-1, -1) )),
+                       std::pow( ComplexRawFloatingPointType(-1.0, -1.0), RawFloatingPointType(2.0)/3 ) );
+    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(-2, -2) )),
+                       std::pow( ComplexRawFloatingPointType(-2.0, -2.0), RawFloatingPointType(2.0)/3 ) );
+  }
 }
 
 //---------------------------------------------------------------------------//
