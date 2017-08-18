@@ -940,7 +940,7 @@ struct QuantityToPowerTypeHelper<N,D,boost::units::quantity<Unit,T>, typename st
   //! Compute the quantity raised to the rational power N/D
   static inline QuantityToRpowType rpow( const boost::units::quantity<Unit,T>& a )
   {
-    return QuantityToRpowType::from_value( QuantityTraitsHelperBase<T>::template rawRpow<N,D>( a.value() ) );
+    return QuantityToRpowType::from_value( RawRationalPowerHelper<0,D,T>::calculateRationalPower( a.value() ) );
   }
 };
 
@@ -955,9 +955,7 @@ struct QuantityToPowerTypeHelper<0,D,boost::units::quantity<Unit,T>, typename st
 
   //! Compute the quantity raised to the rational power N/D
   static inline QuantityToRpowType rpow( const boost::units::quantity<Unit,T>& a )
-  {
-    return QuantityTraitsHelperBase<T>::template rawRpow<0,D>( a.value() );
-  }
+  { return RawRationalPowerHelper<0,D,T>::calculateRationalPower( a.value() ); }
 }; 
 
 /*! Partial specialization of QuantityToPowerTypeHelper for N==D, N!=0
@@ -1086,7 +1084,9 @@ public:
   //! Take the quantity to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
   static inline typename GetQuantityToPowerType<N,D>::AsFloatingPointType rpow( const QuantityType& quantity )
-  { return QuantityToPowerTypeHelper<N,D,FloatingPointQuantityType>::rpow( quantity ); }
+  {
+    return QuantityToPowerTypeHelper<N,D,FloatingPointQuantityType>::rpow( FloatingPointQuantityType::from_value( Details::FloatingPointInitializationHelper<RawType>::init( quantity.value() ) ) );
+  }
   
   //! Potentially dangerous to initialize quantities in this way!
   static inline QuantityType initializeQuantity( const RawType& raw_quantity ) noexcept
