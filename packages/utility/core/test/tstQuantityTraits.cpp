@@ -6768,8 +6768,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<2,3>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6784,8 +6785,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<2,3>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6800,8 +6802,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6816,8 +6819,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<-2,-3>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6832,8 +6836,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<4,6>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6848,8 +6853,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<4,6>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6864,8 +6870,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6880,8 +6887,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<-4,-6>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6896,8 +6904,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<6,9>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6912,8 +6921,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<6,9>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6928,8 +6938,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6944,8 +6955,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
   BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(0) )), 0.0 );
   BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(1) )), 1.0 );
-  BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(2) )),
-                     RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+  BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<-6,-9>( T(2) )),
+                              RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                              tolerance );
 
   BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(0, 0) )),
                      ComplexRawFloatingPointType(0.0, 0.0) );
@@ -6962,8 +6974,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
   {
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<2,3>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<2,3>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<2,3>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -6976,8 +6989,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<2,3>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::rpow<2,3>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -6990,8 +7004,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<-2,-3>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-2,-3>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7004,8 +7019,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<-2,-3>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::rpow<-2,-3>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7018,8 +7034,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<4,6>( T(-2) )),
-                       RawFloatingPointType(Utility::cbrt( -2.0 )) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<4,6>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<4,6>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7032,8 +7049,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<4,6>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::rpow<4,6>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7046,8 +7064,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<-4,-6>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-4,-6>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7060,8 +7079,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<-4,-6>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
         
     BOOST_CHECK_EQUAL( (Utility::rpow<-4,-6>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7074,8 +7094,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<6,9>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<6,9>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<6,9>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7088,8 +7109,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<6,9>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::rpow<6,9>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7102,8 +7124,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::QuantityTraits<T>::template rpow<-6,-9>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::QuantityTraits<std::complex<T> >::template rpow<-6,-9>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );
@@ -7116,8 +7139,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 
     BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(-1) )),
                        RawFloatingPointType(1.0) );
-    BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( T(-2) )),
-                       RawFloatingPointType(std::pow(2.0, 2.0/3)) );
+    BOOST_CHECK_CLOSE_FRACTION( (Utility::rpow<-6,-9>( T(-2) )),
+                                RawFloatingPointType(std::pow(2.0, 2.0/3)),
+                                tolerance );
     
     BOOST_CHECK_EQUAL( (Utility::rpow<-6,-9>( std::complex<T>(-1, 0) )),
                        std::pow( ComplexRawFloatingPointType(-1.0, 0.0), RawFloatingPointType(2.0)/3 ) );

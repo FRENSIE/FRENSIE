@@ -10,7 +10,6 @@
 #define UTILITY_QUANTITY_TRAITS_HPP
 
 // Std Lib Includes
-#include <iostream>
 #include <type_traits>
 #include <cmath>
 #include <complex>
@@ -21,6 +20,7 @@
 #include <boost/units/static_rational.hpp>
 #include <boost/units/limits.hpp>
 #include <boost/units/io.hpp>
+#include <boost/math/common_factor.hpp>
 
 // FRENSIE Includes
 #include "Utility_QuantityTraitsDecl.hpp"
@@ -200,7 +200,7 @@ struct RawRationalPowerHelper
 template<boost::units::integer_type N,
          boost::units::integer_type D,
          typename T>
-struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(D%2==1 && ((N==1 && D>3) || (D>1 && N>D && N%D!=0) || (D>2 && N<D && D%N!=0)) && std::is_signed<T>::value)>::type>
+struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(D%2==1 && D>1 && boost::math::static_gcd<N,D>::value==1 && ((N==1 && D>3) || N>1) && std::is_signed<T>::value)>::type>
 {
   //! The return type
   typedef typename ToFloatingPointHelper<T>::type ReturnType;
@@ -213,7 +213,7 @@ struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(D%2==1 && ((N==1 &&
       ReturnType tmp_value_to_n_over_d = 
         std::pow( -static_cast<ReturnType>( value ),
                   static_cast<ReturnType>( N )/D );
-      std::cout << "value^(N/D) = " << value << "^(" << N << "/" << D << "): " << tmp_value_to_n_over_d << std::endl;
+
       if( N%2 == 1 )
         return -tmp_value_to_n_over_d;
       else
@@ -345,18 +345,7 @@ struct RawRationalPowerHelper<N, 1, std::complex<T>, typename std::enable_if<(N>
     
     return tmp_value*tmp_value*ReturnType(value.real(), value.imag());
   }
-};
-
-/*! The partial specialization of RawRationalPowerHelper for N>1,D>1,N>D,N%D==0
- * If N is an integer multiple of D, we will set N to N/D and D to 1 to 
- * take advantage of other partial specializations for D==1.
- * \ingroup quantity_traits
- */
-template<boost::units::integer_type N,
-         boost::units::integer_type D,
-         typename T>
-struct RawRationalPowerHelper<N, D, T, typename std::enable_if<(N>1 && D>1 && N>D && N%D==0)>::type> : public RawRationalPowerHelper<N/D,1,T>
-{ /* ... */ };         
+};       
 
 /*! The partial specialization of RawRationalPowerHelper for N==1, D==2
  *
@@ -406,16 +395,18 @@ struct RawRationalPowerHelper<1,3,T>
   { return RawCubeRootHelper<T>::calculateCubeRoot( value ); }
 };
 
-/*! The partial specialization of RawRationalPowerHelper for N>1,D>1,N<D,N%D==0
- * If D is an integer multiple of N, we will set N to 1 and D to D/N to 
- * take advantage of other partial specializations for N==1.
+/*! \brief The partial specialization of RawRationalPowerHelper for N>1, D>1,
+ * GCD(N,D)>1
+ * If GCD(N,D)!=1 then we will simplify the rational power (N/D): (N/D) ==
+ * ([N/GCD(N,D)]/[D/GCD(N,D)]). This allows us to take advantage of the
+ * other specializations (and to limit the number of required specializations).
  * \ingroup quantity_traits
  */
 template<boost::units::integer_type N,
          boost::units::integer_type D,
          typename T>
-struct RawRationalPowerHelper<N, D, T, typename std::enable_if<(N>1 && D>1 && N<D && D%N==0)>::type> : public RawRationalPowerHelper<1,D/N,T>
-{ /* ... */ };         
+struct RawRationalPowerHelper<N, D, T, typename std::enable_if<(N>1 && D>1 && N!=D && boost::math::static_gcd<N,D>::value>1)>::type> : public RawRationalPowerHelper<N/boost::math::static_gcd<N,D>::value,D/boost::math::static_gcd<N,D>::value,T>
+{ /* ... */ };
 
 /*! The partial specialization of RawRationalPowerHelper for N<0, D>0
  *
