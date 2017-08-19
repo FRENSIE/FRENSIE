@@ -940,7 +940,7 @@ struct QuantityToPowerTypeHelper<N,D,boost::units::quantity<Unit,T>, typename st
   //! Compute the quantity raised to the rational power N/D
   static inline QuantityToRpowType rpow( const boost::units::quantity<Unit,T>& a )
   {
-    return QuantityToRpowType::from_value( RawRationalPowerHelper<0,D,T>::calculateRationalPower( a.value() ) );
+    return QuantityToRpowType::from_value( RawRationalPowerHelper<N,D,T>::calculateRationalPower( a.value() ) );
   }
 };
 

@@ -7988,6 +7988,118 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_neg3_over_2_basic, T, TestTypes )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a quantity to a rational power can be computed
+BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_neg3_over_2,
+                               QuantityType,
+                               TestBasicQuantityTypes )
+{
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::RawFloatingPointType RawFloatingPointType;
+  typedef typename Utility::QuantityTraits<QuantityType>::FloatingPointQuantityType FloatingPointQuantityType;
+  typedef std::complex<RawType> ComplexRawType;
+  typedef std::complex<RawFloatingPointType> ComplexRawFloatingPointType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
+  typedef typename Utility::QuantityTraits<ComplexQuantityType>::FloatingPointQuantityType ComplexFloatingPointQuantityType;
+  typedef std::is_same<RawFloatingPointType,float> IsRawFloatingPointTypeFloat;
+  
+  RawFloatingPointType tolerance = IsRawFloatingPointTypeFloat::value ? 1e-6 : 1e-12;
+
+  // Check that the type returned from the rpow method is correct
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::template rpow<-3,2>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::template rpow<3,-2>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::template rpow<-6,4>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::template rpow<6,-4>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::template rpow<-9,6>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<QuantityType>::template rpow<9,-6>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<-3,2>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<3,-2>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<-6,4>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<6,-4>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<-9,6>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<9,-6>( Utility::QuantityTraits<QuantityType>::one() )),typename Utility::QuantityTraits<QuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::template rpow<-3,2>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::template rpow<3,-2>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::template rpow<-6,4>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::template rpow<6,-4>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::template rpow<-9,6>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::QuantityTraits<ComplexQuantityType>::template rpow<9,-6>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<-3,2>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<3,-2>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<-6,4>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<6,-4>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<-9,6>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+  BOOST_CHECK( (std::is_same<decltype(Utility::rpow<9,-6>( Utility::QuantityTraits<ComplexQuantityType>::one() )),typename Utility::QuantityTraits<ComplexQuantityType>::template GetQuantityToPowerType<-3,2>::AsFloatingPointType>::value) );
+
+  // Check that the rpow method calculate the correct value
+  BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<QuantityType>::template rpow<-3,2>( Utility::QuantityTraits<QuantityType>::zero() )) );
+  
+  auto quantity = Utility::QuantityTraits<QuantityType>::template rpow<-3,2>( Utility::QuantityTraits<QuantityType>::one() );
+  
+  BOOST_CHECK_EQUAL( quantity*quantity,
+                     Utility::QuantityTraits<FloatingPointQuantityType>::one()/
+                     (Utility::QuantityTraits<FloatingPointQuantityType>::one()*
+                      Utility::QuantityTraits<FloatingPointQuantityType>::one()*
+                      Utility::QuantityTraits<FloatingPointQuantityType>::one()*
+                      Utility::QuantityTraits<FloatingPointQuantityType>::one()) );
+
+  quantity = Utility::QuantityTraits<QuantityType>::template rpow<-3,2>( QuantityType::from_value(2) );
+
+  BOOST_CHECK_CLOSE_FRACTION( quantity.value(), 1.0/(2*sqrt(2.0)), tolerance );
+
+  BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<ComplexQuantityType>::template rpow<-3,2>( Utility::QuantityTraits<ComplexQuantityType>::zero() )) );
+
+  auto complex_quantity = Utility::QuantityTraits<ComplexQuantityType>::template rpow<-3,2>( Utility::QuantityTraits<ComplexQuantityType>::one() );
+
+  BOOST_CHECK_EQUAL( complex_quantity*complex_quantity,
+                     Utility::QuantityTraits<ComplexFloatingPointQuantityType>::one()/
+                     (Utility::QuantityTraits<FloatingPointQuantityType>::one()*
+                      Utility::QuantityTraits<FloatingPointQuantityType>::one()*
+                      Utility::QuantityTraits<FloatingPointQuantityType>::one()*
+                      Utility::QuantityTraits<FloatingPointQuantityType>::one()) );
+
+  complex_quantity = Utility::QuantityTraits<ComplexQuantityType>::template rpow<-3,2>( ComplexQuantityType::from_value( ComplexRawType(0, 1) ) );
+  auto complex_raw_quantity = std::pow( ComplexRawFloatingPointType(0.0, 1.0),
+                                        RawFloatingPointType(-1.5) );
+
+  BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(),
+                              Utility::real(complex_raw_quantity),
+                              tolerance );
+  BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(),
+                              Utility::imag(complex_raw_quantity),
+                              tolerance );
+
+  if( Utility::QuantityTraits<QuantityType>::is_signed::value )
+  {
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<QuantityType>::template rpow<-3,2>( QuantityType::from_value(-1) )) );
+    BOOST_CHECK( Utility::isnaninf(Utility::QuantityTraits<QuantityType>::template rpow<-3,2>( QuantityType::from_value(-2) )) );
+
+    complex_quantity = Utility::QuantityTraits<ComplexQuantityType>::template rpow<-3,2>( ComplexQuantityType::from_value( ComplexRawType(-1, 0) ) );
+    complex_raw_quantity = std::pow( ComplexRawFloatingPointType(-1.0, 0.0),
+                                     RawFloatingPointType(-1.5) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(),
+                                Utility::real(complex_raw_quantity),
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(),
+                                Utility::imag(complex_raw_quantity),
+                                tolerance );
+    
+    complex_quantity = Utility::QuantityTraits<ComplexQuantityType>::template rpow<-3,2>( ComplexQuantityType::from_value( ComplexRawType(0, -1) ) );
+    complex_raw_quantity = std::pow( ComplexRawFloatingPointType(0.0, -1.0),
+                                     RawFloatingPointType(-1.5) );
+    
+    BOOST_CHECK_CLOSE_FRACTION( Utility::real(complex_quantity).value(),
+                                Utility::real(complex_raw_quantity),
+                                tolerance );
+    BOOST_CHECK_CLOSE_FRACTION( Utility::imag(complex_quantity).value(),
+                                Utility::imag(complex_raw_quantity),
+                                tolerance );
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Check that rational power of a quantity can be computed
 BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 {
@@ -8390,46 +8502,234 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( rpow_2_over_3_basic, T, TestTypes )
 // Check that a quantity can be initialized from a raw quantity
 BOOST_AUTO_TEST_CASE_TEMPLATE( initializeQuantity_basic, T, TestTypes )
 {
+  T quantity = Utility::QuantityTraits<T>::initializeQuantity( T(0) );
+  
+  BOOST_CHECK_EQUAL( quantity, T(0) );
 
+  quantity = Utility::QuantityTraits<T>::initializeQuantity( T(1) );
+
+  BOOST_CHECK_EQUAL( quantity, T(1) );
+
+  std::complex<T> complex_quantity =
+    Utility::QuantityTraits<std::complex<T>>::initializeQuantity( std::complex<T>(0, 0) );
+
+  BOOST_CHECK_EQUAL( complex_quantity.real(), T(0) );
+  BOOST_CHECK_EQUAL( complex_quantity.imag(), T(0) );
+
+  complex_quantity = Utility::QuantityTraits<std::complex<T>>::initializeQuantity( std::complex<T>(1, 0) );
+
+  BOOST_CHECK_EQUAL( complex_quantity.real(), T(1) );
+  BOOST_CHECK_EQUAL( complex_quantity.imag(), T(0) );
+
+  complex_quantity = Utility::QuantityTraits<std::complex<T>>::initializeQuantity( std::complex<T>(0, 1) );
+
+  BOOST_CHECK_EQUAL( complex_quantity.real(), T(0) );
+  BOOST_CHECK_EQUAL( complex_quantity.imag(), T(1) );
+
+  complex_quantity = Utility::QuantityTraits<std::complex<T>>::initializeQuantity( std::complex<T>(1, 1) );
+
+  BOOST_CHECK_EQUAL( complex_quantity.real(), T(1) );
+  BOOST_CHECK_EQUAL( complex_quantity.imag(), T(1) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a quantity can be initialized from a raw quantity
 BOOST_AUTO_TEST_CASE_TEMPLATE( initializeQuantity,
                                QuantityType,
-                               TestQuantityTypes )
+                               TestBasicQuantityTypes )
 {
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef std::complex<RawType> ComplexRawType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
 
+  QuantityType quantity =
+    Utility::QuantityTraits<QuantityType>::initializeQuantity( RawType(0) );
+
+  BOOST_CHECK_EQUAL( quantity, Utility::QuantityTraits<QuantityType>::zero() );
+
+  quantity = Utility::QuantityTraits<QuantityType>::initializeQuantity( RawType(1) );
+
+  BOOST_CHECK_EQUAL( quantity, Utility::QuantityTraits<QuantityType>::one() );
+
+  ComplexQuantityType complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(0, 0) );
+
+  BOOST_CHECK_EQUAL( complex_quantity, Utility::QuantityTraits<ComplexQuantityType>::zero() );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(1, 0) );
+
+  BOOST_CHECK_EQUAL( complex_quantity, Utility::QuantityTraits<ComplexQuantityType>::one() );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(0, 1) );
+
+  BOOST_CHECK_EQUAL( Utility::real(complex_quantity).value(), RawType(0) );
+  BOOST_CHECK_EQUAL( Utility::imag(complex_quantity).value(), RawType(1) );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(1, 1) );
+
+  BOOST_CHECK_EQUAL( Utility::real(complex_quantity).value(), RawType(1) );
+  BOOST_CHECK_EQUAL( Utility::imag(complex_quantity).value(), RawType(1) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the value of a raw quantity can be returned
 BOOST_AUTO_TEST_CASE_TEMPLATE( getRawQuantity_basic, T, TestTypes )
 {
+  T quantity(0);
+  
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::getRawQuantity( quantity ), T(0) );
 
+  quantity = T(1);
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::getRawQuantity( quantity ), T(1) );
+
+  quantity = T(2);
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( quantity ), T(2) );
+
+  std::complex<T> complex_quantity(0, 0);
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::getRawQuantity( complex_quantity ).real(), T(0) );
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::getRawQuantity( complex_quantity ).imag(), T(0) );
+
+  complex_quantity = std::complex<T>(1, 0);
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::getRawQuantity( complex_quantity ).real(), T(1) );
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::getRawQuantity( complex_quantity ).imag(), T(0) );
+
+  complex_quantity = std::complex<T>(0, 1);
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( complex_quantity ).real(), T(0) );
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( complex_quantity ).imag(), T(1) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the value of a raw quantity can be returned
 BOOST_AUTO_TEST_CASE_TEMPLATE( getRawQuantity,
                                QuantityType,
-                               TestQuantityTypes )
+                               TestBasicQuantityTypes )
 {
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef std::complex<RawType> ComplexRawType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
 
+  QuantityType quantity =
+    Utility::QuantityTraits<QuantityType>::initializeQuantity( RawType(0) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::getRawQuantity( quantity ), RawType(0) );
+
+  quantity = Utility::QuantityTraits<QuantityType>::initializeQuantity( RawType(1) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::getRawQuantity( quantity ), RawType(1) );
+
+  quantity = Utility::QuantityTraits<QuantityType>::initializeQuantity( RawType(2) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( quantity ), RawType(2) );
+
+  ComplexQuantityType complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(0, 0) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::getRawQuantity( complex_quantity ), ComplexRawType(0, 0) );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(1, 0) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::getRawQuantity( complex_quantity ), ComplexRawType(1, 0) );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(0, 1) );
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::getRawQuantity( complex_quantity ), ComplexRawType(0, 1) );
+
+  complex_quantity =
+    Utility::QuantityTraits<ComplexQuantityType>::initializeQuantity( ComplexRawType(1, 1) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( complex_quantity ), ComplexRawType(1, 1) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the value of a quantity can be set
 BOOST_AUTO_TEST_CASE_TEMPLATE( setQuantity_basic, T, TestTypes )
 {
+  T quantity;
 
+  Utility::QuantityTraits<T>::setQuantity( quantity, T(0) );
+  
+  BOOST_CHECK_EQUAL( quantity, T(0) );
+
+  Utility::QuantityTraits<T>::setQuantity( quantity, T(1) );
+
+  BOOST_CHECK_EQUAL( quantity, T(1) );
+
+  Utility::setQuantity( quantity, T(2) );
+
+  BOOST_CHECK_EQUAL( quantity, T(2) );
+
+  std::complex<T> complex_quantity;
+
+  Utility::QuantityTraits<std::complex<T> >::setQuantity( complex_quantity, std::complex<T>(0, 0) );
+
+  BOOST_CHECK_EQUAL( complex_quantity.real(), T(0) );
+  BOOST_CHECK_EQUAL( complex_quantity.imag(), T(0) );
+
+  Utility::QuantityTraits<std::complex<T> >::setQuantity( complex_quantity, std::complex<T>(1, 0) );
+
+  BOOST_CHECK_EQUAL( complex_quantity.real(), T(1) );
+  BOOST_CHECK_EQUAL( complex_quantity.imag(), T(0) );
+
+  Utility::setQuantity( complex_quantity, std::complex<T>(0, 1) );
+
+  BOOST_CHECK_EQUAL( complex_quantity.real(), T(0) );
+  BOOST_CHECK_EQUAL( complex_quantity.imag(), T(1) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the value of a quantity can be set
-BOOST_AUTO_TEST_CASE_TEMPLATE( setQuantity, QuantityType, TestQuantityTypes )
+BOOST_AUTO_TEST_CASE_TEMPLATE( setQuantity,
+                               QuantityType,
+                               TestBasicQuantityTypes )
 {
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef std::complex<RawType> ComplexRawType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
 
+  QuantityType quantity;
+
+  Utility::QuantityTraits<QuantityType>::setQuantity( quantity, RawType(0) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( quantity ), RawType(0) );
+
+  Utility::QuantityTraits<QuantityType>::setQuantity( quantity, RawType(1) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( quantity ), RawType(1) );
+
+  Utility::setQuantity( quantity, RawType(2) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( quantity ), RawType(2) );
+
+  ComplexQuantityType complex_quantity;
+  
+  Utility::QuantityTraits<ComplexQuantityType>::setQuantity( complex_quantity, ComplexRawType(0, 0) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( complex_quantity ), ComplexRawType(0, 0) );
+
+  Utility::QuantityTraits<ComplexQuantityType>::setQuantity( complex_quantity, ComplexRawType(1, 0) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( complex_quantity ), ComplexRawType(1, 0) );
+
+  Utility::QuantityTraits<ComplexQuantityType>::setQuantity( complex_quantity, ComplexRawType(0, 1) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( complex_quantity ), ComplexRawType(0, 1) );
+
+  Utility::setQuantity( complex_quantity, ComplexRawType(1, 1) );
+
+  BOOST_CHECK_EQUAL( Utility::getRawQuantity( complex_quantity ), ComplexRawType(1, 1) );
 }
 
 //---------------------------------------------------------------------------//
