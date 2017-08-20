@@ -13,15 +13,19 @@
 #include <sstream>
 #include <iterator>
 #include <limits>
+#include <complex>
+#include <vector>
 
 // Boost Includes
 #include <boost/algorithm/string.hpp>
 #include <boost/type_traits/promote.hpp>
+#include <boost/units/quantity.hpp>
 
 // FRENSIE Includes
 #include "Utility_FromStringTraitsDecl.hpp"
 #include "Utility_LogRecordType.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
@@ -1190,6 +1194,205 @@ void expandRepeatKeywords( std::string& obj_rep )
 
   obj_rep += container_end_char;
 }
+
+/*! \brief Partial specialization of FromStringTraits for 
+ * std::complex types.
+ * \ingroup from_string_traits
+ */
+template<typename T>
+struct FromStringTraits<std::complex<T> >
+{
+  //! The type that a string will be converted to
+  typedef std::complex<T> ReturnType;
+
+  //! Convert the string to an object of type std::complex<T>
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    // Extract the real and imaginary components of the complex number
+    std::vector<T> components = Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >::fromString( obj_rep );
+
+    // There must only be two and only two components
+    TEST_FOR_EXCEPTION( components.size() != 2,
+                        Utility::StringConversionException,
+                        "Could not extract the real and imaginary components "
+                        "of the complex number from the stream (number of "
+                        "components = " << components.size() << " != 2)." );
+
+    return ReturnType( components[0], components[1] );
+  }
+
+  //! Extract an object of type std::complex<T> from the stream
+  static inline void fromStream( std::istream& is,
+                                 std::complex<T>& obj,
+                                 const std::string& delim = std::string() )
+  {
+    // Extract the real and imaginary components of the complex number
+    std::vector<T> components;
+
+    Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >::fromStream( is, components, delim );
+
+    // There must only be two and only two components
+    TEST_FOR_EXCEPTION( components.size() != 2,
+                        Utility::StringConversionException,
+                        "Could not extract the real and imaginary components "
+                        "of the complex number from the stream (number of "
+                        "components = " << components.size() << " != 2)." );
+
+    obj.real( components[0] );
+    obj.imag( components[1] );
+  }
+};
+
+/*! \brief Partial specialization of FromStringTraits for 
+ * boost::unit::quantity types.
+ * \ingroup from_string_traits
+ */
+template<typename Unit, typename T>
+struct FromStringTraits<boost::units::quantity<Unit,T> >
+{
+  
+private:
+
+  // This type
+  typedef FromStringTraits<boost::units::quantity<Unit,T> > ThisType;
+
+public:
+  
+  //! The type that a string will be converted to
+  typedef boost::units::quantity<Unit,T> ReturnType;
+
+  //! Convert the string to an object of type boost::units::quantity<Unit,T>
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    std::string trimmed_obj_rep = boost::algorithm::trim_copy( obj_rep );
+
+    size_t container_end_loc = trimmed_obj_rep.find_first_of( Utility::container_end_char );
+    
+    size_t space_loc;
+
+    // The type T can be a container (e.g. std::complex) - don't count white
+    // spaces that occur inside of the container
+    if( container_end_loc < trimmed_obj_rep.size() )
+      space_loc = trimmed_obj_rep.find( " ", container_end_loc );
+    else
+      space_loc =  trimmed_obj_rep.find( " " );
+
+    TEST_FOR_EXCEPTION( space_loc >= trimmed_obj_rep.size(),
+                        Utility::StringConversionException,
+                        "Unable to convert the string to a "
+                        "boost::units::quantity type because the string "
+                        "does not contain any units!" );
+
+    std::string value_rep, unit_rep;
+    
+    value_rep = trimmed_obj_rep.substr( 0, space_loc );
+    unit_rep = trimmed_obj_rep.substr( space_loc+1,
+                                       trimmed_obj_rep.size()-space_loc-1 );
+    
+    T raw_value;
+    
+    try{
+      raw_value = FromStringTraits<T>::fromString( value_rep );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                             "Could not convert the string to a "
+                             "boost::units::quantity type!" );
+
+    // Check that the unit matches
+    TEST_FOR_EXCEPTION( Utility::UnitTraits<Unit>::symbol() != unit_rep,
+                        Utility::StringConversionException,
+                        "Unable to convert the string to a "
+                        "boost::units::quantity type because the requested "
+                        "units (" << Utility::UnitTraits<Unit>::symbol() <<
+                        ") do not match the extracted units ("
+                        << unit_rep << ")!" );
+
+    return boost::units::quantity<Unit,T>::from_value( raw_value );
+  }
+
+  //! Extract an object of type boost::units::quantity<Unit,T> from the stream
+  static inline void fromStream( std::istream& is,
+                                 boost::units::quantity<Unit,T>& obj,
+                                 const std::string& delim = std::string() )
+  {
+    if( delim.size() > 0 )
+    {
+      std::string obj_rep;
+      
+      Utility::fromStream( is, obj_rep, delim );
+
+      obj = ThisType::fromString( obj_rep );
+    }
+    // Use white space characters as the deliminators
+    else
+    {
+      // Extract the value
+      T raw_value;
+      
+      FromStringTraits<T>::fromStream( is, raw_value );
+
+      // Extract the unit rep
+      std::string unit_rep, unit_rep_element;
+
+      size_t num_unit_elements =
+        ThisType::getExpectedNumberOfExpectedSpacesInUnit();
+      
+      for( size_t i = 0; i < num_unit_elements; ++i )
+      {
+        // This loop will take care of consecutive white space characters 
+        while( unit_rep_element.size() == 0 )
+          Utility::fromStream( is, unit_rep_element, Details::white_space_delims );
+        unit_rep += unit_rep_element;
+
+        if( i < num_unit_elements - 1 )
+          unit_rep += ' ';
+
+        unit_rep_element.clear();
+      }
+
+      // Check that the unit matches the requested unit
+      TEST_FOR_EXCEPTION( Utility::UnitTraits<Unit>::symbol() != unit_rep,
+                          Utility::StringConversionException,
+                          "Unable to convert the string to a "
+                          "boost::units::quantity type because the requested "
+                          "units (" << Utility::UnitTraits<Unit>::symbol() <<
+                          ") do not match the extracted units ("
+                          << unit_rep << ")!" );
+      
+      obj = boost::units::quantity<Unit,T>::from_value( raw_value );
+    }
+  }
+
+private:
+  
+  // Get the number of expected spaces in the quantity string
+  static size_t getExpectedNumberOfExpectedSpacesInUnit()
+  {
+    // There will always be at least one space since to separate the value
+    // from the unit (the unit may introduce more spaces)
+    size_t num_spaces = 0;
+
+    std::string unit_string =
+      Utility::UnitTraits<Unit>::symbol();
+    
+    boost::algorithm::trim( unit_string );
+    
+    size_t unit_string_loc = 0;
+    
+    while( unit_string_loc < unit_string.size() )
+    {
+      unit_string_loc = unit_string.find( ' ', unit_string_loc );
+
+      if( unit_string_loc < unit_string.size() )
+      {
+        ++num_spaces;
+        ++unit_string_loc;
+      }
+    }
+
+    return num_spaces;
+  }
+};
   
 } // end Utility namespace
 

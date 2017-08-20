@@ -14,15 +14,15 @@
 #include <type_traits>
 #include <iterator>
 #include <stdexcept>
+#include <complex>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
-#include <boost/units/systems/cgs/energy.hpp>
-#include <boost/units/systems/si/energy.hpp>
 
 // FRENSIE Includes
 #include "Utility_ToStringTraitsDecl.hpp"
 #include "Utility_LogRecordType.hpp"
+#include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
@@ -203,6 +203,33 @@ struct ToStringTraits<T,typename std::enable_if<std::is_base_of<std::exception,T
   { os << obj.what(); }
 };
 
+/*! Partial specialization of ToStringTraits for std::complex types
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::complex<T> >
+{
+  //! Convert the std::complex type to a string
+  static inline std::string toString( const std::complex<T>& obj )
+  {
+    std::ostringstream oss;
+
+    ToStringTraits<std::complex<T> >::toStream( oss, obj );
+
+    return oss.str();
+  }
+
+  //! Place the std::complex type in a stream
+  static inline void toStream( std::ostream& os, const std::complex<T>& obj )
+  {
+    os << Utility::container_start_char
+       << Utility::toString( obj.real() )
+       << Utility::next_container_element_char << " "
+       << Utility::toString( obj.imag() ) 
+       << Utility::container_end_char;
+  }
+};
+
 /*! Partial specialization of ToStringTraits for boost::units::quantity types
  * \ingroup to_string_traits
  */
@@ -224,7 +251,7 @@ struct ToStringTraits<boost::units::quantity<Unit,T> >
                                const boost::units::quantity<Unit,T>& obj )
   {
     Utility::toStream( os, obj.value() );
-    os << " " << Unit();
+    os << " " << Utility::UnitTraits<Unit>::symbol();
   }
 };
   
