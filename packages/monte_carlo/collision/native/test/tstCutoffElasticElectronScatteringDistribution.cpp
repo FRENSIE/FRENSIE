@@ -23,10 +23,7 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_TabularTwoDDistribution.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
-#include "Utility_HistogramFullyTabularTwoDDistribution.hpp"
+#include "Utility_ElasticTwoDDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -804,13 +801,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering distribution
   native_scattering_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-            native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::LinLinLin>( native_data ) );
 
   // Create the scattering distribution
   partial_native_scattering_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-            partial_native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::LinLinLin>( partial_native_data ) );
 
   // Create cutoff distributions
   native_elastic_distribution.reset(

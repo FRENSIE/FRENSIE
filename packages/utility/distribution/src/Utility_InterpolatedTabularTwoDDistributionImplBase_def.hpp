@@ -27,7 +27,7 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distributi
   // Make sure the distributions are continuous
   testPrecondition( this->areSecondaryDistributionsContinuous() );
   // Make sure the distributions are compatible with the requested interp
-  testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( distribution ) );
+  //testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( distribution ) );
   // Make sure the fuzzy boundary tolerance is valid
   testPrecondition( d_fuzzy_boundary_tol >= 0.0 )
   testPrecondition( d_fuzzy_boundary_tol < 1.0 )
@@ -47,8 +47,15 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Distributi
 {
   // Make sure the distributions are continuous
   testPrecondition( this->areSecondaryDistributionsContinuous() );
+  /*! \todo The compatibility of secondary with the requested interpolation
+      method needs to be investigated further. There are cases where the
+      2-D interpolation mathod should be agnostic to the 1-D interpolation
+      method such that you could perform a Lin-Lin (y-z) interpolation in the
+      OneDDistribution and a Log-Log-Log (ie: Log-Log x-z and Log-Log y-z)
+      interpolation in the TwoDDistribution. For now this precondition test will
+      be commented out. */
   // Make sure the distributions are compatible with the requested interp
-  testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( secondary_distributions ) );
+  //testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( secondary_distributions ) );
   // Make sure the fuzzy boundary tolerance is valid
   testPrecondition( d_fuzzy_boundary_tol >= 0.0 )
   testPrecondition( d_fuzzy_boundary_tol < 1.0 )

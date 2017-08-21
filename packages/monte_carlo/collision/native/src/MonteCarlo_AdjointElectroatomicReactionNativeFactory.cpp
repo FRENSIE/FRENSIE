@@ -20,8 +20,8 @@
 
 namespace MonteCarlo{
 
-//// Create the analog elastic scattering adjoint electroatomic reactions
-//void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+//// Create the coupled elastic scattering adjoint electroatomic reactions
+//void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 //            const Data::AdjointElectronPhotonRelaxationDataContainer&
 //                raw_adjoint_electroatom_data,
 //            const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -37,10 +37,10 @@ namespace MonteCarlo{
 //  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 //                                                      energy_grid.end() ) );
 
-//  // Create the analog elastic scattering distribution
-//  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
+//  // Create the coupled elastic scattering distribution
+//  std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+//  ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
 //    distribution,
 //    raw_adjoint_electroatom_data,
 //    evaluation_tol );
@@ -65,21 +65,21 @@ namespace MonteCarlo{
 //  unsigned sr_threshold_energy_index =
 //    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-//  // Calculate the analog cross section
-//  unsigned analog_threshold_energy_index =
+//  // Calculate the coupled cross section
+//  unsigned coupled_threshold_energy_index =
 //    std::min( sr_threshold_energy_index, cutoff_threshold_energy_index );
 
 //  unsigned sr_threshold_diff =
-//    sr_threshold_energy_index - analog_threshold_energy_index;
+//    sr_threshold_energy_index - coupled_threshold_energy_index;
 //  unsigned cutoff_threshold_diff =
-//    cutoff_threshold_energy_index - analog_threshold_energy_index;
+//    cutoff_threshold_energy_index - coupled_threshold_energy_index;
 
 //  std::vector<double> combined_cross_section(
-//                           energy_grid.size() - analog_threshold_energy_index );
+//                           energy_grid.size() - coupled_threshold_energy_index );
 
 //  for (unsigned i = 0; i < combined_cross_section.size(); ++i )
 //  {
-//    double energy = energy_grid[i + analog_threshold_energy_index];
+//    double energy = energy_grid[i + coupled_threshold_energy_index];
 
 //    if ( i < sr_threshold_diff )
 //    {
@@ -97,15 +97,15 @@ namespace MonteCarlo{
 //    }
 //  }
 
-//  Teuchos::ArrayRCP<double> analog_cross_section;
-//  analog_cross_section.assign( combined_cross_section.begin(),
+//  Teuchos::ArrayRCP<double> coupled_cross_section;
+//  coupled_cross_section.assign( combined_cross_section.begin(),
 //                               combined_cross_section.end() );
 
 //  elastic_reaction.reset(
-//    new AnalogElasticAdjointElectroatomicReaction<Utility::LinLin>(
+//    new CoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
 //      energy_grid,
-//      analog_cross_section,
-//      analog_threshold_energy_index,
+//      coupled_cross_section,
+//      coupled_threshold_energy_index,
 //      grid_searcher,
 //      distribution ) );
 //}

@@ -10,9 +10,9 @@
 #define MONTE_CARLO_ELECTROATOMIC_REACTION_NATIVE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_JointElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
@@ -26,9 +26,9 @@
 
 namespace MonteCarlo{
 
-// Create the analog elastic scattering electroatomic reactions
+// Create the coupled elastic scattering electroatomic reactions
 template<typename TwoDInterpPolicy>
-void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
@@ -54,9 +54,9 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
     raw_electroatom_data.getTotalElasticCrossSection().begin(),
     raw_electroatom_data.getTotalElasticCrossSection().end() );
 
-  // Create the analog elastic scattering distribution
-  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
-  ElasticFactory::createAnalogElasticDistribution<TwoDInterpPolicy>(
+  // Create the coupled elastic scattering distribution
+  std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
+  ElasticFactory::createCoupledElasticDistribution<TwoDInterpPolicy>(
     distribution,
     energy_grid,
     cutoff_cross_section,
@@ -66,7 +66,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
     evaluation_tol );
 
   elastic_reaction.reset(
-    new AnalogElasticElectroatomicReaction<Utility::LinLin>(
+    new CoupledElasticElectroatomicReaction<Utility::LinLin>(
       energy_grid,
       total_cross_section,
       raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex(),
@@ -74,9 +74,9 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
       distribution ) );
 }
 
-// Create the joint elastic scattering electroatomic reactions
+// Create the decoupled elastic scattering electroatomic reactions
 template<typename TwoDInterpPolicy>
-void ElectroatomicReactionNativeFactory::createJointElasticReaction(
+void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
@@ -118,7 +118,7 @@ void ElectroatomicReactionNativeFactory::createJointElasticReaction(
   ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
     tabular_distribution,
     raw_electroatom_data,
-    Utility::AnalogElasticTraits::mu_peak,
+    Utility::ElasticElectronTraits::mu_peak,
     correlated_sampling_mode_on,
     evaluation_tol );
 
@@ -130,7 +130,7 @@ void ElectroatomicReactionNativeFactory::createJointElasticReaction(
     raw_electroatom_data.getAtomicNumber() );
 
   elastic_reaction.reset(
-    new JointElasticElectroatomicReaction<Utility::LinLin>(
+    new DecoupledElasticElectroatomicReaction<Utility::LinLin>(
                                         energy_grid,
                                         total_cross_section,
                                         sampling_ratios,

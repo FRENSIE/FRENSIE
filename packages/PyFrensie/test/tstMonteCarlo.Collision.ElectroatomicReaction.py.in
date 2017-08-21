@@ -31,32 +31,32 @@ Native = importPyFrensieModuleFromBuildDir('Data.Native')
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the analog electroatomic reaction
-class AnalogElasticReactionTestCase(unittest.TestCase):
-    "TestCase class for MonteCarlo.Collision analog elastic electroatomic reaction"
+# Test the coupled electroatomic reaction
+class CoupledElasticReactionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision coupled elastic electroatomic reaction"
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createAnalogElasticReaction( self.data, True, True, 1e-7 )
+        self.reaction = Collision.createCoupledElasticReaction( self.data, True, True, 1e-7 )
 
     def testgetThresholdEnergy(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticReaction getThresholdEnergy method"
+        "*Test MonteCarlo.Collision.createCoupledElasticReaction getThresholdEnergy method"
         self.assertTrue( self.reaction.getThresholdEnergy(), 1e-5 )
 
     def testgetCrossSection(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticReaction getCrossSection method"
+        "*Test MonteCarlo.Collision.createCoupledElasticReaction getCrossSection method"
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.4892412446206226e+09,
-                                delta=1e-12*2.4892412446206226e+09 )
+                                2.48924e+09,
+                                delta=1e-12*2.48924e+09 )
         energy = 4e-4
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.4369585366038626e+08,
-                                delta=1e-12*4.4369585366038626e+08 )
+                                4.4366354584580237e+08,
+                                delta=1e-12*4.4366354584580237e+08 )
         energy = 1e5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.0994087355686440e+06,
-                                delta=1e-9*2.0994087355686440e+06 )
+                                2.11161e+06,
+                                delta=1e-9*2.11161e+06 )
 
 #-----------------------------------------------------------------------------#
 # Test the cutoff electroatomic reaction
@@ -139,8 +139,8 @@ class MomentPreservingElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*6.8927580042035654e+07 )
         energy = 1e5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.2037703049967248e-03,
-                                delta=1e-9*2.2037703049967248e-03 )
+                                2.2037700886489448e-03,
+                                delta=1e-9*2.2037700886489448e-03 )
 
 #-----------------------------------------------------------------------------#
 # Test the atomic excitation electroatomic reaction
@@ -225,9 +225,9 @@ class SubshellElectroionizationReactionsTestCase(unittest.TestCase):
                                 delta=1e-9*1.82234e5 )
 
 #-----------------------------------------------------------------------------#
-# Test the moment preserving electroatomic reaction
+# Test the bremsstrahlung electroatomic reaction
 class BremsstrahlungReactionTestCase(unittest.TestCase):
-    "TestCase class for MonteCarlo.Collision moment preserving elastic electroatomic reaction"
+    "TestCase class for MonteCarlo.Collision bremsstrahlung electroatomic reaction"
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
@@ -268,7 +268,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    suite.addTest(unittest.makeSuite(AnalogElasticReactionTestCase))
+    suite.addTest(unittest.makeSuite(CoupledElasticReactionTestCase))
     suite.addTest(unittest.makeSuite(CutoffElasticReactionTestCase))
     suite.addTest(unittest.makeSuite(ScreenedRutherfordElasticReactionTestCase))
     suite.addTest(unittest.makeSuite(MomentPreservingElasticReactionTestCase))

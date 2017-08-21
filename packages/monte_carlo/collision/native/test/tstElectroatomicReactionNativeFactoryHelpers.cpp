@@ -29,14 +29,14 @@ double eval_tol = 1e-7;
 //---------------------------------------------------------------------------//
 // LinLinLog Tests.
 //---------------------------------------------------------------------------//
-// Check that an analog elastic reaction can be created
+// Check that an coupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createAnalogElasticReaction )
+                   createCoupledElasticReaction )
 {
   bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
 
-  reaction = MonteCarlo::createAnalogElasticReaction(
+  reaction = MonteCarlo::createCoupledElasticReaction(
                 *data_container,
                 linlinlog_interpolation_mode_on,
                 correlated_sampling_mode_on,
@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
@@ -65,14 +65,14 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a joint elastic reaction can be created
+// Check that a decoupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createJointElasticReaction )
+                   createDecoupledElasticReaction )
 {
   bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
 
-  reaction = MonteCarlo::createJointElasticReaction(
+  reaction = MonteCarlo::createDecoupledElasticReaction(
                 *data_container,
                 linlinlog_interpolation_mode_on,
                 correlated_sampling_mode_on,
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct
@@ -421,14 +421,14 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // LinLinLog Tests.
 //---------------------------------------------------------------------------//
-// Check that an analog elastic reaction can be created
+// Check that an coupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createAnalogElasticReaction_lin )
+                   createCoupledElasticReaction_lin )
 {
   bool linlinlog_interpolation_mode_on = false;
   bool correlated_sampling_mode_on = true;
 
-  reaction = MonteCarlo::createAnalogElasticReaction(
+  reaction = MonteCarlo::createCoupledElasticReaction(
                 *data_container,
                 linlinlog_interpolation_mode_on,
                 correlated_sampling_mode_on,
@@ -436,7 +436,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
 
   // Test that the stored cross section is correct

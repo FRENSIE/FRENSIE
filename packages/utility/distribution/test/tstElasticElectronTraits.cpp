@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAnalogElasticTraits.cpp
+//! \file   tstElasticElectronTraits.cpp
 //! \author Luke Kersting
-//! \brief  Analog elastic traits unit tests
+//! \brief  Elastic electron traits unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,14 +15,14 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "Utility_AnalogElasticTraits.hpp"
+#include "Utility_ElasticElectronTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-typedef Utility::AnalogElasticTraits ElasticTraits;
+typedef Utility::ElasticElectronTraits ElasticTraits;
 
 double energy, eta;
 unsigned atomic_number;
@@ -32,7 +32,7 @@ std::shared_ptr<ElasticTraits> traits;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the Seltzer modification can be turned on/off
-TEUCHOS_UNIT_TEST( AnalogElasticTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    setSeltzerModificationOnOff )
 {
   // Construct the traits
@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTraits,
 
 //---------------------------------------------------------------------------//
 // Check that the atomic number can be set
-TEUCHOS_UNIT_TEST( AnalogElasticTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    setAtomicNumber )
 {
   // Construct the traits
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTraits,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    evaluateMoliereScreeningConstant )
 {
   // Test with several energies
@@ -141,7 +141,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticTraits,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticTraits,
+TEUCHOS_UNIT_TEST( ElasticElectronTraits,
                    evaluateMoliereScreeningConstant_static )
 {
   // Test with several energies
@@ -209,5 +209,5 @@ TEUCHOS_UNIT_TEST( AnalogElasticTraits,
   TEST_FLOATING_EQUALITY( eta, 4.14887699806239E-14, 1e-12 );
 }
 //---------------------------------------------------------------------------//
-// end tstAnalogElasticTraits.cpp
+// end tstElasticElectronTraits.cpp
 //---------------------------------------------------------------------------//

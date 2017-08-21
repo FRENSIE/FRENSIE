@@ -12,7 +12,7 @@
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactoryHelpers.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
@@ -42,7 +42,7 @@
 // Add use of std::shared_ptr
 %shared_ptr(MonteCarlo::AtomicReaction)
 %shared_ptr(MonteCarlo::ElectroatomicReaction)
-%shared_ptr(MonteCarlo::AnalogElasticElectroatomicReaction)
+%shared_ptr(MonteCarlo::CoupledElasticElectroatomicReaction)
 
 // Ignore react
 %ignore *::react( ElectronState&, ParticleBank&, Data::SubshellType& ) const;
@@ -97,7 +97,7 @@ MonteCarlo::ElectroatomicReactionNativeFactoryHelpers
 // Add support for the elastic electroatomic reactions
 //---------------------------------------------------------------------------//
 
-%include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+%include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 %include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
 //%include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 //%include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"

@@ -18,7 +18,7 @@
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
-#include "Utility_AnalogElasticTraits.hpp"
+#include "Utility_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -32,8 +32,8 @@ public:
   typedef std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;
 
-  //! Typedef for the Analog elastic traits
-  typedef Utility::AnalogElasticTraits ElasticTraits;
+  //! Typedef for the Elastic electron traits
+  typedef Utility::ElasticElectronTraits ElasticTraits;
 
   //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
@@ -110,7 +110,7 @@ protected:
 
 private:
 
-  // Analog elastic traits
+  // Elastic electron traits
   std::shared_ptr<ElasticTraits> d_elastic_traits;
 
   // Cutoff elastic scattering distribution

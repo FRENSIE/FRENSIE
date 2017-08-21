@@ -19,8 +19,8 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 
 
 namespace DataGen{
@@ -36,7 +36,7 @@ public:
   Integrator;
 
   // Typedef for elastic electron traits
-  typedef Utility::AnalogElasticTraits ElasticTraits;
+  typedef Utility::ElasticElectronTraits ElasticTraits;
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
@@ -54,8 +54,8 @@ public:
     const Teuchos::ArrayRCP<double>& screened_rutherford_cross_section,
     const unsigned cutoff_threshold_energy_index,
     const unsigned screened_rutherford_threshold_energy_index,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_distribution,
+    const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+        coupled_distribution,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const double cutoff_angle_cosine );
 
@@ -173,9 +173,9 @@ private:
   // The screened rutherford elastic threshold_energy_index
   unsigned d_screened_rutherford_threshold_energy_index;
 
-  // The analog distribution
-  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    d_analog_distribution;
+  // The coupled distribution
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+    d_coupled_distribution;
 
   // The cutoff reaction
   std::shared_ptr<const MonteCarlo::ElectroatomicReaction>

@@ -18,7 +18,7 @@
 #include "DataGen_AdjointPairProductionEnergyDistributionNormConstantEvaluator.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"

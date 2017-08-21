@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_BremsstrahlungAngularDistributionType.cpp
 //! \author Luke Kersting
-//! \brief  Electroatomic reaction type helper function definitions.
+//! \brief  Bremsstrahlung angular distribution type helper function definitions.
 //!
 //---------------------------------------------------------------------------//
 

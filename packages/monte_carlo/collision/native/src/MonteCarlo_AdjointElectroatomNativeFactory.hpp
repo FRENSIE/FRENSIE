@@ -35,7 +35,7 @@ private:
 public:
 
   //! Create an adjoint electroatom core
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createAdjointElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,

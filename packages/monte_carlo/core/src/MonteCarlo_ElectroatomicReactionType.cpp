@@ -26,12 +26,12 @@ std::string convertElectroatomicReactionEnumToString(
     return "Total Electroatomic Reaction";
   case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION:
     return "Total Absorption Electroatomic Reaction";
-  case ANALOG_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Analog Elastic Electroatomic Reaction";
+  case COUPLED_ELASTIC_ELECTROATOMIC_REACTION:
+    return "Coupled Elastic Electroatomic Reaction";
   case HYBRID_ELASTIC_ELECTROATOMIC_REACTION:
     return "Hybrid Elastic Electroatomic Reaction";
-  case JOINT_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Joint Elastic Electroatomic Reaction";
+  case DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION:
+    return "Decoupled Elastic Electroatomic Reaction";
   case CUTOFF_ELASTIC_ELECTROATOMIC_REACTION:
     return "Cutoff Elastic Electroatomic Reaction";
   case SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION:

@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( InterpolationType,
 }
 
 //---------------------------------------------------------------------------//
-// Check that an interpolatio ntype can be converted to a string
+// Check that an interpolation type can be converted to a string
 TEUCHOS_UNIT_TEST( InterpolationType, convertInterpolationTypeToString )
 {
   std::string type_string =

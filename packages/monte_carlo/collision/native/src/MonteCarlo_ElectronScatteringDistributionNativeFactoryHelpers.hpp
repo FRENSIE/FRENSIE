@@ -22,8 +22,8 @@ namespace MonteCarlo{
 //      ****ELASTIC DISTRIBUTIONS****
 //----------------------------------------------------------------------------//
 
-//! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
-std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
+//! Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
+std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
@@ -33,7 +33,7 @@ std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> c
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -41,7 +41,7 @@ std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> c
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -49,7 +49,7 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> c
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -60,7 +60,7 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //! Create a simple dipole bremsstrahlung distribution
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
@@ -69,7 +69,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> 
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
@@ -83,7 +83,7 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );

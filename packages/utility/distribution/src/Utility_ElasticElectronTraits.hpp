@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticTraits.hpp
+//! \file   Utility_ElasticElectronTraits.hpp
 //! \author Luke Kersting
-//! \brief  The Analog elastic electron traits declaration
+//! \brief  The Coupled elastic electron traits declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_ANALOG_ELASTIC_TRAITS_HPP
-#define UTILITY_ANALOG_ELASTIC_TRAITS_HPP
+#ifndef UTILITY_ELASTIC_ELECTRON_TRAITS_HPP
+#define UTILITY_ELASTIC_ELECTRON_TRAITS_HPP
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
@@ -15,20 +15,20 @@
 namespace Utility{
 
 //! Electron elastic traits
-class AnalogElasticTraits
+class ElasticElectronTraits
 {
 
 public:
 
   //! Typedef for the this type
-  typedef AnalogElasticTraits ThisType;
+  typedef ElasticElectronTraits ThisType;
 
   //! Constructor
-  AnalogElasticTraits( const unsigned atomic_number,
+  ElasticElectronTraits( const unsigned atomic_number,
                             const bool seltzer_modification_on = true );
 
   //! Destructor
-  virtual ~AnalogElasticTraits()
+  virtual ~ElasticElectronTraits()
   { /* ... */ }
 
 
@@ -88,8 +88,8 @@ private:
 
 } // end Utility namespace
 
-#endif // end UTILITY_ANALOG_ELASTIC_TRAITS_HPP
+#endif // end UTILITY_ELASTIC_ELECTRON_TRAITS_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticTraits.hpp
+// end Utility_ElasticElectronTraits.hpp
 //---------------------------------------------------------------------------//

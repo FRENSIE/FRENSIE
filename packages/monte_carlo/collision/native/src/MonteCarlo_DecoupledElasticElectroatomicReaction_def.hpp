@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_JointElasticElectroatomicReaction_def.hpp
+//! \file   MonteCarlo_DecoupledElasticElectroatomicReaction_def.hpp
 //! \author Luke Kersting
-//! \brief  The joint scattering elastic electroatomic reaction class def.
+//! \brief  The decoupled scattering elastic electroatomic reaction class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_JOINT_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
-#define MONTE_CARLO_JOINT_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#ifndef MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::JointElasticElectroatomicReaction(
+DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
       const Teuchos::ArrayRCP<const double>& sampling_ratios,
@@ -57,7 +57,7 @@ JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::JointEl
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::JointElasticElectroatomicReaction(
+DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
       const Teuchos::ArrayRCP<const double>& sampling_ratios,
@@ -95,29 +95,29 @@ JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::JointEl
 /*! \details This does not include photons from atomic relaxation.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
-ElectroatomicReactionType JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+ElectroatomicReactionType DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return JOINT_ELASTIC_ELECTROATOMIC_REACTION;
+  return DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION;
 }
 
 
 // Return the sampling ratio at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-double JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getSamplingRatio( const double energy ) const
+double DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getSamplingRatio( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
@@ -149,7 +149,7 @@ double JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::
 
 // Return the differential cross section
 template<typename InterpPolicy, bool processed_cross_section>
-double JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+double DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
             const double incoming_energy,
             const double scattering_angle_cosine ) const
 {
@@ -163,7 +163,7 @@ double JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::
   {
     // Get the PDF
     double pdf;
-    if( scattering_angle_cosine <= Utility::AnalogElasticTraits::mu_peak )
+    if( scattering_angle_cosine <= Utility::ElasticElectronTraits::mu_peak )
     {
       pdf = d_tabular_distribution->evaluatePDF( incoming_energy,
                                                  scattering_angle_cosine );
@@ -185,7 +185,7 @@ double JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+void DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
                      ElectronState& electron,
                      ParticleBank& bank,
                      Data::SubshellType& shell_of_interaction ) const
@@ -217,8 +217,8 @@ void JointElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::re
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_JOINT_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_JointElasticElectroatomicReaction_def.hpp
+// end MonteCarlo_DecoupledElasticElectroatomicReaction_def.hpp
 //---------------------------------------------------------------------------//

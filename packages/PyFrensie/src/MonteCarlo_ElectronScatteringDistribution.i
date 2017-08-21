@@ -8,7 +8,7 @@
 
 %{
 // FRENSIE Includes
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
@@ -42,7 +42,7 @@
 %include "MonteCarlo_ElectronScatteringDistributionHelpers.i"
 
 // Add use of std::shared_ptr
-%shared_ptr(MonteCarlo::AnalogElasticElectronScatteringDistribution)
+%shared_ptr(MonteCarlo::CoupledElasticElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::HybridElasticElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::CutoffElasticElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::MomentPreservingElasticElectronScatteringDistribution)
@@ -101,19 +101,19 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 
 %ignore *::evaluateCDFAtCutoff( const double, const double );
 
-%include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+%include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 
 // Electron scattering distribution interface setup
-%electron_distribution_interface_setup( AnalogElasticElectronScatteringDistribution )
+%electron_distribution_interface_setup( CoupledElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( HybridElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( CutoffElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( MomentPreservingElasticElectronScatteringDistribution )
 
 //---------------------------------------------------------------------------//
-// Add support for the extra analog electron scattering distribution functions
+// Add support for the extra coupled electron scattering distribution functions
 //---------------------------------------------------------------------------//
 
 /*%feature("autodoc",*/

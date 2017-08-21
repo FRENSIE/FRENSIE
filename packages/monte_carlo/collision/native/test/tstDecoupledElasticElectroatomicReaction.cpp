@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstJointElasticElectroatomicReaction.cpp
+//! \file   tstDecoupledElasticElectroatomicReaction.cpp
 //! \author Luke Kersting
-//! \brief  Joint Elastic electroatomic reaction unit tests
+//! \brief  Decoupled Elastic electroatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,8 +17,8 @@
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "MonteCarlo_JointElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
@@ -29,67 +29,67 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::JointElasticElectroatomicReaction<Utility::LinLin> > joint_elastic_reaction;
+Teuchos::RCP<MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLin> > decoupled_elastic_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, getReactionType )
+TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST( joint_elastic_reaction->getReactionType(),
-                       MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( decoupled_elastic_reaction->getReactionType(),
+                       MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, getThresholdEnergy )
+TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( joint_elastic_reaction->getThresholdEnergy(),
+  TEST_EQUALITY_CONST( decoupled_elastic_reaction->getThresholdEnergy(),
                        1.0e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, getNumberOfEmittedElectrons )
+TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction, getNumberOfEmittedElectrons )
 {
-  TEST_EQUALITY_CONST( joint_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
+  TEST_EQUALITY_CONST( decoupled_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( joint_elastic_reaction->getNumberOfEmittedElectrons(20.0),
+  TEST_EQUALITY_CONST( decoupled_elastic_reaction->getNumberOfEmittedElectrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, getNumberOfEmittedPhotons )
+TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction, getNumberOfEmittedPhotons )
 {
-  TEST_EQUALITY_CONST( joint_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
+  TEST_EQUALITY_CONST( decoupled_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( joint_elastic_reaction->getNumberOfEmittedPhotons(20.0),
+  TEST_EQUALITY_CONST( decoupled_elastic_reaction->getNumberOfEmittedPhotons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the joint cross section can be returned
-TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction,
+TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction,
                    getCrossSection )
 {
 
-  double cross_section = joint_elastic_reaction->getCrossSection( 1.0E-05 );
+  double cross_section = decoupled_elastic_reaction->getCrossSection( 1.0E-05 );
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
-  cross_section = joint_elastic_reaction->getCrossSection( 1.0E-03 );
+  cross_section = decoupled_elastic_reaction->getCrossSection( 1.0E-03 );
   TEST_FLOATING_EQUALITY( cross_section, 2.80423E+06, 1e-12 );
 
-  cross_section = joint_elastic_reaction->getCrossSection( 1.0E+05 );
+  cross_section = decoupled_elastic_reaction->getCrossSection( 1.0E+05 );
   TEST_FLOATING_EQUALITY( cross_section, 1.29871E+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
-TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, react )
+TEUCHOS_UNIT_TEST( DecoupledElasticElectroatomicReaction, react )
 {
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 20.0 );
@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, react )
 
   Data::SubshellType shell_of_interaction;
 
-  joint_elastic_reaction->react( electron, bank, shell_of_interaction );
+  decoupled_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_ASSERT( electron.getZDirection() < 1.0 );
@@ -125,7 +125,7 @@ TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, react )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   electron.setDirection( 0.0, 0.0, 1.0 );
-  joint_elastic_reaction->react( electron, bank, shell_of_interaction );
+  decoupled_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(),
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, react )
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   electron.setDirection( 0.0, 0.0, 1.0 );
-  joint_elastic_reaction->react( electron, bank, shell_of_interaction );
+  decoupled_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(),
@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, react )
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   electron.setDirection( 0.0, 0.0, 1.0 );
-  joint_elastic_reaction->react( electron, bank, shell_of_interaction );
+  decoupled_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(),
@@ -155,7 +155,7 @@ TEUCHOS_UNIT_TEST( JointElasticElectroatomicReaction, react )
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   electron.setDirection( 0.0, 0.0, 1.0 );
-  joint_elastic_reaction->react( electron, bank, shell_of_interaction );
+  decoupled_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(),
@@ -235,8 +235,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getAtomicNumber() );
 
     // Create the reaction
-    joint_elastic_reaction.reset(
-      new MonteCarlo::JointElasticElectroatomicReaction<Utility::LinLin>(
+    decoupled_elastic_reaction.reset(
+      new MonteCarlo::DecoupledElasticElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             total_cross_section,
             sampling_ratios,
@@ -252,5 +252,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
 
 //---------------------------------------------------------------------------//
-// end tstJointElasticElectroatomicReaction.cpp
+// end tstDecoupledElasticElectroatomicReaction.cpp
 //---------------------------------------------------------------------------//

@@ -22,7 +22,7 @@ namespace Utility{
 
 namespace {
 
-//! Helper class used by unit base interpolation methods (Lin-Lin)
+//! Helper class used by unit base interpolation methods
 template<typename YProcessingTag, typename XProcessingTag>
 struct UnitBaseHelper
 { /* ... */ };

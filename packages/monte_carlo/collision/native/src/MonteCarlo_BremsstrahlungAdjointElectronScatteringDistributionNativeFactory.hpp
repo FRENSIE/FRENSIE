@@ -22,7 +22,7 @@ class BremsstrahlungAdjointElectronScatteringDistributionNativeFactory
 public:
 
   //! Create a bremsstrahlung adjoint distribution
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createBremsstrahlungDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& adjoint_energy_grid,
@@ -33,7 +33,7 @@ public:
     const double evaluation_tol = 1e-7 );
 
   //! Create the energy gain function
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createEnergyGainFunction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> adjoint_energy_grid,

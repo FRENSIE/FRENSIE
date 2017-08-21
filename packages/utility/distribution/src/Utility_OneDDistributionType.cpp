@@ -39,7 +39,7 @@ std::string convertOneDDistributionTypeToString(
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
   case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
   case CUTOFF_ELASTIC_DISTRIBUTION: return "Cutoff Elastic Distribution";
-  case ANALOG_ELASTIC_DISTRIBUTION: return "Analog Elastic Distribution";
+  case COUPLED_ELASTIC_DISTRIBUTION: return "Coupled Elastic Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
 		     "The distribution type is missin a name. Please add it!");

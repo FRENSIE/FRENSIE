@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -19,17 +19,17 @@ namespace MonteCarlo{
 //      ****ELASTIC REACTIONS****
 //----------------------------------------------------------------------------//
 
-//! Create an analog elastic scattering electroatomic reaction
+//! Create an coupled elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
-createAnalogElasticReaction(
+createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
-//! Create a joint elastic scattering electroatomic reaction
+//! Create a decoupled elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
-createJointElasticReaction(
+createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,

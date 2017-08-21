@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_JointElasticElectroatomicReaction.hpp
+//! \file   MonteCarlo_DecoupledElasticElectroatomicReaction.hpp
 //! \author Luke Kersting
-//! \brief  The joint scattering elastic electroatomic reaction class decl.
+//! \brief  The decoupled scattering elastic electroatomic reaction class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_JOINT_ELASTIC_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_JOINT_ELASTIC_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -20,9 +20,9 @@
 
 namespace MonteCarlo{
 
-//! The joint (cutoff and screened Rutherford) elastic electroatomic reaction class
+//! The decoupled (cutoff and screened Rutherford) elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class JointElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class DecoupledElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
 private:
@@ -34,7 +34,7 @@ typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,process
 public:
 
   //! Basic Constructor
-  JointElasticElectroatomicReaction(
+  DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
       const Teuchos::ArrayRCP<const double>& sampling_ratios,
@@ -45,7 +45,7 @@ public:
             analytical_distribution );
 
   //! Constructor
-  JointElasticElectroatomicReaction(
+  DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
       const Teuchos::ArrayRCP<const double>& sampling_ratios,
@@ -58,7 +58,7 @@ public:
 
 
   //! Destructor
-  ~JointElasticElectroatomicReaction()
+  ~DecoupledElasticElectroatomicReaction()
   { /* ... */ }
 
   //! Return the number of electrons emitted from the rxn at the given energy
@@ -112,12 +112,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_JointElasticElectroatomicReaction_def.hpp"
+#include "MonteCarlo_DecoupledElasticElectroatomicReaction_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_JOINT_ELASTIC_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_JointElasticElectroatomicReaction.hpp
+// end MonteCarlo_DecoupledElasticElectroatomicReaction.hpp
 //---------------------------------------------------------------------------//

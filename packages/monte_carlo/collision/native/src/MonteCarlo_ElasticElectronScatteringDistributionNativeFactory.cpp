@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Data_DataContainerHelpers.hpp"
@@ -399,7 +400,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
   {
     // Create discrete distribution
     function_data.second.reset(
-        new const DiscreteDist( elastic_angles, elastic_pdf, false, true ) );
+        new const Utility::DiscreteDistribution( elastic_angles, elastic_pdf, false, true ) );
   }
   else
   {

@@ -343,7 +343,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
   {
     if( this->arePrimaryLimitsExtended() )
       return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
-    else 
+    else
       return QuantityTraits<ReturnType>::zero();
   }
   else if( lower_bin_boundary->first == primary_indep_var_value )
@@ -430,9 +430,9 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
        *  will always zero or inf. When this is the case the error tolerance will
        *  be used instead of the relative error tolerance.
        */
-       if ( secondary_indep_var_value == QuantityTraits<SecondaryIndepQuantity>::zero() )
+       if ( secondary_indep_var_value == SIQT::zero() )
        {
-          error_norm_constant = QuantityTraits<SecondaryIndepQuantity>::one();
+          error_norm_constant = SIQT::one();
           tolerance = d_error_tol;
        }
 
@@ -490,8 +490,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
         {
           // Get error in estimate
           double error =
-              (secondary_indep_var_value - est_secondary_indep_var_value )/
-                                  QuantityTraits<SecondaryIndepQuantity>::one();
+            (secondary_indep_var_value - est_secondary_indep_var_value )/SIQT::one();
           error = error < 0 ? -error : error;
 
           // If error meets error tolerance accept estimate

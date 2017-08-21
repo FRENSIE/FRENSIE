@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_AnalogElasticDistribution.hpp
+//! \file   Utility_CoupledElasticDistribution.hpp
 //! \author Luke Kersting
-//! \brief  Analog elastic distribution class declaration
+//! \brief  Coupled elastic distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_ANALOG_ELASTIC_HPP
-#define UTILITY_ANALOG_ELASTIC_HPP
+#ifndef UTILITY_COUPLED_ELASTIC_HPP
+#define UTILITY_COUPLED_ELASTIC_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -22,14 +22,14 @@
 
 namespace Utility{
 
-/*! The analog elastic distribution class declaration
+/*! The coupled elastic distribution class declaration
  * \ingroup one_d_distributions
  */
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-class UnitAwareAnalogElasticDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                     public ParameterListCompatibleObject<UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
+class UnitAwareCoupledElasticDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+                                     public ParameterListCompatibleObject<UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
 {
 
   // Only allow construction when the independent unit dimensionless
@@ -70,7 +70,7 @@ private:
 public:
 
   //! This distribution type
-  typedef UnitAwareAnalogElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
@@ -82,24 +82,24 @@ public:
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
   //! Default constructor
-  UnitAwareAnalogElasticDistribution();
+  UnitAwareCoupledElasticDistribution();
 
   //! Basic constructor (potentially dangerous)
-  UnitAwareAnalogElasticDistribution(
+  UnitAwareCoupledElasticDistribution(
                     const Teuchos::Array<double>& independent_values,
                     const Teuchos::Array<double>& dependent_values,
                     const double& moliere_screening_constant,
                     const double& cutoff_cross_section_ratio );
 
 //  //! Basic constructor (potentially dangerous)
-//  UnitAwareAnalogElasticDistribution(
+//  UnitAwareCoupledElasticDistribution(
 //                    const Teuchos::Array<double>& independent_values,
 //                    const Teuchos::Array<double>& dependent_values,
 //                    const double& cutoff_cross_section_ratio );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareAnalogElasticDistribution(
+  UnitAwareCoupledElasticDistribution(
                     const Teuchos::Array<InputIndepQuantity>& independent_values,
                     const Teuchos::Array<InputDepQuantity>& dependent_values,
                     const double& moliere_screening_constant,
@@ -107,24 +107,21 @@ public:
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
-  UnitAwareAnalogElasticDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
+  UnitAwareCoupledElasticDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)
-  static UnitAwareAnalogElasticDistribution fromUnitlessDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution );
+  static UnitAwareCoupledElasticDistribution fromUnitlessDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwareAnalogElasticDistribution& operator=(
-                           const UnitAwareAnalogElasticDistribution& dist_instance );
+  UnitAwareCoupledElasticDistribution& operator=(
+                           const UnitAwareCoupledElasticDistribution& dist_instance );
 
   //! Destructor
-  ~UnitAwareAnalogElasticDistribution()
+  ~UnitAwareCoupledElasticDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
   DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
-
-  //! Evaluate the distribution
-  DepQuantity evaluateCutoff( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
@@ -180,12 +177,12 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareAnalogElasticDistribution& other ) const;
+  bool isEqual( const UnitAwareCoupledElasticDistribution& other ) const;
 
 protected:
 
   //! Copy constructor (copying from unitless distribution only)
-  UnitAwareAnalogElasticDistribution( const UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
+  UnitAwareCoupledElasticDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
@@ -253,16 +250,10 @@ private:
   template<typename FriendInterpolationPolicy,
            typename FriendIndepUnit,
            typename FriendDepUnit>
-  friend class UnitAwareAnalogElasticDistribution;
+  friend class UnitAwareCoupledElasticDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = ANALOG_ELASTIC_DISTRIBUTION;
-
-  // The scattering angle cosine above which the screened Rutherford distribution is used
-  static double s_cutoff_mu;
-
-  // The change in scattering angle cosine below which the screened Rutherford distribution is used
-  static double s_cutoff_delta_mu;
+  static const OneDDistributionType distribution_type = COUPLED_ELASTIC_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
@@ -312,60 +303,60 @@ private:
   double d_cdf_parameter;
 };
 
-/*! The analog elastic distribution (unit-agnostic)
+/*! The coupled elastic distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
-template<typename InterpolationPolicy> using AnalogElasticDistribution =
-  UnitAwareAnalogElasticDistribution<InterpolationPolicy,void,void>;
+template<typename InterpolationPolicy> using CoupledElasticDistribution =
+  UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>;
 
 } // end Utility namespace
 
 namespace Teuchos{
 
-/*! Type name traits specialization for the Utility::AnalogElasticDistribution
+/*! Type name traits specialization for the Utility::CoupledElasticDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files.
  */
 template<typename InterpolationPolicy>
-class TypeNameTraits<Utility::AnalogElasticDistribution<InterpolationPolicy> >
+class TypeNameTraits<Utility::CoupledElasticDistribution<InterpolationPolicy> >
 {
 public:
   static std::string name()
   {
     std::ostringstream iss;
-    iss << "Analog Elastic " << InterpolationPolicy::name() << " Distribution";
+    iss << "Coupled Elastic " << InterpolationPolicy::name() << " Distribution";
 
     return iss.str();
   }
   static std::string concreteName(
-            const Utility::AnalogElasticDistribution<InterpolationPolicy>& instance )
+            const Utility::CoupledElasticDistribution<InterpolationPolicy>& instance )
   {
     return name();
   }
 };
 
 /*! \brief Type name traits partial specialization for the
- * Utility::UnitAwareAnalogElasticDistribution
+ * Utility::UnitAwareCoupledElasticDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files
  */
 template<typename InterpolationPolicy, typename U, typename V>
-class TypeNameTraits<Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,U,V> >
+class TypeNameTraits<Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,U,V> >
 {
   public:
   static std::string name()
   {
     std::ostringstream iss;
-    iss << "Unit-Aware Analog Elastic " << InterpolationPolicy::name()
+    iss << "Unit-Aware Coupled Elastic " << InterpolationPolicy::name()
         << " Distribution ("
         << Utility::UnitTraits<U>::symbol() << ","
         << Utility::UnitTraits<V>::symbol() << ")";
 
     return iss.str();
   }
-  static std::string concreteName( const Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,U,V>& instance )
+  static std::string concreteName( const Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,U,V>& instance )
   {
     return name();
   }
@@ -377,12 +368,12 @@ class TypeNameTraits<Utility::UnitAwareAnalogElasticDistribution<InterpolationPo
 // Template inludes.
 //---------------------------------------------------------------------------//
 
-#include "Utility_AnalogElasticDistribution_def.hpp"
+#include "Utility_CoupledElasticDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_ANALOG_ELASTIC_ONE_D_DISTRIBUTION_HPP
+#endif // end UTILITY_COUPLED_ELASTIC_ONE_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_AnalogElasticDistribution.hpp
+// end Utility_CoupledElasticDistribution.hpp
 //---------------------------------------------------------------------------//

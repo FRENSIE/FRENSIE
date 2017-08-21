@@ -22,8 +22,8 @@ namespace MonteCarlo{
 //      ****ELASTIC DISTRIBUTIONS****
 //----------------------------------------------------------------------------//
 
-//! Create an adjoint analog elastic distribution ( combined Cutoff and Screened Rutherford )
-std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
+//! Create an adjoint coupled elastic distribution ( combined Cutoff and Screened Rutherford )
+std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,

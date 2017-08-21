@@ -15,14 +15,14 @@ namespace MonteCarlo{
 //      ****ELASTIC DISTRIBUTIONS****
 //----------------------------------------------------------------------------//
 
-// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
-std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
+// Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
+std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
-  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     distribution;
 
   // Assign the cutoff and total elastic cross section and electron energy grid
@@ -39,7 +39,7 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
         distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -50,7 +50,7 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin>(
         distribution,
         cutoff_cross_section,
         total_cross_section,

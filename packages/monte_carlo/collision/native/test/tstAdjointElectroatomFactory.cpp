@@ -218,15 +218,15 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   TEST_FLOATING_EQUALITY( cross_section, 2.1309138391891191, 1e-12 );
 
 
-  // Test that there is no analog elastic cross section
+  // Test that there is no coupled elastic cross section
   cross_section = atom->getReactionCrossSection(
                     1e-5,
-                    MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                    MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                     20.0,
-                    MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                    MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
@@ -375,20 +375,20 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory,
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the coupled elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     1e-5,
-                    MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                    MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 3.06351e+09, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
                     1e-3,
-                    MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                    MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 5.2837359029965259e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
                     20.0,
-                    MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                    MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 1.4129048986120211e+05, 1e-12 );
 
 

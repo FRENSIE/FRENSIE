@@ -2,7 +2,7 @@
 //!
 //! \file   tstElectroatomicReactionTypeHelpers.cpp
 //! \author Luke Kersting
-//! \brief  Electroatomic reaction tyhpe helper function unit tests
+//! \brief  Electroatomic reaction type helper function unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -34,9 +34,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionType,
   TEST_EQUALITY_CONST( reaction_name, "Total Absorption Electroatomic Reaction" );
 
   reaction_name =
-    MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+    MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( reaction_name, "Analog Elastic Electroatomic Reaction" );
+  TEST_EQUALITY_CONST( reaction_name, "Coupled Elastic Electroatomic Reaction" );
 
   reaction_name =
     MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
@@ -44,9 +44,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionType,
   TEST_EQUALITY_CONST( reaction_name, "Hybrid Elastic Electroatomic Reaction" );
 
   reaction_name =
-    MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION );
+    MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( reaction_name, "Joint Elastic Electroatomic Reaction" );
+  TEST_EQUALITY_CONST( reaction_name, "Decoupled Elastic Electroatomic Reaction" );
 
   reaction_name =
     MonteCarlo::convertElectroatomicReactionEnumToString( MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
@@ -502,9 +502,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionType, ostream_operator )
   oss.str( "" );
   oss.clear();
 
-  oss << MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION;
+  oss << MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Analog Elastic Electroatomic Reaction" );
+  TEST_EQUALITY_CONST( oss.str(), "Coupled Elastic Electroatomic Reaction" );
 
   oss.str( "" );
   oss.clear();
@@ -516,9 +516,9 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionType, ostream_operator )
   oss.str( "" );
   oss.clear();
 
-  oss << MonteCarlo::JOINT_ELASTIC_ELECTROATOMIC_REACTION;
+  oss << MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Joint Elastic Electroatomic Reaction" );
+  TEST_EQUALITY_CONST( oss.str(), "Decoupled Elastic Electroatomic Reaction" );
 
   oss.str( "" );
   oss.clear();

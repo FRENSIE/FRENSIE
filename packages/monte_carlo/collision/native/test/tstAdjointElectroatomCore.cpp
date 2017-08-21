@@ -180,7 +180,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                        void_cross_section,
                        0u,
                        grid_searcher,
-                       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION ) );
+                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION ) );
 
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
                                        data_container,

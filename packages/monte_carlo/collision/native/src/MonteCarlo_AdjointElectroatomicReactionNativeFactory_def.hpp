@@ -13,7 +13,7 @@
 #include <algorithm>
 
 // FRENSIE Includes
-#include "MonteCarlo_AnalogElasticAdjointElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_HybridElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticAdjointElectroatomicReaction.hpp"
@@ -28,9 +28,9 @@
 
 namespace MonteCarlo{
 
-// Create the analog elastic scattering adjoint electroatomic reactions
+// Create the coupled elastic scattering adjoint electroatomic reactions
 template<typename TwoDInterpPolicy>
-void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -59,9 +59,9 @@ void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
     raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection().begin(),
     raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection().end() );
 
-  // Create the analog elastic scattering distribution
-  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
-  ElasticFactory::createAnalogElasticDistribution<TwoDInterpPolicy>(
+  // Create the coupled elastic scattering distribution
+  std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
+  ElasticFactory::createCoupledElasticDistribution<TwoDInterpPolicy>(
     distribution,
     energy_grid,
     cutoff_cross_section,
@@ -71,7 +71,7 @@ void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
     evaluation_tol );
 
   elastic_reaction.reset(
-    new AnalogElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    new CoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
       energy_grid,
       total_cross_section,
       raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSectionThresholdEnergyIndex(),

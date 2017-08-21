@@ -132,20 +132,20 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.3930085615214982, 1e-12 );
 
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the coupled elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
             1e-5,
-            MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 2.74896e+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
             1e-3,
-            MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 2.8049048154381788e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
             20.0,
-            MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987041e+04, 1e-12 );
 
 
@@ -336,20 +336,20 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.3930085615214982, 1e-12 );
 
 
-  // Test that there is no analog elastic cross section
+  // Test that there is no coupled elastic cross section
   cross_section = atom->getReactionCrossSection(
             1e-5,
-            MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
             1e-3,
-            MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
             20.0,
-            MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 

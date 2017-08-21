@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp
+//! \file   MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp
 //! \author Luke Kersting
-//! \brief  The analog elastic electron scattering distribution base class
+//! \brief  The coupled elastic electron scattering distribution base class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ANALOG_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_ANALOG_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_COUPLED_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_COUPLED_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
@@ -15,24 +15,24 @@
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
-#include "Utility_AnalogElasticTraits.hpp"
+#include "Utility_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
-class AnalogElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+class CoupledElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
     public AdjointElectronScatteringDistribution
 {
 
 public:
 
   //! Typedef for the this type
-  typedef AnalogElasticElectronScatteringDistribution ThisType;
+  typedef CoupledElasticElectronScatteringDistribution ThisType;
 
-  //! Typedef for the Analog elastic traits
-  typedef Utility::AnalogElasticTraits ElasticTraits;
+  //! Typedef for the Elastic electron traits
+  typedef Utility::ElasticElectronTraits ElasticTraits;
 
   //! Typedef for the one d distributions
   typedef Utility::OneDDistribution OneDDist;
@@ -41,14 +41,14 @@ public:
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
-  AnalogElasticElectronScatteringDistribution(
-    const std::shared_ptr<const TwoDDist>& analog_elastic_distribution,
+  CoupledElasticElectronScatteringDistribution(
+    const std::shared_ptr<const TwoDDist>& coupled_elastic_distribution,
     const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const bool correlated_sampling_mode_on );
 
   //! Destructor
-  virtual ~AnalogElasticElectronScatteringDistribution()
+  virtual ~CoupledElasticElectronScatteringDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -153,7 +153,7 @@ protected:
 private:
 
   // Cutoff elastic scattering distribution
-  std::shared_ptr<const TwoDDist> d_analog_dist;
+  std::shared_ptr<const TwoDDist> d_coupled_dist;
 
   // Cutoff elastic scattering distribution
   std::shared_ptr<const OneDDist> d_cutoff_ratios;
@@ -170,8 +170,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ANALOG_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_COUPLED_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp
+// end MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp
 //---------------------------------------------------------------------------//

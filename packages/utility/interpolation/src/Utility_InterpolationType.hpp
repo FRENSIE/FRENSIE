@@ -13,6 +13,9 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ExceptionTestMacros.hpp"
+
 namespace Utility{
 
 /*! The interpolation types
@@ -42,8 +45,7 @@ inline std::ostream& operator<<( std::ostream& os,
 
   return os;
 }
-  
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_INTERPOLATION_TYPE_HPP

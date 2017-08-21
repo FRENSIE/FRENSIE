@@ -12,6 +12,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
+#include "Utility_ElasticElectronTraits.hpp"
 
 
 namespace MonteCarlo{
@@ -26,7 +27,8 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
     const bool correlated_sampling_mode_on )
   : d_full_cutoff_distribution( scattering_distribution ),
     d_partial_cutoff_distribution( scattering_distribution ),
-    d_cutoff_angle_cosine( 1.0 )
+    d_cutoff_angle_cosine( scattering_distribution->getUpperBoundOfConditionalIndepVar(
+        scattering_distribution->getLowerBoundOfPrimaryIndepVar() ) )
 {
   // Make sure the array is valid
   testPrecondition( d_full_cutoff_distribution.use_count() > 0 );

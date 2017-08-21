@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AnalogElasticElectroatomicReaction_def.hpp
+//! \file   MonteCarlo_CoupledElasticAdjointElectroatomicReaction_def.hpp
 //! \author Luke Kersting
-//! \brief  The analog scattering elastic electroatomic reaction class def.
+//! \brief  The coupled scattering elastic adjoint electroatomic reaction class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ANALOG_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
-#define MONTE_CARLO_ANALOG_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#ifndef MONTE_CARLO_COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
@@ -16,11 +16,11 @@ namespace MonteCarlo{
 
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::AnalogElasticElectroatomicReaction(
+CoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::CoupledElasticAdjointElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
             scattering_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -33,12 +33,12 @@ AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Analog
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::AnalogElasticElectroatomicReaction(
+CoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::CoupledElasticAdjointElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
             scattering_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -54,52 +54,35 @@ AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Analog
 /*! \details This does not include photons from atomic relaxation.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned CoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned CoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
-ElectroatomicReactionType AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+AdjointElectroatomicReactionType CoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return ANALOG_ELASTIC_ELECTROATOMIC_REACTION;
-}
-
-// Return the differential cross section
-template<typename InterpPolicy, bool processed_cross_section>
-double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
-            const double incoming_energy,
-            const double scattering_angle_cosine ) const
-{
-  // Get the PDF
-  double pdf =
-    d_scattering_distribution->evaluatePDF( incoming_energy,
-                                            scattering_angle_cosine );
-
-  // Get the cross section
-  double cross_section = this->getCrossSection( incoming_energy );
-
-  return pdf*cross_section;
+  return COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-                     ElectronState& electron,
+void CoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+                     AdjointElectronState& electron,
                      ParticleBank& bank,
                      Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterElectron( electron,
-                                              bank,
-                                              shell_of_interaction);
+  d_scattering_distribution->scatterAdjointElectron( electron,
+                                                     bank,
+                                                     shell_of_interaction);
 
   electron.incrementCollisionNumber();
 
@@ -109,8 +92,8 @@ void AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::r
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ANALOG_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AnalogElasticElectroatomicReaction_def.hpp
+// end MonteCarlo_CoupledElasticAdjointElectroatomicReaction_def.hpp
 //---------------------------------------------------------------------------//

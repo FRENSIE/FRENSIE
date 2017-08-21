@@ -225,7 +225,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
 {
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
-  testPrecondition( angle_cosine <= d_upper_bound_conditional_indep_var );
+  testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
 
   // Find the bin boundaries
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
@@ -239,7 +239,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
   {
     if( this->arePrimaryLimitsExtended() )
       return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-    else 
+    else
       return QuantityTraits<ReturnType>::zero();
   }
   else if( lower_bin_boundary->first == incoming_energy )
@@ -340,9 +340,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
             CosineProcessor::processCosineVar( upper_bin_sample ) ) );
 
       if ( angle_cosine == est_angle_cosine )
-      {
         break;
-      }
 
       // Calculate the relative error between the angle_cosine and the estimate
       rel_error = (angle_cosine - est_angle_cosine )/error_norm_constant;
@@ -355,9 +353,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
 
       // If tolerance is met exit loop
       if ( rel_error <= tolerance )
-      {
         break;
-      }
 
       // Update the estimated_cdf estimate
       if ( est_angle_cosine < angle_cosine )
@@ -392,8 +388,8 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
                            << rel_error
                            << ") reached the evaluation tolerance ("
                            << tolerance
-                           << ")."
-                           << "or the error ("
+                           << ")"
+                           << " or the error ("
                            << error
                            << ") reached the error tolerance ("
                            << d_error_tol
@@ -427,7 +423,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
 {
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
-  testPrecondition( angle_cosine <= d_upper_bound_conditional_indep_var );
+  testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
 
   // Find the bin boundaries
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
@@ -440,11 +436,17 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
   if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
-    {
       return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-    }
-    else 
+    else
       return QuantityTraits<ReturnType>::zero();
+  }
+  else if( lower_bin_boundary->first == primary_indep_var_value )
+  {
+    return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
+  }
+  else if( upper_bin_boundary->first == primary_indep_var_value )
+  {
+    return ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
   }
   else
   {

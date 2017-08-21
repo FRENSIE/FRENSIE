@@ -73,7 +73,7 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The cutoff angle cosine between moment preserving and analog elastic collisions
+  // The cutoff angle cosine between moment preserving and coupled elastic collisions
   double d_cutoff_angle_cosine;
 
   // The FullyTabularTwoDDistribution evaluation tolerance

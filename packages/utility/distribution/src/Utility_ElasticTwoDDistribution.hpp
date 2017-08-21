@@ -128,6 +128,7 @@ public:
       d_relative_error_tol( evaluate_relative_error_tol ),
       d_error_tol( evaluate_error_tol ),
       d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
+      d_max_upper_bound_conditional_indep_var( SIQT::one() ),
       d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
   {/* ... */ }
 
@@ -149,6 +150,7 @@ public:
       d_relative_error_tol( evaluate_relative_error_tol ),
       d_error_tol( evaluate_error_tol ),
       d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
+      d_max_upper_bound_conditional_indep_var( SIQT::one() ),
       d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
   {/* ... */ }
 
@@ -314,7 +316,10 @@ private:
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SampleFunctor sample_functor ) const;
 
-  // The upper bound of the conditional distribution ( 1.0 )
+  // The max upper bound of the conditional distribution ( 1.0 )
+  SecondaryIndepQuantity d_max_upper_bound_conditional_indep_var;
+
+  // The upper bound of the conditional distribution ( -1.0 < mu_cut <= 1.0 )
   SecondaryIndepQuantity d_upper_bound_conditional_indep_var;
 
   // The lower bound of the conditional distribution ( -1.0 )

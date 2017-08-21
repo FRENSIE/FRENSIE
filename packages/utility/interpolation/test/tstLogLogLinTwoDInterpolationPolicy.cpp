@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLogLinLinTwoDInterpolationPolicy.cpp
+//! \file   tstLogLogLinTwoDInterpolationPolicy.cpp
 //! \author Alex Robinson
 //! \brief  2D interpolation policy unit tests
 //!

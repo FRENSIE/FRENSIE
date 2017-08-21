@@ -146,6 +146,13 @@ TARGET_LINK_LIBRARIES(tstSimulationAdjointElectronProperties monte_carlo_core)
 ADD_TEST(SimulationAdjointElectronProperties_test tstSimulationAdjointElectronProperties)
 SET_PROPERTY(TEST SimulationAdjointElectronProperties_test PROPERTY LABELS monte_carlo_core electron adjoint)
 
+ADD_EXECUTABLE(tstTwoDInterpolationType
+  tstTwoDInterpolationType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTwoDInterpolationType monte_carlo_core)
+ADD_TEST(TwoDInterpolationType_test tstTwoDInterpolationType)
+SET_PROPERTY(TEST TwoDInterpolationType_test PROPERTY LABELS monte_carlo_core electron)
+
 ADD_EXECUTABLE(tstSimulationProperties
   tstSimulationProperties.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -201,3 +208,17 @@ ADD_EXECUTABLE(tstSimulationPropertiesFactory
 TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
 SET_PROPERTY(TEST SimulationPropertiesFactory_test PROPERTY LABELS monte_carlo_core)
+
+ADD_EXECUTABLE(tstElasticElectronDistributionType
+  tstElasticElectronDistributionType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElasticElectronDistributionType monte_carlo_core)
+ADD_TEST(ElasticElectronDistributionType_test tstElasticElectronDistributionType)
+SET_PROPERTY(TEST ElasticElectronDistributionType_test PROPERTY LABELS monte_carlo_core)
+
+ADD_EXECUTABLE(tstBremsstrahlungAngularDistributionType
+  tstBremsstrahlungAngularDistributionType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstBremsstrahlungAngularDistributionType monte_carlo_core)
+ADD_TEST(BremsstrahlungAngularDistributionType_test tstBremsstrahlungAngularDistributionType)
+SET_PROPERTY(TEST BremsstrahlungAngularDistributionType_test PROPERTY LABELS monte_carlo_core)

@@ -55,13 +55,13 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     // Get the elastic cutoff angle cosine
     double cutoff_cosine = properties.getAdjointElasticCutoffAngleCosine();
 
-    // Create the analog elastic scattering reaction (no moment preserving elastic scattering)
+    // Create the coupled elastic scattering reaction (no moment preserving elastic scattering)
     if ( cutoff_cosine == 1.0 )
     {
       AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
+        scattering_reactions[COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-      AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction<TwoDInterpPolicy>(
+      AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -71,7 +71,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
       reaction_pointer = elastic_reaction;
     }
-    // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
+    // Create the moment preserving elastic scattering reaction (no coupled elastic scattering)
     else if ( cutoff_cosine == -1.0 )
     {
       AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =

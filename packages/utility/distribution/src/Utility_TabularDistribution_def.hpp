@@ -721,7 +721,7 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 {
   return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LinIndepVarProcessingTag>::value;
 }
-  
+
 // Test if the independent variable is compatible with Log processing
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,

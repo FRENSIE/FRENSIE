@@ -1,22 +1,22 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_CutoffElasticDistribution.cpp
+//! \file   Utility_CoupledElasticDistribution.cpp
 //! \author Luke Kersting
-//! \brief  The cutoff elastic distribution class template instantiations
+//! \brief  The coupled elastic distribution class template instantiations
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_CutoffElasticDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCutoffElasticDistribution<LinLin,void,void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCutoffElasticDistribution<LogLin,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLin,void,void> );
+EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLin,void,void> );
 
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_CutoffElasticDistribution.cpp
+// end Utility_CoupledElasticDistribution.cpp
 //---------------------------------------------------------------------------//

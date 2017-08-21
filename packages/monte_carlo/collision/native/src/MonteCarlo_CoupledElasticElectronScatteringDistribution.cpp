@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AnalogElasticElectronScatteringDistribution.cpp
+//! \file   MonteCarlo_CoupledElasticElectronScatteringDistribution.cpp
 //! \author Luke Kersting
-//! \brief  The analog elastic electron scattering distribution definition
+//! \brief  The coupled elastic electron scattering distribution definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_DirectionHelpers.hpp"
@@ -17,17 +17,17 @@
 namespace MonteCarlo{
 
 // Constructor
-AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
-    const std::shared_ptr<const TwoDDist>& analog_elastic_distribution,
+CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDistribution(
+    const std::shared_ptr<const TwoDDist>& coupled_elastic_distribution,
     const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& screened_rutherford_traits,
     const bool correlated_sampling_mode_on )
-  : d_analog_dist( analog_elastic_distribution ),
+  : d_coupled_dist( coupled_elastic_distribution ),
     d_cutoff_ratios( cutoff_cross_section_ratios ),
     d_elastic_traits( screened_rutherford_traits )
 {
   // Make sure the arrays are valid
-  testPrecondition( d_analog_dist.use_count() > 0 );
+  testPrecondition( d_coupled_dist.use_count() > 0 );
   testPrecondition( d_cutoff_ratios.use_count() > 0 );
   testPrecondition( d_elastic_traits.use_count() > 0 );
 
@@ -36,7 +36,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
     // Set the correlated exact sample routine
     d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
-         std::cref( *d_analog_dist ),
+         std::cref( *d_coupled_dist ),
          std::placeholders::_1,
          std::placeholders::_2 );
   }
@@ -45,7 +45,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
     // Set the stochastic unit based sample routine
     d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
-         std::cref( *d_analog_dist ),
+         std::cref( *d_coupled_dist ),
          std::placeholders::_1,
          std::placeholders::_2 );
   }
@@ -58,7 +58,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
 
 // Evaluate the distribution at the given energy and scattering angle cosine
 //! \details When the scattering angle cosine is very close to one, precision will be lost.
-double AnalogElasticElectronScatteringDistribution::evaluate(
+double CoupledElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -67,8 +67,8 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( incoming_energy > d_analog_dist->getUpperBoundOfPrimaryIndepVar() ||
-       incoming_energy < d_analog_dist->getLowerBoundOfPrimaryIndepVar() )
+  if ( incoming_energy > d_coupled_dist->getUpperBoundOfPrimaryIndepVar() ||
+       incoming_energy < d_coupled_dist->getLowerBoundOfPrimaryIndepVar() )
     return 0.0;
 
   if ( scattering_angle_cosine > ElasticTraits::mu_peak )
@@ -86,12 +86,12 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   else
   {
     // evaluate on the cutoff distribution
-    return d_analog_dist->evaluateExact( incoming_energy, scattering_angle_cosine );
+    return d_coupled_dist->evaluateExact( incoming_energy, scattering_angle_cosine );
   }
 }
 
 // Evaluate the PDF at the given energy and scattering angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluatePDF(
+double CoupledElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -100,8 +100,8 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( incoming_energy > d_analog_dist->getUpperBoundOfPrimaryIndepVar() ||
-       incoming_energy < d_analog_dist->getLowerBoundOfPrimaryIndepVar() )
+  if ( incoming_energy > d_coupled_dist->getUpperBoundOfPrimaryIndepVar() ||
+       incoming_energy < d_coupled_dist->getLowerBoundOfPrimaryIndepVar() )
     return 0.0;
 
   if ( scattering_angle_cosine > ElasticTraits::mu_peak )
@@ -115,14 +115,14 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     // evaluate on the cutoff distribution
-    return d_analog_dist->evaluateSecondaryConditionalPDFExact(
+    return d_coupled_dist->evaluateSecondaryConditionalPDFExact(
                                 incoming_energy,
                                 scattering_angle_cosine );
   }
 }
 
 // Evaluate the CDF
-double AnalogElasticElectronScatteringDistribution::evaluateCDF(
+double CoupledElasticElectronScatteringDistribution::evaluateCDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -131,8 +131,8 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( incoming_energy > d_analog_dist->getUpperBoundOfPrimaryIndepVar() ||
-       incoming_energy < d_analog_dist->getLowerBoundOfPrimaryIndepVar() )
+  if ( incoming_energy > d_coupled_dist->getUpperBoundOfPrimaryIndepVar() ||
+       incoming_energy < d_coupled_dist->getLowerBoundOfPrimaryIndepVar() )
     return 0.0;
 
   if ( scattering_angle_cosine >= ElasticTraits::mu_peak )
@@ -146,7 +146,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   else
   {
     // evaluate CDF on the cutoff distribution
-    return d_analog_dist->evaluateSecondaryConditionalCDFExact(
+    return d_coupled_dist->evaluateSecondaryConditionalCDFExact(
                     incoming_energy,
                     scattering_angle_cosine );
   }
@@ -155,7 +155,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
 
 
 // Evaluate the tabular cutoff distribution
-double AnalogElasticElectronScatteringDistribution::evaluateTabular(
+double CoupledElasticElectronScatteringDistribution::evaluateTabular(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -165,7 +165,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateTabular(
 }
 
 // Evaluate the PDF of the tabular cutoff distribution
-double AnalogElasticElectronScatteringDistribution::evaluateTabularPDF(
+double CoupledElasticElectronScatteringDistribution::evaluateTabularPDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -175,7 +175,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateTabularPDF(
 }
 
 // Evaluate the CDF of the tabular cutoff distribution
-double AnalogElasticElectronScatteringDistribution::evaluateTabularCDF(
+double CoupledElasticElectronScatteringDistribution::evaluateTabularCDF(
         const double incoming_energy,
     const double scattering_angle_cosine ) const
 {
@@ -185,7 +185,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateTabularCDF(
 }
 
 // Evaluate the PDF for an angle cosine above the cutoff
-double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
+double CoupledElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
         const double scattering_angle_cosine,
         const double eta,
         const double cutoff_pdf ) const
@@ -207,7 +207,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
 }
 
 // Evaluate the CDF for an angle cosine above the cutoff
-double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
+double CoupledElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF(
         const double scattering_angle_cosine,
         const double eta,
         const double cutoff_ratio ) const
@@ -232,17 +232,17 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
 }
 
 // Evaluate the distribution at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateAtCutoff(
+double CoupledElasticElectronScatteringDistribution::evaluateAtCutoff(
                     const double incoming_energy ) const
 {
-  return d_analog_dist->evaluateExact( incoming_energy, ElasticTraits::mu_peak );
+  return d_coupled_dist->evaluateExact( incoming_energy, ElasticTraits::mu_peak );
 }
 
 // Evaluate the PDF at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
+double CoupledElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
                     const double incoming_energy ) const
 {
-  return d_analog_dist->evaluateSecondaryConditionalPDFExact(
+  return d_coupled_dist->evaluateSecondaryConditionalPDFExact(
                                     incoming_energy, ElasticTraits::mu_peak );
 
 //  return this->evaluateAtCutoff( incoming_energy )*
@@ -250,7 +250,7 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
 }
 
 // Evaluate the CDF at the cutoff angle cosine
-double AnalogElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
+double CoupledElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
                     const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -261,7 +261,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDFAtCutoff(
 }
 
 // Sample an outgoing energy and direction from the distribution
-void AnalogElasticElectronScatteringDistribution::sample(
+void CoupledElasticElectronScatteringDistribution::sample(
          const double incoming_energy,
          double& outgoing_energy,
          double& scattering_angle_cosine ) const
@@ -278,7 +278,7 @@ void AnalogElasticElectronScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials(
+void CoupledElasticElectronScatteringDistribution::sampleAndRecordTrials(
         const double incoming_energy,
         double& outgoing_energy,
         double& scattering_angle_cosine,
@@ -294,7 +294,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials(
 }
 
 // Randomly scatter the electron
-void AnalogElasticElectronScatteringDistribution::scatterElectron(
+void CoupledElasticElectronScatteringDistribution::scatterElectron(
          ElectronState& electron,
          ParticleBank& bank,
          Data::SubshellType& shell_of_interaction ) const
@@ -316,7 +316,7 @@ void AnalogElasticElectronScatteringDistribution::scatterElectron(
 }
 
 // Randomly scatter the adjoint electron
-void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
+void CoupledElasticElectronScatteringDistribution::scatterAdjointElectron(
          AdjointElectronState& adjoint_electron,
          ParticleBank& bank,
          Data::SubshellType& shell_of_interaction ) const
@@ -338,7 +338,7 @@ void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
 }
 
 // Sample an outgoing direction from the distribution
-void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
+void CoupledElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
                                                 double& scattering_angle_cosine,
                                                 unsigned& trials ) const
@@ -358,7 +358,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 }
 
 // Sample the screened Rutherford peak
-double AnalogElasticElectronScatteringDistribution::sampleScreenedRutherfordPeak(
+double CoupledElasticElectronScatteringDistribution::sampleScreenedRutherfordPeak(
     const double incoming_energy,
     const double random_number,
     const double cutoff_ratio ) const
@@ -387,7 +387,7 @@ double AnalogElasticElectronScatteringDistribution::sampleScreenedRutherfordPeak
  *  incoming energy. Because the secondary energy grid in very course, this
  *  routine will likely lead to interpolation errors.
  */
-double AnalogElasticElectronScatteringDistribution::sampleOneDUnion(
+double CoupledElasticElectronScatteringDistribution::sampleOneDUnion(
     const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -410,7 +410,7 @@ double AnalogElasticElectronScatteringDistribution::sampleOneDUnion(
  *  normalizing the sampled values of the tabular Cuotff disitrbution to range
  *  from -1 to 0.999999 exactly.
  */
-double AnalogElasticElectronScatteringDistribution::sampleTwoDUnion(
+double CoupledElasticElectronScatteringDistribution::sampleTwoDUnion(
     const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -458,7 +458,7 @@ double AnalogElasticElectronScatteringDistribution::sampleTwoDUnion(
  *  cuotff due to interpolation errors. This difference is assumed small and
  *  ignored.
  */
-double AnalogElasticElectronScatteringDistribution::sampleSimplifiedUnion(
+double CoupledElasticElectronScatteringDistribution::sampleSimplifiedUnion(
     const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -488,5 +488,5 @@ double AnalogElasticElectronScatteringDistribution::sampleSimplifiedUnion(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AnalogElasticElectronScatteringDistribution.cpp
+// end MonteCarlo_CoupledElasticElectronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

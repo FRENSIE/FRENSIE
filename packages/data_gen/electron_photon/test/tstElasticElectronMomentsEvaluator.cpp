@@ -1217,15 +1217,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     al_data->getTotalElasticCrossSection().end() );
 
   // Create the elastic traits
-  std::shared_ptr<Utility::AnalogElasticTraits> elastic_traits(
-        new Utility::AnalogElasticTraits( al_data->getAtomicNumber() ) );
+  std::shared_ptr<Utility::ElasticElectronTraits> elastic_traits(
+        new Utility::ElasticElectronTraits( al_data->getAtomicNumber() ) );
 
-  // Create the analog elastic distributions (combined Cutoff and Screened Rutherford)
-  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    analog_distribution;
+  // Create the coupled elastic distributions (combined Cutoff and Screened Rutherford)
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+    coupled_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
-        analog_distribution,
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+        coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
         energy_grid,
@@ -1245,7 +1245,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         rutherford_cross_section,
         al_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
         al_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-        analog_distribution,
+        coupled_distribution,
         elastic_traits,
         cutoff_angle_cosine ) );
 

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAnalogElasticElectronScatteringDistribution.cpp
+//! \file   tstCoupledElasticElectronScatteringDistribution.cpp
 //! \author Luke Kersting
-//! \brief  Analog elastic electron scattering distribution unit tests
+//! \brief  Coupled elastic electron scattering distribution unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,45 +15,45 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
-#include "Utility_AnalogElasticTraits.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
+#include "Utility_ElasticElectronTraits.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_ElasticTwoDDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestAnalogElasticElectronScatteringDistribution : public MonteCarlo::AnalogElasticElectronScatteringDistribution
+class TestCoupledElasticElectronScatteringDistribution : public MonteCarlo::CoupledElasticElectronScatteringDistribution
 {
 public:
-  TestAnalogElasticElectronScatteringDistribution(
+  TestCoupledElasticElectronScatteringDistribution(
     const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         elastic_cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const Utility::AnalogElasticTraits>& elastic_traits,
+    const std::shared_ptr<const Utility::ElasticElectronTraits>& elastic_traits,
     const bool correlated_sampling_mode_on )
-    : MonteCarlo::AnalogElasticElectronScatteringDistribution(
+    : MonteCarlo::CoupledElasticElectronScatteringDistribution(
         elastic_cutoff_distribution,
         cutoff_cross_section_ratios,
         elastic_traits,
         correlated_sampling_mode_on )
   { /* ... */ }
 
-  ~TestAnalogElasticElectronScatteringDistribution()
+  ~TestCoupledElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  // Allow public access to the AnalogElasticElectronScatteringDistribution protected member functions
-  using MonteCarlo::AnalogElasticElectronScatteringDistribution::sampleOneDUnion;
-  using MonteCarlo::AnalogElasticElectronScatteringDistribution::sampleTwoDUnion;
-  using MonteCarlo::AnalogElasticElectronScatteringDistribution::sampleSimplifiedUnion;
-  using MonteCarlo::AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl;
-  using MonteCarlo::AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF;
-  using MonteCarlo::AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF;
+  // Allow public access to the CoupledElasticElectronScatteringDistribution protected member functions
+  using MonteCarlo::CoupledElasticElectronScatteringDistribution::sampleOneDUnion;
+  using MonteCarlo::CoupledElasticElectronScatteringDistribution::sampleTwoDUnion;
+  using MonteCarlo::CoupledElasticElectronScatteringDistribution::sampleSimplifiedUnion;
+  using MonteCarlo::CoupledElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl;
+  using MonteCarlo::CoupledElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF;
+  using MonteCarlo::CoupledElasticElectronScatteringDistribution::evaluateScreenedRutherfordCDF;
 
 };
 
@@ -61,17 +61,17 @@ public:
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::AnalogElasticElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::CoupledElasticElectronScatteringDistribution>
   distribution, lin_distribution, log_distribution;
 
-std::shared_ptr<TestAnalogElasticElectronScatteringDistribution>
+std::shared_ptr<TestCoupledElasticElectronScatteringDistribution>
   test_distribution, test_lin_distribution, test_log_distribution;
 
 //---------------------------------------------------------------------------//
 // LinLinLog Tests
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluate )
 {
   // Set energy in MeV
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluatePDF )
 {
   // Set energy in MeV
@@ -242,7 +242,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screened Rutherford pdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluateScreenedRutherfordPDF )
 {
   double tol = 1.0e-12;
@@ -276,7 +276,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the cdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluateCDF )
 {
   // Set energy in MeV
@@ -377,7 +377,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screened Rutherford cdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluateScreenedRutherfordCDF )
 {
   double tol = 1e-10;
@@ -412,7 +412,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl )
 {
   // Set fake random number stream
@@ -479,7 +479,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleOneDUnion )
 {
   double scattering_angle_cosine, energy;
@@ -565,7 +565,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleTwoDUnion )
 {
   double scattering_angle_cosine, energy;
@@ -652,7 +652,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleSimplifiedUnion )
 {
   double scattering_angle_cosine, energy;
@@ -739,7 +739,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sample )
 {
   // Set up the electron
@@ -877,7 +877,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleAndRecordTrials )
 {
   // Set fake random number stream
@@ -906,7 +906,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    ScatterElectron )
 {
   // Set fake random number stream
@@ -934,7 +934,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    ScatterAdjointElectron )
 {
   // Set fake random number stream
@@ -967,7 +967,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 // LogLogLog Tests
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluate_log )
 {
   // Set energy in MeV
@@ -1052,7 +1052,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluatePDF_log )
 {
   // Set energy in MeV
@@ -1138,7 +1138,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screened Rutherford pdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluateScreenedRutherfordPDF_log )
 {
   double tol = 1.0e-12;
@@ -1172,7 +1172,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the cdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluateCDF_log )
 {
   // Set energy in MeV
@@ -1273,7 +1273,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screened Rutherford cdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluateScreenedRutherfordCDF_log )
 {
   double tol = 1e-10;
@@ -1308,7 +1308,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl_log )
 {
   // Set fake random number stream
@@ -1375,7 +1375,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleOneDUnion_log )
 {
   double scattering_angle_cosine, energy;
@@ -1461,7 +1461,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleTwoDUnion_log )
 {
   double scattering_angle_cosine, energy;
@@ -1548,7 +1548,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleSimplifiedUnion_log )
 {
   double scattering_angle_cosine, energy;
@@ -1635,7 +1635,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sample_log )
 {
   // Set up the electron
@@ -1773,7 +1773,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleAndRecordTrials_log )
 {
   // Set fake random number stream
@@ -1802,7 +1802,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    ScatterElectron_log )
 {
   // Set fake random number stream
@@ -1830,7 +1830,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    ScatterAdjointElectron_log )
 {
   // Set fake random number stream
@@ -1863,7 +1863,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 // LinLinLin Tests
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluate_lin )
 {
   // Set energy in MeV
@@ -1951,7 +1951,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluatePDF_lin )
 {
   // Set energy in MeV
@@ -2032,7 +2032,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the cdf can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    evaluateCDF_lin )
 {
   // Set energy in MeV
@@ -2113,7 +2113,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl_lin )
 {
   // Set fake random number stream
@@ -2161,7 +2161,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sample_lin )
 {
   // Set fake random number stream
@@ -2202,7 +2202,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    sampleAndRecordTrials_lin )
 {
   // Set fake random number stream
@@ -2231,7 +2231,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    ScatterElectron_lin )
 {
   // Set fake random number stream
@@ -2257,7 +2257,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
+TEUCHOS_UNIT_TEST( CoupledElasticElectronScatteringDistribution,
                    ScatterAdjointElectron_lin )
 {
   // Set fake random number stream
@@ -2308,9 +2308,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Data::ElectronPhotonRelaxationDataContainer data_container =
     Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-  // Get the Analog elastic traits
-  std::shared_ptr<Utility::AnalogElasticTraits> traits(
-    new Utility::AnalogElasticTraits( data_container.getAtomicNumber() ) );
+  // Get the Elastic electron traits
+  std::shared_ptr<Utility::ElasticElectronTraits> traits(
+    new Utility::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
   // Electron energy grid
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
@@ -2364,9 +2364,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Teuchos::Array<double> pdf(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
-  // Create analog elastic distribution
+  // Create coupled elastic distribution
   function_data[n].second.reset(
-    new const Utility::AnalogElasticDistribution<Utility::LinLin>( angles, pdf, eta, cutoff_ratio ) );
+    new const Utility::CoupledElasticDistribution<Utility::LinLin>( angles, pdf, eta, cutoff_ratio ) );
   }
 
 
@@ -2386,7 +2386,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the distribution
     log_distribution.reset(
-        new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+        new MonteCarlo::CoupledElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
                 traits,
@@ -2394,7 +2394,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the test distribution
     test_log_distribution.reset(
-        new TestAnalogElasticElectronScatteringDistribution(
+        new TestCoupledElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
                 traits,
@@ -2414,7 +2414,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the distribution
     distribution.reset(
-        new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+        new MonteCarlo::CoupledElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
                 traits,
@@ -2422,7 +2422,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the test distribution
     test_distribution.reset(
-        new TestAnalogElasticElectronScatteringDistribution(
+        new TestCoupledElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
                 traits,
@@ -2441,7 +2441,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the distribution
     lin_distribution.reset(
-        new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+        new MonteCarlo::CoupledElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
                 traits,
@@ -2449,7 +2449,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the test distribution
     test_lin_distribution.reset(
-        new TestAnalogElasticElectronScatteringDistribution(
+        new TestCoupledElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
                 traits,
@@ -2464,5 +2464,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
 
 //---------------------------------------------------------------------------//
-// end tstAnalogElasticElectronScatteringDistribution.cpp
+// end tstCoupledElasticElectronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

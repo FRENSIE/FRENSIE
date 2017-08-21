@@ -37,13 +37,13 @@ bool unit_based_interpolation_mode_on = true;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that an analog elastic reaction can be created
+// Check that an coupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
-                   createAnalogElasticReaction )
+                   createCoupledElasticReaction )
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction<Utility::LinLinLog>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -53,7 +53,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                       MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
 
   // Test that the stored cross section is correct

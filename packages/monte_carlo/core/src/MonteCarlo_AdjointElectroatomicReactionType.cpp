@@ -24,8 +24,8 @@ std::string convertAdjointElectroatomicReactionEnumToString(
   {
   case TOTAL_ADJOINT_ELECTROATOMIC_REACTION:
     return "Total Adjoint Electroatomic Reaction";
-  case ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
-    return "Analog Elastic Adjoint Electroatomic Reaction";
+  case COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+    return "Coupled Elastic Adjoint Electroatomic Reaction";
   case HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
     return "Hybrid Elastic Adjoint Electroatomic Reaction";
   case CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:

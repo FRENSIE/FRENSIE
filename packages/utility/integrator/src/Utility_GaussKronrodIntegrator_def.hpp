@@ -740,8 +740,6 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
   int last;
   for ( last = 1; last < d_subinterval_limit; ++last )
   {
-    T area_12 = 0.0;
-    T error_12 = 0.0;
     T result_asc_1 = 0.0, result_asc_2 = 0.0;
     BinTraits<T> bin_1, bin_2;
 
@@ -932,8 +930,6 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
   int last;
   for ( last = 1; last < d_subinterval_limit; ++last )
   {
-    T area_12 = 0.0;
-    T error_12 = 0.0;
     T result_asc_1 = 0.0, result_asc_2 = 0.0;
     BinTraits<T> bin_1, bin_2;
 
@@ -1061,7 +1057,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   T total_area = 0.0;
   T total_error = 0.0, total_area_abs = 0.0;
 
-  int number_of_intervals = points_of_interest.size() - 1;
+  unsigned number_of_intervals = points_of_interest.size() - 1;
   std::vector<bool> rescale_bin_error( number_of_intervals );
 
   absolute_error = 0.0;
@@ -1102,7 +1098,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   Teuchos::Array<int> bin_order( number_of_intervals );
 
   // Compute error approximations for integrals between the points of interest
-  for ( int i = 0; i < number_of_intervals; ++i )
+  for ( unsigned i = 0; i < number_of_intervals; ++i )
   {
     if ( rescale_bin_error[i] )
       bin_array[i].error = absolute_error;
@@ -1170,7 +1166,6 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   int round_off_1 = 0;
   int extrapolated_round_off_1 = 0;
   int round_off_2 = 0;
-  int ierro = 0;
 
 
   T error_correction = 0.0;
@@ -1185,12 +1180,9 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     ksgn = -1;
   }
 
-  //++number_of_intervals;
-  for ( number_of_intervals; number_of_intervals < d_subinterval_limit; ++number_of_intervals )
+  for ( ; number_of_intervals < d_subinterval_limit; ++number_of_intervals )
   {
-    T area_12 = 0.0, error_12 = 0.0;
     T result_asc_1 = 0.0, result_asc_2 = 0.0;
-    T smallest_bin_size = 0.0; // 1.5*smallest bin size
 
     ExtrpolatedBinTraits<T> bin_1, bin_2;
 
@@ -1298,7 +1290,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     if ( bin_1.level + 1 <= max_level )
     {
-      error_over_large_bins += error_12;
+      error_over_large_bins += (bin_1.error + bin_2.error);
     }
 
     bin = bin_array[bin_order[nr_max]];
@@ -1421,7 +1413,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     T long_result = 0.0;
     std::vector<int>::reverse_iterator j =  bin_order.rbegin();
     // Sum result over all bins
-    for ( j; j != bin_order.rend(); ++j )
+    for ( ; j != bin_order.rend(); ++j )
     {
       bin = bin_array[*j];
       long_result += bin.result;
@@ -1620,7 +1612,6 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   int round_off_1 = 0;
   int extrapolated_round_off_1 = 0;
   int round_off_2 = 0;
-  int ierro = 0;
 
 
   T error_correction = 0.0;
@@ -1638,9 +1629,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   //++number_of_intervals;
   for ( number_of_intervals; number_of_intervals < d_subinterval_limit; ++number_of_intervals )
   {
-    T area_12 = 0.0, error_12 = 0.0;
     T result_asc_1 = 0.0, result_asc_2 = 0.0;
-    T smallest_bin_size = 0.0; // 1.5*smallest bin size
 
     ExtrpolatedBinTraits<T> bin_1, bin_2;
 
@@ -1748,7 +1737,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
 
     if ( bin_1.level + 1 <= max_level )
     {
-      error_over_large_bins += error_12;
+      error_over_large_bins += (bin_1.error + bin_2.error);
     }
 
     bin = bin_array[bin_order[nr_max]];

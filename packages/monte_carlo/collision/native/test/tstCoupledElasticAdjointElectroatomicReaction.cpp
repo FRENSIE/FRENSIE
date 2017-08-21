@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAnalogElasticAdjointElectroatomicReaction.cpp
+//! \file   tstCoupledElasticAdjointElectroatomicReaction.cpp
 //! \author Luke Kersting
-//! \brief  Analog Elastic adjoint electroatomic reaction unit tests
+//! \brief  Coupled Elastic adjoint electroatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,8 +17,8 @@
 
 // FRENSIE Includes
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-#include "MonteCarlo_AnalogElasticAdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CoupledElasticAdjointElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
@@ -29,73 +29,73 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::AnalogElasticAdjointElectroatomicReaction<Utility::LinLin> > analog_elastic_reaction;
+Teuchos::RCP<MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LinLin> > coupled_elastic_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticAdjointElectroatomicReaction, getReactionType )
+TEUCHOS_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getReactionType(),
-		       MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( coupled_elastic_reaction->getReactionType(),
+		       MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticAdjointElectroatomicReaction, getThresholdEnergy )
+TEUCHOS_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getThresholdEnergy(),
+  TEST_EQUALITY_CONST( coupled_elastic_reaction->getThresholdEnergy(),
                        1.0e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticAdjointElectroatomicReaction, getNumberOfEmittedElectrons )
+TEUCHOS_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction, getNumberOfEmittedElectrons )
 {
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
+  TEST_EQUALITY_CONST( coupled_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getNumberOfEmittedElectrons(20.0),
+  TEST_EQUALITY_CONST( coupled_elastic_reaction->getNumberOfEmittedElectrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticAdjointElectroatomicReaction, getNumberOfEmittedPhotons )
+TEUCHOS_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction, getNumberOfEmittedPhotons )
 {
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
+  TEST_EQUALITY_CONST( coupled_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( analog_elastic_reaction->getNumberOfEmittedPhotons(20.0),
+  TEST_EQUALITY_CONST( coupled_elastic_reaction->getNumberOfEmittedPhotons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the analog cross section can be returned
-TEUCHOS_UNIT_TEST( AnalogElasticAdjointElectroatomicReaction,
+// Check that the coupled cross section can be returned
+TEUCHOS_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
 
   double cross_section =
-    analog_elastic_reaction->getCrossSection( 1.0E-05 );
+    coupled_elastic_reaction->getCrossSection( 1.0E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
   cross_section =
-    analog_elastic_reaction->getCrossSection( 1.0E-03 );
+    coupled_elastic_reaction->getCrossSection( 1.0E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.80490481543817E+06, 1e-12 );
 
   cross_section =
-    analog_elastic_reaction->getCrossSection( 20.0 );
+    coupled_elastic_reaction->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987E+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
-TEUCHOS_UNIT_TEST( AnalogElasticAdjointElectroatomicReaction, react )
+TEUCHOS_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction, react )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
   electron.setEnergy( 20.0 );
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticAdjointElectroatomicReaction, react )
 
   Data::SubshellType shell_of_interaction;
 
-  analog_elastic_reaction->react( electron, bank, shell_of_interaction );
+  coupled_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_ASSERT( electron.getZDirection() < 2.0 );
@@ -154,11 +154,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getAdjointTotalElasticCrossSection().begin(),
         data_container.getAdjointTotalElasticCrossSection().end() );
 
-    // Create analog distribution
-    std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
-        analog_elastic_distribution,
+    // Create coupled distribution
+    std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+        coupled_elastic_distribution;
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+        coupled_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
         total_cross_section,
@@ -167,12 +167,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         evaluation_tol );
 
     // Create the reaction
-    analog_elastic_reaction.reset(
-      new MonteCarlo::AnalogElasticAdjointElectroatomicReaction<Utility::LinLin>(
+    coupled_elastic_reaction.reset(
+      new MonteCarlo::CoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
         energy_grid,
         total_cross_section,
         data_container.getAdjointTotalElasticCrossSectionThresholdEnergyIndex(),
-        analog_elastic_distribution ) );
+        coupled_elastic_distribution ) );
   }
 
   // Initialize the random number generator
@@ -182,5 +182,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
 
 //---------------------------------------------------------------------------//
-// end tstAnalogElasticAdjointElectroatomicReaction.cpp
+// end tstCoupledElasticAdjointElectroatomicReaction.cpp
 //---------------------------------------------------------------------------//

@@ -63,7 +63,7 @@ public:
   ~TestStandardAdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
-  // Allow public access to the AnalogElasticElectronScatteringDistribution protected member functions
+  // Allow public access to the CoupledElasticElectronScatteringDistribution protected member functions
   using DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData;
   using DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationData;
   using DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator::setComptonProfileData;

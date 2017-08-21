@@ -10,18 +10,19 @@
 #define MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_AnalogElasticTraits.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
+#include "Utility_ElasticTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
 template< class TwoDInterpPolicy >
-struct TwoDInterpIsLinLinLog
+struct TwoDInterpIsLogLogLog
 {
     static const bool value = false;
 };
 
 template<>
-struct TwoDInterpIsLinLinLog< Utility::LinLinLog >
+struct TwoDInterpIsLogLogLog< Utility::LogLogLog >
 {
     static const bool value = true;
 };
@@ -30,11 +31,11 @@ struct TwoDInterpIsLinLinLog< Utility::LinLinLog >
 //      ****FORWARD DATA PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
 
-// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+// Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
 template<typename TwoDInterpPolicy>
-void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-    std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
+void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
+    std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
+        coupled_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
@@ -50,8 +51,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
   energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
                       data_container.getElectronEnergyGrid().end() );
 
-  ThisType::createAnalogElasticDistribution<TwoDInterpPolicy>(
-    analog_elastic_distribution,
+  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy>(
+    coupled_elastic_distribution,
     cutoff_cross_section,
     total_cross_section,
     energy_grid,
@@ -63,11 +64,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
     evaluation_tol );
 }
 
-// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+// Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
 template<typename TwoDInterpPolicy>
-void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-    std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
+void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
+    std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
+        coupled_elastic_distribution,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> total_cross_section,
@@ -75,8 +76,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
-  ThisType::createAnalogElasticDistribution<TwoDInterpPolicy>(
-    analog_elastic_distribution,
+  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy>(
+    coupled_elastic_distribution,
     cutoff_cross_section,
     total_cross_section,
     energy_grid,
@@ -164,11 +165,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 //      ****ADJOINT DATA PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
 
-// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+// Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
 template<typename TwoDInterpPolicy>
-void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-    std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
+void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
+    std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
+        coupled_elastic_distribution,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> total_cross_section,
@@ -176,8 +177,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
-  ThisType::createAnalogElasticDistribution<TwoDInterpPolicy>(
-    analog_elastic_distribution,
+  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy>(
+    coupled_elastic_distribution,
     cutoff_cross_section,
     total_cross_section,
     energy_grid,
@@ -265,15 +266,15 @@ ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy>(
 //      ****DATA CONTAINER INDEPENDENT PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
 
-// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+// Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
 /*! \details This function has been overloaded so it can be called without using
  *  the native data container. This functionality is neccessary for generating
  *  native moment preserving data without first creating native data files.
  */
 template<typename TwoDInterpPolicy>
-void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-    std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
+void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
+    std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
+        coupled_elastic_distribution,
     const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
     const Teuchos::ArrayRCP<const double>& total_cross_section,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -321,7 +322,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
                                   total_cross_section,
                                   cross_section_ratios );
 
-  // Create the Analog elastic traits
+  // Create the Elastic electron traits
   std::shared_ptr<const ElasticTraits> elastic_traits(
     new ElasticTraits( atomic_number ) );
 
@@ -336,9 +337,9 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
         scattering_function,
         evaluation_tol );
 
-  // Create analog distribution
-  analog_elastic_distribution.reset(
-      new AnalogElasticElectronScatteringDistribution(
+  // Create coupled distribution
+  coupled_elastic_distribution.reset(
+      new CoupledElasticElectronScatteringDistribution(
                 scattering_function,
                 cross_section_ratios,
                 elastic_traits,
@@ -456,9 +457,29 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
-  // Create the scattering function
-  std::shared_ptr<TwoDDist> scattering_function;
-  ThisType::createScatteringFunction<TwoDInterpPolicy>(
+  // Create the full scattering function
+  std::shared_ptr<TwoDDist> full_scattering_function;
+    ThisType::createScatteringFunction<TwoDInterpPolicy>(
+        cutoff_elastic_angles,
+        cutoff_elastic_pdf,
+        angular_energy_grid,
+        full_scattering_function,
+        ElasticTraits::mu_peak,
+        evaluation_tol,
+        false );
+
+  if( cutoff_angle_cosine >= ElasticTraits::mu_peak )
+  {
+    cutoff_elastic_distribution.reset(
+        new CutoffElasticElectronScatteringDistribution(
+                full_scattering_function,
+                correlated_sampling_mode_on ) );
+  }
+  else
+  {
+    // Create the scattering function below the cutoff angle cosine
+    std::shared_ptr<TwoDDist> scattering_function;
+    ThisType::createScatteringFunction<TwoDInterpPolicy>(
         cutoff_elastic_angles,
         cutoff_elastic_pdf,
         angular_energy_grid,
@@ -467,31 +488,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
         evaluation_tol,
         false );
 
-  if( cutoff_angle_cosine < 0.999999 )
-  {
-    // Create the full scattering function
-    std::shared_ptr<TwoDDist> full_scattering_function;
-    ThisType::createScatteringFunction<TwoDInterpPolicy>(
-        cutoff_elastic_angles,
-        cutoff_elastic_pdf,
-        angular_energy_grid,
-        full_scattering_function,
-        1.0,
-        evaluation_tol,
-        false );
-
     cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
                 full_scattering_function,
                 scattering_function,
                 cutoff_angle_cosine,
-                correlated_sampling_mode_on ) );
-  }
-  else
-  {
-    cutoff_elastic_distribution.reset(
-        new CutoffElasticElectronScatteringDistribution(
-                scattering_function,
                 correlated_sampling_mode_on ) );
   }
 }
@@ -898,7 +899,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
 //  }
 //}
 
-// Create the analog scattering function
+// Create the coupled scattering function
 template<typename TwoDInterpPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
@@ -931,18 +932,20 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringF
     double cutoff_ratio = cross_section_ratios->evaluate( energy_grid[n] );
 
 
-  // Create analog elastic distribution
+  // Create coupled elastic distribution
   function_data[n].second.reset(
-    new const AnalogDist( elastic_angles.find( energy_grid[n] )->second,
-                          elastic_pdf.find( energy_grid[n] )->second,
-                          eta,
-                          cutoff_ratio ) );
+    new const Utility::CoupledElasticDistribution<Utility::LinLin>(
+                                elastic_angles.find( energy_grid[n] )->second,
+                                elastic_pdf.find( energy_grid[n] )->second,
+                                eta,
+                                cutoff_ratio ) );
   }
 
   // Set the scattering function
   scattering_function.reset(
     new Utility::ElasticTwoDDistribution<TwoDInterpPolicy>(
         function_data,
+        1.0,
         1e-6,
         evaluation_tol ) );
 }
@@ -999,8 +1002,9 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
 
   // Set the scattering function
   scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
+    new Utility::ElasticTwoDDistribution<TwoDInterpPolicy>(
         function_data,
+        cutoff_angle_cosine,
         1e-6,
         evaluation_tol ) );
 }

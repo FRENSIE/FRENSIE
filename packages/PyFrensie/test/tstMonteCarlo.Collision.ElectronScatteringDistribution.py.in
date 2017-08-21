@@ -32,16 +32,16 @@ Native = importPyFrensieModuleFromBuildDir('Data.Native')
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the analog electron scattering distribution
-class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
-    "TestCase class for MonteCarlo.Collision analog elastic electron scattering distribution"
+# Test the coupled electron scattering distribution
+class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision coupled elastic electron scattering distribution"
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createAnalogElasticDistribution( self.data, "LinLinLog", True, 1e-15 )
+        self.dist = Collision.createCoupledElasticDistribution( self.data, "LinLinLog", True, 1e-15 )
 
     def testevaluate(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluate method"
+        "*Test MonteCarlo.Collision.createCoupledElasticDistribution evaluate method"
         energy = 1e5
         self.assertTrue(self.dist.evaluate(energy, -0.01) == 4.8836447748920078e-16)
         self.assertTrue(self.dist.evaluate(energy, 0.71) == 1.0198661034411070e-14)
@@ -71,7 +71,7 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
                                 delta=1e-9*2.2274203961181431e+12 )
 
     def testevaluatePDF(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluatePDF method"
+        "*Test MonteCarlo.Collision.createCoupledElasticDistribution evaluatePDF method"
         energy = 1e5
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, -0.01),
                                 4.8836447290971699e-16,
@@ -113,7 +113,7 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
                                 delta=1e-9*8.7837650620821399e+24 )
 
     def testevaluateCDF(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticDistribution evaluateCDF method"
+        "*Test MonteCarlo.Collision.createCoupledElasticDistribution evaluateCDF method"
         energy = 1e5
         self.assertAlmostEqual( self.dist.evaluateCDF(energy, -0.01),
                                 1.5194151539596023e-16,
@@ -150,7 +150,7 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluateCDF(energy, 1.0) == 1.0)
 
     def testSample(self):
-        "*Test MonteCarlo.Collision.createAnalogElasticDistribution sample method"
+        "*Test MonteCarlo.Collision.createCoupledElasticDistribution sample method"
         random_numbers = [ 0.5, 0.5 ]
         Prng.RandomNumberGenerator.setFakeStream(random_numbers)
         energy = 6.625e1
@@ -170,16 +170,16 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
         self.assertTrue( energy == outgoing_energy)
 
 ##-----------------------------------------------------------------------------#
-## Test the analog adjoint electron scattering distribution
-#class AnalogElasticAdjointElectronScatteringDistributionTestCase(unittest.TestCase):
-#    "TestCase class for MonteCarlo.Collision analog elastic adjoint electron scattering distribution"
+## Test the coupled adjoint electron scattering distribution
+#class CoupledElasticAdjointElectronScatteringDistributionTestCase(unittest.TestCase):
+#    "TestCase class for MonteCarlo.Collision coupled elastic adjoint electron scattering distribution"
 
 #    def setUp(self):
 #        self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.adjointfile )
-#        self.dist = Collision.createAnalogElasticDistribution( self.data, True, True, 1e-7 )
+#        self.dist = Collision.createCoupledElasticDistribution( self.data, True, True, 1e-7 )
 
 #    def testEvaluate(self):
-#        "*Test MonteCarlo.Collision.createAnalogElasticDistribution adjoint evaluate method"
+#        "*Test MonteCarlo.Collision.createCoupledElasticDistribution adjoint evaluate method"
 #        energy = 20.0
 #        self.assertAlmostEqual( self.dist.evaluate(energy, -1.0),
 #                                1.795001149384975663e-10,
@@ -221,7 +221,7 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 #                                delta=1e-12*6.636473391404605309e+02 )
 
 #    def testEvaluatePDF(self):
-#        "*Test MonteCarlo.Collision.createAnalogElasticDistribution adjoint evaluatePDF method"
+#        "*Test MonteCarlo.Collision.createCoupledElasticDistribution adjoint evaluatePDF method"
 #        energy = 20.0
 #        self.assertAlmostEqual( self.dist.evaluatePDF(energy, -1.0),
 #                                1.793495604046327523e-10,
@@ -263,7 +263,7 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 #                                delta=1e-12*6.636474776238064806e+02 )
 
 #    def testEvaluateCDF(self):
-#        "*Test MonteCarlo.Collision.createAnalogElasticDistribution adjoint evaluateCDF method"
+#        "*Test MonteCarlo.Collision.createCoupledElasticDistribution adjoint evaluateCDF method"
 #        energy = 20.0
 #        self.assertTrue( self.dist.evaluateCDF(energy, -1.0) == 0.0 )
 #        self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.0),
@@ -294,7 +294,7 @@ class AnalogElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
 
 #    def testSample(self):
-#        "*Test MonteCarlo.Collision.createAnalogElasticDistribution adjoint sample method"
+#        "*Test MonteCarlo.Collision.createCoupledElasticDistribution adjoint sample method"
 #        random_numbers = [ 0.5, 0.5 ]
 #        Prng.RandomNumberGenerator.setFakeStream(random_numbers)
 #        energy = 3.2e-2
@@ -320,7 +320,7 @@ class CutoffElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createCutoffElasticDistribution( self.data, 0.9, True, True, 1e-7 )
+        self.dist = Collision.createCutoffElasticDistribution( self.data, 0.9, "LinLinLog", True, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createCutoffElasticDistribution evaluate method"
@@ -528,7 +528,7 @@ class HybridElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createHybridElasticDistribution( self.data, 0.9, True, True, 1e-7 )
+        self.dist = Collision.createHybridElasticDistribution( self.data, 0.9, "LinLinLog", True, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createHybridElasticDistribution evaluate method"
@@ -703,7 +703,7 @@ class MomentPreservingElasticElectronScatteringDistributionTestCase(unittest.Tes
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createMomentPreservingElasticDistribution( self.data, 0.9, True, True, 1e-7 )
+        self.dist = Collision.createMomentPreservingElasticDistribution( self.data, 0.9, "LinLinLog", True, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createMomentPreservingElasticDistribution evaluate method"
@@ -908,7 +908,7 @@ class BremsstrahlungElectronScatteringDistributionTestCase_dipole(unittest.TestC
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createBremsstrahlungDistribution( self.data, True, True, True, 1e-7 )
+        self.dist = Collision.createBremsstrahlungDistribution( self.data, "LinLinLog", True, True, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungDistribution dipole evaluate method"
@@ -1020,7 +1020,7 @@ class BremsstrahlungElectronScatteringDistributionTestCase_2bs(unittest.TestCase
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createBremsstrahlungDistribution( self.data, 1, True, True, True, 1e-7 )
+        self.dist = Collision.createBremsstrahlungDistribution( self.data, 1, "LinLinLog", True, True, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungDistribution 2bs evaluate method"
@@ -1136,7 +1136,7 @@ class ElectroionizationSubshellElectronScatteringDistributionTestCase(unittest.T
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
         self.shell = 1
         self.binding_energy = self.data.getSubshellBindingEnergy( self.shell )
-        self.dist = Collision.createElectroionizationSubshellDistribution( self.data, self.shell, self.binding_energy, True, True, True, 1e-7 )
+        self.dist = Collision.createElectroionizationSubshellDistribution( self.data, self.shell, self.binding_energy, "LinLinLog", True, True, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createElectroionizationSubshellDistribution evaluate method"
@@ -1260,8 +1260,8 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    suite.addTest(unittest.makeSuite(AnalogElasticElectronScatteringDistributionTestCase))
-#    suite.addTest(unittest.makeSuite(AnalogElasticAdjointElectronScatteringDistributionTestCase))
+    suite.addTest(unittest.makeSuite(CoupledElasticElectronScatteringDistributionTestCase))
+#    suite.addTest(unittest.makeSuite(CoupledElasticAdjointElectronScatteringDistributionTestCase))
     suite.addTest(unittest.makeSuite(CutoffElasticElectronScatteringDistributionTestCase))
 #    suite.addTest(unittest.makeSuite(CutoffElasticAdjointElectronScatteringDistributionTestCase))
     suite.addTest(unittest.makeSuite(HybridElasticElectronScatteringDistributionTestCase))

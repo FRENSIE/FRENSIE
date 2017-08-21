@@ -151,20 +151,20 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the coupled elastic cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-5,
-        MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+        MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         1e-3,
-        MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+        MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 2.80490481543817E+06*num_density, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         20.0,
-        MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+        MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
   TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987E+04*num_density, 1e-12 );
 
 

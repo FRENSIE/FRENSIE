@@ -52,9 +52,9 @@ private:
 
 public:
 
-  //! Create an analog elastic scattering adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
-  static void createAnalogElasticReaction(
+  //! Create an coupled elastic scattering adjoint electroatomic reaction
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  static void createCoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -64,7 +64,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -76,7 +76,7 @@ public:
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createCutoffElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -88,7 +88,7 @@ public:
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createScreenedRutherfordElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -100,7 +100,7 @@ public:
     const double evaluation_tol );
 
   //! Create the moment preserving elastic scattering adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createMomentPreservingElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -120,7 +120,7 @@ public:
     std::shared_ptr<AdjointElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -133,7 +133,7 @@ public:
     const double evaluation_tol );
 
   //! Create the subshell electroionization adjoint electroatomic reactions
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -146,7 +146,7 @@ public:
     const double evaluation_tol );
 
   //! Create the bremsstrahlung adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createBremsstrahlungReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,

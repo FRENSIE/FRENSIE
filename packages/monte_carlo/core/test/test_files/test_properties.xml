@@ -38,32 +38,41 @@
   <ParameterList name="Electron Properties">
     <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
     <Parameter name="Max Electron Energy" type="double" value="10.0"/>
-    <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
-    <Parameter name="Electron Elastic" type="bool" value="false"/>
-    <Parameter name="Electron Electroionization" type="bool" value="false"/>
-    <Parameter name="Electron Bremsstrahlung" type="bool" value="false"/>
-    <Parameter name="Electron Atomic Excitation" type="bool" value="false"/>
+    <Parameter name="Electron Hash Grid Bins" type="unsigned int" value="400"/>
     <Parameter name="Electron Evaluation Tolerance" type="double" value="1e-5"/>
-    <Parameter name="Electron LinLinLog Interpolation" type="bool" value="false"/>
     <Parameter name="Electron Correlated Sampling" type="bool" value="false"/>
     <Parameter name="Electron Unit Based Interpolation" type="bool" value="false"/>
-    <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
+    <Parameter name="Electron Elastic" type="bool" value="false"/>
+    <Parameter name="Electron Elastic Interpolation" type="string" value="LinLinLin"/>
+    <Parameter name="Elastic Electron Distribution" type="string" value="Hybrid"/>
     <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
+    <Parameter name="Electron Electroionization" type="bool" value="false"/>
+    <Parameter name="Electron Electroionization Interpolation" type="string" value="LinLinLin"/>
+    <Parameter name="Electron Bremsstrahlung" type="bool" value="false"/>
+    <Parameter name="Electron Bremsstrahlung Interpolation" type="string" value="LinLinLin"/>
+    <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Electron Atomic Excitation" type="bool" value="false"/>
   </ParameterList>
 
   <ParameterList name="Adjoint Electron Properties">
     <Parameter name="Min Adjoint Electron Energy" type="double" value="1e-2"/>
     <Parameter name="Max Adjoint Electron Energy" type="double" value="10.0"/>
     <Parameter name="Adjoint Electron Hash Grid Bins" type="unsigned int" value="400"/>
-    <Parameter name="Adjoint Electron Elastic" type="bool" value="false"/>
-    <Parameter name="Adjoint Electron Electroionization" type="bool" value="false"/>
-    <Parameter name="Adjoint Electron Bremsstrahlung" type="bool" value="false"/>
-    <Parameter name="Adjoint Electron Atomic Excitation" type="bool" value="false"/>
     <Parameter name="Adjoint Electron Evaluation Tolerance" type="double" value="1e-5"/>
     <Parameter name="Adjoint Electron Correlated Sampling" type="bool" value="false"/>
     <Parameter name="Adjoint Electron Unit Based Interpolation" type="bool" value="false"/>
-    <Parameter name="Adjoint Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+<!--    <Parameter name="Adjoint Electron Atomic Relaxation" type="bool" value="false"/>-->
+    <Parameter name="Adjoint Electron Elastic" type="bool" value="false"/>
+<!--    <Parameter name="Adjoint Electron Elastic Interpolation" type="string" value="LinLinLin"/>-->
+    <Parameter name="Adjoint Elastic Electron Distribution" type="string" value="Hybrid"/>
     <Parameter name="Adjoint Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
+    <Parameter name="Adjoint Electron Electroionization" type="bool" value="false"/>
+<!--    <Parameter name="Adjoint Electron Electroionization Interpolation" type="string" value="LinLinLin"/>-->
+    <Parameter name="Adjoint Electron Bremsstrahlung" type="bool" value="false"/>
+<!--    <Parameter name="Adjoint Electron Bremsstrahlung Interpolation" type="string" value="LinLinLin"/>-->
+    <Parameter name="Adjoint Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Adjoint Electron Atomic Excitation" type="bool" value="false"/>
   </ParameterList>
 
 </ParameterList>

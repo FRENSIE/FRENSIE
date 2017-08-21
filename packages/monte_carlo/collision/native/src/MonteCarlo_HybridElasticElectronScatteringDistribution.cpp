@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_HybridElasticElectronScatteringDistribution.cpp
 //! \author Luke Kersting
-//! \brief  The analog elastic electron scattering distribution definition
+//! \brief  The coupled elastic electron scattering distribution definition
 //!
 //---------------------------------------------------------------------------//
 

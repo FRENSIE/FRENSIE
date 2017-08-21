@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLinLinLinAnalogElasticTwoDDistribution.cpp
+//! \file   tstLogLogLogCoupledElasticTwoDDistribution.cpp
 //! \author Luke Kersting
 //! \brief  The elastic two-dimensional dist. unit tests
-//!         (Analog with LinLinLin interpolation)
+//!         (Coupled with LogLogLog interpolation)
 //!
 //---------------------------------------------------------------------------//
 
@@ -23,7 +23,7 @@
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DynamicOutputFormatter.hpp"
-#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
@@ -314,7 +314,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
                                                          distribution_data ) );
   }
 
@@ -333,7 +333,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 3.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
                                                          distribution_data ) );
   }
 
@@ -364,7 +364,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -406,17 +406,17 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
   TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, 1.0 ), 9.00001800000899910e-01, 1e-15 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, -1.0 ),
-                          0.495,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, -1.0 ),
+                          3.46102718214321869450e-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.0 ),
-                          2.475,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.0 ),
+                          1.73051359107160940276,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.999999 ),
-                          4.95,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.999999 ),
+                          3.46102718214321880552,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 1.0 ),
-                          4.95000990000494844878,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 1.0 ),
+                          3.4610341042010435153,
                           1e-15 );
 
   // On the upper bin boundary
@@ -485,16 +485,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, -1.0*cgs::dimensionless() ),
-                                  0.495*barn,
+                                  3.46102718214321869450e-01*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  2.475*barn,
+                                  1.73051359107160940276*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.999999*cgs::dimensionless() ),
-                                  4.95*barn,
+                                  3.46102718214321880552*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  4.95000990000494844878*barn,
+                                  3.46103410420104351530*barn,
                                   1e-15 );
 
   // On the upper bin boundary
@@ -556,16 +556,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluateExact )
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, -1.0 ),
-                          0.495,
+                          3.46102718214321869450e-01,
                           1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.0 ),
-                          2.475,
+                          1.73051359107160940276,
                           1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.999999 ),
-                          4.95,
+                          3.46102718214321880552,
                           1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 1.0 ),
-                          4.95000990000494844878,
+                          3.46103410420104351530,
                           1e-15 );
 
   // On the upper bin boundary
@@ -640,16 +640,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, -1.0*cgs::dimensionless() ),
-                                  0.495*barn,
+                                  3.46102718214321869450e-01*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  2.475*barn,
+                                  1.73051359107160940276*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 0.999999*cgs::dimensionless() ),
-                                  4.95*barn,
+                                  3.46102718214321880552*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  4.95000990000494844878*barn,
+                                  3.46103410420104351530*barn,
                                   1e-15 );
 
   // On the upper bin boundary
@@ -715,16 +715,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, correlatedEvaluate )
 
   // In the first bin
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, -1.0 ),
-                          0.495,
+                          3.46102718214321869450e-01,
                           1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 0.0 ),
-                          2.475,
+                          1.73051359107160940276,
                           1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 0.999999 ),
-                          4.95,
+                          3.46102718214321880552,
                           1e-15 );
   TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 1.0 ),
-                          4.95000990000494844878,
+                          3.46103410420104351530,
                           1e-15 );
 
   // On the upper bin boundary
@@ -799,16 +799,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, -1.0*cgs::dimensionless() ),
-                                  0.495*barn,
+                                  3.46102718214321869450e-01*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 0.0*cgs::dimensionless() ),
-                                  2.475*barn,
+                                  1.73051359107160940276*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 0.999999*cgs::dimensionless() ),
-                                  4.95*barn,
+                                  3.46102718214321880552*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 1.0*cgs::dimensionless() ),
-                                  4.95000990000494844878*barn,
+                                  3.46103410420104351530*barn,
                                   1e-15 );
 
   // On the upper bin boundary
@@ -1672,12 +1672,12 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, -1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.0 ),
                           2.57143040816457724151e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.999999 ), 0.9 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.999999 ), 0.9 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 1.0 ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1963,21 +1963,21 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -2124,21 +2124,21 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -2296,21 +2296,21 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -2490,21 +2490,21 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -2693,21 +2693,21 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -2905,21 +2905,21 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -3125,21 +3125,21 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -3368,21 +3368,21 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
   fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
   fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.585; // use lower bin boundary
   fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
+  fake_stream[6] = 0.585; // use lower bin boundary
   fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
+  fake_stream[8] = 0.584; // use upper bin boundary
   fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
+  fake_stream[10] = 0.584; // use upper bin boundary
   fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.584; // use upper bin boundary
   fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
+  fake_stream[14] = 0.584; // use upper bin boundary
   fake_stream[15] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -3563,14 +3563,14 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 8 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.5; // use lower bin boundary
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 0.5; // use lower bin boundary
-  fake_stream[4] = 0.49; // use upper bin boundary
-  fake_stream[5] = 0.49; // use upper bin boundary
-  fake_stream[6] = 0.49; // use upper bin boundary
-  fake_stream[7] = 0.49; // use upper bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
+  fake_stream[1] = 0.585; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
+  fake_stream[3] = 0.585; // use lower bin boundary
+  fake_stream[4] = 0.584; // use upper bin boundary
+  fake_stream[5] = 0.584; // use upper bin boundary
+  fake_stream[6] = 0.584; // use upper bin boundary
+  fake_stream[7] = 0.584; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Samples from lower boundary of second bin
@@ -3692,14 +3692,14 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 8 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.5; // use lower bin boundary
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 0.5; // use lower bin boundary
-  fake_stream[4] = 0.49; // use upper bin boundary
-  fake_stream[5] = 0.49; // use upper bin boundary
-  fake_stream[6] = 0.49; // use upper bin boundary
-  fake_stream[7] = 0.49; // use upper bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
+  fake_stream[1] = 0.585; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
+  fake_stream[3] = 0.585; // use lower bin boundary
+  fake_stream[4] = 0.584; // use upper bin boundary
+  fake_stream[5] = 0.584; // use upper bin boundary
+  fake_stream[6] = 0.584; // use upper bin boundary
+  fake_stream[7] = 0.584; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Samples from lower boundary of second bin
@@ -3855,21 +3855,21 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // In the first bin
   fake_stream.resize( 16 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5; // use lower bin boundary
+  fake_stream[1] = 0.585; // use lower bin boundary
   fake_stream[2] = 0.2;
-  fake_stream[3] = 0.5; // use lower bin boundary
+  fake_stream[3] = 0.585; // use lower bin boundary
   fake_stream[4] = 0.9;
-  fake_stream[5] = 0.5; // use lower bin boundary
+  fake_stream[5] = 0.585; // use lower bin boundary
   fake_stream[6] = 1.0-1e-15;
-  fake_stream[7] = 0.5; // use lower bin boundary
+  fake_stream[7] = 0.585; // use lower bin boundary
   fake_stream[8] = 0.0;
-  fake_stream[9] = 0.49; // use upper bin boundary
+  fake_stream[9] = 0.584; // use upper bin boundary
   fake_stream[10] = 0.2;
-  fake_stream[11] = 0.49; // use upper bin boundary
+  fake_stream[11] = 0.584; // use upper bin boundary
   fake_stream[12] = 0.9;
-  fake_stream[13] = 0.49; // use upper bin boundary
+  fake_stream[13] = 0.584; // use upper bin boundary
   fake_stream[14] = 1.0-1e-15;
-  fake_stream[15] = 0.49; // use upper bin boundary
+  fake_stream[15] = 0.584; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Samples from lower boundary of second bin
@@ -4034,21 +4034,21 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // In the first bin
   fake_stream.resize( 16 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5; // use lower bin boundary
+  fake_stream[1] = 0.585; // use lower bin boundary
   fake_stream[2] = 0.2;
-  fake_stream[3] = 0.5; // use lower bin boundary
+  fake_stream[3] = 0.585; // use lower bin boundary
   fake_stream[4] = 0.9;
-  fake_stream[5] = 0.5; // use lower bin boundary
+  fake_stream[5] = 0.585; // use lower bin boundary
   fake_stream[6] = 1.0-1e-15;
-  fake_stream[7] = 0.5; // use lower bin boundary
+  fake_stream[7] = 0.585; // use lower bin boundary
   fake_stream[8] = 0.0;
-  fake_stream[9] = 0.49; // use upper bin boundary
+  fake_stream[9] = 0.584; // use upper bin boundary
   fake_stream[10] = 0.2;
-  fake_stream[11] = 0.49; // use upper bin boundary
+  fake_stream[11] = 0.584; // use upper bin boundary
   fake_stream[12] = 0.9;
-  fake_stream[13] = 0.49; // use upper bin boundary
+  fake_stream[13] = 0.584; // use upper bin boundary
   fake_stream[14] = 1.0-1e-15;
-  fake_stream[15] = 0.49; // use upper bin boundary
+  fake_stream[15] = 0.584; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Samples from lower boundary of second bin
@@ -4195,14 +4195,14 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 8 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.5; // use lower bin boundary
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 0.5; // use lower bin boundary
-  fake_stream[4] = 0.49; // use upper bin boundary
-  fake_stream[5] = 0.49; // use upper bin boundary
-  fake_stream[6] = 0.49; // use upper bin boundary
-  fake_stream[7] = 0.49; // use upper bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
+  fake_stream[1] = 0.585; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
+  fake_stream[3] = 0.585; // use lower bin boundary
+  fake_stream[4] = 0.584; // use upper bin boundary
+  fake_stream[5] = 0.584; // use upper bin boundary
+  fake_stream[6] = 0.584; // use upper bin boundary
+  fake_stream[7] = 0.584; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Samples from lower boundary of second bin
@@ -4338,14 +4338,14 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 8 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.5; // use lower bin boundary
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 0.5; // use lower bin boundary
-  fake_stream[4] = 0.49; // use upper bin boundary
-  fake_stream[5] = 0.49; // use upper bin boundary
-  fake_stream[6] = 0.49; // use upper bin boundary
-  fake_stream[7] = 0.49; // use upper bin boundary
+  fake_stream[0] = 0.585; // use lower bin boundary
+  fake_stream[1] = 0.585; // use lower bin boundary
+  fake_stream[2] = 0.585; // use lower bin boundary
+  fake_stream[3] = 0.585; // use lower bin boundary
+  fake_stream[4] = 0.584; // use upper bin boundary
+  fake_stream[5] = 0.584; // use upper bin boundary
+  fake_stream[6] = 0.584; // use upper bin boundary
+  fake_stream[7] = 0.584; // use upper bin boundary
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -6105,7 +6105,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the two-dimensional distribution
   {
-    Utility::ElasticTwoDDistribution<Utility::LinLinLin>::DistributionType
+    Utility::ElasticTwoDDistribution<Utility::LogLogLog>::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
@@ -6115,7 +6115,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999; values[2] = 1.0;
 
     distribution_data[0].first = 1.0;
-    distribution_data[0].second.reset( new Utility::AnalogElasticDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    distribution_data[0].second.reset( new Utility::CoupledElasticDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
     // Create the secondary distribution In the first bin
     bin_boundaries[0] = -1.0; values[0] = 1.0;
@@ -6123,9 +6123,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999; values[2] = 10.0;
 
     distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::AnalogElasticDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    distribution_data[1].second.reset( new Utility::CoupledElasticDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LinLinLin>( distribution_data, 1.0, 1e-3, 1e-7 ) );
+    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogLog>( distribution_data, 1.0, 1e-3, 1e-7 ) );
     distribution = tab_distribution;
   }
 
@@ -6143,7 +6143,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 1.0*barn;
 
     primary_bins[0] = 1.0*MeV;
-    secondary_dists[0].reset( new Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    secondary_dists[0].reset( new Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
     // Create the secondary distribution In the first bin
     bin_boundaries[0] = -1.0*cgs::dimensionless(); values[0] = 1.0*barn;
@@ -6151,9 +6151,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 10.0*barn;
 
     primary_bins[1] = 2.0*MeV;
-    secondary_dists[1].reset( new Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
+    secondary_dists[1].reset( new Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::dimensionless,Barn>(
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogLog,MegaElectronVolt,cgs::dimensionless,Barn>(
         primary_bins, secondary_dists, 1.0*cgs::dimensionless(), 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;
@@ -6166,5 +6166,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstLinLinLinAnalogElasticTwoDDistribution.cpp
+// end tstLogLogLogCoupledElasticTwoDDistribution.cpp
 //---------------------------------------------------------------------------//

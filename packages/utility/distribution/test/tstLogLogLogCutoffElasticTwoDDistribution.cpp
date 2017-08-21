@@ -23,11 +23,9 @@
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DynamicOutputFormatter.hpp"
-#include "Utility_CutoffElasticDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 #include "Utility_ElasticTwoDDistribution.hpp"
-#include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
-#include "Utility_ExponentialDistribution.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
 #include "Utility_BarnUnit.hpp"
 
@@ -5206,7 +5204,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999; values[2] = 1.0;
 
     distribution_data[0].first = 1.0;
-    distribution_data[0].second.reset( new Utility::CutoffElasticDistribution<Utility::LinLin>( bin_boundaries, values ) );
+    distribution_data[0].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
 
     // Create the secondary distribution In the first bin
     bin_boundaries[0] = -1.0; values[0] = 1.0;
@@ -5214,7 +5212,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999; values[2] = 10.0;
 
     distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::CutoffElasticDistribution<Utility::LinLin>( bin_boundaries, values ) );
+    distribution_data[1].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
 
     tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogLog>( distribution_data, 0.999999, 1e-3, 1e-7 ) );
     distribution = tab_distribution;
@@ -5234,7 +5232,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 1.0*barn;
 
     primary_bins[0] = 1.0*MeV;
-    secondary_dists[0].reset( new Utility::UnitAwareCutoffElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values ) );
+    secondary_dists[0].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values ) );
 
     // Create the secondary distribution In the first bin
     bin_boundaries[0] = -1.0*cgs::dimensionless(); values[0] = 1.0*barn;
@@ -5242,7 +5240,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 10.0*barn;
 
     primary_bins[1] = 2.0*MeV;
-    secondary_dists[1].reset( new Utility::UnitAwareCutoffElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values ) );
+    secondary_dists[1].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values ) );
 
     unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogLog,MegaElectronVolt,cgs::dimensionless,Barn>(
         primary_bins, secondary_dists, 0.999999*cgs::dimensionless(), 1e-3, 1e-7 ) );

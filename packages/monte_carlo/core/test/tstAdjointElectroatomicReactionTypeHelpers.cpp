@@ -29,9 +29,9 @@ TEUCHOS_UNIT_TEST( AdjointAdjointElectroatomicReactionType,
   TEST_EQUALITY_CONST( reaction_name, "Total Adjoint Electroatomic Reaction" );
 
   reaction_name =
-    MonteCarlo::convertAdjointElectroatomicReactionEnumToString( MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+    MonteCarlo::convertAdjointElectroatomicReactionEnumToString( MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( reaction_name, "Analog Elastic Adjoint Electroatomic Reaction" );
+  TEST_EQUALITY_CONST( reaction_name, "Coupled Elastic Adjoint Electroatomic Reaction" );
 
   reaction_name =
     MonteCarlo::convertAdjointElectroatomicReactionEnumToString( MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
@@ -485,9 +485,9 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionType, ostream_operator )
   oss.str( "" );
   oss.clear();
 
-  oss << MonteCarlo::ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  oss << MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Analog Elastic Adjoint Electroatomic Reaction" );
+  TEST_EQUALITY_CONST( oss.str(), "Coupled Elastic Adjoint Electroatomic Reaction" );
 
   oss.str( "" );
   oss.clear();

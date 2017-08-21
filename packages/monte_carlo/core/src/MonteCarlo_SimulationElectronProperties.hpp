@@ -12,6 +12,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 
 namespace MonteCarlo{
 
@@ -49,65 +51,11 @@ public:
   //! Return the absolute maximum electron energy (MeV)
   static double getAbsoluteMaxElectronEnergy();
 
-  //! Set atomic relaxation mode to off (on by default)
-  void setAtomicRelaxationModeOff();
-
-  //! Set atomic relaxation mode to on (on by default)
-  void setAtomicRelaxationModeOn();
-
-  //! Return if atomic relaxation mode is on
-  bool isAtomicRelaxationModeOn() const;
-
-  //! Set elastic mode to off (on by default)
-  void setElasticModeOff();
-
-  //! Set elastic mode to on (on by default)
-  void setElasticModeOn();
-
-  //! Return if elastic mode is on
-  bool isElasticModeOn() const;
-
-  //! Set electroionization mode to off (on by default)
-  void setElectroionizationModeOff();
-
-  //! Set electroionization mode to on (on by default)
-  void setElectroionizationModeOn();
-
-  //! Return if electroionization mode is on
-  bool isElectroionizationModeOn() const;
-
-  //! Set bremsstrahlung mode to off (on by default)
-  void setBremsstrahlungModeOff();
-
-  //! Set bremsstrahlung mode to on (on by default)
-  void setBremsstrahlungModeOn();
-
-  //! Return if bremsstrahlung mode is on
-  bool isBremsstrahlungModeOn() const;
-
-  //! Set atomic excitation mode to off (on by default)
-  void setAtomicExcitationModeOff();
-
-  //! Set atomic excitation mode to on (on by default)
-  void setAtomicExcitationModeOn();
-
-  //! Return if atomic excitation mode is on
-  bool isAtomicExcitationModeOn() const;
-
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
   void setElectronEvaluationTolerance( const double tol );
 
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
   double getElectronEvaluationTolerance() const;
-
-  //! Set secondary electron LinLinLog interpolation mode to off (on by default)
-  void setLinLinLogInterpolationModeOff();
-
-  //! Set secondary electron LinLinLog interpolation mode to on (on by default)
-  void setLinLinLogInterpolationModeOn();
-
-  //! Return if secondary electron LinLinLog interpolation mode is on
-  bool isLinLinLogInterpolationModeOn() const;
 
   //! Set correlated sampling mode to off (on by default)
   void setCorrelatedSamplingModeOff();
@@ -127,6 +75,84 @@ public:
   //! Return if unit based interpolation mode is on
   bool isUnitBasedInterpolationModeOn() const;
 
+  //! Set the number of electron hash grid bins
+  void setNumberOfElectronHashGridBins( const unsigned bins );
+
+  //! Return the number of electron hash grid bins
+  unsigned getNumberOfElectronHashGridBins() const;
+
+  //! Set atomic relaxation mode to off (on by default)
+  void setAtomicRelaxationModeOff();
+
+  //! Set atomic relaxation mode to on (on by default)
+  void setAtomicRelaxationModeOn();
+
+  //! Return if atomic relaxation mode is on
+  bool isAtomicRelaxationModeOn() const;
+
+  /* ------ Elastic Properties ------ */
+
+  //! Set elastic mode to off (on by default)
+  void setElasticModeOff();
+
+  //! Set elastic mode to on (on by default)
+  void setElasticModeOn();
+
+  //! Return if elastic mode is on
+  bool isElasticModeOn() const;
+
+  //! Set the elastic 2D interpolation policy (LogLogLog by default)
+  void setElasticTwoDInterpPolicy( TwoDInterpolationType interp_type );
+
+  //! Return the elastic 2D interpolation policy
+  TwoDInterpolationType getElasticTwoDInterpPolicy() const;
+
+  //! Set the elastic distribution mode ( Decoupled by default )
+  void setElasticElectronDistributionMode( ElasticElectronDistributionType distribution_mode );
+
+  //! Return the elastic distribution mode
+  ElasticElectronDistributionType getElasticElectronDistributionMode() const;
+
+  //! Set the elastic cutoff angle cosine (mu = 1.0 by default)
+  void setElasticCutoffAngleCosine( const double cutoff_angle_cosine );
+
+  //! Return the elastic cutoff angle cosine
+  double getElasticCutoffAngleCosine() const;
+
+  /* ------ Electroionization Properties ------ */
+
+  //! Set electroionization mode to off (on by default)
+  void setElectroionizationModeOff();
+
+  //! Set electroionization mode to on (on by default)
+  void setElectroionizationModeOn();
+
+  //! Return if electroionization mode is on
+  bool isElectroionizationModeOn() const;
+
+  //! Set the electroionization 2D interpolation policy (LogLogLog by default)
+  void setElectroionizationTwoDInterpPolicy( TwoDInterpolationType interp_type );
+
+  //! Return the electroionization 2D interpolation policy
+  TwoDInterpolationType getElectroionizationTwoDInterpPolicy() const;
+
+  /* ------ Bremsstrahlung Properties ------ */
+
+  //! Set bremsstrahlung mode to off (on by default)
+  void setBremsstrahlungModeOff();
+
+  //! Set bremsstrahlung mode to on (on by default)
+  void setBremsstrahlungModeOn();
+
+  //! Return if bremsstrahlung mode is on
+  bool isBremsstrahlungModeOn() const;
+
+  //! Set the bremsstrahlung 2D interpolation policy (LogLogLog by default)
+  void setBremsstrahlungTwoDInterpPolicy( TwoDInterpolationType interp_type );
+
+  //! Return the bremsstrahlung 2D interpolation policy
+  TwoDInterpolationType getBremsstrahlungTwoDInterpPolicy() const;
+
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
   void setBremsstrahlungAngularDistributionFunction(
                          const BremsstrahlungAngularDistributionType function );
@@ -135,17 +161,16 @@ public:
   BremsstrahlungAngularDistributionType
   getBremsstrahlungAngularDistributionFunction() const;
 
-  //! Set the elastic cutoff angle cosine (mu = 1.0 by default)
-  void setElasticCutoffAngleCosine( const double cutoff_angle_cosine );
+  /* ------ Atomic Excitation Properties ------ */
 
-  //! Return the elastic cutoff angle cosine
-  double getElasticCutoffAngleCosine() const;
+  //! Set atomic excitation mode to off (on by default)
+  void setAtomicExcitationModeOff();
 
-  //! Set the number of electron hash grid bins
-  void setNumberOfElectronHashGridBins( const unsigned bins );
+  //! Set atomic excitation mode to on (on by default)
+  void setAtomicExcitationModeOn();
 
-  //! Return the number of electron hash grid bins
-  unsigned getNumberOfElectronHashGridBins() const;
+  //! Return if atomic excitation mode is on
+  bool isAtomicExcitationModeOn() const;
 
 private:
 
@@ -161,27 +186,8 @@ private:
   // The maximum electron energy (MeV)
   double d_max_electron_energy;
 
-  // The atomic relaxation mode (true = on - default, false = off)
-  bool d_atomic_relaxation_mode_on;
-
-  // The elasic electron scattering mode (true = on - default, false = off)
-  bool d_elastic_mode_on;
-
-  // The electroionization electron scattering mode (true = on - default, false = off)
-  bool d_electroionization_mode_on;
-
-  // The bremsstrahlung electron scattering mode (true = on - default, false = off)
-  bool d_bremsstrahlung_mode_on;
-
-  // The atomic excitation electron scattering mode (true = on - default, false = off)
-  bool d_atomic_excitation_mode_on;
-
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_evaluation_tol;
-
-  /* The lin-log interpolation mode for secondary distributions
-   * (true = on - default, false = off) */
-  bool d_linlinlog_interpolation_mode_on;
 
   /* The correlated sampling mode for bremsstrahlung and electroionization
    * (true = on - default, false = off) */
@@ -191,15 +197,42 @@ private:
    * (true = on - default, false = off) */
   bool d_unit_based_interpolation_mode_on;
 
-  // The bremsstrahlung photon angular distribution function (default is 2BS)
-  BremsstrahlungAngularDistributionType
-  d_bremsstrahlung_angular_distribution_function;
+  // The number of electron hash grid bins
+  unsigned d_num_electron_hash_grid_bins;
+
+  // The atomic relaxation mode (true = on - default, false = off)
+  bool d_atomic_relaxation_mode_on;
+
+  // The elasic electron scattering mode (true = on - default, false = off)
+  bool d_elastic_mode_on;
+
+  // The elasic electron 2D interpolation type ( LogLogLog - default )
+  TwoDInterpolationType d_elastic_interpolation_type;
+
+  // The elasic electron distribution mode ( Decoupled - default )
+  ElasticElectronDistributionType d_elastic_distribution_mode;
 
   // The elastic cutoff angle cosine (mu = 1.0 by default)
   double d_elastic_cutoff_angle_cosine;
 
-  // The number of electron hash grid bins
-  unsigned d_num_electron_hash_grid_bins;
+  // The electroionization electron scattering mode (true = on - default, false = off)
+  bool d_electroionization_mode_on;
+
+  // The electroionization electron 2D interpolation type ( LogLogLog - default )
+  TwoDInterpolationType d_electroionization_interpolation_type;
+
+  // The bremsstrahlung electron scattering mode (true = on - default, false = off)
+  bool d_bremsstrahlung_mode_on;
+
+  // The bremsstrahlung electron 2D interpolation type ( LogLogLog - default )
+  TwoDInterpolationType d_bremsstrahlung_interpolation_type;
+
+  // The bremsstrahlung photon angular distribution function (default is 2BS)
+  BremsstrahlungAngularDistributionType
+  d_bremsstrahlung_angular_distribution_function;
+
+  // The atomic excitation electron scattering mode (true = on - default, false = off)
+  bool d_atomic_excitation_mode_on;
 };
 
 } // end MonteCarlo namespace

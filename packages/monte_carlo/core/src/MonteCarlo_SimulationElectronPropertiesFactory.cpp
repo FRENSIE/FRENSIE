@@ -8,7 +8,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -58,39 +60,12 @@ void SimulationElectronPropertiesFactory::initializeProperties(
     }
   }
 
-  // Get the atomic relaxation mode - optional
-  if( properties.isParameter( "Electron Atomic Relaxation" ) )
+  // Get the number of photon hash grid bins - optional
+  if( properties.isParameter( "Electron Hash Grid Bins" ) )
   {
-    if( !properties.get<bool>( "Electron Atomic Relaxation" ) )
-      electron_properties.setAtomicRelaxationModeOff();
-  }
+    unsigned bins = properties.get<unsigned>( "Electron Hash Grid Bins" );
 
-  // Get the elastic scattering reaction mode - optional
-  if( properties.isParameter( "Electron Elastic" ) )
-  {
-    if( !properties.get<bool>( "Electron Elastic" ) )
-      electron_properties.setElasticModeOff();
-  }
-
-  // Get the electroionization scattering reaction mode - optional
-  if( properties.isParameter( "Electron Electroionization" ) )
-  {
-    if( !properties.get<bool>( "Electron Electroionization" ) )
-      electron_properties.setElectroionizationModeOff();
-  }
-
-  // Get the bremsstrahlung reaction mode - optional
-  if( properties.isParameter( "Electron Bremsstrahlung" ) )
-  {
-    if( !properties.get<bool>( "Electron Bremsstrahlung" ) )
-      electron_properties.setBremsstrahlungModeOff();
-  }
-
-  // Get the atomic excitation scattering reaction mode - optional
-  if( properties.isParameter( "Electron Atomic Excitation" ) )
-  {
-    if( !properties.get<bool>( "Electron Atomic Excitation" ) )
-      electron_properties.setAtomicExcitationModeOff();
+    electron_properties.setNumberOfElectronHashGridBins( bins );
   }
 
   // Get the secondary electron evaluation tolerance - optional
@@ -113,25 +88,117 @@ void SimulationElectronPropertiesFactory::initializeProperties(
     }
   }
 
-  // Get the secondary electron LinLinLog interpolation mode - optional
-  if( properties.isParameter( "Electron LinLinLog Interpolation" ) )
+  // Get the atomic relaxation mode - optional
+  if( properties.isParameter( "Electron Atomic Relaxation" ) )
   {
-    if( !properties.get<bool>( "Electron LinLinLog Interpolation" ) )
-      electron_properties.setLinLinLogInterpolationModeOff();
+    if( !properties.get<bool>( "Electron Atomic Relaxation" ) )
+      electron_properties.setAtomicRelaxationModeOff();
   }
 
-  // Get the correlated sampling mode - optional
-  if( properties.isParameter( "Electron Correlated Sampling" ) )
+  // Get the elastic scattering reaction mode - optional
+  if( properties.isParameter( "Electron Elastic" ) )
   {
-    if( !properties.get<bool>( "Electron Correlated Sampling" ) )
-      electron_properties.setCorrelatedSamplingModeOff();
+    if( !properties.get<bool>( "Electron Elastic" ) )
+      electron_properties.setElasticModeOff();
   }
 
-  // Get the unit based interpolation mode - optional
-  if( properties.isParameter( "Electron Unit Based Interpolation" ) )
+  // Get the elastic 2D interpolation policy - optional
+  if( properties.isParameter( "Electron Elastic Interpolation" ) )
   {
-    if( !properties.get<bool>( "Electron Unit Based Interpolation" ) )
-      electron_properties.setUnitBasedInterpolationModeOff();
+    std::string raw_policy =
+      properties.get<std::string>( "Electron Elastic Interpolation" );
+
+    TwoDInterpolationType interp_policy =
+      convertStringToTwoDInterpolationType( raw_policy );
+
+    electron_properties.setElasticTwoDInterpPolicy( interp_policy );
+  }
+
+  // Get the elastic electron distribution type - optional
+  if( properties.isParameter( "Elastic Electron Distribution" ) )
+  {
+    std::string raw_type =
+      properties.get<std::string>( "Elastic Electron Distribution" );
+
+     MonteCarlo::ElasticElectronDistributionType type;
+
+    if( raw_type == "Analog" || raw_type == "analog" || raw_type == "COUPLED" )
+      type = MonteCarlo::COUPLED_DISTRIBUTION;
+    else if( raw_type == "Decoupled" || raw_type == "decoupled" || raw_type == "DECOUPLED" )
+      type = MonteCarlo::DECOUPLED_DISTRIBUTION;
+    else if( raw_type == "Hybrid" || raw_type == "hybrid" || raw_type == "HYBRID" )
+      type = MonteCarlo::HYBRID_DISTRIBUTION;
+    else if( raw_type == "Cutoff" || raw_type == "cutoff" || raw_type == "CUTOFF" )
+      type = MonteCarlo::CUTOFF_DISTRIBUTION;
+    else if( raw_type == "Rutherford" || raw_type == "rutherford" || raw_type == "RUTHERFORD" )
+      type = MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION;
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: elastic electron distribution "
+                       << raw_type <<
+                       " is not currently supported!" );
+    }
+
+     electron_properties.setElasticElectronDistributionMode( type );
+  }
+
+  // Get the elastic cutoff angle cosine - optional
+  if( properties.isParameter( "Elastic Cutoff Angle Cosine" ) )
+  {
+    double cutoff_angle_cosine =
+      properties.get<double>( "Elastic Cutoff Angle Cosine" );
+
+    if( cutoff_angle_cosine >= -1.0 && cutoff_angle_cosine <= 1.0 )
+    {
+      electron_properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
+    }
+    else
+    {
+      std::cerr << "Warning: the elastic cutoff angle cosine must have a "
+                << "value between -1 and 1. The default value of "
+                << electron_properties.getElasticCutoffAngleCosine()
+                << " will be used instead of " << cutoff_angle_cosine << "."
+                << std::endl;
+    }
+  }
+
+  // Get the electroionization scattering reaction mode - optional
+  if( properties.isParameter( "Electron Electroionization" ) )
+  {
+    if( !properties.get<bool>( "Electron Electroionization" ) )
+      electron_properties.setElectroionizationModeOff();
+  }
+
+  // Get the electroionization 2D interpolation policy - optional
+  if( properties.isParameter( "Electron Electroionization Interpolation" ) )
+  {
+    std::string raw_policy =
+      properties.get<std::string>( "Electron Electroionization Interpolation" );
+
+    TwoDInterpolationType interp_policy =
+      convertStringToTwoDInterpolationType( raw_policy );
+
+    electron_properties.setElectroionizationTwoDInterpPolicy( interp_policy );
+  }
+
+  // Get the bremsstrahlung reaction mode - optional
+  if( properties.isParameter( "Electron Bremsstrahlung" ) )
+  {
+    if( !properties.get<bool>( "Electron Bremsstrahlung" ) )
+      electron_properties.setBremsstrahlungModeOff();
+  }
+
+  // Get the bremsstrahlung 2D interpolation policy - optional
+  if( properties.isParameter( "Electron Bremsstrahlung Interpolation" ) )
+  {
+    std::string raw_policy =
+      properties.get<std::string>( "Electron Bremsstrahlung Interpolation" );
+
+    TwoDInterpolationType interp_policy =
+      convertStringToTwoDInterpolationType( raw_policy );
+
+    electron_properties.setBremsstrahlungTwoDInterpPolicy( interp_policy );
   }
 
   // Get the bremsstrahlung photon angular distribution function - optional
@@ -160,32 +227,25 @@ void SimulationElectronPropertiesFactory::initializeProperties(
                                                                     function );
   }
 
-  // Get the elastic cutoff angle cosine - optional
-  if( properties.isParameter( "Elastic Cutoff Angle Cosine" ) )
+  // Get the atomic excitation scattering reaction mode - optional
+  if( properties.isParameter( "Electron Atomic Excitation" ) )
   {
-    double cutoff_angle_cosine =
-      properties.get<double>( "Elastic Cutoff Angle Cosine" );
-
-    if( cutoff_angle_cosine >= -1.0 && cutoff_angle_cosine <= 1.0 )
-    {
-      electron_properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
-    }
-    else
-    {
-      std::cerr << "Warning: the elastic cutoff angle cosine must have a "
-                << "value between -1 and 1. The default value of "
-                << electron_properties.getElasticCutoffAngleCosine()
-                << " will be used instead of " << cutoff_angle_cosine << "."
-                << std::endl;
-    }
+    if( !properties.get<bool>( "Electron Atomic Excitation" ) )
+      electron_properties.setAtomicExcitationModeOff();
   }
 
-  // Get the number of photon hash grid bins - optional
-  if( properties.isParameter( "Electron Hash Grid Bins" ) )
+  // Get the correlated sampling mode - optional
+  if( properties.isParameter( "Electron Correlated Sampling" ) )
   {
-    unsigned bins = properties.get<unsigned>( "Electron Hash Grid Bins" );
+    if( !properties.get<bool>( "Electron Correlated Sampling" ) )
+      electron_properties.setCorrelatedSamplingModeOff();
+  }
 
-    electron_properties.setNumberOfElectronHashGridBins( bins );
+  // Get the unit based interpolation mode - optional
+  if( properties.isParameter( "Electron Unit Based Interpolation" ) )
+  {
+    if( !properties.get<bool>( "Electron Unit Based Interpolation" ) )
+      electron_properties.setUnitBasedInterpolationModeOff();
   }
 
   properties.unused( *os_warn );

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAnalogElasticDistribution.cpp
+//! \file   tstCoupledElasticDistribution.cpp
 //! \author Luke Kersting
-//! \brief  Analog elastic distribution unit tests.
+//! \brief  Coupled elastic distribution unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -26,7 +26,7 @@
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_AnalogElasticDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
@@ -86,7 +86,7 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist )
   Utility::setQuantity( dependent_values[2], 1.0 );
   Utility::setQuantity( dependent_values[3], 1e-1 );
 
-  dist.reset(new Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
+  dist.reset(new Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
                                                       independent_values,
                                                       dependent_values,
                                                       eta,
@@ -97,7 +97,7 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    evaluate,
                                    InterpolationPolicy )
 {
@@ -112,11 +112,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   double sample = distribution->evaluate( distribution->sample() );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, evaluate );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, evaluate );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    evaluate,
                                    InterpolationPolicy )
 {
@@ -136,11 +136,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
                                   1e-15 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, evaluate );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, evaluate );
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    evaluatePDF,
                                    InterpolationPolicy )
 {
@@ -163,11 +163,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
                           1e-6 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, evaluatePDF );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    evaluatePDF,
                                    InterpolationPolicy )
 {
@@ -195,11 +195,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
                               1e-6 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, evaluatePDF );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    evaluateCDF,
                                    InterpolationPolicy )
 {
@@ -222,11 +222,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
                           1e-10 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, evaluateCDF );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, evaluateCDF );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware CDF can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    evaluateCDF,
                                    InterpolationPolicy )
 {
@@ -249,11 +249,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
                           1e-10 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, evaluateCDF );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, evaluateCDF );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    sample,
                                    InterpolationPolicy )
 {
@@ -283,11 +283,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_COMPARE( sample, <=, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sample );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, sample );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    sample,
                                    InterpolationPolicy )
 {
@@ -317,11 +317,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_COMPARE( sample, <=, 1.0*si::dimensionless() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, sample );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, sample );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    sampleAndRecordTrials,
                                    InterpolationPolicy )
 {
@@ -357,11 +357,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sampleAndRecordTrials );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, sampleAndRecordTrials );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    sampleAndRecordTrials,
                                    InterpolationPolicy )
 {
@@ -398,11 +398,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, sampleAndRecordTrials );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, sampleAndRecordTrials );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    sampleAndRecordBinIndex,
                                    InterpolationPolicy )
 {
@@ -437,11 +437,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_COMPARE( sample, <=, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sampleAndRecordBinIndex );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, sampleAndRecordBinIndex );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    sampleAndRecordBinIndex,
                                    InterpolationPolicy )
 {
@@ -477,12 +477,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_COMPARE( sample, <=, 1.0*si::dimensionless() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution,
                          sampleAndRecordBinIndex );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    sampleWithRandomNumber,
                                    InterpolationPolicy )
 {
@@ -498,11 +498,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sampleWithRandomNumber );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, sampleWithRandomNumber );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    sampleWithRandomNumber,
                                    InterpolationPolicy )
 {
@@ -529,12 +529,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_COMPARE( sample, <, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution,
                          sampleWithRandomNumber );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled from a subrange
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    sampleInSubrange,
                                    InterpolationPolicy )
 {
@@ -559,11 +559,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_COMPARE( sample, <=, 1e-1 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, sampleInSubrange );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, sampleInSubrange );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled from a subrange
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    sampleInSubrange,
                                    InterpolationPolicy )
 {
@@ -590,11 +590,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_COMPARE( sample, <=, 1e-1*si::dimensionless() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, sampleInSubrange );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, sampleInSubrange );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled from a subrange
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    sampleWithRandomNumberInSubrange,
                                    InterpolationPolicy )
 {
@@ -608,12 +608,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution,
                          sampleWithRandomNumberInSubrange );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled from a subrange
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    sampleWithRandomNumberInSubrange,
                                    InterpolationPolicy )
 {
@@ -629,13 +629,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*si::dimensionless(), 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution,
                          sampleWithRandomNumberInSubrange );
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    getUpperBoundOfIndepVar,
                                    InterpolationPolicy )
 {
@@ -644,12 +644,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, getUpperBoundOfIndepVar );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, getUpperBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    getUpperBoundOfIndepVar,
                                    InterpolationPolicy )
 {
@@ -659,49 +659,49 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
                        1.0*si::dimensionless() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution,
                          getUpperBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    getCutoffBoundOfIndepVar,
                                    InterpolationPolicy )
 {
-  Teuchos::RCP<Utility::AnalogElasticDistribution<InterpolationPolicy> >
-                analog_distribution;
+  Teuchos::RCP<Utility::CoupledElasticDistribution<InterpolationPolicy> >
+                coupled_distribution;
 
-  initialize<InterpolationPolicy>( analog_distribution );
+  initialize<InterpolationPolicy>( coupled_distribution );
 
-  TEST_EQUALITY_CONST( analog_distribution->getCutoffBoundOfIndepVar(), 0.999999 );
+  TEST_EQUALITY_CONST( coupled_distribution->getCutoffBoundOfIndepVar(), 0.999999 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, getCutoffBoundOfIndepVar );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, getCutoffBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    getCutoffBoundOfIndepVar,
                                    InterpolationPolicy )
 {
-Teuchos::RCP<Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> >
-unit_aware_analog_distribution;
+Teuchos::RCP<Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> >
+unit_aware_coupled_distribution;
 
-  initialize<InterpolationPolicy>( unit_aware_analog_distribution );
+  initialize<InterpolationPolicy>( unit_aware_coupled_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_analog_distribution->getCutoffBoundOfIndepVar(),
+  TEST_EQUALITY_CONST( unit_aware_coupled_distribution->getCutoffBoundOfIndepVar(),
                        0.999999*si::dimensionless() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution,
                          getCutoffBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    getLowerBoundOfIndepVar,
                                    InterpolationPolicy )
 {
@@ -710,12 +710,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), -1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, getLowerBoundOfIndepVar );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, getLowerBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    getLowerBoundOfIndepVar,
                                    InterpolationPolicy )
 {
@@ -725,40 +725,40 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
                        -1.0*si::dimensionless() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution,
                          getLowerBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    getDistributionType,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
-                       Utility::ANALOG_ELASTIC_DISTRIBUTION );
+                       Utility::COUPLED_ELASTIC_DISTRIBUTION );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, getDistributionType );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, getDistributionType );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution type can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    getDistributionType,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
-                       Utility::ANALOG_ELASTIC_DISTRIBUTION );
+                       Utility::COUPLED_ELASTIC_DISTRIBUTION );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, getDistributionType );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, getDistributionType );
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is tabular
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    isTabular,
                                    InterpolationPolicy )
 {
@@ -767,11 +767,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_ASSERT( distribution->isTabular() );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, isTabular );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, isTabular );
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is tabular
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    isTabular,
                                    InterpolationPolicy )
 {
@@ -780,11 +780,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_ASSERT( unit_aware_distribution->isTabular() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, isTabular );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, isTabular );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution is continuous
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    isContinuous,
                                    InterpolationPolicy )
 {
@@ -793,11 +793,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_ASSERT( distribution->isContinuous() );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, isContinuous );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, isContinuous );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution is continuous
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    isContinuous,
                                    InterpolationPolicy )
 {
@@ -806,51 +806,112 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_ASSERT( unit_aware_distribution->isContinuous() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, isContinuous );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, isContinuous );
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is compatible with the interpolation type
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    isCompatibleWithInterpType,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  }
+  else
+  {  
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  }
+
+  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  }
+  else
+  {
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  }
+
+  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  }
+  else
+  {
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  }
+
+  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  }
+  else
+  {
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  }
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, isCompatibleWithInterpType );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, isCompatibleWithInterpType );
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is compatible with the interp type
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    isCompatibleWithInterpType,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
+  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  }
+  else
+  {  
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  }
 
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  }
+  else
+  {
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  }
+
+  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  }
+  else
+  {
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  }
+
+  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  }
+  else
+  {
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  }
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution,
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution,
                          isCompatibleWithInterpType );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CoupledElasticDistribution,
                                    toParameterList,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( distribution );
 
-  typedef Utility::AnalogElasticDistribution<InterpolationPolicy> Distribution;
+  typedef Utility::CoupledElasticDistribution<InterpolationPolicy> Distribution;
 
   Teuchos::RCP<Distribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Distribution>( distribution );
@@ -861,7 +922,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
                                       *true_distribution );
 
   std::ostringstream xml_file_name;
-  xml_file_name << "analog_elastic_" << InterpolationPolicy::name()
+  xml_file_name << "coupled_elastic_" << InterpolationPolicy::name()
                 << "_dist_test_list.xml";
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
@@ -881,17 +942,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( AnalogElasticDistribution,
   TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
 
-UNIT_TEST_INSTANTIATION( AnalogElasticDistribution, toParameterList );
+UNIT_TEST_INSTANTIATION( CoupledElasticDistribution, toParameterList );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareCoupledElasticDistribution,
                                    toParameterList,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  typedef Utility::UnitAwareAnalogElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> Distribution;
+  typedef Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,si::dimensionless,si::amount> Distribution;
 
   Teuchos::RCP<Distribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Distribution>( unit_aware_distribution );
@@ -922,14 +983,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareAnalogElasticDistribution,
   TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwareAnalogElasticDistribution, toParameterList );
+UNIT_TEST_INSTANTIATION( UnitAwareCoupledElasticDistribution, toParameterList );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( AnalogElasticDistribution, fromParameterList )
+TEUCHOS_UNIT_TEST( CoupledElasticDistribution, fromParameterList )
 {
-  Utility::AnalogElasticDistribution<Utility::LinLin> distribution_1 =
-    test_dists_list->get<Utility::AnalogElasticDistribution<Utility::LinLin> >( "Analog Elastic Distribution A" );
+  Utility::CoupledElasticDistribution<Utility::LinLin> distribution_1 =
+    test_dists_list->get<Utility::CoupledElasticDistribution<Utility::LinLin> >( "Coupled Elastic Distribution A" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
@@ -937,15 +998,15 @@ TEUCHOS_UNIT_TEST( AnalogElasticDistribution, fromParameterList )
   TEST_EQUALITY_CONST( distribution_1.getCutoffCrossSectionRatio(), 0.1 );
 
   distribution_1 =
-    test_dists_list->get<Utility::AnalogElasticDistribution<Utility::LinLin> >( "Analog Elastic Distribution B" );
+    test_dists_list->get<Utility::CoupledElasticDistribution<Utility::LinLin> >( "Coupled Elastic Distribution B" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
   TEST_EQUALITY_CONST( distribution_1.getMoliereScreeningConstant(), 1.0 );
   TEST_EQUALITY_CONST( distribution_1.getCutoffCrossSectionRatio(), 0.2 );
 
-  Utility::AnalogElasticDistribution<Utility::LogLin> distribution_2 =
-    test_dists_list->get<Utility::AnalogElasticDistribution<Utility::LogLin> >( "Analog Elastic Distribution C" );
+  Utility::CoupledElasticDistribution<Utility::LogLin> distribution_2 =
+    test_dists_list->get<Utility::CoupledElasticDistribution<Utility::LogLin> >( "Coupled Elastic Distribution C" );
 
   TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 1.0 );
@@ -955,11 +1016,11 @@ TEUCHOS_UNIT_TEST( AnalogElasticDistribution, fromParameterList )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticDistribution, fromParameterList )
+TEUCHOS_UNIT_TEST( UnitAwareCoupledElasticDistribution, fromParameterList )
 {
-  Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,si::dimensionless,si::amount>
+  Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount>
     distribution_1 =
-    test_dists_list->get<Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >( "Unit-Aware Analog Elastic Distribution A" );
+    test_dists_list->get<Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >( "Unit-Aware Coupled Elastic Distribution A" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
@@ -973,7 +1034,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticDistribution, fromParameterList )
                        0.99999911111120975971 );
 
   distribution_1 =
-    test_dists_list->get<Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >( "Unit-Aware Analog Elastic Distribution B" );
+    test_dists_list->get<Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> >( "Unit-Aware Coupled Elastic Distribution B" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
@@ -985,9 +1046,9 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticDistribution, fromParameterList )
                         1e-9 );
   TEST_EQUALITY_CONST( distribution_1.sampleWithRandomNumber( 0.3 ), 0.99999912500010945671 );
 
-  Utility::UnitAwareAnalogElasticDistribution<Utility::LogLin,si::dimensionless,si::amount>
+  Utility::UnitAwareCoupledElasticDistribution<Utility::LogLin,si::dimensionless,si::amount>
     distribution_2 =
-    test_dists_list->get<Utility::UnitAwareAnalogElasticDistribution<Utility::LogLin,si::dimensionless,si::amount> >( "Unit-Aware Analog Elastic Distribution C" );
+    test_dists_list->get<Utility::UnitAwareCoupledElasticDistribution<Utility::LogLin,si::dimensionless,si::amount> >( "Unit-Aware Coupled Elastic Distribution C" );
 
   TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0 );
   TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 1.0 );
@@ -1001,7 +1062,7 @@ TEUCHOS_UNIT_TEST( UnitAwareAnalogElasticDistribution, fromParameterList )
 
 //---------------------------------------------------------------------------//
 // Check that distributions can be scaled
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareCoupledElasticDistribution,
                                    explicit_conversion,
                                    IndepUnitA,
                                    DepUnitA,
@@ -1020,11 +1081,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareAnalogElasticDistribution,
   initialize<Utility::LinLin>( distribution );
 
   // Copy from unitless distribution to distribution type A
-  Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::AnalogElasticDistribution<Utility::LinLin> >( distribution ) );
+  Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::CoupledElasticDistribution<Utility::LinLin> >( distribution ) );
 
   // Copy from distribution type A to distribution type B
-  Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,IndepUnitB,DepUnitB>
+  Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
   IndepQuantityA indep_quantity_a =
@@ -1091,61 +1152,61 @@ typedef cgs::mass cgs_mass;
 typedef si::dimensionless si_dimensionless;
 typedef cgs::dimensionless cgs_dimensionless;
 
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       si_dimensionless,
                                       si_amount,
                                       cgs_dimensionless,
                                       si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       cgs_dimensionless,
                                       si_amount,
                                       si_dimensionless,
                                       si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       si_dimensionless,
                                       si_length,
                                       cgs_dimensionless,
                                       cgs_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       cgs_dimensionless,
                                       cgs_length,
                                       si_dimensionless,
                                       si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       si_dimensionless,
                                       si_mass,
                                       cgs_dimensionless,
                                       cgs_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       cgs_dimensionless,
                                       cgs_mass,
                                       si_dimensionless,
                                       si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       si_dimensionless,
                                       si_dimensionless,
                                       cgs_dimensionless,
                                       cgs_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       cgs_dimensionless,
                                       cgs_dimensionless,
                                       si_dimensionless,
                                       si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       si_dimensionless,
                                       void,
                                       cgs_dimensionless,
                                       void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareAnalogElasticDistribution,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareCoupledElasticDistribution,
                                       explicit_conversion,
                                       cgs_dimensionless,
                                       void,
@@ -1168,13 +1229,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::AnalogElasticDistribution<Utility::LinLin> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::AnalogElasticDistribution<Utility::LogLin> );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LinLin> );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::CoupledElasticDistribution<Utility::LogLin> );
 
-  typedef Utility::UnitAwareAnalogElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> UnitAwareAnalogElasticLinLinDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareAnalogElasticLinLinDist );
-  typedef Utility::UnitAwareAnalogElasticDistribution<Utility::LogLin,si::dimensionless,si::amount> UnitAwareAnalogElasticLogLinDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareAnalogElasticLogLinDist );
+  typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,si::dimensionless,si::amount> UnitAwareCoupledElasticLinLinDist;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareCoupledElasticLinLinDist );
+  typedef Utility::UnitAwareCoupledElasticDistribution<Utility::LogLin,si::dimensionless,si::amount> UnitAwareCoupledElasticLogLinDist;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareCoupledElasticLogLinDist );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
@@ -1185,5 +1246,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstAnalogElasticDistribution.cpp
+// end tstCoupledElasticDistribution.cpp
 //---------------------------------------------------------------------------//

@@ -15,9 +15,9 @@ namespace MonteCarlo{
 //      ****ELASTIC REACTIONS****
 //----------------------------------------------------------------------------//
 
-//! Create an analog elastic scattering electroatomic reaction
+//! Create an coupled elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
-createAnalogElasticReaction(
+createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
@@ -39,7 +39,7 @@ createAnalogElasticReaction(
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElectroatomicReactionNativeFactory::createAnalogElasticReaction<Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -49,7 +49,7 @@ createAnalogElasticReaction(
   }
   else
   {
-    ElectroatomicReactionNativeFactory::createAnalogElasticReaction<Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -60,9 +60,9 @@ createAnalogElasticReaction(
   return reaction;
 }
 
-//! Create a joint elastic scattering electroatomic reaction
+//! Create a decoupled elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
-createJointElasticReaction(
+createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const bool linlinlog_interpolation_mode_on,
     const bool correlated_sampling_mode_on,
@@ -84,7 +84,7 @@ createJointElasticReaction(
 
   if ( linlinlog_interpolation_mode_on )
   {
-    ElectroatomicReactionNativeFactory::createJointElasticReaction<Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -94,7 +94,7 @@ createJointElasticReaction(
   }
   else
   {
-    ElectroatomicReactionNativeFactory::createJointElasticReaction<Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
