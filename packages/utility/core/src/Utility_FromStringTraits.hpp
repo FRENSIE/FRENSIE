@@ -743,7 +743,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::StringConversionException,
                                 "Could not initialize the stream!" );
-
+    
     if( Utility::doesInputStreamContainAnotherElement( iss, container_end_char, true ) )
     {
       // Extract each element of the container
@@ -1230,7 +1230,7 @@ struct FromStringTraits<std::complex<T> >
     std::vector<T> components;
 
     Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >::fromStream( is, components, delim );
-
+    
     // There must only be two and only two components
     TEST_FOR_EXCEPTION( components.size() != 2,
                         Utility::StringConversionException,
@@ -1283,11 +1283,13 @@ public:
                         "boost::units::quantity type because the string "
                         "does not contain any units!" );
 
-    std::string value_rep, unit_rep;
+    std::string value_rep = trimmed_obj_rep.substr( 0, space_loc );
+    std::string unit_rep =
+      trimmed_obj_rep.substr( space_loc+1,
+                              trimmed_obj_rep.size()-space_loc-1 );
     
-    value_rep = trimmed_obj_rep.substr( 0, space_loc );
-    unit_rep = trimmed_obj_rep.substr( space_loc+1,
-                                       trimmed_obj_rep.size()-space_loc-1 );
+    // Check that the unit matches
+    ThisType::verifyExtractedUnit( unit_rep );
     
     T raw_value;
     
@@ -1298,15 +1300,6 @@ public:
                              "Could not convert the string to a "
                              "boost::units::quantity type!" );
 
-    // Check that the unit matches
-    TEST_FOR_EXCEPTION( Utility::UnitTraits<Unit>::symbol() != unit_rep,
-                        Utility::StringConversionException,
-                        "Unable to convert the string to a "
-                        "boost::units::quantity type because the requested "
-                        "units (" << Utility::UnitTraits<Unit>::symbol() <<
-                        ") do not match the extracted units ("
-                        << unit_rep << ")!" );
-
     return boost::units::quantity<Unit,T>::from_value( raw_value );
   }
 
@@ -1315,58 +1308,91 @@ public:
                                  boost::units::quantity<Unit,T>& obj,
                                  const std::string& delim = std::string() )
   {
-    if( delim.size() > 0 )
-    {
-      std::string obj_rep;
-      
-      Utility::fromStream( is, obj_rep, delim );
+    // Remove leading white space characters from the stream
+    ThisType::removeLeadingWhiteSpaceChars( is );
 
-      obj = ThisType::fromString( obj_rep );
-    }
-    // Use white space characters as the deliminators
+    // Extract the raw value
+    T raw_value;
+    Utility::fromStream( is, raw_value, " " );
+
+    Utility::moveInputStreamToNextElement( is, ' ', ' ' );
+
+    // Extract the unit
+    std::string unit_rep;
+    
+    if( delim.size() > 0 )
+      Utility::fromStream( is, unit_rep, delim );
     else
     {
-      // Extract the value
-      T raw_value;
+      // Extract the unit
+      std::string unit_rep_element;
       
-      FromStringTraits<T>::fromStream( is, raw_value );
-
-      // Extract the unit rep
-      std::string unit_rep, unit_rep_element;
-
-      size_t num_unit_elements =
-        ThisType::getExpectedNumberOfExpectedSpacesInUnit();
-      
-      for( size_t i = 0; i < num_unit_elements; ++i )
+      size_t num_elements = ThisType::getExpectedNumberOfElementsInUnit();
+  
+      for( size_t i = 0; i < num_elements; ++i )
       {
-        // This loop will take care of consecutive white space characters 
+        // This loop will take care of consecutive white space characters
         while( unit_rep_element.size() == 0 )
           Utility::fromStream( is, unit_rep_element, Details::white_space_delims );
-        unit_rep += unit_rep_element;
 
-        if( i < num_unit_elements - 1 )
+        unit_rep += unit_rep_element;
+      
+        if( i < num_elements - 1 )
           unit_rep += ' ';
 
         unit_rep_element.clear();
       }
-
-      // Check that the unit matches the requested unit
-      TEST_FOR_EXCEPTION( Utility::UnitTraits<Unit>::symbol() != unit_rep,
-                          Utility::StringConversionException,
-                          "Unable to convert the string to a "
-                          "boost::units::quantity type because the requested "
-                          "units (" << Utility::UnitTraits<Unit>::symbol() <<
-                          ") do not match the extracted units ("
-                          << unit_rep << ")!" );
-      
-      obj = boost::units::quantity<Unit,T>::from_value( raw_value );
     }
+    
+    // Check that the extracted unit is correct
+    ThisType::verifyExtractedUnit( unit_rep );
+
+    obj = boost::units::quantity<Unit,T>::from_value( raw_value );
   }
 
 private:
+
+  // Remove leading white space characters
+  static void removeLeadingWhiteSpaceChars( std::istream& is )
+  {
+    char stream_char;
+    bool done = false;
+      
+    while( !done )
+    {
+      is.get( stream_char );
+      
+      done = true;
+      
+      for( size_t i = 0; i < std::strlen(Details::white_space_delims); ++i )
+      {
+        if( stream_char == Details::white_space_delims[i] )
+        {
+          done = false;
+          break;
+        }
+      }
+
+      // Place the non-white space character back in the stream
+      if( done )
+        is.putback( stream_char );
+    }
+  }
+
+  // Check that the extract unit is correct
+  static void verifyExtractedUnit( const std::string& unit_rep )
+  {
+    TEST_FOR_EXCEPTION( Utility::UnitTraits<Unit>::symbol() != unit_rep,
+                        Utility::StringConversionException,
+                        "Unable to convert the string to a "
+                        "boost::units::quantity type because the requested "
+                        "units (" << Utility::UnitTraits<Unit>::symbol() <<
+                        ") do not match the extracted units ("
+                        << unit_rep << ")!" );
+  }
   
   // Get the number of expected spaces in the quantity string
-  static size_t getExpectedNumberOfExpectedSpacesInUnit()
+  static size_t getExpectedNumberOfElementsInUnit()
   {
     // There will always be at least one space since to separate the value
     // from the unit (the unit may introduce more spaces)
@@ -1375,22 +1401,10 @@ private:
     std::string unit_string =
       Utility::UnitTraits<Unit>::symbol();
     
-    boost::algorithm::trim( unit_string );
+    std::vector<std::string> unit_string_elements;
+    boost::split( unit_string_elements, unit_string, boost::is_any_of( " " ) );
     
-    size_t unit_string_loc = 0;
-    
-    while( unit_string_loc < unit_string.size() )
-    {
-      unit_string_loc = unit_string.find( ' ', unit_string_loc );
-
-      if( unit_string_loc < unit_string.size() )
-      {
-        ++num_spaces;
-        ++unit_string_loc;
-      }
-    }
-
-    return num_spaces;
+    return unit_string_elements.size();
   }
 };
   

@@ -92,7 +92,7 @@ std::string FromStringTraits<std::string>::extractElementString(
     char string_element;
     is.get( string_element );
     sub_container_string.push_back( string_element );
-    
+
     TEST_FOR_EXCEPTION( is.eof(),
                         Utility::StringConversionException,
                         "Unable to get the string element (EOF reached "
@@ -108,8 +108,22 @@ std::string FromStringTraits<std::string>::extractElementString(
       sub_container_present = true;
       break;
     }
-    else if( string_element != ' ' )
-      break;
+    else
+    {
+      bool white_space_element = false;
+      
+      for( size_t i = 0; i < std::strlen( Details::white_space_delims ); ++i )
+      {
+        if( string_element == Details::white_space_delims[i] )
+        {
+          white_space_element = true;
+          break;
+        }
+      }
+
+      if( !white_space_element )
+        break;
+    }
   }
   
   // Restore the stream

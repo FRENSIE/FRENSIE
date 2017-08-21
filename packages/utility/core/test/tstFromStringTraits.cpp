@@ -15,9 +15,19 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include <boost/mpl/list.hpp>
+#include <boost/mpl/insert_range.hpp>
+#include <boost/units/systems/cgs/energy.hpp>
+#include <boost/units/systems/si/energy.hpp>
 
 // FRENSIE Includes
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_UnitTraits.hpp"
+
+using namespace Utility::Units;
+namespace si = boost::units::si;
+namespace cgs = boost::units::cgs;
 
 //---------------------------------------------------------------------------//
 // Template Test Types
@@ -25,6 +35,48 @@
 typedef boost::mpl::list<char, signed char, unsigned char, int8_t> SingleByteTypes;
 
 typedef boost::mpl::list<short, int16_t, int, long, int32_t, long long, int64_t> MultipleByteTypes;
+
+typedef boost::mpl::list<int, unsigned int, long, unsigned long, int32_t, uint32_t, long long, unsigned long long, int64_t, uint64_t, float, double> ComplexTestTypes;
+
+template<typename Unit, typename RawTypeWrapper = void>
+struct QuantityTypeList
+{
+  typedef boost::mpl::list<boost::units::quantity<Unit,float>, boost::units::quantity<Unit,double> > BasicFloatingPointQuantityTypes;
+  
+  typedef boost::mpl::list<boost::units::quantity<Unit,int>, boost::units::quantity<Unit,unsigned long>, boost::units::quantity<Unit,float>, boost::units::quantity<Unit,double> > BasicQuantityTypes;
+
+  typedef boost::mpl::list<boost::units::quantity<Unit,std::complex<int> >, boost::units::quantity<Unit,std::complex<unsigned long> >, boost::units::quantity<Unit,std::complex<float> >, boost::units::quantity<Unit,std::complex<double> > > ComplexQuantityTypes;
+
+  typedef typename boost::mpl::insert_range<BasicQuantityTypes, typename boost::mpl::end<BasicQuantityTypes>::type,ComplexQuantityTypes>::type type;
+};
+
+template<typename... TypeLists>
+struct MergeTypeLists
+{ /* ... */ };
+
+template<typename FrontList, typename... TypeLists>
+struct MergeTypeLists<FrontList,TypeLists...>
+{
+private:
+  typedef typename MergeTypeLists<TypeLists...>::type BackMergedListType;
+
+public:
+  typedef typename boost::mpl::insert_range<FrontList,typename boost::mpl::end<FrontList>::type,BackMergedListType>::type type;
+};
+
+template<typename FrontList>
+struct MergeTypeLists<FrontList>
+{ 
+  typedef FrontList type;
+};
+
+typedef typename MergeTypeLists<typename QuantityTypeList<cgs::energy>::BasicFloatingPointQuantityTypes, typename QuantityTypeList<si::energy>::BasicFloatingPointQuantityTypes, typename QuantityTypeList<ElectronVolt>::BasicFloatingPointQuantityTypes, typename QuantityTypeList<KiloElectronVolt>::BasicFloatingPointQuantityTypes>::type TestBasicFloatingPointQuantityTypes;
+
+typedef typename MergeTypeLists<typename QuantityTypeList<cgs::energy>::BasicQuantityTypes, typename QuantityTypeList<si::energy>::BasicQuantityTypes, typename QuantityTypeList<ElectronVolt>::BasicQuantityTypes, typename QuantityTypeList<KiloElectronVolt>::BasicQuantityTypes>::type TestBasicQuantityTypes;
+
+typedef typename MergeTypeLists<typename QuantityTypeList<cgs::energy>::ComplexQuantityTypes, typename QuantityTypeList<si::energy>::ComplexQuantityTypes, typename QuantityTypeList<ElectronVolt>::ComplexQuantityTypes, typename QuantityTypeList<KiloElectronVolt>::ComplexQuantityTypes>::type TestComplexQuantityTypes;
+
+typedef typename MergeTypeLists<typename QuantityTypeList<cgs::energy>::type, typename QuantityTypeList<si::energy>::type, typename QuantityTypeList<ElectronVolt>::type, typename QuantityTypeList<KiloElectronVolt>::type>::type TestQuantityTypes;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -1515,6 +1567,548 @@ BOOST_AUTO_TEST_CASE( double_fromStream )
   Utility::fromStream( iss, test_double );
 
   BOOST_CHECK_EQUAL( test_double, Utility::PhysicalConstants::pi/2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a std::complex can be created from a string
+BOOST_AUTO_TEST_CASE_TEMPLATE( complex_fromString, T, ComplexTestTypes )
+{
+  std::string complex_string = Utility::toString( std::complex<T>(0, 0) );
+
+  std::complex<T> complex_value =
+    Utility::fromString<std::complex<T> >( complex_string );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 0) );
+
+  complex_string = Utility::toString( std::complex<T>(1, 0) );
+  complex_value = Utility::fromString<std::complex<T> >( complex_string );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 0) );
+
+  complex_string = Utility::toString( std::complex<T>(0, 1) );
+  complex_value = Utility::fromString<std::complex<T> >( complex_string );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 1) );
+
+  complex_string = Utility::toString( std::complex<T>(1, 1) );
+  complex_value = Utility::fromString<std::complex<T> >( complex_string );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 1) );
+
+  complex_string = Utility::toString( std::complex<T>(2, 2) );
+  complex_value = Utility::fromString<std::complex<T> >( complex_string );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(2, 2) );
+
+  if( std::is_signed<T>::value )
+  {
+    complex_string = Utility::toString( std::complex<T>(-1, 0) );
+    complex_value = Utility::fromString<std::complex<T> >( complex_string );
+
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(-1, 0) );
+    
+    complex_string = Utility::toString( std::complex<T>(0, -1) );
+    complex_value = Utility::fromString<std::complex<T> >( complex_string );
+    
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, -1) );
+    
+    complex_string = Utility::toString( std::complex<T>(-1, -1) );
+    complex_value = Utility::fromString<std::complex<T> >( complex_string );
+    
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(-1, -1) );
+    
+    complex_string = Utility::toString( std::complex<T>(-2, -2) );
+    complex_value = Utility::fromString<std::complex<T> >( complex_string );
+    
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(-2, -2) );
+  }
+
+  complex_string = std::string("{") + Utility::toString(0) + "," +
+    Utility::toString(0) + "," + Utility::toString(0) + "}";
+
+  BOOST_CHECK_THROW( Utility::fromString<std::complex<T> >( complex_string ),
+                     Utility::StringConversionException );
+
+  complex_string = std::string("{") + Utility::toString(0) + "}";
+
+  BOOST_CHECK_THROW( Utility::fromString<std::complex<T> >( complex_string ),
+                     Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a std::complex can be extracted from a stream
+BOOST_AUTO_TEST_CASE_TEMPLATE( complex_fromStream, T, ComplexTestTypes )
+{
+  std::istringstream iss;
+
+  iss.str( Utility::toString( std::complex<T>(0, 0) ) );
+
+  std::complex<T> complex_value;
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 0) );
+
+  iss.str( Utility::toString( std::complex<T>(1, 0) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 0) );
+
+  iss.str( Utility::toString( std::complex<T>(0, 1) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 1) );
+
+  iss.str( Utility::toString( std::complex<T>(1, 1) ) );
+  iss.clear();
+  
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 1) );
+
+  iss.str( Utility::toString( std::complex<T>(2, 2) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(2, 2) );
+
+  // Multiple complex values in the same stream with default deliminators
+  iss.str( Utility::toString( std::complex<T>(0, 0) ) + " " +
+           Utility::toString( std::complex<T>(1, 0) ) + " " +
+           Utility::toString( std::complex<T>(0, 1) ) + "  " +
+           Utility::toString( std::complex<T>(1, 1) ) + "\t" +
+           Utility::toString( std::complex<T>(2, 2) ) + "\n" +
+           Utility::toString( std::complex<T>(3, 3) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 0) );
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 0) );
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 1) );
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 1) );
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(2, 2) );
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(3, 3) );
+
+  // Multiple complex values in the same stream with custom deliminators
+  iss.str( Utility::toString( std::complex<T>(0, 0) ) + ", " +
+           Utility::toString( std::complex<T>(1, 0) ) + " , " +
+           Utility::toString( std::complex<T>(0, 1) ) + ",  " +
+           Utility::toString( std::complex<T>(1, 1) ) + ",\t" +
+           Utility::toString( std::complex<T>(2, 2) ) + "," +
+           Utility::toString( std::complex<T>(3, 3) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_value, "," );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 0) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, complex_value, "," );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 0) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, complex_value, "," );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, 1) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, complex_value, "," );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(1, 1) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, complex_value, "," );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(2, 2) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, complex_value );
+
+  BOOST_CHECK_EQUAL( complex_value, std::complex<T>(3, 3) );
+
+  if( std::is_signed<T>::value )
+  {
+    iss.str( Utility::toString( std::complex<T>(-1, 0) ) );
+    iss.clear();
+    
+    Utility::fromStream( iss, complex_value );
+
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(-1, 0) );
+
+    iss.str( Utility::toString( std::complex<T>(0, -1) ) );
+    iss.clear();
+    
+    Utility::fromStream( iss, complex_value );
+    
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(0, -1) );
+
+    iss.str( Utility::toString( std::complex<T>(-1, -1) ) );
+    iss.clear();
+    
+    Utility::fromStream( iss, complex_value );
+    
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(-1, -1) );
+
+    iss.str( Utility::toString( std::complex<T>(-2, -2) ) );
+    iss.clear();
+
+    Utility::fromStream( iss, complex_value );
+    
+    BOOST_CHECK_EQUAL( complex_value, std::complex<T>(-2, -2) );
+  }
+
+  iss.str( std::string("{") + Utility::toString(0) + "," +
+           Utility::toString(0) + "," + Utility::toString(0) + "}" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, complex_value ),
+                     Utility::StringConversionException );
+
+  iss.str( std::string("{") + Utility::toString(0) + "}" );
+  iss.clear();
+
+  BOOST_CHECK_THROW( Utility::fromStream( iss, complex_value ),
+                     Utility::StringConversionException );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a boost::units::quantity can be created from a string
+BOOST_AUTO_TEST_CASE_TEMPLATE( quantity_fromString,
+                               QuantityType,
+                               TestBasicQuantityTypes )
+{
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+
+  // Basic quantity types
+  std::string quantity_string =
+    Utility::toString( QuantityType::from_value(RawType(0)) );
+
+  QuantityType quantity =
+    Utility::fromString<QuantityType>( quantity_string );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(0)) );
+
+  quantity_string = Utility::toString( QuantityType::from_value(RawType(1)) );
+
+  quantity = Utility::fromString<QuantityType>( quantity_string );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(1)) );
+
+  quantity_string = Utility::toString( QuantityType::from_value(RawType(2)) );
+
+  quantity = Utility::fromString<QuantityType>( quantity_string );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(2)) );
+
+  // Complex quantity types
+  typedef std::complex<RawType> ComplexRawType;
+  typedef boost::units::quantity<UnitType,ComplexRawType> ComplexQuantityType;
+
+  quantity_string =
+    Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, 0)) );
+
+  ComplexQuantityType complex_quantity =
+    Utility::fromString<ComplexQuantityType>( quantity_string );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, 0)) );
+
+  quantity_string =
+    Utility::toString( ComplexQuantityType::from_value(ComplexRawType(1, 0)) );
+
+  complex_quantity =
+    Utility::fromString<ComplexQuantityType>( quantity_string );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(1, 0)) );
+
+  quantity_string =
+    Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, 1)) );
+
+  complex_quantity =
+    Utility::fromString<ComplexQuantityType>( quantity_string );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, 1)) );
+
+  quantity_string =
+    Utility::toString( ComplexQuantityType::from_value(ComplexRawType(1, 1)) );
+
+  complex_quantity =
+    Utility::fromString<ComplexQuantityType>( quantity_string );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(1, 1)) );
+
+  quantity_string =
+    Utility::toString( ComplexQuantityType::from_value(ComplexRawType(2, 2)) );
+
+  complex_quantity =
+    Utility::fromString<ComplexQuantityType>( quantity_string );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(2, 2)) );
+
+  if( Utility::QuantityTraits<QuantityType>::is_signed::value )
+  {
+    // Basic quantity types
+    quantity_string =
+      Utility::toString( QuantityType::from_value(RawType(-1)) );
+
+    quantity = Utility::fromString<QuantityType>( quantity_string );
+    
+    BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(-1)) );
+    
+    quantity_string =
+      Utility::toString( QuantityType::from_value(RawType(-2)) );
+    
+    quantity = Utility::fromString<QuantityType>( quantity_string );
+    
+    BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(-2)) );
+    
+    // Complex quantity types
+    quantity_string =
+      Utility::toString( ComplexQuantityType::from_value(ComplexRawType(-1, 0)) );
+    
+    complex_quantity =
+      Utility::fromString<ComplexQuantityType>( quantity_string );
+  
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(-1, 0)) );
+    
+    quantity_string =
+      Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, -1)) );
+    
+    complex_quantity =
+      Utility::fromString<ComplexQuantityType>( quantity_string );
+    
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, -1)) );
+    
+    quantity_string =
+      Utility::toString( ComplexQuantityType::from_value(ComplexRawType(-1, -1)) );
+    
+    complex_quantity =
+      Utility::fromString<ComplexQuantityType>( quantity_string );
+    
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(-1, -1)) );
+    
+    quantity_string =
+      Utility::toString( ComplexQuantityType::from_value(ComplexRawType(-2, -2)) );
+    
+    complex_quantity =
+      Utility::fromString<ComplexQuantityType>( quantity_string );
+    
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(-2, -2)) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a boost::units::quantity can be extracted from a stream
+BOOST_AUTO_TEST_CASE_TEMPLATE( quantity_fromStream,
+                               QuantityType,
+                               TestBasicQuantityTypes )
+{
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+
+  std::istringstream iss;
+
+  // Basic quantity types
+  iss.str( Utility::toString( QuantityType::from_value(RawType(0)) ) );
+
+  QuantityType quantity;
+
+  Utility::fromStream( iss, quantity );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(0)) );
+
+  iss.str( Utility::toString( QuantityType::from_value(RawType(1)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, quantity );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(1)) );
+
+  iss.str( Utility::toString( QuantityType::from_value(RawType(2)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, quantity );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(2)) );
+
+  // Complex quantity types
+  typedef std::complex<RawType> ComplexRawType;
+  typedef boost::units::quantity<UnitType,ComplexRawType> ComplexQuantityType;
+
+  iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, 0)) ) );
+  iss.clear();
+
+  ComplexQuantityType complex_quantity;
+
+  Utility::fromStream( iss, complex_quantity );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, 0)) );
+
+  iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(1, 0)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_quantity );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(1, 0)) );
+
+  iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, 1)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_quantity );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, 1)) );
+
+  iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(1, 1)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_quantity );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(1, 1)) );
+
+  iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(2, 2)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, complex_quantity );
+  
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(2, 2)) );
+
+  // Multiple quantities in the same stream with default deliminators
+  iss.str( Utility::toString( QuantityType::from_value(RawType(0)) ) + " " +
+           Utility::toString( QuantityType::from_value(RawType(1)) ) + "  " +
+           Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, 0)) ) + "\t" +
+           Utility::toString( ComplexQuantityType::from_value(ComplexRawType(1, 1)) ) + "\n" +
+           Utility::toString( ComplexQuantityType::from_value(ComplexRawType(2, 2)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, quantity );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(0)) );
+
+  Utility::fromStream( iss, quantity );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(1)) );
+
+  Utility::fromStream( iss, complex_quantity );
+
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, 0)) );
+
+  Utility::fromStream( iss, complex_quantity );
+
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(1, 1)) );
+
+  Utility::fromStream( iss, complex_quantity );
+
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(2, 2)) );
+
+  // Multiple quantities in the same stream with custom deliminators
+  iss.str( Utility::toString( QuantityType::from_value(RawType(0)) ) + ", " +
+           Utility::toString( QuantityType::from_value(RawType(1)) ) + ",  " +
+           Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, 0)) ) + ",\t" +
+           Utility::toString( ComplexQuantityType::from_value(ComplexRawType(1, 1)) ) + " ,\n" +
+           Utility::toString( ComplexQuantityType::from_value(ComplexRawType(2, 2)) ) );
+  iss.clear();
+
+  Utility::fromStream( iss, quantity, "," );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(0)) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, quantity, "," );
+
+  BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(1)) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+
+  Utility::fromStream( iss, complex_quantity, "," );
+
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, 0)) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+  
+  Utility::fromStream( iss, complex_quantity, "," );
+
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(1, 1)) );
+
+  Utility::moveInputStreamToNextElement( iss, ',', '}' );
+  
+  Utility::fromStream( iss, complex_quantity );
+
+  BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(2, 2)) );
+
+  if( Utility::QuantityTraits<QuantityType>::is_signed::value )
+  {
+    // Basic quantity types
+    iss.str( Utility::toString( QuantityType::from_value(RawType(-1)) ) );
+    iss.clear();
+
+    Utility::fromStream( iss, quantity );
+    
+    BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(-1)) );
+
+    iss.str( Utility::toString( QuantityType::from_value(RawType(-2)) ) );
+    iss.clear();
+
+    Utility::fromStream( iss, quantity );
+    
+    BOOST_CHECK_EQUAL( quantity, QuantityType::from_value(RawType(-2)) );
+    
+    // Complex quantity types
+    iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(-1, 0)) ) );
+    iss.clear();
+    
+    Utility::fromStream( iss, complex_quantity );
+  
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(-1, 0)) );
+    
+    iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(0, -1)) ) );
+    iss.clear();
+    
+    Utility::fromStream( iss, complex_quantity );
+    
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(0, -1)) );
+    
+    iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(-1, -1)) ) );
+    iss.clear();
+    
+    Utility::fromStream( iss, complex_quantity );
+    
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(-1, -1)) );
+    
+    iss.str( Utility::toString( ComplexQuantityType::from_value(ComplexRawType(-2, -2)) ) );
+    iss.clear();
+    
+    Utility::fromStream( iss, complex_quantity );
+    
+    BOOST_CHECK_EQUAL( complex_quantity, ComplexQuantityType::from_value(ComplexRawType(-2, -2)) );
+  }
 }
 
 //---------------------------------------------------------------------------//
