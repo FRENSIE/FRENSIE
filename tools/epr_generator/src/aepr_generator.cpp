@@ -808,7 +808,12 @@ int main( int argc, char** argv )
       Data::ElectronPhotonRelaxationVolatileDataContainer temp_data_container(
             data_file_path,
             Utility::ArchivableObject::XML_ARCHIVE );
-      
+
+      MonteCarlo::TwoDInterpolationType electron_interp =
+        MonteCarlo::LINLINLIN_INTERPOLATION;
+     if ( electron_linlinlog_interpolation_mode )
+        MonteCarlo::LINLINLOG_INTERPOLATION;
+
       try{
         DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
           temp_data_container,
@@ -816,7 +821,7 @@ int main( int argc, char** argv )
           cutoff_angle_cosine,
           electron_tabular_evaluation_tol,
           number_of_moment_preserving_angles,
-          electron_linlinlog_interpolation_mode );
+          electron_interp );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
                                 "Error: Unable to repopulate the elastic "

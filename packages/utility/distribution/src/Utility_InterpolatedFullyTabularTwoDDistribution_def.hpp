@@ -356,21 +356,30 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
   }
   else
   {
+    // Calculate the bin length of the first indep variable
+    const typename QuantityTraits<PrimaryIndepQuantity>::RawType primary_bin_length =
+      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseGridLength(
+                                                    lower_bin_boundary->first,
+                                                    upper_bin_boundary->first );
+
+    // Calculate the first indep variable bin ratio (beta)
+    const typename QuantityTraits<PrimaryIndepQuantity>::RawType beta =
+      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
+                                                    primary_indep_var_value,
+                                                    lower_bin_boundary->first,
+                                                    primary_bin_length );
+
     // Get the lower secondary indep grid limits at the primary value
     SecondaryIndepQuantity lower_sec_indep_var_bound =
       TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                      lower_bin_boundary->first,
-                      upper_bin_boundary->first,
-                      primary_indep_var_value,
+                      beta,
                       lower_bin_boundary->second->getLowerBoundOfIndepVar(),
                       upper_bin_boundary->second->getLowerBoundOfIndepVar() );
 
     // Get the upper secondary indep grid limits at the primary value
     SecondaryIndepQuantity upper_sec_indep_var_bound =
       TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                      lower_bin_boundary->first,
-                      upper_bin_boundary->first,
-                      primary_indep_var_value,
+                      beta,
                       lower_bin_boundary->second->getUpperBoundOfIndepVar(),
                       upper_bin_boundary->second->getUpperBoundOfIndepVar() );
 
@@ -382,18 +391,14 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
     else if ( secondary_indep_var_value == lower_sec_indep_var_bound )
     {
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                primary_indep_var_value,
+                beta,
                 ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar()),
                 ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) );
     }
     else if ( secondary_indep_var_value == upper_sec_indep_var_bound )
     {
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                primary_indep_var_value,
+                beta,
                 ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar()),
                 ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) );
     }
@@ -450,9 +455,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
 
         // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
         SecondaryIndepQuantity est_secondary_indep_var_value =
-          TwoDInterpPolicy::ZXInterpPolicy::interpolate( lower_bin_boundary->first,
-                                                         upper_bin_boundary->first,
-                                                         primary_indep_var_value,
+          TwoDInterpPolicy::ZXInterpPolicy::interpolate( beta,
                                                          lower_bin_sample,
                                                          upper_bin_sample );
 
@@ -572,6 +575,19 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
   }
   else
   {
+    // Calculate the bin length of the first indep variable
+    const typename QuantityTraits<PrimaryIndepQuantity>::RawType primary_bin_length =
+      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseGridLength(
+                                                    lower_bin_boundary->first,
+                                                    upper_bin_boundary->first );
+
+    // Calculate the first indep variable bin ratio (beta)
+    const typename QuantityTraits<PrimaryIndepQuantity>::RawType beta =
+      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
+                                                    primary_indep_var_value,
+                                                    lower_bin_boundary->first,
+                                                    primary_bin_length );
+
     // Check for a seconday indep value outside of the secondary indep grid limits
     if ( secondary_indep_var_value < min_secondary_indep_var )
       return below_lower_bound_return;
@@ -580,18 +596,14 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
     else if ( secondary_indep_var_value == min_secondary_indep_var )
     {
       return TwoDInterpPolicy::SecondaryBasePolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                primary_indep_var_value,
+                beta,
                 ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar()),
                 ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) );
     }
     else if ( secondary_indep_var_value == max_secondary_indep_var )
     {
       return TwoDInterpPolicy::SecondaryBasePolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                primary_indep_var_value,
+                beta,
                 ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar()),
                 ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) );
     }
@@ -712,12 +724,7 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
 
       // Interpolate using the templated TwoDInterpPolicy::PrimaryBasePolicy
       eta_estimate =
-        TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
-                                                    lower_bin_boundary->first,
-                                                    upper_bin_boundary->first,
-                                                    primary_indep_var_value,
-                                                    eta_0,
-                                                    eta_1 );
+        TwoDInterpPolicy::PrimaryBasePolicy::interpolate( beta, eta_0, eta_1 );
 
       // Scale the sample so that it preserves the intermediate limits.
       SecondaryIndepQuantity est_secondary_indep_var_value =

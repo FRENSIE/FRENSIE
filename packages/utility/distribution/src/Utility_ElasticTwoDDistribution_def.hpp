@@ -317,6 +317,19 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
       tolerance = d_error_tol;
     }
 
+    // Calculate the bin length of the first indep variable
+    const typename QuantityTraits<PrimaryIndepQuantity>::RawType primary_bin_length =
+      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseGridLength(
+                                                    lower_bin_boundary->first,
+                                                    upper_bin_boundary->first );
+
+    // Calculate the first indep variable bin ratio (beta)
+    const typename QuantityTraits<PrimaryIndepQuantity>::RawType beta =
+      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
+                                                    incoming_energy,
+                                                    lower_bin_boundary->first,
+                                                    primary_bin_length );
+
     // Refine the estimated cdf value until it meet the tolerance
     while ( rel_error > tolerance )
     {
@@ -333,9 +346,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
       SecondaryIndepQuantity est_angle_cosine =
        CosineProcessor::processCosineVar(
          TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-            lower_bin_boundary->first,
-            upper_bin_boundary->first,
-            incoming_energy,
+            beta,
             CosineProcessor::processCosineVar( lower_bin_sample ),
             CosineProcessor::processCosineVar( upper_bin_sample ) ) );
 
@@ -400,9 +411,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
 
     // Return the interpolated evaluation
     return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-              lower_bin_boundary->first,
-              upper_bin_boundary->first,
-              incoming_energy,
+              beta,
               ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
               ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
   }

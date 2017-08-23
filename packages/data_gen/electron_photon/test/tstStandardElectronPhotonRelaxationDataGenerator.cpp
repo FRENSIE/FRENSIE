@@ -68,7 +68,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( generator.getCutoffAngleCosine(), 1.0 );
   TEST_EQUALITY_CONST( generator.getNumberOfMomentPreservingAngles(), 0 );
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(), 1e-7 );
-  TEST_ASSERT( generator.isElectronLinLinLogInterpolationModeOn() );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
 }
@@ -104,7 +105,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
   TEST_EQUALITY_CONST( generator.getCutoffAngleCosine(), 1.0 );
   TEST_EQUALITY_CONST( generator.getNumberOfMomentPreservingAngles(), 0 );
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(), 1e-7 );
-  TEST_ASSERT( generator.isElectronLinLinLogInterpolationModeOn() );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
 }
@@ -248,19 +250,24 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the linlinlog interpolation can be set
+// Check that the electron TwoDInterpPolicy can be set
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
-                   setElectronLinLinLogInterpolationMode )
+                   setElectronTwoDInterpPolicy )
 {
   DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
-  TEST_ASSERT( generator.isElectronLinLinLogInterpolationModeOn() );
-  generator.setElectronLinLinLogInterpolationModeOff();
-  TEST_ASSERT( !generator.isElectronLinLinLogInterpolationModeOn() );
-  generator.setElectronLinLinLogInterpolationModeOn();
-  TEST_ASSERT( generator.isElectronLinLinLogInterpolationModeOn() );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
+
+  generator.setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLIN_INTERPOLATION );
+
+  generator.setElectronTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLOG_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//
@@ -320,7 +327,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
-    raw_data_generator->setElectronLinLinLogInterpolationModeOff();
+    raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
     raw_data_generator->setElectronCorrelatedSamplingModeOn();
     raw_data_generator->setElectronUnitBasedInterpolationModeOn();
     raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
@@ -351,7 +358,9 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_ASSERT( !data_container.isElectronLinLinLogInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Lin" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -626,6 +635,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1e-15 );
 
   // Check the electron energy grid
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
@@ -655,6 +666,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.front(), 1.54213098883628845e+02 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29045336560270462e+04);
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+
+  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> angular_grid =
     data_container.getElasticAngularEnergyGrid();
@@ -691,7 +704,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( elastic_pdf.back(), 9.86945e+5 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
 
-  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
+//  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
   TEST_ASSERT( data_container.hasMomentPreservingData() );
 
   std::vector<double> discrete_angles =
@@ -756,6 +769,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( electroionization_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( electroionization_energy_grid.size(), 8 );
 
+  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> electroionization_recoil_energy =
     data_container.getElectroionizationRecoilEnergy( 1u, 1.36100e-5 );
 
@@ -796,6 +811,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
   TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> bremsstrahlung_energy_grid =
     data_container.getBremsstrahlungEnergyGrid();
@@ -854,6 +871,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.size(), 170 );
 
+  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> atomic_excitation_energy_loss =
     data_container.getAtomicExcitationEnergyLoss();
 
@@ -890,7 +909,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setCutoffAngleCosine( 0.9 );
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
-    raw_data_generator->setElectronLinLinLogInterpolationModeOn();
+    raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
     raw_data_generator->setElectronCorrelatedSamplingModeOn();
     raw_data_generator->setElectronUnitBasedInterpolationModeOn();
     raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
@@ -921,7 +940,9 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_ASSERT( data_container.isElectronLinLinLogInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Log" );
+  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Log" );
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Log" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -1196,6 +1217,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1e-15 );
 
   // Check the electron energy grid
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
@@ -1227,6 +1250,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.front(), 2.57455204707366647 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+
+  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> angular_grid =
     data_container.getElasticAngularEnergyGrid();
@@ -1263,7 +1288,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( elastic_pdf.back(), 9.86945e+5 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
 
-  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
+//  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
   TEST_ASSERT( data_container.hasMomentPreservingData() );
 
   std::vector<double> discrete_angles =
@@ -1328,6 +1353,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( electroionization_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( electroionization_energy_grid.size(), 8 );
 
+  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> electroionization_recoil_energy =
     data_container.getElectroionizationRecoilEnergy( 1u, 1.36100e-5 );
 
@@ -1375,6 +1402,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 10 );
+
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> bremsstrahlung_photon_energy =
     data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 );
@@ -1426,6 +1455,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.size(), 170 );
 
+  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> atomic_excitation_energy_loss =
     data_container.getAtomicExcitationEnergyLoss();
 
@@ -1451,14 +1482,14 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   double cutoff_angle_cosine = 1.0;
   double tabular_evaluation_tol = 1e-7;
   unsigned number_of_discrete_angles = 0;
-  bool linlinlog_interpolation_mode_on = true;
+  MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLOG_INTERPOLATION;
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,
     cutoff_angle_cosine,
     tabular_evaluation_tol,
     number_of_discrete_angles,
-    linlinlog_interpolation_mode_on );
+    two_d_interp );
 
   TEST_ASSERT( !data_container.hasMomentPreservingData() );;
 
@@ -1470,7 +1501,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     cutoff_angle_cosine,
     tabular_evaluation_tol,
     number_of_discrete_angles,
-    linlinlog_interpolation_mode_on );
+    two_d_interp );
 
   // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
@@ -1488,7 +1519,9 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_ASSERT( data_container.isElectronLinLinLogInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Log" );
+  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Log" );
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Log" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -1763,13 +1796,16 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1e-15 );
 
   // Check the electron data
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+
+
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 797 );
 
   // Check the elastic data
-  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
+//  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
   TEST_ASSERT( data_container.hasMomentPreservingData() );
 
   std::vector<double> discrete_angles =
@@ -1838,6 +1874,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
 
+  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> angular_grid =
     data_container.getElasticAngularEnergyGrid();
 
@@ -1887,6 +1925,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+
+  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> electroionization_energy_grid =
     data_container.getElectroionizationEnergyGrid( 1u );
@@ -1943,6 +1983,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 10 );
 
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> bremsstrahlung_photon_energy =
     data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 );
 
@@ -1993,6 +2035,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.size(), 170 );
 
+  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> atomic_excitation_energy_loss =
     data_container.getAtomicExcitationEnergyLoss();
 
@@ -2015,11 +2059,11 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_ASSERT( data_container.hasMomentPreservingData() );
 
-  double max_energy = 21.0;
+  double max_energy = 1e5;
   double cutoff_angle_cosine = 1.0;
   double tabular_evaluation_tol = 1e-7;
   unsigned number_of_discrete_angles = 0;
-  bool linlinlog_interpolation_mode_on = true;
+  MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLOG_INTERPOLATION;
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
@@ -2027,14 +2071,14 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     cutoff_angle_cosine,
     tabular_evaluation_tol,
     number_of_discrete_angles,
-    linlinlog_interpolation_mode_on );
+    two_d_interp );
 
   TEST_ASSERT( !data_container.hasMomentPreservingData() );
 
   max_energy = 20.0;
   cutoff_angle_cosine = 0.9;
   number_of_discrete_angles = 2;
-  linlinlog_interpolation_mode_on = false;
+  two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
@@ -2042,7 +2086,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     cutoff_angle_cosine,
     tabular_evaluation_tol,
     number_of_discrete_angles,
-    linlinlog_interpolation_mode_on );
+    two_d_interp );
 
   // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
@@ -2060,7 +2104,9 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_ASSERT( !data_container.isElectronLinLinLogInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Lin" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -2332,13 +2378,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 
   // Check the electron data
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 797 );
 
   // Check the elastic data
-  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
+//  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
   TEST_ASSERT( data_container.hasMomentPreservingData() );
 
   std::vector<double> discrete_angles =
@@ -2351,8 +2399,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32897955096369191e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98032097904586468e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32890450341329891e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98011871521784721e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
@@ -2364,8 +2412,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   discrete_weights = data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 2.33598553048858498e-03 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97664014469511473e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 2.38160236613325221e-03 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97618397633866727e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold =
@@ -2404,6 +2452,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
   TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
 
+  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
+
   std::vector<double> angular_grid =
     data_container.getElasticAngularEnergyGrid();
 
@@ -2432,8 +2482,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   elastic_pdf = data_container.getCutoffElasticPDF(20.0);
 
-  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.88175663030314722e-10 );
-  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.35908710823637899e+05 );
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.94742666332695421e-10 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.59262709413180826e+05 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 95 );
 
   // Check the electroionization data
@@ -2457,6 +2507,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( electroionization_energy_grid.front(), 1.36100e-5 );
   TEST_EQUALITY_CONST( electroionization_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( electroionization_energy_grid.size(), 8 );
+
+  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> electroionization_recoil_energy =
     data_container.getElectroionizationRecoilEnergy( 1u, 1.36100e-5 );
@@ -2505,6 +2557,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 10 );
+
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> bremsstrahlung_photon_energy =
     data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 );
@@ -2555,6 +2609,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.front(), 1.36100e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.back(), 1.00000e+5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_grid.size(), 170 );
+
+  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
 
   std::vector<double> atomic_excitation_energy_loss =
     data_container.getAtomicExcitationEnergyLoss();
@@ -2619,7 +2675,14 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 1.0 );
 //  TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 0 );
 //  TEST_EQUALITY_CONST( data_container.getTabularEvaluationTolerance(), 1e-7 );
-//  TEST_ASSERT( data_container.isElectronLinLinLogInterpolationModeOn() );
+//  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Log" );
+//  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Log" );
+//  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Log" );
+//  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
 //  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
 //  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
 //  TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -3377,14 +3440,14 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  double cutoff_angle_cosine = 0.9;
 //  double tabular_evaluation_tol = 1e-7;
 //  unsigned number_of_discrete_angles = 2;
-//  bool linlinlog_interpolation_mode_on = false;
+//  MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
 
 //  DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
 //    data_container,
 //    cutoff_angle_cosine,
 //    tabular_evaluation_tol,
 //    number_of_discrete_angles,
-//    linlinlog_interpolation_mode_on );
+//    two_d_interp );
 
 //  // Check the table settings data
 //  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 6 );
@@ -3393,7 +3456,14 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( data_container.getMinElectronEnergy(), 1.0e-5 );
 //  TEST_EQUALITY_CONST( data_container.getMaxElectronEnergy(), 1.0e+5 );
 //  TEST_EQUALITY_CONST( data_container.getTabularEvaluationTolerance(), 1e-7 );
-//  TEST_ASSERT( !data_container.isElectronLinLinLogInterpolationModeOn() );
+//  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
 //  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
 //  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
 //  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );

@@ -263,7 +263,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
 
-  else if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
         data_container,

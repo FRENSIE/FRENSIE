@@ -50,19 +50,25 @@ namespace Data{
   bool ValuesLessThanOrEqualToOne( const Array& values );
 
   // Test if a value is less than or equal to zero
-  static bool isValueLessThanOrEqualToZero( const double value );
+  bool isValueLessThanOrEqualToZero( const double value );
 
   // Test if a value is less than zero
-  static bool isValueLessThanZero( const double value );
+  bool isValueLessThanZero( const double value );
 
   // Test if a value is greater than one
-  static bool isValueGreaterThanOne( const double value );
+  bool isValueGreaterThanOne( const double value );
 
   // Test if a value is greater than or equal to one
-  static bool isValueGreaterThanOrEqualToOne( const double value );
+  bool isValueGreaterThanOrEqualToOne( const double value );
 
   // Test if a value is less than minus one
-  static bool isValueLessThanMinusOne( const double value );
+  bool isValueLessThanMinusOne( const double value );
+
+  // Test if the TwoDInterpPolicy is valid
+  bool isTwoDInterpPolicyValid( const std::string value );
+
+  // Test if the InterpPolicy is valid
+  bool isInterpPolicyValid( const std::string value );
 
 } // end Data namespace
 

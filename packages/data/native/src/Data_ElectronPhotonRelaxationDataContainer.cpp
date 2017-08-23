@@ -124,12 +124,6 @@ double ElectronPhotonRelaxationDataContainer::getElectronTabularEvaluationTolera
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
-bool ElectronPhotonRelaxationDataContainer::isElectronLinLinLogInterpolationModeOn() const
-{
-  return d_electron_linlinlog_interpolation_mode_on;
-}
-
 // Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
 bool ElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
 {
@@ -512,11 +506,25 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getImpulseAppr
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+// Return the elastic TwoDInterpPolicy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getElasticTwoDInterpPolicy() const
+{
+  return d_elastic_two_d_interp;
+}
+
 // Return the elastic angular energy grid
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElasticAngularEnergyGrid() const
 {
   return d_angular_energy_grid;
+}
+
+// Return the cutoff elastic scatering interpolation policy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getCutoffElasticInterpPolicy() const
+{
+  return d_cutoff_elastic_interp;
 }
 
 // Return the elastic angles map
@@ -557,25 +565,25 @@ ElectronPhotonRelaxationDataContainer::getCutoffElasticPDF(
   return d_cutoff_elastic_pdf.find( incoming_energy )->second;
 }
 
-// Return if there is screened Rutherford data
-bool ElectronPhotonRelaxationDataContainer::hasScreenedRutherfordData() const
-{
-  return d_screened_rutherford_normalization_constant.size() > 0;
-}
+//// Return if there is screened Rutherford data
+//bool ElectronPhotonRelaxationDataContainer::hasScreenedRutherfordData() const
+//{
+//  return d_screened_rutherford_normalization_constant.size() > 0;
+//}
 
-// Return the screened Rutherford elastic normalization constant
-const std::vector<double>&
-ElectronPhotonRelaxationDataContainer::getScreenedRutherfordNormalizationConstant() const
-{
-  return d_screened_rutherford_normalization_constant;
-}
+//// Return the screened Rutherford elastic normalization constant
+//const std::vector<double>&
+//ElectronPhotonRelaxationDataContainer::getScreenedRutherfordNormalizationConstant() const
+//{
+//  return d_screened_rutherford_normalization_constant;
+//}
 
-// Return Moliere's screening constant
-const std::vector<double>&
-ElectronPhotonRelaxationDataContainer::getMoliereScreeningConstant() const
-{
-  return d_moliere_screening_constant;
-}
+//// Return Moliere's screening constant
+//const std::vector<double>&
+//ElectronPhotonRelaxationDataContainer::getMoliereScreeningConstant() const
+//{
+//  return d_moliere_screening_constant;
+//}
 
 // Return if there is moment preserving data
 bool ElectronPhotonRelaxationDataContainer::hasMomentPreservingData() const
@@ -630,6 +638,13 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSectionReduction(
   return d_moment_preserving_cross_section_reductions;
 }
 
+// Return the electroionization TwoDInterpPolicy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getElectroionizationTwoDInterpPolicy() const
+{
+  return d_electroionization_two_d_interp;
+}
+
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
@@ -639,6 +654,13 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
 
   return d_electroionization_energy_grid.find( subshell )->second;
+}
+
+// Return the electroionization recoil interpolation policy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilInterpPolicy() const
+{
+  return d_electroionization_recoil_interp;
 }
 
 // Return the electroionization recoil energy for a subshell and energy bin
@@ -679,6 +701,13 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incoming_energy )->second;
 }
 
+// Return the bremsstrahlung TwoDInterpPolicy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getBremsstrahlungTwoDInterpPolicy() const
+{
+  return d_bremsstrahlung_two_d_interp;
+}
+
 // Return the bremsstrahlung energy grid
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungEnergyGrid() const
@@ -686,7 +715,14 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungEnergyGrid() const
   return d_bremsstrahlung_energy_grid;
 }
 
-// Return the bremsstrahlung for an incoming energy
+// Return the bremsstrahlung photon interpolation policy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonInterpPolicy() const
+{
+  return d_bremsstrahlung_photon_interp;
+}
+
+// Return the bremsstrahlung photon energy for an incoming energy
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy(
                             const double incoming_energy ) const
@@ -717,6 +753,13 @@ ElectronPhotonRelaxationDataContainer::getAtomicExcitationEnergyGrid() const
   return d_atomic_excitation_energy_grid;
 }
 
+// Return the atomic excitation energy loss interpolation policy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getAtomicExcitationEnergyLossInterpPolicy() const
+{
+  return d_atomic_excitation_energy_loss_interp;
+}
+
 // Return the atomic excitation energy loss
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getAtomicExcitationEnergyLoss() const
@@ -730,6 +773,14 @@ ElectronPhotonRelaxationDataContainer::getElectronEnergyGrid() const
 {
   return d_electron_energy_grid;
 }
+
+// Return the electron cross section interpolation policy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getElectronCrossSectionInterpPolicy() const
+{
+  return d_electron_cross_section_interp;
+}
+
 // Return the cutoff elastic electron cross section
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getCutoffElasticCrossSection() const
@@ -963,14 +1014,6 @@ void ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationToleranc
   testPrecondition( electron_tabular_evaluation_tol > 0.0 );
 
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
-}
-
-// Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode
-void ElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff(
-    const bool electron_linlinlog_interpolation_mode_on )
-{
-  d_electron_linlinlog_interpolation_mode_on =
-    electron_linlinlog_interpolation_mode_on;
 }
 
 // Set the electron FullyTabularTwoDDistribution correlated sampling mode
@@ -1527,6 +1570,16 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+// Set the elastic TwoDInterpPolicy
+void ElectronPhotonRelaxationDataContainer::setElasticTwoDInterpPolicy(
+    const std::string& elastic_two_d_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDInterpPolicyValid( elastic_two_d_interp ) );
+
+  d_elastic_two_d_interp = elastic_two_d_interp;
+}
+
 // Set the elastic angular energy grid
 void ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid(
                        const std::vector<double>& angular_energy_grid )
@@ -1540,6 +1593,16 @@ void ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid(
   testPrecondition( ValuesGreaterThanZero( angular_energy_grid ) );
 
   d_angular_energy_grid = angular_energy_grid;
+}
+
+// Set the cutoff elastic scattering InterpPolicy
+void ElectronPhotonRelaxationDataContainer::setCutoffElasticInterpPolicy(
+    const std::string& cutoff_elastic_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isInterpPolicyValid( cutoff_elastic_interp ) );
+
+  d_cutoff_elastic_interp = cutoff_elastic_interp;
 }
 
 // Set the total elastic angles for an incoming energy
@@ -1590,26 +1653,26 @@ void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF(
   d_cutoff_elastic_pdf = cutoff_elastic_pdf;
 }
 
-// Set the screened Rutherford elastic normalization constant
-void ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant(
-        const std::vector<double>& screened_rutherford_normalization_constant )
-{
-  // Make sure the screened_rutherford_normalization_constants are valid
-  testPrecondition( std::find_if( screened_rutherford_normalization_constant.begin(),
-                                  screened_rutherford_normalization_constant.end(),
-                                  isValueLessThanZero ) ==
-                    screened_rutherford_normalization_constant.end() );
+//// Set the screened Rutherford elastic normalization constant
+//void ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant(
+//        const std::vector<double>& screened_rutherford_normalization_constant )
+//{
+//  // Make sure the screened_rutherford_normalization_constants are valid
+//  testPrecondition( std::find_if( screened_rutherford_normalization_constant.begin(),
+//                                  screened_rutherford_normalization_constant.end(),
+//                                  isValueLessThanZero ) ==
+//                    screened_rutherford_normalization_constant.end() );
 
-  d_screened_rutherford_normalization_constant =
-    screened_rutherford_normalization_constant;
-}
+//  d_screened_rutherford_normalization_constant =
+//    screened_rutherford_normalization_constant;
+//}
 
-// Set Moliere's screening constant
-void ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant(
-             const std::vector<double>& moliere_screening_constant )
-{
-  d_moliere_screening_constant = moliere_screening_constant;
-}
+//// Set Moliere's screening constant
+//void ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant(
+//             const std::vector<double>& moliere_screening_constant )
+//{
+//  d_moliere_screening_constant = moliere_screening_constant;
+//}
 
 // Clear all the moment preserving data
 void ElectronPhotonRelaxationDataContainer::clearMomentPreservingData()
@@ -1678,6 +1741,16 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionReduc
   d_moment_preserving_cross_section_reductions = cross_section_reduction;
 }
 
+// Set the electroionization TwoDInterpPolicy
+void ElectronPhotonRelaxationDataContainer::setElectroionizationTwoDInterpPolicy(
+    const std::string& electroionization_two_d_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDInterpPolicyValid( electroionization_two_d_interp ) );
+
+  d_electroionization_two_d_interp = electroionization_two_d_interp;
+}
+
 // Set the electroionization energy grid for a subshell
 void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
             const unsigned subshell,
@@ -1688,6 +1761,16 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
   testPrecondition( EnergyGridValid( electroionization_energy_grid ) );
 
   d_electroionization_energy_grid[subshell]=electroionization_energy_grid;
+}
+
+// Set the electroionization recoil InterpPolicy
+void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilInterpPolicy(
+    const std::string& electroionization_recoil_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isInterpPolicyValid( electroionization_recoil_interp ) );
+
+  d_electroionization_recoil_interp = electroionization_recoil_interp;
 }
 
 // Set the electroionization recoil energy for a subshell and energy bin
@@ -1750,6 +1833,16 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF(
     electroionization_recoil_pdf;
 }
 
+// Set the bremsstrahlung TwoDInterpPolicy
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungTwoDInterpPolicy(
+    const std::string& bremsstrahlung_two_d_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDInterpPolicyValid( bremsstrahlung_two_d_interp ) );
+
+  d_bremsstrahlung_two_d_interp = bremsstrahlung_two_d_interp;
+}
+
 // Set the bremsstrahlung energy grid
 void ElectronPhotonRelaxationDataContainer::setBremsstrahlungEnergyGrid(
                        const std::vector<double>& bremsstrahlung_energy_grid )
@@ -1758,6 +1851,16 @@ void ElectronPhotonRelaxationDataContainer::setBremsstrahlungEnergyGrid(
   testPrecondition( EnergyGridValid( bremsstrahlung_energy_grid ) );
 
   d_bremsstrahlung_energy_grid = bremsstrahlung_energy_grid;
+}
+
+// Set the bremsstrahlung photon InterpPolicy
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonInterpPolicy(
+    const std::string& bremsstrahlung_photon_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isInterpPolicyValid( bremsstrahlung_photon_interp ) );
+
+  d_bremsstrahlung_photon_interp = bremsstrahlung_photon_interp;
 }
 
 // Set the bremsstrahlung photon energy for an incoming energy
@@ -1813,6 +1916,16 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyGrid(
   d_atomic_excitation_energy_grid = atomic_excitation_energy_grid;
 }
 
+// Set the atomic excitation energy loss InterpPolicy
+void ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyLossInterpPolicy(
+    const std::string& atomic_excitation_energy_loss_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isInterpPolicyValid( atomic_excitation_energy_loss_interp ) );
+
+  d_atomic_excitation_energy_loss_interp = atomic_excitation_energy_loss_interp;
+}
+
 // Set the atomic excitation energy loss for an incoming energy
 void ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyLoss(
              const std::vector<double>&  atomic_excitation_energy_loss )
@@ -1820,8 +1933,7 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyLoss(
   // Make sure the atomic excitation energy loss are valid
   testPrecondition( ValuesGreaterThanZero( atomic_excitation_energy_loss ) );
 
-  d_atomic_excitation_energy_loss =
-    atomic_excitation_energy_loss;
+  d_atomic_excitation_energy_loss = atomic_excitation_energy_loss;
 }
 
 // Set the electron energy grid
@@ -1832,6 +1944,16 @@ void ElectronPhotonRelaxationDataContainer::setElectronEnergyGrid(
   testPrecondition( EnergyGridValid( energy_grid ) );
 
   d_electron_energy_grid = energy_grid;
+}
+
+// Set the electron cross section interpolation policy
+void ElectronPhotonRelaxationDataContainer::setElectronCrossSectionInterpPolicy(
+    const std::string& electron_cross_section_interp )
+{
+  // Make sure the atomic excitation energy loss are valid
+  testPrecondition( isInterpPolicyValid( electron_cross_section_interp ) );
+
+  d_electron_cross_section_interp = electron_cross_section_interp;
 }
 
 // Set the cutoff elastic electron cross section

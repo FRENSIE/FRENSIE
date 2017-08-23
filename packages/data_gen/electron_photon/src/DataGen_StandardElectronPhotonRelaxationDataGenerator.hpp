@@ -21,6 +21,7 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -102,14 +103,11 @@ public:
   //! Get the FullyTabularTwoDDistribution evaluation tolerance
   double getTabularEvaluationTolerance() const;
 
-  //! Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode to off (on by default)
-  void setElectronLinLinLogInterpolationModeOff();
+  //! Set the electron TwoDInterpPolicy (LogLogLog by default)
+  void setElectronTwoDInterpPolicy( MonteCarlo::TwoDInterpolationType interp );
 
-  //! Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode to on (on by default)
-  void setElectronLinLinLogInterpolationModeOn();
-
-  //! Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
-  bool isElectronLinLinLogInterpolationModeOn() const;
+  //! Return the electron TwoDInterpPolicy
+  MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
   //! Set electron FullyTabularTwoDDistribution correlated sampling mode to off (on by default)
   void setElectronCorrelatedSamplingModeOff();
@@ -140,7 +138,7 @@ public:
     const double cutoff_angle_cosine = 0.9,
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const bool linlinlog_interpolation_mode_on = true,
+    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
     std::ostream& os_log = std::cout );
 
   //! Repopulate the electron moment preserving data
@@ -149,7 +147,7 @@ public:
     const double cutoff_angle_cosine = 0.9,
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const bool linlinlog_interpolation_mode_on = true,
+    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
     std::ostream& os_log = std::cout );
 
 protected:
@@ -217,7 +215,7 @@ private:
   static void setMomentPreservingData(
     const std::vector<double>& elastic_energy_grid,
     const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
 
   // Extract the average photon heating numbers
@@ -374,9 +372,8 @@ private:
   // The number of moment preserving angles
   unsigned d_number_of_moment_preserving_angles;
 
-  /* The electron FullyTabularTwoDDistribution lin-lin-log interpolation mode
-   * (true = on - default, false = off) */
-  bool d_linlinlog_interpolation_mode_on;
+  // The electron TwoDInterpPolicy (LogLogLog - default)
+  MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
   // The electron FullyTabularTwoDDistribution correlated sampling mode
   bool d_correlated_sampling_mode_on;

@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Tue Aug 15 14:26:23 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Wed Aug 23 10:15:03 CDT 2017. It is for testing only!</notes>
 	<atomic_number>6</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -15,7 +15,6 @@
 	<cutoff_angle_cosine>1.00000000000000000e+00</cutoff_angle_cosine>
 	<number_of_moment_preserving_angles>0.00000000000000000e+00</number_of_moment_preserving_angles>
 	<electron_tabular_evaluation_tol>1.00000000000000008e-15</electron_tabular_evaluation_tol>
-	<electron_linlinlog_interpolation_mode_on>1</electron_linlinlog_interpolation_mode_on>
 	<electron_correlated_sampling_mode_on>1</electron_correlated_sampling_mode_on>
 	<electron_unit_based_interpolation_mode_on>1</electron_unit_based_interpolation_mode_on>
 	<grid_convergence_tol>1.00000000000000002e-03</grid_convergence_tol>
@@ -35259,6 +35258,7 @@
 		<item>3.15332044777859921e-01</item>
 		<item>3.13351508326949857e-01</item>
 	</impulse_approx_total_cross_section>
+	<elastic_two_d_interp>Log-Log-Log</elastic_two_d_interp>
 	<angular_energy_grid>
 		<count>16</count>
 		<item_version>0</item_version>
@@ -35279,6 +35279,7 @@
 		<item>6.62500000000000000e+01</item>
 		<item>1.00000000000000000e+05</item>
 	</angular_energy_grid>
+	<cutoff_elastic_interp>Lin-Lin</cutoff_elastic_interp>
 	<cutoff_elastic_angles class_id="13" tracking_level="0" version="0">
 		<count>16</count>
 		<item_version>0</item_version>
@@ -37473,14 +37474,6 @@
 			</second>
 		</item>
 	</cutoff_elastic_pdf>
-	<screened_rutherford_normalization_constant>
-		<count>0</count>
-		<item_version>0</item_version>
-	</screened_rutherford_normalization_constant>
-	<moliere_screening_constant>
-		<count>0</count>
-		<item_version>0</item_version>
-	</moliere_screening_constant>
 	<moment_preserving_elastic_discrete_angles>
 		<count>0</count>
 		<item_version>0</item_version>
@@ -37493,6 +37486,7 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_cross_section_reductions>
+	<electroionization_two_d_interp>Log-Log-Log</electroionization_two_d_interp>
 	<electroionization_energy_grid>
 		<count>4</count>
 		<item_version>0</item_version>
@@ -37556,6 +37550,7 @@
 			</second>
 		</item>
 	</electroionization_energy_grid>
+	<electroionization_recoil_interp>Lin-Lin</electroionization_recoil_interp>
 	<electroionization_recoil_energy class_id="15" tracking_level="0" version="0">
 		<count>4</count>
 		<item_version>0</item_version>
@@ -41142,6 +41137,7 @@
 			</second>
 		</item>
 	</electroionization_recoil_pdf>
+	<bremsstrahlung_two_d_interp>Log-Log-Log</bremsstrahlung_two_d_interp>
 	<bremsstrahlung_energy_grid>
 		<count>9</count>
 		<item_version>0</item_version>
@@ -41155,6 +41151,7 @@
 		<item>1.22474000000000007e+01</item>
 		<item>1.00000000000000000e+05</item>
 	</bremsstrahlung_energy_grid>
+	<bremsstrahlung_photon_interp>Lin-Lin</bremsstrahlung_photon_interp>
 	<bremsstrahlung_photon_energy>
 		<count>9</count>
 		<item_version>0</item_version>
@@ -42366,6 +42363,7 @@
 		<item>9.00000000000000000e+04</item>
 		<item>1.00000000000000000e+05</item>
 	</atomic_excitation_energy_grid>
+	<atomic_excitation_energy_loss_interp>Lin-Lin</atomic_excitation_energy_loss_interp>
 	<atomic_excitation_energy_loss>
 		<count>181</count>
 		<item_version>0</item_version>
@@ -43425,6 +43423,7 @@
 		<item>9.75000000000000000e+04</item>
 		<item>1.00000000000000000e+05</item>
 	</electron_energy_grid>
+	<electron_cross_section_interp>Lin-Lin</electron_cross_section_interp>
 	<cutoff_elastic_cross_section>
 		<count>870</count>
 		<item_version>0</item_version>
@@ -45631,7 +45630,7 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_cross_section>
-	<moment_preserving_elastic_cross_section_threshold_index>10793024</moment_preserving_elastic_cross_section_threshold_index>
+	<moment_preserving_elastic_cross_section_threshold_index>10796800</moment_preserving_elastic_cross_section_threshold_index>
 	<electroionization_subshell_cross_section>
 		<count>4</count>
 		<item_version>0</item_version>

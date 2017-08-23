@@ -214,7 +214,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_coupled )
 {
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::TWOBS_DISTRIBUTION );
-  properties.setElasticTwoDInterpPolicy( MonteCarlo::LOGLINLIN_INTERPOLATION );
+  properties.setElasticTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
   properties.setElasticElectronDistributionMode( MonteCarlo::COUPLED_DISTRIBUTION );
   properties.setUnitBasedInterpolationModeOn();
   properties.setElasticCutoffAngleCosine( 1.0 );

@@ -282,8 +282,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
-  TEST_EQUALITY_CONST( evaluated_pdf.front(), 5.19221275245657547e-08 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 5.06129104868643801e+05 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 5.19221275245657745e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 5.06129104868643684e+05 );
 
   // Test highest energy bin
   energy = 1.0e+5;
@@ -347,7 +347,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
   TEST_EQUALITY_CONST( evaluated_pdf.front(), 6.14602802628500258e-08 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429072791244427e+05 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429072791244369e+05 );
 
 
   // Test highest energy bin

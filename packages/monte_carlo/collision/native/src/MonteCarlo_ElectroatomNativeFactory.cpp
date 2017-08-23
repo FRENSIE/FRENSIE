@@ -118,6 +118,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                                 properties,
                                                 scattering_reactions );
     }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: the 2D interpolation policy "
+                       << elastic_interp <<
+                       " is not currently supported!" );
+    }
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -164,6 +171,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
                     properties.isUnitBasedInterpolationModeOn(),
                     properties.getElectronEvaluationTolerance() );
     }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: the 2D interpolation policy "
+                       << brem_interp <<
+                       " is not currently supported!" );
+    }
   }
 
   // Create the atomic excitation scattering reaction
@@ -184,9 +198,10 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
     std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
-    TwoDInterpolationType brem_interp = properties.getElectroionizationTwoDInterpPolicy();
+    TwoDInterpolationType ionization_interp =
+                            properties.getElectroionizationTwoDInterpPolicy();
 
-    if( brem_interp == LOGLOGLOG_INTERPOLATION )
+    if( ionization_interp == LOGLOGLOG_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LogLogLog>(
                        raw_electroatom_data,
@@ -197,7 +212,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        properties.isUnitBasedInterpolationModeOn(),
                        properties.getElectronEvaluationTolerance() );
     }
-    else if( brem_interp == LINLINLOG_INTERPOLATION )
+    else if( ionization_interp == LINLINLOG_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLog>(
                        raw_electroatom_data,
@@ -208,7 +223,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        properties.isUnitBasedInterpolationModeOn(),
                        properties.getElectronEvaluationTolerance() );
     }
-    else if( brem_interp == LINLINLIN_INTERPOLATION )
+    else if( ionization_interp == LINLINLIN_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLin>(
                        raw_electroatom_data,
@@ -218,6 +233,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        properties.isCorrelatedSamplingModeOn(),
                        properties.isUnitBasedInterpolationModeOn(),
                        properties.getElectronEvaluationTolerance() );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: the 2D interpolation policy "
+                       << ionization_interp <<
+                       " is not currently supported!" );
     }
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )

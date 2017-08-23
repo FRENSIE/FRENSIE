@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="11">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Tue Aug 15 14:26:23 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Wed Aug 23 10:15:03 CDT 2017. It is for testing only!</notes>
 	<atomic_number>1</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -15,7 +15,6 @@
 	<cutoff_angle_cosine>9.00000000000000022e-01</cutoff_angle_cosine>
 	<number_of_moment_preserving_angles>1.00000000000000000e+00</number_of_moment_preserving_angles>
 	<electron_tabular_evaluation_tol>1.00000000000000008e-15</electron_tabular_evaluation_tol>
-	<electron_linlinlog_interpolation_mode_on>1</electron_linlinlog_interpolation_mode_on>
 	<electron_correlated_sampling_mode_on>1</electron_correlated_sampling_mode_on>
 	<electron_unit_based_interpolation_mode_on>1</electron_unit_based_interpolation_mode_on>
 	<grid_convergence_tol>1.00000000000000002e-03</grid_convergence_tol>
@@ -22292,6 +22291,7 @@
 		<item>3.64706288172826562e-02</item>
 		<item>3.59008637199275463e-02</item>
 	</impulse_approx_total_cross_section>
+	<elastic_two_d_interp>Lin-Lin-Log</elastic_two_d_interp>
 	<angular_energy_grid>
 		<count>16</count>
 		<item_version>0</item_version>
@@ -22312,6 +22312,7 @@
 		<item>6.62500000000000000e+01</item>
 		<item>1.00000000000000000e+05</item>
 	</angular_energy_grid>
+	<cutoff_elastic_interp>Lin-Lin</cutoff_elastic_interp>
 	<cutoff_elastic_angles class_id="10" tracking_level="0" version="0">
 		<count>16</count>
 		<item_version>0</item_version>
@@ -24528,14 +24529,6 @@
 			</second>
 		</item>
 	</cutoff_elastic_pdf>
-	<screened_rutherford_normalization_constant>
-		<count>0</count>
-		<item_version>0</item_version>
-	</screened_rutherford_normalization_constant>
-	<moliere_screening_constant>
-		<count>0</count>
-		<item_version>0</item_version>
-	</moliere_screening_constant>
 	<moment_preserving_elastic_discrete_angles>
 		<count>16</count>
 		<item_version>0</item_version>
@@ -24820,6 +24813,7 @@
 		<item>6.33653436603948419e-06</item>
 		<item>9.95726637137201650e-12</item>
 	</moment_preserving_cross_section_reductions>
+	<electroionization_two_d_interp>Lin-Lin-Log</electroionization_two_d_interp>
 	<electroionization_energy_grid>
 		<count>1</count>
 		<item_version>0</item_version>
@@ -24839,6 +24833,7 @@
 			</second>
 		</item>
 	</electroionization_energy_grid>
+	<electroionization_recoil_interp>Lin-Lin</electroionization_recoil_interp>
 	<electroionization_recoil_energy class_id="12" tracking_level="0" version="0">
 		<count>1</count>
 		<item_version>0</item_version>
@@ -25847,6 +25842,7 @@
 			</second>
 		</item>
 	</electroionization_recoil_pdf>
+	<bremsstrahlung_two_d_interp>Lin-Lin-Log</bremsstrahlung_two_d_interp>
 	<bremsstrahlung_energy_grid>
 		<count>10</count>
 		<item_version>0</item_version>
@@ -25861,6 +25857,7 @@
 		<item>1.00000000000000000e+01</item>
 		<item>1.00000000000000000e+05</item>
 	</bremsstrahlung_energy_grid>
+	<bremsstrahlung_photon_interp>Lin-Lin</bremsstrahlung_photon_interp>
 	<bremsstrahlung_photon_energy>
 		<count>10</count>
 		<item_version>0</item_version>
@@ -27293,6 +27290,7 @@
 		<item>9.00000000000000000e+04</item>
 		<item>1.00000000000000000e+05</item>
 	</atomic_excitation_energy_grid>
+	<atomic_excitation_energy_loss_interp>Lin-Lin</atomic_excitation_energy_loss_interp>
 	<atomic_excitation_energy_loss>
 		<count>170</count>
 		<item_version>0</item_version>
@@ -28268,6 +28266,7 @@
 		<item>9.75000000000000000e+04</item>
 		<item>1.00000000000000000e+05</item>
 	</electron_energy_grid>
+	<electron_cross_section_interp>Lin-Lin</electron_cross_section_interp>
 	<cutoff_elastic_cross_section>
 		<count>797</count>
 		<item_version>0</item_version>
@@ -30458,7 +30457,7 @@
 		<item>3.08644238119568676e+06</item>
 		<item>2.97942134584011836e+06</item>
 		<item>2.85778288302247180e+06</item>
-		<item>2.74768630049978010e+06</item>
+		<item>2.74768630049987184e+06</item>
 		<item>2.74271765558884200e+06</item>
 		<item>2.64527118089386914e+06</item>
 		<item>2.55603196752304491e+06</item>
@@ -30511,7 +30510,7 @@
 		<item>8.69587844096601941e+05</item>
 		<item>8.70690177437621984e+05</item>
 		<item>8.74434698479972547e+05</item>
-		<item>8.80205168443815084e+05</item>
+		<item>8.80205168443826260e+05</item>
 		<item>8.80611027414344600e+05</item>
 		<item>8.90503334892209619e+05</item>
 		<item>9.03322301851561991e+05</item>
@@ -30567,7 +30566,7 @@
 		<item>2.43662524485789734e+05</item>
 		<item>2.27449872359662026e+05</item>
 		<item>2.21657408804531122e+05</item>
-		<item>2.04653177446162590e+05</item>
+		<item>2.04653177446162503e+05</item>
 		<item>1.89641893973782862e+05</item>
 		<item>1.88369967382697039e+05</item>
 		<item>1.80796226704634057e+05</item>

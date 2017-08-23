@@ -2378,6 +2378,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
         new Utility::ElasticTwoDDistribution<Utility::LogLogLog>(
             function_data,
+            1.0,
             1e-6,
             evaluation_tol,
             1e-12 ) );
@@ -2407,8 +2408,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
         new Utility::ElasticTwoDDistribution<Utility::LinLinLog>(
             function_data,
+            1.0,
             1e-6,
-            evaluation_tol ) );
+            evaluation_tol,
+            1e-12 ) );
 
     bool correlated_sampling_mode_on = true;
 
@@ -2434,8 +2437,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
         new Utility::ElasticTwoDDistribution<Utility::LinLinLin>(
             function_data,
+            1.0,
             1e-6,
-            evaluation_tol ) );
+            evaluation_tol,
+            1e-12 ) );
 
     bool correlated_sampling_mode_on = true;
 

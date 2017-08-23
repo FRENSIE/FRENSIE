@@ -151,6 +151,13 @@ public:
                                               const LengthType grid_0_length,
                                               const LengthType grid_1_length );
 
+  //! Calculate the length of an intermediate grid using the indep variable ratio (beta)
+  template<typename IndepRatioType, typename LengthType>
+  static LengthType calculateIntermediateGridLength(
+                       const IndepRatioType beta,
+                       const LengthType grid_0_length,
+                       const LengthType grid_1_length );
+
   //! Calculate the length of a processed intermediate grid
   template<typename T>
   static T calculateIntermediateGridLengthProcessed(

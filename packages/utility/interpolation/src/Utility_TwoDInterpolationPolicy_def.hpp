@@ -1160,6 +1160,29 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediat
                                       grid_1_length );
 }
 
+// Calculate the length of an intermediate grid using the indep variable ratio (beta)
+template<typename ZYInterpPolicy, typename ZXInterpPolicy>
+template<typename IndepRatioType, typename LengthType>
+inline LengthType
+TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIntermediateGridLength(
+                       const IndepRatioType beta,
+                       const LengthType grid_0_length,
+                       const LengthType grid_1_length )
+{
+  // Make sure the first independent variable ratio is valid
+//  testPrecondition( beta <= QuantityTraits<IndepRatioType>::one() );
+//  testPrecondition( beta >= QuantityTraits<IndepRatioType>::zero() );
+  // Make sure the grid lengths are valid
+  testPrecondition( !QuantityTraits<LengthType>::isnaninf( grid_0_length ) );
+  testPrecondition( !QuantityTraits<LengthType>::isnaninf( grid_1_length ) );
+  testPrecondition( grid_0_length >= QuantityTraits<LengthType>::zero() );
+  testPrecondition( grid_1_length >= QuantityTraits<LengthType>::zero() );
+  testPrecondition( grid_0_length + grid_1_length >
+                    QuantityTraits<LengthType>::zero() );
+
+  return LXInterpPolicy::interpolate( beta, grid_0_length, grid_1_length );
+}
+
 // Calculate the min value of an intermediate grid
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
 template<typename IndepType, typename LimitType>

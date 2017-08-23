@@ -137,6 +137,12 @@ struct LogLog : public InterpolationHelper<LogLog>
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
@@ -204,6 +210,12 @@ struct LogLin : public InterpolationHelper<LogLin>
   static DepType interpolate( const IndepType indep_var_0,
                               const IndepType indep_var_1,
                               const IndepType indep_var,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
@@ -277,6 +289,12 @@ struct LinLog : public InterpolationHelper<LinLog>
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
@@ -344,6 +362,12 @@ struct LinLin : public InterpolationHelper<LinLin>
   static DepType interpolate( const IndepType indep_var_0,
                               const IndepType indep_var_1,
                               const IndepType indep_var,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 

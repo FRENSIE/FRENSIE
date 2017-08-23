@@ -257,6 +257,33 @@ TEUCHOS_UNIT_TEST( LinLin, interpolate_raw )
 }
 
 //---------------------------------------------------------------------------//
+// Check that linear-linear interpolation between two points can be done
+TEUCHOS_UNIT_TEST( LinLin, interpolate_raw_beta )
+{
+  double x0 = 0.0, x1 = 1.0, x = 0.5;
+  double beta = ( x - x0 )/( x1 - x0 );
+  double y0 = 5.0, y1 = 10.0;
+
+  double y = Utility::LinLin::interpolate( beta, y0, y1 );
+
+  TEST_EQUALITY_CONST( y, 7.5 );
+
+  x = 0.0;
+  beta = ( x - x0 )/( x1 - x0 );
+
+  y = Utility::LinLin::interpolate( beta, y0, y1 );
+
+  TEST_EQUALITY_CONST( y, 5.0 );
+
+  x = 1.0;
+  beta = ( x - x0 )/( x1 - x0 );
+
+  y = Utility::LinLin::interpolate( beta, y0, y1 );
+
+  TEST_EQUALITY_CONST( y, 10.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that linear-linear interpolation between two processed points can be
 // done
 TEUCHOS_UNIT_TEST( LinLin, interpolate_processed )
