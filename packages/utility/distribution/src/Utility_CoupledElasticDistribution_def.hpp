@@ -610,7 +610,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffBoundOfIndepVar() const
 {
-  return 0.999999*IQT::one();
+  return IQT::initializeQuantity(0.999999);
 }
 
 // Return the lower bound of the distribution independent variable
@@ -620,7 +620,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return -1.0*IQT::one();
+  return IQT::initializeQuantity(-1.0);
 }
 
 // Return the distribution type

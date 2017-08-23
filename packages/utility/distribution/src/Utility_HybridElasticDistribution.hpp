@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_CoupledElasticDistribution.hpp
+//! \file   Utility_HybridElasticDistribution.hpp
 //! \author Luke Kersting
-//! \brief  Coupled elastic distribution class declaration
+//! \brief  Hybrid elastic distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_COUPLED_ELASTIC_HPP
-#define UTILITY_COUPLED_ELASTIC_HPP
+#ifndef UTILITY_HYBRID_ELASTIC_HPP
+#define UTILITY_HYBRID_ELASTIC_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -22,14 +22,14 @@
 
 namespace Utility{
 
-/*! The coupled elastic distribution class declaration
+/*! The hybrid elastic distribution class declaration
  * \ingroup one_d_distributions
  */
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-class UnitAwareCoupledElasticDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                     public ParameterListCompatibleObject<UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
+class UnitAwareHybridElasticDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+                                     public ParameterListCompatibleObject<UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
 {
 
   // Only allow construction when the independent unit dimensionless
@@ -70,7 +70,7 @@ private:
 public:
 
   //! This distribution type
-  typedef UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
@@ -82,36 +82,40 @@ public:
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
   //! Default constructor
-  UnitAwareCoupledElasticDistribution();
+  UnitAwareHybridElasticDistribution();
 
   //! Basic constructor (potentially dangerous)
-  UnitAwareCoupledElasticDistribution(
-                    const Teuchos::Array<double>& independent_values,
-                    const Teuchos::Array<double>& dependent_values,
-                    const double& moliere_screening_constant,
+  UnitAwareHybridElasticDistribution(
+                    const Teuchos::Array<double>& independent_cutoff_values,
+                    const Teuchos::Array<double>& dependent_cutoff_values,
+                    const Teuchos::Array<double>& independent_discrete_values,
+                    const Teuchos::Array<double>& dependent_discrete_values,
+                    const double& cutoff_angle_cosine,
                     const double& cutoff_cross_section_ratio );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareCoupledElasticDistribution(
-                    const Teuchos::Array<InputIndepQuantity>& independent_values,
-                    const Teuchos::Array<InputDepQuantity>& dependent_values,
-                    const double& moliere_screening_constant,
-                    const double& cutoff_cross_section_ratio );
+  UnitAwareHybridElasticDistribution(
+        const Teuchos::Array<InputIndepQuantity>& independent_cutoff_values,
+        const Teuchos::Array<InputDepQuantity>& dependent_cutoff_values,
+        const Teuchos::Array<InputIndepQuantity>& independent_discrete_values,
+        const Teuchos::Array<InputDepQuantity>& dependent_discrete_values,
+        const InputIndepQuantity& cutoff_angle_cosine,
+        const double& cutoff_cross_section_ratio );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
-  UnitAwareCoupledElasticDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
+  UnitAwareHybridElasticDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)
-  static UnitAwareCoupledElasticDistribution fromUnitlessDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution );
+  static UnitAwareHybridElasticDistribution fromUnitlessDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwareCoupledElasticDistribution& operator=(
-                           const UnitAwareCoupledElasticDistribution& dist_instance );
+  UnitAwareHybridElasticDistribution& operator=(
+                           const UnitAwareHybridElasticDistribution& dist_instance );
 
   //! Destructor
-  ~UnitAwareCoupledElasticDistribution()
+  ~UnitAwareHybridElasticDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -155,9 +159,6 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
 
-  //! Return the moliere screening constant for the distribution
-  double getMoliereScreeningConstant() const;
-
   //! Return the cutoff cross section ratio for the distribution
   double getCutoffCrossSectionRatio() const;
 
@@ -171,12 +172,12 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareCoupledElasticDistribution& other ) const;
+  bool isEqual( const UnitAwareHybridElasticDistribution& other ) const;
 
 protected:
 
   //! Copy constructor (copying from unitless distribution only)
-  UnitAwareCoupledElasticDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
+  UnitAwareHybridElasticDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
@@ -200,25 +201,37 @@ protected:
 private:
 
   // Initialize the distribution
-  void initializeDistributionFromRawData(
-                              const Teuchos::Array<double>& independent_values,
-                              const Teuchos::Array<double>& dependent_values );
+  void initializeDistributionsFromRawData(
+                    const Teuchos::Array<double>& independent_cutoff_values,
+                    const Teuchos::Array<double>& dependent_cutoff_values,
+                    const Teuchos::Array<double>& independent_discrete_values,
+                    const Teuchos::Array<double>& dependent_discrete_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  void initializeDistribution(
+  void initializeCutoffDistribution(
                   const Teuchos::Array<InputIndepQuantity>& independent_values,
                   const Teuchos::Array<InputDepQuantity>& dependent_values );
 
-  // Reconstruct original distribution
-  void reconstructOriginalDistribution(
-                         Teuchos::Array<IndepQuantity>& independent_values,
-                         Teuchos::Array<DepQuantity>& dependent_values ) const;
+  // Initialize the distribution
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  void initializeDiscreteDistribution(
+                  const Teuchos::Array<InputIndepQuantity>& independent_values,
+                  const Teuchos::Array<InputDepQuantity>& dependent_values );
 
-  // Reconstruct original distribution w/o units
-  void reconstructOriginalUnitlessDistribution(
-                              Teuchos::Array<double>& independent_values,
-                              Teuchos::Array<double>& dependent_values ) const;
+  // Reconstruct original distributions
+  void reconstructOriginalDistributions(
+                 Teuchos::Array<IndepQuantity>& independent_cutoff_values,
+                 Teuchos::Array<DepQuantity>& dependent_cutoff_values,
+                 Teuchos::Array<IndepQuantity>& independent_discrete_values,
+                 Teuchos::Array<DepQuantity>& dependent_discrete_values ) const;
+
+  // Reconstruct original distributions w/o units
+  void reconstructOriginalUnitlessDistributions(
+                      Teuchos::Array<double>& independent_cutoff_values,
+                      Teuchos::Array<double>& dependent_cutoff_values,
+                      Teuchos::Array<double>& independent_discrete_values,
+                      Teuchos::Array<double>& dependent_discrete_values ) const;
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
@@ -230,8 +243,9 @@ private:
   IndepQuantity sampleImplementation( double random_number,
                                       unsigned& sampled_bin_index ) const;
 
-  // Return a random sample of the screened Rutherford analytical peak using the random number
-  IndepQuantity sampleScreenedRutherford( double random_number ) const;
+  // Return a random sample of the moment preserving discrete distribution using the random number and record the bin index
+  IndepQuantity sampleDiscrete( double random_number,
+                                unsigned& sampled_bin_index ) const;
 
   // Return a random sample of the cutoff tabular distribution using the random number and record the bin index
   IndepQuantity sampleCutoff( double random_number,
@@ -241,113 +255,95 @@ private:
   template<typename FriendInterpolationPolicy,
            typename FriendIndepUnit,
            typename FriendDepUnit>
-  friend class UnitAwareCoupledElasticDistribution;
+  friend class UnitAwareHybridElasticDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = COUPLED_ELASTIC_DISTRIBUTION;
+  static const OneDDistributionType distribution_type = HYBRID_ELASTIC_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
   // prevent altering the grid with log interpolation
   typedef Teuchos::Array<Quad<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
-  DistributionArray d_distribution;
+  DistributionArray d_cutoff_distribution;
 
-  // The normalization constant
-  DistNormQuantity d_norm_constant;
+  // The distribution (first = independent value, second = CDF)
+  Teuchos::Array<Pair<IndepQuantity,double> > d_discrete_distribution;
 
-  // The scaled_normalization constant
-  DistNormQuantity d_scaled_norm_constant;
+  // The discrete normalization constant
+  DistNormQuantity d_discrete_norm_constant;
+
+  // The cutoff normalization constant
+  DistNormQuantity d_cutoff_norm_constant;
 
   // The max CDF value
   UnnormCDFQuantity d_max_cdf;
 
-  // The lower bounds of the independent variable
-  IndepQuantity d_min_indep_var;
-
-  // The upper bounds of the independent variable
-  IndepQuantity d_max_indep_var;
-
-  /* Moliere's atomic screening constant at the energy of the distribution
-   * eta = 1/4 ( alpha m c / 0.885 p )**2 Z**(2/3) ( 1.13 + 3.76 [ alpha Z / beta ]**2 sqrt{ E/ (E + 1)})
-   *
-   * The numerical value is the same as that of Seltzer
-   * (Chapter 7) in the "Orange Book"".
-   */
-  double d_moliere_eta;
+  // The cutoff angle cosine between the tabular and discrete distributions
+  IndepQuantity d_cutoff_mu;
 
   // The ratio of the cutoff cross section to the total cross section at the energy of the distribution
   double d_cutoff_cross_section_ratio;
 
   /* Parameter for rescaling the random number to sample the
-   * screened Rutherford analytical peak ( 1/(1 - cutoff_cs_ratio) )
+   * moment preserving discrete peak ( 1/(1 - cutoff_cs_ratio) )
    */
   double d_scaling_parameter;
-
-  /* Parameter for evaluating the PDF of the screened Rutherford analytical peak
-   * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
-   */
-  DepQuantity d_pdf_parameter;
-
-  /* Parameter for evaluating the CDF of the screened Rutherford analytical peak
-   * ( (1 - cutoff_cs_ratio)*eta/mu_c )
-   */
-  double d_cdf_parameter;
 };
 
-/*! The coupled elastic distribution (unit-agnostic)
+/*! The hybrid elastic distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
-template<typename InterpolationPolicy> using CoupledElasticDistribution =
-  UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>;
+template<typename InterpolationPolicy> using HybridElasticDistribution =
+  UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>;
 
 } // end Utility namespace
 
 namespace Teuchos{
 
-/*! Type name traits specialization for the Utility::CoupledElasticDistribution
+/*! Type name traits specialization for the Utility::HybridElasticDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files.
  */
 template<typename InterpolationPolicy>
-class TypeNameTraits<Utility::CoupledElasticDistribution<InterpolationPolicy> >
+class TypeNameTraits<Utility::HybridElasticDistribution<InterpolationPolicy> >
 {
 public:
   static std::string name()
   {
     std::ostringstream iss;
-    iss << "Coupled Elastic " << InterpolationPolicy::name() << " Distribution";
+    iss << "Hybrid Elastic " << InterpolationPolicy::name() << " Distribution";
 
     return iss.str();
   }
   static std::string concreteName(
-            const Utility::CoupledElasticDistribution<InterpolationPolicy>& instance )
+            const Utility::HybridElasticDistribution<InterpolationPolicy>& instance )
   {
     return name();
   }
 };
 
 /*! \brief Type name traits partial specialization for the
- * Utility::UnitAwareCoupledElasticDistribution
+ * Utility::UnitAwareHybridElasticDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files
  */
 template<typename InterpolationPolicy, typename U, typename V>
-class TypeNameTraits<Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,U,V> >
+class TypeNameTraits<Utility::UnitAwareHybridElasticDistribution<InterpolationPolicy,U,V> >
 {
   public:
   static std::string name()
   {
     std::ostringstream iss;
-    iss << "Unit-Aware Coupled Elastic " << InterpolationPolicy::name()
+    iss << "Unit-Aware Hybrid Elastic " << InterpolationPolicy::name()
         << " Distribution ("
         << Utility::UnitTraits<U>::symbol() << ","
         << Utility::UnitTraits<V>::symbol() << ")";
 
     return iss.str();
   }
-  static std::string concreteName( const Utility::UnitAwareCoupledElasticDistribution<InterpolationPolicy,U,V>& instance )
+  static std::string concreteName( const Utility::UnitAwareHybridElasticDistribution<InterpolationPolicy,U,V>& instance )
   {
     return name();
   }
@@ -359,12 +355,12 @@ class TypeNameTraits<Utility::UnitAwareCoupledElasticDistribution<InterpolationP
 // Template inludes.
 //---------------------------------------------------------------------------//
 
-#include "Utility_CoupledElasticDistribution_def.hpp"
+#include "Utility_HybridElasticDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_COUPLED_ELASTIC_ONE_D_DISTRIBUTION_HPP
+#endif // end UTILITY_HYBRID_ELASTIC_ONE_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_CoupledElasticDistribution.hpp
-//---------------------------------------------------------------------------//
+// end Utility_HybridElasticDistribution.hpp
+//---------------------------------------------------------------------------//endent_discrete_values,
