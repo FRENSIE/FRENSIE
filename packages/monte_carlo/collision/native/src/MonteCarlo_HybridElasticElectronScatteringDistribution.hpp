@@ -15,10 +15,10 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_DiscreteDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_TwoDInterpolationPolicy.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_FullyTabularTwoDDistribution.hpp"
+//#include "Utility_TabularOneDDistribution.hpp"
+//#include "Utility_TwoDInterpolationPolicy.hpp"
+//#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -36,8 +36,7 @@ public:
 
   //! Constructor
   HybridElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& continuous_distribution,
-    const std::shared_ptr<TwoDDist>& discrete_distribution,
+    const std::shared_ptr<TwoDDist>& hybrid_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
@@ -105,20 +104,15 @@ private:
   // The tabular evaluation tolerance
   double d_evaluation_tol;
 
-  // The continuous elastic cutoff distribution
-  std::shared_ptr<TwoDDist> d_continuous_distribution;
-
-  // The discrete elastic moment preserving distribution
-  std::shared_ptr<TwoDDist> d_discrete_distribution;
+  // The hybrid elastic distribution
+  std::shared_ptr<TwoDDist> d_hybrid_distribution;
 
   // The ratios of the cutoff to the moment preserving cross section
   std::shared_ptr<const Utility::OneDDistribution> d_cross_section_ratios;
 
-  // The sample discrete function pointer
-  std::function<double ( const double, const double )> d_sample_discrete_func;
+  // The sample function pointer
+  std::function<double ( const double, const double )> d_sample_func;
 
-  // The sample continuous function pointer
-  std::function<double ( const double, const double )> d_sample_continuous_func;
 };
 
 } // end MonteCarlo namespace

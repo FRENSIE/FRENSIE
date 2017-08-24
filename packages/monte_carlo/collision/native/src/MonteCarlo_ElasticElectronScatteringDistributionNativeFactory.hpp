@@ -269,6 +269,19 @@ public:
     const double evaluation_tol,
     const bool discrete_function = false );
 
+  //! Create the hybrid elastic scattering function
+  template<typename TwoDInterpPolicy = Utility::LogLogLog>
+  static void createHybridScatteringFunction(
+    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
+    const std::map<double,std::vector<double> >& moment_preserving_angles,
+    const std::map<double,std::vector<double> >& moment_preserving_weights,
+    const std::vector<double>& angular_energy_grid,
+    std::shared_ptr<TwoDDist>& hybrid_functions,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
+
 protected:
 
   //! Create the cutoff to total preserving cross section ratios

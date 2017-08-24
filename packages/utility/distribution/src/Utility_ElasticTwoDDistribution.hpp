@@ -278,8 +278,7 @@ private:
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
                     const PrimaryIndepQuantity incoming_energy,
@@ -287,8 +286,19 @@ private:
                     EvaluationMethod evaluate ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateExactInSubrangeImpl(
+                    const PrimaryIndepQuantity incoming_energy,
+                    const SecondaryIndepQuantity angle_cosine,
+                    const SecondaryIndepQuantity max_angle_cosine,
+                    EvaluationMethod evaluate,
+                    ReturnType above_max_angle_cosine_return =
+                        QuantityTraits<ReturnType>::zero(),
+                    unsigned max_number_of_iterations = 500 ) const;
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateExactImpl(
                     const PrimaryIndepQuantity incoming_energy,

@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_CoupledElasticDistribution.hpp"
+#include "Utility_HybridElasticDistribution.hpp"
 #include "Utility_ElasticTwoDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -377,27 +378,27 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
 
-  // Create the discrete scattering function
-  std::shared_ptr<TwoDDist> discrete_function;
-  ThisType::createScatteringFunction<TwoDInterpPolicy>(
-                moment_preserving_angles,
-                moment_preserving_weights,
-                angular_energy_grid,
-                discrete_function,
-                1.0,
-                evaluation_tol,
-                true );
+//  // Create the discrete scattering function
+//  std::shared_ptr<TwoDDist> discrete_function;
+//  ThisType::createScatteringFunction<TwoDInterpPolicy>(
+//                moment_preserving_angles,
+//                moment_preserving_weights,
+//                angular_energy_grid,
+//                discrete_function,
+//                1.0,
+//                evaluation_tol,
+//                true );
 
-  // Create the continuous scattering function
-  std::shared_ptr<TwoDDist> continuous_function;
-  ThisType::createScatteringFunction<TwoDInterpPolicy>(
-                cutoff_elastic_angles,
-                cutoff_elastic_pdf,
-                angular_energy_grid,
-                continuous_function,
-                cutoff_angle_cosine,
-                evaluation_tol,
-                false );
+//  // Create the continuous scattering function
+//  std::shared_ptr<TwoDDist> continuous_function;
+//  ThisType::createScatteringFunction<TwoDInterpPolicy>(
+//                cutoff_elastic_angles,
+//                cutoff_elastic_pdf,
+//                angular_energy_grid,
+//                continuous_function,
+//                cutoff_angle_cosine,
+//                evaluation_tol,
+//                false );
 
   // Create the full continuous scattering function
   std::shared_ptr<TwoDDist> full_continuous_function;
@@ -420,11 +421,22 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
                 cutoff_angle_cosine,
                 cross_section_ratios );
 
+  // Create the hybrid scattering function
+  std::shared_ptr<TwoDDist> hybrid_function;
+    ThisType::createHybridScatteringFunction( cross_section_ratios,
+                                              cutoff_elastic_angles,
+                                              cutoff_elastic_pdf,
+                                              moment_preserving_angles,
+                                              moment_preserving_weights,
+                                              angular_energy_grid,
+                                              hybrid_function,
+                                              cutoff_angle_cosine,
+                                              evaluation_tol );
+
   // Create hybrid distribution
   hybrid_elastic_distribution.reset(
         new HybridElasticElectronScatteringDistribution(
-                continuous_function,
-                discrete_function,
+                hybrid_function,
                 cross_section_ratios,
                 cutoff_angle_cosine,
                 correlated_sampling_mode_on,
@@ -759,107 +771,59 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
                                                         energy_grid[n],
                                                         cutoff_angle_cosine );
 
+    // Get the reduced cutoff cross section
+    double reduced_cross_section = cutoff_cross_section[n]*cutoff_cdf;
+
     // Get the ratio of the cutoff to the moment preserving cross section
-    cross_section_ratio[n] = cutoff_cross_section[n]*cutoff_cdf/
-                                            moment_preserving_cross_section[n];
+    cross_section_ratio[n] =
+      reduced_cross_section/(reduced_cross_section + moment_preserving_cross_section[n] );
   }
     // Create cross section ratios
     cross_section_ratios.reset(
       new const TabularDist( energy_grid, cross_section_ratio ) );
 }
 
-//// Create the hybrid elastic scattering functions
-//template<typename TwoDInterpPolicy>
-//void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
-//    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-//    const Teuchos::ArrayRCP<const double> energy_grid,
-//    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-//    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-//    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
-//    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
-//    const std::map<double,std::vector<double> >& moment_preserving_angles,
-//    const std::map<double,std::vector<double> >& moment_preserving_weights,
-//    const std::vector<double>& angular_energy_grid,
-//    const double cutoff_angle_cosine,
-//    std::shared_ptr<HybridDistribution>& hybrid_functions )
-//{
-//  // Get the distribution data
-//  HybridDistribution function_data( angular_energy_grid.size() );
+// Create the hybrid elastic scattering functions
+template<typename TwoDInterpPolicy>
+void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
+    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const std::map<double,std::vector<double> >& elastic_angles,
+    const std::map<double,std::vector<double> >& elastic_pdf,
+    const std::map<double,std::vector<double> >& moment_preserving_angles,
+    const std::map<double,std::vector<double> >& moment_preserving_weights,
+    const std::vector<double>& energy_grid,
+    std::shared_ptr<TwoDDist>& hybrid_function,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+{
+  // Get the distribution data
+  TwoDDist::DistributionType function_data( energy_grid.size() );
 
-//  // Loop through all energies below the max energy
-//  for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
-//  {
-//    ThisType::createHybridScatteringFunction<TwoDInterpPolicy>(
-//        grid_searcher,
-//        energy_grid,
-//        cutoff_cross_section,
-//        cutoff_elastic_angles,
-//        cutoff_elastic_pdf,
-//        moment_preserving_cross_section,
-//        moment_preserving_angles,
-//        moment_preserving_weights,
-//        angular_energy_grid[n],
-//        cutoff_angle_cosine,
-//        function_data[n] );
-//  }
+  // Loop through all energies below the max energy
+  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  {
+    // Create the cutoff elastic scattering function
+    function_data[n].first = energy_grid[n];
 
-//  // Set the cutoff scattering function
-//  hybrid_functions.reset( new HybridDistribution( function_data ) );
-//}
+    // Create hybrid elastic distribution
+    function_data[n].second.reset(
+      new const Utility::HybridElasticDistribution<Utility::LinLin>(
+                        elastic_angles.find( energy_grid[n] )->second,
+                        elastic_pdf.find( energy_grid[n] )->second,
+                        moment_preserving_angles.find( energy_grid[n] )->second,
+                        moment_preserving_weights.find( energy_grid[n] )->second,
+                        cutoff_angle_cosine,
+                        cross_section_ratios->evaluate( energy_grid[n] ) ) );
+  }
 
-//// Create the hybrid elastic scattering functions and cross section ratio
-//template<typename TwoDInterpPolicy>
-//void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
-//    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-//    const Teuchos::ArrayRCP<const double> energy_grid,
-//    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-//    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-//    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
-//    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
-//    const std::map<double,std::vector<double> >& moment_preserving_angles,
-//    const std::map<double,std::vector<double> >& moment_preserving_weights,
-//    const double energy,
-//    const double cutoff_angle_cosine,
-//    HybridFunction& function_data )
-//{
-//  testPrecondition( cutoff_elastic_angles.count( energy ) );
-
-//  // Create the cutoff elastic scattering function
-//  function_data.first = energy;
-
-//  function_data.second.reset(
-//    new const TabularDist( cutoff_elastic_angles.find( energy )->second,
-//                           cutoff_elastic_pdf.find( energy )->second ) );
-
-//  function_data.third.reset(
-//    new const DiscreteDist( moment_preserving_angles.find( energy )->second,
-//                            moment_preserving_weights.find( energy )->second ) );
-
-//  unsigned energy_index =
-//    grid_searcher->findLowerBinIndex( energy );
-
-//  // Get the moment preserving cross section at the given energy
-//  double mp_cross_section_i =
-//    Utility::LinLin::interpolate( energy_grid[energy_index],
-//                                  energy_grid[energy_index+1],
-//                                  energy,
-//                                  moment_preserving_cross_section[energy_index],
-//                                  moment_preserving_cross_section[energy_index+1] );
-
-//  // Get the cutoff cross section at the given energy
-//  double cutoff_cross_section_i =
-//    Utility::LinLin::interpolate( energy_grid[energy_index],
-//                                  energy_grid[energy_index+1],
-//                                  energy,
-//                                  cutoff_cross_section[energy_index],
-//                                  cutoff_cross_section[energy_index+1] );
-
-//  // Get the cutoff cdf value at the angle cosine cutoff
-//  double cutoff_cdf = function_data.second->evaluateCDF( cutoff_angle_cosine );
-
-//  // Get the ratio of the cutoff the moment preserving cross section
-//  function_data.fourth = cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
-//}
+  // Set the hybrid function
+  hybrid_function.reset(
+    new Utility::ElasticTwoDDistribution<TwoDInterpPolicy>(
+        function_data,
+        1.0,
+        1e-6,
+        evaluation_tol ) );
+}
 
 //// Create the scattering function at the given energy
 ///*! \details This function has been overloaded so it can be called without using

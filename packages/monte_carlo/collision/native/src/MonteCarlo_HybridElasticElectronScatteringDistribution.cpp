@@ -18,21 +18,18 @@ namespace MonteCarlo{
 
 // Constructor
 HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& continuous_distribution,
-    const std::shared_ptr<TwoDDist>& discrete_distribution,
+    const std::shared_ptr<TwoDDist>& hybrid_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
-  : d_continuous_distribution( continuous_distribution ),
-    d_discrete_distribution( discrete_distribution ),
+  : d_hybrid_distribution( hybrid_distribution ),
     d_cross_section_ratios( cross_section_ratios ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_evaluation_tol( evaluation_tol )
 {
   // Make sure the pointers are valid
-  testPrecondition( d_continuous_distribution.use_count() > 0 );
-  testPrecondition( d_discrete_distribution.use_count() > 0 );
+  testPrecondition( d_hybrid_distribution.use_count() > 0 );
   testPrecondition( d_cross_section_ratios.use_count() > 0 );
   // Make sure the cutoff angle cosine is valid
   testPrecondition( d_cutoff_angle_cosine >= -1.0 );
@@ -44,34 +41,21 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
   if( correlated_sampling_mode_on )
   {
     // Set the correlated unit based sample routine
-    d_sample_discrete_func = std::bind<double>(
+    d_sample_func = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
-         std::cref( *d_discrete_distribution ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
-
-    d_sample_continuous_func = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
-         std::cref( *d_continuous_distribution ),
+         std::cref( *d_hybrid_distribution ),
          std::placeholders::_1,
          std::placeholders::_2 );
   }
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_discrete_func = std::bind<double>(
+    d_sample_func = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
-         std::cref( *d_discrete_distribution ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
-
-    d_sample_continuous_func = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
-         std::cref( *d_continuous_distribution ),
+         std::cref( *d_hybrid_distribution ),
          std::placeholders::_1,
          std::placeholders::_2 );
   }
-
 }
 
 // Return the cutoff to moment preserving cross section ratio
@@ -110,10 +94,8 @@ double HybridElasticElectronScatteringDistribution::evaluate(
 
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
-    double unormalized_eval = d_continuous_distribution->evaluateExact(
-                                    incoming_energy, scattering_angle_cosine);
-
-    return this->normalizeEvalution( incoming_energy,unormalized_eval );
+    return d_hybrid_distribution->correlatedEvaluateInBoundaries(
+      incoming_energy, scattering_angle_cosine, -1.0, d_cutoff_angle_cosine );
   }
   else
     return 0.0;
@@ -136,11 +118,8 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
 
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
-    double unormalized_eval =
-        d_continuous_distribution->evaluateSecondaryConditionalPDFExact(
-                                    incoming_energy, scattering_angle_cosine);
-
-    return this->normalizeEvalution( incoming_energy, unormalized_eval );
+    return d_hybrid_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries(
+      incoming_energy, scattering_angle_cosine, -1.0, d_cutoff_angle_cosine );
   }
   else
     return 0.0;
@@ -161,23 +140,8 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
-  {
-    double unormalized_eval =
-        d_continuous_distribution->evaluateSecondaryConditionalCDFExact(
+  return d_hybrid_distribution->evaluateSecondaryConditionalCDFExact(
                                     incoming_energy, scattering_angle_cosine);
-
-    return this->normalizeEvalution( incoming_energy, unormalized_eval );
-  }
-  else if( incoming_energy <
-                d_continuous_distribution->getLowerBoundOfPrimaryIndepVar() ||
-           incoming_energy >
-                d_continuous_distribution->getUpperBoundOfPrimaryIndepVar() )
-  {
-    return 0.0;
-  }
-  else
-    return 1.0;
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -269,52 +233,14 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   // Increment the number of trials
   ++trials;
 
-  if( incoming_energy < d_continuous_distribution->getLowerBoundOfPrimaryIndepVar() ||
-      incoming_energy > d_continuous_distribution->getUpperBoundOfPrimaryIndepVar() )
-  {
-    scattering_angle_cosine = 1.0;
-  }
-  else
-  {
-    double random_number =
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
+  double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-    // Ratio of the cutoff cross section to the moment preserving cross section
-    double cross_section_ratio = this->getCrossSectionRatio( incoming_energy );
-
-    // Scale the random number
-    double scaled_random_number = ( 1.0 + cross_section_ratio )*random_number;
-
-    if ( scaled_random_number <= cross_section_ratio )
-    {
-      scaled_random_number /= cross_section_ratio;
-
-      scattering_angle_cosine =
-        d_sample_continuous_func( incoming_energy, scaled_random_number );
-    }
-    else
-    {
-      scaled_random_number -= cross_section_ratio;
-
-      scattering_angle_cosine =
-        d_sample_discrete_func( incoming_energy, scaled_random_number );
-    }
-  }
+  scattering_angle_cosine = d_sample_func( incoming_energy, random_number );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
-}
-
-// Normalized the cutoff eval to the entire distribution
-inline double HybridElasticElectronScatteringDistribution::normalizeEvalution(
-                            const double incoming_energy,
-                            const double unormalized_eval ) const
-{
-  // Sampling ratio of the cutoff to the moment preserving distribution
-  double sampling_ratio = this->getSamplingRatio( incoming_energy );
-
-  return unormalized_eval*sampling_ratio;
 }
 
 } // end MonteCarlo namespace

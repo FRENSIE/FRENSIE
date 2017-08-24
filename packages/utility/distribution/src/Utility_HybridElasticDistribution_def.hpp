@@ -1031,7 +1031,7 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
 
     // Scale the dependent values by the cross section ratio
     /*! \details The pdf values are for the tabular cutoff elastic distribution
-     *  and must be re-scaled for the total elastic distribution.
+     *  and must be re-scaled for the total hybrid elastic distribution.
      */
     d_cutoff_distribution[i].third =
                 DepQuantity( dependent_values[i]*d_cutoff_cross_section_ratio );
@@ -1042,6 +1042,29 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_cutoff_distribution,
                                                                false );
 
+  // Calculate the slopes of the PDF
+  DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_cutoff_distribution );
+
+
+  typename DistributionArray::const_iterator lower_bin_boundary =
+                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
+                                                 d_cutoff_distribution.end(),
+                                                 d_cutoff_mu );
+
+    IndepQuantity indep_diff = d_cutoff_mu - lower_bin_boundary->first;
+
+    double cdf = (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
+          indep_diff*indep_diff*lower_bin_boundary->fourth/2.0);
+
+    double cdf_norm = cdf*d_cutoff_norm_constant;
+
+std::cout << std::setprecision(20) << "\nlower_bin_boundary->first =\t" <<     lower_bin_boundary->first << std::endl;
+std::cout << std::setprecision(20) << "lower_bin_boundary->second =\t" <<     lower_bin_boundary->second << std::endl;
+std::cout << std::setprecision(20) << "lower_bin_boundary->third =\t" << lower_bin_boundary->third << std::endl;
+std::cout << std::setprecision(20) << "cdf =\t" <<   cdf << std::endl;
+std::cout << std::setprecision(20) << "d_cutoff_norm_constant =\t" << d_cutoff_norm_constant << std::endl;
+std::cout << std::setprecision(20) << "cdf_norm =\t" << cdf_norm << std::endl;
+
   // Scale norm constant by the cross section ratio
   /*! \details The norm constant given by the calculateContinuousCDF function
    *  is for the tabular cutoff elastic distribution and must be re-scaled for
@@ -1049,11 +1072,111 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
    */
   d_cutoff_norm_constant *= d_cutoff_cross_section_ratio;
 
+cdf_norm = cdf*d_cutoff_norm_constant;
+std::cout << std::setprecision(20) << "d_cutoff_cross_section_ratio =\t" << d_cutoff_cross_section_ratio << std::endl;
+std::cout << std::setprecision(20) << "d_cutoff_norm_constant =\t" << d_cutoff_norm_constant << std::endl;
+std::cout << std::setprecision(20) << "cdf_norm =\t" << cdf_norm << std::endl;
+
   // Set the max CDF for the total elastic distribution
   d_max_cdf = 1.0/d_cutoff_norm_constant;
 
-  // Calculate the slopes of the PDF
-  DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_cutoff_distribution );
+std::cout << std::setprecision(20) << "d_max_cdf =\t" << d_max_cdf << std::endl;
+  d_max_cdf = cdf/d_cutoff_cross_section_ratio;
+
+
+
+
+  // Scale the random number
+  double scaled_random_number = cdf;
+
+  lower_bin_boundary =
+                Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
+                                                  d_cutoff_distribution.end(),
+                                                  scaled_random_number);
+
+  // Calculate the sampled bin index
+
+std::cout << std::setprecision(20) << "lower_bin_boundary->first =\t" << lower_bin_boundary->first << std::endl;
+  IndepQuantity indep_value = lower_bin_boundary->first;
+  UnnormCDFQuantity cdf_diff =
+    scaled_random_number - lower_bin_boundary->second;
+  DepQuantity pdf_value = lower_bin_boundary->third;
+  SlopeQuantity slope = lower_bin_boundary->fourth;
+
+double sample;
+  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
+  if( slope != QuantityTraits<SlopeQuantity>::zero() )
+  {
+    typedef typename QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
+
+    DepQuantitySqr term_1 = pdf_value*pdf_value;
+    DepQuantitySqr term_2( 2.0*slope*cdf_diff );
+
+    IndepQuantity term_3((Utility::sqrt( term_1 + term_2 ) - pdf_value)/slope);
+
+    sample = indep_value + term_3;
+
+  }
+  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+  else
+  {
+    IndepQuantity term_2( cdf_diff/pdf_value );
+
+    sample = indep_value + term_2;
+  }
+std::cout << std::setprecision(20) << "sample =\t" << sample << std::endl;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Scale the random number
+  scaled_random_number = d_cutoff_cross_section_ratio/d_cutoff_norm_constant - 1e-15;
+
+  lower_bin_boundary =
+                Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
+                                                  d_cutoff_distribution.end(),
+                                                  scaled_random_number);
+
+  // Calculate the sampled bin index
+
+std::cout << std::setprecision(20) << "lower_bin_boundary->first =\t" << lower_bin_boundary->first << std::endl;
+  indep_value = lower_bin_boundary->first;
+  cdf_diff =
+    scaled_random_number - lower_bin_boundary->second;
+  pdf_value = lower_bin_boundary->third;
+  slope = lower_bin_boundary->fourth;
+
+  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
+  if( slope != QuantityTraits<SlopeQuantity>::zero() )
+  {
+    typedef typename QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
+
+    DepQuantitySqr term_1 = pdf_value*pdf_value;
+    DepQuantitySqr term_2( 2.0*slope*cdf_diff );
+
+    IndepQuantity term_3((Utility::sqrt( term_1 + term_2 ) - pdf_value)/slope);
+
+    sample = indep_value + term_3;
+
+  }
+  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+  else
+  {
+    IndepQuantity term_2( cdf_diff/pdf_value );
+
+    sample = indep_value + term_2;
+  }
+std::cout << std::setprecision(20) << "sample =\t" << sample << std::endl;
 }
 
 // Initialize the distribution
