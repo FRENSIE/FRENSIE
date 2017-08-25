@@ -168,23 +168,38 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
       }
     }
 
-    unsigned index = std::distance( raw_angular_grid.begin(), end_angle );
+    unsigned N = 0;
+    for ( ; N < raw_angular_grid.size(); ++N )
+        if ( raw_angular_grid[N] >= cutoff_angle_cosine )
+            break;
 
-    end_pdf = raw_pdf.begin();
-    std::advance( end_pdf, index );
+    angular_grid.resize(N+1);
+    evaluated_pdf.resize(N+1);
 
-    angular_grid.assign( raw_angular_grid.begin(), end_angle );
-    evaluated_pdf.assign( raw_pdf.begin(), end_pdf );
-
-    if( angular_grid.back() != cutoff_angle_cosine )
+    // Assign the grid before the angle cosine
+    for ( unsigned i = 0; i < N; ++i )
     {
-      double pdf_at_cutoff = raw_pdf[index] + (raw_pdf[index] - raw_pdf[index+1])*
-                         (cutoff_angle_cosine - raw_angular_grid[index] )/
-                         (raw_angular_grid[index+1] - raw_angular_grid[index] );
+      angular_grid[i] = raw_angular_grid[i];
+      evaluated_pdf[i] = raw_pdf[i];
+    }
 
-
-      angular_grid.push_back( cutoff_angle_cosine );
-      evaluated_pdf.push_back( pdf_at_cutoff );
+    // Get the pdf at the cutoff angle cosine if needed
+    if( raw_angular_grid[N] != cutoff_angle_cosine )
+    {
+      // Assign the angle and pdf at the cutoff angle cosine
+      angular_grid[N] = cutoff_angle_cosine;
+      evaluated_pdf[N] =
+        Utility::LinLin::interpolate( raw_angular_grid[N-1],
+                                      raw_angular_grid[N],
+                                      cutoff_angle_cosine,
+                                      raw_pdf[N-1],
+                                      raw_pdf[N] );
+    }
+    else
+    {
+      // Assign the angle and pdf at the cutoff angle cosine
+      angular_grid[N] = raw_angular_grid[N];
+      evaluated_pdf[N] = raw_pdf[N];
     }
   }
   else

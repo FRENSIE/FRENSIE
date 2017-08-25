@@ -287,7 +287,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( indep_var_value <= this->getUpperBoundOfIndepVar() );
 
   // Check to see if the tabular or discrete portion will be evaluated
-  if( indep_var_value < d_cutoff_mu )
+  if( indep_var_value <= d_cutoff_mu )
   { // evaluate the cutoff tabular large angle distribution
 
     typename DistributionArray::const_iterator lower_bin_boundary =
@@ -305,8 +305,6 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
                                              lower_bin_boundary->third,
                                              upper_bin_boundary->third );
   }
-  else if( indep_var_value == d_cutoff_mu )
-    return d_cutoff_distribution.back().third;
   else
     return DQT::zero(); // getRawQuantity(this->evaluatePDF( indep_var_value ))*d_discrete_norm_constant;
 }
@@ -331,7 +329,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 
   // Check to see if the tabular or discrete portion will be evaluated
   if( indep_var_value <= d_cutoff_mu )
-    return this->evaluate( indep_var_value )*d_cutoff_norm_constant;
+    return this->evaluate( indep_var_value )/d_max_cdf;
 //  else if( indep_var_value >= d_discrete_distribution.front().first &&
 //           indep_var_value <= d_discrete_distribution.back().first )
 //  {
@@ -390,7 +388,8 @@ double UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,De
                                        d_discrete_distribution.end(),
                                        indep_var_value );
 
-    return bin->second;
+    return d_cutoff_cross_section_ratio +
+                            bin->second*( 1.0 - d_cutoff_cross_section_ratio );
   }
 }
 
@@ -509,28 +508,22 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   // Calculate the sampled independent value
   IndepQuantity sample;
 
-  // Sample the moment preserving discrete distribution
-  if ( random_number == d_cutoff_cross_section_ratio )
+  if( random_number <= d_cutoff_cross_section_ratio )
   {
-    // Set the sampled bin index to the last bin
-    sampled_bin_index = d_cutoff_distribution.size() - 1;
-
-    return d_cutoff_mu;
+    sample = this->sampleCutoff( random_number, sampled_bin_index );
   }
-  else if ( random_number >= d_cutoff_cross_section_ratio )
+  else if ( random_number > d_cutoff_cross_section_ratio )
   {
-    double scaled_random_number =
-        ( random_number - d_cutoff_cross_section_ratio )*d_scaling_parameter;
-
-    sample = this->sampleDiscrete( scaled_random_number, sampled_bin_index );
+    sample = this->sampleDiscrete( random_number, sampled_bin_index );
 
     // Add the total number of cutoff bins to the sampled discrete bin
     sampled_bin_index += d_cutoff_distribution.size() - 1;
   }
-  else
-  {
-    sample = this->sampleCutoff( random_number, sampled_bin_index );
-  }
+
+  // Make sure the sample is valid
+  testPostcondition( !IQT::isnaninf( sample ) );
+  testPostcondition( sample >= this->getLowerBoundOfIndepVar() );
+  testPostcondition( sample <= this->getUpperBoundOfIndepVar() );
 
   return sample;
 }
@@ -545,14 +538,18 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
                                             unsigned& sampled_bin_index ) const
 {
   // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number >= d_cutoff_cross_section_ratio );
   testPrecondition( random_number <= 1.0 );
+
+  // Scale the random number
+  UnnormCDFQuantity scaled_random_number =
+        ( random_number - d_cutoff_cross_section_ratio )*d_scaling_parameter;
 
   // Get the bin index sampled
   sampled_bin_index =
     Search::binaryUpperBoundIndex<SECOND>( d_discrete_distribution.begin(),
                                            d_discrete_distribution.end(),
-                                           random_number );
+                                           scaled_random_number );
 
   return d_discrete_distribution[sampled_bin_index].first;
 }
@@ -573,23 +570,22 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   // Calculate the sampled independent value
   IndepQuantity sample;
 
-  UnnormCDFQuantity scaled_random_number;
-
   // Scale the random number
-  scaled_random_number = random_number*d_max_cdf;
+  UnnormCDFQuantity scaled_random_number =
+                random_number*d_max_cdf;
 
   typename DistributionArray::const_iterator lower_bin_boundary =
-                Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
-                                                  d_cutoff_distribution.end(),
-                                                  scaled_random_number);
+        Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
+                                          d_cutoff_distribution.end(),
+                                          scaled_random_number );
 
   // Calculate the sampled bin index
   sampled_bin_index =
             std::distance( d_cutoff_distribution.begin(), lower_bin_boundary );
 
+
   IndepQuantity indep_value = lower_bin_boundary->first;
-  UnnormCDFQuantity cdf_diff =
-    scaled_random_number - lower_bin_boundary->second;
+  UnnormCDFQuantity cdf_diff = scaled_random_number - lower_bin_boundary->second;
   DepQuantity pdf_value = lower_bin_boundary->third;
   SlopeQuantity slope = lower_bin_boundary->fourth;
 
@@ -611,8 +607,49 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   {
     IndepQuantity term_2( cdf_diff/pdf_value );
 
-    sample = indep_value + term_2;
+    sample =  indep_value + term_2;
   }
+std::cout << std::setprecision(20) << "\nrandom_number =\t" << random_number << std::endl;
+std::cout << std::setprecision(20) << "d_cutoff_cross_section_ratio =\t" << d_cutoff_cross_section_ratio << std::endl;
+std::cout << std::setprecision(20) << "scaled_random_number =\t" << scaled_random_number << std::endl;
+std::cout << std::setprecision(20) << "indep_value =\t" << indep_value << std::endl;
+std::cout << std::setprecision(20) << "cdf_diff =\t" << cdf_diff << std::endl;
+std::cout << std::setprecision(20) << "pdf_value =\t" << pdf_value << std::endl;
+std::cout << std::setprecision(20) << "slope =\t" << slope << std::endl;
+std::cout << std::setprecision(20) << "sample =\t" << sample << std::endl;
+
+    lower_bin_boundary =
+                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
+                                                 d_cutoff_distribution.end(),
+                                                 d_cutoff_mu );
+
+    typename DistributionArray::const_iterator upper_bin_boundary =
+                                                            lower_bin_boundary;
+    ++upper_bin_boundary;
+
+    DepQuantity raw_pdf = InterpolationPolicy::interpolate( lower_bin_boundary->first,
+                                             upper_bin_boundary->first,
+                                             d_cutoff_mu,
+                                             lower_bin_boundary->third,
+                                             upper_bin_boundary->third );
+
+std::cout << std::setprecision(20) << "raw_pdf 0.9 =\t" << raw_pdf << std::endl;
+
+    lower_bin_boundary =
+                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
+                                                 d_cutoff_distribution.end(),
+                                                 0.1 );
+
+    upper_bin_boundary = lower_bin_boundary;
+    ++upper_bin_boundary;
+
+    raw_pdf = InterpolationPolicy::interpolate( lower_bin_boundary->first,
+                                             upper_bin_boundary->first,
+                                             0.1,
+                                             lower_bin_boundary->third,
+                                             upper_bin_boundary->third );
+
+std::cout << std::setprecision(20) << "raw_pdf 0.1 =\t" << raw_pdf << std::endl;
 
   // Make sure the sample is valid
   testPostcondition( !IQT::isnaninf( sample ) );
@@ -1042,141 +1079,27 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_cutoff_distribution,
                                                                false );
 
+  // Scale norm constant by the cross section ratio
+  /*! \details The cutoff norm constant given by the calculateContinuousCDF
+   *  function is for the tabular cutoff elastic distribution and must be
+   * re-scaled for the total hybrid elastic distribution.
+   */
+  d_cutoff_norm_constant *= d_cutoff_cross_section_ratio;
+
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_cutoff_distribution );
 
-
+  // Find the raw CDF at the cutoff angle cosine
   typename DistributionArray::const_iterator lower_bin_boundary =
                 Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
                                                  d_cutoff_distribution.end(),
                                                  d_cutoff_mu );
 
-    IndepQuantity indep_diff = d_cutoff_mu - lower_bin_boundary->first;
+  IndepQuantity indep_diff = d_cutoff_mu - lower_bin_boundary->first;
 
-    double cdf = (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
-          indep_diff*indep_diff*lower_bin_boundary->fourth/2.0);
-
-    double cdf_norm = cdf*d_cutoff_norm_constant;
-
-std::cout << std::setprecision(20) << "\nlower_bin_boundary->first =\t" <<     lower_bin_boundary->first << std::endl;
-std::cout << std::setprecision(20) << "lower_bin_boundary->second =\t" <<     lower_bin_boundary->second << std::endl;
-std::cout << std::setprecision(20) << "lower_bin_boundary->third =\t" << lower_bin_boundary->third << std::endl;
-std::cout << std::setprecision(20) << "cdf =\t" <<   cdf << std::endl;
-std::cout << std::setprecision(20) << "d_cutoff_norm_constant =\t" << d_cutoff_norm_constant << std::endl;
-std::cout << std::setprecision(20) << "cdf_norm =\t" << cdf_norm << std::endl;
-
-  // Scale norm constant by the cross section ratio
-  /*! \details The norm constant given by the calculateContinuousCDF function
-   *  is for the tabular cutoff elastic distribution and must be re-scaled for
-   *  the total elastic distribution.
-   */
-  d_cutoff_norm_constant *= d_cutoff_cross_section_ratio;
-
-cdf_norm = cdf*d_cutoff_norm_constant;
-std::cout << std::setprecision(20) << "d_cutoff_cross_section_ratio =\t" << d_cutoff_cross_section_ratio << std::endl;
-std::cout << std::setprecision(20) << "d_cutoff_norm_constant =\t" << d_cutoff_norm_constant << std::endl;
-std::cout << std::setprecision(20) << "cdf_norm =\t" << cdf_norm << std::endl;
-
-  // Set the max CDF for the total elastic distribution
-  d_max_cdf = 1.0/d_cutoff_norm_constant;
-
-std::cout << std::setprecision(20) << "d_max_cdf =\t" << d_max_cdf << std::endl;
-  d_max_cdf = cdf/d_cutoff_cross_section_ratio;
-
-
-
-
-  // Scale the random number
-  double scaled_random_number = cdf;
-
-  lower_bin_boundary =
-                Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
-                                                  d_cutoff_distribution.end(),
-                                                  scaled_random_number);
-
-  // Calculate the sampled bin index
-
-std::cout << std::setprecision(20) << "lower_bin_boundary->first =\t" << lower_bin_boundary->first << std::endl;
-  IndepQuantity indep_value = lower_bin_boundary->first;
-  UnnormCDFQuantity cdf_diff =
-    scaled_random_number - lower_bin_boundary->second;
-  DepQuantity pdf_value = lower_bin_boundary->third;
-  SlopeQuantity slope = lower_bin_boundary->fourth;
-
-double sample;
-  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
-  if( slope != QuantityTraits<SlopeQuantity>::zero() )
-  {
-    typedef typename QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
-
-    DepQuantitySqr term_1 = pdf_value*pdf_value;
-    DepQuantitySqr term_2( 2.0*slope*cdf_diff );
-
-    IndepQuantity term_3((Utility::sqrt( term_1 + term_2 ) - pdf_value)/slope);
-
-    sample = indep_value + term_3;
-
-  }
-  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
-  else
-  {
-    IndepQuantity term_2( cdf_diff/pdf_value );
-
-    sample = indep_value + term_2;
-  }
-std::cout << std::setprecision(20) << "sample =\t" << sample << std::endl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // Scale the random number
-  scaled_random_number = d_cutoff_cross_section_ratio/d_cutoff_norm_constant - 1e-15;
-
-  lower_bin_boundary =
-                Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
-                                                  d_cutoff_distribution.end(),
-                                                  scaled_random_number);
-
-  // Calculate the sampled bin index
-
-std::cout << std::setprecision(20) << "lower_bin_boundary->first =\t" << lower_bin_boundary->first << std::endl;
-  indep_value = lower_bin_boundary->first;
-  cdf_diff =
-    scaled_random_number - lower_bin_boundary->second;
-  pdf_value = lower_bin_boundary->third;
-  slope = lower_bin_boundary->fourth;
-
-  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
-  if( slope != QuantityTraits<SlopeQuantity>::zero() )
-  {
-    typedef typename QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
-
-    DepQuantitySqr term_1 = pdf_value*pdf_value;
-    DepQuantitySqr term_2( 2.0*slope*cdf_diff );
-
-    IndepQuantity term_3((Utility::sqrt( term_1 + term_2 ) - pdf_value)/slope);
-
-    sample = indep_value + term_3;
-
-  }
-  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
-  else
-  {
-    IndepQuantity term_2( cdf_diff/pdf_value );
-
-    sample = indep_value + term_2;
-  }
-std::cout << std::setprecision(20) << "sample =\t" << sample << std::endl;
+  d_max_cdf = (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third
+                + indep_diff*indep_diff*lower_bin_boundary->fourth/2.0)
+                    /d_cutoff_cross_section_ratio;
 }
 
 // Initialize the distribution
