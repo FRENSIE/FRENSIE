@@ -77,7 +77,7 @@ struct TupleSize<const volatile T> : public TupleSize<T>
  * \ingroup tuple
  */
 template<typename T>
-struct TupleSize<T,typename std::enable_if<Utility::IsTuple<T>::value>::type> : public std::tuple_size<T>
+struct TupleSize<T,typename std::enable_if<Utility::IsTuple<T>::value && !std::is_const<T>::value && !std::is_volatile<T>::value>::type> : public std::tuple_size<T>
 { /* ... */ };
 
 /*! The tuple element struct (the default is undefined)
@@ -135,28 +135,6 @@ template<size_t I, typename T>
 struct TupleElement<I,T,typename std::enable_if<Utility::IsTuple<T>::value && !std::is_const<T>::value && !std::is_volatile<T>::value>::type> : public std::tuple_element<I,T>
 { /* ... */ };
 
-/*! The tuple slice struct (the default is undefined)
- * \ingroup tuple
- */
-template<size_t offset,
-         size_t size,
-         typename TupleType,
-         typename Enabled = void>
-struct TupleSlice
-{ /* ... */ };
-
-/*! Partial specialization of TupleSlice for all tuple types
- * \ingroup tuple
- */
-template<size_t offset, size_t size, typename TupleType>
-struct TupleSlice<offset,size,TupleType,typename std::enable_if<offset < Utility::TupleSize<TupleType>::value-1 && offset+size <= Utility::TupleSize<TupleType>::value && Utility::IsTuple<TupleType>::value>::type>;
-
-/*! Partial specialization of TupleSlice for non-tuple types
- * \ingroup tuple
- */
-template<size_t offset, size_t size, typename T>
-struct TupleSlice<offset,size,T,typename std::enable_if<offset == 0 && size == 1 && !Utility::IsTuple<T>::value>::type>;
-
 /*! Return a reference to the desired tuple element (std::get)
  * \ingroup tuple
  */
@@ -204,30 +182,6 @@ template<size_t I, typename TupleType, typename ValueType>
 inline void set( TupleType& tuple, ValueType value )
 { Utility::get<I>( tuple ) = value; }
 
-/*! Create a slice of a tuple
- * \ingroup tuple
- */
-template<size_t offset, size_t size, typename TupleType>
-typename TupleSlice<offset,size,TupleType>::type slice( const TupleType& tuple );
-
-/*! Create a tied slice of a tuple
- * \ingroup tuple
- */
-template<size_t offset, size_t size, typename TupleType>
-typename TupleSlice<offset,size,TupleType>::ConstTiedType tiedSlice( const TupleType& tuple );
-
-/*! Create a tied slice of a tuple
- * \ingroup tuple
- */
-template<size_t offset, size_t size, typename TupleType>
-typename TupleSlice<offset,size,TupleType>::TiedType tiedSlice( TupleType& tuple );
-
-/*! Create a tied slice of a tuple
- * \ingroup tuple
- */
-template<size_t offset, size_t size, typename TupleType>
-typename TupleSlice<offset,size,const TupleType>::TiedType tiedSlice( const TupleType& tuple );
-
 /*! Partial specialization of ToStringTraits for tuple types
  * \ingroup tuple
  * \ingroup to_string_traits
@@ -242,6 +196,34 @@ struct ToStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::typ
   static void toStream( std::ostream& os, const T& tuple );
 };
 
+namespace Details{
+
+/*! Remove references from tuple element types (default is undefined)
+ * \ingroup tuple
+ */
+template<typename T>
+struct RemoveTupleElementReferences;
+
+/*! Partial specialization of RemoveTupleElementReferences for std::tuple types
+ * \ingroup tuple
+ */
+template<typename... Types>
+struct RemoveTupleElementReferences<std::tuple<Types...> >
+{
+  typedef std::tuple<typename std::remove_reference<Types>::type...> type;
+};
+
+/*! Partial specialization of RemoveTupleElementReferences for std::pair types
+ * \ingroup tuple
+ */
+template<typename T1, typename T2>
+struct RemoveTupleElementReferences<std::pair<T1,T2> >
+{
+  typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> type;
+};
+  
+} // end Details namespace
+
 /*! Partial specialization of FromStringTraits for std::tuple
  * \ingroup tuple
  * \ingroup from_string_traits
@@ -250,7 +232,7 @@ template<typename T>
 struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
 {
   //! The type that a string will be converted to
-  typedef typename std::remove_reference<T>::type ReturnType;
+  typedef typename Details::RemoveTupleElementReferences<T>::type ReturnType;
   
   //! Convert the string to an object of type T
   static ReturnType fromString( const std::string& obj_rep );
@@ -262,11 +244,11 @@ struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
 };
 
 /*! \brief The partial specialization of the Utility::ComparisonTraits for
- * tuple types.
+ * tuple types (with at least one element).
  * \ingroup comparison_traits
  */
-template<typename T>
-struct ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
+template<typename... Types>
+struct ComparisonTraits<std::tuple<Types...> >
 {
   //! The extra data type (usually a comparison tolerance)
   typedef double ExtraDataType;
@@ -274,10 +256,10 @@ struct ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
   //! Create a comparison header
   template<typename ComparisonPolicy>
   static std::string createComparisonHeader(
-                           const T& left_value,
+                           const std::tuple<Types...>& left_value,
                            const std::string& left_name,
                            const bool log_left_name,
-                           const T& right_value,
+                           const std::tuple<Types...>& right_value,
                            const std::string& right_name,
                            const bool log_right_name,
                            const std::string& name_suffix,
@@ -285,10 +267,46 @@ struct ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
 
   //! Compare two tuples
   template<typename ComparisonPolicy>
-  static bool compare( const T& left_value,
+  static bool compare( const std::tuple<Types...>& left_value,
                        const std::string& left_name,
                        const bool log_left_name,
-                       const T& right_value,
+                       const std::tuple<Types...>& right_value,
+                       const std::string& right_name,
+                       const bool log_right_name,
+                       const std::string& name_suffix,
+                       std::ostream& log,
+                       const bool log_comparison_details = false,
+                       const ExtraDataType& extra_data = ExtraDataType() );
+};
+
+/*! \brief The partial specialization of the Utility::ComparisonTraits for
+ * empty tuple types.
+ * \ingroup comparison_traits
+ */
+template<>
+struct ComparisonTraits<std::tuple<> >
+{
+  //! The extra data type (usually a comparison tolerance)
+  typedef double ExtraDataType;
+
+  //! Create a comparison header
+  template<typename ComparisonPolicy>
+  static std::string createComparisonHeader(
+                           const std::tuple<>& left_value,
+                           const std::string& left_name,
+                           const bool log_left_name,
+                           const std::tuple<>& right_value,
+                           const std::string& right_name,
+                           const bool log_right_name,
+                           const std::string& name_suffix,
+                           const ExtraDataType& extra_data = ExtraDataType() );
+
+  //! Compare two tuples
+  template<typename ComparisonPolicy>
+  static bool compare( const std::tuple<>& left_value,
+                       const std::string& left_name,
+                       const bool log_left_name,
+                       const std::tuple<>& right_value,
                        const std::string& right_name,
                        const bool log_right_name,
                        const std::string& name_suffix,
@@ -296,6 +314,30 @@ struct ComparisonTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
                        const bool log_comparison_header = false,
                        const ExtraDataType& extra_data = ExtraDataType() );
 };
+
+// /*! \brief The partial specialization of the Utility::ComparisonTraits for
+//  * const tuple types (with at least one element).
+//  * \ingroup comparison_traits
+//  */
+// template<typename... Types>
+// struct ComparisonTraits<const std::tuple<Types...> > : public ComparisonTraits<std::tuple<Types...> >
+// { /* ... */ };
+
+// /*! \brief The partial specialization of the Utility::ComparisonTraits for
+//  * volatile tuple types (with at least one element).
+//  * \ingroup comparison_traits
+//  */
+// template<typename... Types>
+// struct ComparisonTraits<volatile std::tuple<Types...> > : public ComparisonTraits<std::tuple<Types...> >
+// { /* ... */ };
+
+// /*! \brief The partial specialization of the Utility::ComparisonTraits for
+//  * const volatile tuple types (with at least one element).
+//  * \ingroup comparison_traits
+//  */
+// template<typename... Types>
+// struct ComparisonTraits<const volatile std::tuple<Types...> > : public ComparisonTraits<std::tuple<Types...> >
+// { /* ... */ };
   
 } // end Utility namespace
 

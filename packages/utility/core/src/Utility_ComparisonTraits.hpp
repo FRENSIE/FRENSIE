@@ -90,26 +90,12 @@ inline bool ComparisonTraits<T,Enabled>::compare(
 }
 
 
-/*! The specialization of the Utility::ComparisonTraits for const types.
- * \ingroup comparison_traits
- */
-template<typename T>
-struct ComparisonTraits<T,typename std::enable_if<std::is_const<T>::value && !std::is_volatile<T>::value>::type> : public ComparisonTraits<typename std::remove_const<T>::type>
-{ /* ... */ };
-
-/*! The specialization of the Utility::ComparisonTraits for volatile types.
- * \ingroup comparison_traits
- */
-template<typename T>
-struct ComparisonTraits<T,typename std::enable_if<!std::is_const<T>::value && std::is_volatile<T>::value>::type> : public ComparisonTraits<typename std::remove_volatile<T>::type>
-{ /* ... */ };
-
-/*! \brief The specialization of the Utility::ComparisonTraits for const
+/*! \brief The specialization of the Utility::ComparisonTraits for const and/or
  * volatile types.
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<T,typename std::enable_if<std::is_const<T>::value && std::is_volatile<T>::value>::type> : public ComparisonTraits<typename std::remove_cv<T>::type>
+struct ComparisonTraits<T,typename std::enable_if<std::is_const<T>::value || std::is_volatile<T>::value>::type> : public ComparisonTraits<typename std::remove_cv<T>::type>
 { /* ... */ };
 
 namespace Details{

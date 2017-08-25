@@ -166,13 +166,6 @@ template<typename T>
 struct IsTuple<const volatile T> : public IsTuple<T>
 { /* ... */ };
 
-/*! Partial specialization of IsTuple for reference types
- * \ingroup type_traits
- */
-template<typename T>
-struct IsTuple<T&> : public IsTuple<T>
-{ /* ... */ };
-
 } // end Utility namespace
 
 #endif // end UTILITY_TYPE_TRAITS_HPP

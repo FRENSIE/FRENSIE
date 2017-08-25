@@ -168,11 +168,9 @@ TARGET_LINK_LIBRARIES(tstComparisonTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(ComparisonTraits_test tstComparisonTraits --report_level=detailed)
 SET_PROPERTY(TEST ComparisonTraits_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstTuple
-  tstTuple.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTuple utility_core)
-ADD_TEST(Tuple_test tstTuple)
+ADD_EXECUTABLE(tstTuple tstTuple.cpp)
+TARGET_LINK_LIBRARIES(tstTuple utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(Tuple_test tstTuple --report_level=detailed)
 SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstView
