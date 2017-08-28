@@ -275,8 +275,8 @@ private:
   // The cutoff normalization constant
   DistNormQuantity d_cutoff_norm_constant;
 
-  // The max CDF value
-  UnnormCDFQuantity d_max_cdf;
+  // The unormalized CDF value a the cutoff angle cosine
+  UnnormCDFQuantity d_max_cutoff_cdf;
 
   // The cutoff angle cosine between the tabular and discrete distributions
   IndepQuantity d_cutoff_mu;

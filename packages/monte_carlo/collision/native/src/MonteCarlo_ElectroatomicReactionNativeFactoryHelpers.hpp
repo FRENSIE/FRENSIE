@@ -23,7 +23,7 @@ namespace MonteCarlo{
 std::shared_ptr<ElectroatomicReaction>
 createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -31,7 +31,7 @@ createCoupledElasticReaction(
 std::shared_ptr<ElectroatomicReaction>
 createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -40,7 +40,7 @@ std::shared_ptr<ElectroatomicReaction>
 createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -49,7 +49,7 @@ std::shared_ptr<ElectroatomicReaction>
 createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -58,7 +58,7 @@ std::shared_ptr<ElectroatomicReaction>
 createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -67,7 +67,7 @@ std::shared_ptr<ElectroatomicReaction>
 createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -89,7 +89,7 @@ std::shared_ptr<ElectroatomicReaction>
 createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const unsigned subshell,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
@@ -98,7 +98,7 @@ createSubshellElectroionizationReaction(
 std::vector<std::shared_ptr<ElectroatomicReaction> >
 createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
@@ -112,7 +112,7 @@ std::shared_ptr<ElectroatomicReaction>
 createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const bool dipole_distribution_mode_on,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );

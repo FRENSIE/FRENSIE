@@ -19,18 +19,15 @@ namespace MonteCarlo{
 // Constructor
 HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& hybrid_distribution,
-    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
   : d_hybrid_distribution( hybrid_distribution ),
-    d_cross_section_ratios( cross_section_ratios ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_evaluation_tol( evaluation_tol )
 {
   // Make sure the pointers are valid
   testPrecondition( d_hybrid_distribution.use_count() > 0 );
-  testPrecondition( d_cross_section_ratios.use_count() > 0 );
   // Make sure the cutoff angle cosine is valid
   testPrecondition( d_cutoff_angle_cosine >= -1.0 );
   testPrecondition( d_cutoff_angle_cosine < 1.0 );
@@ -58,30 +55,9 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
   }
 }
 
-// Return the cutoff to moment preserving cross section ratio
-inline double HybridElasticElectronScatteringDistribution::getCrossSectionRatio(
-                                         const double incoming_energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-
-  return d_cross_section_ratios->evaluate( incoming_energy );
-}
-
-// Return the sampling ratio at the given incoming energy
-inline double HybridElasticElectronScatteringDistribution::getSamplingRatio(
-                                        const double incoming_energy ) const
-{
-  double cross_section_ratio = this->getCrossSectionRatio( incoming_energy );
-
-  return cross_section_ratio/( 1.0 + cross_section_ratio );
-}
-
 // Evaluate the distribution at the given energy and scattering angle cosine
-/*! \details Only scattering angle cosine within the continuous distribution are
- *  evaluated. If the scattering angle cosine is below the cutoff angle cosine
- *  the continuous distribution is evaluated. If it is above the cutoff angle
- *  a value of zero is returned.
+/*! \details Only scattering angle cosines below the cutoff angle cosine are
+ *  evaluated. If it is above the cutoff angle a value of zero is returned.
  */
 double HybridElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
@@ -94,18 +70,16 @@ double HybridElasticElectronScatteringDistribution::evaluate(
 
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
-    return d_hybrid_distribution->correlatedEvaluateInBoundaries(
-      incoming_energy, scattering_angle_cosine, -1.0, d_cutoff_angle_cosine );
+    return d_hybrid_distribution->evaluate(
+      incoming_energy, scattering_angle_cosine );
   }
   else
     return 0.0;
 }
 
 // Evaluate the PDF at the given energy and scattering angle cosine
-/*! \details Only scattering angle cosine within the continuous distribution are
- *  evaluated. If the scattering angle cosine is below the cutoff angle cosine
- *  the continuous distribution is evaluated. If it is above the cutoff angle
- *  a value of zero is returned.
+/*! \details Only scattering angle cosines below the cutoff angle cosine are
+ *  evaluated. If it is above the cutoff angle a value of zero is returned.
  */
 double HybridElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
@@ -126,10 +100,8 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the CDF
-/*! \details Only scattering angle cosine within the continuous distribution are
- *  evaluated. If the scattering angle cosine is below the cutoff angle cosine
- *  the continuous distribution is evaluated. If it is above the cutoff angle
- *  a value of zero is returned.
+/*! \details Unline the evaluate and evaluatePDF function the CDF can be
+ *  evaluated across the entire range of the angle cosine.
  */
 double HybridElasticElectronScatteringDistribution::evaluateCDF(
         const double incoming_energy,
@@ -222,6 +194,12 @@ void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
 }
 
 // Sample an outgoing direction from the distribution
+/*! \details The union of the 1-D tabular Cutoff distribution and the discrete
+ *  moment preserving distribution are sampled without taking into account
+ *  The interpolated value of the sampling ratio at the given incoming energy.
+ *  Because the secondary energy grid in very course, this routine will likely
+ *  lead to interpolation errors.
+ */
 void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
                                                 double& scattering_angle_cosine,

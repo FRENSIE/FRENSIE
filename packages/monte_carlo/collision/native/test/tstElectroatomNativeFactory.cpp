@@ -596,7 +596,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   inelastic = 6.4103437333324831e+06;
-  elastic = 1.6111881507138280e+07*cross_section_ratio + 1.8915579016892887e+06;
+  elastic = 1.6111881507138280e+07*cross_section_ratio + 1.8627628267192466e+06;
 
   cross_section = atom->getTotalCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
@@ -670,7 +670,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   cross_section_ratio =
     cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.995260e-4 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.1309E+8*cross_section_ratio + 5.9201747603359349e+07,
+                          6.1309E+8*cross_section_ratio + 2.5195477504187709e+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );

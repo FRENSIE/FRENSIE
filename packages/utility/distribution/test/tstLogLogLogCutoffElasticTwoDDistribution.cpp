@@ -375,12 +375,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( distribution->evaluate( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( distribution->evaluate( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 0.0 );
@@ -436,14 +430,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluate )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
@@ -504,12 +490,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluateExact )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateExact( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateExact( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.0 ), 0.0 );
@@ -565,14 +545,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluateExact )
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateExact )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
@@ -633,12 +605,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, correlatedEvaluate )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->correlatedEvaluate( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->correlatedEvaluate( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.0 ), 0.0 );
@@ -695,14 +661,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, correlatedEvaluate )
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluate )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
@@ -762,12 +720,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ), 0.0 );
@@ -847,14 +799,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
@@ -934,12 +878,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.0 ), 0.0 );
@@ -1021,14 +959,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact     ( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
@@ -1108,12 +1038,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.0 ), 0.0 );
@@ -1195,14 +1119,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF     ( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
@@ -1282,12 +1198,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ), 0.0 );
@@ -1351,14 +1261,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
@@ -1418,12 +1320,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.0 ), 0.0 );
@@ -1487,14 +1383,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
@@ -1554,12 +1442,6 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, -2.0 ), std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, 2.0 ), std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.0 ), 0.0 );
@@ -1623,14 +1505,6 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
-  // Below lower bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, -2.0*cgs::dimensionless() ),
-              std::logic_error );
-
-  // Above upper bounds of conditional indep var
-  TEST_THROW( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, 2.0*cgs::dimensionless() ),
-              std::logic_error );
-
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );

@@ -65,7 +65,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
     d_scaling_parameter( 1.0/( 1.0 - cutoff_cross_section_ratio ) ),
     d_discrete_norm_constant( DNQT::zero() ),
     d_cutoff_norm_constant( DNQT::zero() ),
-    d_max_cdf( UCQT::zero() )
+    d_max_cutoff_cdf( UCQT::zero() )
 {
   // Make sure there is at lease one bin in the cutoff distribution
   testPrecondition( independent_cutoff_values.size() > 1 );
@@ -109,7 +109,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
     d_cutoff_cross_section_ratio( cutoff_cross_section_ratio ),
     d_discrete_norm_constant( DNQT::zero() ),
     d_cutoff_norm_constant( DNQT::zero() ),
-    d_max_cdf( UCQT::zero() )
+    d_max_cutoff_cdf( UCQT::zero() )
 {
   // Make sure there is at lease one bin in the cutoff distribution
   testPrecondition( independent_cutoff_values.size() > 1 );
@@ -154,7 +154,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
     d_scaling_parameter(),
     d_discrete_norm_constant(),
     d_cutoff_norm_constant(),
-    d_max_cdf()
+    d_max_cutoff_cdf()
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_cutoff_distribution.size() > 0 );
@@ -199,7 +199,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
     d_scaling_parameter(),
     d_discrete_norm_constant(),
     d_cutoff_norm_constant(),
-    d_max_cdf()
+    d_max_cutoff_cdf()
 {
   // Make sure the distribution is valid
   testPrecondition( unitless_dist_instance.d_cutoff_distribution.size() > 0 );
@@ -262,7 +262,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
     d_scaling_parameter = dist_instance.d_scaling_parameter;
     d_discrete_norm_constant = dist_instance.d_discrete_norm_constant;
     d_cutoff_norm_constant = dist_instance.d_cutoff_norm_constant;
-    d_max_cdf = dist_instance.d_max_cdf;
+    d_max_cutoff_cdf = dist_instance.d_max_cutoff_cdf;
   }
 
   return *this;
@@ -329,7 +329,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 
   // Check to see if the tabular or discrete portion will be evaluated
   if( indep_var_value <= d_cutoff_mu )
-    return this->evaluate( indep_var_value )/d_max_cdf;
+    return this->evaluate( indep_var_value )/d_max_cutoff_cdf;
 //  else if( indep_var_value >= d_discrete_distribution.front().first &&
 //           indep_var_value <= d_discrete_distribution.back().first )
 //  {
@@ -572,7 +572,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 
   // Scale the random number
   UnnormCDFQuantity scaled_random_number =
-                random_number*d_max_cdf;
+                random_number*d_max_cutoff_cdf;
 
   typename DistributionArray::const_iterator lower_bin_boundary =
         Search::binaryLowerBound<SECOND>( d_cutoff_distribution.begin(),
@@ -609,47 +609,6 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 
     sample =  indep_value + term_2;
   }
-std::cout << std::setprecision(20) << "\nrandom_number =\t" << random_number << std::endl;
-std::cout << std::setprecision(20) << "d_cutoff_cross_section_ratio =\t" << d_cutoff_cross_section_ratio << std::endl;
-std::cout << std::setprecision(20) << "scaled_random_number =\t" << scaled_random_number << std::endl;
-std::cout << std::setprecision(20) << "indep_value =\t" << indep_value << std::endl;
-std::cout << std::setprecision(20) << "cdf_diff =\t" << cdf_diff << std::endl;
-std::cout << std::setprecision(20) << "pdf_value =\t" << pdf_value << std::endl;
-std::cout << std::setprecision(20) << "slope =\t" << slope << std::endl;
-std::cout << std::setprecision(20) << "sample =\t" << sample << std::endl;
-
-    lower_bin_boundary =
-                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
-                                                 d_cutoff_distribution.end(),
-                                                 d_cutoff_mu );
-
-    typename DistributionArray::const_iterator upper_bin_boundary =
-                                                            lower_bin_boundary;
-    ++upper_bin_boundary;
-
-    DepQuantity raw_pdf = InterpolationPolicy::interpolate( lower_bin_boundary->first,
-                                             upper_bin_boundary->first,
-                                             d_cutoff_mu,
-                                             lower_bin_boundary->third,
-                                             upper_bin_boundary->third );
-
-std::cout << std::setprecision(20) << "raw_pdf 0.9 =\t" << raw_pdf << std::endl;
-
-    lower_bin_boundary =
-                Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
-                                                 d_cutoff_distribution.end(),
-                                                 0.1 );
-
-    upper_bin_boundary = lower_bin_boundary;
-    ++upper_bin_boundary;
-
-    raw_pdf = InterpolationPolicy::interpolate( lower_bin_boundary->first,
-                                             upper_bin_boundary->first,
-                                             0.1,
-                                             lower_bin_boundary->third,
-                                             upper_bin_boundary->third );
-
-std::cout << std::setprecision(20) << "raw_pdf 0.1 =\t" << raw_pdf << std::endl;
 
   // Make sure the sample is valid
   testPostcondition( !IQT::isnaninf( sample ) );
@@ -977,7 +936,7 @@ bool UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
          d_cutoff_cross_section_ratio == other.d_cutoff_cross_section_ratio &&
          d_discrete_norm_constant == other.d_discrete_norm_constant &&
          d_cutoff_norm_constant == other.d_cutoff_norm_constant &&
-         d_max_cdf == other.d_max_cdf;
+         d_max_cutoff_cdf == other.d_max_cutoff_cdf;
 }
 
 // Initialize the distributions
@@ -1079,13 +1038,6 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_cutoff_distribution,
                                                                false );
 
-  // Scale norm constant by the cross section ratio
-  /*! \details The cutoff norm constant given by the calculateContinuousCDF
-   *  function is for the tabular cutoff elastic distribution and must be
-   * re-scaled for the total hybrid elastic distribution.
-   */
-  d_cutoff_norm_constant *= d_cutoff_cross_section_ratio;
-
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_cutoff_distribution );
 
@@ -1097,9 +1049,14 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
 
   IndepQuantity indep_diff = d_cutoff_mu - lower_bin_boundary->first;
 
-  d_max_cdf = (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third
+  // Set the max cutoff CDF
+  d_max_cutoff_cdf = (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third
                 + indep_diff*indep_diff*lower_bin_boundary->fourth/2.0)
-                    /d_cutoff_cross_section_ratio;
+                /d_cutoff_cross_section_ratio;
+
+  // Set the norm constant to the inverse max cdf value
+  d_cutoff_norm_constant = 1.0/d_max_cutoff_cdf;
+
 }
 
 // Initialize the distribution

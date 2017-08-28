@@ -37,7 +37,7 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createCoupledElasticReaction( self.data, True, True, 1e-7 )
+        self.reaction = Collision.createCoupledElasticReaction( self.data, "LinLinLog", True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCoupledElasticReaction getThresholdEnergy method"
@@ -59,13 +59,69 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-9*2.11161e+06 )
 
 #-----------------------------------------------------------------------------#
+# Test the decoupled electroatomic reaction
+class DecoupledElasticReactionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision decoupled elastic electroatomic reaction"
+
+    def setUp(self):
+        self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
+        self.reaction = Collision.createDecoupledElasticReaction( self.data, "LinLinLog", True, 1e-7 )
+
+    def testgetThresholdEnergy(self):
+        "*Test MonteCarlo.Collision.createDecoupledElasticReaction getThresholdEnergy method"
+        self.assertTrue( self.reaction.getThresholdEnergy(), 1e-5 )
+
+    def testgetCrossSection(self):
+        "*Test MonteCarlo.Collision.createDecoupledElasticReaction getCrossSection method"
+        energy = 1e-5
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+                                2.48924e+09,
+                                delta=1e-12*2.48924e+09 )
+        energy = 4e-4
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+                                4.4366354584580237e+08,
+                                delta=1e-12*4.4366354584580237e+08 )
+        energy = 1e5
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+                                2.11161e+06,
+                                delta=1e-9*2.11161e+06 )
+
+#-----------------------------------------------------------------------------#
+# Test the hybrid electroatomic reaction
+class HybridElasticReactionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision hybrid elastic electroatomic reaction"
+
+    def setUp(self):
+        self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
+        self.reaction = Collision.createHybridElasticReaction( self.data, 0.9, "LinLinLog", True, 1e-14 )
+
+    def testgetThresholdEnergy(self):
+        "*Test MonteCarlo.Collision.createHybridElasticReaction getThresholdEnergy method"
+        self.assertTrue( self.reaction.getThresholdEnergy(), 6.654785 )
+
+    def testgetCrossSection(self):
+        "*Test MonteCarlo.Collision.createHybridElasticReaction getCrossSection method"
+        energy = 1e-5
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+                                2.4754121265454507e+09,
+                                delta=1e-12*2.4754121265454507e+09 )
+        energy = 4e-4
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+                                5.2888196704079199e+08,
+                                delta=1e-12*3.2786275807901180e+08 )
+        energy = 1e5
+        self.assertAlmostEqual( self.reaction.getCrossSection(energy),
+                                2.2050564844577009e-03,
+                                delta=1e-9*2.2050564844577009e-03 )
+
+#-----------------------------------------------------------------------------#
 # Test the cutoff electroatomic reaction
 class CutoffElasticReactionTestCase(unittest.TestCase):
     "TestCase class for MonteCarlo.Collision cutoff elastic electroatomic reaction"
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createCutoffElasticReaction( self.data, 1.0, True, True, 1e-7 )
+        self.reaction = Collision.createCutoffElasticReaction( self.data, 1.0, "LinLinLog", True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCutoffElasticReaction getThresholdEnergy method"
@@ -93,7 +149,7 @@ class ScreenedRutherfordElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createScreenedRutherfordElasticReaction( self.data, 0.9, True, True, 1e-7 )
+        self.reaction = Collision.createScreenedRutherfordElasticReaction( self.data, 0.9, "LinLinLog", True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createScreenedRutherfordElasticReaction getThresholdEnergy method"
@@ -121,7 +177,7 @@ class MomentPreservingElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createMomentPreservingElasticReaction( self.data, 0.9, True, True, 1e-7 )
+        self.reaction = Collision.createMomentPreservingElasticReaction( self.data, 0.9, "LinLinLog", True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createMomentPreservingElasticReaction getThresholdEnergy method"
@@ -135,8 +191,8 @@ class MomentPreservingElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*1.1063294415585944e+08 )
         energy = 4e-4
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                6.8927580042035654e+07,
-                                delta=1e-12*6.8927580042035654e+07 )
+                                1.9356264227342713e+08,
+                                delta=1e-12*1.9356264227342713e+08 )
         energy = 1e5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 2.2037700886489448e-03,
@@ -177,10 +233,10 @@ class SubshellElectroionizationReactionsTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction_first = Collision.createSubshellElectroionizationReaction( self.data, 1,  True, True, True, 1e-7 )
+        self.reaction_first = Collision.createSubshellElectroionizationReaction( self.data, 1,  "LinLinLog", True, True, 1e-7 )
         subshells = self.data.getSubshells()
         shell = subshells[(len(subshells) -1 )]
-        self.reaction_last = Collision.createSubshellElectroionizationReaction( self.data, shell,  True, True, True, 1e-7 )
+        self.reaction_last = Collision.createSubshellElectroionizationReaction( self.data, shell,  "LinLinLog", True, True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createSubshellElectroionizationReactions getThresholdEnergy method"
@@ -231,7 +287,7 @@ class BremsstrahlungReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createBremsstrahlungReaction( self.data, False, True, True, True, 1e-7 )
+        self.reaction = Collision.createBremsstrahlungReaction( self.data, False, "LinLinLog", True, True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungReaction getThresholdEnergy method"
@@ -269,6 +325,8 @@ if __name__ == "__main__":
 
     # Add the test cases to the test suite
     suite.addTest(unittest.makeSuite(CoupledElasticReactionTestCase))
+    suite.addTest(unittest.makeSuite(DecoupledElasticReactionTestCase))
+    suite.addTest(unittest.makeSuite(HybridElasticReactionTestCase))
     suite.addTest(unittest.makeSuite(CutoffElasticReactionTestCase))
     suite.addTest(unittest.makeSuite(ScreenedRutherfordElasticReactionTestCase))
     suite.addTest(unittest.makeSuite(MomentPreservingElasticReactionTestCase))

@@ -19,7 +19,7 @@ namespace MonteCarlo{
 std::shared_ptr<ElectroatomicReaction>
 createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -37,7 +37,7 @@ createCoupledElasticReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog>(
         raw_electroatom_data,
@@ -47,7 +47,17 @@ createCoupledElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
@@ -57,6 +67,17 @@ createCoupledElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 
@@ -64,7 +85,7 @@ createCoupledElasticReaction(
 std::shared_ptr<ElectroatomicReaction>
 createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -82,7 +103,7 @@ createDecoupledElasticReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog>(
         raw_electroatom_data,
@@ -92,7 +113,17 @@ createDecoupledElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
@@ -102,6 +133,17 @@ createDecoupledElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 
@@ -110,7 +152,7 @@ std::shared_ptr<ElectroatomicReaction>
 createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -128,7 +170,7 @@ createHybridElasticReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog>(
         raw_electroatom_data,
@@ -139,7 +181,18 @@ createHybridElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
@@ -150,6 +203,17 @@ createHybridElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 
@@ -158,7 +222,7 @@ std::shared_ptr<ElectroatomicReaction>
 createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -176,7 +240,7 @@ createCutoffElasticReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog>(
         raw_electroatom_data,
@@ -187,7 +251,18 @@ createCutoffElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
@@ -198,6 +273,17 @@ createCutoffElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 
@@ -206,7 +292,7 @@ std::shared_ptr<ElectroatomicReaction>
 createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -224,9 +310,31 @@ createScreenedRutherfordElasticReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLog>(
+ ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+ ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+ ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -237,15 +345,15 @@ createScreenedRutherfordElasticReaction(
   }
   else
   {
-    ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLin>(
-        raw_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        reaction,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 
@@ -254,7 +362,7 @@ std::shared_ptr<ElectroatomicReaction>
 createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -272,7 +380,7 @@ createMomentPreservingElasticReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLog>(
         raw_electroatom_data,
@@ -283,7 +391,18 @@ createMomentPreservingElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLin>(
         raw_electroatom_data,
@@ -294,6 +413,17 @@ createMomentPreservingElasticReaction(
         correlated_sampling_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 
@@ -338,7 +468,7 @@ std::shared_ptr<ElectroatomicReaction>
 createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const unsigned subshell,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
@@ -357,7 +487,7 @@ createSubshellElectroionizationReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog>(
         raw_electroatom_data,
@@ -369,7 +499,19 @@ createSubshellElectroionizationReaction(
         unit_based_interpolation_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        subshell,
+        reaction,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
         raw_electroatom_data,
@@ -381,6 +523,17 @@ createSubshellElectroionizationReaction(
         unit_based_interpolation_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 
@@ -388,7 +541,7 @@ createSubshellElectroionizationReaction(
 std::vector<std::shared_ptr<ElectroatomicReaction> >
 createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
@@ -407,7 +560,7 @@ createSubshellElectroionizationReactions(
   // Create the reaction
   std::vector<std::shared_ptr<ElectroatomicReaction> > reactions;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog>(
         raw_electroatom_data,
@@ -418,7 +571,18 @@ createSubshellElectroionizationReactions(
         unit_based_interpolation_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reactions,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
         raw_electroatom_data,
@@ -429,6 +593,14 @@ createSubshellElectroionizationReactions(
         unit_based_interpolation_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
   return reactions;
 }
 
@@ -441,7 +613,7 @@ std::shared_ptr<ElectroatomicReaction>
 createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const bool dipole_distribution_mode_on,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
@@ -472,7 +644,7 @@ createBremsstrahlungReaction(
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog>(
         raw_electroatom_data,
@@ -484,7 +656,19 @@ createBremsstrahlungReaction(
         unit_based_interpolation_mode_on,
         evaluation_tol );
   }
-  else
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog>(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction,
+        photon_distribution_function,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
     ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
         raw_electroatom_data,
@@ -496,6 +680,17 @@ createBremsstrahlungReaction(
         unit_based_interpolation_mode_on,
         evaluation_tol );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
+  }
+
+  // Make sure the reaction was created correctly
+  testPostcondition( reaction.use_count() > 0 );
+
   return reaction;
 }
 

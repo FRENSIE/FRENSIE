@@ -33,12 +33,11 @@ double eval_tol = 1e-7;
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createCoupledElasticReaction )
 {
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
 
   reaction = MonteCarlo::createCoupledElasticReaction(
                 *data_container,
-                linlinlog_interpolation_mode_on,
+                "LinLinLog",
                 correlated_sampling_mode_on,
                 eval_tol );
 
@@ -69,12 +68,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createDecoupledElasticReaction )
 {
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
 
   reaction = MonteCarlo::createDecoupledElasticReaction(
                 *data_container,
-                linlinlog_interpolation_mode_on,
+                "LinLinLog",
                 correlated_sampling_mode_on,
                 eval_tol );
 
@@ -105,16 +103,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createHybridElasticReaction )
 {
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
   double cutoff_angle_cosine = 0.9;
 
     reaction = MonteCarlo::createHybridElasticReaction(
                 *data_container,
                 cutoff_angle_cosine,
-                linlinlog_interpolation_mode_on,
+                "LinLinLog",
                 correlated_sampling_mode_on,
-                1e-7 );
+                1e-14 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -124,15 +121,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Test that the stored cross section is correct
   double energy = 1.0e-5;
   double cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.4754121265454507e+09, 1e-12 );
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.2888196704079199e+08, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2050564844577009e-03, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -143,13 +140,12 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createCutoffElasticReaction )
 {
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
 
   reaction = MonteCarlo::createCutoffElasticReaction(
                 *data_container,
                 1.0,
-                linlinlog_interpolation_mode_on,
+                "LinLinLog",
                 correlated_sampling_mode_on,
                 eval_tol );
 
@@ -180,13 +176,12 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createScreenedRutherfordElasticReaction )
 {
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
 
   reaction = MonteCarlo::createScreenedRutherfordElasticReaction(
                 *data_container,
                 0.9,
-                linlinlog_interpolation_mode_on,
+                "LinLinLog",
                 correlated_sampling_mode_on,
                 eval_tol );
 
@@ -217,13 +212,12 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createMomentPreservingElasticReaction )
 {
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
 
   reaction = MonteCarlo::createMomentPreservingElasticReaction(
                 *data_container,
                 0.9,
-                linlinlog_interpolation_mode_on,
+                "LinLinLog",
                 correlated_sampling_mode_on,
                 eval_tol );
 
@@ -239,7 +233,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.9356264227342713e+08, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
@@ -280,14 +274,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createSubshellElectroelectricReactions )
 {
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
   bool unit_based_interpolation_mode_on = true;
 
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> >
   reactions = MonteCarlo::createSubshellElectroionizationReactions(
                                *data_container,
-                               linlinlog_interpolation_mode_on,
+                               "LinLinLog",
                                correlated_sampling_mode_on,
                                unit_based_interpolation_mode_on,
                                eval_tol );
@@ -339,14 +332,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createBremsstrahlungReaction_dipole )
 {
   bool dipole_distribution_mode_on = true;
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
   bool unit_based_interpolation_mode_on = false;
 
   reaction =
     MonteCarlo::createBremsstrahlungReaction( *data_container,
                                              dipole_distribution_mode_on,
-                                             linlinlog_interpolation_mode_on,
+                                             "LinLinLog",
                                              correlated_sampling_mode_on,
                                              unit_based_interpolation_mode_on,
                                              eval_tol );
@@ -382,14 +374,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createBremsstrahlungReaction_2bs )
 {
   bool dipole_distribution_mode_on = false;
-  bool linlinlog_interpolation_mode_on = true;
   bool correlated_sampling_mode_on = true;
   bool unit_based_interpolation_mode_on = false;
 
   reaction =
     MonteCarlo::createBremsstrahlungReaction( *data_container,
                                              dipole_distribution_mode_on,
-                                             linlinlog_interpolation_mode_on,
+                                             "LinLinLog",
                                              correlated_sampling_mode_on,
                                              unit_based_interpolation_mode_on,
                                              eval_tol );
@@ -430,7 +421,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   reaction = MonteCarlo::createCoupledElasticReaction(
                 *data_container,
-                linlinlog_interpolation_mode_on,
+                "LinLinLin",
                 correlated_sampling_mode_on,
                 eval_tol );
 
@@ -468,7 +459,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   reaction = MonteCarlo::createCutoffElasticReaction(
                 *data_container,
                 1.0,
-                linlinlog_interpolation_mode_on,
+                "LinLinLin",
                 correlated_sampling_mode_on,
                 eval_tol );
 
@@ -505,7 +496,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   reaction = MonteCarlo::createMomentPreservingElasticReaction(
                         *data_container,
                         0.9,
-                        linlinlog_interpolation_mode_on,
+                        "LinLinLin",
                         correlated_sampling_mode_on,
                         eval_tol );
 
@@ -521,7 +512,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 6.8927580042035654e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.9356264227342713e+08, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
@@ -543,7 +534,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> >
   reactions = MonteCarlo::createSubshellElectroionizationReactions(
                                *data_container,
-                               linlinlog_interpolation_mode_on,
+                               "LinLinLin",
                                correlated_sampling_mode_on,
                                unit_based_interpolation_mode_on,
                                eval_tol );
@@ -602,7 +593,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   reaction =
     MonteCarlo::createBremsstrahlungReaction( *data_container,
                                              dipole_distribution_mode_on,
-                                             linlinlog_interpolation_mode_on,
+                                             "LinLinLin",
                                              correlated_sampling_mode_on,
                                              unit_based_interpolation_mode_on,
                                              eval_tol );
@@ -645,7 +636,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   reaction =
     MonteCarlo::createBremsstrahlungReaction( *data_container,
                                              dipole_distribution_mode_on,
-                                             linlinlog_interpolation_mode_on,
+                                             "LinLinLin",
                                              correlated_sampling_mode_on,
                                              unit_based_interpolation_mode_on,
                                              eval_tol );

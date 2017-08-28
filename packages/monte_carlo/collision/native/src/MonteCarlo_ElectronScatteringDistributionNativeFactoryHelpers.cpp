@@ -144,6 +144,9 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
                      " is invalid or currently not supported!" );
   }
 
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
   return distribution;
 }
 
@@ -245,6 +248,9 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
                      " is invalid or currently not supported!" );
   }
 
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
   return distribution;
 }
 
@@ -298,6 +304,9 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
                      " is invalid or currently not supported!" );
   }
 
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
   return distribution;
 }
 
@@ -350,6 +359,9 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
                      two_d_interp_policy_name <<
                      " is invalid or currently not supported!" );
   }
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }
@@ -411,6 +423,9 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
                      two_d_interp_policy_name <<
                      " is invalid or currently not supported!" );
   }
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }

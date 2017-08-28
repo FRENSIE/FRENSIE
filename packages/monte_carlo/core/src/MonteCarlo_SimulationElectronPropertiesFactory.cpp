@@ -115,10 +115,10 @@ void SimulationElectronPropertiesFactory::initializeProperties(
   }
 
   // Get the elastic electron distribution type - optional
-  if( properties.isParameter( "Elastic Electron Distribution" ) )
+  if( properties.isParameter( "Electron Elastic Distribution" ) )
   {
     std::string raw_type =
-      properties.get<std::string>( "Elastic Electron Distribution" );
+      properties.get<std::string>( "Electron Elastic Distribution" );
 
      MonteCarlo::ElasticElectronDistributionType type;
 

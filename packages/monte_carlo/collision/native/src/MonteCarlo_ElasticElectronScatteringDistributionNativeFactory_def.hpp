@@ -423,21 +423,21 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    ThisType::createHybridScatteringFunction( cross_section_ratios,
-                                              cutoff_elastic_angles,
-                                              cutoff_elastic_pdf,
-                                              moment_preserving_angles,
-                                              moment_preserving_weights,
-                                              angular_energy_grid,
-                                              hybrid_function,
-                                              cutoff_angle_cosine,
-                                              evaluation_tol );
+    ThisType::createHybridScatteringFunction<TwoDInterpPolicy>(
+                cross_section_ratios,
+                cutoff_elastic_angles,
+                cutoff_elastic_pdf,
+                moment_preserving_angles,
+                moment_preserving_weights,
+                angular_energy_grid,
+                hybrid_function,
+                cutoff_angle_cosine,
+                evaluation_tol );
 
   // Create hybrid distribution
   hybrid_elastic_distribution.reset(
         new HybridElasticElectronScatteringDistribution(
                 hybrid_function,
-                cross_section_ratios,
                 cutoff_angle_cosine,
                 correlated_sampling_mode_on,
                 evaluation_tol ) );
@@ -553,84 +553,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
                 cutoff_angle_cosine,
                 correlated_sampling_mode_on ) );
 }
-
-//// Create a screened Rutherford elastic distribution
-//template<typename TwoDInterpPolicy>
-//void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
-//    std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-//        screened_rutherford_elastic_distribution,
-//    const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
-//        cutoff_elastic_distribution,
-//    const unsigned atomic_number )
-//{
-//  // Create the screened Rutherford distribution
-//  screened_rutherford_elastic_distribution.reset(
-//        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-//                cutoff_elastic_distribution,
-//                atomic_number ) );
-//}
-
-//// Return angle cosine grid for given grid energy bin
-//template<typename TwoDInterpPolicy>
-//std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-//    const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
-//    const double energy,
-//    const double cutoff_angle_cosine )
-//{
-//  testPrecondition( energy >= raw_cutoff_elastic_angles.begin()->first );
-//  testPrecondition( energy <= raw_cutoff_elastic_angles.rbegin()->first );
-
-//  // Get the angular grid
-//  std::vector<double> raw_grid;
-//  if( raw_cutoff_elastic_angles.count( energy ) > 0 )
-//  {
-//    raw_grid = raw_cutoff_elastic_angles.at( energy );
-//  }
-//  else
-//  {
-//    std::map<double,std::vector<double>>::const_iterator lower_bin, upper_bin;
-//    upper_bin = raw_cutoff_elastic_angles.upper_bound( energy );
-//    lower_bin = upper_bin;
-//    --lower_bin;
-
-//    // Use the angular grid for the energy bin closes to the energy
-//    if ( energy - lower_bin->first <= upper_bin->first - energy )
-//    {
-//      raw_grid = lower_bin->second;
-//    }
-//    else
-//    {
-//      raw_grid = upper_bin->second;
-//    }
-//  }
-
-//  return ThisType::getAngularGrid(
-//            raw_grid,
-//            cutoff_angle_cosine );
-//}
-
-//// Return angle cosine grid for the given cutoff angle
-//template<typename TwoDInterpPolicy>
-//std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-//    const std::vector<double>& raw_cutoff_elastic_angles,
-//    const double cutoff_angle_cosine )
-//{
-//  // Find the first angle cosine above the cutoff angle cosine
-//  std::vector<double>::const_iterator start;
-//  for ( start = raw_cutoff_elastic_angles.begin(); start != raw_cutoff_elastic_angles.end(); ++start )
-//  {
-//    if ( *start > cutoff_angle_cosine )
-//    {
-//      break;
-//    }
-//  }
-
-//  std::vector<double> grid( start, raw_cutoff_elastic_angles.end() );
-
-//   grid.insert( grid.begin(), cutoff_angle_cosine );
-
-//  return grid;
-//}
 
 // Return angle cosine grid with the evaluated pdf for the given energy
 template<typename TwoDInterpPolicy>
@@ -824,44 +746,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
         1e-6,
         evaluation_tol ) );
 }
-
-//// Create the scattering function at the given energy
-///*! \details This function has been overloaded so it can be called without using
-// *  the native data container. This functionality is neccessary for generating
-// *  native moment preserving data without first creating native data files.
-// */
-//template<typename TwoDInterpPolicy>
-//void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-//        const std::map<double,std::vector<double> >& elastic_angles,
-//        const std::map<double,std::vector<double> >& elastic_pdf,
-//        const double energy,
-//        TwoDFunction& function_data,
-//        const bool discrete_function )
-//{
-//  // Make sure the energy is valid
-//  testPrecondition( elastic_angles.count( energy ) );
-
-//  // Get the incoming energy
-//  function_data.first = energy;
-
-//  // Create the distribution at the energy
-//  if ( discrete_function )
-//  {
-//    // Create discrete distribution
-//    function_data.second.reset(
-//      new const DiscreteDist( elastic_angles.find( energy )->second,
-//                              elastic_pdf.find( energy )->second,
-//                              false,
-//                              true ) );
-//  }
-//  else
-//  {
-//    // Create tabular distribution
-//    function_data.second.reset(
-//      new const TabularDist( elastic_angles.find( energy )->second,
-//                             elastic_pdf.find( energy )->second ) );
-//  }
-//}
 
 // Create the coupled scattering function
 template<typename TwoDInterpPolicy>
