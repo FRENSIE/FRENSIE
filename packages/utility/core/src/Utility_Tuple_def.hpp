@@ -396,6 +396,61 @@ inline bool ComparisonTraits<std::tuple<> >::compare(
 
   return success;
 }
+
+// Create a comparison header
+template<typename T1, typename T2>
+template<typename ComparisonPolicy>
+inline std::string ComparisonTraits<std::pair<T1,T2> >::createComparisonHeader(
+                                       const std::pair<T1,T2>& left_value,
+                                       const std::string& left_name,
+                                       const bool log_left_name,
+                                       const std::pair<T1,T2>& right_value,
+                                       const std::string& right_name,
+                                       const bool log_right_name,
+                                       const std::string& name_suffix,
+                                       const ExtraDataType& extra_data  )
+{
+  std::string comparison_header =
+    ComparisonPolicy::createComparisonDetails( left_name,
+                                               log_left_name,
+                                               left_value,
+                                               right_name,
+                                               log_right_name,
+                                               right_value,
+                                               name_suffix,
+                                               extra_data );
+  comparison_header += ": ";
+  
+  return comparison_header;
+}
+
+// Compare two tuples
+template<typename T1, typename T2>
+template<typename ComparisonPolicy>
+inline bool ComparisonTraits<std::pair<T1,T2> >::compare(
+                                       const std::pair<T1,T2>& left_value,
+                                       const std::string& left_name,
+                                       const bool log_left_name,
+                                       const std::pair<T1,T2>& right_value,
+                                       const std::string& right_name,
+                                       const bool log_right_name,
+                                       const std::string& name_suffix,
+                                       std::ostream& log,
+                                       const bool log_comparison_details, 
+                                       const ExtraDataType& extra_data )
+{
+  return Details::TupleMemberCompareHelper<0,std::pair<T1,T2> >::template compareTupleMembers<ComparisonPolicy>(
+                                                        left_value,
+                                                        left_name,
+                                                        log_left_name,
+                                                        right_value,
+                                                        right_name,
+                                                        log_right_name,
+                                                        name_suffix,
+                                                        log,
+                                                        log_comparison_details,
+                                                        extra_data );
+}
   
 } // end Utility namespace
 

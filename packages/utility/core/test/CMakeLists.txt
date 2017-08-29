@@ -173,11 +173,9 @@ TARGET_LINK_LIBRARIES(tstTuple utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(Tuple_test tstTuple --report_level=detailed)
 SET_PROPERTY(TEST Tuple_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstView
-  tstView.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstView utility_core)
-ADD_TEST(View_test tstView)
+ADD_EXECUTABLE(tstView tstView.cpp)
+TARGET_LINK_LIBRARIES(tstView utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(View_test tstView --report_level=detailed)
 SET_PROPERTY(TEST View_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstArrayView

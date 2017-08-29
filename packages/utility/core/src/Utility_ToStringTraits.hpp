@@ -15,6 +15,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <complex>
+#include <initializer_list>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
@@ -295,6 +296,13 @@ struct ToStringTraitsIteratorHelper
 };
   
 } // end Details namespace
+
+/*! Partial specialization of ToStringTraits for std::complex types
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::initializer_list<T> > : public Details::ToStringTraitsIteratorHelper<std::initializer_list<T> >
+{ /* ... */ };
 
 // Convert the object to a string
 template<typename T>

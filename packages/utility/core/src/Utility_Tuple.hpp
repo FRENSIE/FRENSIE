@@ -244,7 +244,7 @@ struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
 };
 
 /*! \brief The partial specialization of the Utility::ComparisonTraits for
- * tuple types (with at least one element).
+ * std::tuple types (with at least one element).
  * \ingroup comparison_traits
  */
 template<typename... Types>
@@ -280,7 +280,7 @@ struct ComparisonTraits<std::tuple<Types...> >
 };
 
 /*! \brief The partial specialization of the Utility::ComparisonTraits for
- * empty tuple types.
+ * empty std::tuple types.
  * \ingroup comparison_traits
  */
 template<>
@@ -315,29 +315,41 @@ struct ComparisonTraits<std::tuple<> >
                        const ExtraDataType& extra_data = ExtraDataType() );
 };
 
-// /*! \brief The partial specialization of the Utility::ComparisonTraits for
-//  * const tuple types (with at least one element).
-//  * \ingroup comparison_traits
-//  */
-// template<typename... Types>
-// struct ComparisonTraits<const std::tuple<Types...> > : public ComparisonTraits<std::tuple<Types...> >
-// { /* ... */ };
+/*! \brief The partial specialization of the Utility::ComparisonTraits for
+ * std::pair types (with at least one element).
+ * \ingroup comparison_traits
+ */
+template<typename T1, typename T2>
+struct ComparisonTraits<std::pair<T1,T2> >
+{
+  //! The extra data type (usually a comparison tolerance)
+  typedef double ExtraDataType;
 
-// /*! \brief The partial specialization of the Utility::ComparisonTraits for
-//  * volatile tuple types (with at least one element).
-//  * \ingroup comparison_traits
-//  */
-// template<typename... Types>
-// struct ComparisonTraits<volatile std::tuple<Types...> > : public ComparisonTraits<std::tuple<Types...> >
-// { /* ... */ };
+  //! Create a comparison header
+  template<typename ComparisonPolicy>
+  static std::string createComparisonHeader(
+                           const std::pair<T1,T2>& left_value,
+                           const std::string& left_name,
+                           const bool log_left_name,
+                           const std::pair<T1,T2>& right_value,
+                           const std::string& right_name,
+                           const bool log_right_name,
+                           const std::string& name_suffix,
+                           const ExtraDataType& extra_data = ExtraDataType() );
 
-// /*! \brief The partial specialization of the Utility::ComparisonTraits for
-//  * const volatile tuple types (with at least one element).
-//  * \ingroup comparison_traits
-//  */
-// template<typename... Types>
-// struct ComparisonTraits<const volatile std::tuple<Types...> > : public ComparisonTraits<std::tuple<Types...> >
-// { /* ... */ };
+  //! Compare two tuples
+  template<typename ComparisonPolicy>
+  static bool compare( const std::pair<T1,T2>& left_value,
+                       const std::string& left_name,
+                       const bool log_left_name,
+                       const std::pair<T1,T2>& right_value,
+                       const std::string& right_name,
+                       const bool log_right_name,
+                       const std::string& name_suffix,
+                       std::ostream& log,
+                       const bool log_comparison_details = false,
+                       const ExtraDataType& extra_data = ExtraDataType() );
+};
   
 } // end Utility namespace
 

@@ -11,86 +11,75 @@
 #include <sstream>
 #include <type_traits>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+// Boost Includes
+#define BOOST_TEST_MAIN
+#include <boost/test/unit_test.hpp>
+#include <boost/mpl/list.hpp>
+#include <boost/mpl/insert_range.hpp>
 
 // FRENSIE Includes
-#include "Utility_View.hpp"
 #include "Utility_Tuple.hpp"
-
-typedef unsigned char uchar;
-typedef signed char schar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef long long longlong;
-typedef unsigned long long ulonglong;
-
-typedef std::string string;
-typedef std::array<int,1> array_int_1;
-typedef std::array<double,2> array_double_2;
-typedef std::vector<int> array_int;
-typedef std::vector<double> vector_double;
-typedef std::vector<int> vector_int;
-typedef std::vector<bool> vector_bool;
-typedef std::list<double> list_double;
-typedef std::list<int> list_int;
-typedef std::forward_list<double> forward_list_double;
-typedef std::forward_list<int> forward_list_int;
-typedef std::deque<double> deque_double;
-typedef std::deque<int> deque_int;
-typedef std::set<int> set_int;
-typedef std::set<std::string> set_string;
-typedef std::unordered_set<int> unordered_set_int;
-typedef std::unordered_set<std::string> unordered_set_string;
-typedef std::map<int,double> map_int_double;
-typedef std::map<long,std::string> map_long_string;
-typedef std::unordered_map<int,double> unordered_map_int_double;
-typedef std::unordered_map<long,std::string> unordered_map_long_string;
+#include "Utility_View.hpp"
 
 //---------------------------------------------------------------------------//
-// Instantiation Macros
+// Template Test Types
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_TEMPLATE_1_INSTANT( type, name )      \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, string );   \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array_int_1 ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, vector_int ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, list_int ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, forward_list_int ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, deque_int );        \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, set_int );          \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unordered_set_int ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, map_int_double );   \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unordered_map_int_double )
+template<typename Policy>
+struct TypeList
+{
+  typedef boost::mpl::list<std::tuple<Policy,std::string>,std::tuple<Policy,std::array<int,1> >,std::tuple<Policy,std::vector<int> >,std::tuple<Policy,std::list<int> >,std::tuple<Policy,std::forward_list<int> >,std::tuple<Policy,std::deque<int> >,std::tuple<Policy,std::set<int> >,std::tuple<Policy,std::unordered_set<int> >,std::tuple<Policy,std::map<int,double> >,std::tuple<Policy,std::unordered_map<int,double> > > type;
+};
 
-#define UNIT_TEST_TEMPLATE_1_BIDIR_CONTAINER_INSTANT( type, name )      \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, string );   \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array_int_1 ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, vector_int ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, list_int ); \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, deque_int );        \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, set_int );          \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, map_int_double )
+template<typename... TypeLists>
+struct MergeTypeLists
+{ /* ... */ };
 
-#define UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( type, name )        \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, bool );       \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, char );         \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, schar );       \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uchar );       \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, short );        \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ushort );      \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, int );           \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uint );           \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, long );      \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ulong );         \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, longlong );       \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ulonglong );       \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float );           \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )
+template<typename FrontList, typename... TypeLists>
+struct MergeTypeLists<FrontList,TypeLists...>
+{
+private:
+  typedef typename MergeTypeLists<TypeLists...>::type BackMergedListType;
+
+public:
+  typedef typename boost::mpl::insert_range<FrontList,typename boost::mpl::end<FrontList>::type,BackMergedListType>::type type;
+};
+
+template<typename FrontList>
+struct MergeTypeLists<FrontList>
+{ 
+  typedef FrontList type;
+};
+
+typedef boost::mpl::list<bool,char,signed char,unsigned char,short,unsigned short,int,unsigned int,long,unsigned long,long long,unsigned long long,float,double> TestTypes;
+
+typedef boost::mpl::list<std::string,std::array<int,1>,std::vector<int>,std::list<int>,std::forward_list<int>,std::deque<int>,std::set<int>,std::unordered_set<int>,std::map<int,double>,std::unordered_map<int,double> > TestContainers;
+
+typedef boost::mpl::list<std::string,std::array<int,1>,std::vector<int>,std::list<int>,std::deque<int>,std::set<int>,std::map<int,double> > BidirTestContainers;
+
+typedef typename MergeTypeLists<typename TypeList<Utility::EqualityComparisonPolicy>::type, typename TypeList<Utility::CloseComparisonPolicy>::type, typename TypeList<Utility::RelativeErrorComparisonPolicy>::type>::type TestEqualityPolicyContainers;
+
+typedef typename TypeList<Utility::InequalityComparisonPolicy>::type TestInequalityPolicyContainers;
 
 //---------------------------------------------------------------------------//
 // Testing functions
 //---------------------------------------------------------------------------//
+template<typename T>
+T initializeValue( const size_t index, const T dummy )
+{ return T(index); }
+
+template<typename T1, typename T2>
+std::pair<T1,T2> initializeValue( const size_t index,
+                                  const std::pair<T1,T2>& dummy )
+{ return std::make_pair( T1(index), T2(index) ); }
+
+template<typename T>
+T initializeTolerance( const double raw_tolerance, const T dummy )
+{ return T(raw_tolerance); }
+
+std::string initializeTolerance( const double raw_tolerance,
+                                 const std::string& dummy )
+{ return Utility::toString( raw_tolerance ); }
+
 void initializeContainer( std::string& container )
 { container = "test string"; }
 
@@ -103,7 +92,7 @@ void initializeContainer( std::array<T,N>& container )
 
 template<typename T>
 void initializeContainer( std::vector<T>& container )
-{ container.resize( 10, 0 ); }
+{ container.resize( 10, T(0) ); }
 
 template<typename T>
 void initializeContainer( std::list<T>& container )
@@ -154,24 +143,26 @@ typename std::forward_list<T>::size_type size( const std::forward_list<T>& conta
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a view can be constructed
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, default_constructor, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( default_constructor,
+                               Container,
+                               TestContainers )
 {
   Utility::View<typename Container::iterator> view;
 
-  TEST_EQUALITY_CONST( view.size(), 0 );
-  TEST_ASSERT( view.empty() );
+  BOOST_CHECK_EQUAL( view.size(), 0 );
+  BOOST_CHECK( view.empty() );
 
   Utility::View<typename Container::const_iterator> view_of_const;
 
-  TEST_EQUALITY_CONST( view_of_const.size(), 0 );
-  TEST_ASSERT( view.empty() );
+  BOOST_CHECK_EQUAL( view_of_const.size(), 0 );
+  BOOST_CHECK( view.empty() );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( View, default_constructor );
 
 //---------------------------------------------------------------------------//
 // Check that a view can be constructed from iterators
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, iterator_constructor, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( iterator_constructor,
+                               Container,
+                               TestContainers )
 {
   Container container = initializeContainer<Container>();
 
@@ -180,8 +171,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, iterator_constructor, Container )
     Utility::View<typename Container::iterator>
       view( container.begin(), container.end() );
 
-    TEST_EQUALITY( view.size(), size(container) );
-    TEST_ASSERT( !view.empty() );
+    BOOST_CHECK_EQUAL( view.size(), size(container) );
+    BOOST_CHECK( !view.empty() );
   }
 
   // Construct a view of const from iterators
@@ -189,8 +180,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, iterator_constructor, Container )
     Utility::View<typename Container::const_iterator>
       view( container.begin(), container.end() );
 
-    TEST_EQUALITY( view.size(), size(container) );
-    TEST_ASSERT( !view.empty() );
+    BOOST_CHECK_EQUAL( view.size(), size(container) );
+    BOOST_CHECK( !view.empty() );
   }
 
   // Construct a view of const from const iterators
@@ -198,16 +189,16 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, iterator_constructor, Container )
     Utility::View<typename Container::const_iterator>
       view( container.cbegin(), container.cend() );
 
-    TEST_EQUALITY( view.size(), size(container) );
-    TEST_ASSERT( !view.empty() );
+    BOOST_CHECK_EQUAL( view.size(), size(container) );
+    BOOST_CHECK( !view.empty() );
   }
 }
 
-UNIT_TEST_TEMPLATE_1_INSTANT( View, iterator_constructor );
-
 //---------------------------------------------------------------------------//
 // Check the copy constructor
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, copy_constructor, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( copy_constructor,
+                               Container,
+                               TestContainers )
 {
   Container container = initializeContainer<Container>();
 
@@ -220,29 +211,29 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, copy_constructor, Container )
   {
     Utility::View<typename Container::iterator> view_copy( view );
 
-    TEST_EQUALITY_CONST( view_copy.size(), view.size() );
+    BOOST_CHECK_EQUAL( view_copy.size(), view.size() );
   }
 
   {
     Utility::View<typename Container::const_iterator>
       view_of_const_copy( view );
 
-    TEST_EQUALITY_CONST( view_of_const_copy.size(), view.size() );
+    BOOST_CHECK_EQUAL( view_of_const_copy.size(), view.size() );
   }
 
   {
     Utility::View<typename Container::const_iterator>
       view_of_const_copy( view_of_const );
 
-    TEST_EQUALITY_CONST( view_of_const_copy.size(), view_of_const.size() );
+    BOOST_CHECK_EQUAL( view_of_const_copy.size(), view_of_const.size() );
   }
 }
 
-UNIT_TEST_TEMPLATE_1_INSTANT( View, copy_constructor );
-
 //---------------------------------------------------------------------------//
 // Check the assignment operator
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, assignment_operator, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( assignment_operator,
+                               Container,
+                               TestContainers )
 {
   Container container = initializeContainer<Container>();
 
@@ -255,54 +246,50 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, assignment_operator, Container )
   {
     Utility::View<typename Container::iterator> view_copy = view;
 
-    TEST_EQUALITY_CONST( view_copy.size(), view.size() );
+    BOOST_CHECK_EQUAL( view_copy.size(), view.size() );
   }
 
   {
     Utility::View<typename Container::const_iterator>
       view_of_const_copy = view;
 
-    TEST_EQUALITY_CONST( view_of_const_copy.size(), view.size() );
+    BOOST_CHECK_EQUAL( view_of_const_copy.size(), view.size() );
   }
 
   {
     Utility::View<typename Container::const_iterator>
       view_of_const_copy = view_of_const;
 
-    TEST_EQUALITY_CONST( view_of_const_copy.size(), view_of_const.size() );
+    BOOST_CHECK_EQUAL( view_of_const_copy.size(), view_of_const.size() );
   }
 }
 
-UNIT_TEST_TEMPLATE_1_INSTANT( View, assignment_operator );
-
 //---------------------------------------------------------------------------//
 // Check that view iterators can be acquired
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, iterator, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( iterator, Container, TestContainers )
 {
   Container container = initializeContainer<Container>();
 
   Utility::View<typename Container::iterator>
     view( container.begin(), container.end() );
 
-  TEST_ASSERT( view.begin() == container.begin() );
-  TEST_ASSERT( view.end() == container.end() );
-  TEST_ASSERT( view.cbegin() == container.cbegin() );
-  TEST_ASSERT( view.cend() == container.cend() );
+  BOOST_CHECK( view.begin() == container.begin() );
+  BOOST_CHECK( view.end() == container.end() );
+  BOOST_CHECK( view.cbegin() == container.cbegin() );
+  BOOST_CHECK( view.cend() == container.cend() );
 
   Utility::View<typename Container::const_iterator>
     view_of_const( container.cbegin(), container.cend() );
 
-  TEST_ASSERT( view_of_const.begin() == container.cbegin() );
-  TEST_ASSERT( view_of_const.end() == container.cend() );
-  TEST_ASSERT( view_of_const.cbegin() == container.cbegin() );
-  TEST_ASSERT( view_of_const.cend() == container.cend() );
+  BOOST_CHECK( view_of_const.begin() == container.cbegin() );
+  BOOST_CHECK( view_of_const.end() == container.cend() );
+  BOOST_CHECK( view_of_const.cbegin() == container.cbegin() );
+  BOOST_CHECK( view_of_const.cend() == container.cend() );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( View, iterator );
 
 //---------------------------------------------------------------------------//
 // Check if a view can be converted to a view-of-const
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, to_const, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( to_const, Container, TestContainers )
 {
   Container container = initializeContainer<Container>();
 
@@ -312,73 +299,69 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, to_const, Container )
   {
     auto view_of_const = view.toConst();
 
-    TEST_ASSERT( Utility::IsPointerToConst<typename decltype(view_of_const)::pointer>::value );
+    BOOST_CHECK( Utility::IsPointerToConst<typename decltype(view_of_const)::pointer>::value );
   }
   
   {
     auto view_of_const =
       (Utility::View<typename Container::const_iterator>)view;
 
-    TEST_ASSERT( Utility::IsPointerToConst<typename decltype(view_of_const)::pointer>::value );
+    BOOST_CHECK( Utility::IsPointerToConst<typename decltype(view_of_const)::pointer>::value );
   }
 }
 
-UNIT_TEST_TEMPLATE_1_INSTANT( View, to_const );
-
 //---------------------------------------------------------------------------//
 // Check if a view can be constructed using the view helper function
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, view_construction_helper, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( view_construction_helper,
+                               Container,
+                               TestContainers )
 {
   Container container = initializeContainer<Container>();
 
   auto view = Utility::view( container );
 
-  TEST_EQUALITY_CONST( view.size(), size(container) );
-  TEST_ASSERT( view.begin() == container.begin() );
-  TEST_ASSERT( view.end() == container.end() );
-  TEST_ASSERT( (std::is_same<typename decltype(view)::iterator,typename Container::iterator>::value) );
+  BOOST_CHECK_EQUAL( view.size(), size(container) );
+  BOOST_CHECK( view.begin() == container.begin() );
+  BOOST_CHECK( view.end() == container.end() );
+  BOOST_CHECK( (std::is_same<typename decltype(view)::iterator,typename Container::iterator>::value) );
 
   auto view_to_const =
     Utility::view( const_cast<const Container&>(container) );
 
-  TEST_EQUALITY_CONST( view_to_const.size(), size(container) );
-  TEST_ASSERT( view_to_const.begin() == container.cbegin() );
-  TEST_ASSERT( view_to_const.end() == container.cend() );
-  TEST_ASSERT( (std::is_same<typename decltype(view_to_const)::iterator,typename Container::const_iterator>::value) );
+  BOOST_CHECK_EQUAL( view_to_const.size(), size(container) );
+  BOOST_CHECK( view_to_const.begin() == container.cbegin() );
+  BOOST_CHECK( view_to_const.end() == container.cend() );
+  BOOST_CHECK( (std::is_same<typename decltype(view_to_const)::iterator,typename Container::const_iterator>::value) );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( View, view_construction_helper );
 
 //---------------------------------------------------------------------------//
 // Check if a reverse view can be constructed using the reverseView helper
 // function
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View,
-                                   reverse_view_construction_helper,
-                                   Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( reverse_view_construction_helper,
+                               Container,
+                               BidirTestContainers )
 {
   Container container = initializeContainer<Container>();
 
   auto reverse_view = Utility::reverseView( container );
 
-  TEST_EQUALITY_CONST( reverse_view.size(), size(container) );
-  TEST_ASSERT( reverse_view.begin() == container.rbegin() );
-  TEST_ASSERT( reverse_view.end() == container.rend() );
-  TEST_ASSERT( (std::is_same<typename decltype(reverse_view)::iterator,typename Container::reverse_iterator>::value) );
+  BOOST_CHECK_EQUAL( reverse_view.size(), size(container) );
+  BOOST_CHECK( reverse_view.begin() == container.rbegin() );
+  BOOST_CHECK( reverse_view.end() == container.rend() );
+  BOOST_CHECK( (std::is_same<typename decltype(reverse_view)::iterator,typename Container::reverse_iterator>::value) );
 
   auto reverse_view_to_const =
     Utility::reverseView( const_cast<const Container&>(container) );
 
-  TEST_EQUALITY_CONST( reverse_view_to_const.size(), size(container) );
-  TEST_ASSERT( reverse_view_to_const.begin() == container.crbegin() );
-  TEST_ASSERT( reverse_view_to_const.end() == container.crend() );
-  TEST_ASSERT( (std::is_same<typename decltype(reverse_view_to_const)::iterator,typename Container::const_reverse_iterator>::value) );
+  BOOST_CHECK_EQUAL( reverse_view_to_const.size(), size(container) );
+  BOOST_CHECK( reverse_view_to_const.begin() == container.crbegin() );
+  BOOST_CHECK( reverse_view_to_const.end() == container.crend() );
+  BOOST_CHECK( (std::is_same<typename decltype(reverse_view_to_const)::iterator,typename Container::const_reverse_iterator>::value) );
 }
-
-UNIT_TEST_TEMPLATE_1_BIDIR_CONTAINER_INSTANT( View, reverse_view_construction_helper );
 
 //---------------------------------------------------------------------------//
 // Check that a view can be converted to a string
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, toString, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( toString, Container, TestContainers )
 {
   Container container = initializeContainer<Container>();
 
@@ -405,17 +388,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, toString, Container )
   if( !std::is_same<Container,std::string>::value )
     container_string += "}";
   
-  TEST_EQUALITY( Utility::toString(Utility::view( container )),
+  BOOST_CHECK_EQUAL( Utility::toString(Utility::view( container )),
                  container_string );
-  TEST_EQUALITY( Utility::toString(Utility::viewOfConst( container )),
+  BOOST_CHECK_EQUAL( Utility::toString(Utility::viewOfConst( container )),
                  container_string );
 }
 
-UNIT_TEST_TEMPLATE_1_INSTANT( View, toString );
-
 //---------------------------------------------------------------------------//
 // Check that a view can be placed in a stream
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, ostream_operator, Container )
+BOOST_AUTO_TEST_CASE_TEMPLATE( ostream_operator, Container, TestContainers )
 {
   Container container = initializeContainer<Container>();
 
@@ -446,43 +427,41 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View, ostream_operator, Container )
 
   oss << Utility::view( container );
 
-  TEST_EQUALITY( oss.str(), container_string );
+  BOOST_CHECK_EQUAL( oss.str(), container_string );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::viewOfConst( container );
   
-  TEST_EQUALITY( oss.str(), container_string );
+  BOOST_CHECK_EQUAL( oss.str(), container_string );
 }
-
-UNIT_TEST_TEMPLATE_1_INSTANT( View, ostream_operator );
 
 //---------------------------------------------------------------------------//
 // Check the element access for std::array views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_array, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_array, T, TestTypes )
 {
   std::array<T,2> container( {0, 1} );
 
   Utility::View<typename std::array<T,2>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( view.at(0), 0 );
-  TEST_EQUALITY_CONST( view.at(1), 1 );
-  TEST_EQUALITY_CONST( view.front(), 0 );
-  TEST_EQUALITY_CONST( view.back(), 1 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
+  BOOST_CHECK_EQUAL( view.at(0), 0 );
+  BOOST_CHECK_EQUAL( view.at(1), 1 );
+  BOOST_CHECK_EQUAL( view.front(), 0 );
+  BOOST_CHECK_EQUAL( view.back(), 1 );
 
   view[0] = 1;
   view[1] = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( view.at(0), 1 );
-  TEST_EQUALITY_CONST( view.at(1), 0 );
-  TEST_EQUALITY_CONST( view.front(), 1 );
-  TEST_EQUALITY_CONST( view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( view.at(0), 1 );
+  BOOST_CHECK_EQUAL( view.at(1), 0 );
+  BOOST_CHECK_EQUAL( view.front(), 1 );
+  BOOST_CHECK_EQUAL( view.back(), 0 );
 
   Utility::View<typename std::array<T,2>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
@@ -490,71 +469,69 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_array, element_access, T )
   reverse_view[0] = 1;
   reverse_view[1] = 0;
 
-  TEST_EQUALITY_CONST( reverse_view[0], 1 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view.at(0), 1 );
-  TEST_EQUALITY_CONST( reverse_view.at(1), 0 );
-  TEST_EQUALITY_CONST( reverse_view.front(), 1 );
-  TEST_EQUALITY_CONST( reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view.at(0), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.at(1), 0 );
+  BOOST_CHECK_EQUAL( reverse_view.front(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
 
   container[0] = 1;
   container[1] = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 1 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 1 );
 
   Utility::View<typename std::array<T,2>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], 1 );
-  TEST_EQUALITY_CONST( view_of_const[1], 0 );
-  TEST_EQUALITY_CONST( view_of_const.at(0), 1 );
-  TEST_EQUALITY_CONST( view_of_const.at(1), 0 );
-  TEST_EQUALITY_CONST( view_of_const.front(), 1 );
-  TEST_EQUALITY_CONST( view_of_const.back(), 0 );
+  BOOST_CHECK_EQUAL( view_of_const[0], 1 );
+  BOOST_CHECK_EQUAL( view_of_const[1], 0 );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.front(), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.back(), 0 );
 
   Utility::View<typename std::array<T,2>::const_reverse_iterator>
     reverse_view_of_const( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view_of_const[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const[1], 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(0), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(1), 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.front(), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.back(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(0), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(1), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.front(), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.back(), 1 );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_array, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for vector views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_vector, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_vector, T, TestTypes )
 {
   std::vector<T> container( {0, 1} );
 
   Utility::View<typename std::vector<T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( view.at(0), 0 );
-  TEST_EQUALITY_CONST( view.at(1), 1 );
-  TEST_EQUALITY_CONST( view.front(), 0 );
-  TEST_EQUALITY_CONST( view.back(), 1 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
+  BOOST_CHECK_EQUAL( view.at(0), 0 );
+  BOOST_CHECK_EQUAL( view.at(1), 1 );
+  BOOST_CHECK_EQUAL( view.front(), 0 );
+  BOOST_CHECK_EQUAL( view.back(), 1 );
 
   view[0] = 1;
   view[1] = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( view.at(0), 1 );
-  TEST_EQUALITY_CONST( view.at(1), 0 );
-  TEST_EQUALITY_CONST( view.front(), 1 );
-  TEST_EQUALITY_CONST( view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( view.at(0), 1 );
+  BOOST_CHECK_EQUAL( view.at(1), 0 );
+  BOOST_CHECK_EQUAL( view.front(), 1 );
+  BOOST_CHECK_EQUAL( view.back(), 0 );
 
   Utility::View<typename std::vector<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
@@ -562,71 +539,69 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_vector, element_access, T )
   reverse_view[0] = 1;
   reverse_view[1] = 0;
 
-  TEST_EQUALITY_CONST( reverse_view[0], 1 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view.at(0), 1 );
-  TEST_EQUALITY_CONST( reverse_view.at(1), 0 );
-  TEST_EQUALITY_CONST( reverse_view.front(), 1 );
-  TEST_EQUALITY_CONST( reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view.at(0), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.at(1), 0 );
+  BOOST_CHECK_EQUAL( reverse_view.front(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
 
   container[0] = 1;
   container[1] = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 1 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 1 );
 
   Utility::View<typename std::vector<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], 1 );
-  TEST_EQUALITY_CONST( view_of_const[1], 0 );
-  TEST_EQUALITY_CONST( view_of_const.at(0), 1 );
-  TEST_EQUALITY_CONST( view_of_const.at(1), 0 );
-  TEST_EQUALITY_CONST( view_of_const.front(), 1 );
-  TEST_EQUALITY_CONST( view_of_const.back(), 0 );
+  BOOST_CHECK_EQUAL( view_of_const[0], 1 );
+  BOOST_CHECK_EQUAL( view_of_const[1], 0 );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.front(), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.back(), 0 );
 
   Utility::View<typename std::vector<T>::const_reverse_iterator>
     reverse_view_of_const( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view_of_const[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const[1], 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(0), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(1), 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.front(), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.back(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(0), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(1), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.front(), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.back(), 1 );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_vector, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for list views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_list, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_list, T, TestTypes )
 {
   std::list<T> container( {0, 1} );
 
   Utility::View<typename std::list<T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( view.at(0), 0 );
-  TEST_EQUALITY_CONST( view.at(1), 1 );
-  TEST_EQUALITY_CONST( view.front(), 0 );
-  TEST_EQUALITY_CONST( view.back(), 1 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
+  BOOST_CHECK_EQUAL( view.at(0), 0 );
+  BOOST_CHECK_EQUAL( view.at(1), 1 );
+  BOOST_CHECK_EQUAL( view.front(), 0 );
+  BOOST_CHECK_EQUAL( view.back(), 1 );
 
   view[0] = 1;
   view[1] = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( view.at(0), 1 );
-  TEST_EQUALITY_CONST( view.at(1), 0 );
-  TEST_EQUALITY_CONST( view.front(), 1 );
-  TEST_EQUALITY_CONST( view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( view.at(0), 1 );
+  BOOST_CHECK_EQUAL( view.at(1), 0 );
+  BOOST_CHECK_EQUAL( view.front(), 1 );
+  BOOST_CHECK_EQUAL( view.back(), 0 );
 
   Utility::View<typename std::list<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
@@ -634,71 +609,69 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_list, element_access, T )
   reverse_view[0] = 1;
   reverse_view[1] = 0;
 
-  TEST_EQUALITY_CONST( reverse_view[0], 1 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view.at(0), 1 );
-  TEST_EQUALITY_CONST( reverse_view.at(1), 0 );
-  TEST_EQUALITY_CONST( reverse_view.front(), 1 );
-  TEST_EQUALITY_CONST( reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view.at(0), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.at(1), 0 );
+  BOOST_CHECK_EQUAL( reverse_view.front(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
 
   container.front() = 1;
   container.back() = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 1 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 1 );
 
   Utility::View<typename std::list<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], 1 );
-  TEST_EQUALITY_CONST( view_of_const[1], 0 );
-  TEST_EQUALITY_CONST( view_of_const.at(0), 1 );
-  TEST_EQUALITY_CONST( view_of_const.at(1), 0 );
-  TEST_EQUALITY_CONST( view_of_const.front(), 1 );
-  TEST_EQUALITY_CONST( view_of_const.back(), 0 );
+  BOOST_CHECK_EQUAL( view_of_const[0], 1 );
+  BOOST_CHECK_EQUAL( view_of_const[1], 0 );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.front(), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.back(), 0 );
 
   Utility::View<typename std::list<T>::const_reverse_iterator>
     reverse_view_of_const( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view_of_const[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const[1], 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(0), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(1), 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.front(), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.back(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(0), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(1), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.front(), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.back(), 1 );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_list, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for forward_list views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_forward_list, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_forward_list, T, TestTypes )
 {
   std::forward_list<T> container( {0, 1} );
 
   Utility::View<typename std::forward_list<T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( view.at(0), 0 );
-  TEST_EQUALITY_CONST( view.at(1), 1 );
-  TEST_EQUALITY_CONST( view.front(), 0 );
-  TEST_EQUALITY_CONST( view.back(), 1 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
+  BOOST_CHECK_EQUAL( view.at(0), 0 );
+  BOOST_CHECK_EQUAL( view.at(1), 1 );
+  BOOST_CHECK_EQUAL( view.front(), 0 );
+  BOOST_CHECK_EQUAL( view.back(), 1 );
 
   view[0] = 1;
   view[1] = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( view.at(0), 1 );
-  TEST_EQUALITY_CONST( view.at(1), 0 );
-  TEST_EQUALITY_CONST( view.front(), 1 );
-  TEST_EQUALITY_CONST( view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( view.at(0), 1 );
+  BOOST_CHECK_EQUAL( view.at(1), 0 );
+  BOOST_CHECK_EQUAL( view.front(), 1 );
+  BOOST_CHECK_EQUAL( view.back(), 0 );
 
   container.front() = 1;
   *(++container.begin()) = 0;
@@ -706,41 +679,39 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_forward_list, element_access, T )
   Utility::View<typename std::forward_list<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], 1 );
-  TEST_EQUALITY_CONST( view_of_const[1], 0 );
-  TEST_EQUALITY_CONST( view_of_const.at(0), 1 );
-  TEST_EQUALITY_CONST( view_of_const.at(1), 0 );
-  TEST_EQUALITY_CONST( view_of_const.front(), 1 );
-  TEST_EQUALITY_CONST( view_of_const.back(), 0 );
+  BOOST_CHECK_EQUAL( view_of_const[0], 1 );
+  BOOST_CHECK_EQUAL( view_of_const[1], 0 );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.front(), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.back(), 0 );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_forward_list, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for deque views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_deque, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_deque, T, TestTypes )
 {
   std::deque<T> container( {0, 1} );
 
   Utility::View<typename std::deque<T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( view.at(0), 0 );
-  TEST_EQUALITY_CONST( view.at(1), 1 );
-  TEST_EQUALITY_CONST( view.front(), 0 );
-  TEST_EQUALITY_CONST( view.back(), 1 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
+  BOOST_CHECK_EQUAL( view.at(0), 0 );
+  BOOST_CHECK_EQUAL( view.at(1), 1 );
+  BOOST_CHECK_EQUAL( view.front(), 0 );
+  BOOST_CHECK_EQUAL( view.back(), 1 );
 
   view[0] = 1;
   view[1] = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( view.at(0), 1 );
-  TEST_EQUALITY_CONST( view.at(1), 0 );
-  TEST_EQUALITY_CONST( view.front(), 1 );
-  TEST_EQUALITY_CONST( view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( view.at(0), 1 );
+  BOOST_CHECK_EQUAL( view.at(1), 0 );
+  BOOST_CHECK_EQUAL( view.front(), 1 );
+  BOOST_CHECK_EQUAL( view.back(), 0 );
 
   Utility::View<typename std::deque<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
@@ -748,201 +719,1005 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_deque, element_access, T )
   reverse_view[0] = 1;
   reverse_view[1] = 0;
 
-  TEST_EQUALITY_CONST( reverse_view[0], 1 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view.at(0), 1 );
-  TEST_EQUALITY_CONST( reverse_view.at(1), 0 );
-  TEST_EQUALITY_CONST( reverse_view.front(), 1 );
-  TEST_EQUALITY_CONST( reverse_view.back(), 0 );
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view.at(0), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.at(1), 0 );
+  BOOST_CHECK_EQUAL( reverse_view.front(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
 
   container.front() = 1;
   container.back() = 0;
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view[1], 1 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 1 );
 
   Utility::View<typename std::deque<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], 1 );
-  TEST_EQUALITY_CONST( view_of_const[1], 0 );
-  TEST_EQUALITY_CONST( view_of_const.at(0), 1 );
-  TEST_EQUALITY_CONST( view_of_const.at(1), 0 );
-  TEST_EQUALITY_CONST( view_of_const.front(), 1 );
-  TEST_EQUALITY_CONST( view_of_const.back(), 0 );
+  BOOST_CHECK_EQUAL( view_of_const[0], 1 );
+  BOOST_CHECK_EQUAL( view_of_const[1], 0 );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.front(), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.back(), 0 );
 
   Utility::View<typename std::deque<T>::const_reverse_iterator>
     reverse_view_of_const( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view_of_const[0], 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const[1], 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(0), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(1), 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.front(), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.back(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[0], 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[1], 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(0), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(1), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.front(), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.back(), 1 );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_deque, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for set views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_set, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_set, T, TestTypes )
 {
   std::set<T> container( {0, 1} );
 
   Utility::View<typename std::set<T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], 0 );
-  TEST_EQUALITY_CONST( view[1], 1 );
-  TEST_EQUALITY_CONST( view.at(0), 0 );
-  TEST_EQUALITY_CONST( view.at(1), 1 );
-  TEST_EQUALITY_CONST( view.front(), 0 );
-  TEST_EQUALITY_CONST( view.back(), 1 );
+  BOOST_CHECK_EQUAL( view[0], 0 );
+  BOOST_CHECK_EQUAL( view[1], 1 );
+  BOOST_CHECK_EQUAL( view.at(0), 0 );
+  BOOST_CHECK_EQUAL( view.at(1), 1 );
+  BOOST_CHECK_EQUAL( view.front(), 0 );
+  BOOST_CHECK_EQUAL( view.back(), 1 );
 
   Utility::View<typename std::set<T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view[0], 1 );
-  TEST_EQUALITY_CONST( reverse_view[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view.at(0), 1 );
-  TEST_EQUALITY_CONST( reverse_view.at(1), 0 );
-  TEST_EQUALITY_CONST( reverse_view.front(), 1 );
-  TEST_EQUALITY_CONST( reverse_view.back(), 0 );
+  BOOST_CHECK_EQUAL( reverse_view[0], 1 );
+  BOOST_CHECK_EQUAL( reverse_view[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view.at(0), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.at(1), 0 );
+  BOOST_CHECK_EQUAL( reverse_view.front(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view.back(), 0 );
   
   Utility::View<typename std::set<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], 0 );
-  TEST_EQUALITY_CONST( view_of_const[1], 1 );
-  TEST_EQUALITY_CONST( view_of_const.at(0), 0 );
-  TEST_EQUALITY_CONST( view_of_const.at(1), 1 );
-  TEST_EQUALITY_CONST( view_of_const.front(), 0 );
-  TEST_EQUALITY_CONST( view_of_const.back(), 1 );
+  BOOST_CHECK_EQUAL( view_of_const[0], 0 );
+  BOOST_CHECK_EQUAL( view_of_const[1], 1 );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.front(), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.back(), 1 );
 
   Utility::View<typename std::set<T>::const_reverse_iterator>
     reverse_view_of_const( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view_of_const[0], 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const[1], 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(0), 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(1), 0 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.front(), 1 );
-  TEST_EQUALITY_CONST( reverse_view_of_const.back(), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[0], 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[1], 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(0), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(1), 0 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.front(), 1 );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.back(), 0 );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_set, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for unordered_set views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_unordered_set, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_unordered_set, T, TestTypes )
 {
   std::unordered_set<T> container( {0, 1} );
 
   Utility::View<typename std::unordered_set<T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], 1 );
-  TEST_EQUALITY_CONST( view[1], 0 );
-  TEST_EQUALITY_CONST( view.at(0), 1 );
-  TEST_EQUALITY_CONST( view.at(1), 0 );
-  TEST_EQUALITY_CONST( view.front(), 1 );
-  TEST_EQUALITY_CONST( view.back(), 0 );
+  BOOST_CHECK_EQUAL( view[0], 1 );
+  BOOST_CHECK_EQUAL( view[1], 0 );
+  BOOST_CHECK_EQUAL( view.at(0), 1 );
+  BOOST_CHECK_EQUAL( view.at(1), 0 );
+  BOOST_CHECK_EQUAL( view.front(), 1 );
+  BOOST_CHECK_EQUAL( view.back(), 0 );
 
   Utility::View<typename std::unordered_set<T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], 1 );
-  TEST_EQUALITY_CONST( view_of_const[1], 0 );
-  TEST_EQUALITY_CONST( view_of_const.at(0), 1 );
-  TEST_EQUALITY_CONST( view_of_const.at(1), 0 );
-  TEST_EQUALITY_CONST( view_of_const.front(), 1 );
-  TEST_EQUALITY_CONST( view_of_const.back(), 0 );
+  BOOST_CHECK_EQUAL( view_of_const[0], 1 );
+  BOOST_CHECK_EQUAL( view_of_const[1], 0 );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), 0 );
+  BOOST_CHECK_EQUAL( view_of_const.front(), 1 );
+  BOOST_CHECK_EQUAL( view_of_const.back(), 0 );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_unordered_set, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for map views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_map, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_map, T, TestTypes )
 {
   std::map<T,T> container( {std::make_pair((T)0, (T)0), std::make_pair((T)1, (T)1)} );
 
   Utility::View<typename std::map<T,T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view[1], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view.at(0), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view.at(1), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view.front(), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view.back(), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view[0], (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view[1], (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view.at(0), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view.at(1), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view.front(), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view.back(), (std::pair<const T,T>({1, 1})) );
 
   Utility::View<typename std::map<T,T>::reverse_iterator>
     reverse_view( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view[0], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( reverse_view[1], (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( reverse_view.at(0), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( reverse_view.at(1), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( reverse_view.front(), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( reverse_view.back(), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( reverse_view[0], (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( reverse_view[1], (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( reverse_view.at(0), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( reverse_view.at(1), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( reverse_view.front(), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( reverse_view.back(), (std::pair<const T,T>({0, 0})) );
   
   Utility::View<typename std::map<T,T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view_of_const[1], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view_of_const.at(0), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view_of_const.at(1), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view_of_const.front(), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view_of_const.back(), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view_of_const[0], (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view_of_const[1], (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view_of_const.front(), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view_of_const.back(), (std::pair<const T,T>({1, 1})) );
 
   Utility::View<typename std::map<T,T>::const_reverse_iterator>
     reverse_view_of_const( container.rbegin(), container.rend() );
 
-  TEST_EQUALITY_CONST( reverse_view_of_const[0], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( reverse_view_of_const[1], (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(0), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( reverse_view_of_const.at(1), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( reverse_view_of_const.front(), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( reverse_view_of_const.back(), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[0], (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( reverse_view_of_const[1], (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(0), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.at(1), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.front(), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( reverse_view_of_const.back(), (std::pair<const T,T>({0, 0})) );
 }
-
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_map, element_access );
 
 //---------------------------------------------------------------------------//
 // Check the element access for unordered_map views
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( View_unordered_map, element_access, T )
+BOOST_AUTO_TEST_CASE_TEMPLATE( element_access_unordered_map, T, TestTypes )
 {
   std::unordered_map<T,T> container( {std::make_pair((T)0, (T)0), std::make_pair((T)1, (T)1)} );
 
   Utility::View<typename std::unordered_map<T,T>::iterator>
     view( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view[0], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view[1], (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view.at(0), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view.at(1), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view.front(), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view.back(), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view[0], (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view[1], (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view.at(0), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view.at(1), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view.front(), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view.back(), (std::pair<const T,T>({0, 0})) );
 
   Utility::View<typename std::unordered_map<T,T>::const_iterator>
     view_of_const( container.begin(), container.end() );
 
-  TEST_EQUALITY_CONST( view_of_const[0], (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view_of_const[1], (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view_of_const.at(0), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view_of_const.at(1), (std::pair<const T,T>({0, 0})) );
-  TEST_EQUALITY_CONST( view_of_const.front(), (std::pair<const T,T>({1, 1})) );
-  TEST_EQUALITY_CONST( view_of_const.back(), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view_of_const[0], (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view_of_const[1], (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view_of_const.at(0), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view_of_const.at(1), (std::pair<const T,T>({0, 0})) );
+  BOOST_CHECK_EQUAL( view_of_const.front(), (std::pair<const T,T>({1, 1})) );
+  BOOST_CHECK_EQUAL( view_of_const.back(), (std::pair<const T,T>({0, 0})) );
 }
 
-UNIT_TEST_TEMPLATE_1_BASIC_INSTANT( View_unordered_map, element_access );
+//---------------------------------------------------------------------------//
+// Check that the correct comparison policies are allowed for views
+BOOST_AUTO_TEST_CASE_TEMPLATE( IsComparisonAllowed,
+                               Container,
+                               TestContainers )
+{
+  typedef Utility::View<typename Container::iterator> View;
+  typedef Utility::View<typename Container::const_iterator> ViewOfConst;
+
+  BOOST_CHECK( Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::EqualityComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::InequalityComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::GreaterThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::GreaterThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::LessThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::LessThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::CloseComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<View>::template IsComparisonAllowed<Utility::RelativeErrorComparisonPolicy>::value );
+
+  BOOST_CHECK( Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::EqualityComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::InequalityComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::GreaterThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::GreaterThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::LessThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::LessThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::CloseComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<const View>::template IsComparisonAllowed<Utility::RelativeErrorComparisonPolicy>::value );
+
+  BOOST_CHECK( Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::EqualityComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::InequalityComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::GreaterThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::GreaterThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::LessThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::LessThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::CloseComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<ViewOfConst>::template IsComparisonAllowed<Utility::RelativeErrorComparisonPolicy>::value );
+
+  BOOST_CHECK( Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::EqualityComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::InequalityComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::GreaterThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::GreaterThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::LessThanComparisonPolicy>::value );
+  BOOST_CHECK( !Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::LessThanOrEqualToComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::CloseComparisonPolicy>::value );
+  BOOST_CHECK( Utility::ComparisonTraits<const ViewOfConst>::template IsComparisonAllowed<Utility::RelativeErrorComparisonPolicy>::value );
+}
+
+//---------------------------------------------------------------------------//
+// Check that two views can be compared
+BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
+                               PolicyContainerPair,
+                               TestEqualityPolicyContainers )
+{
+  typedef typename Utility::TupleElement<0,PolicyContainerPair>::type Policy;
+  typedef typename Utility::TupleElement<1,PolicyContainerPair>::type Container;
+  typedef Utility::View<typename Container::iterator> View;
+  typedef Utility::View<typename Container::const_iterator> ViewOfConst;
+
+  Container left_container = initializeContainer<Container>();
+  Container right_container = initializeContainer<Container>();
+
+  // Construct a view from iterators
+  View left_view( left_container.begin(), left_container.end() );
+  ViewOfConst left_view_of_const = left_view.toConst();
+
+  View right_view( right_container.begin(), right_container.end() );
+  ViewOfConst right_view_of_const = right_view.toConst();
+  
+  std::ostringstream oss;
+
+  // No details logging
+  bool compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", false,
+                                                      "", oss );
+
+  bool expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                                                   left_view[i], "lhs", false,
+                                                   right_view[i], "rhs", false,
+                                                   "", local_oss, false );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                             left_view_of_const, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "", oss );
+
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view_of_const.size() );
+
+  for( size_t i = 0; i < left_view_of_const.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                                          left_view_of_const[i], "lhs", false,
+                                          right_view_of_const[i], "rhs", false,
+                                          "", local_oss, false );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                             left_view, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "", oss );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view_of_const.size() );
+
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                                          left_view[i], "lhs", false,
+                                          right_view_of_const[i], "rhs", false,
+                                          "", local_oss, false );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                             left_view_of_const, "lhs", false,
+                                             right_view, "rhs", false,
+                                             "", oss );
+
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view.size() );
+
+  for( size_t i = 0; i < left_view_of_const.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                                           left_view_of_const[i], "lhs", false,
+                                           right_view[i], "rhs", false,
+                                           "", local_oss, false );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  // Details logging - default tolerance
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", false,
+                                                      "", oss, true );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  std::string expected_details =
+    Policy::createComparisonDetails("lhs", false, left_view.size(),
+                                    "rhs", false, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                                                   left_view[i], "lhs", false,
+                                                   right_view[i], "rhs", false,
+                                                   "", local_oss, true );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", false,
+                                                      "", oss, true );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", true, left_view.size(),
+                                    "rhs", false, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+              left_view[i], "lhs", true,
+              right_view[i], "rhs", false,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", true,
+                                                      "", oss, true );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", false, left_view.size(),
+                                    "rhs", true, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+              left_view[i], "lhs", false,
+              right_view[i], "rhs", true,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", true,
+                                                      "", oss, true );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", true, left_view.size(),
+                                    "rhs", true, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+              left_view[i], "lhs", true,
+              right_view[i], "rhs", true,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  // Details logging - custom tolerance
+  typedef typename Utility::ComparisonTraits<View>::ExtraDataType ExtraDataType;
+  ExtraDataType tol = initializeTolerance( 1e-6, ExtraDataType() );
+  
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", false,
+                                                      "", oss, true, tol );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", false, left_view.size(),
+                                    "rhs", false, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                                                   left_view[i], "lhs", false,
+                                                   right_view[i], "rhs", false,
+                                                   "", local_oss, true, tol );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", false,
+                                                      "", oss, true, tol );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", true, left_view.size(),
+                                    "rhs", false, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                left_view[i], "lhs", true,
+                right_view[i], "rhs", false,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", true,
+                                                      "", oss, true, tol );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", false, left_view.size(),
+                                    "rhs", true, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                left_view[i], "lhs", false,
+                right_view[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", true,
+                                                      "", oss, true, tol );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", true, left_view.size(),
+                                    "rhs", true, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+                left_view[i], "lhs", true,
+                right_view[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  // Details logging - default tolerance, view of const
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                              left_view_of_const, "lhs", false,
+                                              right_view, "rhs", false,
+                                              "", oss, true );
+
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", false, left_view_of_const.size(),
+                                    "rhs", false, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+                      left_view_of_const[i], "lhs", false,
+                      right_view[i], "rhs", false,
+                      std::string("[") + Utility::toString(i) + "]", local_oss,
+                      true );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                             left_view, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "", oss, true );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view_of_const.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", false, left_view.size(),
+                                    "rhs", false, right_view_of_const.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+                      left_view[i], "lhs", false,
+                      right_view_of_const[i], "rhs", false,
+                      std::string("[") + Utility::toString(i) + "]", local_oss,
+                      true );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                             left_view_of_const, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "", oss, true );
+
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view_of_const.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", false, left_view_of_const.size(),
+                                    "rhs", false, right_view_of_const.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+                      left_view_of_const[i], "lhs", false,
+                      right_view_of_const[i], "rhs", false,
+                      std::string("[") + Utility::toString(i) + "]", local_oss,
+                      true );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  // Details logging - custom tolerance, view of const
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                              left_view_of_const, "lhs", true,
+                                              right_view, "rhs", true,
+                                              "", oss, true, tol );
+
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", true, left_view_of_const.size(),
+                                    "rhs", true, right_view.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+                left_view_of_const[i], "lhs", true,
+                right_view[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                             left_view, "lhs", true,
+                                             right_view_of_const, "rhs", true,
+                                             "", oss, true, tol );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view_of_const.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", true, left_view.size(),
+                                    "rhs", true, right_view_of_const.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+                left_view[i], "lhs", true,
+                right_view_of_const[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+                                             left_view_of_const, "lhs", true,
+                                             right_view_of_const, "rhs", true,
+                                             "", oss, true, tol );
+
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view_of_const.size() );
+
+  expected_details =
+    Policy::createComparisonDetails("lhs", true, left_view_of_const.size(),
+                                    "rhs", true, right_view_of_const.size(),
+                                    " size" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n" );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+                left_view_of_const[i], "lhs", true,
+                right_view_of_const[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
+    expected_details += local_oss.str();
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+}
+
+//---------------------------------------------------------------------------//
+// Check that two views can be compared
+BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper,
+                               PolicyContainerPair,
+                               TestEqualityPolicyContainers )
+{
+  // typedef typename Utility::TupleElement<0,PolicyContainerPair>::type Policy;
+  // typedef typename Utility::TupleElement<1,PolicyContainerPair>::type Container;
+  // typedef typename Container::value_type T;
+  // typedef Utility::View<typename Container::iterator> View;
+  // typedef Utility::View<typename Container::const_iterator> ViewOfConst;
+
+  // Container left_container = initializeContainer<Container>();
+  // Container right_container = initializeContainer<Container>();
+
+  // // Construct a view from iterators
+  // View left_view( left_container.begin(), left_container.end() );
+  // ViewOfConst left_view_of_const = left_view.toConst();
+
+  // View right_view( right_container.begin(), right_container.end() );
+  // ViewOfConst right_view_of_const = right_view.toConst();
+  
+  // std::ostringstream oss;
+
+  // bool compare_result = Utility::compare<Policy>( left_view, "lhs",
+  //                                                 right_view, "rhs",
+  //                                                 oss );
+
+  // bool expected_compare_result =
+  //   Policy::compare( left_view.size(), right_view.size() );
+
+  // for( size_t i = 0; i < left_view.size(); ++i )
+  // {
+  //   expected_compare_result = expected_compare_result &&
+  //     Policy::compare( left_view[i], right_view[i] );
+  // }
+
+  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  // BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  // compare_result = Utility::compare<Policy>( {initializeValue(0, T()),
+  //                                             initializeValue(1, T()),
+  //                                             initializeValue(2, T())}, "lhs",
+  //                                            right_view, "rhs",
+  //                                            oss );
+
+  // expected_compare_result =
+  //   Policy::compare( size_t(3), right_view.size() );
+
+  // if( expected_compare_result )
+  // {
+  //   for( size_t i = 0; i < 3; ++i )
+  //   {
+  //     expected_compare_result = expected_compare_result &&
+  //       Policy::compare( initializeValue(i, T()), right_view[i] );
+  //   }
+  // }
+
+  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  // BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  // compare_result = Utility::compare<Policy>( left_view, "lhs",
+  //                                            {initializeValue(0, T()),
+  //                                             initializeValue(1, T()),
+  //                                             initializeValue(2, T())}, "rhs",
+  //                                            oss );
+
+  // expected_compare_result =
+  //   Policy::compare( left_view.size(), size_t(3) );
+
+  // if( expected_compare_result )
+  // {
+  //   for( size_t i = 0; i < 3; ++i )
+  //   {
+  //     expected_compare_result = expected_compare_result &&
+  //       Policy::compare( left_view[i], initializeValue(i, T()) );
+  //   }
+  // }
+
+  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  // BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  // typedef typename Utility::ComparisonTraits<View>::ExtraDataType ExtraDataType;
+  // ExtraDataType tol = initializeTolerance( 1e-6, ExtraDataType() );
+
+  // compare_result = Utility::compare<Policy>( left_view, "lhs",
+  //                                            right_view, "rhs",
+  //                                            oss, tol, false );
+
+  // expected_compare_result =
+  //   Policy::compare( left_view.size(), right_view.size() );
+
+  // for( size_t i = 0; i < left_view.size(); ++i )
+  // {
+  //   expected_compare_result = expected_compare_result &&
+  //     Policy::compare( left_view[i], right_view[i], tol );
+  // }
+
+  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  // BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  // compare_result = Utility::compare<Policy>( {initializeValue(0, T()),
+  //                                             initializeValue(1, T()),
+  //                                             initializeValue(2, T())}, "lhs",
+  //                                            right_view, "rhs",
+  //                                            oss, tol, false );
+
+  // expected_compare_result =
+  //   Policy::compare( size_t(3), right_view.size() );
+
+  // if( expected_compare_result )
+  // {
+  //   for( size_t i = 0; i < 3; ++i )
+  //   {
+  //     expected_compare_result = expected_compare_result &&
+  //       Policy::compare( initializeValue(i, T()), right_view[i], tol );
+  //   }
+  // }
+
+  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  // BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  // compare_result = Utility::compare<Policy>( left_view, "lhs",
+  //                                            {initializeValue(0, T()),
+  //                                             initializeValue(1, T()),
+  //                                             initializeValue(2, T())}, "rhs",
+  //                                            oss, tol, false );
+
+  // expected_compare_result =
+  //   Policy::compare( left_view.size(), size_t(3) );
+
+  // if( expected_compare_result )
+  // {
+  //   for( size_t i = 0; i < 3; ++i )
+  //   {
+  //     expected_compare_result = expected_compare_result &&
+  //       Policy::compare( left_view[i], initializeValue(i, T()), tol );
+  //   }
+  // }
+
+  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  // BOOST_CHECK_EQUAL( oss.str(), "" );
+}
 
 //---------------------------------------------------------------------------//
 // end tstView.cpp

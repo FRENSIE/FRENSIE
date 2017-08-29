@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "Utility_IteratorTypeTraits.hpp"
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_ComparisonTraits.hpp"
 
 /*! \defgroup view View
  *
@@ -228,7 +229,8 @@ struct ToStringTraits<Utility::View<std::string::const_iterator> >
   }
 };
 
-/*! Specialization of ToStringTraits for Utility::View<std::string::iterator>
+/*! \brief Partial specialization of ToStringTraits for 
+ * Utility::View<std::string::iterator>
  * \ingroup view
  * \ingroup to_string_traits
  */
@@ -244,6 +246,14 @@ std::ostream& operator<<( std::ostream& os, const Utility::View<T>& view )
 
   return os;
 }
+
+/*! Partial specialization of ComparisonTraits for Utility::View
+ * \ingroup view
+ * \ingropu comparison_traits
+ */
+template<typename T>
+struct ComparisonTraits<Utility::View<T> > : public Details::ComparisonTraitsSequenceContainerHelper<Utility::View,T>
+{ /* ... */ };
   
 } // end Utility namespace
 
