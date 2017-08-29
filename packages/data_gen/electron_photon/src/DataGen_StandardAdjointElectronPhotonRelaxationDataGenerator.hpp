@@ -23,11 +23,12 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_OneDDistribution.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 
 namespace DataGen{
 
@@ -180,14 +181,12 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getTabularEvaluationTolerance() const;
 
-  //! Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode on (on by default)
-  void setElectronLinLinLogInterpolationModeOn();
+  //! Set the electron TwoDInterpPolicy (LogLogLog by default)
+  void setElectronTwoDInterpPolicy(
+                    const MonteCarlo::TwoDInterpolationType two_d_interp );
 
-  //! Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode off (on by default)
-  void setElectronLinLinLogInterpolationModeOff();
-
-  //! Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
-  bool isElectronLinLinLogInterpolationModeOn() const;
+  //! Return the electron TwoDInterpPolicy (LogLogLog by default)
+  MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
   //! Set the electron FullyTabularTwoDDistribution correlated sampling mode on (on by default)
   void setElectronCorrelatedSamplingModeOn();
@@ -522,14 +521,14 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_tabular_evaluation_tol;
 
-  // The electron FullyTabularTwoDDistribution LinLinLog interpolation mode
-  bool d_electron_linlinlog_interpolation_mode;
-
   // The electron FullyTabularTwoDDistribution correlated sampling mode
   bool d_electron_correlated_sampling_mode;
 
   // The electron FullyTabularTwoDDistribution unit based interpolation mode
   bool d_electron_unit_based_interpolation_mode;
+
+  // The electron TwoDInterpPolicy
+  MonteCarlo::TwoDInterpolationType d_electron_two_d_interp;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;

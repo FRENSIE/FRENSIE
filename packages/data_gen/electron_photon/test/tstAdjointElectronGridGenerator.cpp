@@ -128,48 +128,40 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.361E-05, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.24107116875615175e+15,
+                                  1.45459306782740344e+14,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.88E-05, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.2085082782879335e15,
+                                  8.27973188840469688e+13,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.123900E-02, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.10409837921920361328e+12,
+                                  2.32262715425886452e+08,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 8.75350E-01, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.77224945713311374187e+08,
+                                  1.35028876890255080e+05,
                                   1e-5 );
 
-  cross_section =
-    grid_generator.evaluateAdjointCrossSection(
-        max_ionization_subshell_adjoint_energy - 6.0e-8,
-        precision );
-
+  cross_section = grid_generator.evaluateAdjointCrossSection(
+                            max_ionization_subshell_adjoint_energy - 6.0e-8,
+                            precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  6.24990225613476213766e+04,
+                                  6.24990220809307066e+04,
                                   1e-5 );
 
-  cross_section =
-    grid_generator.evaluateAdjointCrossSection(
-        max_ionization_subshell_adjoint_energy,
-        precision );
-
+  cross_section = grid_generator.evaluateAdjointCrossSection(
+                                        max_ionization_subshell_adjoint_energy,
+                                        precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  6.24157095179795578588e+04,
+                                  6.24157090392438113e+04,
                                   1e-5 );
   }
 
@@ -188,28 +180,24 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  6.4064216868408593086e1,
+                                  5.06492925987715452e+01,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  3.1844399889852791574e1,
+                                  2.80659096301639543e+01,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 6.0e4, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.435228075256366651e2,
+                                  9.48414236124130894e-01,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.0e5, precision );
-
   TEST_EQUALITY_CONST( cross_section, 0.0 );
   }
 }
@@ -236,25 +224,22 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1.88E-05, 1.0E-04, 1.0e-4 );
-
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  4.82239854614584424492e-04,
+                                  7.03876269450687264e-03,
                                   1e-5 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-4 );
-
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.93155010362838024051e-09,
+                                  9.18192907572466955e-06,
                                   1e-6 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 8.75350E-01,
                                        max_ionization_subshell_adjoint_energy,
                                        1.0e-4 );
-
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.89649592011628116099e-09,
+                                  2.48914820325727447e-06,
                                   1.0e-5 );
   }
 
@@ -273,21 +258,18 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-4 );
-
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.03626348582881844251,
+                                  1.17577664633500101,
                                   1e-5 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 6.0e4, 1.0e5, 1.0e-4 );
-
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  4.40195316623949625344e-09,
+                                  6.66146107931649665e-07,
                                   1e-5 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1.0e5-5.0e-8, 1.0e5, 1.0e-4 );
-
   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
   }
 }
@@ -331,37 +313,35 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 489 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 563 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                   0.01 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf[0.01].size(), 489 );
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 563 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
-                                  1.83873405521627049893e+06,
+                                  1.52093743868442765e+06,
                                   1e-6 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(), 
-                                  6.07022103854779505606e-06,
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(),
+                                  3.26680624502745858e-06,
                                   1e-6 );
 
   // Check the generated max energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 398 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 425 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                   1.0 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf[1.0].size(), 398 );
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 425 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
-                                  2.08058824803910742048e+05,
+                                  2.00226002762292570e+05,
                                   1e-6 );
-
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
-                                  2.55274262000830477661e-04,
+                                  1.56681865400607552e-04,
                                   1e-6 );
 }
 

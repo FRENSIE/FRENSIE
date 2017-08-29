@@ -633,6 +633,16 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungPhotonCros
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+// Return the elastic TwoDInterpPolicy
+/*! The TwoDInterpPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+const std::string&
+AdjointElectronPhotonRelaxationDataContainer::getElasticTwoDInterpPolicy() const
+{
+  return d_elastic_two_d_interp;
+}
+
 // Return the elastic angular energy grid
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElasticAngularEnergyGrid() const
@@ -729,6 +739,16 @@ AdjointElectronPhotonRelaxationDataContainer::getReducedCutoffCrossSectionRatios
   return d_reduced_cutoff_cross_section_ratios;
 }
 
+// Return the electroionization TwoDInterpPolicy
+/*! The TwoDInterpPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+const std::string&
+AdjointElectronPhotonRelaxationDataContainer::getElectroionizationTwoDInterpPolicy() const
+{
+  return d_electroionization_two_d_interp;
+}
+
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyGrid(
@@ -793,6 +813,16 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilP
   }
 
   return d_adjoint_electroionization_recoil_pdf.find( subshell )->second.find( incoming_adjoint_energy )->second;
+}
+
+// Return the bremsstrahlung TwoDInterpPolicy
+/*! The TwoDInterpPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+const std::string&
+AdjointElectronPhotonRelaxationDataContainer::getBremsstrahlungTwoDInterpPolicy() const
+{
+  return d_bremsstrahlung_two_d_interp;
 }
 
 // Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
@@ -1953,6 +1983,19 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungPhoto
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+// Set the elastic TwoDInterpPolicy
+/*! The TwoDInterpPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+void AdjointElectronPhotonRelaxationDataContainer::setElasticTwoDInterpPolicy(
+    const std::string& elastic_two_d_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDInterpPolicyValid( elastic_two_d_interp ) );
+
+  d_elastic_two_d_interp = elastic_two_d_interp;
+}
+
 // Set the elastic angular energy grid
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointElasticAngularEnergyGrid(
 				       const std::vector<double>& adjoint_angular_energy_grid )
@@ -2086,6 +2129,19 @@ void AdjointElectronPhotonRelaxationDataContainer::setReducedCutoffCrossSectionR
   d_reduced_cutoff_cross_section_ratios = reduced_cutoff_cross_section_ratios;
 }
 
+// Set the electroionization TwoDInterpPolicy
+/*! The TwoDInterpPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+void AdjointElectronPhotonRelaxationDataContainer::setElectroionizationTwoDInterpPolicy(
+    const std::string& electroionization_two_d_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDInterpPolicyValid( electroionization_two_d_interp ) );
+
+  d_electroionization_two_d_interp = electroionization_two_d_interp;
+}
+
 // Set the electroionization energy grid for a subshell
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationEnergyGrid(
             const unsigned subshell,
@@ -2173,6 +2229,19 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
 
   d_adjoint_electroionization_recoil_pdf[subshell] =
     adjoint_electroionization_recoil_pdf;
+}
+
+// Set the bremsstrahlung TwoDInterpPolicy
+/*! The TwoDInterpPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+void AdjointElectronPhotonRelaxationDataContainer::setBremsstrahlungTwoDInterpPolicy(
+    const std::string& bremsstrahlung_two_d_interp )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDInterpPolicyValid( bremsstrahlung_two_d_interp ) );
+
+  d_bremsstrahlung_two_d_interp = bremsstrahlung_two_d_interp;
 }
 
 // Set the bremsstrahlung incoming electron energy grid for the scattering spectrum

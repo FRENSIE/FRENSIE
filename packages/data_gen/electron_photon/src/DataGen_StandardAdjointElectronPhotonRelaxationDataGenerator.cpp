@@ -72,7 +72,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_electron_absolute_diff_tol( 1e-16 ),
     d_adjoint_electron_distance_tol( 1e-8 ),
     d_tabular_evaluation_tol( 1e-8 ),
-    d_electron_linlinlog_interpolation_mode( true ),
+    d_electron_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
     d_electron_correlated_sampling_mode( true ),
     d_electron_unit_based_interpolation_mode( true ),
     d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
@@ -524,22 +524,20 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getTabularEvaluatio
   return d_tabular_evaluation_tol;
 }
 
-// Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode on (on by default)
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronLinLinLogInterpolationModeOn()
+
+
+
+// Set the electron TwoDInterpPolicy (LogLogLog by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDInterpPolicy(
+                    const MonteCarlo::TwoDInterpolationType two_d_interp )
 {
-  d_electron_linlinlog_interpolation_mode = true;
+  d_electron_two_d_interp = two_d_interp;
 }
 
-// Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode off (on by default)
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronLinLinLogInterpolationModeOff()
+// Return the electron TwoDInterpPolicy (LogLogLog by default)
+MonteCarlo::TwoDInterpolationType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDInterpPolicy() const
 {
-  d_electron_linlinlog_interpolation_mode = false;
-}
-
-// Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
-bool StandardAdjointElectronPhotonRelaxationDataGenerator::isElectronLinLinLogInterpolationModeOn() const
-{
-  return d_electron_linlinlog_interpolation_mode;
+  return d_electron_two_d_interp;
 }
 
 // Set the electron FullyTabularTwoDDistribution correlated sampling mode on (on by default)
@@ -713,8 +711,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
     d_adjoint_electroionization_distance_tol );
   data_container.setElectronTabularEvaluationTolerance(
     d_tabular_evaluation_tol );
-  data_container.setElectronLinLinLogInterpolationModeOnOff(
-    d_electron_linlinlog_interpolation_mode );
+  {
+  std::string interp =
+    MonteCarlo::convertTwoDInterpolationTypeToString( d_electron_two_d_interp );
+  data_container.setElasticTwoDInterpPolicy( interp );
+  data_container.setElectroionizationTwoDInterpPolicy( interp );
+  data_container.setBremsstrahlungTwoDInterpPolicy( interp );
+  }
   data_container.setElectronCorrelatedSamplingModeOnOff(
     d_electron_correlated_sampling_mode );
   data_container.setElectronUnitBasedInterpolationModeOnOff(
@@ -2066,7 +2069,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
-    if( d_electron_linlinlog_interpolation_mode )
+    if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
         cutoff_distribution,
@@ -2077,7 +2080,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
-    else
+    else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
       MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
         cutoff_distribution,
@@ -2087,6 +2090,24 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
         d_forward_epr_data->getCutoffAngleCosine(),
         d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
+    }
+    else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+        cutoff_distribution,
+        d_forward_epr_data->getCutoffElasticAngles(),
+        d_forward_epr_data->getCutoffElasticPDF(),
+        d_forward_epr_data->getElasticAngularEnergyGrid(),
+        d_forward_epr_data->getCutoffAngleCosine(),
+        d_electron_correlated_sampling_mode,
+        d_tabular_evaluation_tol );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: the TwoDInterpPolicy " <<
+                       d_electron_two_d_interp <<
+                       " is invalid or currently not supported!" );
     }
 
     std::vector<double> reduced_cutoff_cross_section_ratio( energy_grid.size() );
@@ -2439,7 +2460,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 {
   std::shared_ptr<BremsstrahlungReaction> bremsstrahlung_reaction;
 
-  if( d_electron_linlinlog_interpolation_mode )
+  if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog>(
         *d_forward_epr_data,
@@ -2451,7 +2472,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
-  else
+  else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin>(
         *d_forward_epr_data,
@@ -2462,6 +2483,25 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
         d_electron_correlated_sampling_mode,
         d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
+  }
+  else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+  {
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LogLogLog>(
+        *d_forward_epr_data,
+        forward_electron_energy_grid,
+        forward_grid_searcher,
+        bremsstrahlung_reaction,
+        MonteCarlo::DIPOLE_DISTRIBUTION,
+        d_electron_correlated_sampling_mode,
+        d_electron_unit_based_interpolation_mode,
+        d_tabular_evaluation_tol );
+  }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     d_electron_two_d_interp <<
+                     " is invalid or currently not supported!" );
   }
 
   brem_grid_generators.reset(
@@ -2493,7 +2533,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   std::shared_ptr<ElectroionizationReaction>
     electroionization_subshell_reaction;
 
-  if( d_electron_linlinlog_interpolation_mode )
+  if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog>(
         *d_forward_epr_data,
@@ -2505,7 +2545,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
-  else
+  else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin>(
         *d_forward_epr_data,
@@ -2516,6 +2556,25 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
         d_electron_correlated_sampling_mode,
         d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
+  }
+  else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+  {
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LogLogLog>(
+        *d_forward_epr_data,
+        forward_electron_energy_grid,
+        forward_grid_searcher,
+        shell,
+        electroionization_subshell_reaction,
+        d_electron_correlated_sampling_mode,
+        d_electron_unit_based_interpolation_mode,
+        d_tabular_evaluation_tol );
+  }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     d_electron_two_d_interp <<
+                     " is invalid or currently not supported!" );
   }
 
   /* The max energy nudge value should be greater than the binding energy (a

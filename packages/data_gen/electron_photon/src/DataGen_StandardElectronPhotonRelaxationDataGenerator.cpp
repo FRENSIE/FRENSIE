@@ -466,7 +466,15 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
     data_container.setCutoffElasticPDF( elastic_pdf );
     data_container.setCutoffElasticAngles( elastic_angle );
   }
-  
+  else if ( max_electron_energy > angular_energy_grid.back() )
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the desired max electron energy " <<
+                     max_electron_energy <<
+                     " is greater than the max tabulated energy " <<
+                     angular_energy_grid.back() );
+  }
+
   // Repopulate moment preserving data
   StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
     data_container,

@@ -609,7 +609,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 
     // Create the TwoDDistribution between the two distributions
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
+      new Utility::ElasticTwoDDistribution<TwoDInterpPolicy>(
         function_data,
         1e-6,
         evaluation_tol ) );
@@ -633,8 +633,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     for ( unsigned i = 0; i < angular_grid.size(); ++i )
     {
       evaluated_pdf[i] =
-        scattering_function->evaluateSecondaryConditionalPDFExact(
-                                                    energy, angular_grid[i] );
+        scattering_function->evaluateExact( energy, angular_grid[i] );
     }
     testPostcondition( evaluated_pdf.size() > 1 );
     testPostcondition( angular_grid.size() > 1 );

@@ -337,6 +337,9 @@ public:
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  //! Return the elastic TwoDInterpPolicy
+  const std::string& getElasticTwoDInterpPolicy() const;
+
   //! Return the elastic angular energy grid
   const std::vector<double>& getAdjointElasticAngularEnergyGrid() const;
 
@@ -376,6 +379,9 @@ public:
   //! Return the ratio of the reduced cutoff cross section to the full cutoff
   const std::vector<double>& getReducedCutoffCrossSectionRatios() const;
 
+  //! Return the electroionization TwoDInterpPolicy
+  const std::string& getElectroionizationTwoDInterpPolicy() const;
+
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
                            const unsigned subshell ) const;
@@ -392,6 +398,9 @@ public:
   const std::vector<double>& getAdjointElectroionizationRecoilPDF(
                            const unsigned subshell,
                            const double incoming_adjoint_energy ) const;
+
+  //! Return the bremsstrahlung TwoDInterpPolicy
+  const std::string& getBremsstrahlungTwoDInterpPolicy() const;
 
   //! Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergyGrid() const;
@@ -827,6 +836,9 @@ protected:
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  //! Set the elastic TwoDInterpPolicy
+  void setElasticTwoDInterpPolicy( const std::string& elastic_two_d_interp );
+
   //! Set the elastic angular energy grid
   void setAdjointElasticAngularEnergyGrid(
     const std::vector<double>& adjoint_angular_energy_grid );
@@ -871,6 +883,10 @@ protected:
   void setReducedCutoffCrossSectionRatios(
     const std::vector<double>& reduced_cutoff_cross_section_ratios );
 
+  //! Set the electroionization TwoDInterpPolicy
+  void setElectroionizationTwoDInterpPolicy(
+    const std::string& electroionization_two_d_interp );
+
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setAdjointElectroionizationEnergyGrid(
     const unsigned subshell,
@@ -899,6 +915,10 @@ protected:
     const unsigned subshell,
     const std::map<double,std::vector<double> >&
     adjoint_electroionization_recoil_pdf );
+
+  //! Set the bremsstrahlung TwoDInterpPolicy
+  void setBremsstrahlungTwoDInterpPolicy(
+    const std::string& bremsstrahlung_two_d_interp );
 
   //! Set the bremsstrahlung incoming electron energy grid for the scattering spectrum
   void setAdjointElectronBremsstrahlungEnergyGrid(
@@ -1290,6 +1310,9 @@ private:
 // ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  // The elastic TwoDInterpPolicy
+  std::string d_elastic_two_d_interp;
+
   // The elastic angular energy grid (MeV)
   std::vector<double> d_adjoint_angular_energy_grid;
 
@@ -1308,6 +1331,9 @@ private:
   //! The ratio of the reduced cutoff cross section to the full cutoff
   std::vector<double> d_reduced_cutoff_cross_section_ratios;
 
+  // The electroionization TwoDInterpPolicy
+  std::string d_electroionization_two_d_interp;
+
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_adjoint_electroionization_energy_grid;
 
@@ -1318,6 +1344,9 @@ private:
   // The electroionization recoil pdf for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
     d_adjoint_electroionization_recoil_pdf;
+
+  // The bremsstrahlung TwoDInterpPolicy
+  std::string d_bremsstrahlung_two_d_interp;
 
   // The electron bremsstrahlung energy grid (MeV)
   std::vector<double> d_adjoint_electron_bremsstrahlung_energy_grid;

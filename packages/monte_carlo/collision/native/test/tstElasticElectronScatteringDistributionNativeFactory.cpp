@@ -299,8 +299,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
-  TEST_EQUALITY_CONST( evaluated_pdf.front(), 5.19221275245657745e-08 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 5.06129104868643684e+05 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 5.19221420086210804e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 5.06129128916336049e+05 );
 
   // Test highest energy bin
   energy = 1.0e+5;
@@ -363,8 +363,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
   TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 79 );
-  TEST_EQUALITY_CONST( evaluated_pdf.front(), 6.14602802628500258e-08 );
-  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429072791244369e+05 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 6.14603e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 4.33429111111111124e+05 );
 
 
   // Test highest energy bin
@@ -384,6 +384,71 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( evaluated_pdf.size(), 90 );
   TEST_EQUALITY_CONST( evaluated_pdf.front(), 1.76576e-8 );
   TEST_EQUALITY_CONST( evaluated_pdf.back(), 9.86374e5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the angular grid can be returned
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   getAngularGridAndPDF_LogLogLog )
+{
+  std::vector<double> angular_grid, evaluated_pdf;
+  double evaluation_tol = 1e-7;
+  double cutoff_angle_cosine = 0.9;
+
+  // Test lowerest energy bin
+  double energy = 1.0e-5;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+    angular_grid,
+    evaluated_pdf,
+    data_container->getCutoffElasticAngles(),
+    data_container->getCutoffElasticPDF(),
+    energy,
+    cutoff_angle_cosine,
+    evaluation_tol );
+
+  TEST_EQUALITY_CONST( angular_grid.size(), 2 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.9 );
+  TEST_EQUALITY_CONST( evaluated_pdf.size(), 2 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 0.5 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 0.5 );
+
+  // Test inbetween energy bins
+  energy = 20.0;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+    angular_grid,
+    evaluated_pdf,
+    data_container->getCutoffElasticAngles(),
+    data_container->getCutoffElasticPDF(),
+    energy,
+    cutoff_angle_cosine,
+    evaluation_tol );
+
+  TEST_EQUALITY_CONST( angular_grid.size(), 21 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.9 );
+  TEST_EQUALITY_CONST( evaluated_pdf.size(), 21 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 4.21284828599103030e-08 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 3.02987288635384749e-04 );
+
+
+  // Test highest energy bin
+  energy = 1.0e5;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+    angular_grid,
+    evaluated_pdf,
+    data_container->getCutoffElasticAngles(),
+    data_container->getCutoffElasticPDF(),
+    energy,
+    cutoff_angle_cosine,
+    evaluation_tol );
+
+  TEST_EQUALITY_CONST( angular_grid.size(), 21 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.9 );
+  TEST_EQUALITY_CONST( evaluated_pdf.size(), 21 );
+  TEST_EQUALITY_CONST( evaluated_pdf.front(), 1.76576e-8 );
+  TEST_EQUALITY_CONST( evaluated_pdf.back(), 1.29106538461538494e-04 );
 }
 
 //---------------------------------------------------------------------------//

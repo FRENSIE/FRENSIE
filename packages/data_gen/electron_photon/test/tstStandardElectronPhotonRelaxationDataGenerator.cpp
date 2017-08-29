@@ -2063,7 +2063,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   double cutoff_angle_cosine = 1.0;
   double tabular_evaluation_tol = 1e-7;
   unsigned number_of_discrete_angles = 0;
-  MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLOG_INTERPOLATION;
+  MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
@@ -2078,7 +2078,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   max_energy = 20.0;
   cutoff_angle_cosine = 0.9;
   number_of_discrete_angles = 2;
-  two_d_interp = MonteCarlo::LINLINLIN_INTERPOLATION;
+  two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
 
   DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
     data_container,
@@ -2104,9 +2104,9 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Lin" );
-  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Lin" );
-  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Log-Log-Log" );
+  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Log-Log-Log" );
+  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Log-Log-Log" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -2399,8 +2399,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32890450341329891e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98011871521784721e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32890919907420679e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98015592866181911e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
@@ -2412,8 +2412,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   discrete_weights = data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 2.38160236613325221e-03 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97618397633866727e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 2.37321981772591799e-03 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97626780182274131e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold =
@@ -2482,8 +2482,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   elastic_pdf = data_container.getCutoffElasticPDF(20.0);
 
-  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.94742666332695421e-10 );
-  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.59262709413180826e+05 );
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.57657148989572720e-10 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.61023246742115472e+05 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 95 );
 
   // Check the electroionization data

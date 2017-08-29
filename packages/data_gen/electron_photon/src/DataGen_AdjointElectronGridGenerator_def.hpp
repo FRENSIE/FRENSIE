@@ -244,7 +244,7 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
   // Make sure the energies are valid
   testPrecondition( incoming_adjoint_energy > 0.0 );
 
-  long double cross_section = 0.0L;
+  long double cross_section = 0.0;
 
   // The nudged incoming energy
   double nudged_start_energy = this->getNudgedEnergy( incoming_adjoint_energy );
@@ -252,7 +252,7 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
   // If the nudge_incoming_energy >= d_nudged_max_energy return 0.0
   if ( nudged_start_energy >= d_nudged_max_energy )
   {
-    return 0.0L;
+    return 0.0;
   }
 
   // Create boost rapper function for the adjoint electroatomic differential cross section
@@ -280,8 +280,8 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
   // Integrate from the nudged_start_energy to the next highest energy bin (if necessary)
   if( d_integration_points[start_index] != nudged_start_energy && start_index > 0)
   {
-    cross_section_k = 0.0L;
-    abs_error = 0.0L;
+    cross_section_k = 0.0;
+    abs_error = 0.0;
 
     integrator.integrateAdaptively<51>(
         diff_adjoint_cs_wrapper,
@@ -291,6 +291,7 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
         abs_error );
 
     cross_section += cross_section_k;
+    abs_error += abs_error;
   }
   
   unsigned lower_bin_index = start_index;
@@ -299,8 +300,8 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
   // Integrate through the energy bins above the given energy and below the max energy
   for ( start_index; start_index < d_integration_points.size(); ++start_index )
   {
-    cross_section_k = 0.0L;
-    abs_error = 0.0L;
+    cross_section_k = 0.0;
+    abs_error = 0.0;
 
     if ( d_integration_points[lower_bin_index] < d_integration_points[start_index-1] )
       ++lower_bin_index;
@@ -313,6 +314,7 @@ double AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::eva
         abs_error );
 
     cross_section += cross_section_k;
+    abs_error += abs_error;
   }
   return (double) cross_section;
 }
