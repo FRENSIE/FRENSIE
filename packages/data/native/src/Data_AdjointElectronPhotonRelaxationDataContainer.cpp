@@ -207,12 +207,6 @@ double AdjointElectronPhotonRelaxationDataContainer::getElectronTabularEvaluatio
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
-bool AdjointElectronPhotonRelaxationDataContainer::isElectronLinLinLogInterpolationModeOn() const
-{
-  return d_electron_linlinlog_interpolation_mode_on;
-}
-
 // Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
 bool AdjointElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
 {
@@ -1281,14 +1275,6 @@ void AdjointElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationT
   testPrecondition( electron_tabular_evaluation_tol > 0.0 );
 
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
-}
-
-// Set electron FullyTabularTwoDDistribution LinLinLog interpolation mode
-void AdjointElectronPhotonRelaxationDataContainer::setElectronLinLinLogInterpolationModeOnOff(
-    const bool electron_linlinlog_interpolation_mode_on )
-{
-  d_electron_linlinlog_interpolation_mode_on =
-                                    electron_linlinlog_interpolation_mode_on;
 }
 
 // Set the electron FullyTabularTwoDDistribution correlated sampling mode

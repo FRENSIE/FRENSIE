@@ -99,23 +99,23 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
 {
   // First Subshell
   double cross_section = first_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.8519803461001985e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6546723061232531e+09, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.2393802974961805e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0974417538143312e+04, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.9076248255317492e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0290719796204296e+04, 1e-12 );
 
   // Last Subshell
   cross_section = last_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0830534089499673e+11, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3958478233739835e+11, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 5.5810947929891583e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.1696146426193579e+05, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.4054452418092950e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2047779456815193e+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -204,7 +204,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-7;
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),

@@ -58,7 +58,6 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_linlinlog_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, electron_correlated_sampling_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, electron_unit_based_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
@@ -117,15 +116,18 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section_threshold_index );
   
   // Electron Data
+  DATA_MAKE_NVP_DEFAULT( ar, elastic_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, reduced_cutoff_cross_section_ratios );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_pdf );
@@ -187,7 +189,6 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_linlinlog_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, electron_correlated_sampling_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, electron_unit_based_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
@@ -246,15 +247,18 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section_threshold_index );
 
   // Electron Data
+  DATA_MAKE_NVP_DEFAULT( ar, elastic_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, reduced_cutoff_cross_section_ratios );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_recoil_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_energy );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_bremsstrahlung_pdf );

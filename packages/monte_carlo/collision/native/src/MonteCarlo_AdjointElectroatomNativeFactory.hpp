@@ -35,7 +35,6 @@ private:
 public:
 
   //! Create an adjoint electroatom core
-  template <typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createAdjointElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -50,6 +49,19 @@ public:
         const double atomic_weight,
         const SimulationAdjointElectronProperties& properties,
         Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom );
+
+private:
+
+  //! Create the elastic reaction for a electroatom core
+  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  static void createElasticElectroatomCore(
+        const Data::AdjointElectronPhotonRelaxationDataContainer&
+            raw_adjoint_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const SimulationAdjointElectronProperties& properties,
+        std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+        AdjointElectroatom::ReactionMap& scattering_reactions );
 };
 
 } // end MonteCarlo

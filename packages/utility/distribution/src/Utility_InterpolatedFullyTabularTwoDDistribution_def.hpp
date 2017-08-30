@@ -927,10 +927,32 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
                              std::placeholders::_1,
                              random_number );
 
-  return this->correlatedSampleImpl( primary_indep_var_value,
-                                     min_secondary_indep_var_value,
-                                     max_secondary_indep_var_value,
-                                     sampling_functor );
+  if ( random_number == 0.0 )
+  {
+    // Check for a primary value outside of the primary grid limits
+    if( primary_indep_var_value < this->getLowerBoundOfPrimaryIndepVar() ||
+        primary_indep_var_value > this->getUpperBoundOfPrimaryIndepVar() )
+    {
+      if( this->arePrimaryLimitsExtended() )
+        return min_secondary_indep_var_value;
+      else
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Error: Sampling beyond the primary grid boundaries "
+                         "cannot be done unless the grid has been extended ("
+                         << primary_indep_var_value << " not in ["
+                         << this->getLowerBoundOfPrimaryIndepVar() << ","
+                         << this->getUpperBoundOfPrimaryIndepVar() << "])!" );
+      }
+    }
+    else
+      return min_secondary_indep_var_value;
+  }
+  else
+    return this->correlatedSampleImpl( primary_indep_var_value,
+                                       min_secondary_indep_var_value,
+                                       max_secondary_indep_var_value,
+                                       sampling_functor );
 }
 
 // Return a random correlated sample from the secondary conditional PDF at the CDF val

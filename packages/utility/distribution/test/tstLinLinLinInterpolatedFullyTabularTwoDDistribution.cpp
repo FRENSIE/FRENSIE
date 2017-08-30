@@ -6323,13 +6323,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // On the third bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
   TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
 
@@ -6481,20 +6481,20 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
                         1.0*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
+                        2.5*cgs::centimeter,
+                        7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
                         1.0*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
+                        2.5*cgs::centimeter,
+                        7.5*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-12 );
 
   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
                         1.0*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
+                        2.5*cgs::centimeter,
+                        7.5*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
 
@@ -6625,13 +6625,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
 
   // On the third bin
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0, 0.0, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0, 0.0, 2.5, 7.5 );
   TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0, 0.4230769230769231, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0, 0.4230769230769231, 2.5, 7.5 );
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0, 1.0-1e-15, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0, 1.0-1e-15, 2.5, 7.5 );
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
 
   // In the third bin
@@ -6717,13 +6717,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
 
   // On the third bin
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0*MeV, 0.0, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0*MeV, 0.0, 2.5*cgs::centimeter, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0*MeV, 0.4230769230769231, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0*MeV, 0.4230769230769231, 2.5*cgs::centimeter, 7.5*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0*MeV, 1.0-1e-15, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( 1.0*MeV, 1.0-1e-15, 2.5*cgs::centimeter, 7.5*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-15 );
 
   // In the third bin

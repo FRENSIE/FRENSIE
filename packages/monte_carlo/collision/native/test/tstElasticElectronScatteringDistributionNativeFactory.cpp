@@ -1944,7 +1944,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   native_hybrid_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.4559530792436211e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 8.4575166562763160e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
   // Test 2

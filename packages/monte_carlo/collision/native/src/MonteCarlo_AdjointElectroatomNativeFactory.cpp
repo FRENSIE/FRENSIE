@@ -8,152 +8,218 @@
 
 //// FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomNativeFactory.hpp"
-//#include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 //#include "Utility_StandardHashBasedGridSearcher.hpp"
 //#include "Utility_SortAlgorithms.hpp"
 //#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-//// Create an adjoint electroatom core
-//void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
-//        const Data::AdjointElectronPhotonRelaxationDataContainer&
-//            raw_adjoint_electroatom_data,
-//        const SimulationAdjointElectronProperties& properties,
-//        Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core )
-//{
-//  // Extract the common energy grid used for this atom
-//  Teuchos::ArrayRCP<double> energy_grid;
-//  energy_grid.assign(
-//    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
-//    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
+// Create an adjoint electroatom core
+void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
+        const Data::AdjointElectronPhotonRelaxationDataContainer&
+            raw_adjoint_electroatom_data,
+        const SimulationAdjointElectronProperties& properties,
+        Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core )
+{
+  // Extract the common energy grid used for this atom
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign(
+    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
+    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
+  // Construct the hash-based grid searcher for this atom
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
+                     energy_grid,
+                     properties.getNumberOfAdjointElectronHashGridBins() ) );
 
+  // Create the scattering reactions
+  AdjointElectroatomCore::ReactionMap scattering_reactions;
+  std::shared_ptr<ElectroatomicReaction> total_forward_reaction;
 
+  // Create the elastic scattering reaction
+  if ( properties.isAdjointElasticModeOn() )
+  {
+    std::shared_ptr<AdjointElectroatomicReaction> elastic_reaction;
 
+    std::string elastic_interp =
+            raw_adjoint_electroatom_data.getElasticTwoDInterpPolicy();
 
-//  // Construct the hash-based grid searcher for this atom
-//  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-//    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
-//                     energy_grid,
-//                     properties.getNumberOfAdjointElectronHashGridBins() ) );
+    if( elastic_interp == "Log-Log-Log" )
+    {
+      ThisType::createElasticElectroatomCore<Utility::LogLogLog>(
+                                                raw_adjoint_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                elastic_reaction,
+                                                scattering_reactions );
+    }
+    else if( elastic_interp == "Lin-Lin-Log" )
+    {
+      ThisType::createElasticElectroatomCore<Utility::LinLinLog>(
+                                                raw_adjoint_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                elastic_reaction,
+                                                scattering_reactions );
+    }
+    else if( elastic_interp == "Lin-Lin-Lin" )
+    {
+      ThisType::createElasticElectroatomCore<Utility::LinLinLin>(
+                                                raw_adjoint_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                elastic_reaction,
+                                                scattering_reactions );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: the 2D interpolation policy "
+                       << elastic_interp <<
+                       " is not currently supported!" );
+    }
 
-//  // Create the scattering reactions
-//  AdjointElectroatomCore::ReactionMap scattering_reactions;
-//  std::shared_ptr<ElectroatomicReaction> total_forward_reaction;
+    // Create the total forward reaction
+    AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
+        raw_adjoint_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        elastic_reaction,
+        total_forward_reaction );
+  }
 
-//  // Create the elastic reaction
-//  {
-//    std::shared_ptr<AdjointElectroatomicReaction> elastic_reaction;
+  // Create the bremsstrahlung scattering reaction
+  if ( properties.isAdjointBremsstrahlungModeOn() )
+  {
+    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
 
-//    // Create the coupled elastic scattering reaction (no moment preserving elastic scattering)
-//    if ( properties.getElasticCutoffAngleCosine() == 1.0 )
-//    {
-//      AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-//        scattering_reactions[COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
+    std::string brem_interp =
+        raw_adjoint_electroatom_data.getBremsstrahlungTwoDInterpPolicy();
 
-//      AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy>(
-//                        raw_adjoint_electroatom_data,
-//                        energy_grid,
-//                        grid_searcher,
-//                        elastic_reaction,
-//                        properties.getElectronEvaluationTolerance() );
+    if( brem_interp == "Log-Log-Log" )
+    {
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog>(
+                        raw_adjoint_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.isAdjointUnitBasedInterpolationModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
+    }
+    else if( brem_interp == "Lin-Lin-Log" )
+    {
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog>(
+                        raw_adjoint_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.isAdjointUnitBasedInterpolationModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
+    }
+    else if( brem_interp == "Lin-Lin-Lin" )
+    {
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin>(
+                        raw_adjoint_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        reaction_pointer,
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.isAdjointUnitBasedInterpolationModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: the 2D interpolation policy "
+                       << brem_interp <<
+                       " is not currently supported!" );
+    }
+  }
 
-//      reaction_pointer = elastic_reaction;
-//    }
-//    // Create the moment preserving elastic scattering reaction (no coupled elastic scattering)
-//    else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
-//    {
-//      AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-//        scattering_reactions[MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
+  // Create the atomic excitation scattering reaction
+  if ( properties.isAdjointAtomicExcitationModeOn() )
+  {
+    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION];
 
-//      AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy>(
-//                        raw_adjoint_electroatom_data,
-//                        energy_grid,
-//                        grid_searcher,
-//                        elastic_reaction,
-//                        properties.getElasticCutoffAngleCosine(),
-//                        properties.getElectronEvaluationTolerance() );
+    AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
+                               raw_adjoint_electroatom_data,
+                               energy_grid,
+                               grid_searcher,
+                               reaction_pointer );
+  }
 
-//      reaction_pointer = elastic_reaction;
-//    }
-//    // Create the hybrid elastic scattering reaction (if cutoff is within range)
-//    else
-//    {
-//      AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-//        scattering_reactions[HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
+  // Create the subshell electroionization reactions
+  if ( properties.isAdjointElectroionizationModeOn() )
+  {
+    std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
+        electroionization_reactions;
 
-//      AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy>(
-//                       raw_adjoint_electroatom_data,
-//                       energy_grid,
-//                       grid_searcher,
-//                       elastic_reaction,
-//                       properties.getElasticCutoffAngleCosine(),
-//                       properties.getElectronEvaluationTolerance() );
+    std::string ionization_interp =
+        raw_adjoint_electroatom_data.getElectroionizationTwoDInterpPolicy();
 
-//      reaction_pointer = elastic_reaction;
-//    }
+    if( ionization_interp == "Log-Log-Log" )
+    {
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog>(
+                                raw_adjoint_electroatom_data,
+                                energy_grid,
+                                grid_searcher,
+                                electroionization_reactions,
+                                properties.isAdjointCorrelatedSamplingModeOn(),
+                                properties.isAdjointUnitBasedInterpolationModeOn(),
+                                properties.getAdjointElectronEvaluationTolerance() );
+    }
+    else if( ionization_interp == "Lin-Lin-Log" )
+    {
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog>(
+                                raw_adjoint_electroatom_data,
+                                energy_grid,
+                                grid_searcher,
+                                electroionization_reactions,
+                                properties.isAdjointCorrelatedSamplingModeOn(),
+                                properties.isAdjointUnitBasedInterpolationModeOn(),
+                                properties.getAdjointElectronEvaluationTolerance() );
+    }
+    else if( ionization_interp == "Lin-Lin-Lin" )
+    {
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin>(
+                                raw_adjoint_electroatom_data,
+                                energy_grid,
+                                grid_searcher,
+                                electroionization_reactions,
+                                properties.isAdjointCorrelatedSamplingModeOn(),
+                                properties.isAdjointUnitBasedInterpolationModeOn(),
+                                properties.getAdjointElectronEvaluationTolerance() );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: the 2D interpolation policy "
+                       << ionization_interp <<
+                       " is not currently supported!" );
+    }
 
-//    // Create the total forward reaction
-//      AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-//        raw_adjoint_electroatom_data,
-//        energy_grid,
-//        grid_searcher,
-//        elastic_reaction,
-//        total_forward_reaction );
-//  }
+    for( size_t i = 0; i < electroionization_reactions.size(); ++i )
+    {
+      scattering_reactions[electroionization_reactions[i]->getReactionType()] =
+        electroionization_reactions[i];
+    }
+  }
 
-//  // Create the bremsstrahlung scattering reaction
-//  {
-//    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-//      scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
-
-//    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<TwoDInterpPolicy>(
-//                         raw_adjoint_electroatom_data,
-//                         energy_grid,
-//                         grid_searcher,
-//                         reaction_pointer,
-//                         properties.getElectronEvaluationTolerance() );
-//  }
-
-//  // Create the atomic excitation scattering reaction
-//  {
-//    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-//      scattering_reactions[ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION];
-
-//    AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
-//                               raw_adjoint_electroatom_data,
-//                               energy_grid,
-//                               grid_searcher,
-//                               reaction_pointer );
-//  }
-
-//  // Create the subshell electroionization reactions
-//  {
-//  std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
-//    electroionization_reactions;
-
-//  AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy>(
-//                               raw_adjoint_electroatom_data,
-//                               energy_grid,
-//                               grid_searcher,
-//                               electroionization_reactions,
-//                               properties.getElectronEvaluationTolerance() );
-
-//    for( size_t i = 0; i < electroionization_reactions.size(); ++i )
-//    {
-//      scattering_reactions[electroionization_reactions[i]->getReactionType()] =
-//        electroionization_reactions[i];
-//    }
-//  }
-
-//  // Create the electroatom core
-//  adjoint_electroatom_core.reset(
-//    new AdjointElectroatomCore( grid_searcher,
-//                                total_forward_reaction,
-//                                scattering_reactions,
-//                                AdjointElectroatomCore::ReactionMap() ) );
-//}
+  // Create the electroatom core
+  adjoint_electroatom_core.reset(
+    new AdjointElectroatomCore( grid_searcher,
+                                total_forward_reaction,
+                                scattering_reactions,
+                                AdjointElectroatomCore::ReactionMap() ) );
+}
 
 // Create a adjoint electroatom
 void AdjointElectroatomNativeFactory::createAdjointElectroatom(
@@ -169,20 +235,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatom(
 
   Teuchos::RCP<AdjointElectroatomCore> core;
 
-  if( raw_adjoint_electroatom_data.isElectronLinLinLogInterpolationModeOn() )
-  {
-    ThisType::createAdjointElectroatomCore<Utility::LinLinLog>(
-                                                raw_adjoint_electroatom_data,
-                                                properties,
-                                                core);
-  }
-  else
-  {
-    ThisType::createAdjointElectroatomCore<Utility::LinLinLin>(
-                                                raw_adjoint_electroatom_data,
-                                                properties,
-                                                core);
-  }
+  ThisType::createAdjointElectroatomCore( raw_adjoint_electroatom_data,
+                                          properties,
+                                          core);
 
   // Create the adjoint electroatom
   adjoint_electroatom.reset( new AdjointElectroatom(

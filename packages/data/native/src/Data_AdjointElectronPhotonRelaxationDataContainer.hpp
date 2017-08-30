@@ -134,9 +134,6 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
 
-  //! Return if electron FullyTabularTwoDDistribution LinLinLog interpolation mode is on
-  bool isElectronLinLinLogInterpolationModeOn() const;
-
   //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
   bool isElectronCorrelatedSamplingModeOn() const;
 
@@ -583,10 +580,6 @@ protected:
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
   void setElectronTabularEvaluationTolerance(
     const double electron_tabular_evaluation_tol );
-
-  //! Set the electron FullyTabularTwoDDistribution LinLinLog interpolation mode
-  void setElectronLinLinLogInterpolationModeOnOff(
-    const bool electron_linlinlog_interpolation_mode_on );
 
   //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
   void setElectronCorrelatedSamplingModeOnOff(
@@ -1126,9 +1119,6 @@ private:
 
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;
-
-  // The electron FullyTabularTwoDDistribution lin-lin-log interpolation mode
-  bool d_electron_linlinlog_interpolation_mode_on;
 
   // The electron FullyTabularTwoDDistribution correlated sampling mode
   bool d_electron_correlated_sampling_mode_on;

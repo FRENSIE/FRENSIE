@@ -916,7 +916,7 @@ int main( int argc, char** argv )
 
     std::remove( cstr );
   }
-
+std::cout << std::setprecision(17) << std::scientific << "\ndata genernated" << std::endl;
   // Export the generated data to an XML file
   std::ostringstream oss;
   oss << "aepr_" << atomic_number << "_native.xml";
@@ -938,13 +938,14 @@ int main( int argc, char** argv )
     new_file_name += "/";
     new_file_name += oss.str();
   }
-
+std::cout << std::setprecision(17) << std::scientific << "\ndata ready for export to " << new_file_name << std::endl;
   data_container.exportData( new_file_name,
                              Utility::ArchivableObject::XML_ARCHIVE );
-
+std::cout << std::setprecision(17) << std::scientific << "\ndata exported" << std::endl;
   // Update the cross_sections.xml file if requested
   if( forward_file_name.size() == 0 && modify_cs_xml_file )
   {
+std::cout << std::setprecision(17) << std::scientific << "\nUpdate the cross_sections.xml file if requested" << std::endl;
     Teuchos::ParameterList& alias_table =
       cross_sections_table_info->sublist( cross_section_alias );
 
@@ -987,8 +988,9 @@ int main( int argc, char** argv )
     Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,
                                           cross_sections_xml_file );
   }
-
+  std::cout << std::setprecision(17) << std::scientific << " =\twhat's the problem?" << std::endl;
   return 0;
+  std::cout << std::setprecision(17) << std::scientific << " =\thow are we here?" << std::endl;
 }
 
 //---------------------------------------------------------------------------//

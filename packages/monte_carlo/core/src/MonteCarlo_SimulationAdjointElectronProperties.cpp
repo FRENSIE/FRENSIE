@@ -8,7 +8,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
-#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -31,6 +30,7 @@ SimulationAdjointElectronProperties::SimulationAdjointElectronProperties()
     d_adjoint_correlated_sampling_mode_on( true ),
     d_adjoint_unit_based_interpolation_mode_on( true ),
     d_adjoint_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
+    d_adjoint_elastic_distribution_mode( DECOUPLED_DISTRIBUTION ),
     d_adjoint_elastic_cutoff_angle_cosine( 1.0 ),
     d_num_adjoint_electron_hash_grid_bins( 500 )
 { /* ... */ }
@@ -233,6 +233,20 @@ void SimulationAdjointElectronProperties::setAdjointElasticCutoffAngleCosine(
 double SimulationAdjointElectronProperties::getAdjointElasticCutoffAngleCosine() const
 {
   return d_adjoint_elastic_cutoff_angle_cosine;
+}
+
+// Set the elastic distribution mode ( Decoupled by default )
+void SimulationAdjointElectronProperties::setAdjointElasticElectronDistributionMode(
+    ElasticElectronDistributionType distribution_mode )
+{
+  d_adjoint_elastic_distribution_mode = distribution_mode;
+}
+
+// Return the elastic distribution mode
+ElasticElectronDistributionType
+SimulationAdjointElectronProperties::getAdjointElasticElectronDistributionMode() const
+{
+  return d_adjoint_elastic_distribution_mode;
 }
 
 // Set the number of adjoint electron hash grid bins

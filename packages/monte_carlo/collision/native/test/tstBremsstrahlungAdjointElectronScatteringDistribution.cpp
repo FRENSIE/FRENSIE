@@ -60,15 +60,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = adjoint_brem_dist->evaluate( 1.0e-5, 20.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.8099198885653855e-08, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.0304750685665021e-08, 1e-12 );
 
   // Check inbetween bins
   pdf = adjoint_brem_dist->evaluate( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.6491897596876557e-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.2203988191884462e-06, 1e-12 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluate( 20.0, 20.000000201 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.6600905012787506e+05, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.6906136058904714e+05, 1e-12 );
 
   // Check above highest bin
   pdf = adjoint_brem_dist->evaluate( 21.0, 22.0 );
@@ -89,15 +89,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = adjoint_brem_dist->evaluatePDF( 1.0e-5, 20.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 7.8967728456432097e-08, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 5.2461141364463200e-08, 1e-12 );
 
   // Check inbetween bins
   pdf = adjoint_brem_dist->evaluatePDF( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4797369693516995e-06, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.9343900632558151e-06, 1e-6 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluatePDF( 20.0, 20.000000201 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.4183240331479590e+05, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.2815167487713543e+05, 1e-12 );
 
   // Check above highest bin
   pdf = adjoint_brem_dist->evaluatePDF( 21.0, 22.0 );
@@ -118,15 +118,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   cdf = adjoint_brem_dist->evaluateCDF( 1.0e-5, 10.1000050505 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999920391076202e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999924241779103e-01, 1e-12 );
 
   // Check inbetween bins
   cdf = adjoint_brem_dist->evaluateCDF( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999588949121854e-01, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999626384724594e-01, 1e-6 );
 
   // Check on highest bin
   cdf = adjoint_brem_dist->evaluateCDF( 20.0, 20.1000000505 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.4951141073746048e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.5489358397075608e-01, 1e-12 );
 
   // Check above highest bin
   cdf = adjoint_brem_dist->evaluateCDF( 21.0, 22.0 );
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 3.7392446346993542e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 2.8653791459942965e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
 }
 
@@ -180,7 +180,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 3.7392446346993542e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 2.8653791459942965e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
   TEST_EQUALITY_CONST( trials, 1.0 );
 }
@@ -211,7 +211,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 3.7392446346993542e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 2.8653791459942965e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );

@@ -84,21 +84,21 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          5.9530537686269305e+01 + 6.1222996978575356e+07,
+                          4.6179443997604473e+01 + 6.1222996978575356e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.3378907585855153e+01 + 1.0537482649407225e+07,
+                          1.6612628318967477e+01 + 1.0537482649407225e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.3930085615214982 + 8.1829299853764838e+04,
+                          7.7113235533702451e-01 + 8.1829299853764838e+04,
                           1e-12 );
 }
 
@@ -124,10 +124,10 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   TEST_EQUALITY_CONST( grid_index, 0u );
 
   grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
-  TEST_EQUALITY_CONST( grid_index, 48 );
+  TEST_EQUALITY_CONST( grid_index, 55 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  TEST_EQUALITY_CONST( grid_index, 158 );
+  TEST_EQUALITY_CONST( grid_index, 145 );
 }
 
 //---------------------------------------------------------------------------//

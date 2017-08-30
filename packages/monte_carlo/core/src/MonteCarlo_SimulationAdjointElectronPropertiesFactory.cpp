@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationAdjointElectronPropertiesFactory.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -167,6 +168,35 @@ void SimulationAdjointElectronPropertiesFactory::initializeProperties(
                 << " will be used instead of " << cutoff_angle_cosine << "."
                 << std::endl;
     }
+  }
+
+  // Get the elastic electron distribution type - optional
+  if( properties.isParameter( "Adjoint Electron Elastic Distribution" ) )
+  {
+    std::string raw_type =
+      properties.get<std::string>( "Adjoint Electron Elastic Distribution" );
+
+     MonteCarlo::ElasticElectronDistributionType type;
+
+    if( raw_type == "Analog" || raw_type == "analog" || raw_type == "COUPLED" )
+      type = MonteCarlo::COUPLED_DISTRIBUTION;
+    else if( raw_type == "Decoupled" || raw_type == "decoupled" || raw_type == "DECOUPLED" )
+      type = MonteCarlo::DECOUPLED_DISTRIBUTION;
+    else if( raw_type == "Hybrid" || raw_type == "hybrid" || raw_type == "HYBRID" )
+      type = MonteCarlo::HYBRID_DISTRIBUTION;
+    else if( raw_type == "Cutoff" || raw_type == "cutoff" || raw_type == "CUTOFF" )
+      type = MonteCarlo::CUTOFF_DISTRIBUTION;
+    else if( raw_type == "Rutherford" || raw_type == "rutherford" || raw_type == "RUTHERFORD" )
+      type = MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION;
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: elastic electron distribution "
+                       << raw_type <<
+                       " is not currently supported!" );
+    }
+
+    adjoint_electron_properties.setAdjointElasticElectronDistributionMode( type );
   }
 
   // Get the number of adjoint electron hash grid bins - optional

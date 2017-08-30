@@ -18,7 +18,6 @@
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"

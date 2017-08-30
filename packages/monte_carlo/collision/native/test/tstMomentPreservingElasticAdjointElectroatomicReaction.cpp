@@ -93,17 +93,17 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
   double cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.221760610333641618e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2217606103336416e+07, 1e-12 );
 
   cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E-03 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.667880835876263678e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6696690569928249e+06, 1e-12 );
 
   cross_section =
     mp_elastic_reaction->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.128471955127146487, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0498802209908908e+00, 1e-12 );
 }
 
 
@@ -170,7 +170,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
         discrete_elastic_distribution;
 
-  NativeFactory::createMomentPreservingElasticDistribution(
+  NativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogLog>(
         discrete_elastic_distribution,
         data_container,
         cutoff_angle_cosine,

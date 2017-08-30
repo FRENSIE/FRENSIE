@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 
 namespace MonteCarlo{
 
@@ -119,6 +120,13 @@ public:
   //! Return the adjoint elastic cutoff angle cosine
   double getAdjointElasticCutoffAngleCosine() const;
 
+  //! Set the adjoint elastic distribution mode ( Decoupled by default )
+  void setAdjointElasticElectronDistributionMode(
+                        ElasticElectronDistributionType distribution_mode );
+
+  //! Return the elastic distribution mode
+  ElasticElectronDistributionType getAdjointElasticElectronDistributionMode() const;
+
   //! Set the number of adjoint electron hash grid bins
   void setNumberOfAdjointElectronHashGridBins( const unsigned bins );
 
@@ -168,6 +176,9 @@ private:
 
   // The adjoint elastic cutoff angle cosine (mu = 1.0 by default)
   double d_adjoint_elastic_cutoff_angle_cosine;
+
+  // The adjoint elasic electron distribution mode ( Decoupled - default )
+  ElasticElectronDistributionType d_adjoint_elastic_distribution_mode;
 
   // The number of adjoint electron hash grid bins
   unsigned d_num_adjoint_electron_hash_grid_bins;

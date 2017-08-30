@@ -73,15 +73,15 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   // Test that the total cross section can be returned
   double energy = 1e-5;
   double cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.1039036983306004e+11, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.7214370967188240e+10, 1e-12 );
 
   energy = 1e-3;
   cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 8.4098042799498022e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.9971073781145435e+07, 1e-12 );
 
   energy = 20.0;
   cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.9756148447984250e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.5775551075616051e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -97,154 +97,91 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   cross_section = atom->getAbsorptionCrossSection( 9.0E-05 );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
+  MonteCarlo::AdjointElectroatomicReactionType reaction;
 
   // Test that the atomic excitation cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 6.1222996978575356e+07, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    1e-3,
-                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 1.0537482649407225e+07, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 8.1829299853764838e+04, 1e-12 );
 
 
   // Test that the bremsstrahlung cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 5.9530537686269305e+01, 1e-12 );
+  reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 4.6179443997604473e+01, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    1e-3,
-                    MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 2.3378907585855153e+01, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6612628318967477e+01, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.3930085615214982, 1e-12 );
-
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 7.7113235533702451e-01, 1e-12 );
 
   // Test that the coupled elastic cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-            1e-5,
-            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 2.74896e+08, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-            1e-3,
-            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 2.8049048154381788e+06, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-            20.0,
-            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987041e+04, 1e-12 );
 
 
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+
   // Test that there is no hybrid elastic cross section
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-
-  // Test that there is no cutoff elastic cross section
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-                    1e-3,
-                    MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-
-  // Test that there is no screened Rutherford reaction
-  cross_section = atom->getReactionCrossSection(
-       1e-5,
-       MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-       20.0,
-       MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-
-  // Test that there is no moment preserving elastic cross section
-  cross_section = atom->getReactionCrossSection(
-         1e-5,
-         MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-         20.0,
-         MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that there is no total electroionization
-  cross_section = atom->getReactionCrossSection(
-            1e-5,
-            MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-            20.0,
-            MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that the K subshell electroionization cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-           1e-5,
-           MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.1005425077655093e+11, 1e-12 );
+  reaction = MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 4.6878251924030220e+10, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-           1e-3,
-           MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 7.0755631955745041e+07, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6628669703671712e+07, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-           20.0,
-           MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.0270866910252909e+05, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 6.2903317255053284e+04, 1e-12 );
 
 
   // Test that the L1 subshell electroionization cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-          1e-5,
-          MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-          1e-3,
-          MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-          20.0,
-          MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
@@ -261,6 +198,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   properties.setAdjointUnitBasedInterpolationModeOff();
   properties.setAdjointCorrelatedSamplingModeOn();
   properties.setAdjointElasticCutoffAngleCosine( cutoff_angle_cosine );
+  properties.setAdjointElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
   properties.setAdjointElectronEvaluationTolerance( evaluation_tol );
   properties.setNumberOfAdjointElectronHashGridBins( 100 );
   Teuchos::RCP<MonteCarlo::AdjointElectroatom> atom;
@@ -279,13 +217,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 1e-5);
-  TEST_FLOATING_EQUALITY( cross_section, 1.1038884276973904e+11, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.7212843903867241e+10, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 8.3269122676390618e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.9165464214786734e+07, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.8454149287869464e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4473544058673398e+05, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -301,159 +239,92 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
   cross_section = atom->getAbsorptionCrossSection( 9.0E-05 );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
+  MonteCarlo::AdjointElectroatomicReactionType reaction;
 
   // Test that the atomic excitation cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 6.1222996978575356e+07, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    1e-3,
-                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 1.0537482649407225e+07, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 8.1829299853764838e+04, 1e-12 );
 
 
   // Test that the bremsstrahlung cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 5.9530537686269305e+01, 1e-12 );
+  reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 4.6179443997604473e+01, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    1e-3,
-                    MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 2.3378907585855153e+01, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6612628318967477e+01, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.3930085615214982, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 7.7113235533702451e-01, 1e-12 );
 
 
-  // Test that there is no coupled elastic cross section
-  cross_section = atom->getReactionCrossSection(
-            1e-5,
-            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-            1e-3,
-            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-            20.0,
-            MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
-  // Test that the hybrid elastic cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+
+  // Test that there is no hybrid elastic cross section
+  reaction = MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_FLOATING_EQUALITY( cross_section, 2.7336893667900169e+08, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    1e-3,
-                    MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.9759846923307613e+06, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 1.9992952490794754e+06, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 2.1309138391891191, 1e-12 );
-
-
-  // Test that there is no cutoff elastic cross section
-  cross_section = atom->getReactionCrossSection(
-                    1e-5,
-                    MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-                    1e-3,
-                    MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-                    20.0,
-                    MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-
-  // Test that there is no screened Rutherford reaction
-  cross_section = atom->getReactionCrossSection(
-       1e-5,
-       MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-       20.0,
-       MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-
-  // Test that there is no moment preserving elastic cross section
-  cross_section = atom->getReactionCrossSection(
-         1e-5,
-         MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection(
-         20.0,
-         MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0523455605114753e+00, 1e-12 );
 
 
   // Test that there is no total electroionization
-  cross_section = atom->getReactionCrossSection(
-            1e-5,
-            MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-            20.0,
-            MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that the K subshell electroionization cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-           1e-5,
-           MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.1005425077655093e+11, 1e-12 );
+  reaction = MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 4.6878251924030220e+10, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-           1e-3,
-           MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 7.0755631955745041e+07, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6628669703671712e+07, 1e-12 );
 
-  cross_section = atom->getReactionCrossSection(
-           20.0,
-           MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.0270866910252909e+05, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 6.2903317255053284e+04, 1e-12 );
 
 
   // Test that the L1 subshell electroionization cross section can be returned
-  cross_section = atom->getReactionCrossSection(
-          1e-5,
-          MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  reaction = MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-          1e-3,
-          MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection(
-          20.0,
-          MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 

@@ -11,164 +11,133 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
-#include "Utility_SortAlgorithms.hpp"
+#include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Create an adjoint electroatom core
+// Create the elastic reaction for a electroatom core
 template <typename TwoDInterpPolicy>
-void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
-        const Data::AdjointElectronPhotonRelaxationDataContainer&
-            raw_adjoint_electroatom_data,
+void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
+        const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         const SimulationAdjointElectronProperties& properties,
-        Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core )
+        std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+        AdjointElectroatom::ReactionMap& scattering_reactions )
 {
-  // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign(
-    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
-    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
+  // Get the elastic distribution type
+  ElasticElectronDistributionType distribution_type =
+                        properties.getAdjointElasticElectronDistributionMode();
 
-  // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
-                     energy_grid,
-                     properties.getNumberOfAdjointElectronHashGridBins() ) );
-
-  // Create the scattering reactions
-  AdjointElectroatomCore::ReactionMap scattering_reactions;
-  std::shared_ptr<ElectroatomicReaction> total_forward_reaction;
-
-  // Get the FullyTabularTwoDDistribution evaluation tolerance
-  double evaluation_tol = properties.getAdjointElectronEvaluationTolerance();
-  bool correlated_sampling_mode_on =
-                            properties.isAdjointCorrelatedSamplingModeOn();
-  bool unit_based_interpolation_mode_on =
-                            properties.isAdjointUnitBasedInterpolationModeOn();
-
-  // Create the elastic reaction
+  if( distribution_type == COUPLED_DISTRIBUTION )
   {
-    std::shared_ptr<AdjointElectroatomicReaction> elastic_reaction;
+    AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    // Get the elastic cutoff angle cosine
-    double cutoff_cosine = properties.getAdjointElasticCutoffAngleCosine();
-
-    // Create the coupled elastic scattering reaction (no moment preserving elastic scattering)
-    if ( cutoff_cosine == 1.0 )
-    {
-      AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
-
-      AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy>(
-                        raw_adjoint_electroatom_data,
+    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy>(
+                        raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         elastic_reaction,
-                        correlated_sampling_mode_on,
-                        evaluation_tol );
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
+
+    reaction_pointer = elastic_reaction;
+  }
+  else if( distribution_type == DECOUPLED_DISTRIBUTION )
+  {
+    AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
+
+    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy>(
+                        raw_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        elastic_reaction,
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
+
+    reaction_pointer = elastic_reaction;
+  }
+  else if( distribution_type == HYBRID_DISTRIBUTION )
+  {
+    // Create the coupled elastic scattering reaction (no moment preserving elastic scattering)
+    if ( properties.getAdjointElasticCutoffAngleCosine() == 1.0 )
+    {
+      AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
+
+      AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy>(
+                        raw_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        elastic_reaction,
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
 
       reaction_pointer = elastic_reaction;
     }
     // Create the moment preserving elastic scattering reaction (no coupled elastic scattering)
-    else if ( cutoff_cosine == -1.0 )
+    else if ( properties.getAdjointElasticCutoffAngleCosine() == -1.0 )
     {
-      AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
+      AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
       AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy>(
-                        raw_adjoint_electroatom_data,
+                        raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         elastic_reaction,
-                        cutoff_cosine,
-                        correlated_sampling_mode_on,
-                        evaluation_tol );
+                        properties.getAdjointElasticCutoffAngleCosine(),
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
 
       reaction_pointer = elastic_reaction;
     }
     // Create the hybrid elastic scattering reaction (if cutoff is within range)
     else
     {
-      AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
+      AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
       AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy>(
-                       raw_adjoint_electroatom_data,
-                       energy_grid,
-                       grid_searcher,
-                       elastic_reaction,
-                       cutoff_cosine,
-                        correlated_sampling_mode_on,
-                        evaluation_tol );
+                        raw_electroatom_data,
+                        energy_grid,
+                        grid_searcher,
+                        elastic_reaction,
+                        properties.getAdjointElasticCutoffAngleCosine(),
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
 
       reaction_pointer = elastic_reaction;
     }
-
-    // Create the total forward reaction
-      AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-        raw_adjoint_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        elastic_reaction,
-        total_forward_reaction );
   }
-
-  // Create the bremsstrahlung scattering reaction
+  else if( distribution_type == CUTOFF_DISTRIBUTION )
   {
-    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
+    AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<TwoDInterpPolicy>(
-                        raw_adjoint_electroatom_data,
+    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy>(
+                        raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
-                        reaction_pointer,
-                        correlated_sampling_mode_on,
-                        unit_based_interpolation_mode_on,
-                        evaluation_tol );
-  }
+                        elastic_reaction,
+                        properties.getAdjointElasticCutoffAngleCosine(),
+                        properties.isAdjointCorrelatedSamplingModeOn(),
+                        properties.getAdjointElectronEvaluationTolerance() );
 
-  // Create the atomic excitation scattering reaction
+    reaction_pointer = elastic_reaction;
+  }
+  else
   {
-    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION];
-
-    AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
-                               raw_adjoint_electroatom_data,
-                               energy_grid,
-                               grid_searcher,
-                               reaction_pointer );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: elastic distribution type "
+                     << distribution_type <<
+                     " is not currently supported!" );
   }
-
-  // Create the subshell electroionization reactions
-  {
-  std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
-    electroionization_reactions;
-
-  AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy>(
-                                raw_adjoint_electroatom_data,
-                                energy_grid,
-                                grid_searcher,
-                                electroionization_reactions,
-                                correlated_sampling_mode_on,
-                                unit_based_interpolation_mode_on,
-                                evaluation_tol );
-
-    for( size_t i = 0; i < electroionization_reactions.size(); ++i )
-    {
-      scattering_reactions[electroionization_reactions[i]->getReactionType()] =
-        electroionization_reactions[i];
-    }
-  }
-
-  // Create the electroatom core
-  adjoint_electroatom_core.reset(
-    new AdjointElectroatomCore( grid_searcher,
-                                total_forward_reaction,
-                                scattering_reactions,
-                                AdjointElectroatomCore::ReactionMap() ) );
 }
 
 } // end MonteCarlo namespace
