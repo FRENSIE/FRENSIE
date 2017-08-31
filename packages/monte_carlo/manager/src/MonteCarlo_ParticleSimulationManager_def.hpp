@@ -378,7 +378,7 @@ void ParticleSimulationManager<GeometryHandler,
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
-
+    
       if( op_to_surface_hit < remaining_subtrack_op )
       {
               // Advance the particle to the cell boundary
@@ -448,22 +448,6 @@ void ParticleSimulationManager<GeometryHandler,
       // A collision occurs in this cell
       else
       {
-        #pragma omp flush( d_end_simulation )
-        if( d_end_simulation )
-        {
-          // Print particle information
-          #pragma omp critical( ostream_update )
-          {
-            std::cerr << " History #: " << particle.getHistoryNumber()
-                      << " Collision #: " << particle.getCollisionNumber()
-                      << " Time: " << particle.getTime()
-                      << std::endl;
-          }
-
-          particle.setAsGone();
-          break;
-        }
-
         // Advance the particle to the collision site
         double distance_to_collision =
           remaining_subtrack_op/cell_total_macro_cross_section;
@@ -493,15 +477,12 @@ void ParticleSimulationManager<GeometryHandler,
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank );
 
-        if( !particle.isGone() )
-        {
-          GMI::changeInternalRayDirection( particle.getDirection() );
+        GMI::changeInternalRayDirection( particle.getDirection() );
 
-          // Cache the current position of the new ray
-          ray_start_point[0] = particle.getXPosition();
-          ray_start_point[1] = particle.getYPosition();
-          ray_start_point[2] = particle.getZPosition();
-        }
+        // Cache the current position of the new ray
+        ray_start_point[0] = particle.getXPosition();
+        ray_start_point[1] = particle.getYPosition();
+        ray_start_point[2] = particle.getZPosition();
 
         // Make sure the energy is above the cutoff
         if( particle.getEnergy() <
