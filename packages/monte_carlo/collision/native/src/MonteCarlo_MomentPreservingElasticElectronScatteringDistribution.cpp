@@ -61,7 +61,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the distribution at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateExact(
+  return d_discrete_scattering_distribution->evaluate(
                         incoming_energy,
                         scattering_angle_cosine );
 }
@@ -77,7 +77,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the PDF at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateSecondaryConditionalPDFExact(
+  return d_discrete_scattering_distribution->evaluateSecondaryConditionalPDF(
                         incoming_energy,
                         scattering_angle_cosine );
 }
@@ -93,7 +93,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the CDF at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateSecondaryConditionalCDFExact(
+  return d_discrete_scattering_distribution->evaluateSecondaryConditionalCDF(
                         incoming_energy,
                         scattering_angle_cosine );
 }

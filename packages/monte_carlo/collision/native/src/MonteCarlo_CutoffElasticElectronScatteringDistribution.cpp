@@ -119,8 +119,11 @@ double CutoffElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return d_partial_cutoff_distribution->evaluateExact( incoming_energy,
-                                                       scattering_angle_cosine );
+  if ( scattering_angle_cosine > d_cutoff_angle_cosine )
+    return 0.0;
+  else
+    return d_partial_cutoff_distribution->evaluateExact( incoming_energy,
+                                                         scattering_angle_cosine );
 }
 
 // Evaluate the PDF
@@ -133,7 +136,10 @@ double CutoffElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+  if ( scattering_angle_cosine > d_cutoff_angle_cosine )
+    return 0.0;
+  else
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
                         incoming_energy,
                         scattering_angle_cosine );
 }
@@ -148,7 +154,10 @@ double CutoffElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+  if ( scattering_angle_cosine >= d_cutoff_angle_cosine )
+    return 1.0;
+  else
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
                         incoming_energy,
                         scattering_angle_cosine );
 }

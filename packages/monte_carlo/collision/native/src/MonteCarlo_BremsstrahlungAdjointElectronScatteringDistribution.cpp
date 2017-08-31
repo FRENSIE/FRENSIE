@@ -183,7 +183,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
 
-  outgoing_energy = incoming_energy + d_sample_func( incoming_energy );
+  outgoing_energy = d_sample_func( incoming_energy );
 
   testPostcondition( outgoing_energy > incoming_energy );
 }

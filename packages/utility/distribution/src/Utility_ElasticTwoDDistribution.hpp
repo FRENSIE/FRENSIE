@@ -118,7 +118,7 @@ public:
   UnitAwareElasticTwoDDistribution(
         const DistributionType& distribution,
         const SecondaryIndepQuantity upper_bound_conditional_indep_var = SIQT::one(),
-        const double fuzzy_boundary_tol = 1e-3,
+        const double fuzzy_boundary_tol = 1e-7,
         const double evaluate_relative_error_tol = 1e-7,
         const double evaluate_error_tol = 1e-12 )
     : ParentType( distribution,
@@ -139,7 +139,7 @@ public:
         const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
         const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
         const SecondaryIndepQuantity upper_bound_conditional_indep_var = SIQT::one(),
-        const double fuzzy_boundary_tol = 1e-3,
+        const double fuzzy_boundary_tol = 1e-7,
         const double evaluate_relative_error_tol = 1e-7,
         const double evaluate_error_tol = 1e-12 )
     : ParentType( primary_indep_grid,

@@ -24,7 +24,7 @@
 
 %feature("docstring") REACTION
 "The REACTION proxy class. This class can getNumberOfEmittedElectrons,
-getNumberOfEmittedPhotons, getCrossSection, getDifferentialCrossSection."
+getNumberOfEmittedPhotons."
 
 %feature("autodoc",
 "getNumberOfEmittedElectrons(REACTION self, const double energy) -> unsigned" )
