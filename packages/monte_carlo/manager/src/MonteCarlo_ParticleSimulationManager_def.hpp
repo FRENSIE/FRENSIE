@@ -475,7 +475,7 @@ void ParticleSimulationManager<GeometryHandler,
                                                       particle.getPosition() );
 
         // Undergo a collision with the material in the cell
-        CMI::collideWithCellMaterial( particle, bank, true );
+        CMI::collideWithCellMaterial( particle, bank );
  
         GMI::changeInternalRayDirection( particle.getDirection() );
 
