@@ -94,7 +94,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
     ar_distribution( incoming_energies );
 
   // Loop through the incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     energy_distribution[i].first = incoming_energies_array[i];
 
@@ -263,7 +263,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
     angle_distribution( incoming_energies );
 
   // Loop through the incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     energy_distribution[i].first = incoming_energies_array[i];
 
@@ -295,7 +295,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
 	    cosine_arrays( number_points_distribution );
 
     // Read over the tabular angular data
-    for( int j = 0; j < number_points_distribution; j++ )
+    for( int j = 0; j < number_points_distribution; ++j )
     {
       // Location of the angular data tables
       double angular_data_loc = angle_locations_array[j] - 

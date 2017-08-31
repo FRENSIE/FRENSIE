@@ -42,7 +42,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
   std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>
     energy_loss_distribution;
 
-  AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
+  ExcitationFactory::createAtomicExcitationDistribution(
                                                  raw_electroatom_data,
                                                  energy_loss_distribution );
 

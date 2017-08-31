@@ -22,7 +22,7 @@ namespace Utility{
 
 namespace {
 
-//! Helper class used by unit base interpolation methods (Lin-Lin)
+//! Helper class used by unit base interpolation methods
 template<typename YProcessingTag, typename XProcessingTag>
 struct UnitBaseHelper
 { /* ... */ };
@@ -150,6 +150,13 @@ public:
                                               const IndepType indep_var_x,
                                               const LengthType grid_0_length,
                                               const LengthType grid_1_length );
+
+  //! Calculate the length of an intermediate grid using the indep variable ratio (beta)
+  template<typename IndepRatioType, typename LengthType>
+  static LengthType calculateIntermediateGridLength(
+                       const IndepRatioType beta,
+                       const LengthType grid_0_length,
+                       const LengthType grid_1_length );
 
   //! Calculate the length of a processed intermediate grid
   template<typename T>

@@ -21,10 +21,10 @@ namespace MonteCarlo{
 //! The electroatomic reaction type enum.
 enum AdjointElectroatomicReactionType{
   TOTAL_ADJOINT_ELECTROATOMIC_REACTION = 1,
-  TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION = 2,
-  BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION = 3,
-  POSITRON_ANNIHILATION_ADJOINT_ELECTROATOMIC_REACTION = 4,
-  ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION = 5,
+  BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION = 2,
+  POSITRON_ANNIHILATION_ADJOINT_ELECTROATOMIC_REACTION = 3,
+  COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION = 4,
+  DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION = 5,
   HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION = 6,
   CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION = 7,
   SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION = 8,
@@ -78,7 +78,7 @@ std::string convertAdjointElectroatomicReactionEnumToString(
 
 //! Convert a Data::SubshellType enum to a AdjointElectroatomicReactionType enum
 AdjointElectroatomicReactionType
-convertSubshellEnumToAdjointElectroatomicReactionEnum(
+convertSubshellEnumToElectroionizationAdjointElectroatomicReactionEnum(
                                             const Data::SubshellType subshell );
 
 //! Stream operator for printing AdjointElectroatomicReactionType enums

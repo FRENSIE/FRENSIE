@@ -189,10 +189,10 @@ inline void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryInd
     lower_bin_boundary = d_distribution.begin();
     upper_bin_boundary = d_distribution.end();
 
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
-					       lower_bin_boundary,
+    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>(
+                                               lower_bin_boundary,
                                                upper_bin_boundary,
-					       primary_independent_var_value );
+                                               primary_independent_var_value );
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
   }

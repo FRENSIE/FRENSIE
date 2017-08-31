@@ -18,6 +18,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
 #include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
@@ -25,6 +26,7 @@
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
+#include "Data_DataContainerHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -60,7 +62,9 @@ int main( int argc, char** argv )
   double cutoff_angle_cosine = 1.0;
   int number_of_moment_preserving_angles = 0;
   bool append_moment_preserving_data = false;
-  bool linlinlog_interpolation_mode_on = true;
+  std::string electron_two_d_interp = "Log-Log-Log";
+  MonteCarlo::TwoDInterpolationType electron_interp =
+                                        MonteCarlo::LOGLOGLOG_INTERPOLATION;
 
   // General grid generation options
   double grid_convergence_tol = 0.001;
@@ -134,10 +138,9 @@ int main( int argc, char** argv )
                                &number_of_moment_preserving_angles,
                                "Number of moment preserving angles for table "
                                "(angles>=0)" );
-  epr_generator_clp.setOption( "linlinlog_interp_on",
-                               "linlinlin_interp_on",
-                               &linlinlog_interpolation_mode_on,
-                               "The electron 2D interpolation mode" );
+  epr_generator_clp.setOption( "electron_interp_policy",
+                               &electron_two_d_interp,
+                               "The electron 2D interpolation policy" );
   epr_generator_clp.setOption( "append_moment_preserving_data",
                                "do_not_append_moment_preserving_data",
                                &append_moment_preserving_data,
@@ -269,6 +272,23 @@ int main( int argc, char** argv )
     return 1;
   }
 
+  // 8.) The electron TwoDInterpPolicy
+  if( !Data::isTwoDInterpPolicyValid( electron_two_d_interp ) )
+  {
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the electron 2D interpolation policy is not valid!"
+              << std::endl;
+
+    epr_generator_clp.printHelpMessage( argv[0], *out );
+
+    return 1;
+  }
+  else
+  {
+    electron_interp =
+      MonteCarlo::convertStringToTwoDInterpolationType( electron_two_d_interp );
+  }
+
   // 9.) The number of moment preserving angles must be >= 0
   if( number_of_moment_preserving_angles < 0 )
   {
@@ -354,10 +374,10 @@ int main( int argc, char** argv )
       try{
         DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingData(
           data_container,
-          tabular_evaluation_tol,
           cutoff_angle_cosine,
+          tabular_evaluation_tol,
           number_of_moment_preserving_angles,
-          linlinlog_interpolation_mode_on );
+          electron_interp );
       }
       EXCEPTION_CATCH_AND_EXIT( std::exception,
                                 "Error: Unable to repopulate the moment "
@@ -433,8 +453,7 @@ int main( int argc, char** argv )
         raw_generator->setDefaultGridAbsoluteDifferenceTolerance(
                                                       grid_absolute_diff_tol );
         raw_generator->setDefaultGridDistanceTolerance( grid_distance_tol );
-        if( !linlinlog_interpolation_mode_on )
-          raw_generator->setElectronLinLinLogInterpolationModeOff();
+        raw_generator->setElectronTwoDInterpPolicy( electron_interp );
 
         epr_generator.reset( raw_generator );
       }

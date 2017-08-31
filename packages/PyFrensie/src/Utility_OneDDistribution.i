@@ -23,6 +23,7 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "PyFrensie_ArrayConversionHelpers.hpp"
 %}
@@ -444,6 +445,27 @@ input parameter are the following:
 // Standard distribution interface setup
 %standard_distribution_interface_setup( WattDistribution )
 
+//---------------------------------------------------------------------------//
+// Add support for the CoupledElasticDistribution
+//---------------------------------------------------------------------------//
+// Import the Coupled Elastic OneDDistribution
+%import "Utility_CoupledElasticDistribution.hpp"
+
+// There are many Coupled Elastic One D distributions - use this macro to set up each
+%define %coupled_elastic_distribution_interface_setup( INTERP )
+
+// Add a more detailed docstring for the constructor
+%feature("docstring")
+Utility::UnitAwareCoupledElasticDistribution<Utility::INTERP,void,void>::UnitAwareCoupledElasticDistribution
+"The independent values and dependent values should be stored in a NumPy array.
+"
+
+%advanced_tab_distribution_interface_setup( CoupledElasticDistribution_ ## INTERP, CoupledElasticDistribution, Utility::INTERP )
+
+%enddef
+
+%coupled_elastic_distribution_interface_setup( LinLin )
+%coupled_elastic_distribution_interface_setup( LinLog )
 //---------------------------------------------------------------------------//
 // end Utility_OneDDistribution.i
 //---------------------------------------------------------------------------//

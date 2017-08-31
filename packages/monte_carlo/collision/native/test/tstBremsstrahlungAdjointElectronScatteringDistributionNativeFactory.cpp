@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 0.9118675275
+  fake_stream[1] = 0.5; // Sample an E_out of 1.7653791459942965e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 6.066333527969225935e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.7653791459942965e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
 }
 
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 0.9118675275
+  fake_stream[1] = 0.5; // Sample an E_out of 1.7653791459942965e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -79,7 +79,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 6.066333527969225935e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.7653791459942965e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
   TEST_EQUALITY_CONST( trials, 1.0 );
 }
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 0.9118675275
+  fake_stream[1] = 0.5; // Sample an E_out of 1.7653791459942965e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistributionNativeFact
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 6.066333527969225935e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.7653791459942965e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
@@ -144,9 +144,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   else
     energy_grid = data_container->getAdjointElectronEnergyGrid();
 
-  BremFactory::createBremsstrahlungAdjointDistribution( *data_container,
-                                                        energy_grid,
-                                                        brem_distribution );
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
+
+  BremFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
+            *data_container,
+            energy_grid,
+            brem_distribution,
+            correlated_sampling_mode_on,
+            unit_based_interpolation_mode_on );
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

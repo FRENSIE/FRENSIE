@@ -165,7 +165,7 @@ void StandardENDLDataGenerator::setRelaxationData(
             convert_subshell );
 
         // convert subshells to a set
-        for ( int i = 0; i < subshells.size(); i++ )
+        for ( int i = 0; i < subshells.size(); ++i )
         {
           endf_subshells.insert( subshells[i] );
         }

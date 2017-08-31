@@ -31,11 +31,12 @@ std::shared_ptr<MonteCarlo::ElectroatomicReaction>
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
 std::shared_ptr<Utility::FullyTabularTwoDDistribution>
-    elastic_scattering_function;
+    full_elastic_scattering_function, partial_elastic_scattering_function;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::ArrayRCP<double> elastic_cross_section;
 unsigned elastic_threshold_index;
 double upper_cutoff_angle_cosine;
+bool correlated_sampling_mode_on = true;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -108,8 +109,10 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
   // Create the reaction
   elastic_scattering_distribution.reset(
           new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-                elastic_scattering_function,
-                cutoff_angle_cosine ) );
+                full_elastic_scattering_function,
+                partial_elastic_scattering_function,
+                cutoff_angle_cosine,
+                correlated_sampling_mode_on ) );
 
   test_elastic_reaction.reset(
     new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
@@ -124,19 +127,19 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
   double cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09*ratio, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924E+09*ratio, 1e-12 );
 
   ratio = 2.439675590438E-01;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-03 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08*ratio, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.90281E+08*ratio, 1e-12 );
 
   ratio = 7.776633431294E-06;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E+05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02*ratio, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.83051E-02*ratio, 1e-12 );
 }
 
 
@@ -228,32 +231,64 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   Utility::FullyTabularTwoDDistribution::DistributionType function_data( size );
+  Utility::FullyTabularTwoDDistribution::DistributionType partial_function_data( size );
 
   for( unsigned n = 0; n < size; ++n )
   {
     function_data[n].first = elastic_energy_grid[n];
+    partial_function_data[n].first = elastic_energy_grid[n];
+
+    Teuchos::Array<double> angles = elas_block( offset[n], table_length[n] );
+    Teuchos::Array<double> pdfs =
+            elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 );
 
     function_data[n].second.reset(
-      new Utility::HistogramDistribution(
-         elas_block( offset[n], table_length[n] ),
-         elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-         true ) );
+      new Utility::HistogramDistribution( angles, pdfs, true ) );
+
+    unsigned index = 0;
+    for( unsigned i = 0; i < angles.size(); ++i )
+    {
+      if( angles[i] <= 0.9 )
+      {
+        index = i;
+      }
+    }
+
+    Teuchos::Array<double> partial_angles(index+1), partial_pdfs(index);
+    partial_angles[0] = angles[0];
+    for( unsigned i = 1; i <= index; ++i )
+    {
+      partial_angles[i] = angles[i];
+      partial_pdfs[i-1] = pdfs[i-1];
+    }
+
+    if( angles[index] != 0.9 )
+    {
+      partial_angles.push_back(0.9);
+      partial_pdfs.push_back(function_data[n].second->evaluate( 0.9 ) );
+
+    }
+
+    partial_function_data[n].second.reset(
+      new Utility::HistogramDistribution( partial_angles, partial_pdfs, true ) );
   }
 
   // Get the atomic number
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
-  upper_cutoff_angle_cosine = 1.0;
-
   // Create the scattering function
-  elastic_scattering_function.reset(
+  full_elastic_scattering_function.reset(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
             function_data ) );
 
+  partial_elastic_scattering_function.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            partial_function_data ) );
+
   elastic_scattering_distribution.reset(
           new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-                elastic_scattering_function,
-                upper_cutoff_angle_cosine ) );
+                full_elastic_scattering_function,
+                correlated_sampling_mode_on ) );
 
   // Create the reaction
   ace_elastic_reaction.reset(

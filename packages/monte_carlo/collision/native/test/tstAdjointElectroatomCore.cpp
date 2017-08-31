@@ -21,7 +21,7 @@
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp"
+#include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
@@ -59,10 +59,10 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
   TEST_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0373590927063245326E+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0367499733585879e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.64663279900629E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -84,21 +84,21 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.48761655529424E+01 + 6.12229969785753563e+07,
+                          4.6179443997604473e+01 + 6.1222996978575356e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.84695186338680E+01 + 1.05374826494071E+07,
+                          1.6612628318967477e+01 + 1.0537482649407225e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.52732920066756 + 8.18292998537648382e+04,
+                          7.7113235533702451e-01 + 8.1829299853764838e+04,
                           1e-12 );
 }
 
@@ -124,10 +124,10 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   TEST_EQUALITY_CONST( grid_index, 0u );
 
   grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
-  TEST_EQUALITY_CONST( grid_index, 42 );
+  TEST_EQUALITY_CONST( grid_index, 55 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  TEST_EQUALITY_CONST( grid_index, 155 );
+  TEST_EQUALITY_CONST( grid_index, 145 );
 }
 
 //---------------------------------------------------------------------------//
@@ -172,8 +172,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the total forward reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_forward_reaction;
 
-    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> void_reaction(
-        new MonteCarlo::VoidAbsorptionAdjointElectroatomicReaction() );
+    // Get void reaction
+    Teuchos::ArrayRCP<double> void_cross_section( energy_grid.size() );
+    std::shared_ptr<MonteCarlo::ElectroatomicReaction> void_reaction(
+     new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
+                       energy_grid,
+                       void_cross_section,
+                       0u,
+                       grid_searcher,
+                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION ) );
 
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
                                        data_container,
@@ -195,7 +202,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         ae_distribution;
 
     // Create the atomic excitation distribution
-    AtomicNativeFactory::createAtomicExcitationAdjointDistribution(
+    AtomicNativeFactory::createAtomicExcitationDistribution(
         data_container,
         ae_distribution );
 
@@ -221,11 +228,18 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         b_distribution;
 
+    bool correlated_sampling_mode_on = true;
+    bool unit_based_interpolation_mode_on = true;
+    double evaluation_tol = 1e-7;
+
     // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungAdjointDistribution(
+    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
-        b_distribution );
+        b_distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> b_reaction(

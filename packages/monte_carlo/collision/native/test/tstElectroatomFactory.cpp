@@ -183,16 +183,23 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
 
 //---------------------------------------------------------------------------//
 // Check that a electroatom map can be created with moment preserving data
-TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preserving )
+TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_hybrid )
 {
+  double cutoff_angle_cosine = 0.9;
+  double evaluation_tol = 1e-15;
+
   // Create the set of electroatom aliases
   std::unordered_set<std::string> electroatom_aliases;
   electroatom_aliases.insert( "Pb-Native" );
 
   // Set the bremsstrahlung photon angular distribution function
-  properties->setBremsstrahlungAngularDistributionFunction(
-                                             MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties->setElasticCutoffAngleCosine( 0.9 );
+  properties->setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+  properties->setUnitBasedInterpolationModeOff();
+  properties->setElasticTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties->setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
+  properties->setCorrelatedSamplingModeOn();
+  properties->setElasticCutoffAngleCosine( cutoff_angle_cosine );
+  properties->setElectronEvaluationTolerance( evaluation_tol );
   properties->setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
 
   std::shared_ptr<MonteCarlo::ElectroatomFactory> electroatom_factory(
@@ -224,11 +231,12 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
         elastic_distribution,
         *data_container,
-        1.0,
-        1e-15 );
+        properties->getElasticCutoffAngleCosine(),
+        properties->isCorrelatedSamplingModeOn(),
+        properties->getElectronEvaluationTolerance() );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
     electroatom_map;
@@ -248,32 +256,28 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
 
   // Test that the total cross section can be returned
   double energy = 1e-5;
-  double cross_section_ratio = elastic_distribution->evaluateCDF(
-            energy,
-            properties->getElasticCutoffAngleCosine() );
+  double cross_section_ratio =
+            elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
   double inelastic = 1.398201198e8;
-  double elastic = 2.48924e9*cross_section_ratio + 1.106329441558590e8;
+  double elastic = 2.48924e9*cross_section_ratio + 1.1063294415585944e+08;
 
   double cross_section = atom->getTotalCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
   energy = 2e-1;
-  cross_section_ratio = elastic_distribution->evaluateCDF(
-                            energy,
-                            properties->getElasticCutoffAngleCosine() );
-  inelastic = 6.411260911064270e6;
-  elastic = 1.6111881507138280e+07*cross_section_ratio + 1.8915579016892887e+06;
-
+  cross_section_ratio =
+            elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
+  inelastic = 6.4103437333324831e+06;
+  elastic = 1.6111881507138280e+07*cross_section_ratio + 1.8627628267192466e+06;
 
   cross_section = atom->getTotalCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
   energy = 1e5;
-  cross_section_ratio = elastic_distribution->evaluateCDF(
-            energy,
-            properties->getElasticCutoffAngleCosine() );
-  inelastic = 2.8454030479e6;
-  elastic = 8.83051e-2*cross_section_ratio + 2.20377030499672e-3;
+  cross_section_ratio =
+            elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
+  inelastic = 2.8454030479e+06;
+  elastic = 8.83051e-2*cross_section_ratio + 2.2037703049967248e-03;
   cross_section = atom->getTotalCrossSection( energy );
   TEST_FLOATING_EQUALITY( cross_section, inelastic + elastic, 1e-12 );
 
@@ -347,35 +351,31 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_moment_preser
   // Test that the hybrid elastic cross section can be returned
   reaction = MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1e5, reaction );
-  cross_section_ratio = elastic_distribution->evaluateCDF(
-                        1e5,
-                        properties->getElasticCutoffAngleCosine() );
+  cross_section_ratio =
+            elastic_distribution->evaluateCutoffCrossSectionRatio( 1e5 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.83051e-2*cross_section_ratio + 2.20377030499672e-3,
+                          8.83051e-2*cross_section_ratio + 2.2037700886489448e-03,
                           1e-11 );
 
   cross_section = atom->getReactionCrossSection( 1.0e-3, reaction );
-  cross_section_ratio = elastic_distribution->evaluateCDF(
-                        1.e-3,
-                        properties->getElasticCutoffAngleCosine() );
+  cross_section_ratio =
+            elastic_distribution->evaluateCutoffCrossSectionRatio( 1.0e-3 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.90281E+8*cross_section_ratio + 1.25840137740571E+8,
+                          2.90281E+8*cross_section_ratio + 1.2584013774057175e+08,
                           1e-12 );
 
-  cross_section = atom->getReactionCrossSection( 1.99526e-4, reaction );
-  cross_section_ratio = elastic_distribution->evaluateCDF(
-                        1.99526e-4,
-                        properties->getElasticCutoffAngleCosine() );
+  cross_section = atom->getReactionCrossSection( 1.995260e-4, reaction );
+  cross_section_ratio =
+            elastic_distribution->evaluateCutoffCrossSectionRatio( 1.995260e-4 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.1309e8*cross_section_ratio + 5.9201747603359349e+07,
+                          6.1309E+8*cross_section_ratio + 2.5195477504187709e+08,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1e-5, reaction );
-  cross_section_ratio = elastic_distribution->evaluateCDF(
-                        1e-5,
-                        properties->getElasticCutoffAngleCosine() );
+  cross_section_ratio = 
+            elastic_distribution->evaluateCutoffCrossSectionRatio( 1e-5 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.48924E+9*cross_section_ratio + 1.10632944155859E+8,
+                          2.48924E+9*cross_section_ratio + 1.1063294415585944e+08,
                           1e-12 );
 
 
@@ -598,15 +598,15 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
   // Test that the total cross section can be returned
   double energy = 1.0e-5;
   double cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.6290601198e9, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.62906011980000019073e+09, 1e-12 );
 
   energy = 2.0e-1;
   cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.25231424182025e7, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.25222252404707632959e+07, 1e-12 );
 
   energy = 1.0e5;
   cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 4.9570130479e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.95701304790000058711e+06, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -649,45 +649,51 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
   TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
 
-  // Test that the analog elastic cross section can be returned
-  reaction = MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION;
+  // Test that the decoupled elastic cross section can be returned
+  reaction = MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1.0e5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.11161e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.995260e1, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.14554e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.14554e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 6.309570e0, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.68623e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.68623e+06, 1e-12 );
+
+  cross_section = atom->getReactionCrossSection( 2e-1, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 1.61118815071382801980e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.995260e-3, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.103010e8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.10301e+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.995260e-4, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 6.1309e8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.1309e+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.0e-5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.489240e9, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e5, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that there is no cutoff elastic cross section
   reaction = MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION;
-  cross_section = atom->getReactionCrossSection( 1.0e5, reaction );
+  cross_section = atom->getReactionCrossSection( 1e5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection( 1.995260e1, reaction );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection( 6.309570e0, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection( 1.995260e-3, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection( 1.995260e-4, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection( 1.0e-5, reaction );
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
@@ -879,7 +885,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   properties->setBremsstrahlungAngularDistributionFunction(
                                              MonteCarlo::DIPOLE_DISTRIBUTION );
   // Set the secondary interpolation policy to LinLinLin
-  properties->setLinLinLogInterpolationModeOff();
+//  properties->setLinLinLogInterpolationModeOff();
   // Set the elastic cutoff angle cosine to 1.0
   properties->setElasticCutoffAngleCosine( 1.0 );
   // Set atomic relaxation on for electrons
@@ -913,15 +919,15 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   // Test that the total cross section can be returned
   double energy = 1.0e-5;
   double cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.6290601198e9, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.62906011980000019073e+09, 1e-12 );
 
   energy = 2.0e-1;
   cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.25231424182025e7, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.25222252404707632959e+07, 1e-12 );
 
   energy = 1.0e5;
   cross_section = atom->getTotalCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 4.9570130479e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.95701304790000058711e+06, 1e-12 );
 
 
   // Test that the absorption cross section can be returned
@@ -964,45 +970,51 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   TEST_FLOATING_EQUALITY( cross_section, 4.8698e3, 1e-12 );
 
 
-  // Test that the analog elastic cross section can be returned
-  reaction = MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION;
+  // Test that the decoupled elastic cross section can be returned
+  reaction = MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1.0e5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.11161e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.995260e1, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.14554e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.14554e+06, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 6.309570e0, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.68623e6, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.68623e+06, 1e-12 );
+
+  cross_section = atom->getReactionCrossSection( 2e-1, reaction );
+  TEST_FLOATING_EQUALITY( cross_section, 1.61118815071382801980e+07, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.995260e-3, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.103010e8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.10301e+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.995260e-4, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 6.1309e8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.1309e+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 1.0e-5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.489240e9, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e5, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that there is no cutoff elastic cross section
   reaction = MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION;
-  cross_section = atom->getReactionCrossSection( 1.0e5, reaction );
+  cross_section = atom->getReactionCrossSection( 1e5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection( 1.995260e1, reaction );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
-  cross_section = atom->getReactionCrossSection( 6.309570e0, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection( 1.995260e-3, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection( 1.995260e-4, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = atom->getReactionCrossSection( 1.0e-5, reaction );
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 

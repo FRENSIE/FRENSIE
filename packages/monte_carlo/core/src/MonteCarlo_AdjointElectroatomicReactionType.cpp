@@ -24,10 +24,10 @@ std::string convertAdjointElectroatomicReactionEnumToString(
   {
   case TOTAL_ADJOINT_ELECTROATOMIC_REACTION:
     return "Total Adjoint Electroatomic Reaction";
-  case TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION:
-    return "Total Absorption Adjoint Electroatomic Reaction";
-  case ANALOG_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
-    return "Analog Elastic Adjoint Electroatomic Reaction";
+  case COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+    return "Coupled Elastic Adjoint Electroatomic Reaction";
+  case DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+    return "Decoupled Elastic Adjoint Electroatomic Reaction";
   case HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
     return "Hybrid Elastic Adjoint Electroatomic Reaction";
   case CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
@@ -124,14 +124,15 @@ std::string convertAdjointElectroatomicReactionEnumToString(
     return "Q3 Subshell Electroionization Adjoint Electroatomic Reaction";
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: cannot convert the Adjoint Electroatomic reaction type "
-		     "to a string!" );
+                     "Error: cannot convert the adjoint Electroatomic reaction "
+                     "type to a string!" );
   }
 }
 
 // Convert a Data::SubshellType enum to an AdjointElectroatomicReactionType enum
-AdjointElectroatomicReactionType convertSubshellEnumToAdjointElectroatomicReactionEnum(
-						  const Data::SubshellType subshell )
+AdjointElectroatomicReactionType
+convertSubshellEnumToElectroionizationAdjointElectroatomicReactionEnum(
+                                            const Data::SubshellType subshell )
 {
   switch( subshell )
   {
@@ -176,8 +177,8 @@ AdjointElectroatomicReactionType convertSubshellEnumToAdjointElectroatomicReacti
   case Data::Q3_SUBSHELL: return Q3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-             "Error: the invalid shell does not have a corresponding "
-             "Electroionization Adjoint Electroatomic reaction!" );
+                     "Error: the invalid shell does not have a corresponding "
+                     "Electroionization Adjoint Electroatomic reaction!" );
   }
 }
 

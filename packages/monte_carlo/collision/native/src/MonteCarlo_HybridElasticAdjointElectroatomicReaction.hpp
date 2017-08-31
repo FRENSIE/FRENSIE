@@ -20,8 +20,7 @@
 namespace MonteCarlo{
 
 //! The hybrid elastic adjoint electroatomic reaction class
-template<typename TwoDInterpPolicy,
-         typename InterpPolicy,
+template<typename InterpPolicy,
          bool processed_cross_section = false>
 class HybridElasticAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {

@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
                    evaluateAdjointCrossSection )
 {
-  double precision = 1e-16;
+  double precision = 1e-5;
   double cross_section;
 
   // Native Electroionization
@@ -128,49 +128,41 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.361E-05, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  86521451176875.359375,
-                                  1e-6 );
+                                  1.45459306782740344e+14,
+                                  1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.88E-05, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  75473418116430.25,
-                                  1e-6 );
+                                  8.27973188840469688e+13,
+                                  1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.123900E-02, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  10085232885757.525391,
-                                  1e-6 );
+                                  2.32262715425886452e+08,
+                                  1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 8.75350E-01, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1938114506.5189130306,
-                                  1e-6 );
+                                  1.35028876890255080e+05,
+                                  1e-5 );
 
-  cross_section =
-    grid_generator.evaluateAdjointCrossSection(
-        max_ionization_subshell_adjoint_energy - 6.0e-8,
-        precision );
-
+  cross_section = grid_generator.evaluateAdjointCrossSection(
+                            max_ionization_subshell_adjoint_energy - 6.0e-8,
+                            precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  62498.955782988668943,
-                                  1e-6 );
+                                  6.24990220809307066e+04,
+                                  1e-5 );
 
-  cross_section =
-    grid_generator.evaluateAdjointCrossSection(
-        max_ionization_subshell_adjoint_energy,
-        precision );
-
+  cross_section = grid_generator.evaluateAdjointCrossSection(
+                                        max_ionization_subshell_adjoint_energy,
+                                        precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  62415.410814203823975,
-                                  1e-6 );
+                                  6.24157090392438113e+04,
+                                  1e-5 );
   }
 
   // Native Bremsstrahlung
@@ -188,31 +180,26 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  64.935407681010943293,
-                                  1e-6 );
+                                  5.06492925987715452e+01,
+                                  1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  33.230200611852552584,
-                                  1e-6 );
+                                  2.80659096301639543e+01,
+                                  1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 6.0e4, precision );
-
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  318.65574145326422695,
-                                  1e-6 );
+                                  9.48414236124130894e-01,
+                                  1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.0e5, precision );
-
   TEST_EQUALITY_CONST( cross_section, 0.0 );
   }
-
 }
 
 //---------------------------------------------------------------------------//
@@ -236,27 +223,24 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
                     distance_tol );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 1.88E-05, 1.0E-04, 1.0e-16 );
-
+    grid_generator.evaluateAdjointPDF( 1.88E-05, 1.0E-04, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  0.0085138663210346018223,
-                                  1e-6 );
+                                  7.03876269450687264e-03,
+                                  1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-16 );
-
+    grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.1791068996014191233e-10,
+                                  9.18192907572466955e-06,
                                   1e-6 );
 
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 8.75350E-01,
                                        max_ionization_subshell_adjoint_energy,
-                                       1.0e-16 );
-
+                                       1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.7344420224170549014e-10,
-                                  1.0e-6 );
+                                  2.48914820325727447e-06,
+                                  1.0e-5 );
   }
 
   // Native Bremsstrahlung
@@ -273,22 +257,19 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
                     distance_tol );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-16 );
-
+    grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  0.9930515094610286031,
-                                  1e-6 );
+                                  1.17577664633500101,
+                                  1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 6.0e4, 1.0e5, 1.0e-16 );
-
+    grid_generator.evaluateAdjointPDF( 6.0e4, 1.0e5, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.9826488900521473179e-09,
-                                  1e-6 );
+                                  6.66146107931649665e-07,
+                                  1e-5 );
 
   diff_cross_section =
-    grid_generator.evaluateAdjointPDF( 1.0e5-5.0e-8, 1.0e5, 1.0e-16 );
-
+    grid_generator.evaluateAdjointPDF( 1.0e5-5.0e-8, 1.0e5, 1.0e-4 );
   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
   }
 }
@@ -332,67 +313,57 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 480 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 563 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                   0.01 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf[0.01].size(), 480 );
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 563 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
-                                  2515799.9709712304175,
+                                  1.52093743868442765e+06,
                                   1e-6 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(), 
-                                  6.070850573859183565e-06,
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(),
+                                  3.26680624502745858e-06,
                                   1e-6 );
 
   // Check the generated max energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 391 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 425 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                   1.0 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf[1.0].size(), 391 );
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 425 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
-                                  231843.12605058084591,
+                                  2.00226002762292570e+05,
                                   1e-6 );
-
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
-                                  2.4063406981884109793e-4,
+                                  1.56681865400607552e-04,
                                   1e-6 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_h_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_h_file_name, test_native_pb_file_name;
+  clp().setOption( "test_native_h_file",
+                   &test_native_h_file_name,
+                   "Test Native H file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_h_file",
-                 &test_native_h_file_name,
-                 "Test Native H file name" );
-  clp.setOption( "test_native_pb_file",
-                 &test_native_pb_file_name,
-                 "Test Native Pb file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
-  {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  bool correlated_sampling_mode_on = true;
+  bool unit_based_interpolation_mode_on = true;
+  double evaluation_tol = 1e-7;
 
   // Create the H distributions
   {
@@ -414,11 +385,14 @@ int main( int argc, char** argv )
                 union_energy_grid.size()/10 + 1 ) );
 
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-      data_container,
-      union_energy_grid,
-      grid_searcher,
-      h_brem_reaction,
-      MonteCarlo::DIPOLE_DISTRIBUTION );
+        data_container,
+        union_energy_grid,
+        grid_searcher,
+        h_brem_reaction,
+        MonteCarlo::DIPOLE_DISTRIBUTION,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
     brem_energy_grid = data_container.getBremsstrahlungEnergyGrid();
 
@@ -435,39 +409,22 @@ int main( int argc, char** argv )
 
     // Create the subshell electroelectric reaction
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
-      data_container,
-      union_energy_grid,
-      grid_searcher,
-      *shell,
-      h_ionization_reaction );
+        data_container,
+        union_energy_grid,
+        grid_searcher,
+        *shell,
+        h_ionization_reaction,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
     binding_energy = data_container.getSubshellBindingEnergy( *shell );
 
     max_ionization_subshell_adjoint_energy = 1e5 - 2.0*binding_energy;
   }
-
-  // Create the Pb distributions
-  {
-    // Create the native data file container
-    Data::ElectronPhotonRelaxationDataContainer
-      data_container( test_native_pb_file_name );
-
-  }
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);   
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAdjointElectronGridGenerator.cpp

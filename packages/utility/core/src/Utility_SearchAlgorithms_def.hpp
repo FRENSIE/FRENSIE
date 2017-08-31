@@ -64,6 +64,7 @@ inline Iterator binaryLowerBound(
   remember( --true_end );
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
+
   // The value used for the search must be within the limits of the sorted data
   testPrecondition( (value >= get<member>( *start )) );
   testPrecondition( (value <= get<member>( *(true_end) )) );

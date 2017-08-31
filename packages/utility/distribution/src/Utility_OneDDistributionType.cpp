@@ -23,7 +23,6 @@ std::string convertOneDDistributionTypeToString(
   {
   case DELTA_DISTRIBUTION: return "Delta Distribution";
   case DISCRETE_DISTRIBUTION: return "Discrete Distribution";
-  case ELASTIC_ELECTRON_DISTRIBUTION: return "Elastic Electron Distribution";
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";
   case EVAPORATION_DISTRIBUTION: return "Evaporation Distribution";
   case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";
@@ -38,6 +37,8 @@ std::string convertOneDDistributionTypeToString(
   case UNIFORM_DISTRIBUTION: return "Uniform Distribution";
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
   case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
+  case COUPLED_ELASTIC_DISTRIBUTION: return "Coupled Elastic Distribution";
+  case HYBRID_ELASTIC_DISTRIBUTION: return "Hybrid Elastic Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
 		     "The distribution type is missin a name. Please add it!");

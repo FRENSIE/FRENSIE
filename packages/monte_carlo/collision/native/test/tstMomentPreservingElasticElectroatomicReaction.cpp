@@ -51,7 +51,7 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getReactionType )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getReactionType(),
-		       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -67,10 +67,10 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getThresholdEne
 TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmittedElectrons )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -78,10 +78,10 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmit
 TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction, getNumberOfEmittedPhotons )
 {
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+                       0u );
 
   TEST_EQUALITY_CONST( mp_elastic_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -90,20 +90,14 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectroatomicReaction,
                    getCrossSection )
 {
 
-  double cross_section =
-    mp_elastic_reaction->getCrossSection( 1.0E-05 );
+  double cross_section = mp_elastic_reaction->getCrossSection( 1.0E-05 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.611494138359356821e+08, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.611494138359350E+08, 1e-12 );
+  cross_section = mp_elastic_reaction->getCrossSection( 1.0E-03 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.730253976136980951e+07, 1e-12 );
 
-  cross_section =
-    mp_elastic_reaction->getCrossSection( 1.0E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 5.730253976136980E+07, 1e-12 );
-
-  cross_section =
-    mp_elastic_reaction->getCrossSection( 1.0E+05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 6.808061009771560E-05, 1e-12 );
+  cross_section = mp_elastic_reaction->getCrossSection( 1.0E+05 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.8080603251349155e-05, 1e-12 );
 }
 
 
@@ -186,10 +180,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
         function_data ) );
 
+    bool correlated_sampling_mode_on = true;
+
     discrete_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                cutoff_angle_cosine ) );
+                cutoff_angle_cosine,
+                correlated_sampling_mode_on ) );
 
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(

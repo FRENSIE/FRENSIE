@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_KinematicHelpers.hpp
-//! \author Alex Bennett, Alex Robinson
+//! \author Alex Bennett, Alex Robinson, Luke Kersting
 //! \brief  Kinematic helper function declarations
 //!
 //---------------------------------------------------------------------------//
@@ -46,8 +46,7 @@ double calculateRelativisticMomentumEnergySquared(
 
 //! Calculate the dimensionless momentum**2 of a relativistic particle ( momentum/mass*c )**2
 double calculateDimensionlessRelativisticMomentumSquared(
-                                                  const double rest_mass_energy,
-                                                  const double kinetic_energy );
+                            const double kinetic_energy_in_rest_mass_units );
 
 //! Calculate the momentum of a massive particle ( MeV*s/cm )
 double calculateRelativisticMomentum( const double rest_mass_energy,
@@ -165,14 +164,12 @@ inline double calculateRelativisticMomentumEnergySquared(
 }
 
 // Calculate the dimensionless momentum of a relativistic particle ( momentum/mass*c )**2
-//! Write Unit Test
+//! \todo Write Unit Test
 inline double calculateDimensionlessRelativisticMomentumSquared(
-                                                  const double rest_mass_energy,
-                                                  const double kinetic_energy )
+                            const double kinetic_energy_in_rest_mass_units )
 {
-  return calculateRelativisticMomentumEnergySquared(
-               rest_mass_energy, kinetic_energy ) /
-               (rest_mass_energy*rest_mass_energy);
+  return kinetic_energy_in_rest_mass_units*( kinetic_energy_in_rest_mass_units +
+                                             2.0L );
 }
 
 // Calculate the momentum of a relativistic particle ( MeV*s/cm )

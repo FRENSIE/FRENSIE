@@ -56,26 +56,34 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
     {
       // Set the correlated unit based sample routine
       d_sample_func = std::bind<double>(
-           &ElectroionizationSubshellElectronScatteringDistribution::correlatedSampleUnitBased,
-           std::cref( *this ),
-           std::placeholders::_1 );
+        &TwoDDist::correlatedSampleSecondaryConditionalInBoundaries,
+        std::cref( *d_electroionization_subshell_scattering_distribution ),
+        std::placeholders::_1,
+        std::bind<double>(
+          &ThisType::getMinSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ),
+        std::bind<double>(
+          &ThisType::getMaxSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ) );
     }
     else
     {
       // Set the stochastic unit based sample routine
       d_sample_func = std::bind<double>(
-           &ElectroionizationSubshellElectronScatteringDistribution::sampleUnitBased,
-           std::cref( *this ),
-           std::placeholders::_1 );
+            &TwoDDist::sampleSecondaryConditional,
+            std::cref( *d_electroionization_subshell_scattering_distribution ),
+            std::placeholders::_1 );
     }
   }
   else
   {
       // Set the correlated exact sample routine
     d_sample_func = std::bind<double>(
-           &ElectroionizationSubshellElectronScatteringDistribution::correlatedSampleExact,
-           std::cref( *this ),
-           std::placeholders::_1 );
+            &TwoDDist::sampleSecondaryConditionalExact,
+            std::cref( *d_electroionization_subshell_scattering_distribution ),
+            std::placeholders::_1 );
   }
 }
 
@@ -92,43 +100,67 @@ void ElectroionizationSubshellElectronScatteringDistribution::setEvaluationRouti
   {
     // Set the correlated unit based evaluation routines
     d_evaluate_func = std::bind<double>(
-       &ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateUnitBased,
-       std::cref( *this ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+        &TwoDDist::correlatedEvaluateInBoundaries,
+        std::cref( *d_electroionization_subshell_scattering_distribution ),
+        std::placeholders::_1,
+        std::placeholders::_2,
+        std::bind<double>(
+          &ThisType::getMinSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ),
+        std::bind<double>(
+          &ThisType::getMaxSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ) );
 
     d_evaluate_pdf_func = std::bind<double>(
-       &ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluatePDFUnitBased,
-       std::cref( *this ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+        &TwoDDist::correlatedEvaluateSecondaryConditionalPDFInBoundaries,
+        std::cref( *d_electroionization_subshell_scattering_distribution ),
+        std::placeholders::_1,
+        std::placeholders::_2,
+        std::bind<double>(
+          &ThisType::getMinSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ),
+        std::bind<double>(
+          &ThisType::getMaxSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ) );
 
     d_evaluate_cdf_func = std::bind<double>(
-       &ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateCDFUnitBased,
-       std::cref( *this ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+        &TwoDDist::correlatedEvaluateSecondaryConditionalCDFInBoundaries,
+        std::cref( *d_electroionization_subshell_scattering_distribution ),
+        std::placeholders::_1,
+        std::placeholders::_2,
+        std::bind<double>(
+          &ThisType::getMinSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ),
+        std::bind<double>(
+          &ThisType::getMaxSecondaryEnergyAtIncomingEnergy,
+          std::cref( *this ),
+          std::placeholders::_1 ) );
   }
   else
   {
     // Set the correlated exact evaluation routines
     d_evaluate_func = std::bind<double>(
-       &ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateExact,
-       std::cref( *this ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+        &TwoDDist::evaluateExact,
+        std::cref( *d_electroionization_subshell_scattering_distribution ),
+        std::placeholders::_1,
+        std::placeholders::_2 );
 
     d_evaluate_pdf_func = std::bind<double>(
-       &ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluatePDFExact,
-       std::cref( *this ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+        &TwoDDist::evaluateSecondaryConditionalPDFExact,
+        std::cref( *d_electroionization_subshell_scattering_distribution ),
+        std::placeholders::_1,
+        std::placeholders::_2 );
 
     d_evaluate_cdf_func = std::bind<double>(
-       &ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateCDFExact,
-       std::cref( *this ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+        &TwoDDist::evaluateSecondaryConditionalCDFExact,
+        std::cref( *d_electroionization_subshell_scattering_distribution ),
+        std::placeholders::_1,
+        std::placeholders::_2 );
   }
 }
 
@@ -207,11 +239,12 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   // calcualte the energy of the second outgoing electron
   double outgoing_energy_2 = incoming_energy - outgoing_energy_1 - this->getBindingEnergy();
 
-  if ( outgoing_energy_2 <= 0.0 )
-    return 0.0;
-
   // Assume the lower of the two outgoing energies is the knock-on electron
   double knock_on_energy = std::min( outgoing_energy_1, outgoing_energy_2 );
+
+  // Make sure the knock on energy is above the min outgoing energy
+  if ( knock_on_energy < this->getMinSecondaryEnergyAtIncomingEnergy( incoming_energy ) )
+    return 0.0;
 
   // evaluate the CDF
   return d_evaluate_pdf_func( incoming_energy, knock_on_energy );
@@ -274,8 +307,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Sample knock-on electron energy and outgoing angle
   this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
-  outgoing_energy =
-        std::max( 1e-15, incoming_energy - knock_on_energy - d_binding_energy );
+  outgoing_energy = incoming_energy - knock_on_energy - d_binding_energy;
 
   // Calculate the outgoing angle cosine for the primary electron
   scattering_angle_cosine = outgoingAngle( incoming_energy,
@@ -322,7 +354,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
           knock_on_angle_cosine );
 
   // Create new elecrton
-  Teuchos::RCP<ElectronState> knock_on_electron(
+  Teuchos::RCP<ParticleState> knock_on_electron(
                            new ElectronState( electron, true, true ) );
 
   // Set knock-on electron energy
@@ -348,102 +380,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   electron.incrementGenerationNumber();
 }
 
-
-// Evaluate the distribution for a given incoming and outgoing energy
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateUnitBased(
-                                        const double incoming_energy,
-                                        const double outgoing_energy ) const
-{
-  return d_electroionization_subshell_scattering_distribution->correlatedEvaluate(
-            incoming_energy,
-            outgoing_energy,
-            this->getMinSecondaryEnergyAtIncomingEnergy(incoming_energy),
-            this->getMaxSecondaryEnergyAtIncomingEnergy(incoming_energy) );
-}
-
-// Evaluate the distribution for a given incoming and outgoing energy
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateExact(
-                                        const double incoming_energy,
-                                        const double outgoing_energy ) const
-{
-  return d_electroionization_subshell_scattering_distribution->evaluateExact(
-            incoming_energy,
-            outgoing_energy );
-}
-
-// Evaluate the PDF value for a given incoming and outgoing energy
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluatePDFUnitBased(
-                                        const double incoming_energy,
-                                        const double outgoing_energy ) const
-{
-  return d_electroionization_subshell_scattering_distribution->correlatedEvaluateSecondaryConditionalPDF(
-            incoming_energy,
-            outgoing_energy,
-            this->getMinSecondaryEnergyAtIncomingEnergy(incoming_energy),
-            this->getMaxSecondaryEnergyAtIncomingEnergy(incoming_energy) );
-}
-
-// Evaluate the PDF value for a given incoming and outgoing energy
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluatePDFExact(
-                                        const double incoming_energy,
-                                        const double outgoing_energy ) const
-{
-  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalPDFExact(
-            incoming_energy,
-            outgoing_energy );
-}
-
-// Evaluate the CDF value for a given incoming and outgoing energy
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateCDFUnitBased(
-                                        const double incoming_energy,
-                                        const double outgoing_energy ) const
-{
-  return d_electroionization_subshell_scattering_distribution->correlatedEvaluateSecondaryConditionalCDF(
-            incoming_energy,
-            outgoing_energy,
-            this->getMinSecondaryEnergyAtIncomingEnergy(incoming_energy),
-            this->getMaxSecondaryEnergyAtIncomingEnergy(incoming_energy) );
-}
-
-// Evaluate the CDF value for a given incoming and outgoing energy
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedEvaluateCDFExact(
-                                        const double incoming_energy,
-                                        const double outgoing_energy ) const
-{
-  return d_electroionization_subshell_scattering_distribution->evaluateSecondaryConditionalCDFExact(
-            incoming_energy,
-            outgoing_energy );
-}
-
-// Sample a secondary energy from the distribution
-double ElectroionizationSubshellElectronScatteringDistribution::sampleUnitBased(
-            const double incoming_energy ) const
-{
-  // Sample the outgoing energy
-  return d_electroionization_subshell_scattering_distribution->sampleSecondaryConditional(
-            incoming_energy );
-}
-
-// Sample a secondary energy from the distribution
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedSampleUnitBased(
-             const double incoming_energy ) const
-{
-  // Sample the outgoing energy
-  return d_electroionization_subshell_scattering_distribution->correlatedSampleSecondaryConditional(
-            incoming_energy,
-            this->getMinSecondaryEnergyAtIncomingEnergy(incoming_energy),
-            this->getMaxSecondaryEnergyAtIncomingEnergy(incoming_energy) );
-}
-
-// Sample a secondary energy from the distribution
-double ElectroionizationSubshellElectronScatteringDistribution::correlatedSampleExact(
-             const double incoming_energy ) const
-{
-  // Sample the outgoing energy
-  return d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
-            incoming_energy );
-}
-
 // Calculate the outgoing angle cosine
 double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
                                             const double incoming_energy,
@@ -452,10 +388,13 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
   testPrecondition( incoming_energy > outgoing_energy )
 
   // The normalized incoming electron energy
+//  double normalized_incoming_energy =
+//          (incoming_energy + d_binding_energy)/Utility::PhysicalConstants::electron_rest_mass_energy;
   double normalized_incoming_energy =
           incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
 
   // The ratio of incoming to outgoing energy
+//  double energy_ratio = (outgoing_energy + d_binding_energy)/incoming_energy;
   double energy_ratio = outgoing_energy/incoming_energy;
 
   // Randomly select the plane of scattering

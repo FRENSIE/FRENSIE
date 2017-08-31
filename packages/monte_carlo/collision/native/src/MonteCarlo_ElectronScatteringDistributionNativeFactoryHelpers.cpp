@@ -15,56 +15,50 @@ namespace MonteCarlo{
 //      ****ELASTIC DISTRIBUTIONS****
 //----------------------------------------------------------------------------//
 
-// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
-std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
+// Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
+std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
-  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     distribution;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
         distribution,
         data_container,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
+        distribution,
+        data_container,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin>(
+        distribution,
+        data_container,
+        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
-        distribution,
-        data_container,
-        evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
 
-  return distribution;
-}
-
-// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
-std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogElasticDistribution(
-    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const bool linlinlog_interpolation_mode_on,
-    const double evaluation_tol )
-{
-  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    distribution;
-
-  if ( linlinlog_interpolation_mode_on )
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
-        distribution,
-        data_container,
-        evaluation_tol );
-  }
-  else
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLin>(
-        distribution,
-        data_container,
-        evaluation_tol );
-  }
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }
@@ -73,19 +67,14 @@ std::shared_ptr<const AnalogElasticElectronScatteringDistribution> createAnalogE
 std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
                       data_container.getElectronEnergyGrid().end() );
-
-  // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-                             energy_grid,
-                             100 ) );
 
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
@@ -111,100 +100,52 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   std::shared_ptr<const HybridElasticElectronScatteringDistribution>
     distribution;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogLog>(
+        distribution,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
+        distribution,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
-        distribution,
-        grid_searcher,
-        energy_grid,
-        cutoff_cross_section,
-        mp_cross_section,
-        data_container,
-        cutoff_angle_cosine,
-        evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
 
-  return distribution;
-}
-
-//! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
-    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
-    const double evaluation_tol )
-{
-  // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( data_container.getAdjointElectronEnergyGrid().begin(),
-                      data_container.getAdjointElectronEnergyGrid().end() );
-
-  // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-                             energy_grid,
-                             100 ) );
-
-  // Cutoff elastic cross section
-  Teuchos::ArrayRCP<double> cutoff_cross_section;
-  cutoff_cross_section.assign(
-    data_container.getAdjointCutoffElasticCrossSection().begin(),
-    data_container.getAdjointCutoffElasticCrossSection().end() );
-
-  // Cutoff elastic cross section threshold energy bin index
-  unsigned cutoff_threshold_energy_index =
-    data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
-
-  // Moment preserving elastic cross section
-  Teuchos::ArrayRCP<double> mp_cross_section;
-  mp_cross_section.assign(
-    data_container.getAdjointMomentPreservingCrossSection().begin(),
-    data_container.getAdjointMomentPreservingCrossSection().end() );
-
-  // Moment preserving elastic cross section threshold energy bin index
-  unsigned mp_threshold_energy_index =
-    data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
-
-  // Create the hybrid elastic scattering distribution
-  std::shared_ptr<const HybridElasticElectronScatteringDistribution>
-    distribution;
-
-  if ( linlinlog_interpolation_mode_on )
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
-        distribution,
-        grid_searcher,
-        energy_grid,
-        cutoff_cross_section,
-        mp_cross_section,
-        data_container,
-        cutoff_angle_cosine,
-        evaluation_tol );
-  }
-  else
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
-        distribution,
-        grid_searcher,
-        energy_grid,
-        cutoff_cross_section,
-        mp_cross_section,
-        data_container,
-        cutoff_angle_cosine,
-        evaluation_tol );
-  }
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }
@@ -213,46 +154,50 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
 std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     distribution;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
+        distribution,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
+        distribution,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+        distribution,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
-      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
 
-  return distribution;
-}
-
-//! Create a cutoff elastic distribution
-std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
-    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
-    const double evaluation_tol )
-{
-  std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
-    distribution;
-
-  if ( linlinlog_interpolation_mode_on )
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
-  }
-  else
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
-      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
-  }
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }
@@ -261,52 +206,50 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
 std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
-      distribution,
-      data_container,
-      cutoff_angle_cosine,
-      evaluation_tol );
+        distribution,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogLog>(
+        distribution,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
+        distribution,
+        data_container,
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
   }
   else
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
-      distribution,
-      data_container,
-      cutoff_angle_cosine,
-      evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
 
-  return distribution;
-}
-
-//! Create a moment preserving elastic distribution
-std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
-    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine,
-    const bool linlinlog_interpolation_mode_on,
-    const double evaluation_tol )
-{
-  std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
-    distribution;
-
-  if ( linlinlog_interpolation_mode_on )
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
-      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
-  }
-  else
-  {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
-      distribution, data_container, cutoff_angle_cosine, evaluation_tol );
-  }
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }
@@ -318,7 +261,7 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
 // Create a simple dipole bremsstrahlung distribution
 std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
@@ -326,24 +269,43 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
 
-  if (linlinlog_interpolation_mode_on)
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
-    data_container,
-    distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
-    evaluation_tol );
+    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
+        data_container,
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog>(
+        data_container,
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
+        data_container,
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
   }
   else
   {
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
-    data_container,
-    distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
-    evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }
@@ -352,7 +314,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
 std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
@@ -360,26 +322,46 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
 
-  if (linlinlog_interpolation_mode_on)
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
-    data_container,
-    data_container.getAtomicNumber(),
-    distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
-    evaluation_tol );
+    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
+        data_container,
+        data_container.getAtomicNumber(),
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog>(
+        data_container,
+        data_container.getAtomicNumber(),
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
+        data_container,
+        data_container.getAtomicNumber(),
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
   }
   else
   {
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
-    data_container,
-    data_container.getAtomicNumber(),
-    distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
-    evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }
@@ -393,7 +375,7 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
-    const bool linlinlog_interpolation_mode_on,
+    const std::string two_d_interp_policy_name,
     const bool correlated_sampling_mode_on,
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
@@ -401,28 +383,49 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
   std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
     distribution;
 
-  if (linlinlog_interpolation_mode_on)
+  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
-    data_container,
-    subshell,
-    binding_energy,
-    distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
-    evaluation_tol );
+        data_container,
+        subshell,
+        binding_energy,
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
+  {
+    ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog>(
+        data_container,
+        subshell,
+        binding_energy,
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
+  }
+  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
+  {
+    ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin>(
+        data_container,
+        subshell,
+        binding_energy,
+        distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
   }
   else
   {
-    ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin>(
-    data_container,
-    subshell,
-    binding_energy,
-    distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
-    evaluation_tol );
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the TwoDInterpPolicy " <<
+                     two_d_interp_policy_name <<
+                     " is invalid or currently not supported!" );
   }
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
 
   return distribution;
 }

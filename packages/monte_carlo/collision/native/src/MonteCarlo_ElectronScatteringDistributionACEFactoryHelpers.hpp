@@ -24,8 +24,7 @@ namespace MonteCarlo{
 
 //! Create a cutoff elastic distribution
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
-    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double cutoff_angle_cosine = 1.0 );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data );
 
 //----------------------------------------------------------------------------//
 //      ****BREMSSTRAHLUNG DISTRIBUTIONS****

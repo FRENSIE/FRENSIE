@@ -14,7 +14,6 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "DataGen_AdjointElectronCrossSectionEvaluator.hpp"
 #include "Utility_TwoDGridGenerator.hpp"
 
 namespace DataGen{

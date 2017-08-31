@@ -9,15 +9,9 @@
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_ElectronState.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -90,39 +84,6 @@ public:
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
-
-  //! Evaluate the distribution for a given incoming and photon energy
-  double correlatedEvaluateUnitBased( const double incoming_energy,
-                                      const double photon_energy ) const;
-
-  //! Evaluate the distribution for a given incoming and photon energy
-  double correlatedEvaluateExact( const double incoming_energy,
-                                  const double photon_energy ) const;
-
-  //! Evaluate the PDF value for a given incoming and photon energy
-  double correlatedEvaluatePDFUnitBased( const double incoming_energy,
-                                         const double photon_energy ) const;
-
-  //! Evaluate the PDF value for a given incoming and photon energy
-  double correlatedEvaluatePDFExact( const double incoming_energy,
-                                     const double photon_energy ) const;
-
-  //! Evaluate the CDF value for a given incoming and photon energy
-  double correlatedEvaluateCDFUnitBased( const double incoming_energy,
-                                         const double photon_energy ) const;
-
-  //! Evaluate the CDF value for a given incoming and photon energy
-  double correlatedEvaluateCDFExact( const double incoming_energy,
-                                     const double photon_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double sampleUnitBased( const double incoming_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double correlatedSampleUnitBased( const double incoming_energy ) const;
-
-  //! Sample a secondary energy from the distribution
-  double correlatedSampleExact( const double incoming_energy ) const;
 
   // Sample the outgoing photon angle from a dipole distribution
   double SampleDipoleAngle(  const double incoming_electron_energy,

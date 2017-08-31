@@ -59,6 +59,10 @@ public:
   //! Return the number of photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double outgoing_energy ) const;
+
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
 

@@ -28,7 +28,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLinLog,Utility::LinLin> >
+Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin> >
     hybrid_elastic_reaction;
 
 //---------------------------------------------------------------------------//
@@ -38,7 +38,7 @@ Teuchos::RCP<MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinL
 TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction, getReactionType )
 {
   TEST_EQUALITY_CONST( hybrid_elastic_reaction->getReactionType(),
-		       MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+                       MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -77,23 +77,23 @@ TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction, getNumberOfEmitted
 TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
-
+  // Cross section ratio for cutoff angle
+  double ratio = 9.500004750002375431e-01;
   double cross_section = hybrid_elastic_reaction->getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.74896E+08*9.50000475000238E-01 + 1.22176061033364E+07,
+                          2.74896E+08*ratio + 1.2217606103336416e+07,
                           1e-12 );
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
-
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.9754757077506483e+06,
+                          1.999295249079475412e+06,
                           1e-12 );
 
+  ratio = 8.090305336994016189e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );
-
   TEST_FLOATING_EQUALITY( cross_section,
-                          3.04727623729037E+02*8.2702774720157165e-06 + 2.0520968300008926,
+                          3.047276237290374752e+02*ratio + 2.0498802209908908,
                           1e-12 );
 }
 
@@ -173,16 +173,17 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         hybrid_elastic_distribution;
 
     double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
+    bool correlated_sampling_mode_on = true;
     double evaluation_tol = 1e-7;
 
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
         hybrid_elastic_distribution,
-        grid_searcher,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Calculate the hybrid cross section
@@ -226,10 +227,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the reaction
     hybrid_elastic_reaction.reset(
-      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLinLog,Utility::LinLin>(
+      new MonteCarlo::HybridElasticAdjointElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
+            grid_searcher,
             cutoff_angle_cosine,
             hybrid_elastic_distribution ) );
   }

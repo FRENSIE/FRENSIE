@@ -252,7 +252,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::set<unsigned> subshells = data_container->getSubshells();
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
     *data_container,
     *subshells.begin(),
     binding_energy,

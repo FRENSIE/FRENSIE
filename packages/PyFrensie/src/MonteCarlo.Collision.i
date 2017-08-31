@@ -194,6 +194,11 @@ MonteCarlo::calculateDopplerBroadenedEnergy;
 %include "MonteCarlo_ElectronScatteringDistribution.i"
 
 //---------------------------------------------------------------------------//
+// Add Electroatomic Reaction support
+//---------------------------------------------------------------------------//
+%include "MonteCarlo_ElectroatomicReaction.i"
+
+//---------------------------------------------------------------------------//
 // Turn off the exception handling
 //---------------------------------------------------------------------------//
 %exception;

@@ -137,6 +137,12 @@ struct LogLog : public InterpolationHelper<LogLog>
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
@@ -149,7 +155,7 @@ struct LogLog : public InterpolationHelper<LogLog>
   //! Process the independent value
   template<typename T>
   static typename QuantityTraits<T>::RawType
-  processIndepVar( const T indep_var );
+  processIndepVar( const T cosine_var );
 
   //! Process the dependent value
   template<typename T>
@@ -207,6 +213,12 @@ struct LogLin : public InterpolationHelper<LogLin>
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
@@ -219,7 +231,7 @@ struct LogLin : public InterpolationHelper<LogLin>
   //! Process the independent value
   template<typename T>
   static typename QuantityTraits<T>::RawType
-  processIndepVar( const T indep_var );
+  processIndepVar( const T cosine_var );
 
   //! Process the dependent value
   template<typename T>
@@ -277,6 +289,12 @@ struct LinLog : public InterpolationHelper<LinLog>
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
   static typename QuantityTraits<DepType>::RawType
@@ -289,7 +307,7 @@ struct LinLog : public InterpolationHelper<LinLog>
   //! Process the independent value
   template<typename T>
   static typename QuantityTraits<T>::RawType
-  processIndepVar( const T indep_var );
+  processIndepVar( const T cosine_var );
 
   //! Process the dependent value
   template<typename T>
@@ -347,6 +365,12 @@ struct LinLin : public InterpolationHelper<LinLin>
                               const DepType dep_var_0,
                               const DepType dep_var_1 );
 
+  //! Interpolate between two points using the indep variable ratio (beta)
+  template<typename T, typename DepType>
+  static DepType interpolate( const T beta,
+                              const DepType dep_var_0,
+                              const DepType dep_var_1 );
+
   //! Interpolate between two points and return the processed value
   template<typename IndepType, typename DepType>
   static typename QuantityTraits<DepType>::RawType 
@@ -355,7 +379,7 @@ struct LinLin : public InterpolationHelper<LinLin>
                          const IndepType indep_var,
                          const DepType dep_var_0,
                          const DepType dep_var_1 );
-  
+
   //! Test if the independent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isIndepVarInValidRange( const T indep_var );

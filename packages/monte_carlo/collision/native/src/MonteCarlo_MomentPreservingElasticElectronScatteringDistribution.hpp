@@ -36,7 +36,8 @@ public:
   //! Constructor
   MomentPreservingElasticElectronScatteringDistribution(
         const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
-        const double cutoff_angle_cosine );
+        const double cutoff_angle_cosine,
+        const bool correlated_sampling_mode_on );
 
   //! Destructor
   virtual ~MomentPreservingElasticElectronScatteringDistribution()
@@ -89,6 +90,9 @@ private:
 
   // The cutoff angle cosine
   double d_cutoff_angle_cosine;
+
+  // The sample function pointer
+  std::function<double ( const double )> d_sample_func;
 };
 
 } // end MonteCarlo namespace

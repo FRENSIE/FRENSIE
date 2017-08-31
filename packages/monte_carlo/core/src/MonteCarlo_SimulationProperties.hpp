@@ -15,6 +15,7 @@
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
 #include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 
 namespace MonteCarlo{
@@ -26,7 +27,8 @@ class SimulationProperties : public SimulationGeneralProperties,
                              public SimulationNeutronProperties,
                              public SimulationPhotonProperties,
                              public SimulationAdjointPhotonProperties,
-                             public SimulationElectronProperties
+                             public SimulationElectronProperties,
+                             public SimulationAdjointElectronProperties
 {
 
 public:

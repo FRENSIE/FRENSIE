@@ -88,7 +88,22 @@ ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABL
 
 # Add the MonteCarlo.Collision.ElectronScatteringDistribution unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectronScatteringDistribution)
-ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectronScatteringDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectronScatteringDistribution.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml)
 SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
+
+# Add the MonteCarlo.Collision.AdjointElectronScatteringDistribution unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.AdjointElectronScatteringDistribution)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.AdjointElectronScatteringDistribution_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.AdjointElectronScatteringDistribution.py --adjointfile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.AdjointElectronScatteringDistribution_test PROPERTY LABELS pyfrensie electron adjoint)
+
+# Add the MonteCarlo.Collision.ElectroatomicReaction unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ElectroatomicReaction)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.ElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml )
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.ElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
+
+# Add the adjoint MonteCarlo.Collision.ElectroatomicReaction unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.AdjointElectroatomicReaction)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.AdjointElectroatomicReaction_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.AdjointElectroatomicReaction.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml )
+SET_PROPERTY(TEST PyFrensie.MonteCarlo.Collision.AdjointElectroatomicReaction_test PROPERTY LABELS pyfrensie electron )
 
 

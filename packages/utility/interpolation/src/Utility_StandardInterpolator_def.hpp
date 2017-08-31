@@ -112,7 +112,7 @@ auto StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>
                                                          processed_slope ) );
 }
 
-// Interpolate between two points and return the processed valu
+// Interpolate between two points and return the processed value
 template<typename InterpPolicy, typename IndependentUnit, typename DependentUnit, typename T>
 T StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::interpolateAndProcess(
                                             const IndepQuantity indep_var_0,

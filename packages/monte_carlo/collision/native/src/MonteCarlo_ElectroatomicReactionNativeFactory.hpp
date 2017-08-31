@@ -16,6 +16,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
@@ -28,53 +32,86 @@ class ElectroatomicReactionNativeFactory
 
 public:
 
-  //! Create an analog elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
-  static void createAnalogElasticReaction(
+  // Typedef for the Elastic Distribution Factory
+  using ElasticFactory = ElasticElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Bremsstrahlung Distribution Factory
+  using BremsstrahlungFactory =
+    BremsstrahlungElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Electroionization Subshell Distribution Factory
+  using ElectroionizationFactory =
+    ElectroionizationSubshellElectronScatteringDistributionNativeFactory;
+
+  // Typedef for the Atomic Excitation Distribution Factory
+  using ExcitationFactory =
+    AtomicExcitationElectronScatteringDistributionNativeFactory;
+
+  // Typedef for this type
+  using ThisType = ElectroatomicReactionNativeFactory;
+
+  //! Create an coupled elastic scattering electroatomic reaction
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
+    const double evaluation_tol );
+
+  //! Create a decoupled elastic scattering electroatomic reaction
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  static void createDecoupledElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LinLinLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine ,
+    const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an atomic excitation scattering electroatomic reaction
@@ -86,7 +123,7 @@ public:
 
   //! Create the subshell electroionization electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
-            typename TwoDInterpPolicy = Utility::LinLinLog>
+            typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -99,7 +136,7 @@ public:
 
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
-            typename TwoDInterpPolicy = Utility::LinLinLog>
+            typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -112,7 +149,7 @@ public:
 
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
-            typename TwoDInterpPolicy = Utility::LinLinLog>
+            typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,

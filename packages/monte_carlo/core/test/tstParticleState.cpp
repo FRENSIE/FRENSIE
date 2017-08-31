@@ -37,12 +37,12 @@ public:
   { /* ... */ }
 
   TestParticleState( const MonteCarlo::ParticleState& existing_base_state,
-		     const bool increment_generation_number = false,
-		     const bool reset_collision_number = false )
+                     const bool increment_generation_number = false,
+                     const bool reset_collision_number = false )
     : MonteCarlo::ParticleState( existing_base_state,
-			     MonteCarlo::PHOTON,
-			     increment_generation_number,
-			     reset_collision_number )
+                                 MonteCarlo::PHOTON,
+                                 increment_generation_number,
+                                 reset_collision_number )
   { /* ... */ }
 
   ~TestParticleState()
@@ -52,7 +52,7 @@ public:
   { return 1.0; }
 
   MonteCarlo::ParticleState::timeType calculateTraversalTime(
-						  const double distance ) const
+                                                  const double distance ) const
   { return 1.0; }
 
   MonteCarlo::ParticleState* clone() const
@@ -545,33 +545,33 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
   TestParticleState particle_gen_b( particle_gen_a, true );
 
   TEST_EQUALITY( particle_gen_b.getXPosition(),
-		 particle_gen_a.getXPosition() );
+                 particle_gen_a.getXPosition() );
   TEST_EQUALITY( particle_gen_b.getYPosition(),
-		 particle_gen_a.getYPosition() );
+                 particle_gen_a.getYPosition() );
   TEST_EQUALITY( particle_gen_b.getZPosition(),
-		 particle_gen_a.getZPosition() );
+                 particle_gen_a.getZPosition() );
   TEST_EQUALITY( particle_gen_b.getXDirection(),
-		 particle_gen_a.getXDirection() );
+                 particle_gen_a.getXDirection() );
   TEST_EQUALITY( particle_gen_b.getYDirection(),
-		 particle_gen_a.getYDirection() );
+                 particle_gen_a.getYDirection() );
   TEST_EQUALITY( particle_gen_b.getZDirection(),
-		 particle_gen_a.getZDirection() );
+                 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_b.getSourceEnergy(),
                  particle_gen_a.getSourceEnergy() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
-		 particle_gen_a.getEnergy() );
+                 particle_gen_a.getEnergy() );
   TEST_EQUALITY( particle_gen_b.getSourceTime(),
                  particle_gen_a.getSourceTime() );
   TEST_EQUALITY( particle_gen_b.getTime(),
-		 particle_gen_a.getTime() );
+                 particle_gen_a.getTime() );
   TEST_EQUALITY( particle_gen_b.getCollisionNumber(),
-		 particle_gen_a.getCollisionNumber() );
+                 particle_gen_a.getCollisionNumber() );
   TEST_EQUALITY( particle_gen_b.getGenerationNumber(),
-		 particle_gen_a.getGenerationNumber()+1u );
+                 particle_gen_a.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_b.getSourceWeight(),
                  particle_gen_a.getSourceWeight() );
   TEST_EQUALITY( particle_gen_b.getWeight(),
-		 particle_gen_a.getWeight() );
+                 particle_gen_a.getWeight() );
   TEST_EQUALITY( particle_gen_b.getSourceCell(),
                  particle_gen_a.getSourceCell() );
   TEST_EQUALITY( particle_gen_b.getCell(),
@@ -581,36 +581,36 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
   TestParticleState particle_gen_c( particle_gen_b, true, true );
 
   TEST_EQUALITY( particle_gen_c.getXPosition(),
-		 particle_gen_b.getXPosition() );
+                 particle_gen_b.getXPosition() );
   TEST_EQUALITY( particle_gen_c.getYPosition(),
-		 particle_gen_b.getYPosition() );
+                 particle_gen_b.getYPosition() );
   TEST_EQUALITY( particle_gen_c.getZPosition(),
-		 particle_gen_b.getZPosition() );
+                 particle_gen_b.getZPosition() );
   TEST_EQUALITY( particle_gen_c.getXDirection(),
-		 particle_gen_b.getXDirection() );
+                 particle_gen_b.getXDirection() );
   TEST_EQUALITY( particle_gen_c.getYDirection(),
-		 particle_gen_b.getYDirection() );
+                 particle_gen_b.getYDirection() );
   TEST_EQUALITY( particle_gen_c.getZDirection(),
-		 particle_gen_b.getZDirection() );
+                 particle_gen_b.getZDirection() );
   TEST_EQUALITY( particle_gen_c.getSourceEnergy(),
-		 particle_gen_b.getSourceEnergy() );
+                 particle_gen_b.getSourceEnergy() );
   TEST_EQUALITY( particle_gen_c.getEnergy(),
-		 particle_gen_b.getEnergy() );
+                 particle_gen_b.getEnergy() );
   TEST_EQUALITY( particle_gen_c.getSourceTime(),
-		 particle_gen_b.getSourceTime() );
+                 particle_gen_b.getSourceTime() );
   TEST_EQUALITY( particle_gen_c.getTime(),
-		 particle_gen_b.getTime() );
+                 particle_gen_b.getTime() );
   TEST_EQUALITY_CONST( particle_gen_c.getCollisionNumber(), 0u );
   TEST_EQUALITY( particle_gen_c.getGenerationNumber(),
-		 particle_gen_b.getGenerationNumber()+1u );
+                 particle_gen_b.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_c.getSourceWeight(),
-		 particle_gen_b.getSourceWeight() );
+                 particle_gen_b.getSourceWeight() );
   TEST_EQUALITY( particle_gen_c.getWeight(),
-		 particle_gen_b.getWeight() );
+                 particle_gen_b.getWeight() );
   TEST_EQUALITY( particle_gen_c.getSourceCell(),
-		 particle_gen_b.getSourceCell() );
+                 particle_gen_b.getSourceCell() );
   TEST_EQUALITY( particle_gen_c.getCell(),
-		 particle_gen_b.getCell() );
+                 particle_gen_b.getCell() );
 
   // Create a second third generation particle after the second gen particle
   // has been set to gone

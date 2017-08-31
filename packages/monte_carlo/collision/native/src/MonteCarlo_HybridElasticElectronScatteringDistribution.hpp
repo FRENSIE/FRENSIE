@@ -15,10 +15,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_DiscreteDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_TwoDInterpolationPolicy.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_FullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -36,21 +33,14 @@ public:
 
   //! Constructor
   HybridElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& continuous_distribution,
-    const std::shared_ptr<TwoDDist>& discrete_distribution,
-    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const std::shared_ptr<TwoDDist>& hybrid_distribution,
     const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Destructor
   virtual ~HybridElasticElectronScatteringDistribution()
   { /* ... */ }
-
-  //! Return the cutoff to moment preserving cross section ratio
-  double getCrossSectionRatio( const double incoming_energy ) const;
-
-  //! Return the sampling ratio at the given incoming energy
-  double getSamplingRatio( const double incoming_energy ) const;
 
   //! Evaluate the PDF
   double evaluate( const double incoming_energy,
@@ -85,10 +75,6 @@ public:
                                MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
-//  double oldSampleImpl( const double incoming_energy ) const;
-//  double newSampleImpl( const double incoming_energy ) const;
-//  double newSampleImpl2( const double incoming_energy ) const;
-
 protected:
 
    //! Sample an outgoing direction from the distribution
@@ -98,24 +84,17 @@ protected:
 
 private:
 
-  // Normalized the cutoff eval to the entire distribution
-  double normalizeEvalution( const double incoming_energy,
-                             const double unormalized_eval ) const;
-
   // cutoff angle cosine
   double d_cutoff_angle_cosine;
 
   // The tabular evaluation tolerance
   double d_evaluation_tol;
 
-  // The continuous elastic cutoff distribution
-  std::shared_ptr<TwoDDist> d_continuous_distribution;
+  // The hybrid elastic distribution
+  std::shared_ptr<TwoDDist> d_hybrid_distribution;
 
-  // The discrete elastic moment preserving distribution
-  std::shared_ptr<TwoDDist> d_discrete_distribution;
-
-  // The ratios of the cutoff to the moment preserving cross section
-  std::shared_ptr<const Utility::OneDDistribution> d_cross_section_ratios;
+  // The sample function pointer
+  std::function<double ( const double, const double )> d_sample_func;
 
 };
 

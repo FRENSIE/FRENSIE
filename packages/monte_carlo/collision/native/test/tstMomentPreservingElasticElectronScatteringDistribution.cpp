@@ -19,6 +19,7 @@
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 
 //---------------------------------------------------------------------------//
@@ -32,10 +33,12 @@ class TestMomentPreservingElasticElectronScatteringDistribution : public MonteCa
 public:
   TestMomentPreservingElasticElectronScatteringDistribution(
         const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
-        const double cutoff_angle_cosine )
+        const double cutoff_angle_cosine,
+        const bool correlated_sampling_mode_on )
     : MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
         discrete_scattering_distribution,
-        cutoff_angle_cosine )
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on )
   { /* ... */ }
 
   ~TestMomentPreservingElasticElectronScatteringDistribution()
@@ -69,73 +72,98 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
 
   // Calculate the pdf
   double pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 
 
   scattering_angle_cosine = 9.23783127169921725e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 1.41615401623161025e-01, 1e-12 );
 
   scattering_angle_cosine = 9.81773163837444063e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 3
   TEST_FLOATING_EQUALITY( pdf_value, 8.58384598376839003e-01, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 4
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 
   // Test with a different energy
   energy = 1.00E+05;
 
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 
 
-  scattering_angle_cosine = 9.33076191050687509e-01;
+  scattering_angle_cosine = 9.330761886145804151e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 2
-  TEST_FLOATING_EQUALITY( pdf_value, 5.49699922275026379e-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 5.496999172982874144e-04, 1e-12 );
 
 
-  scattering_angle_cosine = 9.99076800496474626e-01;
+  scattering_angle_cosine = 9.990768004009449310e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 3
-  TEST_FLOATING_EQUALITY( pdf_value, 9.99450300077724951e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 9.994503000827017480e-01, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   pdf_value =
-    discrete_elastic_distribution->evaluate( energy,
-                                             scattering_angle_cosine );
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // Test 4
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
+
+  // Test at an inbetween energy
+  energy = 1e-2;
+
+  scattering_angle_cosine = angle_cosine_cutoff;
+  pdf_value =
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
+
+  scattering_angle_cosine = 9.2645992675518529e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 6.4764433696216817e-02, 1e-12 );
+
+  scattering_angle_cosine = 9.8541370435560194e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 6.1330747141642072e-01, 1e-12 );
+
+  scattering_angle_cosine = 9.2769440676839743e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 2.2808272964015063e-02, 1e-12 );
+
+  scattering_angle_cosine = 9.8734113139460522e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 2.9911982192334730e-01, 1e-12 );
+
+  scattering_angle_cosine = 9.87342e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -149,73 +177,98 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
 
   // Calculate the pdf
   double pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 
 
   scattering_angle_cosine = 9.23783127169921725e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 1.41615401623161025e-01, 1e-12 );
 
   scattering_angle_cosine = 9.81773163837444063e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 3
   TEST_FLOATING_EQUALITY( pdf_value, 8.58384598376839003e-01, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 4
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 
   // Test with a different energy
   energy = 1.00E+05;
 
   scattering_angle_cosine = angle_cosine_cutoff;
   pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 
 
-  scattering_angle_cosine = 9.33076191050687509e-01;
+  scattering_angle_cosine = 9.330761886145804151e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 2
-  TEST_FLOATING_EQUALITY( pdf_value, 5.49699922275026379e-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 5.496999172982874144e-04, 1e-12 );
 
 
-  scattering_angle_cosine = 9.99076800496474626e-01;
+  scattering_angle_cosine = 9.990768004009449310e-01;
   pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 3
-  TEST_FLOATING_EQUALITY( pdf_value, 9.99450300077724951e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 9.994503000827017480e-01, 1e-12 );
 
-  scattering_angle_cosine = 1.0;
+  scattering_angle_cosine = 1.0-1e-5;
   pdf_value =
-    discrete_elastic_distribution->evaluatePDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // Test 4
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
+
+  // Test at an inbetween energy
+  energy = 1e-2;
+
+  scattering_angle_cosine = angle_cosine_cutoff;
+  pdf_value =
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
+
+  scattering_angle_cosine = 9.2645992675518529e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 6.4764433696216830e-02, 1e-12 );
+
+  scattering_angle_cosine = 9.8541370435560194e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 6.1330747141642084e-01, 1e-12 );
+
+  scattering_angle_cosine = 9.2769440676839743e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 2.2808272964015063e-02, 1e-12 );
+
+  scattering_angle_cosine = 9.8734113139460522e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( pdf_value, 2.9911982192334730e-01, 1e-12 );
+
+  scattering_angle_cosine = 9.87342e-01;
+  pdf_value =
+    discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( pdf_value, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -229,35 +282,23 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
 
   // Calculate the pdf
   double cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
-
-  // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( cdf_value, 0.0 );
 
 
   scattering_angle_cosine = 9.23783127169921725e-01;
   cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
-
-  // Test 2
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( cdf_value, 1.41615401623161025e-01, 1e-12 );
 
   scattering_angle_cosine = 9.5e-01;
   cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
-
-  // Test 3
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( cdf_value, 1.41615401623161025e-01, 1e-12 );
 
   scattering_angle_cosine = 9.81773163837444063e-01;
   cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
-
-  // Test 4
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // Test with a different energy
@@ -265,37 +306,58 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
 
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
-
-  // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( cdf_value, 0.0 );
 
 
-  scattering_angle_cosine = 9.33076191050687509e-01;
+  scattering_angle_cosine = 9.330761886145804151e-01;
   cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
-
-  // Test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 5.49699922275026379e-04, 1e-12 );
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( cdf_value, 5.496999172982874144e-04, 1e-12 );
 
 
   scattering_angle_cosine = 9.6e-01;
   cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( cdf_value, 5.496999172982874144e-04, 1e-12 );
 
-  // Test 3
-  TEST_FLOATING_EQUALITY( cdf_value, 5.49699922275026379e-04, 1e-12 );
-
-  scattering_angle_cosine = 9.99076800496474626e-01;
+  scattering_angle_cosine = 9.990768004009449310e-01;
   cdf_value =
-    discrete_elastic_distribution->evaluateCDF( energy,
-                                                scattering_angle_cosine );
-
-  // Test 4
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
+
+  // Test at an inbetween energy
+  energy = 1e-2;
+
+  scattering_angle_cosine = angle_cosine_cutoff;
+  cdf_value =
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( cdf_value, 0.0 );
+
+  scattering_angle_cosine = 9.2645992675518529e-01;
+  cdf_value =
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( cdf_value, 6.4764433696216830e-02, 1e-12 );
+
+  scattering_angle_cosine = 9.8541370435560194e-01;
+  cdf_value =
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( cdf_value, 7.0088017807665270e-01, 1e-12 );
+
+  scattering_angle_cosine = 9.2769440676839743e-01;
+  cdf_value =
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_FLOATING_EQUALITY( cdf_value, 8.7572706660231897e-02, 1e-12 );
+
+  scattering_angle_cosine = 9.8734113139460522e-01;
+  cdf_value =
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( cdf_value, 1.0 );
+
+  scattering_angle_cosine = 9.87342e-01;
+  cdf_value =
+    discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
+  TEST_EQUALITY_CONST( cdf_value, 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -504,26 +566,39 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             angular_energy_grid[n] ) );
 
     function_data[n].second.reset(
-	  new const Utility::DiscreteDistribution(
+      new const Utility::DiscreteDistribution(
         discrete_angles,
         weights,
         false,
         true ) );
   }
 
+    double cutoff_angle_cosine = 0.9;
+    double fuzzy_boundary_tol = 1e-7;
+    double evaluate_relative_error_tol = 1e-7;
+    double evaluate_error_tol = 1e-16;
+
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
-        function_data ) );
+      new Utility::ElasticTwoDDistribution<Utility::LinLinLog>(
+        function_data,
+        cutoff_angle_cosine,
+        fuzzy_boundary_tol,
+        evaluate_relative_error_tol,
+        evaluate_error_tol ) );
+
+    bool correlated_sampling_mode_on = true;
 
     discrete_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                angle_cosine_cutoff ) );
+                angle_cosine_cutoff,
+                correlated_sampling_mode_on ) );
 
     test_discrete_elastic_distribution.reset(
         new TestMomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                angle_cosine_cutoff ) );
+                angle_cosine_cutoff,
+                correlated_sampling_mode_on ) );
   }
 
   // Initialize the random number generator

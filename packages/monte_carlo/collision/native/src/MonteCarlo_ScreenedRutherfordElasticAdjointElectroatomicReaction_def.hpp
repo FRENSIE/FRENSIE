@@ -77,9 +77,9 @@ AdjointElectroatomicReactionType ScreenedRutherfordElasticAdjointElectroatomicRe
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void ScreenedRutherfordElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-         AdjointElectronState& electron,
-         ParticleBank& bank,
-         Data::SubshellType& shell_of_interaction ) const
+            AdjointElectronState& electron,
+            ParticleBank& bank,
+            Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterAdjointElectron( electron,
                                                      bank,

@@ -17,7 +17,8 @@ namespace MonteCarlo{
 // Constructor
 MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
-    const double cutoff_angle_cosine )
+    const double cutoff_angle_cosine,
+    const bool correlated_sampling_mode_on )
   : d_discrete_scattering_distribution( discrete_scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
@@ -26,6 +27,26 @@ MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticEl
   // Make sure the cutoff angle cosine is valid
   testPostcondition( d_cutoff_angle_cosine >= -1.0 );
   testPostcondition( d_cutoff_angle_cosine < 1.0 );
+  // Make sure the bool is valid
+  testPrecondition( correlated_sampling_mode_on == 0 ||
+                    correlated_sampling_mode_on == 1 )
+
+  if( correlated_sampling_mode_on )
+  {
+    // Set the correlated unit based sample routine
+    d_sample_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditionalExact,
+         std::cref( *d_discrete_scattering_distribution ),
+         std::placeholders::_1 );
+  }
+  else
+  {
+    // Set the stochastic unit based sample routine
+    d_sample_func = std::bind<double>(
+         &TwoDDist::sampleSecondaryConditional,
+         std::cref( *d_discrete_scattering_distribution ),
+         std::placeholders::_1 );
+  }
 }
 
 
@@ -40,7 +61,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the distribution at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateExact(
+  return d_discrete_scattering_distribution->evaluate(
                         incoming_energy,
                         scattering_angle_cosine );
 }
@@ -56,7 +77,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the PDF at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateSecondaryConditionalPDFExact(
+  return d_discrete_scattering_distribution->evaluateSecondaryConditionalPDF(
                         incoming_energy,
                         scattering_angle_cosine );
 }
@@ -72,7 +93,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the CDF at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateSecondaryConditionalCDFExact(
+  return d_discrete_scattering_distribution->evaluateSecondaryConditionalCDF(
                         incoming_energy,
                         scattering_angle_cosine );
 }
@@ -90,8 +111,8 @@ void MomentPreservingElasticElectronScatteringDistribution::sample(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 }
 
 // Sample an outgoing energy and direction and record the number of trials
@@ -106,8 +127,8 @@ void MomentPreservingElasticElectronScatteringDistribution::sampleAndRecordTrial
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
-				                   scattering_angle_cosine,
-				                   trials );
+                                   scattering_angle_cosine,
+                                   trials );
 }
 
 // Randomly scatter the electron
@@ -122,14 +143,14 @@ void MomentPreservingElasticElectronScatteringDistribution::scatterElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine,
-			                this->sampleAzimuthalAngle() );
+                            this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
@@ -144,14 +165,14 @@ void MomentPreservingElasticElectronScatteringDistribution::scatterAdjointElectr
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine,
-				                    this->sampleAzimuthalAngle() );
+                                    this->sampleAzimuthalAngle() );
 }
 
 // Sample an outgoing direction from the distribution

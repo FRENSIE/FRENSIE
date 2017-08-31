@@ -34,7 +34,7 @@ ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cro
               threshold_energy_index ),
     d_interaction_subshell( interaction_subshell ),
     d_electroionization_subshell_distribution( electroionization_subshell_distribution ),
-    d_reaction_type( convertSubshellEnumToAdjointElectroatomicReactionEnum(
+    d_reaction_type( convertSubshellEnumToElectroionizationAdjointElectroatomicReactionEnum(
                                                         interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
@@ -63,7 +63,7 @@ ElectroionizationSubshellAdjointElectroatomicReaction<InterpPolicy,processed_cro
     d_interaction_subshell( interaction_subshell ),
     d_electroionization_subshell_distribution(
             electroionization_subshell_distribution ),
-    d_reaction_type( convertSubshellEnumToAdjointElectroatomicReactionEnum(
+    d_reaction_type( convertSubshellEnumToElectroionizationAdjointElectroatomicReactionEnum(
             interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid

@@ -58,36 +58,56 @@ inline bool ValuesLessThanOrEqualToOne( const Array& values )
                        isValueGreaterThanOne ) == values.end();
 }
 
-// Test if a value is less than or equal to zero
-bool isValueLessThanOrEqualToZero( const double value )
-{
-  return value <= 0.0;
-}
+//// Test if a value is less than or equal to zero
+//bool isValueLessThanOrEqualToZero( const double value )
+//{
+//  return value <= 0.0;
+//}
 
-// Test if a value is less than zero
-bool isValueLessThanZero( const double value )
-{
-  return value < 0.0;
-}
+//// Test if a value is less than zero
+//bool isValueLessThanZero( const double value )
+//{
+//  return value < 0.0;
+//}
 
-// Test if a value is greater than one
-bool isValueGreaterThanOne( const double value )
-{
-  return value > 1.0;
-}
+//// Test if a value is greater than one
+//bool isValueGreaterThanOne( const double value )
+//{
+//  return value > 1.0;
+//}
 
-// Test if a value is greater than or equal to one
-bool isValueGreaterThanOrEqualToOne( const double value )
-{
-  return value >= 1.0;
-}
+//// Test if a value is greater than or equal to one
+//bool isValueGreaterThanOrEqualToOne( const double value )
+//{
+//  return value >= 1.0;
+//}
 
-// Test if a value is less than -1.0
-bool isValueLessThanMinusOne( const double value )
-{
-  return value < -1.0;
-}
+//// Test if a value is less than -1.0
+//bool isValueLessThanMinusOne( const double value )
+//{
+//  return value < -1.0;
+//}
 
+//// Test if the TwoDInterpPolicy is valid
+//bool isTwoDInterpPolicyValid( const std::string value )
+//{
+//  if ( value == "LinLinLin" || value == "LinLinLog" || value == "LinLogLin" ||
+//       value == "LogLinLin" || value == "LinLogLog" || value == "LogLogLin" ||
+//       value == "LogLinLog" || value == "LogLogLog" )
+//    return true;
+//  else
+//    return false;
+//}
+
+//// Test if the InterpPolicy is valid
+//bool isInterpPolicyValid( const std::string value )
+//{
+//  if ( value == "LinLin" || value == "LinLog" || value == "LogLin" ||
+//       value == "LogLog" || value == "Histogram" || value == "Gamow" )
+//    return true;
+//  else
+//    return false;
+//}
 
 } // end Data namespace
 

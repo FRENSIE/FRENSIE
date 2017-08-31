@@ -50,7 +50,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getRea
 TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getThresholdEnergy )
 {
   TEST_EQUALITY_CONST( rutherford_elastic_reaction->getThresholdEnergy(),
-                       0.312509629531249944 );
+                       3.12509629531249944e-01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -164,11 +164,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
+    double cutoff_angle_cosine = 1.0;
+    double evaluation_tol = 1e-7;
+    bool correlated_sampling_mode_on = true;
+
     NativeFactory::createCutoffElasticDistribution(
         cutoff_elastic_distribution,
         data_container,
-        1.0,
-        1e-7 );
+        cutoff_angle_cosine,
+        correlated_sampling_mode_on,
+        evaluation_tol );
 
     // Create the screened rutherford distribution
     std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>

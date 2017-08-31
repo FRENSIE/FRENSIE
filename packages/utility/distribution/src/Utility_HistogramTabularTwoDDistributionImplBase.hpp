@@ -86,11 +86,16 @@ public:
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the distribution
-  DepQuantity correlatedEvaluate(
+  DepQuantity correlatedEvaluateInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
                 const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the distribution
+  DepQuantity correlatedEvaluate(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the distribution
   DepQuantity evaluateExact(
@@ -103,11 +108,16 @@ public:
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
-  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
+  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDFInBoundaries(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const SecondaryIndepQuantity min_secondary_indep_var,
                 const SecondaryIndepQuantity max_secondary_indep_var ) const;
+
+  //! Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(

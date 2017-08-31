@@ -25,8 +25,7 @@ public:
   static void createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double upper_cutoff_angle_cosine = 1.0 );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data );
 
 protected:
 

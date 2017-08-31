@@ -13,7 +13,6 @@
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_VoidAbsorptionAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
 //#include "Utility_TabularDistribution.hpp"
 //#include "Utility_SortAlgorithms.hpp"
@@ -21,8 +20,8 @@
 
 namespace MonteCarlo{
 
-//// Create the analog elastic scattering adjoint electroatomic reactions
-//void AdjointElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+//// Create the coupled elastic scattering adjoint electroatomic reactions
+//void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 //            const Data::AdjointElectronPhotonRelaxationDataContainer&
 //                raw_adjoint_electroatom_data,
 //            const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -38,10 +37,10 @@ namespace MonteCarlo{
 //  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 //                                                      energy_grid.end() ) );
 
-//  // Create the analog elastic scattering distribution
-//  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
+//  // Create the coupled elastic scattering distribution
+//  std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
 
-//  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+//  ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
 //    distribution,
 //    raw_adjoint_electroatom_data,
 //    evaluation_tol );
@@ -66,21 +65,21 @@ namespace MonteCarlo{
 //  unsigned sr_threshold_energy_index =
 //    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-//  // Calculate the analog cross section
-//  unsigned analog_threshold_energy_index =
+//  // Calculate the coupled cross section
+//  unsigned coupled_threshold_energy_index =
 //    std::min( sr_threshold_energy_index, cutoff_threshold_energy_index );
 
 //  unsigned sr_threshold_diff =
-//    sr_threshold_energy_index - analog_threshold_energy_index;
+//    sr_threshold_energy_index - coupled_threshold_energy_index;
 //  unsigned cutoff_threshold_diff =
-//    cutoff_threshold_energy_index - analog_threshold_energy_index;
+//    cutoff_threshold_energy_index - coupled_threshold_energy_index;
 
 //  std::vector<double> combined_cross_section(
-//                           energy_grid.size() - analog_threshold_energy_index );
+//                           energy_grid.size() - coupled_threshold_energy_index );
 
 //  for (unsigned i = 0; i < combined_cross_section.size(); ++i )
 //  {
-//    double energy = energy_grid[i + analog_threshold_energy_index];
+//    double energy = energy_grid[i + coupled_threshold_energy_index];
 
 //    if ( i < sr_threshold_diff )
 //    {
@@ -98,15 +97,15 @@ namespace MonteCarlo{
 //    }
 //  }
 
-//  Teuchos::ArrayRCP<double> analog_cross_section;
-//  analog_cross_section.assign( combined_cross_section.begin(),
+//  Teuchos::ArrayRCP<double> coupled_cross_section;
+//  coupled_cross_section.assign( combined_cross_section.begin(),
 //                               combined_cross_section.end() );
 
 //  elastic_reaction.reset(
-//    new AnalogElasticAdjointElectroatomicReaction<Utility::LinLin>(
+//    new CoupledElasticAdjointElectroatomicReaction<Utility::LinLin>(
 //      energy_grid,
-//      analog_cross_section,
-//      analog_threshold_energy_index,
+//      coupled_cross_section,
+//      coupled_threshold_energy_index,
 //      grid_searcher,
 //      distribution ) );
 //}
@@ -391,7 +390,7 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
   std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>
     energy_loss_distribution;
 
-  AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationAdjointDistribution(
+  AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
                                                  raw_adjoint_electroatom_data,
                                                  energy_loss_distribution );
 
@@ -432,7 +431,7 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 //      electroionization_subshell_distribution;
 
 //  // Create the electroionization subshell distribution
-//  ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+//  ElectroionizationFactory::createAdjointElectroionizationSubshellDistribution(
 //      raw_adjoint_electroatom_data,
 //      subshell,
 //      raw_adjoint_electroatom_data.getSubshellBindingEnergy( subshell ),
@@ -526,44 +525,44 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 //                          bremsstrahlung_distribution ) );
 //}
 
-// Create the forward total reaction (only used to get the cross section)
-void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-      const Data::AdjointElectronPhotonRelaxationDataContainer&
-        raw_adjoint_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-      std::shared_ptr<ElectroatomicReaction>& total_forward_reaction )
-{
-  // Make sure the elastic reaction is valid
-  testPrecondition( elastic_reaction.use_count() > 0 );
+//// Create the forward total reaction (only used to get the cross section)
+//void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
+//      const Data::AdjointElectronPhotonRelaxationDataContainer&
+//        raw_adjoint_electroatom_data,
+//      const Teuchos::ArrayRCP<const double>& energy_grid,
+//      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+//      const std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+//      std::shared_ptr<ElectroatomicReaction>& total_forward_reaction )
+//{
+//  // Make sure the elastic reaction is valid
+//  testPrecondition( elastic_reaction.use_count() > 0 );
 
-  // Get the inelastic cross sections
-  std::vector<double> inelastic_cross_section =
-    raw_adjoint_electroatom_data.getForwardInelasticElectronCrossSection();
+//  // Get the inelastic cross sections
+//  std::vector<double> inelastic_cross_section =
+//    raw_adjoint_electroatom_data.getForwardInelasticElectronCrossSection();
 
-  // Add the inelastic and elastic cross section together
-  std::vector<double> total_forward_cross_section( energy_grid.size() );
-  for( size_t i = 0; i < energy_grid.size(); ++i )
-  {
-    total_forward_cross_section[i] = inelastic_cross_section[i] +
-        elastic_reaction->getCrossSection( energy_grid[i] );
-  }
+//  // Add the inelastic and elastic cross section together
+//  std::vector<double> total_forward_cross_section( energy_grid.size() );
+//  for( size_t i = 0; i < energy_grid.size(); ++i )
+//  {
+//    total_forward_cross_section[i] = inelastic_cross_section[i] +
+//        elastic_reaction->getCrossSection( energy_grid[i] );
+//  }
 
-  // Assign the total forward cross section
-  Teuchos::ArrayRCP<double> cross_section;
-  cross_section.assign( total_forward_cross_section.begin(),
-                        total_forward_cross_section.end() );
+//  // Assign the total forward cross section
+//  Teuchos::ArrayRCP<double> cross_section;
+//  cross_section.assign( total_forward_cross_section.begin(),
+//                        total_forward_cross_section.end() );
 
-  // Create the total forward reaction
-  total_forward_reaction.reset(
-     new AbsorptionElectroatomicReaction<Utility::LinLin,false>(
-                                               energy_grid,
-                                               cross_section,
-                                               0u,
-                                               grid_searcher,
-                                               TOTAL_ELECTROATOMIC_REACTION ) );
-}
+//  // Create the total forward reaction
+//  total_forward_reaction.reset(
+//     new AbsorptionElectroatomicReaction<Utility::LinLin,false>(
+//                                               energy_grid,
+//                                               cross_section,
+//                                               0u,
+//                                               grid_searcher,
+//                                               TOTAL_ELECTROATOMIC_REACTION ) );
+//}
 
 } // end MonteCarlo namespace
 

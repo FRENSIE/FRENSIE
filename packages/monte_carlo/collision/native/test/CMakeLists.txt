@@ -628,6 +628,7 @@ SET_PROPERTY(TEST AdjointPhotonCollisionHandler_test PROPERTY LABELS photon adjo
 ##---------------------------------------------------------------------------##
 ##      electron class tests
 ##---------------------------------------------------------------------------##
+
 ##      electron distribution tests
 
 ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
@@ -644,12 +645,12 @@ TARGET_LINK_LIBRARIES(tstScreenedRutherfordElasticElectronScatteringDistribution
 ADD_TEST(ScreenedRutherfordElasticElectronScatteringDistribution_test tstScreenedRutherfordElasticElectronScatteringDistribution --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_native_al_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST ScreenedRutherfordElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
 
-ADD_EXECUTABLE(tstAnalogElasticElectronScatteringDistribution
-  tstAnalogElasticElectronScatteringDistribution.cpp
+ADD_EXECUTABLE(tstCoupledElasticElectronScatteringDistribution
+  tstCoupledElasticElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAnalogElasticElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(AnalogElasticElectronScatteringDistribution_test tstAnalogElasticElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
-SET_PROPERTY(TEST AnalogElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
+TARGET_LINK_LIBRARIES(tstCoupledElasticElectronScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(CoupledElasticElectronScatteringDistribution_test tstCoupledElasticElectronScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
+SET_PROPERTY(TEST CoupledElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstMomentPreservingElasticElectronScatteringDistribution
   tstMomentPreservingElasticElectronScatteringDistribution.cpp
@@ -722,13 +723,6 @@ ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistributionACEFactory
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistributionACEFactory monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationElectronScatteringDistributionACEFactory_test tstAtomicExcitationElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron ace)
-
-ADD_EXECUTABLE(tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory
-  tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory monte_carlo_collision_native)
-ADD_TEST(AtomicExcitationAdjointElectronScatteringDistributionACEFactory_test tstAtomicExcitationAdjointElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AtomicExcitationAdjointElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron adjoint ace)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectronScatteringDistributionACEFactory
   tstBremsstrahlungElectronScatteringDistributionACEFactory.cpp
@@ -839,19 +833,33 @@ TARGET_LINK_LIBRARIES(tstScreenedRutherfordElasticAdjointElectroatomicReaction m
 ADD_TEST(ScreenedRutherfordElasticAdjointElectroatomicReaction_test tstScreenedRutherfordElasticAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
 SET_PROPERTY(TEST ScreenedRutherfordElasticAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
-ADD_EXECUTABLE(tstAnalogElasticElectroatomicReaction
-  tstAnalogElasticElectroatomicReaction.cpp
+ADD_EXECUTABLE(tstCoupledElasticElectroatomicReaction
+  tstCoupledElasticElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAnalogElasticElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(AnalogElasticElectroatomicReaction_test tstAnalogElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
-SET_PROPERTY(TEST AnalogElasticElectroatomicReaction_test PROPERTY LABELS electron)
+TARGET_LINK_LIBRARIES(tstCoupledElasticElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(CoupledElasticElectroatomicReaction_test tstCoupledElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
+SET_PROPERTY(TEST CoupledElasticElectroatomicReaction_test PROPERTY LABELS electron)
 
-ADD_EXECUTABLE(tstAnalogElasticAdjointElectroatomicReaction
-  tstAnalogElasticAdjointElectroatomicReaction.cpp
+ADD_EXECUTABLE(tstCoupledElasticAdjointElectroatomicReaction
+  tstCoupledElasticAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAnalogElasticAdjointElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(AnalogElasticAdjointElectroatomicReaction_test tstAnalogElasticAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AnalogElasticAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
+TARGET_LINK_LIBRARIES(tstCoupledElasticAdjointElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(CoupledElasticAdjointElectroatomicReaction_test tstCoupledElasticAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST CoupledElasticAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
+
+ADD_EXECUTABLE(tstDecoupledElasticElectroatomicReaction
+  tstDecoupledElasticElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDecoupledElasticElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledElasticElectroatomicReaction_test tstDecoupledElasticElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml")
+SET_PROPERTY(TEST DecoupledElasticElectroatomicReaction_test PROPERTY LABELS electron)
+
+ADD_EXECUTABLE(tstDecoupledElasticAdjointElectroatomicReaction
+  tstDecoupledElasticAdjointElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDecoupledElasticAdjointElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledElasticAdjointElectroatomicReaction_test tstDecoupledElasticAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+SET_PROPERTY(TEST DecoupledElasticAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstHybridElasticElectroatomicReaction
   tstHybridElasticElectroatomicReaction.cpp
@@ -892,7 +900,7 @@ ADD_EXECUTABLE(tstAtomicExcitationAdjointElectroatomicReaction
   tstAtomicExcitationAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(AtomicExcitationAdjointElectroatomicReaction_test tstAtomicExcitationAdjointElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
+ADD_TEST(AtomicExcitationAdjointElectroatomicReaction_test tstAtomicExcitationAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
 SET_PROPERTY(TEST AtomicExcitationAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectroatomicReaction
@@ -921,7 +929,7 @@ ADD_EXECUTABLE(tstElectroionizationSubshellAdjointElectroatomicReaction
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellAdjointElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellAdjointElectroatomicReaction_test tstElectroionizationSubshellAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_6_native.xml")
-SET_PROPERTY(TEST ElectroionizationSubshellElectroatomicReaction_test PROPERTY LABELS electron adjoint)
+SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
 ADD_EXECUTABLE(tstVoidElectroatomicReaction
   tstVoidElectroatomicReaction.cpp
@@ -950,6 +958,13 @@ ADD_EXECUTABLE(tstAdjointElectroatomicReactionNativeFactory
 TARGET_LINK_LIBRARIES(tstAdjointElectroatomicReactionNativeFactory monte_carlo_collision_native)
 ADD_TEST(AdjointElectroatomicReactionNativeFactory_test tstAdjointElectroatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml" )
 SET_PROPERTY(TEST AdjointElectroatomicReactionNativeFactory_test PROPERTY LABELS electron native adjoint)
+
+ADD_EXECUTABLE(tstElectroatomicReactionNativeFactoryHelpers
+  tstElectroatomicReactionNativeFactoryHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactoryHelpers monte_carlo_collision_native)
+ADD_TEST(ElectroatomicReactionNativeFactoryHelpers_test tstElectroatomicReactionNativeFactoryHelpers --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
+SET_PROPERTY(TEST ElectroatomicReactionNativeFactoryHelpers_test PROPERTY LABELS electron native)
 
 ##      electroatom tests
 

@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -43,19 +44,27 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory, initializeProperties )
 
   TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 10.0 );
-  TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
-  TEST_ASSERT( !properties.isElasticModeOn() );
-  TEST_ASSERT( !properties.isElectroionizationModeOn() );
-  TEST_ASSERT( !properties.isBremsstrahlungModeOn() );
-  TEST_ASSERT( !properties.isAtomicExcitationModeOn() );
+  TEST_EQUALITY_CONST( properties.getNumberOfElectronHashGridBins(), 400 );
   TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-5 );
-  TEST_ASSERT( !properties.isLinLinLogInterpolationModeOn() );
   TEST_ASSERT( !properties.isCorrelatedSamplingModeOn() );
   TEST_ASSERT( !properties.isUnitBasedInterpolationModeOn() );
-  TEST_EQUALITY_CONST(
-                     properties.getBremsstrahlungAngularDistributionFunction(),
-                     MonteCarlo::DIPOLE_DISTRIBUTION );
+  TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
+  TEST_ASSERT( !properties.isElasticModeOn() );
+  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLIN_INTERPOLATION );
+  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+                       MonteCarlo::HYBRID_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 0.9 );
+  TEST_ASSERT( !properties.isElectroionizationModeOn() );
+  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLIN_INTERPOLATION );
+  TEST_ASSERT( !properties.isBremsstrahlungModeOn() );
+  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLIN_INTERPOLATION );
+  TEST_EQUALITY_CONST(
+             properties.getBremsstrahlungAngularDistributionFunction(),
+             MonteCarlo::DIPOLE_DISTRIBUTION );
+  TEST_ASSERT( !properties.isAtomicExcitationModeOn() );
 }
 
 //---------------------------------------------------------------------------//

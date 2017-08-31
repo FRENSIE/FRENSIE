@@ -19,8 +19,8 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 
 
 namespace DataGen{
@@ -34,6 +34,9 @@ public:
   //! Typedef for the elastic distribution
   typedef Utility::GaussKronrodIntegrator<Utility::long_float>
   Integrator;
+
+  // Typedef for elastic electron traits
+  typedef Utility::ElasticElectronTraits ElasticTraits;
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
@@ -51,13 +54,20 @@ public:
     const Teuchos::ArrayRCP<double>& screened_rutherford_cross_section,
     const unsigned cutoff_threshold_energy_index,
     const unsigned screened_rutherford_threshold_energy_index,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_distribution,
+    const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+        coupled_distribution,
+    const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const double cutoff_angle_cosine );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
+
+  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+  double evaluateLegendreExpandedRutherford(
+            const double scattering_angle_cosine,
+            const double incoming_energy,
+            const int polynomial_order = 0 ) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
   double evaluateLegendreExpandedRutherford(
@@ -163,9 +173,9 @@ private:
   // The screened rutherford elastic threshold_energy_index
   unsigned d_screened_rutherford_threshold_energy_index;
 
-  // The analog distribution
-  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    d_analog_distribution;
+  // The coupled distribution
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+    d_coupled_distribution;
 
   // The cutoff reaction
   std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
@@ -181,11 +191,8 @@ private:
   // The angle cosine cutoff between hard and soft scattering
   double d_cutoff_angle_cosine;
 
-  // The angle cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff_delta_angle_cosine;
-
-  // The angle cosine cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff_angle_cosine;
+  // Elastic electron traits
+  std::shared_ptr<const ElasticTraits> d_elastic_traits;
 };
 
 } // end DataGen namespace

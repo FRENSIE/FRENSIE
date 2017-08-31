@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -31,6 +32,16 @@ public:
   //! Destructor
   virtual ~AtomicExcitationAdjointElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle_cosine ) const
+  { /*...*/}
+
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const
+  { /*...*/}
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,

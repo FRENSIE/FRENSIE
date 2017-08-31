@@ -78,14 +78,23 @@ public:
   //! Return the photon threshold energy nudge factor
   double getPhotonThresholdEnergyNudgeFactor() const;
 
+  //! Return if electron total elastic integrated cross section mode is on
+  bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
+
   //! Return the upper cutoff scattering angle cosine above which moment preserving elastic scattering is used
   double getCutoffAngleCosine() const;
 
   //! Return the number of discrete moment preserving angles
   unsigned getNumberOfMomentPreservingAngles() const;
 
-  //! Return if secondary electron LinLinLog interpolation mode is on
-  bool isElectronLinLinLogInterpolationModeOn() const;
+  //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
+  double getElectronTabularEvaluationTolerance() const;
+
+  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+  bool isElectronCorrelatedSamplingModeOn() const;
+
+  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+  bool isElectronUnitBasedInterpolationModeOn() const;
 
   //! Return the union energy grid convergence tolerance
   double getGridConvergenceTolerance() const;
@@ -250,8 +259,14 @@ public:
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  //! Return the elastic TwoDInterpPolicy
+  const std::string& getElasticTwoDInterpPolicy() const;
+
   //! Return the elastic angular energy grid
   const std::vector<double>& getElasticAngularEnergyGrid() const;
+
+  //! Return the cutoff elastic scatering interpolation policy
+  const std::string& getCutoffElasticInterpPolicy() const;
 
   //! Return the map of the cutoff elastic scattering angles
   const std::map<double,std::vector<double> >& getCutoffElasticAngles() const;
@@ -267,25 +282,28 @@ public:
   const std::vector<double>& getCutoffElasticPDF(
                     const double incoming_energy ) const;
 
-  //! Return if there is screened Rutherford data
-  bool hasScreenedRutherfordData() const;
+//  //! Return if there is screened Rutherford data
+//  bool hasScreenedRutherfordData() const;
 
-  //! Return the screened Rutherford elastic normalization constants
-  const std::vector<double>& getScreenedRutherfordNormalizationConstant() const;
+//  //! Return the screened Rutherford elastic normalization constants
+//  const std::vector<double>& getScreenedRutherfordNormalizationConstant() const;
 
-  //! Return Moliere's screening constant
-  const std::vector<double>& getMoliereScreeningConstant() const;
+//  //! Return Moliere's screening constant
+//  const std::vector<double>& getMoliereScreeningConstant() const;
 
   //! Return if there is moment preserving data
   bool hasMomentPreservingData() const;
 
   //! Return the moment preserving elastic discrete angles
-  const std::map<double,std::vector<double> >
+  const std::map<double,std::vector<double> >&
     getMomentPreservingElasticDiscreteAngles() const;
 
   //! Return the moment preserving elastic weights
-  const std::map<double,std::vector<double> >
+  const std::map<double,std::vector<double> >&
     getMomentPreservingElasticWeights() const;
+
+  //! Return the moment preserving cross section reductions
+  const std::vector<double>& getMomentPreservingCrossSectionReduction() const;
 
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
@@ -295,12 +313,15 @@ public:
   const std::vector<double>& getMomentPreservingElasticWeights(
                                 const double incoming_energy ) const;
 
-  //! Return the ratio of the reduced cutoff cross section to the full cutoff
-  const std::vector<double>& getReducedCutoffCrossSectionRatios() const;
+  //! Return the electroionization TwoDInterpPolicy
+  const std::string& getElectroionizationTwoDInterpPolicy() const;
 
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationEnergyGrid(
                                 const unsigned subshell ) const;
+
+  //! Return the electroionization recoil interpolation policy
+  const std::string& getElectroionizationRecoilInterpPolicy() const;
 
   //! Return the electroionization recoil energy for a subshell and incoming energy
   const std::vector<double>& getElectroionizationRecoilEnergy(
@@ -312,8 +333,14 @@ public:
                                 const unsigned subshell,
                                 const double incoming_energy ) const;
 
+  //! Return the bremsstrahlung TwoDInterpPolicy
+  const std::string& getBremsstrahlungTwoDInterpPolicy() const;
+
   //! Return the bremsstrahlung energy grid for the secondary photon spectrum
   const std::vector<double>& getBremsstrahlungEnergyGrid() const;
+
+  //! Return the bremsstrahlung photon interpolation policy
+  const std::string& getBremsstrahlungPhotonInterpPolicy() const;
 
   //! Return the bremsstrahlung photon energy for an incoming energy
   const std::vector<double>& getBremsstrahlungPhotonEnergy(
@@ -326,11 +353,17 @@ public:
   //! Return the atomic excitation average energy loss energy grid
   const std::vector<double>& getAtomicExcitationEnergyGrid() const;
 
+  //! Return the atomic excitation average energy loss interpolation policy
+  const std::string& getAtomicExcitationEnergyLossInterpPolicy() const;
+
   //! Return the atomic excitation average energy loss
   const std::vector<double>& getAtomicExcitationEnergyLoss() const;
 
   //! Return the electron energy grid
   const std::vector<double>& getElectronEnergyGrid() const;
+
+  //! Return the electron cross section interpolation policy
+  const std::string& getElectronCrossSectionInterpPolicy() const;
 
   //! Return the elastic electron cross section below mu = 0.999999
   const std::vector<double>& getCutoffElasticCrossSection() const;
@@ -419,6 +452,10 @@ protected:
   //! Set the photon threshold energy nudge factor
   void setPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
 
+  //! Set the electron total elastic integrated cross section mode
+  void setElectronTotalElasticIntegratedCrossSectionModeOnOff(
+    const bool electron_total_elastic_integrated_cross_section_mode_on );
+
   //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -426,9 +463,17 @@ protected:
   void setNumberOfMomentPreservingAngles(
     const unsigned number_of_moment_preserving_angles);
 
-  //! Set secondary electron LinLinLog interpolation mode
-  void setElectronLinLinLogInterpolationModeOnOff(
-    const bool linlinlog_interpolation_mode_on);
+  //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
+  void setElectronTabularEvaluationTolerance(
+    const double electron_tabular_evaluation_tol );
+
+  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
+  void setElectronCorrelatedSamplingModeOnOff(
+    const bool electron_correlated_sampling_mode_on );
+
+  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode
+  void setElectronUnitBasedInterpolationModeOnOff(
+    const bool electron_unit_based_interpolation_mode_on );
 
   //! Set the union energy grid convergence tolerance
   void setGridConvergenceTolerance( const double grid_convergence_tol );
@@ -605,9 +650,15 @@ protected:
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  //! Set the elastic TwoDInterpPolicy
+  void setElasticTwoDInterpPolicy( const std::string& elastic_two_d_interp );
+
   //! Set the elastic angular energy grid
   void setElasticAngularEnergyGrid(
     const std::vector<double>& angular_energy_grid );
+
+  //! Set the cutoff elastic InterpPolicy
+  void setCutoffElasticInterpPolicy( const std::string& cutoff_elastic_interp );
 
   //! Set the elastic scattering angles for an incoming energy
   void setCutoffElasticAnglesAtEnergy(
@@ -627,13 +678,13 @@ protected:
   void setCutoffElasticPDF(
     const std::map<double,std::vector<double> >& elastic_pdf );
 
-  //! Set the screened Rutherford elastic normalization constant
-  void setScreenedRutherfordNormalizationConstant(
-    const std::vector<double>& screened_rutherford_normalization_constant );
+//  //! Set the screened Rutherford elastic normalization constant
+//  void setScreenedRutherfordNormalizationConstant(
+//    const std::vector<double>& screened_rutherford_normalization_constant );
 
-  //! Set Moliere's screening constant
-  void setMoliereScreeningConstant(
-    const std::vector<double>& moliere_screening_constant );
+//  //! Set Moliere's screening constant
+//  void setMoliereScreeningConstant(
+//    const std::vector<double>& moliere_screening_constant );
 
   //! Clear all the moment preserving data
   void clearMomentPreservingData();
@@ -648,15 +699,22 @@ protected:
     const double incoming_energy,
     const std::vector<double>& moment_preserving_elastic_weights );
 
-  //! Set the ratio of the reduced cutoff cross section to the full cutoff
-  void setReducedCutoffCrossSectionRatios(
-    const std::vector<double>& reduced_cutoff_cross_section_ratios );
+  //! Set the moment preserving cross section reduction
+  void setMomentPreservingCrossSectionReduction(
+    const std::vector<double>& cross_section_reduction );
 
+  //! Set the electroionization TwoDInterpPolicy
+  void setElectroionizationTwoDInterpPolicy(
+    const std::string& electroionization_two_d_interp );
 
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setElectroionizationEnergyGrid(
     const unsigned subshell,
     const std::vector<double>& electroionization_energy_grid );
+
+  //! Set the electroionization recoil InterpPolicy
+  void setElectroionizationRecoilInterpPolicy(
+    const std::string& electroionization_recoil_interp );
 
   //! Set the electroionization recoil energy for an incoming energy and subshell
   void setElectroionizationRecoilEnergyAtIncomingEnergy(
@@ -680,9 +738,17 @@ protected:
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_pdf );
 
+  //! Set the bremsstrahlung TwoDInterpPolicy
+  void setBremsstrahlungTwoDInterpPolicy(
+    const std::string& bremsstrahlung_two_d_interp );
+
   //! Set the bremsstrahlung energy grid for the secondary photon spectrum
   void setBremsstrahlungEnergyGrid(
     const std::vector<double>& bremsstrahlung_energy_grid );
+
+  //! Set the bremsstrahlung photon InterpPolicy
+  void setBremsstrahlungPhotonInterpPolicy(
+    const std::string& bremsstrahlung_photon_interp );
 
   //! Set the bremsstrahlung photon energy for an incoming energy
   void setBremsstrahlungPhotonEnergyAtIncomingEnergy(
@@ -706,12 +772,20 @@ protected:
   void setAtomicExcitationEnergyGrid(
     const std::vector<double>& atomic_excitation_energy_grid );
 
+  //! Set the atomic excitation average energy loss InterpPolicy
+  void setAtomicExcitationEnergyLossInterpPolicy(
+    const std::string& atomic_excitation_energy_loss_interp );
+
   //! Set the atomic excitation average energy loss
   void setAtomicExcitationEnergyLoss(
             const std::vector<double>& atomic_excitation_energy_loss );
 
   //! Set the electron energy grid
   void setElectronEnergyGrid( const std::vector<double>& energy_grid );
+
+  //! Set the electron cross section interpolation policy
+  void setElectronCrossSectionInterpPolicy(
+    const std::string& electron_cross_section_interp );
 
   //! Set the elastic electron cross section below mu = 0.999999
   void setCutoffElasticCrossSection(
@@ -817,14 +891,23 @@ private:
   // The photon threshold energy nudge factor
   double d_photon_threshold_energy_nudge_factor;
 
+  // The electron total elastic integrated cross section mode
+  bool d_electron_total_elastic_integrated_cross_section_mode_on;
+
   // The elastic cutoff angle
   double d_cutoff_angle_cosine;
 
   // The number of discrete moment preserving angles
   double d_number_of_moment_preserving_angles;
 
-  // The lin-lin-log interpolation mode for electron secondary distributions
-  bool d_linlinlog_interpolation_mode_on;
+  // The electron FullyTabularTwoDDistribution evaluation tolerance
+  double d_electron_tabular_evaluation_tol;
+
+  // The electron FullyTabularTwoDDistribution correlated sampling mode
+  bool d_electron_correlated_sampling_mode_on;
+
+  // The electron FullyTabularTwoDDistribution unit based interpolation mode
+  bool d_electron_unit_based_interpolation_mode_on;
 
   // The union energy grid convergence tolerance
   double d_grid_convergence_tol;
@@ -965,8 +1048,14 @@ private:
 // ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  // The elastic TwoDInterpPolicy
+  std::string d_elastic_two_d_interp;
+
   // The elastic angular energy grid (MeV)
   std::vector<double> d_angular_energy_grid;
+
+  // The cutoff elastic scattering InterpPolicy
+  std::string d_cutoff_elastic_interp;
 
   // The cutoff elastic scattering angles
   std::map<double,std::vector<double> > d_cutoff_elastic_angles;
@@ -974,11 +1063,11 @@ private:
   // The cutoff elastic scattering pdf
   std::map<double,std::vector<double> > d_cutoff_elastic_pdf;
 
-  // The screened rutherford normalization constant for elastic scattering
-  std::vector<double> d_screened_rutherford_normalization_constant;
+//  // The screened rutherford normalization constant for elastic scattering
+//  std::vector<double> d_screened_rutherford_normalization_constant;
 
-  // Moliere's screening constant
-  std::vector<double> d_moliere_screening_constant;
+//  // Moliere's screening constant
+//  std::vector<double> d_moliere_screening_constant;
 
   // The moment preserving elastic discrete angles
   std::map<double,std::vector<double> > d_moment_preserving_elastic_discrete_angles;
@@ -986,11 +1075,17 @@ private:
   // The moment preserving elastic weights
   std::map<double,std::vector<double> > d_moment_preserving_elastic_weights;
 
-  //! The ratio of the reduced cutoff cross section to the full cutoff
-  std::vector<double> d_reduced_cutoff_cross_section_ratios;
+  // The moment preserving cross section reductions
+  std::vector<double> d_moment_preserving_cross_section_reductions;
+
+  // The electroionization TwoDInterpPolicy
+  std::string d_electroionization_two_d_interp;
 
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_energy_grid;
+
+  // The electroionization recoil InterpPolicy
+  std::string d_electroionization_recoil_interp;
 
   // The electroionization recoil energy for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
@@ -1000,8 +1095,14 @@ private:
   std::map<unsigned,std::map<double,std::vector<double> > >
     d_electroionization_recoil_pdf;
 
+  // The bremsstrahlung TwoDInterpPolicy
+  std::string d_bremsstrahlung_two_d_interp;
+
   // The bremsstrahlung energy grid (MeV)
   std::vector<double> d_bremsstrahlung_energy_grid;
+
+  // The bremsstrahlung photon InterpPolicy
+  std::string d_bremsstrahlung_photon_interp;
 
   // The bremsstrahlung photon energy
   std::map<double,std::vector<double> > d_bremsstrahlung_photon_energy;
@@ -1012,11 +1113,17 @@ private:
   // The atomic excitation energy grid (MeV)
   std::vector<double> d_atomic_excitation_energy_grid;
 
+  // The atomic excitation energy loss InterpPolicy
+  std::string d_atomic_excitation_energy_loss_interp;
+
   // The atomic excitation energy loss
   std::vector<double> d_atomic_excitation_energy_loss;
 
   // The electron energy grid (MeV)
   std::vector<double> d_electron_energy_grid;
+
+  // The electron cross section InterpPolicy
+  std::string d_electron_cross_section_interp;
 
   // The cutoff elastic electron cross section (b)
   std::vector<double> d_cutoff_elastic_cross_section;

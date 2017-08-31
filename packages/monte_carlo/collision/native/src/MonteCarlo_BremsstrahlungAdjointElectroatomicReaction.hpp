@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -85,7 +85,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp

@@ -59,8 +59,7 @@ void ElectroatomACEFactory::createElectroatomCore(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
-        reaction_pointer,
-        properties.getElasticCutoffAngleCosine() );
+        reaction_pointer );
     }
   }
 

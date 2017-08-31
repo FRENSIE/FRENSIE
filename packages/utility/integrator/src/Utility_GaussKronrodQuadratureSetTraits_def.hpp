@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GaussKronrodQuadratureSetTraits.cpp
+//! \file   Utility_GaussKronrodQuadratureSetTraits_def.hpp
 //! \author Luke Kersting
 //! \brief  Gauss-Kronrod quadrature set traits
 //!

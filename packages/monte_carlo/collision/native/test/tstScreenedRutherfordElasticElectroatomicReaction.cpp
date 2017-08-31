@@ -151,11 +151,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     double cutoff_angle_cosine = 0.9;
     double evaluation_tol = 1e-7;
+    bool correlated_sampling_mode_on = true;
 
     NativeFactory::createCutoffElasticDistribution(
         cutoff_elastic_distribution,
         data_container,
         cutoff_angle_cosine,
+        correlated_sampling_mode_on,
         evaluation_tol );
 
     // Create the screened rutherford distribution

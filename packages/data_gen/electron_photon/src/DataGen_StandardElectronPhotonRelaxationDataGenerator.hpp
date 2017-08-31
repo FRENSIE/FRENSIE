@@ -20,6 +20,8 @@
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -54,12 +56,6 @@ public:
   ~StandardElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
 
-  //! Set the FullyTabularTwoDDistribution evaluation tolerance
-  void setTabularEvaluationTolerance( const double evaluation_tolerance );
-
-  //! Get the FullyTabularTwoDDistribution evaluation tolerance
-  double getTabularEvaluationTolerance() const;
-
   //! Set the occupation number evaluation tolerance
   void setOccupationNumberEvaluationTolerance(
                                            const double evaluation_tolerance );
@@ -79,7 +75,16 @@ public:
 
   //! Get the photon threshold energy nudge factor
   double getPhotonThresholdEnergyNudgeFactor() const;
-  
+
+  //! Set electron total elastic integrated cross section mode to off (off by default)
+  void setElectronTotalElasticIntegratedCrossSectionModeOff();
+
+  //! Set electron total elastic integrated cross section mode to on (off by default)
+  void setElectronTotalElasticIntegratedCrossSectionModeOn();
+
+  //! Return if electron total elastic integrated cross section mode to on (off by default)
+  bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
+
   //! Set the cutoff angle cosine
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -92,14 +97,35 @@ public:
   //! Get the number of moment preserving angles
   double getNumberOfMomentPreservingAngles() const;
 
-  //! Set secondary electron LinLinLog interpolation mode to off (on by default)
-  void setElectronLinLinLogInterpolationModeOff();
+  //! Set the FullyTabularTwoDDistribution evaluation tolerance
+  void setTabularEvaluationTolerance( const double evaluation_tolerance );
 
-  //! Set secondary electron LinLinLog interpolation mode to on (on by default)
-  void setElectronLinLinLogInterpolationModeOn();
+  //! Get the FullyTabularTwoDDistribution evaluation tolerance
+  double getTabularEvaluationTolerance() const;
 
-  //! Return if secondary electron LinLinLog interpolation mode is on
-  bool isElectronLinLinLogInterpolationModeOn() const;
+  //! Set the electron TwoDInterpPolicy (LogLogLog by default)
+  void setElectronTwoDInterpPolicy( MonteCarlo::TwoDInterpolationType interp );
+
+  //! Return the electron TwoDInterpPolicy
+  MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
+
+  //! Set electron FullyTabularTwoDDistribution correlated sampling mode to off (on by default)
+  void setElectronCorrelatedSamplingModeOff();
+
+  //! Set electron FullyTabularTwoDDistribution correlated sampling mode to on (on by default)
+  void setElectronCorrelatedSamplingModeOn();
+
+  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
+  bool isElectronCorrelatedSamplingModeOn() const;
+
+  //! Set electron FullyTabularTwoDDistribution unit based interpolation mode to off (on by default)
+  void setElectronUnitBasedInterpolationModeOff();
+
+  //! Set electron FullyTabularTwoDDistribution unit based interpolation mode to on (on by default)
+  void setElectronUnitBasedInterpolationModeOn();
+
+  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
+  bool isElectronUnitBasedInterpolationModeOn() const;
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -112,7 +138,7 @@ public:
     const double cutoff_angle_cosine = 0.9,
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const bool linlinlog_interpolation_mode_on = true,
+    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
     std::ostream& os_log = std::cout );
 
   //! Repopulate the electron moment preserving data
@@ -121,7 +147,7 @@ public:
     const double cutoff_angle_cosine = 0.9,
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
-    const bool linlinlog_interpolation_mode_on = true,
+    const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
     std::ostream& os_log = std::cout );
 
 protected:
@@ -189,7 +215,7 @@ private:
   static void setMomentPreservingData(
     const std::vector<double>& elastic_energy_grid,
     const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
 
   // Extract the average photon heating numbers
@@ -287,8 +313,8 @@ private:
     std::vector<double>& elastic_angle,
     std::vector<double>& elastic_pdf ) const;
 
-  // Generate elastic moment preserving discrete angle cosines and weights
-  static void evaluateDisceteAnglesAndWeights(
+  // Calculate the elastic moment preserving discrete angle cosines and weights
+  static void calculateDiscreteAnglesAndWeights(
     const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,
@@ -296,19 +322,24 @@ private:
     std::vector<double>& weights,
     double& cross_section_reduction );
 
-  // Generate elastic moment preserving cross section
-  static void evaluateMomentPreservingCrossSection(
+  // Calculate the electron total elastic cross section
+  void calculateElectronTotalElasticCrossSection(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+    std::shared_ptr<const Utility::OneDDistribution>& total_elastic_cross_section,
+    const std::vector<double>& raw_energy_grid ) const;
+
+  // Calculate the  elastic moment preserving cross section
+  static void calculateMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
     const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
     const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_section,
     const unsigned cutoff_threshold_energy_index,
     const unsigned screened_rutherford_threshold_energy_index,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_distribution,
+    const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
-    std::vector<double>& moment_preserving_cross_section,
-    std::vector<double>& reduced_cutoff_cross_section_ratio );
+    std::vector<double>& moment_preserving_cross_section );
 
   // The ACE data
   std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;
@@ -331,15 +362,25 @@ private:
   // The photon threshold energy nudge factor
   double d_photon_threshold_energy_nudge_factor;
 
+  /* The electron total elastic integrated cross section mode
+   * (true = on, false = off - default) */
+  bool d_integrated_total_elastic_cross_section_mode_on;
+
   // The cutoff angle cosine above which screened rutherford is used
   double d_cutoff_angle_cosine;
 
   // The number of moment preserving angles
   unsigned d_number_of_moment_preserving_angles;
 
-  /* The lin-lin-log interpolation mode for electron secondary distributions
-   * (true = on - default, false = off) */
-  bool d_linlinlog_interpolation_mode_on;
+  // The electron TwoDInterpPolicy (LogLogLog - default)
+  MonteCarlo::TwoDInterpolationType d_two_d_interp;
+
+  // The electron FullyTabularTwoDDistribution correlated sampling mode
+  bool d_correlated_sampling_mode_on;
+
+  // The electron FullyTabularTwoDDistribution unit based interpolation mode
+  bool d_unit_based_interpolation_mode_on;
+
 };
 
 // The if a value is not equal to zero

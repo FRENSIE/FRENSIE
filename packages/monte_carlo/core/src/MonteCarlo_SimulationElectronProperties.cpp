@@ -22,18 +22,21 @@ const double SimulationElectronProperties::s_absolute_max_electron_energy = 1.0e
 SimulationElectronProperties::SimulationElectronProperties()
   : d_min_electron_energy( s_absolute_min_electron_energy ),
     d_max_electron_energy( 20.0 ),
-    d_atomic_relaxation_mode_on( true ),
-    d_elastic_mode_on( true ),
-    d_bremsstrahlung_mode_on( true ),
-    d_electroionization_mode_on( true ),
-    d_atomic_excitation_mode_on( true ),
     d_evaluation_tol( 1e-7 ),
-    d_linlinlog_interpolation_mode_on( true ),
     d_correlated_sampling_mode_on( true ),
     d_unit_based_interpolation_mode_on( true ),
-    d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
+    d_num_electron_hash_grid_bins( 1000 ),
+    d_atomic_relaxation_mode_on( true ),
+    d_elastic_mode_on( true ),
+    d_elastic_interpolation_type( LOGLOGLOG_INTERPOLATION ),
+    d_elastic_distribution_mode( DECOUPLED_DISTRIBUTION ),
     d_elastic_cutoff_angle_cosine( 1.0 ),
-    d_num_electron_hash_grid_bins( 1000 )
+    d_bremsstrahlung_mode_on( true ),
+    d_bremsstrahlung_interpolation_type( LOGLOGLOG_INTERPOLATION ),
+    d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
+    d_electroionization_mode_on( true ),
+    d_electroionization_interpolation_type( LOGLOGLOG_INTERPOLATION ),
+    d_atomic_excitation_mode_on( true )
 { /* ... */ }
 
 // Set the minimum electron energy (MeV)
@@ -80,96 +83,6 @@ double SimulationElectronProperties::getAbsoluteMaxElectronEnergy()
   return s_absolute_max_electron_energy;
 }
 
-// Set atomic relaxation mode to off (on by default)
-void SimulationElectronProperties::setAtomicRelaxationModeOff()
-{
-  d_atomic_relaxation_mode_on = false;
-}
-
-// Set atomic relaxation mode to on (on by default)
-void SimulationElectronProperties::setAtomicRelaxationModeOn()
-{
-  d_atomic_relaxation_mode_on = true;
-}
-
-// Return if atomic relaxation mode is on
-bool SimulationElectronProperties::isAtomicRelaxationModeOn() const
-{
-  return d_atomic_relaxation_mode_on;
-}
-
-// Set elastic mode to off (on by default)
-void SimulationElectronProperties::setElasticModeOff()
-{
-  d_elastic_mode_on = false;
-}
-
-// Set elastic mode to on (on by default)
-void SimulationElectronProperties::setElasticModeOn()
-{
-  d_elastic_mode_on = true;
-}
-
-// Return if elastic mode is on
-bool SimulationElectronProperties::isElasticModeOn() const
-{
-  return d_elastic_mode_on;
-}
-
-// Set electroionization mode to off (on by default)
-void SimulationElectronProperties::setElectroionizationModeOff()
-{
-  d_electroionization_mode_on = false;
-}
-
-// Set electroionization mode to on (on by default)
-void SimulationElectronProperties::setElectroionizationModeOn()
-{
-  d_electroionization_mode_on = true;
-}
-
-// Return if electroionization mode is on
-bool SimulationElectronProperties::isElectroionizationModeOn() const
-{
-  return d_electroionization_mode_on;
-}
-
-// Set bremsstrahlung mode to off (on by default)
-void SimulationElectronProperties::setBremsstrahlungModeOff()
-{
-  d_bremsstrahlung_mode_on = false;
-}
-
-// Set bremsstrahlung mode to on (on by default)
-void SimulationElectronProperties::setBremsstrahlungModeOn()
-{
-  d_bremsstrahlung_mode_on = true;
-}
-
-// Return if bremsstrahlung mode is on
-bool SimulationElectronProperties::isBremsstrahlungModeOn() const
-{
-  return d_bremsstrahlung_mode_on;
-}
-
-// Set atomic excitation mode to off (on by default)
-void SimulationElectronProperties::setAtomicExcitationModeOff()
-{
-  d_atomic_excitation_mode_on = false;
-}
-
-// Set atomic excitation mode to on (on by default)
-void SimulationElectronProperties::setAtomicExcitationModeOn()
-{
-  d_atomic_excitation_mode_on = true;
-}
-
-// Return if atomic excitation mode is on
-bool SimulationElectronProperties::isAtomicExcitationModeOn() const
-{
-  return d_atomic_excitation_mode_on;
-}
-
 // Set the electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
 /*! \details The evaluation tolerance is used by the
  *  InterpolatedFullyTabularTwoDDistribution as the tolerance when performing
@@ -189,36 +102,6 @@ void SimulationElectronProperties::setElectronEvaluationTolerance(
 double SimulationElectronProperties::getElectronEvaluationTolerance() const
 {
   return d_evaluation_tol;
-}
-
-// Set secondary electron LinLinLog interpolation mode to off (on by default)
-/*! \details The secondary electron interpolation policy will be set to
- *  Utility::LinLinLin instead of the default Utility::LinLinLog.
- */
-void SimulationElectronProperties::setLinLinLogInterpolationModeOff()
-{
-  d_linlinlog_interpolation_mode_on = false;
-}
-
-// Set secondary electron LinLinLog interpolation mode to on (on by default)
-/*! \details The secondary electron interpolation policy will be set to
- *  Utility::LinLinLog.
- */
-void SimulationElectronProperties::setLinLinLogInterpolationModeOn()
-{
-  d_linlinlog_interpolation_mode_on = true;
-}
-
-// Return if secondary electron LinLinLog interpolation mode is on
-/*! \details The secondary interpolation policy is used for interpoalting
- *  between the incoming energies of secondary electron distributions
- *  (ie: elastic angular distribution, bremsstrahlung photon energy
- *  distribution, electro-ionization knock-on energy distribution, etc.).
- *  The current two options are LinLinLog (default) or LinLinLin
- */
-bool SimulationElectronProperties::isLinLinLogInterpolationModeOn() const
-{
-  return d_linlinlog_interpolation_mode_on;
 }
 
 // Set correlated sampling mode to off (on by default)
@@ -257,18 +140,84 @@ bool SimulationElectronProperties::isUnitBasedInterpolationModeOn() const
   return d_unit_based_interpolation_mode_on;
 }
 
-// Set the bremsstrahlung photon angular distribution function (2BS by default)
-void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
-                          const BremsstrahlungAngularDistributionType function )
+// Set the number of electron hash grid bins
+void SimulationElectronProperties::setNumberOfElectronHashGridBins(
+                                                          const unsigned bins )
 {
-  d_bremsstrahlung_angular_distribution_function = function;
+  // Make sure the number of bins is valid
+  testPrecondition( bins >= 1 );
+
+  d_num_electron_hash_grid_bins = bins;
 }
 
-// Return if detailed bremsstrahlung mode is on
-BremsstrahlungAngularDistributionType
-SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction() const
+// Get the number of electron hash grid bins
+unsigned SimulationElectronProperties::getNumberOfElectronHashGridBins() const
 {
-  return d_bremsstrahlung_angular_distribution_function;
+  return d_num_electron_hash_grid_bins;
+}
+
+// Set atomic relaxation mode to off (on by default)
+void SimulationElectronProperties::setAtomicRelaxationModeOff()
+{
+  d_atomic_relaxation_mode_on = false;
+}
+
+// Set atomic relaxation mode to on (on by default)
+void SimulationElectronProperties::setAtomicRelaxationModeOn()
+{
+  d_atomic_relaxation_mode_on = true;
+}
+
+// Return if atomic relaxation mode is on
+bool SimulationElectronProperties::isAtomicRelaxationModeOn() const
+{
+  return d_atomic_relaxation_mode_on;
+}
+
+// Set elastic mode to off (on by default)
+void SimulationElectronProperties::setElasticModeOff()
+{
+  d_elastic_mode_on = false;
+}
+
+// Set elastic mode to on (on by default)
+void SimulationElectronProperties::setElasticModeOn()
+{
+  d_elastic_mode_on = true;
+}
+
+// Return if elastic mode is on
+bool SimulationElectronProperties::isElasticModeOn() const
+{
+  return d_elastic_mode_on;
+}
+
+// Set the elastic 2D interpolation policy (LogLogLog by default)
+void SimulationElectronProperties::setElasticTwoDInterpPolicy(
+    TwoDInterpolationType interp_type )
+{
+  d_elastic_interpolation_type = interp_type;
+}
+
+// Return the elastic 2D interpolation policy
+TwoDInterpolationType
+SimulationElectronProperties::getElasticTwoDInterpPolicy() const
+{
+  return d_elastic_interpolation_type;
+}
+
+// Set the elastic distribution mode ( Decoupled by default )
+void SimulationElectronProperties::setElasticElectronDistributionMode(
+    ElasticElectronDistributionType distribution_mode )
+{
+  d_elastic_distribution_mode = distribution_mode;
+}
+
+// Return the elastic distribution mode
+ElasticElectronDistributionType
+SimulationElectronProperties::getElasticElectronDistributionMode() const
+{
+  return d_elastic_distribution_mode;
 }
 
 // Set the elastic cutoff angle cosine (mu = 1.0 by default)
@@ -284,20 +233,100 @@ double SimulationElectronProperties::getElasticCutoffAngleCosine() const
   return d_elastic_cutoff_angle_cosine;
 }
 
-// Set the number of electron hash grid bins
-void SimulationElectronProperties::setNumberOfElectronHashGridBins(
-                                                          const unsigned bins )
+// Set electroionization mode to off (on by default)
+void SimulationElectronProperties::setElectroionizationModeOff()
 {
-  // Make sure the number of bins is valid
-  testPrecondition( bins >= 1 );
-
-  d_num_electron_hash_grid_bins = bins;
+  d_electroionization_mode_on = false;
 }
 
-// Get the number of electron hash grid bins
-unsigned SimulationElectronProperties::getNumberOfElectronHashGridBins() const
+// Set electroionization mode to on (on by default)
+void SimulationElectronProperties::setElectroionizationModeOn()
 {
-  return d_num_electron_hash_grid_bins;
+  d_electroionization_mode_on = true;
+}
+
+// Return if electroionization mode is on
+bool SimulationElectronProperties::isElectroionizationModeOn() const
+{
+  return d_electroionization_mode_on;
+}
+
+// Set the electroionization 2D interpolation policy (LogLogLog by default)
+void SimulationElectronProperties::setElectroionizationTwoDInterpPolicy(
+    TwoDInterpolationType interp_type )
+{
+  d_electroionization_interpolation_type = interp_type;
+}
+
+// Return the electroionization 2D interpolation policy
+TwoDInterpolationType
+SimulationElectronProperties::getElectroionizationTwoDInterpPolicy() const
+{
+  return d_electroionization_interpolation_type;
+}
+
+// Set bremsstrahlung mode to off (on by default)
+void SimulationElectronProperties::setBremsstrahlungModeOff()
+{
+  d_bremsstrahlung_mode_on = false;
+}
+
+// Set bremsstrahlung mode to on (on by default)
+void SimulationElectronProperties::setBremsstrahlungModeOn()
+{
+  d_bremsstrahlung_mode_on = true;
+}
+
+// Return if bremsstrahlung mode is on
+bool SimulationElectronProperties::isBremsstrahlungModeOn() const
+{
+  return d_bremsstrahlung_mode_on;
+}
+
+// Set the bremsstrahlung 2D interpolation policy (LogLogLog by default)
+void SimulationElectronProperties::setBremsstrahlungTwoDInterpPolicy(
+    TwoDInterpolationType interp_type )
+{
+  d_bremsstrahlung_interpolation_type = interp_type;
+}
+
+// Return the bremsstrahlung 2D interpolation policy
+TwoDInterpolationType
+SimulationElectronProperties::getBremsstrahlungTwoDInterpPolicy() const
+{
+  return d_bremsstrahlung_interpolation_type;
+}
+
+// Set the bremsstrahlung photon angular distribution function (2BS by default)
+void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
+                          const BremsstrahlungAngularDistributionType function )
+{
+  d_bremsstrahlung_angular_distribution_function = function;
+}
+
+// Return the bremsstrahlung photon angular distribution function (2BS by default)
+BremsstrahlungAngularDistributionType
+SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction() const
+{
+  return d_bremsstrahlung_angular_distribution_function;
+}
+
+// Set atomic excitation mode to off (on by default)
+void SimulationElectronProperties::setAtomicExcitationModeOff()
+{
+  d_atomic_excitation_mode_on = false;
+}
+
+// Set atomic excitation mode to on (on by default)
+void SimulationElectronProperties::setAtomicExcitationModeOn()
+{
+  d_atomic_excitation_mode_on = true;
+}
+
+// Return if atomic excitation mode is on
+bool SimulationElectronProperties::isAtomicExcitationModeOn() const
+{
+  return d_atomic_excitation_mode_on;
 }
 
 } // end MonteCarlo namespace

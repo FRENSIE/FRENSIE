@@ -58,6 +58,10 @@ public:
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double outgoing_energy ) const;
+
   //! Simulate the reaction
   void react( ElectronState& electron,
               ParticleBank& bank,
@@ -111,6 +115,15 @@ inline ElectroatomicReactionType
 VoidElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
   return TOTAL_ELECTROATOMIC_REACTION;
+}
+
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+inline double VoidElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const
+{
+  return this->getCrossSection( incoming_energy );
 }
 
 // Simulate the reaction

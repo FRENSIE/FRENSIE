@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Create a simple dipole bremsstrahlung distribution
-template <typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& bremsstrahlung_energy_grid,
@@ -41,7 +41,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 }
 
 // Create a simple dipole bremsstrahlung distribution
-template <typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
@@ -113,7 +113,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 }
 
 // Create the energy loss function
-template <typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid,

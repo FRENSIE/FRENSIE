@@ -129,9 +129,9 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateUnitBaseGridLeng
 }
 
 // Calculate the unit base independent variable (eta)
-/*! \details The independent grid length is calculated using the 
- * processed independent grid limits. It has been found that a tolerance of 
- * 1e-3 works best for most applications. 
+/*! \details The independent grid length is calculated using the
+ * processed independent grid limits. It has been found that a tolerance of
+ * 1e-3 works best for most applications.
  */
 template<typename ParentInterpolationType>
 template<typename IndepType>
@@ -153,9 +153,10 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
   testPrecondition( ParentInterpolationType::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var >=
                     ThisType::calculateFuzzyLowerBound( indep_var_min, tol ) );
-  remember( typename QuantityTraits<IndepType>::RawType test_difference = 
+  remember( typename QuantityTraits<IndepType>::RawType test_difference =
             ParentInterpolationType::processIndepVar(indep_var) -
             ParentInterpolationType::processIndepVar(indep_var_min) );
+
   testPrecondition( test_difference <= ThisType::calculateFuzzyUpperBound(
                                                     indep_grid_length, tol ) );
 
@@ -344,6 +345,27 @@ inline DepType LogLog::interpolate( const IndepType indep_var_0,
 	log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0));
 }
 
+// Interpolate between two points using the indep variable ratio (beta)
+template<typename T, typename DepType>
+inline DepType LogLog::interpolate( const T beta,
+                                    const DepType dep_var_0,
+                                    const DepType dep_var_1 )
+{
+  // The IndepType must be a floating point type
+  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  // Make sure the independent variables are valid
+  testPrecondition( beta >= QuantityTraits<T>::zero() );
+  testPrecondition( beta <= QuantityTraits<T>::one() );
+  // Make sure the dependent variables are valid
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var_1 ) );
+
+  return dep_var_0*pow((dep_var_1/dep_var_0),beta);
+}
+
 // Interpolate between two points and return the processed value
 template<typename IndepType, typename DepType>
 inline typename QuantityTraits<DepType>::RawType
@@ -469,6 +491,27 @@ inline DepType LogLin::interpolate( const IndepType indep_var_0,
   testPrecondition( LogLin::isDepVarInValidRange( dep_var_1 ) );
 
   return dep_var_0*pow((dep_var_1/dep_var_0), (indep_var-indep_var_0)/(indep_var_1-indep_var_0));
+}
+
+// Interpolate between two points using the indep variable ratio (beta)
+template<typename T, typename DepType>
+inline DepType LogLin::interpolate( const T beta,
+                                    const DepType dep_var_0,
+                                    const DepType dep_var_1 )
+{
+  // The IndepType must be a floating point type
+  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  // Make sure the independent variables are valid
+  testPrecondition( beta >= QuantityTraits<T>::zero() );
+  testPrecondition( beta <= QuantityTraits<T>::one() );
+  // Make sure the dependent variables are valid
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
+  testPrecondition( LogLin::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLin::isDepVarInValidRange( dep_var_1 ) );
+
+  return dep_var_0*pow((dep_var_1/dep_var_0),beta);
 }
 
 // Interpolate between two points and return the processed value
@@ -601,6 +644,27 @@ inline DepType LinLog::interpolate( const IndepType indep_var_0,
   return dep_var_0 + term_2;
 }
 
+// Interpolate between two points using the indep variable ratio (beta)
+template<typename T, typename DepType>
+inline DepType LinLog::interpolate( const T beta,
+                                    const DepType dep_var_0,
+                                    const DepType dep_var_1 )
+{
+  // The IndepType must be a floating point type
+  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  // Make sure the independent variables are valid
+  testPrecondition( beta >= QuantityTraits<T>::zero() );
+  testPrecondition( beta <= QuantityTraits<T>::one() );
+  // Make sure the dependent variables are valid
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
+  testPrecondition( LinLog::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LinLog::isDepVarInValidRange( dep_var_1 ) );
+
+  return dep_var_0 + (dep_var_1 - dep_var_0)*beta;
+}
+
 // Interpolate between two points and return the processed value
 template<typename IndepType, typename DepType>
 inline typename QuantityTraits<DepType>::RawType
@@ -713,6 +777,27 @@ inline DepType LinLin::interpolate( const IndepType indep_var_0,
 		  (indep_var - indep_var_0) );
 
   return dep_var_0 + term_2;
+}
+
+// Interpolate between two points using the indep variable ratio (beta)
+template<typename T, typename DepType>
+inline DepType LinLin::interpolate( const T beta,
+                                    const DepType dep_var_0,
+                                    const DepType dep_var_1 )
+{
+  // The IndepType must be a floating point type
+  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
+  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  // Make sure the independent variables are valid
+  testPrecondition( beta >= QuantityTraits<T>::zero() );
+  testPrecondition( beta <= QuantityTraits<T>::one() );
+  // Make sure the dependent variables are valid
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_0 ) );
+  testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
+  testPrecondition( LinLin::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LinLin::isDepVarInValidRange( dep_var_1 ) );
+
+  return dep_var_0 + (dep_var_1 - dep_var_0)*beta;
 }
 
 // Interpolate between two points and return the processed value

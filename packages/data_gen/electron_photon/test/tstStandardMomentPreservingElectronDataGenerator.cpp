@@ -162,36 +162,29 @@ TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
   std::string test_h_native_file_name,
               test_pb_native_file_name,
               test_al_native_file_name;
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_h_native_file",
+                   &test_h_native_file_name,
+                   "Test NATIVE H file name" );
+  clp().setOption( "test_pb_native_file",
+                    &test_pb_native_file_name,
+                    "Test NATIVE Pb file name" );
+  clp().setOption( "test_al_native_file",
+                    &test_al_native_file_name,
+                    "Test NATIVE Al file name" );
+}
 
-  clp.setOption( "test_h_native_file",
-         &test_h_native_file_name,
-         "Test NATIVE H file name" );
-  clp.setOption( "test_pb_native_file",
-         &test_pb_native_file_name,
-         "Test NATIVE Pb file name" );
-  clp.setOption( "test_al_native_file",
-         &test_al_native_file_name,
-         "Test NATIVE Al file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
 
   double min_energy = 0.00001;
   double max_energy = 20.0;
@@ -251,21 +244,9 @@ int main( int argc, char** argv )
                      tabular_evaluation_tol,
                      linlinlog_interpolation_mode_on ) );
   }
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstStandardMomentPreservingElectronDataGenerator.cpp

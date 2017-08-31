@@ -48,7 +48,7 @@ public:
     Data::MomentPreservingElectronVolatileDataContainer& data_container,
     const int& number_of_discrete_angles ) const;
 
-protected:
+//protected:
 
   // Set the moment preserving electron data
   void setMomentPreservingElectronData(
@@ -56,8 +56,7 @@ protected:
     const int& number_of_discrete_angles ) const;
 
   // Generate elastic discrete angle cosines and weights
-  void evaluateDisceteAnglesAndWeights(
-    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+  void evaluateDiscreteAnglesAndWeights(
     const double& energy,
     const int& number_of_discrete_angles,
     std::vector<double>& discrete_angles,
@@ -74,7 +73,7 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The cutoff angle cosine between moment preserving and analog elastic collisions
+  // The cutoff angle cosine between moment preserving and coupled elastic collisions
   double d_cutoff_angle_cosine;
 
   // The FullyTabularTwoDDistribution evaluation tolerance
@@ -82,6 +81,9 @@ private:
 
   // The LinLinLog interplation mode
   bool d_linlinlog_interpolation_mode_on;
+
+  // The moment evaluator of the elastic scattering distribution
+  std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> d_moments_evaluator;
 };
 
 

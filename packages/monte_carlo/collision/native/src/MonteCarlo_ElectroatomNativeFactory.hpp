@@ -29,8 +29,9 @@ class ElectroatomNativeFactory
 
 public:
 
+  using ThisType = ElectroatomNativeFactory;
+
   //! Create a electroatom core (using the provided atomic relaxation model)
-  template <typename TwoDInterpPolicy = Utility::LinLinLog>
   static void createElectroatomCore(
        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -47,6 +48,15 @@ public:
        Teuchos::RCP<Electroatom>& electroatom );
 
 private:
+
+  //! Create the elastic reaction for a electroatom core
+  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  static void createElasticElectroatomCore(
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const SimulationElectronProperties& properties,
+        Electroatom::ReactionMap& scattering_reactions );
 
   // Constructor
   ElectroatomNativeFactory();

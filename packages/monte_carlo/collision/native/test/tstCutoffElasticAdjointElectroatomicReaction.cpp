@@ -21,7 +21,7 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
+typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory
     NativeFactory;
 
 //---------------------------------------------------------------------------//
@@ -75,19 +75,13 @@ TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction, getNumberOfEmitted
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction, getCrossSection )
 {
-  double cross_section =
-    elastic_reaction->getCrossSection( 1.0E-05 );
-
+  double cross_section = elastic_reaction->getCrossSection( 1.0E-05 );
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
-  cross_section =
-    elastic_reaction->getCrossSection( 1.0E-03 );
-
+  cross_section = elastic_reaction->getCrossSection( 1.0E-03 );
   TEST_FLOATING_EQUALITY( cross_section, 2.80490481543817E+06, 1e-12 );
 
-  cross_section =
-    elastic_reaction->getCrossSection( 20.0 );
-
+  cross_section = elastic_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section, 3.04727623729037E+02, 1e-12 );
 }
 
@@ -97,24 +91,17 @@ TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction,
                    getCrossSection_cutoff )
 {
   // cross section ratio for cutoff angle
-  double ratio = 9.50000475000238E-01;
-
-  double cross_section =
-    cutoff_elastic_reaction->getCrossSection( 1.0E-05 );
-
+  double ratio = 9.5000047500023754e-01;
+  double cross_section = cutoff_elastic_reaction->getCrossSection( 1.0E-05 );
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08*ratio, 1e-12 );
 
-  ratio = 1.08953394168692E-01;
-  cross_section =
-    cutoff_elastic_reaction->getCrossSection( 1.0E-03 );
-
+  ratio = 1.0895339416868782e-01;
+  cross_section = cutoff_elastic_reaction->getCrossSection( 1.0E-03 );
   TEST_FLOATING_EQUALITY( cross_section, 2.80490481543817E+06*ratio, 1e-12 );
 
-  ratio = 8.2702774720157165e-06;
-  cross_section =
-    cutoff_elastic_reaction->getCrossSection( 20.0 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 3.04727623729037E+02*ratio, 1e-9 );
+  ratio = 8.0903053369940162e-06;
+  cross_section = cutoff_elastic_reaction->getCrossSection( 20.0 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.0472762372903748e+02*ratio, 1e-9 );
 }
 
 
@@ -174,20 +161,22 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   unsigned elastic_threshold_index =
       data_container->getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
 
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        elastic_scattering_distribution;
+
   // Create the full cutoff reaction
   {
     double cutoff_angle_cosine = 1.0;
-    double evaluation_tol = 1e-7;
+    double evaluation_tol = 1e-15;
+    bool correlated_sampling_mode_on = true;
 
     // Create the distribution
-    std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        elastic_scattering_distribution;
-
-    NativeFactory::createCutoffElasticDistribution(
-        elastic_scattering_distribution,
-        *data_container,
-        cutoff_angle_cosine,
-        evaluation_tol );
+    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+                elastic_scattering_distribution,
+                *data_container,
+                cutoff_angle_cosine,
+                correlated_sampling_mode_on,
+                evaluation_tol );
 
     // Create the reaction
     elastic_reaction.reset(
@@ -201,24 +190,31 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
     double cutoff_angle_cosine = 0.9;
     double evaluation_tol = 1e-7;
+    bool correlated_sampling_mode_on = true;
+
+    Teuchos::ArrayRCP<double> cutoff_cross_section;
+    cutoff_cross_section.assign(
+        data_container->getAdjointCutoffElasticCrossSection().begin(),
+        data_container->getAdjointCutoffElasticCrossSection().end() );
 
     // Create the distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        elastic_scattering_distribution;
+        cutoff_distribution;
 
-    NativeFactory::createCutoffElasticDistribution(
-        elastic_scattering_distribution,
-        *data_container,
-        cutoff_angle_cosine,
-        evaluation_tol );
+    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+                cutoff_distribution,
+                *data_container,
+                cutoff_angle_cosine,
+                correlated_sampling_mode_on,
+                evaluation_tol );
 
     // Create the reaction
     cutoff_elastic_reaction.reset(
       new MonteCarlo::CutoffElasticAdjointElectroatomicReaction<Utility::LinLin>(
                 energy_grid,
-                elastic_cross_section,
+                cutoff_cross_section,
                 elastic_threshold_index,
-                elastic_scattering_distribution ) );
+                cutoff_distribution ) );
   }
 
   // Initialize the random number generator

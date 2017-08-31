@@ -99,23 +99,23 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
 {
   // First Subshell
   double cross_section = first_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.52229939949541E+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6546723061232531e+09, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.235699251648680E+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0974417538143312e+04, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 9.79285477601906E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0290719796204296e+04, 1e-12 );
 
   // Last Subshell
   cross_section = last_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.7406999406310E+11, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3958478233739835e+11, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 5.703371879337520E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.1696146426193579e+05, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.35948448287087E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2047779456815193e+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -199,12 +199,19 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
+    bool correlated_sampling_mode_on = true;
+    bool unit_based_interpolation_mode_on = true;
+    double evaluation_tol = 1e-7;
+
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
-        electroionization_subshell_distribution );
+        electroionization_subshell_distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
 
     // Create the subshell electroelectric reaction
@@ -234,6 +241,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container->getAdjointElectroionizationCrossSection( *shell ).begin(),
         data_container->getAdjointElectroionizationCrossSection( *shell ).end() );
 
+    bool correlated_sampling_mode_on = true;
+    bool unit_based_interpolation_mode_on = true;
+    double evaluation_tol = 1e-7;
+
     // Electroionization cross section threshold energy bin index
     unsigned threshold_energy_index =
         data_container->getAdjointElectroionizationCrossSectionThresholdEnergyIndex(
@@ -241,12 +252,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // The electroionization subshell distribution
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
-        electroionization_subshell_distribution; MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createAdjointElectroionizationSubshellDistribution(
+        electroionization_subshell_distribution;
+
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
-        electroionization_subshell_distribution );
-
+        electroionization_subshell_distribution,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on,
+        evaluation_tol );
 
     // Create the subshell electroelectric reaction
     last_subshell_reaction.reset(

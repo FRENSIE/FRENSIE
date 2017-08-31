@@ -74,12 +74,29 @@ ElectroatomicReactionType ScreenedRutherfordElasticElectroatomicReaction<InterpP
   return SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION;
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+                const double incoming_energy,
+                const double scattering_angle_cosine ) const
+{
+  // Get the PDF
+  double pdf =
+    d_scattering_distribution->evaluatePDF( incoming_energy,
+                                            scattering_angle_cosine );
+
+  // Get the cross section
+  double cross_section = this->getCrossSection( incoming_energy );
+
+  return pdf*cross_section;
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+            ElectronState& electron,
+            ParticleBank& bank,
+            Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterElectron( electron,
                                               bank,

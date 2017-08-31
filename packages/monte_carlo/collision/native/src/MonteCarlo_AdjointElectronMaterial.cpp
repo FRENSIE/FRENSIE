@@ -232,8 +232,8 @@ double AdjointElectronMaterial::getMacroscopicReactionCrossSection(
 
 // Collide with a adjoint electron
 void AdjointElectronMaterial::collideAnalogue(
-    AdjointElectronState& adjoint_electron,
-    ParticleBank& bank ) const
+                                        AdjointElectronState& adjoint_electron,
+                                        ParticleBank& bank ) const
 {
   unsigned atom_index = this->sampleCollisionAtom( adjoint_electron.getEnergy() );
 
@@ -242,8 +242,8 @@ void AdjointElectronMaterial::collideAnalogue(
 
 // Collide with a adjoint electron and survival bias
 void AdjointElectronMaterial::collideSurvivalBias(
-    AdjointElectronState& adjoint_electron,
-    ParticleBank& bank ) const
+                                        AdjointElectronState& adjoint_electron,
+                                        ParticleBank& bank ) const
 {
   unsigned atom_index = this->sampleCollisionAtom( adjoint_electron.getEnergy() );
 

@@ -8,7 +8,6 @@
 
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
 
@@ -54,7 +53,7 @@ std::string convertInterpolationTypeToString( const InterpolationType type )
                      " cannot be converted to a string!" );
   }
 }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

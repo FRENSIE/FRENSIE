@@ -115,7 +115,6 @@ void CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_sect
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
-
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
@@ -137,6 +136,8 @@ double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_se
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
   testPostcondition( cross_section_ratio <= 1.0 );
+  // Make sure the cross section is valid
+  testPostcondition( cross_section >= 0.0 );
 
   return cross_section*cross_section_ratio;
 }
