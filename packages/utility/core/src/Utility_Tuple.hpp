@@ -248,13 +248,18 @@ struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
  * \ingroup comparison_traits
  */
 template<typename... Types>
-struct ComparisonTraits<std::tuple<Types...> >
+struct ComparisonTraits<std::tuple<Types...>,typename std::enable_if<Utility::TupleSize<std::tuple<Types...> >::value!=1>::type>
 {
+  //! Check if the comparison is allowed
+  template<typename ComparisonPolicy>
+  struct IsComparisonAllowed : public std::true_type
+  { /* ... */ };
+  
   //! The extra data type (usually a comparison tolerance)
   typedef double ExtraDataType;
 
   //! Create a comparison header
-  template<typename ComparisonPolicy>
+  template<typename ComparisonPolicy, size_t RightShift>
   static std::string createComparisonHeader(
                            const std::tuple<Types...>& left_value,
                            const std::string& left_name,
@@ -266,7 +271,7 @@ struct ComparisonTraits<std::tuple<Types...> >
                            const ExtraDataType& extra_data = ExtraDataType() );
 
   //! Compare two tuples
-  template<typename ComparisonPolicy>
+  template<typename ComparisonPolicy, size_t RightShift>
   static bool compare( const std::tuple<Types...>& left_value,
                        const std::string& left_name,
                        const bool log_left_name,
@@ -280,39 +285,67 @@ struct ComparisonTraits<std::tuple<Types...> >
 };
 
 /*! \brief The partial specialization of the Utility::ComparisonTraits for
- * empty std::tuple types.
+ * std::tuple types (with at least one element).
  * \ingroup comparison_traits
  */
-template<>
-struct ComparisonTraits<std::tuple<> >
+template<typename T>
+struct ComparisonTraits<std::tuple<T> >
 {
+  //! Check if the comparison is allowed
+  template<typename ComparisonPolicy>
+  struct IsComparisonAllowed : public std::true_type
+  { /* ... */ };
+  
   //! The extra data type (usually a comparison tolerance)
   typedef double ExtraDataType;
 
   //! Create a comparison header
-  template<typename ComparisonPolicy>
-  static std::string createComparisonHeader(
-                           const std::tuple<>& left_value,
+  template<typename ComparisonPolicy, size_t RightShift>
+  static inline std::string createComparisonHeader(
+                           const std::tuple<T>& left_value,
                            const std::string& left_name,
                            const bool log_left_name,
-                           const std::tuple<>& right_value,
+                           const std::tuple<T>& right_value,
                            const std::string& right_name,
                            const bool log_right_name,
                            const std::string& name_suffix,
-                           const ExtraDataType& extra_data = ExtraDataType() );
-
+                           const ExtraDataType& extra_data = ExtraDataType() )
+  { return Utility::ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy,RightShift>(
+                                                Utility::get<0>( left_value ),
+                                                left_name,
+                                                log_left_name,
+                                                Utility::get<0>( right_value ),
+                                                right_name,
+                                                log_right_name,
+                                                name_suffix,
+                                                extra_data );
+  }
+  
   //! Compare two tuples
-  template<typename ComparisonPolicy>
-  static bool compare( const std::tuple<>& left_value,
+  template<typename ComparisonPolicy, size_t RightShift>
+  static bool compare( const std::tuple<T>& left_value,
                        const std::string& left_name,
                        const bool log_left_name,
-                       const std::tuple<>& right_value,
+                       const std::tuple<T>& right_value,
                        const std::string& right_name,
                        const bool log_right_name,
                        const std::string& name_suffix,
                        std::ostream& log,
-                       const bool log_comparison_header = false,
-                       const ExtraDataType& extra_data = ExtraDataType() );
+                       const bool log_comparison_details = false,
+                       const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return Utility::ComparisonTraits<T>::template compare<ComparisonPolicy,RightShift>(
+                                                Utility::get<0>( left_value ),
+                                                left_name,
+                                                log_left_name,
+                                                Utility::get<0>( right_value ),
+                                                right_name,
+                                                log_right_name,
+                                                name_suffix,
+                                                log,
+                                                log_comparison_details,
+                                                extra_data );
+  }
 };
 
 /*! \brief The partial specialization of the Utility::ComparisonTraits for
@@ -322,11 +355,16 @@ struct ComparisonTraits<std::tuple<> >
 template<typename T1, typename T2>
 struct ComparisonTraits<std::pair<T1,T2> >
 {
+  //! Check if the comparison is allowed
+  template<typename ComparisonPolicy>
+  struct IsComparisonAllowed : public std::true_type
+  { /* ... */ };
+  
   //! The extra data type (usually a comparison tolerance)
   typedef double ExtraDataType;
 
   //! Create a comparison header
-  template<typename ComparisonPolicy>
+  template<typename ComparisonPolicy, size_t RightShift>
   static std::string createComparisonHeader(
                            const std::pair<T1,T2>& left_value,
                            const std::string& left_name,
@@ -338,7 +376,7 @@ struct ComparisonTraits<std::pair<T1,T2> >
                            const ExtraDataType& extra_data = ExtraDataType() );
 
   //! Compare two tuples
-  template<typename ComparisonPolicy>
+  template<typename ComparisonPolicy, size_t RightShift>
   static bool compare( const std::pair<T1,T2>& left_value,
                        const std::string& left_name,
                        const bool log_left_name,

@@ -26,10 +26,22 @@
 
 namespace Utility{
 
-// Create a comparison header
-template<typename T, typename Enabled>
-template<typename ComparisonPolicy, size_t RightShift>
-inline std::string ComparisonTraits<T,Enabled>::createComparisonHeader(
+namespace Details{
+
+/*! Increment the right shift
+ * \ingroup comparison_traits
+ */
+constexpr size_t incrementRightShift( const size_t right_shift )
+{ return right_shift+2; }
+
+/*! Default implementation of the createComparisonHeader method
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename T,
+         typename ExtraDataType>
+inline std::string createComparisonHeaderImpl(
                                               const T& left_value,
                                               const std::string& left_name,
                                               const bool log_left_name,
@@ -39,38 +51,38 @@ inline std::string ComparisonTraits<T,Enabled>::createComparisonHeader(
                                               const std::string& name_suffix,
                                               const ExtraDataType& extra_data )
 {
-  std::string comparison_header =
-    ComparisonPolicy::createComparisonDetails( left_name,
-                                               log_left_name,
-                                               left_value,
-                                               right_name,
-                                               log_right_name,
-                                               right_value,
-                                               name_suffix,
-                                               extra_data );
+  std::string comparison_header( RightShift, ' ' );
+
+  comparison_header += ComparisonPolicy::createComparisonDetails(
+                                       left_name, log_left_name, left_value,
+                                       right_name, log_right_name, right_value,
+                                       name_suffix, extra_data );
   comparison_header += ": ";
 
   return comparison_header;
 }
 
-// Compare two values of a type (default)
-template<typename T, typename Enabled>
-template<typename ComparisonPolicy>
-inline bool ComparisonTraits<T,Enabled>::compare(
-                        const T& left_value,
-                        const std::string& left_name,
-                        const bool log_left_name,
-                        const T& right_value,
-                        const std::string& right_name,
-                        const bool log_right_name,
-                        const std::string& name_suffix,
-                        std::ostream& log,
-                        const bool log_comparison_details,
-                        const typename QuantityTraits<T>::RawType& extra_data )
+/*! Default implementation of the compare method
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename T,
+         typename ExtraDataType>
+inline bool compareImpl( const T& left_value,
+                         const std::string& left_name,
+                         const bool log_left_name,
+                         const T& right_value,
+                         const std::string& right_name,
+                         const bool log_right_name,
+                         const std::string& name_suffix,
+                         std::ostream& log,
+                         const bool log_comparison_details,
+                         const ExtraDataType& extra_data )
 {
   if( log_comparison_details )
   {
-    log << ComparisonTraits<T,Enabled>::template createComparisonHeader<ComparisonPolicy>(
+    log << Details::createComparisonHeaderImpl<ComparisonPolicy,RightShift>(
                                                                 left_value,
                                                                 left_name,
                                                                 log_left_name,
@@ -90,7 +102,54 @@ inline bool ComparisonTraits<T,Enabled>::compare(
 
   return success;
 }
+  
+} // end Details namespace
 
+// Create a comparison header
+template<typename T, typename Enabled>
+template<typename ComparisonPolicy, size_t RightShift>
+inline std::string ComparisonTraits<T,Enabled>::createComparisonHeader(
+                                              const T& left_value,
+                                              const std::string& left_name,
+                                              const bool log_left_name,
+                                              const T& right_value,
+                                              const std::string& right_name,
+                                              const bool log_right_name,
+                                              const std::string& name_suffix,
+                                              const ExtraDataType& extra_data )
+{
+  return Details::createComparisonHeaderImpl<ComparisonPolicy,RightShift>(
+                                                                left_value,
+                                                                left_name,
+                                                                log_left_name,
+                                                                right_value,
+                                                                right_name,
+                                                                log_right_name,
+                                                                name_suffix,
+                                                                extra_data );
+}
+
+// Compare two values of a type (default)
+template<typename T, typename Enabled>
+template<typename ComparisonPolicy, size_t RightShift>
+inline bool ComparisonTraits<T,Enabled>::compare(
+                                             const T& left_value,
+                                             const std::string& left_name,
+                                             const bool log_left_name,
+                                             const T& right_value,
+                                             const std::string& right_name,
+                                             const bool log_right_name,
+                                             const std::string& name_suffix,
+                                             std::ostream& log,
+                                             const bool log_comparison_details,
+                                             const ExtraDataType& extra_data )
+{
+  return Details::compareImpl<ComparisonPolicy,RightShift>(
+                                      left_value, left_name, log_left_name,
+                                      right_value, right_name, log_right_name,
+                                      name_suffix, log, log_comparison_details,
+                                      extra_data );
+};
 
 /*! \brief The specialization of the Utility::ComparisonTraits for const and/or
  * volatile types.
@@ -134,7 +193,9 @@ struct SequenceContainerComparisonPolicyHelper
   /*! \brief Create the comparison header (this won't compile if this class is
    * not specialized for the comparison policy of interest).
    */
-  template<typename LeftContainer,
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
+           typename LeftContainer,
            typename RightContainer,
            typename ExtraDataType>
   static inline std::string createComparisonHeader(
@@ -151,7 +212,8 @@ struct SequenceContainerComparisonPolicyHelper
   /*! \brief Compare two containers (this won't compile if this class is not
    * specialized for the comparison policy of interest).
    */
-  template<bool LeftContainerIsDominant,
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
            typename ExtraDataType>
@@ -177,8 +239,16 @@ struct SequenceContainerComparisonPolicyHelper
 template<typename Policy>
 struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<std::is_same<Policy,Utility::EqualityComparisonPolicy>::value || std::is_same<Policy,Utility::CloseComparisonPolicy>::value || std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value>::type>
 {
+private:
+
+  // Typedef for this type
+  typedef SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<std::is_same<Policy,Utility::EqualityComparisonPolicy>::value || std::is_same<Policy,Utility::CloseComparisonPolicy>::value || std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value>::type> ThisType;
+
+ public:
+  
   //! Create the comparison header
-  template<bool LeftContainerIsDominant,
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
            typename ExtraDataType>
@@ -208,7 +278,8 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
     
     std::ostringstream oss;
 
-    oss << "size(" << detailed_left_name << ") == "
+    oss << std::string( RightShift, ' ' )
+        << "size(" << detailed_left_name << ") == "
         << "size(" << detailed_right_name << ") "
         << "&& for every index i, "
         << detailed_left_name << "[i] " << Policy::template getOperatorName<ValueType>()
@@ -218,7 +289,8 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
   }
 
   //! Compare two containers
-  template<bool LeftContainerIsDominant,
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
            typename ExtraDataType>
@@ -235,7 +307,21 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
                             const ExtraDataType& extra_data = ExtraDataType() )
   {
     typedef typename std::conditional<LeftContainerIsDominant,typename LeftContainer::value_type,typename RightContainer::value_type>::type ValueType;
-    
+
+    if( log_comparison_details )
+    {
+      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
+                                                               left_container,
+                                                               left_name,
+                                                               log_left_name,
+                                                               right_container,
+                                                               right_name,
+                                                               log_right_name,
+                                                               name_suffix,
+                                                               extra_data );
+    }
+
+    std::ostringstream local_log;
     std::ostringstream detailed_name_suffix;
     
     if( name_suffix.size() > 0 )
@@ -244,7 +330,7 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
     detailed_name_suffix << " size";
 
     bool success =
-      Utility::ComparisonTraits<size_t>::template compare<Policy>(
+      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
                std::distance( left_container.begin(), left_container.end() ),
                left_name,
                log_left_name,
@@ -252,7 +338,7 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
                right_name,
                log_right_name,
                detailed_name_suffix.str(),
-               log,
+               local_log,
                log_comparison_details );
 
     // Only test the individual container elements if the sizes are the same
@@ -280,7 +366,7 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
         detailed_name_suffix << "[" << index << "]";
           
         bool local_success =
-          Utility::ComparisonTraits<ValueType>::template compare<Policy>(
+          Utility::ComparisonTraits<ValueType>::template compare<Policy,Details::incrementRightShift(RightShift)>(
                                              static_cast<ValueType>(*left_it),
                                              left_name,
                                              log_left_name,
@@ -288,7 +374,7 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
                                              right_name,
                                              log_right_name,
                                              detailed_name_suffix.str(),
-                                             log,
+                                             local_log,
                                              log_comparison_details,
                                              extra_data );
         if( !local_success )
@@ -298,6 +384,12 @@ struct SequenceContainerComparisonPolicyHelper<Policy,typename std::enable_if<st
         ++right_it;
         ++index;
       }
+    }
+
+    if( log_comparison_details )
+    {
+      Utility::reportComparisonPassFail( success, log );
+      log << local_log.str();
     }
 
     return success;
@@ -319,7 +411,8 @@ private:
 public:
   
   //! Create a comparison header
-  template<bool LeftContainerIsDominant,
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
            typename ExtraDataType>
@@ -349,7 +442,8 @@ public:
 
     std::ostringstream oss;
 
-    oss << "size(" << detailed_left_name << ") " << Policy::template getOperatorName<size_t>()
+    oss << std::string( RightShift, ' ' )
+        << "size(" << detailed_left_name << ") " << Policy::template getOperatorName<size_t>()
         << "size(" << detailed_right_name << ") "
         << "|| there exists at least one index i such that "
         << detailed_left_name << "[i] " << Policy::template getOperatorName<ValueType>()
@@ -359,7 +453,8 @@ public:
   }
 
   //! Compare two containers
-  template<bool LeftContainerIsDominant,
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
            typename ExtraDataType>
@@ -379,7 +474,7 @@ public:
 
     if( log_comparison_details )
     {
-      log << ThisType::template createComparisonHeader<LeftContainerIsDominant>(
+      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
                                                                left_container,
                                                                left_name,
                                                                log_left_name,
@@ -391,7 +486,7 @@ public:
     }
 
     bool success =
-      Utility::ComparisonTraits<size_t>::template compare<Policy>(
+      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
                std::distance( left_container.begin(), left_container.end() ),
                left_name,
                false,
@@ -416,7 +511,7 @@ public:
       while( left_it != left_end )
       {
         bool local_success =
-          Utility::ComparisonTraits<ValueType>::template compare<Policy>(
+          Utility::ComparisonTraits<ValueType>::template compare<Policy,Details::incrementRightShift(RightShift)>(
                                              static_cast<ValueType>(*left_it),
                                              left_name,
                                              false,
@@ -637,7 +732,7 @@ public:
 public:
 
   //! Create a comparison header
-  template<typename ComparisonPolicy>
+  template<typename ComparisonPolicy, size_t RightShift>
   static inline std::string createComparisonHeader(
                            const STLCompliantSequenceContainer<T>& left_value,
                            const std::string& left_name,
@@ -648,7 +743,7 @@ public:
                            const std::string& name_suffix,
                            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<true>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<RightShift,true>(
                                                                 left_value,
                                                                 left_name,
                                                                 log_left_name,
@@ -660,7 +755,7 @@ public:
   }
 
   //! Create a comparison header
-  template<typename ComparisonPolicy, typename T2>
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,std::string>::type
   createComparisonHeader( std::initializer_list<T2> left_value,
                           const std::string& left_name,
@@ -671,7 +766,7 @@ public:
                           const std::string& name_suffix,
                           const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<false>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<RightShift,false>(
                                                                 left_value,
                                                                 left_name,
                                                                 log_left_name,
@@ -683,7 +778,7 @@ public:
   }
 
   //! Create a comparison header
-  template<typename ComparisonPolicy, typename T2>
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,std::string>::type
   createComparisonHeader(
                            const STLCompliantSequenceContainer<T>& left_value,
@@ -695,7 +790,7 @@ public:
                            const std::string& name_suffix,
                            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<true>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<RightShift,true>(
                                                                 left_value,
                                                                 left_name,
                                                                 log_left_name,
@@ -707,7 +802,7 @@ public:
   }
   
   //! Compare two sequence containers
-  template<typename ComparisonPolicy>
+  template<typename ComparisonPolicy, size_t RightShift>
   static inline bool compare(
                           const STLCompliantSequenceContainer<T>& left_value,
                           const std::string& left_name,
@@ -720,7 +815,7 @@ public:
                           const bool log_comparison_details = false,
                           const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<true>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -734,7 +829,7 @@ public:
   }
 
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, typename T2>
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
   compare( std::initializer_list<T2> left_value,
            const std::string& left_name,
@@ -747,7 +842,7 @@ public:
            const bool log_comparison_details = false,
            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<false>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,false>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -761,7 +856,7 @@ public:
   }
 
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, typename T2>
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
   compare( const STLCompliantSequenceContainer<T>& right_value,
            const std::string& left_name,
@@ -774,7 +869,7 @@ public:
            const bool log_comparison_details = false,
            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<true>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -1340,7 +1435,7 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, typename T>
+template<typename ComparisonPolicy, size_t RightShift, typename T>
 inline bool compare(
                  T&& left_value,
                  const std::string& left_name,
@@ -1351,7 +1446,7 @@ inline bool compare(
                  const bool log_comparison_details,
                  const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::template compare<ComparisonPolicy>(
+  return ComparisonTraits<T>::template compare<ComparisonPolicy,RightShift>(
                                                         left_value,
                                                         left_name,
                                                         false,

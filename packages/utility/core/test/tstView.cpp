@@ -976,7 +976,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
 
   // No details logging
   bool compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", false,
                                                       right_view, "rhs", false,
                                                       "", oss );
@@ -988,7 +988,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                                                    left_view[i], "lhs", false,
                                                    right_view[i], "rhs", false,
                                                    "", local_oss, false );
@@ -1000,7 +1000,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                              left_view_of_const, "lhs", false,
                                              right_view_of_const, "rhs", false,
                                              "", oss );
@@ -1012,7 +1012,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                                           left_view_of_const[i], "lhs", false,
                                           right_view_of_const[i], "rhs", false,
                                           "", local_oss, false );
@@ -1024,7 +1024,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                              left_view, "lhs", false,
                                              right_view_of_const, "rhs", false,
                                              "", oss );
@@ -1036,7 +1036,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                                           left_view[i], "lhs", false,
                                           right_view_of_const[i], "rhs", false,
                                           "", local_oss, false );
@@ -1048,7 +1048,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                              left_view_of_const, "lhs", false,
                                              right_view, "rhs", false,
                                              "", oss );
@@ -1060,7 +1060,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                                            left_view_of_const[i], "lhs", false,
                                            right_view[i], "rhs", false,
                                            "", local_oss, false );
@@ -1073,7 +1073,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
 
   // Details logging - default tolerance
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", false,
                                                       right_view, "rhs", false,
                                                       "", oss, true );
@@ -1091,7 +1091,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                                                    left_view[i], "lhs", false,
                                                    right_view[i], "rhs", false,
                                                    "", local_oss, true );
@@ -1108,7 +1108,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", true,
                                                       right_view, "rhs", false,
                                                       "", oss, true );
@@ -1126,7 +1126,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
               left_view[i], "lhs", true,
               right_view[i], "rhs", false,
               std::string("[") + Utility::toString(i) + "]", local_oss, true );
@@ -1143,7 +1143,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", false,
                                                       right_view, "rhs", true,
                                                       "", oss, true );
@@ -1161,7 +1161,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
               left_view[i], "lhs", false,
               right_view[i], "rhs", true,
               std::string("[") + Utility::toString(i) + "]", local_oss, true );
@@ -1178,7 +1178,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", true,
                                                       right_view, "rhs", true,
                                                       "", oss, true );
@@ -1196,7 +1196,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
               left_view[i], "lhs", true,
               right_view[i], "rhs", true,
               std::string("[") + Utility::toString(i) + "]", local_oss, true );
@@ -1217,7 +1217,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   ExtraDataType tol = initializeTolerance( 1e-6, ExtraDataType() );
   
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", false,
                                                       right_view, "rhs", false,
                                                       "", oss, true, tol );
@@ -1235,7 +1235,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                                                    left_view[i], "lhs", false,
                                                    right_view[i], "rhs", false,
                                                    "", local_oss, true, tol );
@@ -1252,7 +1252,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", true,
                                                       right_view, "rhs", false,
                                                       "", oss, true, tol );
@@ -1270,7 +1270,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                 left_view[i], "lhs", true,
                 right_view[i], "rhs", false,
                 std::string("[") + Utility::toString(i) + "]", local_oss, true,
@@ -1288,7 +1288,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", false,
                                                       right_view, "rhs", true,
                                                       "", oss, true, tol );
@@ -1306,7 +1306,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                 left_view[i], "lhs", false,
                 right_view[i], "rhs", true,
                 std::string("[") + Utility::toString(i) + "]", local_oss, true,
@@ -1324,7 +1324,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<View>::template compare<Policy>(
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
                                                       left_view, "lhs", true,
                                                       right_view, "rhs", true,
                                                       "", oss, true, tol );
@@ -1342,7 +1342,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
                 left_view[i], "lhs", true,
                 right_view[i], "rhs", true,
                 std::string("[") + Utility::toString(i) + "]", local_oss, true,
@@ -1361,7 +1361,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
 
   // Details logging - default tolerance, view of const
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                               left_view_of_const, "lhs", false,
                                               right_view, "rhs", false,
                                               "", oss, true );
@@ -1379,7 +1379,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
                       left_view_of_const[i], "lhs", false,
                       right_view[i], "rhs", false,
                       std::string("[") + Utility::toString(i) + "]", local_oss,
@@ -1397,7 +1397,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                              left_view, "lhs", false,
                                              right_view_of_const, "rhs", false,
                                              "", oss, true );
@@ -1415,7 +1415,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
                       left_view[i], "lhs", false,
                       right_view_of_const[i], "rhs", false,
                       std::string("[") + Utility::toString(i) + "]", local_oss,
@@ -1433,7 +1433,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                              left_view_of_const, "lhs", false,
                                              right_view_of_const, "rhs", false,
                                              "", oss, true );
@@ -1451,7 +1451,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
                       left_view_of_const[i], "lhs", false,
                       right_view_of_const[i], "rhs", false,
                       std::string("[") + Utility::toString(i) + "]", local_oss,
@@ -1470,7 +1470,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
 
   // Details logging - custom tolerance, view of const
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                               left_view_of_const, "lhs", true,
                                               right_view, "rhs", true,
                                               "", oss, true, tol );
@@ -1488,7 +1488,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
                 left_view_of_const[i], "lhs", true,
                 right_view[i], "rhs", true,
                 std::string("[") + Utility::toString(i) + "]", local_oss, true,
@@ -1506,7 +1506,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                              left_view, "lhs", true,
                                              right_view_of_const, "rhs", true,
                                              "", oss, true, tol );
@@ -1524,7 +1524,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
                 left_view[i], "lhs", true,
                 right_view_of_const[i], "rhs", true,
                 std::string("[") + Utility::toString(i) + "]", local_oss, true,
@@ -1542,7 +1542,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy>(
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
                                              left_view_of_const, "lhs", true,
                                              right_view_of_const, "rhs", true,
                                              "", oss, true, tol );
@@ -1560,7 +1560,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   {
     std::ostringstream local_oss;
     bool local_expected_compare_result =
-      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy>(
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
                 left_view_of_const[i], "lhs", true,
                 right_view_of_const[i], "rhs", true,
                 std::string("[") + Utility::toString(i) + "]", local_oss, true,

@@ -15,6 +15,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/push_front.hpp>
+#include <boost/algorithm/string.hpp>
 
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
@@ -143,7 +144,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, Policy, ComparisonPolicies )
   std::ostringstream oss;
 
   bool compare_result =
-    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy,0>(
                                                std::tuple<>(), "lhs", false,
                                                std::tuple<>(), "rhs", false,
                                                "", oss );
@@ -154,7 +155,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, Policy, ComparisonPolicies )
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy,0>(
                                                std::tuple<>(), "lhs", false,
                                                std::tuple<>(), "rhs", false,
                                                "", oss, false,
@@ -165,7 +166,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, Policy, ComparisonPolicies )
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy,0>(
                                                std::tuple<>(), "lhs", false,
                                                std::tuple<>(), "rhs", false,
                                                "", oss, true );
@@ -185,7 +186,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, Policy, ComparisonPolicies )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy,0>(
                                                std::tuple<>(), "lhs", true,
                                                std::tuple<>(), "rhs", false,
                                                "", oss, true );
@@ -205,7 +206,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, Policy, ComparisonPolicies )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy,0>(
                                                std::tuple<>(), "lhs", false,
                                                std::tuple<>(), "rhs", true,
                                                "", oss, true );
@@ -225,7 +226,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, Policy, ComparisonPolicies )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy,0>(
                                                std::tuple<>(), "lhs", true,
                                                std::tuple<>(), "rhs", true,
                                                "", oss, true );
@@ -245,7 +246,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, Policy, ComparisonPolicies )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<> >::template compare<Policy,0>(
                                                std::tuple<>(), "lhs", true,
                                                std::tuple<>(), "rhs", true,
                                                "", oss, true,
@@ -275,17 +276,17 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, Policy, ComparisonPolicies )
   
   std::ostringstream oss;
 
-  bool compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                                  right_value, "rhs",
-                                                  oss );
+  bool compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                                    right_value, "rhs",
+                                                    oss );
   bool expected_compare_result = Policy::compare( left_value, right_value );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                             right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                               right_value, "rhs",
+                                               oss, 1e-6, true );
   expected_compare_result = Policy::compare( left_value, right_value );
 
   std::string expected_details =
@@ -300,9 +301,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, Policy, ComparisonPolicies )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, true );
   expected_compare_result = Policy::compare( left_value, right_value );
 
   expected_details =
@@ -317,9 +318,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, Policy, ComparisonPolicies )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( std::tuple<>(), "lhs",
-                                             right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::tuple<>(), "lhs",
+                                               right_value, "rhs",
+                                               oss, 1e-6, true );
   expected_compare_result = Policy::compare( left_value, right_value );
 
   expected_details =
@@ -334,9 +335,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, Policy, ComparisonPolicies )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( std::tuple<>(), "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::tuple<>(), "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, true );
   expected_compare_result = Policy::compare( left_value, right_value );
 
   expected_details =
@@ -351,9 +352,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, Policy, ComparisonPolicies )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                             std::tuple<>(), "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                               std::tuple<>(), "rhs",
+                                               oss, 1e-6, true );
   expected_compare_result = Policy::compare( left_value, right_value );
 
   expected_details =
@@ -368,9 +369,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, Policy, ComparisonPolicies )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             std::tuple<>(), "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               std::tuple<>(), "rhs",
+                                               oss, 1e-6, true );
   expected_compare_result = Policy::compare( left_value, right_value );
 
   expected_details =
@@ -385,9 +386,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, Policy, ComparisonPolicies )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( std::tuple<>(), "lhs",
-                                             std::tuple<>(), "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::tuple<>(), "lhs",
+                                               std::tuple<>(), "rhs",
+                                               oss, 1e-6, true );
   expected_compare_result = Policy::compare( left_value, right_value );
 
   expected_details =
@@ -492,7 +493,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
 
   // No details logging
   bool compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss );
@@ -504,7 +505,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -518,7 +519,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
 
   // Details logging
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, true );
@@ -528,7 +529,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   std::string expected_details =
     Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
                                     "rhs", false, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
+                                    "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -538,7 +539,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, true,
@@ -550,7 +551,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
                                     "rhs", false, Utility::get<0>(right_value),
-                                    ".0", T(1e-6) ) + ": " +
+                                    "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -560,7 +561,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", false,
                                                      "", oss, true );
@@ -570,7 +571,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
                                     "rhs", false, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
+                                    "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -580,7 +581,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", false,
                                                      "", oss, true,
@@ -592,7 +593,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
                                     "rhs", false, Utility::get<0>(right_value),
-                                    ".0", T(1e-6) ) + ": " +
+                                    "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -602,7 +603,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", true,
                                                      "", oss, true );
@@ -612,7 +613,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
                                     "rhs", true, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
+                                    "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -622,7 +623,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -634,7 +635,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
                                     "rhs", true, Utility::get<0>(right_value),
-                                    ".0", T(1e-6) ) + ": " +
+                                    "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -644,7 +645,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true );
@@ -654,7 +655,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
                                     "rhs", true, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
+                                    "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -664,7 +665,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -676,7 +677,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
                                     "rhs", true, Utility::get<0>(right_value),
-                                    ".0", T(1e-6) ) + ": " +
+                                    "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -701,9 +702,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   
   std::ostringstream oss;
 
-  bool compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                                  right_value, "rhs",
-                                                  oss );
+  bool compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                                    right_value, "rhs",
+                                                    oss );
                                                   
   bool expected_compare_result =
     Policy::compare( Utility::get<0>(left_value),
@@ -712,9 +713,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, false );
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, false );
 
   expected_compare_result = Policy::compare( Utility::get<0>(left_value),
                                              Utility::get<0>(right_value),
@@ -723,9 +724,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                             right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                               right_value, "rhs",
+                                               oss, 1e-6, true );
 
   expected_compare_result = Policy::compare( Utility::get<0>(left_value),
                                              Utility::get<0>(right_value),
@@ -734,7 +735,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   std::string expected_details =
     Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
                                      "rhs", true, Utility::get<0>(right_value),
-                                     ".0", T(1e-6) ) + ": " +
+                                     "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -743,9 +744,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, true );
 
   expected_compare_result = Policy::compare( Utility::get<0>(left_value),
                                              Utility::get<0>(right_value),
@@ -754,7 +755,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
                                      "rhs", true, Utility::get<0>(right_value),
-                                     ".0", T(1e-6) ) + ": " +
+                                     "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -763,9 +764,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( std::make_tuple( T(0) ), "lhs",
-                                             right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::make_tuple( T(0) ), "lhs",
+                                               right_value, "rhs",
+                                               oss, 1e-6, true );
 
   expected_compare_result = Policy::compare( T(0),
                                              Utility::get<0>(right_value),
@@ -774,7 +775,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails( "lhs", false, T(0),
                                      "rhs", true, Utility::get<0>(right_value),
-                                     ".0", T(1e-6) ) + ": " +
+                                     "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -783,9 +784,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( std::make_tuple( T(0) ), "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::make_tuple( T(0) ), "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, true );
 
   expected_compare_result = Policy::compare( T(0),
                                              Utility::get<0>(right_value),
@@ -794,7 +795,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails( "lhs", false, T(0),
                                      "rhs", true, Utility::get<0>(right_value),
-                                     ".0", T(1e-6) ) + ": " +
+                                     "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -803,9 +804,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                             std::make_tuple( T(0) ), "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                               std::make_tuple( T(0) ), "rhs",
+                                               oss, 1e-6, true );
 
   expected_compare_result = Policy::compare( Utility::get<0>(left_value),
                                              T(0),
@@ -814,7 +815,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
                                      "rhs", false, T(0),
-                                     ".0", T(1e-6) ) + ": " +
+                                     "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -823,9 +824,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             std::make_tuple( T(0) ), "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               std::make_tuple( T(0) ), "rhs",
+                                               oss, 1e-6, true );
 
   expected_compare_result = Policy::compare( Utility::get<0>(left_value ),
                                              T(0),
@@ -834,7 +835,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   expected_details =
     Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
                                      "rhs", false, T(0),
-                                     ".0", T(1e-6) ) + ": " +
+                                     "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -843,16 +844,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypePair, PolicyTestTypes1 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( std::make_tuple( T(0) ), "lhs",
-                                             std::make_tuple( T(0) ), "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::make_tuple( T(0) ), "lhs",
+                                               std::make_tuple( T(0) ), "rhs",
+                                               oss, 1e-6, true );
 
   expected_compare_result = Policy::compare( T(0), T(0), T(1e-6) );
 
   expected_details =
     Policy::createComparisonDetails( "lhs", false, T(0),
                                      "rhs", false, T(0),
-                                     ".0", T(1e-6) ) + ": " +
+                                     "", T(1e-6) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n" );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
@@ -1035,61 +1036,102 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
 
   // No details logging
   bool compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss );
 
-  bool expected_compare_result =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value) ) &&
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value) );
+  bool expected_compare_result;
+
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    expected_compare_result =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value) ) &&
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value) );
+  }
+  else
+    expected_compare_result = Policy::compare( left_value, right_value );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
                                                      1e-6 );
-  expected_compare_result =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) ) &&
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    expected_compare_result =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value),
+                       T1(1e-6) ) &&
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value),
+                       T2(1e-6) );
+  }
+  else
+    expected_compare_result = Policy::compare( left_value, right_value );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
   // Details logging
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, true );
-  bool expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value) );
-  bool expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  std::string expected_details;
 
-  std::string expected_details =
-    Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
-                                    "rhs", false, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
-                                    "rhs", false, Utility::get<1>(right_value),
-                                    ".1" ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", false,
+                                                     right_value, "rhs", false,
+                                                     "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
+                                      "rhs", false, Utility::get<0>(right_value),
+                                      ".0" ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
+                                      "rhs", false, Utility::get<1>(right_value),
+                                      ".1" ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", false, left_value,
+                                       "rhs", false, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1098,31 +1140,54 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, true,
                                                      1e-6 );
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) );
-  expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value),
+                       T1(1e-6) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value),
+                       T2(1e-6) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
-                                    "rhs", false, Utility::get<0>(right_value),
-                                    ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
-                                    "rhs", false, Utility::get<1>(right_value),
-                                    ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", false,
+                                                     right_value, "rhs", false,
+                                                     "", 1e-6 ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
+                                      "rhs", false, Utility::get<0>(right_value),
+                                      ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
+                                      "rhs", false, Utility::get<1>(right_value),
+                                      ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", false, left_value,
+                                       "rhs", false, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1131,28 +1196,50 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", false,
                                                      "", oss, true );
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value) );
-  expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value) );
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
-                                    "rhs", false, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
-                                    "rhs", false, Utility::get<1>(right_value),
-                                    ".1" ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", true,
+                                                     right_value, "rhs", false,
+                                                     "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
+                                      "rhs", false, Utility::get<0>(right_value),
+                                      ".0" ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
+                                      "rhs", false, Utility::get<1>(right_value),
+                                      ".1" ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, left_value,
+                                       "rhs", false, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1161,31 +1248,55 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", false,
                                                      "", oss, true,
                                                      1e-6 );
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) );
-  expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value),
+                       T1(1e-6) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value),
+                       T2(1e-6) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
-                                    "rhs", false, Utility::get<0>(right_value),
-                                    ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
-                                    "rhs", false, Utility::get<1>(right_value),
-                                    ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", true,
+                                                     right_value, "rhs", false,
+                                                     "", 1e-6 ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
+                                      "rhs", false, Utility::get<0>(right_value),
+                                      ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
+                                      "rhs", false, Utility::get<1>(right_value),
+                                      ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, left_value,
+                                       "rhs", false, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1194,28 +1305,52 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", true,
                                                      "", oss, true );
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value) );
-  expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
-                                    "rhs", true, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
-                                    "rhs", true, Utility::get<1>(right_value),
-                                    ".1" ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", false,
+                                                     right_value, "rhs", true,
+                                                     "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
+                                      "rhs", true, Utility::get<0>(right_value),
+                                      ".0" ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
+                                      "rhs", true, Utility::get<1>(right_value),
+                                      ".1" ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", false, left_value,
+                                       "rhs", true, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1224,31 +1359,55 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
                                                      1e-6 );
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) );
-  expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
-                                    "rhs", true, Utility::get<0>(right_value),
-                                    ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
-                                    "rhs", true, Utility::get<1>(right_value),
-                                    ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value),
+                       T1(1e-6) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value),
+                       T2(1e-6) );
+    
+    bool expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", false,
+                                                     right_value, "rhs", true,
+                                                     "", 1e-6 ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
+                                      "rhs", true, Utility::get<0>(right_value),
+                                      ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
+                                      "rhs", true, Utility::get<1>(right_value),
+                                      ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", false, left_value,
+                                       "rhs", true, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1257,28 +1416,52 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true );
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value) );
-  expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
-                                    "rhs", true, Utility::get<0>(right_value),
-                                    ".0" ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
-                                    "rhs", true, Utility::get<1>(right_value),
-                                    ".1" ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", true,
+                                                     right_value, "rhs", true,
+                                                     "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
+                                      "rhs", true, Utility::get<0>(right_value),
+                                      ".0" ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
+                                      "rhs", true, Utility::get<1>(right_value),
+                                      ".1" ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+     
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, left_value,
+                                       "rhs", true, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1287,31 +1470,54 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
   oss.clear();
 
   compare_result =
-    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy>(
+    Utility::ComparisonTraits<std::tuple<T1,T2> >::template compare<Policy,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
                                                      1e-6 );
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) );
-  expected_compare_result_1 = 
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
-                                    "rhs", true, Utility::get<0>(right_value),
-                                    ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
-                                    "rhs", true, Utility::get<1>(right_value),
-                                    ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value),
+                       T1(1e-6) );
+    bool expected_compare_result_1 = 
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value),
+                       T2(1e-6) );
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::ComparisonTraits<std::tuple<T1,T2> >::template createComparisonHeader<Policy,0>(
+                                                     left_value, "lhs", true,
+                                                     right_value, "rhs", true,
+                                                     "", 1e-6 ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
+                                      "rhs", true, Utility::get<0>(right_value),
+                                      ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
+                                      "rhs", true, Utility::get<1>(right_value),
+                                      ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, left_value,
+                                       "rhs", true, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1333,58 +1539,96 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
 
   std::ostringstream oss;
 
-  bool compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                                  right_value, "rhs",
-                                                  oss );
+  bool compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                                    right_value, "rhs",
+                                                    oss );
 
-  bool expected_compare_result =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value) ) &&
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value) );
+  bool expected_compare_result;
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), "" );
-
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, false );
-
-  expected_compare_result =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) ) &&
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    expected_compare_result = 
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value) ) &&
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value) );
+  }
+  else
+    expected_compare_result = Policy::compare( left_value, right_value );
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                             right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, false );
 
-  bool expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) );
-  bool expected_compare_result_1 =
-    Policy::compare( Utility::get<1>(left_value),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    expected_compare_result =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value),
+                       T1(1e-6) ) &&
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value),
+                       T2(1e-6) );
+  }
+  else
+    expected_compare_result = Policy::compare( left_value, right_value );
 
-  std::string expected_details =
-    Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
-                                     "rhs", true, Utility::get<0>(right_value),
-                                     ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails( "lhs", true, Utility::get<1>(left_value),
-                                     "rhs", true, Utility::get<1>(right_value),
-                                     ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                               right_value, "rhs",
+                                               oss, 1e-6, true );
+  std::string expected_details;
+
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value),
+                       Utility::get<0>(right_value),
+                       T1(1e-6) );
+    bool expected_compare_result_1 =
+      Policy::compare( Utility::get<1>(left_value),
+                       Utility::get<1>(right_value),
+                       T2(1e-6) );
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
+                                                 right_value, "rhs",
+                                                 1e-6, "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
+                                       "rhs", true, Utility::get<0>(right_value),
+                                       ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(left_value),
+                                       "rhs", true, Utility::get<1>(right_value),
+                                       ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result = Policy::compare( left_value, right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, left_value,
+                                       "rhs", true, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1392,61 +1636,52 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, true );
 
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(const_left_value),
-                     Utility::get<0>(const_right_value),
-                     T1(1e-6) );
-  expected_compare_result_1 =
-    Policy::compare( Utility::get<1>(const_left_value),
-                     Utility::get<1>(const_right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(const_left_value),
+                       Utility::get<0>(const_right_value),
+                       T1(1e-6) );
+    bool expected_compare_result_1 =
+      Policy::compare( Utility::get<1>(const_left_value),
+                       Utility::get<1>(const_right_value),
+                       T2(1e-6) );
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails( "lhs", true, Utility::get<0>(const_left_value),
-                                     "rhs", true, Utility::get<0>(const_right_value),
-                                     ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails( "lhs", true, Utility::get<1>(const_left_value),
-                                     "rhs", true, Utility::get<1>(const_right_value),
-                                     ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
+                                                 const_right_value, "rhs",
+                                                 1e-6, "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(const_left_value),
+                                       "rhs", true, Utility::get<0>(const_right_value),
+                                       ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(const_left_value),
+                                       "rhs", true, Utility::get<1>(const_right_value),
+                                       ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result =
+      Policy::compare( const_left_value, const_right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
-
-  oss.str( "" );
-  oss.clear();
-
-  compare_result = Utility::compare<Policy>( std::make_tuple(T1(0),T2(1)), "lhs",
-                                             right_value, "rhs",
-                                             oss, 1e-6, true );
-
-  expected_compare_result_0 =
-    Policy::compare( T1(0),
-                     Utility::get<0>(right_value),
-                     T1(1e-6) );
-  expected_compare_result_1 =
-    Policy::compare( T2(1),
-                     Utility::get<1>(right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
-
-  expected_details =
-    Policy::createComparisonDetails( "lhs", false, T1(0),
-                                     "rhs", true, Utility::get<0>(right_value),
-                                     ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails( "lhs", false, T2(1),
-                                     "rhs", true, Utility::get<1>(right_value),
-                                     ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, const_left_value,
+                                       "rhs", true, const_right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1454,61 +1689,49 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( std::make_tuple(T1(0),T2(1)), "lhs",
-                                             const_right_value, "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::make_tuple(T1(0),T2(1)), "lhs",
+                                               right_value, "rhs",
+                                               oss, 1e-6, true );
 
-  expected_compare_result_0 =
-    Policy::compare( T1(0),
-                     Utility::get<0>(const_right_value),
-                     T1(1e-6) );
-  expected_compare_result_1 =
-    Policy::compare( T2(1),
-                     Utility::get<1>(const_right_value),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( T1(0), Utility::get<0>(right_value), T1(1e-6) );
+    bool expected_compare_result_1 =
+      Policy::compare( T2(1), Utility::get<1>(right_value), T2(1e-6) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails( "lhs", false, T1(0),
-                                     "rhs", true, Utility::get<0>(const_right_value),
-                                     ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails( "lhs", false, T2(1),
-                                     "rhs", true, Utility::get<1>(const_right_value),
-                                     ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Utility::createComparisonHeader<Policy,0>( std::make_tuple(T1(0),T2(1)), "lhs",
+                                                 right_value, "rhs",
+                                                 1e-6, "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", false, T1(0),
+                                       "rhs", true, Utility::get<0>(right_value),
+                                       ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", false, T2(1),
+                                       "rhs", true, Utility::get<1>(right_value),
+                                       ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result =
+      Policy::compare( std::make_tuple(T1(0),T2(1)), right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
-
-  oss.str( "" );
-  oss.clear();
-
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
-                                             std::make_tuple(T1(0),T2(1)), "rhs",
-                                             oss, 1e-6, true );
-
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(left_value),
-                     T1(0),
-                     T1(1e-6) );
-  expected_compare_result_1 =
-    Policy::compare( Utility::get<1>(left_value),
-                     T2(1),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
-
-  expected_details =
-    Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
-                                     "rhs", false, T1(0),
-                                     ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails( "lhs", true, Utility::get<1>(left_value),
-                                     "rhs", false, T2(1),
-                                     ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Policy::createComparisonDetails( "lhs", false, std::make_tuple(T1(0),T2(1)),
+                                       "rhs", true, right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1516,30 +1739,49 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
-                                             std::make_tuple(T1(0),T2(1)), "rhs",
-                                             oss, 1e-6, true );
+  compare_result = Utility::compare<Policy,0>( std::make_tuple(T1(0),T2(1)), "lhs",
+                                               const_right_value, "rhs",
+                                               oss, 1e-6, true );
 
-  expected_compare_result_0 =
-    Policy::compare( Utility::get<0>(const_left_value),
-                     T1(0),
-                     T1(1e-6) );
-  expected_compare_result_1 =
-    Policy::compare( Utility::get<1>(const_left_value),
-                     T2(1),
-                     T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( T1(0), Utility::get<0>(const_right_value), T1(1e-6) );
+    bool expected_compare_result_1 =
+      Policy::compare( T2(1), Utility::get<1>(const_right_value), T2(1e-6) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
 
-  expected_details =
-    Policy::createComparisonDetails( "lhs", true, Utility::get<0>(const_left_value),
-                                     "rhs", false, T1(0),
-                                     ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails( "lhs", true, Utility::get<1>(const_left_value),
-                                     "rhs", false, T2(1),
-                                     ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Utility::createComparisonHeader<Policy,0>( std::make_tuple(T1(0),T2(1)), "lhs",
+                                                 const_right_value, "rhs",
+                                                 1e-6, "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", false, T1(0),
+                                       "rhs", true, Utility::get<0>(const_right_value),
+                                       ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", false, T2(1),
+                                       "rhs", true, Utility::get<1>(const_right_value),
+                                       ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result =
+      Policy::compare( std::make_tuple(T1(0),T2(1)), const_right_value );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", false, std::make_tuple(T1(0),T2(1)),
+                                       "rhs", true, const_right_value,
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
@@ -1547,24 +1789,149 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
   oss.str( "" );
   oss.clear();
 
-compare_result = Utility::compare<Policy>( std::make_tuple(T1(1),T2(1)), "lhs",
+  compare_result = Utility::compare<Policy,0>( left_value, "lhs",
+                                               std::make_tuple(T1(0),T2(1)), "rhs",
+                                               oss, 1e-6, true );
+
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(left_value), T1(0), T1(1e-6) );
+    bool expected_compare_result_1 =
+      Policy::compare( Utility::get<1>(left_value), T2(1), T2(1e-6) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
+                                                 std::make_tuple(T1(0),T2(1)), "rhs",
+                                                 1e-6, "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
+                                       "rhs", false, T1(0),
+                                       ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(left_value),
+                                       "rhs", false, T2(1),
+                                       ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result =
+      Policy::compare( left_value, std::make_tuple(T1(0),T2(1)) );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, left_value,
+                                       "rhs", false, std::make_tuple(T1(0),T2(1)),
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( const_left_value, "lhs",
+                                               std::make_tuple(T1(0),T2(1)), "rhs",
+                                               oss, 1e-6, true );
+
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 =
+      Policy::compare( Utility::get<0>(const_left_value), T1(0), T1(1e-6) );
+    bool expected_compare_result_1 =
+      Policy::compare( Utility::get<1>(const_left_value), T2(1), T2(1e-6) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
+                                                 std::make_tuple(T1(0),T2(1)), "rhs",
+                                                 1e-6, "" ) +
+      (expected_compare_result ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(const_left_value),
+                                       "rhs", false, T1(0),
+                                       ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(const_left_value),
+                                       "rhs", false, T2(1),
+                                       ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result =
+      Policy::compare( const_left_value, std::make_tuple(T1(0),T2(1)) );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, const_left_value,
+                                       "rhs", false, std::make_tuple(T1(0),T2(1)),
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
+    
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( std::make_tuple(T1(1),T2(1)), "lhs",
+                                               std::make_tuple(T1(0),T2(1)), "rhs",
+                                               oss, 1e-6, true );
+
+  if( std::is_same<Policy,Utility::EqualityComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::CloseComparisonPolicy>::value ||
+      std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value  )
+  {
+    bool expected_compare_result_0 = Policy::compare( T1(1), T1(0), T1(1e-6) );
+    bool expected_compare_result_1 = Policy::compare( T2(1), T2(1), T2(1e-6) );
+    
+    expected_compare_result =
+      expected_compare_result_0 && expected_compare_result_1;
+
+    expected_details =
+      Utility::createComparisonHeader<Policy,0>(
+                                           std::make_tuple(T1(1),T2(1)), "lhs",
                                            std::make_tuple(T1(0),T2(1)), "rhs",
-                                           oss, 1e-6, true );
+                                           1e-6 ) +
+      (expected_compare_result ? "passed\n" : "failed!\n") +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", false, T1(1),
+                                       "rhs", false, T1(0),
+                                       ".0", T1(1e-6) ) + ": " +
+      (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
+      std::string( Utility::Details::incrementRightShift(0), ' ' ) +
+      Policy::createComparisonDetails( "lhs", false, T2(1),
+                                       "rhs", false, T2(1),
+                                       ".1", T2(1e-6) ) + ": " +
+      (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+  }
+  else
+  {
+    expected_compare_result =
+      Policy::compare( std::make_tuple(T1(1),T2(1)),
+                       std::make_tuple(T1(0),T2(1)) );
 
-  expected_compare_result_0 = Policy::compare( T1(1), T1(0), T1(1e-6) );
-  expected_compare_result_1 = Policy::compare( T2(1), T2(1), T2(1e-6) );
-  expected_compare_result =
-    expected_compare_result_0 && expected_compare_result_1;
-
-  expected_details =
-    Policy::createComparisonDetails( "lhs", false, T1(1),
-                                     "rhs", false, T1(0),
-                                     ".0", T1(1e-6) ) + ": " +
-    (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
-    Policy::createComparisonDetails( "lhs", false, T2(1),
-                                     "rhs", false, T2(1),
-                                     ".1", T2(1e-6) ) + ": " +
-    (expected_compare_result_1 ? "passed\n" : "failed!\n" );
+    expected_details =
+      Policy::createComparisonDetails( "lhs", false, std::make_tuple(T1(1),T2(1)),
+                                       "rhs", false, std::make_tuple(T1(0),T2(1)),
+                                       "", std::tuple<T1,T2>() ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n" );
+  }
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );

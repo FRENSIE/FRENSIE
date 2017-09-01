@@ -207,7 +207,7 @@ template<size_t I, typename TupleType, typename Enabled = void>
 struct TupleMemberCompareHelper
 {
   //! Compare tuple members
-  template<typename ComparePolicy>
+  template<typename ComparePolicy, size_t RightShift>
   static inline bool compareTupleMembers(
                      const TupleType& left_tuple,
                      const std::string& left_name,
@@ -232,7 +232,7 @@ struct TupleMemberCompareHelper
       TupleElementIExtraDataConversionHelper;
 
     const bool local_success =
-      Utility::ComparisonTraits<TupleElementIType>::template compare<ComparePolicy>(
+      Utility::ComparisonTraits<TupleElementIType>::template compare<ComparePolicy,RightShift>(
           Utility::get<I>( left_tuple ),
           left_name,
           log_left_name,
@@ -245,7 +245,7 @@ struct TupleMemberCompareHelper
           TupleElementIExtraDataConversionHelper::convert( extra_data ) );
     
     const bool next_local_success =
-      TupleMemberCompareHelper<I+1,TupleType>::template compareTupleMembers<ComparePolicy>(
+      TupleMemberCompareHelper<I+1,TupleType>::template compareTupleMembers<ComparePolicy,RightShift>(
                                                         left_tuple,
                                                         left_name,
                                                         log_left_name,
@@ -264,7 +264,7 @@ struct TupleMemberCompareHelper
 template<size_t I, typename TupleType>
 struct TupleMemberCompareHelper<I,TupleType,typename std::enable_if<I==TupleSize<TupleType>::value>::type>
 {
-  template<typename ComparePolicy>
+  template<typename ComparePolicy, size_t RightShift>
   static inline bool compareTupleMembers( const TupleType&,
                                           const std::string&,
                                           const bool,
@@ -278,12 +278,182 @@ struct TupleMemberCompareHelper<I,TupleType,typename std::enable_if<I==TupleSize
   { return true; }
 };
 
+/*! The tuple comparison policy helper
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
+template<typename Policy, typename TupleType, typename Enabled = void>
+struct TupleComparePolicyHelper
+{
+private:
+
+  // Typedef for this type
+  typedef TupleComparePolicyHelper<Policy,TupleType> ThisType;
+
+public:
+  
+  //! Create the comparison header
+  template<size_t RightShift, typename ExtraDataType>
+  static inline std::string createComparisonHeader(
+                                              const TupleType& left_value,
+                                              const std::string& left_name,
+                                              const bool log_left_name,
+                                              const TupleType& right_value,
+                                              const std::string& right_name,
+                                              const bool log_right_name,
+                                              const std::string& name_suffix,
+                                              const ExtraDataType& extra_data =
+                                              ExtraDataType() )
+  {
+    return ThisType::template createComparisonHeader<RightShift>(
+                                       left_value, left_name, log_left_name,
+                                       right_value, right_name, log_right_name,
+                                       name_suffix, TupleType() );
+  }
+
+  //! Create the comparison header
+  template<size_t RightShift>
+  static inline std::string createComparisonHeader(
+                                              const TupleType& left_value,
+                                              const std::string& left_name,
+                                              const bool log_left_name,
+                                              const TupleType& right_value,
+                                              const std::string& right_name,
+                                              const bool log_right_name,
+                                              const std::string& name_suffix,
+                                              const TupleType& extra_data =
+                                              TupleType() )
+  {
+    return Details::createComparisonHeaderImpl<Policy,RightShift>(
+                                       left_value, left_name, log_left_name,
+                                       right_value, right_name, log_right_name,
+                                       name_suffix, extra_data );
+  }
+
+  //! Compare two tuples
+  template<size_t RightShift, typename ExtraDataType>
+  static inline bool compare(
+                            const TupleType& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const TupleType& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            std::ostream& log,
+                            const bool log_comparison_details = false,
+                            const ExtraDataType& = ExtraDataType() )
+  {
+    return Details::compareImpl<Policy,RightShift>(
+                                      left_value, left_name, log_left_name,
+                                      right_value, right_name, log_right_name,
+                                      name_suffix, log, log_comparison_details,
+                                      TupleType() );
+  }
+};
+
+/*! \brief Specialization of TupleComparePolicyHelper for 
+ * Utility::EqualityComparisonPolicy, Utility::CloseComparisonPolicy and
+ * the Utility::RelativeErrorComparisonPolicy (tuple size > 1 only).
+ * 
+ * If the Utility::EqualityComparisonPolicy, Utility::CloseComparisonPolicy or
+ * the Utility::RelativeErrorComparisonPolicy are used extra details regarding
+ * the comparison of each tuple member comparison will be added to the log.
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
+template<typename Policy, typename TupleType>
+struct TupleComparePolicyHelper<Policy,TupleType,typename std::enable_if<(std::is_same<Policy,Utility::EqualityComparisonPolicy>::value || std::is_same<Policy,Utility::CloseComparisonPolicy>::value || std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value) && (Utility::TupleSize<TupleType>::value>1)>::type>
+{
+private:
+
+  // Typedef for this type
+  typedef TupleComparePolicyHelper<Policy,TupleType,typename std::enable_if<(std::is_same<Policy,Utility::EqualityComparisonPolicy>::value || std::is_same<Policy,Utility::CloseComparisonPolicy>::value || std::is_same<Policy,Utility::RelativeErrorComparisonPolicy>::value) && (Utility::TupleSize<TupleType>::value>1)>::type> ThisType;
+
+public:
+  
+  //! Create the comparison header
+  template<size_t RightShift, typename ExtraDataType>
+  static inline std::string createComparisonHeader(
+                                              const TupleType& left_value,
+                                              const std::string& left_name,
+                                              const bool log_left_name,
+                                              const TupleType& right_value,
+                                              const std::string& right_name,
+                                              const bool log_right_name,
+                                              const std::string& name_suffix,
+                                              const ExtraDataType& =
+                                              ExtraDataType() )
+  {
+    std::string detailed_left_name =
+      Details::createDetailedContainerName( left_value,
+                                            left_name,
+                                            log_left_name,
+                                            name_suffix );
+
+    std::string detailed_right_name =
+      Details::createDetailedContainerName( right_value,
+                                            right_name,
+                                            log_right_name,
+                                            name_suffix );
+
+    std::ostringstream oss;
+    
+    oss << std::string( RightShift, ' ' )
+        << "for every tuple member i, "
+        << "Utility::get<i>(" << detailed_left_name << ") "
+        << Policy::template getOperatorName<TupleType>()
+        << " Utility::get<i>(" << detailed_right_name << "): ";
+
+    return oss.str();
+  }
+
+  //! Compare two tuples
+  template<size_t RightShift, typename ExtraDataType>
+  static inline bool compare(
+                            const TupleType& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const TupleType& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            std::ostream& log,
+                            const bool log_comparison_details = false,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    if( log_comparison_details )
+    {
+      log << ThisType::template createComparisonHeader<RightShift>(
+                                       left_value, left_name, log_left_name,
+                                       right_value, right_name, log_right_name,
+                                       name_suffix, extra_data );
+    }
+
+    std::ostringstream local_log;
+
+    bool success = TupleMemberCompareHelper<0,TupleType>::template compareTupleMembers<Policy,Details::incrementRightShift(RightShift)>(
+                                left_value, left_name, log_left_name,
+                                right_value, right_name, log_right_name,
+                                name_suffix, local_log, log_comparison_details,
+                                extra_data );
+
+    if( log_comparison_details )
+    {
+      Utility::reportComparisonPassFail( success, log );
+      log << local_log.str();
+    }
+
+    return success;
+  }
+};
+
 } // end Details namespace
 
 // Create a comparison header
 template<typename... Types>
-template<typename ComparisonPolicy>
-inline std::string ComparisonTraits<std::tuple<Types...> >::createComparisonHeader(
+template<typename ComparisonPolicy, size_t RightShift>
+inline std::string ComparisonTraits<std::tuple<Types...>,typename std::enable_if<Utility::TupleSize<std::tuple<Types...> >::value!=1>::type>::createComparisonHeader(
                                        const std::tuple<Types...>& left_value,
                                        const std::string& left_name,
                                        const bool log_left_name,
@@ -293,24 +463,16 @@ inline std::string ComparisonTraits<std::tuple<Types...> >::createComparisonHead
                                        const std::string& name_suffix,
                                        const ExtraDataType& extra_data  )
 {
-  std::string comparison_header =
-    ComparisonPolicy::createComparisonDetails( left_name,
-                                               log_left_name,
-                                               left_value,
-                                               right_name,
-                                               log_right_name,
-                                               right_value,
-                                               name_suffix,
-                                               extra_data );
-  comparison_header += ": ";
-  
-  return comparison_header;
+  return Details::TupleComparePolicyHelper<ComparisonPolicy,std::tuple<Types...> >::template createComparisonHeader<RightShift>(
+                                       left_value, left_name, log_left_name,
+                                       right_value, right_name, log_right_name,
+                                       name_suffix, extra_data );
 }
 
 // Compare two tuples
 template<typename... Types>
-template<typename ComparisonPolicy>
-inline bool ComparisonTraits<std::tuple<Types...> >::compare(
+template<typename ComparisonPolicy, size_t RightShift>
+inline bool ComparisonTraits<std::tuple<Types...>,typename std::enable_if<Utility::TupleSize<std::tuple<Types...> >::value!=1>::type>::compare(
                                        const std::tuple<Types...>& left_value,
                                        const std::string& left_name,
                                        const bool log_left_name,
@@ -322,84 +484,16 @@ inline bool ComparisonTraits<std::tuple<Types...> >::compare(
                                        const bool log_comparison_details, 
                                        const ExtraDataType& extra_data )
 {
-  return Details::TupleMemberCompareHelper<0,std::tuple<Types...> >::template compareTupleMembers<ComparisonPolicy>(
-                                                        left_value,
-                                                        left_name,
-                                                        log_left_name,
-                                                        right_value,
-                                                        right_name,
-                                                        log_right_name,
-                                                        name_suffix,
-                                                        log,
-                                                        log_comparison_details,
-                                                        extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy>
-inline std::string ComparisonTraits<std::tuple<> >::createComparisonHeader(
-                                              const std::tuple<>& left_value,
-                                              const std::string& left_name,
-                                              const bool log_left_name,
-                                              const std::tuple<>& right_value,
-                                              const std::string& right_name,
-                                              const bool log_right_name,
-                                              const std::string& name_suffix,
-                                              const ExtraDataType& extra_data )
-{
-  std::string comparison_header =
-    ComparisonPolicy::createComparisonDetails( left_name,
-                                               log_left_name,
-                                               left_value,
-                                               right_name,
-                                               log_right_name,
-                                               right_value,
-                                               name_suffix,
-                                               std::tuple<>() );
-  comparison_header += ": ";
-
-  return comparison_header;
-}
-
-// Compare two tuples
-template<typename ComparisonPolicy>
-inline bool ComparisonTraits<std::tuple<> >::compare(
-                                              const std::tuple<>& left_value,
-                                              const std::string& left_name,
-                                              const bool log_left_name,
-                                              const std::tuple<>& right_value,
-                                              const std::string& right_name,
-                                              const bool log_right_name,
-                                              const std::string& name_suffix,
-                                              std::ostream& log,
-                                              const bool log_comparison_header,
-                                              const ExtraDataType& extra_data )
-{
-  if( log_comparison_header )
-  {
-    log << ComparisonTraits<std::tuple<> >::template createComparisonHeader<ComparisonPolicy>(
-                                                                left_value,
-                                                                left_name,
-                                                                log_left_name,
-                                                                right_value,
-                                                                right_name,
-                                                                log_right_name,
-                                                                name_suffix,
-                                                                extra_data );
-  }
-
-  // Conduct the comparison
-  const bool success = ComparisonPolicy::compare( left_value, right_value );
-
-  if( log_comparison_header )
-    Utility::reportComparisonPassFail( success, log );
-
-  return success;
+  return Details::TupleComparePolicyHelper<ComparisonPolicy,std::tuple<Types...> >::template compare<RightShift>(
+                                      left_value, left_name, log_left_name,
+                                      right_value, right_name, log_right_name,
+                                      name_suffix, log, log_comparison_details,
+                                      extra_data );
 }
 
 // Create a comparison header
 template<typename T1, typename T2>
-template<typename ComparisonPolicy>
+template<typename ComparisonPolicy, size_t RightShift>
 inline std::string ComparisonTraits<std::pair<T1,T2> >::createComparisonHeader(
                                        const std::pair<T1,T2>& left_value,
                                        const std::string& left_name,
@@ -410,23 +504,15 @@ inline std::string ComparisonTraits<std::pair<T1,T2> >::createComparisonHeader(
                                        const std::string& name_suffix,
                                        const ExtraDataType& extra_data  )
 {
-  std::string comparison_header =
-    ComparisonPolicy::createComparisonDetails( left_name,
-                                               log_left_name,
-                                               left_value,
-                                               right_name,
-                                               log_right_name,
-                                               right_value,
-                                               name_suffix,
-                                               extra_data );
-  comparison_header += ": ";
-  
-  return comparison_header;
+  return Details::TupleComparePolicyHelper<ComparisonPolicy,std::pair<T1,T2> >::template createComparisonHeader<RightShift>(
+                                       left_value, left_name, log_left_name,
+                                       right_value, right_name, log_right_name,
+                                       name_suffix, extra_data );
 }
 
 // Compare two tuples
 template<typename T1, typename T2>
-template<typename ComparisonPolicy>
+template<typename ComparisonPolicy, size_t RightShift>
 inline bool ComparisonTraits<std::pair<T1,T2> >::compare(
                                        const std::pair<T1,T2>& left_value,
                                        const std::string& left_name,
@@ -439,17 +525,11 @@ inline bool ComparisonTraits<std::pair<T1,T2> >::compare(
                                        const bool log_comparison_details, 
                                        const ExtraDataType& extra_data )
 {
-  return Details::TupleMemberCompareHelper<0,std::pair<T1,T2> >::template compareTupleMembers<ComparisonPolicy>(
-                                                        left_value,
-                                                        left_name,
-                                                        log_left_name,
-                                                        right_value,
-                                                        right_name,
-                                                        log_right_name,
-                                                        name_suffix,
-                                                        log,
-                                                        log_comparison_details,
-                                                        extra_data );
+  return Details::TupleComparePolicyHelper<ComparisonPolicy,std::pair<T1,T2> >::template compare<RightShift>(
+                                      left_value, left_name, log_left_name,
+                                      right_value, right_name, log_right_name,
+                                      name_suffix, log, log_comparison_details,
+                                      extra_data );
 }
   
 } // end Utility namespace
