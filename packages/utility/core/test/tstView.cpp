@@ -1089,7 +1089,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
     Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
                                                left_view.size(), "lhs", false,
                                                right_view.size(), "rhs", false,
-                                               " size", local_oss, true );
+                                               ".size()", local_oss, true );
   
   for( size_t i = 0; i < left_view.size(); ++i )
   {
@@ -1131,7 +1131,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
     Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
                                                left_view.size(), "lhs", true,
                                                right_view.size(), "rhs", false,
-                                               " size", local_oss, true );
+                                               ".size()", local_oss, true );
   
   for( size_t i = 0; i < left_view.size(); ++i )
   {
@@ -1173,7 +1173,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
     Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
                                                left_view.size(), "lhs", false,
                                                right_view.size(), "rhs", true,
-                                               " size", local_oss, true );
+                                               ".size()", local_oss, true );
   
   for( size_t i = 0; i < left_view.size(); ++i )
   {
@@ -1215,7 +1215,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
     Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
                                                left_view.size(), "lhs", true,
                                                right_view.size(), "rhs", true,
-                                               " size", local_oss, true );
+                                               ".size()", local_oss, true );
   
   for( size_t i = 0; i < left_view.size(); ++i )
   {
@@ -1241,367 +1241,434 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare,
   local_oss.str( "" );
   local_oss.clear();
 
-  // // Details logging - custom tolerance
-  // typedef typename Utility::ComparisonTraits<View>::ExtraDataType ExtraDataType;
-  // ExtraDataType tol = initializeTolerance( 1e-6, ExtraDataType() );
+  // Details logging - custom tolerance
+  typedef typename Utility::ComparisonTraits<View>::ExtraDataType ExtraDataType;
+  ExtraDataType tol = initializeTolerance( 1e-6, ExtraDataType() );
   
-  // compare_result =
-  //   Utility::ComparisonTraits<View>::template compare<Policy,0>(
-  //                                                     left_view, "lhs", false,
-  //                                                     right_view, "rhs", false,
-  //                                                     "", oss, true, tol );
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", false,
+                                                      "", oss, true, tol );
 
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view.size() );
-
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", false, left_view.size(),
-  //                                   "rhs", false, right_view.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
   
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
-  //                                                  left_view[i], "lhs", false,
-  //                                                  right_view[i], "rhs", false,
-  //                                                  "", local_oss, true, tol );
-  //   expected_details += local_oss.str();
+  expected_details =
+    Utility::ComparisonTraits<View>::template createComparisonHeader<Policy,0>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", false,
+                                                      "" );
+  
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                               left_view.size(), "lhs", false,
+                                               right_view.size(), "rhs", false,
+                                               ".size()", local_oss, true );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                                   left_view[i], "lhs", false,
+                                                   right_view[i], "rhs", false,
+                                                   "", local_oss, true, tol );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", false,
+                                                      "", oss, true, tol );
+
+  expected_details =
+    Utility::ComparisonTraits<View>::template createComparisonHeader<Policy,0>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", false,
+                                                      "", tol );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                               left_view.size(), "lhs", true,
+                                               right_view.size(), "rhs", false,
+                                               ".size()", local_oss, true );
+
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                left_view[i], "lhs", true,
+                right_view[i], "rhs", false,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
     
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
   
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
 
-  // oss.str( "" );
-  // oss.clear();
+  oss.str( "" );
+  oss.clear();
 
-  // compare_result =
-  //   Utility::ComparisonTraits<View>::template compare<Policy,0>(
-  //                                                     left_view, "lhs", true,
-  //                                                     right_view, "rhs", false,
-  //                                                     "", oss, true, tol );
+  local_oss.str( "" );
+  local_oss.clear();
 
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view.size() );
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", true,
+                                                      "", oss, true, tol );
 
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", true, left_view.size(),
-  //                                   "rhs", false, right_view.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
-  
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
-  //               left_view[i], "lhs", true,
-  //               right_view[i], "rhs", false,
-  //               std::string("[") + Utility::toString(i) + "]", local_oss, true,
-  //               tol );
-  //   expected_details += local_oss.str();
+  expected_details =
+    Utility::ComparisonTraits<View>::template createComparisonHeader<Policy,0>(
+                                                      left_view, "lhs", false,
+                                                      right_view, "rhs", true,
+                                                      "", tol );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                               left_view.size(), "lhs", false,
+                                               right_view.size(), "rhs", true,
+                                               ".size()", local_oss, true );
+
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                left_view[i], "lhs", false,
+                right_view[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
     
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
   
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
 
-  // oss.str( "" );
-  // oss.clear();
+  oss.str( "" );
+  oss.clear();
 
-  // compare_result =
-  //   Utility::ComparisonTraits<View>::template compare<Policy,0>(
-  //                                                     left_view, "lhs", false,
-  //                                                     right_view, "rhs", true,
-  //                                                     "", oss, true, tol );
+  local_oss.str( "" );
+  local_oss.clear();
 
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view.size() );
+  compare_result =
+    Utility::ComparisonTraits<View>::template compare<Policy,0>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", true,
+                                                      "", oss, true, tol );
 
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", false, left_view.size(),
-  //                                   "rhs", true, right_view.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details =
+    Utility::ComparisonTraits<View>::template createComparisonHeader<Policy,0>(
+                                                      left_view, "lhs", true,
+                                                      right_view, "rhs", true,
+                                                      "", tol );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                               left_view.size(), "lhs", true,
+                                               right_view.size(), "rhs", true,
+                                               ".size()", local_oss, true );
   
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
-  //               left_view[i], "lhs", false,
-  //               right_view[i], "rhs", true,
-  //               std::string("[") + Utility::toString(i) + "]", local_oss, true,
-  //               tol );
-  //   expected_details += local_oss.str();
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                left_view[i], "lhs", true,
+                right_view[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
     
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
   
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
 
-  // oss.str( "" );
-  // oss.clear();
+  oss.str( "" );
+  oss.clear();
 
-  // compare_result =
-  //   Utility::ComparisonTraits<View>::template compare<Policy,0>(
-  //                                                     left_view, "lhs", true,
-  //                                                     right_view, "rhs", true,
-  //                                                     "", oss, true, tol );
+  local_oss.str( "" );
+  local_oss.clear();
 
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view.size() );
+  // Details logging - default tolerance, view of const
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
+                                              left_view_of_const, "lhs", false,
+                                              right_view, "rhs", false,
+                                              "", oss, true );
 
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", true, left_view.size(),
-  //                                   "rhs", true, right_view.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details =
+    Utility::ComparisonTraits<ViewOfConst>::template createComparisonHeader<Policy,0>(
+                                              left_view_of_const, "lhs", false,
+                                              right_view, "rhs", false,
+                                              "" );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                       left_view_of_const.size(), "lhs", false,
+                                       right_view.size(), "rhs", false,
+                                       ".size()", local_oss, true );
   
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
-  //               left_view[i], "lhs", true,
-  //               right_view[i], "rhs", true,
-  //               std::string("[") + Utility::toString(i) + "]", local_oss, true,
-  //               tol );
-  //   expected_details += local_oss.str();
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                      left_view_of_const[i], "lhs", false,
+                      right_view[i], "rhs", false,
+                      std::string("[") + Utility::toString(i) + "]", local_oss,
+                      true );
+        
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
+                                             left_view, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "", oss, true );
+
+  expected_details =
+    Utility::ComparisonTraits<ViewOfConst>::template createComparisonHeader<Policy,0>(
+                                             left_view, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "" );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                      left_view.size(), "lhs", false,
+                                      right_view_of_const.size(), "rhs", false,
+                                      ".size()", local_oss, true );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                      left_view[i], "lhs", false,
+                      right_view_of_const[i], "rhs", false,
+                      std::string("[") + Utility::toString(i) + "]", local_oss,
+                      true );
+        
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
+                                             left_view_of_const, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "", oss, true );
+
+  expected_details =
+    Utility::ComparisonTraits<ViewOfConst>::template createComparisonHeader<Policy,0>(
+                                             left_view_of_const, "lhs", false,
+                                             right_view_of_const, "rhs", false,
+                                             "" );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                      left_view_of_const.size(), "lhs", false,
+                                      right_view_of_const.size(), "rhs", false,
+                                      ".size()", local_oss, true );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                      left_view_of_const[i], "lhs", false,
+                      right_view_of_const[i], "rhs", false,
+                      std::string("[") + Utility::toString(i) + "]", local_oss,
+                      true );
     
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
   
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
 
-  // oss.str( "" );
-  // oss.clear();
+  oss.str( "" );
+  oss.clear();
 
-  // // Details logging - default tolerance, view of const
-  // compare_result =
-  //   Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
-  //                                             left_view_of_const, "lhs", false,
-  //                                             right_view, "rhs", false,
-  //                                             "", oss, true );
+  local_oss.str( "" );
+  local_oss.clear();
 
-  // expected_compare_result =
-  //   Policy::compare( left_view_of_const.size(), right_view.size() );
+  // Details logging - custom tolerance, view of const
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
+                                              left_view_of_const, "lhs", true,
+                                              right_view, "rhs", true,
+                                              "", oss, true, tol );
 
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", false, left_view_of_const.size(),
-  //                                   "rhs", false, right_view.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details =
+    Utility::ComparisonTraits<ViewOfConst>::template createComparisonHeader<Policy,0>(
+                                             left_view_of_const, "lhs", true,
+                                             right_view, "rhs", true,
+                                             "", tol );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                      left_view_of_const.size(), "lhs", true,
+                                      right_view.size(), "rhs", true,
+                                      ".size()", local_oss, true );
   
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
-  //                     left_view_of_const[i], "lhs", false,
-  //                     right_view[i], "rhs", false,
-  //                     std::string("[") + Utility::toString(i) + "]", local_oss,
-  //                     true );
-  //   expected_details += local_oss.str();
-    
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                left_view_of_const[i], "lhs", true,
+                right_view[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
+        
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
   
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
 
-  // oss.str( "" );
-  // oss.clear();
+  oss.str( "" );
+  oss.clear();
 
-  // compare_result =
-  //   Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
-  //                                            left_view, "lhs", false,
-  //                                            right_view_of_const, "rhs", false,
-  //                                            "", oss, true );
-
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view_of_const.size() );
-
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", false, left_view.size(),
-  //                                   "rhs", false, right_view_of_const.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
+  local_oss.str( "" );
+  local_oss.clear();
   
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
-  //                     left_view[i], "lhs", false,
-  //                     right_view_of_const[i], "rhs", false,
-  //                     std::string("[") + Utility::toString(i) + "]", local_oss,
-  //                     true );
-  //   expected_details += local_oss.str();
-    
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
+                                             left_view, "lhs", true,
+                                             right_view_of_const, "rhs", true,
+                                             "", oss, true, tol );
+
+  expected_details =
+    Utility::ComparisonTraits<ViewOfConst>::template createComparisonHeader<Policy,0>(
+                                             left_view, "lhs", true,
+                                             right_view_of_const, "rhs", true,
+                                             "", tol );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                      left_view.size(), "lhs", true,
+                                      right_view_of_const.size(), "rhs", true,
+                                      ".size()", local_oss, true );
   
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                left_view[i], "lhs", true,
+                right_view_of_const[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
 
-  // oss.str( "" );
-  // oss.clear();
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
 
-  // compare_result =
-  //   Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
-  //                                            left_view_of_const, "lhs", false,
-  //                                            right_view_of_const, "rhs", false,
-  //                                            "", oss, true );
-
-  // expected_compare_result =
-  //   Policy::compare( left_view_of_const.size(), right_view_of_const.size() );
-
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", false, left_view_of_const.size(),
-  //                                   "rhs", false, right_view_of_const.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
   
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
-  //                     left_view_of_const[i], "lhs", false,
-  //                     right_view_of_const[i], "rhs", false,
-  //                     std::string("[") + Utility::toString(i) + "]", local_oss,
-  //                     true );
-  //   expected_details += local_oss.str();
-    
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result =
+    Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
+                                             left_view_of_const, "lhs", true,
+                                             right_view_of_const, "rhs", true,
+                                             "", oss, true, tol );
+
+  expected_details =
+    Utility::ComparisonTraits<ViewOfConst>::template createComparisonHeader<Policy,0>(
+                                             left_view_of_const, "lhs", true,
+                                             right_view_of_const, "rhs", true,
+                                             "", tol );
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                      left_view_of_const.size(), "lhs", true,
+                                      right_view_of_const.size(), "rhs", true,
+                                      ".size()", local_oss, true );
   
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                left_view_of_const[i], "lhs", true,
+                right_view_of_const[i], "rhs", true,
+                std::string("[") + Utility::toString(i) + "]", local_oss, true,
+                tol );
 
-  // oss.str( "" );
-  // oss.clear();
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
 
-  // // Details logging - custom tolerance, view of const
-  // compare_result =
-  //   Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
-  //                                             left_view_of_const, "lhs", true,
-  //                                             right_view, "rhs", true,
-  //                                             "", oss, true, tol );
-
-  // expected_compare_result =
-  //   Policy::compare( left_view_of_const.size(), right_view.size() );
-
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", true, left_view_of_const.size(),
-  //                                   "rhs", true, right_view.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
   
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
-  //               left_view_of_const[i], "lhs", true,
-  //               right_view[i], "rhs", true,
-  //               std::string("[") + Utility::toString(i) + "]", local_oss, true,
-  //               tol );
-  //   expected_details += local_oss.str();
-    
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
-  
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
-
-  // oss.str( "" );
-  // oss.clear();
-
-  // compare_result =
-  //   Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
-  //                                            left_view, "lhs", true,
-  //                                            right_view_of_const, "rhs", true,
-  //                                            "", oss, true, tol );
-
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view_of_const.size() );
-
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", true, left_view.size(),
-  //                                   "rhs", true, right_view_of_const.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
-  
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
-  //               left_view[i], "lhs", true,
-  //               right_view_of_const[i], "rhs", true,
-  //               std::string("[") + Utility::toString(i) + "]", local_oss, true,
-  //               tol );
-  //   expected_details += local_oss.str();
-    
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
-  
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
-
-  // oss.str( "" );
-  // oss.clear();
-
-  // compare_result =
-  //   Utility::ComparisonTraits<ViewOfConst>::template compare<Policy,0>(
-  //                                            left_view_of_const, "lhs", true,
-  //                                            right_view_of_const, "rhs", true,
-  //                                            "", oss, true, tol );
-
-  // expected_compare_result =
-  //   Policy::compare( left_view_of_const.size(), right_view_of_const.size() );
-
-  // expected_details =
-  //   Policy::createComparisonDetails("lhs", true, left_view_of_const.size(),
-  //                                   "rhs", true, right_view_of_const.size(),
-  //                                   " size" ) + ": " +
-  //   (expected_compare_result ? "passed\n" : "failed!\n" );
-  
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   std::ostringstream local_oss;
-  //   bool local_expected_compare_result =
-  //     Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
-  //               left_view_of_const[i], "lhs", true,
-  //               right_view_of_const[i], "rhs", true,
-  //               std::string("[") + Utility::toString(i) + "]", local_oss, true,
-  //               tol );
-  //   expected_details += local_oss.str();
-    
-  //   if( !local_expected_compare_result )
-  //     expected_compare_result = local_expected_compare_result;
-  // }
-  
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
 }
 
 //---------------------------------------------------------------------------//
@@ -1610,142 +1677,586 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper,
                                PolicyContainerPair,
                                TestEqualityPolicyContainers )
 {
-  // typedef typename Utility::TupleElement<0,PolicyContainerPair>::type Policy;
-  // typedef typename Utility::TupleElement<1,PolicyContainerPair>::type Container;
-  // typedef typename Container::value_type T;
-  // typedef Utility::View<typename Container::iterator> View;
-  // typedef Utility::View<typename Container::const_iterator> ViewOfConst;
+  typedef typename Utility::TupleElement<0,PolicyContainerPair>::type Policy;
+  typedef typename Utility::TupleElement<1,PolicyContainerPair>::type Container;
+  typedef typename Container::value_type T;
+  typedef Utility::View<typename Container::iterator> View;
+  typedef Utility::View<typename Container::const_iterator> ViewOfConst;
 
-  // Container left_container = initializeContainer<Container>();
-  // Container right_container = initializeContainer<Container>();
+  Container left_container = initializeContainer<Container>();
+  Container right_container = initializeContainer<Container>();
 
-  // // Construct a view from iterators
-  // View left_view( left_container.begin(), left_container.end() );
-  // ViewOfConst left_view_of_const = left_view.toConst();
+  // Construct a view from iterators
+  View left_view( left_container.begin(), left_container.end() );
+  ViewOfConst left_view_of_const = left_view.toConst();
 
-  // View right_view( right_container.begin(), right_container.end() );
-  // ViewOfConst right_view_of_const = right_view.toConst();
+  View right_view( right_container.begin(), right_container.end() );
+  ViewOfConst right_view_of_const = right_view.toConst();
   
-  // std::ostringstream oss;
+  std::ostringstream oss;
 
-  // bool compare_result = Utility::compare<Policy>( left_view, "lhs",
-  //                                                 right_view, "rhs",
-  //                                                 oss );
+  // No details logging
+  bool compare_result = Utility::compare<Policy,0>( left_view, "lhs",
+                                                    right_view, "rhs",
+                                                    oss );
 
-  // bool expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view.size() );
+  bool expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
 
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   expected_compare_result = expected_compare_result &&
-  //     Policy::compare( left_view[i], right_view[i] );
-  // }
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
+                                                   left_view[i], "lhs", true,
+                                                   right_view[i], "rhs", true,
+                                                   "", local_oss, false );
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
 
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), "" );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  // compare_result = Utility::compare<Policy>( {initializeValue(0, T()),
-  //                                             initializeValue(1, T()),
-  //                                             initializeValue(2, T())}, "lhs",
-  //                                            right_view, "rhs",
-  //                                            oss );
+  compare_result = Utility::compare<Policy,0>( left_view_of_const, "lhs",
+                                               right_view.toConst(), "rhs",
+                                               oss );
 
-  // expected_compare_result =
-  //   Policy::compare( size_t(3), right_view.size() );
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view.size() );
 
-  // if( expected_compare_result )
-  // {
-  //   for( size_t i = 0; i < 3; ++i )
-  //   {
-  //     expected_compare_result = expected_compare_result &&
-  //       Policy::compare( initializeValue(i, T()), right_view[i] );
-  //   }
-  // }
+  for( size_t i = 0; i < left_view_of_const.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
+                                            left_view_of_const[i], "lhs", true,
+                                            right_view[i], "rhs", true,
+                                            "", local_oss, false );
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
 
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), "" );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  // compare_result = Utility::compare<Policy>( left_view, "lhs",
-  //                                            {initializeValue(0, T()),
-  //                                             initializeValue(1, T()),
-  //                                             initializeValue(2, T())}, "rhs",
-  //                                            oss );
+  compare_result = Utility::compare<Policy,0>( left_view.toConst(), "lhs",
+                                               right_view_of_const, "rhs",
+                                               oss );
 
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), size_t(3) );
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view_of_const.size() );
 
-  // if( expected_compare_result )
-  // {
-  //   for( size_t i = 0; i < 3; ++i )
-  //   {
-  //     expected_compare_result = expected_compare_result &&
-  //       Policy::compare( left_view[i], initializeValue(i, T()) );
-  //   }
-  // }
+  for( size_t i = 0; i < left_view_of_const.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
+                                           left_view[i], "lhs", true,
+                                           right_view_of_const[i], "rhs", true,
+                                           "", local_oss, false );
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
 
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), "" );
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  // typedef typename Utility::ComparisonTraits<View>::ExtraDataType ExtraDataType;
-  // ExtraDataType tol = initializeTolerance( 1e-6, ExtraDataType() );
+  compare_result = Utility::compare<Policy,0>( left_view_of_const, "lhs",
+                                               right_view_of_const, "rhs",
+                                               oss );
 
-  // compare_result = Utility::compare<Policy>( left_view, "lhs",
-  //                                            right_view, "rhs",
-  //                                            oss, tol, false );
+  expected_compare_result =
+    Policy::compare( left_view_of_const.size(), right_view_of_const.size() );
 
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), right_view.size() );
+  for( size_t i = 0; i < left_view_of_const.size(); ++i )
+  {
+    std::ostringstream local_oss;
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,0>(
+                                           left_view_of_const[i], "lhs", true,
+                                           right_view_of_const[i], "rhs", true,
+                                           "", local_oss, false );
+    
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
 
-  // for( size_t i = 0; i < left_view.size(); ++i )
-  // {
-  //   expected_compare_result = expected_compare_result &&
-  //     Policy::compare( left_view[i], right_view[i], tol );
-  // }
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), "" );
+  compare_result = Utility::compare<Policy,0>( {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "lhs",
+                                               right_view, "rhs",
+                                               oss );
 
-  // compare_result = Utility::compare<Policy>( {initializeValue(0, T()),
-  //                                             initializeValue(1, T()),
-  //                                             initializeValue(2, T())}, "lhs",
-  //                                            right_view, "rhs",
-  //                                            oss, tol, false );
+  expected_compare_result =
+    Policy::compare( size_t(3), right_view.size() );
 
-  // expected_compare_result =
-  //   Policy::compare( size_t(3), right_view.size() );
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < 3; ++i )
+    {
+      std::ostringstream local_oss;
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
+                                         initializeValue(i, T()), "lhs", false,
+                                         right_view[i], "rhs", true,
+                                         "", local_oss, false );
+    
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
 
-  // if( expected_compare_result )
-  // {
-  //   for( size_t i = 0; i < 3; ++i )
-  //   {
-  //     expected_compare_result = expected_compare_result &&
-  //       Policy::compare( initializeValue(i, T()), right_view[i], tol );
-  //   }
-  // }
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), "" );
+  compare_result = Utility::compare<Policy,0>( left_view, "lhs",
+                                               {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "rhs",
+                                               oss );
 
-  // compare_result = Utility::compare<Policy>( left_view, "lhs",
-  //                                            {initializeValue(0, T()),
-  //                                             initializeValue(1, T()),
-  //                                             initializeValue(2, T())}, "rhs",
-  //                                            oss, tol, false );
+  expected_compare_result =
+    Policy::compare( left_view.size(), size_t(3) );
 
-  // expected_compare_result =
-  //   Policy::compare( left_view.size(), size_t(3) );
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < 3; ++i )
+    {
+      std::ostringstream local_oss;
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
+                                         left_view[i], "lhs", true,
+                                         initializeValue(i, T()), "rhs", false,
+                                         "", local_oss, false );
+    
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
 
-  // if( expected_compare_result )
-  // {
-  //   for( size_t i = 0; i < 3; ++i )
-  //   {
-  //     expected_compare_result = expected_compare_result &&
-  //       Policy::compare( left_view[i], initializeValue(i, T()), tol );
-  //   }
-  // }
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
 
-  // BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  // BOOST_CHECK_EQUAL( oss.str(), "" );
+  typedef typename Utility::ComparisonTraits<View>::ExtraDataType ExtraDataType;
+  ExtraDataType tol = initializeTolerance( 1e-6, ExtraDataType() );
+
+  compare_result = Utility::compare<Policy,0>( left_view, "lhs",
+                                               right_view, "rhs",
+                                               oss, tol, false );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), right_view.size() );
+
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    std::ostringstream local_oss;
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
+                                                    left_view[i], "lhs", true,
+                                                    right_view[i], "rhs", true,
+                                                    "", local_oss, false,
+                                                    tol );
+    
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  compare_result = Utility::compare<Policy,0>( {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "lhs",
+                                               right_view, "rhs",
+                                               oss, tol, false );
+
+  expected_compare_result =
+    Policy::compare( size_t(3), right_view.size() );
+
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < 3; ++i )
+    {
+      std::ostringstream local_oss;
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
+                                         initializeValue(i, T()), "lhs", false,
+                                         right_view[i], "rhs", true,
+                                         "", local_oss, false,
+                                         tol );
+    
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  compare_result = Utility::compare<Policy,0>( left_view, "lhs",
+                                               {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "rhs",
+                                               oss, tol, false );
+
+  expected_compare_result =
+    Policy::compare( left_view.size(), size_t(3) );
+
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < 3; ++i )
+    {
+      std::ostringstream local_oss;
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,0>(
+                                         left_view[i], "lhs", true,
+                                         initializeValue(i, T()), "rhs", false,
+                                         "", local_oss, false,
+                                         tol );
+    
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), "" );
+
+  // Details logging 
+  compare_result = Utility::compare<Policy,0>( left_view, "lhs",
+                                               right_view, "rhs",
+                                               oss, tol, true );
+
+  std::string expected_details =
+    Utility::createComparisonHeader<Policy,0>( left_view, "lhs",
+                                               right_view, "rhs",
+                                               tol );
+  std::ostringstream local_oss;
+
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                               left_view.size(), "lhs", true,
+                                               right_view.size(), "rhs", true,
+                                               ".size()", local_oss, true );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename View::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              left_view[i], "lhs", true,
+              right_view[i], "rhs", true,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+  
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( left_view_of_const, "lhs",
+                                               right_view.toConst(), "rhs",
+                                               oss, tol, true );
+
+  expected_details =
+    Utility::createComparisonHeader<Policy,0>( left_view_of_const, "lhs",
+                                               right_view.toConst(), "rhs",
+                                               tol );
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                     left_view_of_const.size(), "lhs", true,
+                                     right_view.toConst().size(), "rhs", false,
+                                     ".size()", local_oss, true );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              left_view_of_const[i], "lhs", true,
+              right_view.toConst()[i], "rhs", false,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+  
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( left_view.toConst(), "lhs",
+                                               right_view_of_const, "rhs",
+                                               oss, tol, true );
+
+  expected_details =
+    Utility::createComparisonHeader<Policy,0>( left_view.toConst(), "lhs",
+                                               right_view_of_const, "rhs",
+                                               tol );
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                      left_view.toConst().size(), "lhs", false,
+                                      right_view_of_const.size(), "rhs", true,
+                                     ".size()", local_oss, true );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              left_view.toConst()[i], "lhs", false,
+              right_view_of_const[i], "rhs", true,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+  
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( left_view_of_const, "lhs",
+                                               right_view_of_const, "rhs",
+                                               oss, tol, true );
+
+  expected_details =
+    Utility::createComparisonHeader<Policy,0>( left_view_of_const, "lhs",
+                                               right_view_of_const, "rhs",
+                                               tol );
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                       left_view_of_const.size(), "lhs", true,
+                                       right_view_of_const.size(), "rhs", true,
+                                       ".size()", local_oss, true );
+  
+  for( size_t i = 0; i < left_view.size(); ++i )
+  {
+    bool local_expected_compare_result =
+      Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              left_view_of_const[i], "lhs", true,
+              right_view_of_const[i], "rhs", true,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+    if( !local_expected_compare_result )
+      expected_compare_result = local_expected_compare_result;
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+  
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "lhs",
+                                               right_view, "rhs",
+                                               oss, tol, true );
+
+  expected_details =
+    Utility::createComparisonHeader<Policy,0>( {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "lhs",
+                                               right_view, "rhs",
+                                               tol );
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                                size_t(3), "lhs", false,
+                                                right_view.size(), "rhs", true,
+                                                ".size()", local_oss, true );
+
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < left_view.size(); ++i )
+    {
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              initializeValue(i, T()), "lhs", false,
+              right_view[i], "rhs", true,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+  
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "lhs",
+                                               right_view_of_const, "rhs",
+                                               oss, tol, true );
+
+  expected_details =
+    Utility::createComparisonHeader<Policy,0>( {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "lhs",
+                                               right_view_of_const, "rhs",
+                                               tol );
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                       size_t(3), "lhs", false,
+                                       right_view_of_const.size(), "rhs", true,
+                                       ".size()", local_oss, true );
+
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < left_view.size(); ++i )
+    {
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              initializeValue(i, T()), "lhs", false,
+              right_view_of_const[i], "rhs", true,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+  
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( left_view, "lhs",
+                                               {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "rhs",
+                                               oss, tol, true );
+
+  expected_details =
+    Utility::createComparisonHeader<Policy,0>( left_view, "lhs",
+                                               {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "rhs",
+                                               tol );
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                                left_view.size(), "lhs", true,
+                                                size_t(3), "rhs", false,
+                                                ".size()", local_oss, true );
+
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < left_view.size(); ++i )
+    {
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              left_view[i], "lhs", true,
+              initializeValue(i, T()), "rhs", false,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  
+  oss.str( "" );
+  oss.clear();
+  
+  local_oss.str( "" );
+  local_oss.clear();
+
+  compare_result = Utility::compare<Policy,0>( left_view_of_const, "lhs",
+                                               {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "rhs",
+                                               oss, tol, true );
+
+  expected_details =
+    Utility::createComparisonHeader<Policy,0>( left_view_of_const, "lhs",
+                                               {initializeValue(0, T()),
+                                                initializeValue(1, T()),
+                                                initializeValue(2, T())}, "rhs",
+                                               tol );
+  expected_compare_result =
+    Utility::ComparisonTraits<size_t>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+                                        left_view_of_const.size(), "lhs", true,
+                                        size_t(3), "rhs", false,
+                                        ".size()", local_oss, true );
+
+  if( expected_compare_result )
+  {
+    for( size_t i = 0; i < left_view.size(); ++i )
+    {
+      bool local_expected_compare_result =
+        Utility::ComparisonTraits<typename ViewOfConst::value_type>::template compare<Policy,Utility::Details::incrementRightShift(0)>(
+              left_view_of_const[i], "lhs", true,
+              initializeValue(i, T()), "rhs", false,
+              std::string("[") + Utility::toString(i) + "]", local_oss, true,
+              tol );
+      if( !local_expected_compare_result )
+        expected_compare_result = local_expected_compare_result;
+    }
+  }
+  
+  expected_details += (expected_compare_result ? "passed\n" : "failed!\n" );
+  expected_details += local_oss.str();
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
 }
 
 //---------------------------------------------------------------------------//

@@ -279,11 +279,12 @@ private:
     std::ostringstream oss;
 
     oss << std::string( RightShift, ' ' )
-        << "size(" << detailed_left_name << ") == "
-        << "size(" << detailed_right_name << ") "
-        << "&& for every index i, "
-        << detailed_left_name << "[i] " << Policy::template getOperatorName<ValueType>()
-        << " " << detailed_right_name << "[i]: ";
+        << detailed_left_name << ".size() == "
+        << detailed_right_name << ".size() && "
+        << "for every index i, "
+        << detailed_left_name << "[i] "
+        << Policy::template getOperatorName<ValueType>() << " "
+        << detailed_right_name << "[i]: ";
 
     return oss.str();
   }
@@ -321,29 +322,28 @@ private:
                                                                extra_data );
     }
 
-    std::ostringstream local_log;
-    std::ostringstream detailed_name_suffix;
     
-    if( name_suffix.size() > 0 )
-      detailed_name_suffix << name_suffix;
+    std::ostringstream local_log, detailed_name_suffix;
 
-    detailed_name_suffix << " size";
-
+    if( log_comparison_details )
+      detailed_name_suffix << name_suffix << ".size()";
+        
     bool success =
-      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+        Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
                std::distance( left_container.begin(), left_container.end() ),
                left_name,
                log_left_name,
                std::distance( right_container.begin(), right_container.end() ),
                right_name,
                log_right_name,
-               detailed_name_suffix.str(),
+               (log_comparison_details ? detailed_name_suffix.str() : name_suffix),
                local_log,
                log_comparison_details );
 
     // Only test the individual container elements if the sizes are the same
     if( success )
     {
+      std::ostringstream detailed_name_suffix;
       size_t index = 0;
       
       typename LeftContainer::const_iterator left_it, left_end;
@@ -858,10 +858,10 @@ public:
   //! Compare two sequence containers
   template<typename ComparisonPolicy, size_t RightShift, typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
-  compare( const STLCompliantSequenceContainer<T>& right_value,
+  compare( const STLCompliantSequenceContainer<T>& left_value,
            const std::string& left_name,
            const bool log_left_name,
-           std::initializer_list<T2> left_value,
+           std::initializer_list<T2> right_value,
            const std::string& right_name,
            const bool log_right_name,
            const std::string& name_suffix,

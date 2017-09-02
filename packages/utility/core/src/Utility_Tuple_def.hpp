@@ -220,10 +220,15 @@ struct TupleMemberCompareHelper
                      const bool log_comparison_details,
                      const double extra_data )
   {
-    std::ostringstream extended_name_suffix;
+    std::ostringstream detailed_left_name;
 
-    if( log_comparison_details )
-      extended_name_suffix << name_suffix << "." << I;
+    detailed_left_name << "Utility::get<" << I << ">("
+                       << left_name << name_suffix << ")";
+
+    std::ostringstream detailed_right_name;
+
+    detailed_right_name << "Utility::get<" << I << ">("
+                        << right_name << name_suffix << ")";
 
     typedef typename Utility::TupleElement<I,TupleType>::type
       TupleElementIType;
@@ -234,12 +239,12 @@ struct TupleMemberCompareHelper
     const bool local_success =
       Utility::ComparisonTraits<TupleElementIType>::template compare<ComparePolicy,RightShift>(
           Utility::get<I>( left_tuple ),
-          left_name,
+          detailed_left_name.str(),
           log_left_name,
           Utility::get<I>( right_tuple ),
-          right_name,
+          detailed_right_name.str(),
           log_right_name,
-          (log_comparison_details ? extended_name_suffix.str() : name_suffix ),
+          "",
           log,
           log_comparison_details,
           TupleElementIExtraDataConversionHelper::convert( extra_data ) );
