@@ -283,7 +283,7 @@ private:
         << "size(" << detailed_right_name << ") "
         << "&& for every index i, "
         << detailed_left_name << "[i] " << Policy::template getOperatorName<ValueType>()
-        << detailed_right_name << " [i]: ";
+        << " " << detailed_right_name << "[i]: ";
 
     return oss.str();
   }
