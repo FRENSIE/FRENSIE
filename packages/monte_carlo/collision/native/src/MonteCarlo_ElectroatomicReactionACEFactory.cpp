@@ -58,7 +58,7 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
   // Remove all cross sections equal to zero
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
                               energy_grid,
-                              raw_electroatom_data.extractElasticCrossSection(),
+                              raw_electroatom_data.extractElasticCutoffCrossSection(),
                               elastic_cross_section,
                               threshold_energy_index );
 

@@ -197,7 +197,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
 
   Teuchos::ArrayView<const double> raw_elastic_cross_section =
-    xss_data_extractor->extractElasticCrossSection();
+    xss_data_extractor->extractElasticCutoffCrossSection();
 
   Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_elastic_cross_section.begin(),

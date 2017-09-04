@@ -52,6 +52,8 @@ ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_B_test ${PYTHON_EXECUTABLE} tstD
 SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_B_test PROPERTY LABELS pyfrensie ace electron photon neutron)
 ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --tablename=82000.12p)
 SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_Pb_test PROPERTY LABELS pyfrensie ace electron photon neutron)
+ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt --tablename=82000.14p)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test PROPERTY LABELS pyfrensie ace14 electron photon neutron)
 
 # Add the Geometry.Ray unit tests
 PyFrensie_MAKE_TEST(tstGeometry.Ray)
