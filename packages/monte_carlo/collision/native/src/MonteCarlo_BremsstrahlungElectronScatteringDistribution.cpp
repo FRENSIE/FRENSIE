@@ -248,20 +248,12 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
                           ParticleBank& bank,
                           Data::SubshellType& shell_of_interaction ) const
 {
-  // Incoming electron energy
-  double incoming_energy = electron.getEnergy();
-
-  // energy of the bremsstrahlung photon
-  double photon_energy;
-
-  // photon outgoing angle cosine
-  double photon_angle_cosine;
-
-  // Sample bremsstrahlung photon energy and angle cosine
-  this->sample( incoming_energy, photon_energy, photon_angle_cosine );
+  // Sample the energy and angle of the bremsstrahlung photon
+  double photon_energy, photon_angle_cosine;
+  this->sample( electron.getEnergy(), photon_energy, photon_angle_cosine );
 
   // Set the new electron energy
-  electron.setEnergy( incoming_energy - photon_energy );
+  electron.setEnergy( electron.getEnergy() - photon_energy );
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
@@ -279,6 +271,10 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
+
+  testPostcondition( photon_energy > 0.0 );
+  testPostcondition( photon_angle_cosine <= 1.0 );
+  testPostcondition( photon_angle_cosine >= -1.0 );
 }
 
 // Sample the outgoing photon direction from the analytical function
@@ -286,6 +282,9 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                                           const double incoming_electron_energy,
                                           const double photon_energy  ) const
 {
+  testPrecondition( incoming_electron_energy > photon_energy );
+  testPrecondition( photon_energy > 0.0 );
+
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared(
                           Utility::PhysicalConstants::electron_rest_mass_energy,
@@ -296,8 +295,11 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
 
   double parameter = -( 1.0 + beta );
 
-  return ( scaled_random_number        + parameter )/
-         ( scaled_random_number * beta + parameter );
+  double photon_angle_cosine = ( scaled_random_number        + parameter )/
+                               ( scaled_random_number * beta + parameter );
+
+  testPostcondition( photon_angle_cosine <= 1.0 );
+  testPostcondition( photon_angle_cosine >= -1.0 );
 }
 
 /* Sample the outgoing photon direction using the 2BS sampling routine of
@@ -307,6 +309,9 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                         const double incoming_electron_energy,
                                         const double photon_energy ) const
 {
+  testPrecondition( incoming_electron_energy > photon_energy );
+  testPrecondition( photon_energy > 0.0 );
+
   double outgoing_electron_energy = incoming_electron_energy - photon_energy;
   double ratio = outgoing_electron_energy/incoming_electron_energy;
   double two_ratio = 2.0*ratio;
@@ -360,6 +365,9 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
 
     if( rand1 < g )
     {
+      testPostcondition( cos(theta) <= 1.0 );
+      testPostcondition( cos(theta) >= -1.0 );
+
       return cos(theta);
     }
   }

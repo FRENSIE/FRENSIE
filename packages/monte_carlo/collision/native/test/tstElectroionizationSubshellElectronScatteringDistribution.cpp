@@ -24,11 +24,41 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Structs.
+//---------------------------------------------------------------------------//
+class TestElectroionizationSubshellElectronScatteringDistribution : public MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution
+{
+public:
+  TestElectroionizationSubshellElectronScatteringDistribution(
+    const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+      electroionization_subshell_scattering_distribution,
+    const double binding_energy,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on )
+    : MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
+        electroionization_subshell_scattering_distribution,
+        binding_energy,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on )
+  { /* ... */ }
+
+  ~TestElectroionizationSubshellElectronScatteringDistribution()
+  { /* ... */ }
+
+  // Allow public access to the ElectroionizationSubshellElectronScatteringDistribution protected member functions
+  using MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle;
+
+};
+
+//---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
   ace_electroionization_distribution, native_electroionization_distribution;
+
+Teuchos::RCP<TestElectroionizationSubshellElectronScatteringDistribution>
+  exact_electroionization_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -226,6 +256,44 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
+/* Note: This tests a bug that caused electroionization to return non-realistic
+ * knock-on energies. The problem was fixed by setting the non-realistic
+ * energies to the max allowed energy.
+ */
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   sample_knock_on_native_exact )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 6.041e-05;
+  double knock_on_energy, knock_on_angle_cosine;
+
+  // sample the electron at the min random number
+  native_electroionization_distribution->sample( incoming_energy,
+                                                 knock_on_energy,
+                                                 knock_on_angle_cosine );
+
+  // Test knock-on electron at the min random number
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0406872554892572, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 1.0E-07, 1e-12 );
+
+  // sample the electron at the max random number
+  exact_electroionization_distribution->sample( incoming_energy,
+                                                knock_on_energy,
+                                                knock_on_angle_cosine );
+
+  // Test knock-on electron at the max random number
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.677955763159096, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 2.776500E-05, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    sample_ace )
 {
@@ -321,6 +389,37 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.279436961765390, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.105262105768E-02, 1e-12 );
 
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   outgoingAngle )
+{
+  double incoming_energy, outgoing_energy, angle_cosine;
+
+  // test for the highest energies
+  incoming_energy = 1e5; outgoing_energy = 1e5 - 1e-10;
+  angle_cosine = exact_electroionization_distribution->outgoingAngle(
+                                            incoming_energy, outgoing_energy );
+  TEST_FLOATING_EQUALITY( angle_cosine, 1.0, 1e-12 );
+
+  incoming_energy = 1e5; outgoing_energy = 0.0;
+  angle_cosine = exact_electroionization_distribution->outgoingAngle(
+                                            incoming_energy, outgoing_energy );
+  TEST_EQUALITY_CONST( angle_cosine, 0.0 );
+
+
+  // test for the lowest energies
+  incoming_energy = 1e-5; outgoing_energy = 1e-5 - 1e-18;
+  angle_cosine = exact_electroionization_distribution->outgoingAngle(
+                                            incoming_energy, outgoing_energy );
+  TEST_FLOATING_EQUALITY( angle_cosine, 1.0, 1e-12 );
+
+  incoming_energy = 1e-5; outgoing_energy = 0.0;
+  angle_cosine = exact_electroionization_distribution->outgoingAngle(
+                                            incoming_energy, outgoing_energy );
+  TEST_EQUALITY_CONST( angle_cosine, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -502,6 +601,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                             binding_energy,
                             true,
                             true ) );
+
+  // Create the distributions
+  exact_electroionization_distribution.reset(
+        new TestElectroionizationSubshellElectronScatteringDistribution(
+                            subshell_distribution,
+                            binding_energy,
+                            true,
+                            false ) );
   }
 
   // Initialize the random number generator

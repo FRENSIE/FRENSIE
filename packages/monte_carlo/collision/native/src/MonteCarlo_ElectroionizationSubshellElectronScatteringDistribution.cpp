@@ -79,11 +79,10 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
   }
   else
   {
-      // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>(
-            &TwoDDist::sampleSecondaryConditionalExact,
-            std::cref( *d_electroionization_subshell_scattering_distribution ),
-            std::placeholders::_1 );
+    // Set the correlated exact sample routine
+    d_sample_func = std::bind<double>( &ThisType::sampleKnockOnExact,
+                                       std::cref( *this ),
+                                       std::placeholders::_1 );
   }
 }
 
@@ -289,11 +288,14 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Sample knock-on electron energy
   knock_on_energy = d_sample_func( incoming_energy );
 
+
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
 
-  testPostcondition( incoming_energy > knock_on_energy );
+  testPostcondition( knock_on_energy > 0.0 );
+  testPostcondition( knock_on_energy <=
+                     this->getMaxSecondaryEnergyAtIncomingEnergy(incoming_energy) );
 }
 
 // Sample an knock on energy and direction from the distribution
@@ -304,7 +306,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
                double& scattering_angle_cosine,
                double& knock_on_angle_cosine ) const
 {
-  // Sample knock-on electron energy and outgoing angle
+  // Sample energy and angle cosine for the knock on electron
   this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
   outgoing_energy = incoming_energy - knock_on_energy - d_binding_energy;
@@ -313,13 +315,12 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   scattering_angle_cosine = outgoingAngle( incoming_energy,
                                            outgoing_energy );
 
-  testPostcondition( incoming_energy > knock_on_energy + d_binding_energy );
   testPostcondition( knock_on_energy > 0.0 );
-  testPostcondition( outgoing_energy > 0.0 );
+  testPostcondition( knock_on_energy <= outgoing_energy );
   testPostcondition( knock_on_angle_cosine <= 1.0 );
-  testPostcondition( knock_on_angle_cosine >= -1.0 );
+  testPostcondition( knock_on_angle_cosine >= 0.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
-  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine >= 0.0 );
 }
 
 // Sample an knock on energy and direction and record the number of trials
@@ -380,6 +381,34 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   electron.incrementGenerationNumber();
 }
 
+// Sample the knock-on energy using a exact correlated routine
+/*! \details When sampling exact it is possible to sample a non-realistic
+ *  knock-on energy. Whenever a non-realistic knock-energy is sampled it is
+ *  defaulted to the max allowed energy.
+ */
+double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnExact(
+            const double incoming_energy ) const
+{
+  // Sample correlated exact
+  double knock_on_energy =
+    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
+        incoming_energy );
+
+  // Get the max allowed knock on energy at the given incoming energy
+  double max_knock_on_energy =
+                this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
+
+  // Set the knock on energy to the max allowed energy
+  if ( knock_on_energy > max_knock_on_energy )
+    knock_on_energy = max_knock_on_energy;
+
+  testPostcondition( knock_on_energy > 0.0 );
+  testPostcondition( knock_on_energy <= max_knock_on_energy );
+
+  return knock_on_energy;
+}
+
+
 // Calculate the outgoing angle cosine
 double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
                                             const double incoming_energy,
@@ -402,6 +431,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
          sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
              ( energy_ratio*normalized_incoming_energy + 2.0 ) );
 
+  testPostcondition( angle_cosine >= 0.0 )
   testPostcondition( angle_cosine <= 1.0 );
 
   return angle_cosine;

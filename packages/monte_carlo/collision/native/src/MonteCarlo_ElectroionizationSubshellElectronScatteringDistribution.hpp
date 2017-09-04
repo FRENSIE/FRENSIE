@@ -98,11 +98,16 @@ public:
                         MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
-private:
+protected:
+
+  // Sample the knock-on energy using a exact correlated routine
+  double sampleKnockOnExact( const double incoming_energy ) const;
 
   // Calculate the outgoing angle cosine
   double outgoingAngle( const double incoming_energy,
                         const double outgoing_energy ) const;
+
+private:
 
   // electroionization subshell scattering cross sections
   std::shared_ptr<TwoDDist> d_electroionization_subshell_scattering_distribution;
