@@ -160,28 +160,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     unsigned threshold_index(
         data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex() );
 
-    // Create the cutoff distribution
-    std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_elastic_distribution;
-
-    double cutoff_angle_cosine = 1.0;
-    double evaluation_tol = 1e-7;
-    bool correlated_sampling_mode_on = true;
-
-    NativeFactory::createCutoffElasticDistribution(
-        cutoff_elastic_distribution,
-        data_container,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-
     // Create the screened rutherford distribution
     std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
         rutherford_elastic_distribution;
 
     NativeFactory::createScreenedRutherfordElasticDistribution(
         rutherford_elastic_distribution,
-        cutoff_elastic_distribution,
         data_container.getAtomicNumber() );
 
     // Create the reaction

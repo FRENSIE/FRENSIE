@@ -18,18 +18,17 @@ namespace MonteCarlo{
 
 // Constructor
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number )
-  : d_elastic_cutoff_distribution( elastic_cutoff_distribution )
 {
-  // Make sure the array is valid
-  testPrecondition( d_elastic_cutoff_distribution.use_count() > 0 );
-
   d_elastic_traits.reset( new ElasticTraits( atomic_number ) );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
-//! \details Because the scattering angle cosine is very close to one, precision will be lost.
+/*! \details The returned value is not normalized to the elastic cutoff
+ *  distribution. The correct normalized value can be calculated by multiplying
+ *  the the returned value by the pdf of the cutoff distribution at mu peak.
+ *  When the scattering angle cosine is very close to one, precision will be lost.
+ */
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -39,13 +38,15 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= ElasticTraits::mu_peak );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double eta = d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy );
-
-  return this->evaluate( incoming_energy, scattering_angle_cosine, eta );
+  return this->evaluatePDF( incoming_energy, scattering_angle_cosine );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
-//! \details Because the scattering angle cosine is very close to one, precision will be lost.
+/*! \details The returned value is not normalized to the elastic cutoff
+ *  distribution. The correct normalized value can be calculated by multiplying
+ *  the the returned value by the pdf of the cutoff distribution at mu peak.
+ *  When the scattering angle cosine is very close to one, precision will be lost.
+ */
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
         const double scattering_angle_cosine,
@@ -57,20 +58,16 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
   testPrecondition( eta > 0.0 );
 
-  double delta_mu = 1.0L - scattering_angle_cosine;
-
-  double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluate( incoming_energy, ElasticTraits::mu_peak );
-
-  double pdf = cutoff_pdf*
-            ( ElasticTraits::delta_mu_peak + eta )*( ElasticTraits::delta_mu_peak + eta )/(
-            ( delta_mu + eta )*( delta_mu + eta ) );
-
-  return pdf;
+  return this->evaluatePDF( incoming_energy, scattering_angle_cosine, eta );
 }
 
 
 // Evaluate the PDF at the given energy and scattering angle cosine
+/*! \details The returned value is not normalized to the elastic cutoff
+ *  distribution. The correct normalized value can be calculated by multiplying
+ *  the the returned value by the pdf of the cutoff distribution at mu peak.
+ *  When the scattering angle cosine is very close to one, precision will be lost.
+ */
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -86,6 +83,11 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the PDF at the given energy and scattering angle cosine
+/*! \details The returned value is not normalized to the elastic cutoff
+ *  distribution. The correct normalized value can be calculated by multiplying
+ *  the the returned value by the pdf of the cutoff distribution at mu peak.
+ *  When the scattering angle cosine is very close to one, precision will be lost.
+ */
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
         const double scattering_angle_cosine,
@@ -99,54 +101,8 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
 
   double delta_mu = 1.0L - scattering_angle_cosine;
 
-  double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, ElasticTraits::mu_peak );
-
-  return cutoff_pdf*
-            ( ElasticTraits::delta_mu_peak + eta )*( ElasticTraits::delta_mu_peak + eta )/(
-            ( delta_mu + eta )*( delta_mu + eta ) );
-}
-
-// Evaluate the integrated distribution at the given energy
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegrated(
-        const double incoming_energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-
-  double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluate( incoming_energy, ElasticTraits::mu_peak );
-
-  double eta = d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy );
-
-  return this->evaluateIntegratedPDF( cutoff_pdf, eta );
-}
-
-// Evaluate the integrated PDF at the given energy
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF(
-        const double incoming_energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-
-  double cutoff_pdf =
-    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, ElasticTraits::mu_peak );
-
-  double eta = d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy );
-
-  return this->evaluateIntegratedPDF( cutoff_pdf, eta );
-}
-
-// Evaluate the integrated PDF at the given energy
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF(
-        const double cutoff_pdf,
-        const double eta ) const
-{
-  // Make sure the cutoff pdf and eta are valid
-  testPrecondition( cutoff_pdf >= 0.0 );
-  testPrecondition( eta > 0.0 );
-
-  return cutoff_pdf*ElasticTraits::delta_mu_peak*( ElasticTraits::delta_mu_peak + eta )/( eta );
+  return ( ElasticTraits::delta_mu_peak + eta )*( ElasticTraits::delta_mu_peak + eta )/(
+         ( delta_mu + eta )*( delta_mu + eta ) );
 }
 
 // Evaluate the CDF

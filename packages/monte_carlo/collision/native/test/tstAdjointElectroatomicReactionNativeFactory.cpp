@@ -158,17 +158,11 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createScreenedRutherfordElasticReaction )
 {
-  double cutoff_angle_cosine = 0.9;
-  double evaluation_tol = 1e-7;
-
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLog>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction,
-                cutoff_angle_cosine,
-                correlated_sampling_mode_on,
-                evaluation_tol );
+                reaction );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

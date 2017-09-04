@@ -51,9 +51,9 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
         "*Test Data.ACE.XSSEPRDataExtractor hasFluorescenceData method"
         self.assertFalse(self.xss_extractor.hasFluorescenceData())
 
-    def testhasAdditionalElasticCrossSectionData(self):
-        "*Test Data.ACE.XSSEPRDataExtractor hasAdditionalElasticCrossSectionData method"
-        self.assertFalse(self.xss_extractor.hasAdditionalElasticCrossSectionData())
+    def testisEPRVersion14(self):
+        "*Test Data.ACE.XSSEPRDataExtractor isEPRVersion14 method"
+        self.assertFalse(self.xss_extractor.isEPRVersion14())
 
     def testExtractESZGBlock(self):
         "*Test Data.ACE.XSSEPRDataExtractor extractESZGBlock method"
@@ -361,9 +361,9 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
         "*Test Data.ACE.XSSEPRDataExtractor hasFluorescenceData method"
         self.assertTrue(self.xss_extractor.hasFluorescenceData())
 
-    def testhasAdditionalElasticCrossSectionData(self):
-        "*Test Data.ACE.XSSEPRDataExtractor hasAdditionalElasticCrossSectionData method"
-        self.assertFalse(self.xss_extractor.hasAdditionalElasticCrossSectionData())
+    def testisEPRVersion14(self):
+        "*Test Data.ACE.XSSEPRDataExtractor isEPRVersion14 method"
+        self.assertFalse(self.xss_extractor.isEPRVersion14())
 
     def testExtractESZGBlock(self):
         "*Test Data.ACE.XSSEPRDataExtractor extractESZGBlock method"
@@ -677,9 +677,9 @@ class XSSEPRDataExtractorEPR14PbTestCase(unittest.TestCase):
         "*Test Data.ACE.XSSEPRDataExtractor hasFluorescenceData method"
         self.assertTrue(self.xss_extractor.hasFluorescenceData())
 
-    def testhasAdditionalElasticCrossSectionData(self):
-        "*Test Data.ACE.XSSEPRDataExtractor hasAdditionalElasticCrossSectionData method"
-        self.assertTrue(self.xss_extractor.hasAdditionalElasticCrossSectionData())
+    def testisEPRVersion14(self):
+        "*Test Data.ACE.XSSEPRDataExtractor isEPRVersion14 method"
+        self.assertTrue(self.xss_extractor.isEPRVersion14())
 
     def testExtractESZGBlock(self):
         "*Test Data.ACE.XSSEPRDataExtractor extractESZGBlock method"

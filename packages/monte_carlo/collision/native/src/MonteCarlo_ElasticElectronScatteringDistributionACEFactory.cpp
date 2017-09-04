@@ -35,7 +35,23 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
                 true ) );
 }
 
+// Create a screened Rutherford elastic distribution
+void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+    std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+        screened_rutherford_elastic_distribution,
+    const unsigned atomic_number )
+{
+  // Create the screened Rutherford distribution
+  screened_rutherford_elastic_distribution.reset(
+        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
+                atomic_number ) );
+}
+
 // Create the scattering function
+/*! \details If the eprdata12 library is used the TwoDInterpPolicy will be set
+ *  to LinLinLin to match MCNP6.1. If the eprdata14 library is used the
+ *  TwoDInterpPolicy will be set to LogLogLog to match MCNP6.2.
+ */
 void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
@@ -75,10 +91,21 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
          true ) );
   }
 
-  // Set the scattering function
-  scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+  // Check if the file version is eprdata14 or eprdata12
+  if ( raw_electroatom_data.isEPRVersion14() )
+  {
+    // Set the scattering function with LogLogLog interp (eprdata14)
+    scattering_function.reset(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
         function_data ) );
+  }
+  else
+  {
+    // Set the scattering function with LinLinLin interp (eprdata12)
+    scattering_function.reset(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+        function_data ) );
+  }
 
 }
 

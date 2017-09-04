@@ -714,7 +714,7 @@ ADD_EXECUTABLE(tstElasticElectronScatteringDistributionACEFactory
   tstElasticElectronScatteringDistributionACEFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElasticElectronScatteringDistributionACEFactory monte_carlo_collision_native)
-ADD_TEST(ElasticElectronScatteringDistributionACEFactory_test tstElasticElectronScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(ElasticElectronScatteringDistributionACEFactory_test tstElasticElectronScatteringDistributionACEFactory --test_ace12_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace12_table=82000.12p --test_ace14_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt" --test_ace14_table=82000.14p)
 SET_PROPERTY(TEST ElasticElectronScatteringDistributionACEFactory_test PROPERTY LABELS electron ace)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistributionACEFactory

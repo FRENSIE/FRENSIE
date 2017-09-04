@@ -704,19 +704,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createScreenedRutherfordElasticDistribution )
 {
-  double cutoff_angle_cosine = 1.0;
-  double evaluation_tol = 1e-7;
-
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-        native_cutoff_elastic_distribution,
-        *data_container,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
         native_sr_elastic_distribution,
-        native_cutoff_elastic_distribution,
         data_container->getAtomicNumber() );
 
   // Set fake random number stream
@@ -764,19 +753,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createScreenedRutherfordElasticDistribution_adjoint )
 {
-  double cutoff_angle_cosine = 1.0;
-  double evaluation_tol = 1e-7;
-
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-        native_cutoff_elastic_distribution,
-        *adjoint_data_container,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
         native_sr_elastic_distribution,
-        native_cutoff_elastic_distribution,
         data_container->getAtomicNumber() );
 
   // Set fake random number stream

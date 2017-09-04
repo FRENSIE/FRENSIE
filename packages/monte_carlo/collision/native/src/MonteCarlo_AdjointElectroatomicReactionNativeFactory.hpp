@@ -99,16 +99,12 @@ public:
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering adjoint electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createScreenedRutherfordElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-    const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
-    const double evaluation_tol );
+    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering adjoint electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogLog>

@@ -196,8 +196,6 @@ public:
   static void createScreenedRutherfordElasticDistribution(
     std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-    const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
     const unsigned atomic_number );
 
   //! Create a moment preserving elastic distribution

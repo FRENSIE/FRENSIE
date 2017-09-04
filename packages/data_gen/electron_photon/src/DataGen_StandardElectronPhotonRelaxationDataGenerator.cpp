@@ -2910,14 +2910,9 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
             d_tabular_evaluation_tol );
     }
 
-    std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-        sr_endl_distribution;
-
-  // Create a screened Rutherford elastic distribution
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
-        sr_endl_distribution,
-        cutoff_endl_distribution,
-        data_container.getAtomicNumber() );
+    // Create the elastic traits
+    std::shared_ptr<Utility::ElasticElectronTraits> elastic_traits(
+      new Utility::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
     std::vector<double> raw_elastic_cross_section =
         d_endl_data_container->getCutoffElasticCrossSection();
@@ -2928,8 +2923,17 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
       // Get the energy
       double energy = raw_energy_grid[n];
 
-      // Get the integrated PDF value at the cutoff angle cosine
-      double integrated_pdf = sr_endl_distribution->evaluateIntegrated( energy );
+      // Get the cutoff pdf
+      double cutoff_pdf = cutoff_endl_distribution->evaluate(
+                            energy, Utility::ElasticElectronTraits::mu_peak );
+
+      // Get Moliere's Screening Constant
+      double eta = elastic_traits->evaluateMoliereScreeningConstant( energy );
+
+      // Calculate the integrated PDF value at the cutoff angle cosine
+      double integrated_pdf =
+        cutoff_pdf*Utility::ElasticElectronTraits::delta_mu_peak*
+            ( Utility::ElasticElectronTraits::delta_mu_peak + eta )/( eta );
 
       // Evaluate the total coupled cross section at the incoming energy
       raw_elastic_cross_section[n] *= ( 1.0 +  integrated_pdf );

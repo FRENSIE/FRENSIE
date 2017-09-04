@@ -176,14 +176,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createScreenedRutherfordElasticReaction )
 {
-  bool correlated_sampling_mode_on = true;
-
   reaction = MonteCarlo::createScreenedRutherfordElasticReaction(
-                *data_container,
-                0.9,
-                "LinLinLog",
-                correlated_sampling_mode_on,
-                eval_tol );
+                *data_container );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

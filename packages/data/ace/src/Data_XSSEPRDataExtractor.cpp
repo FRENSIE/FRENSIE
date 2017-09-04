@@ -52,6 +52,16 @@ XSSEPRDataExtractor::XSSEPRDataExtractor(
   }
 }
 
+// Check if the file version is eprdata14
+/*! \details Version eprdata14 has a ESZE2 block with additional
+ * (total and transport) elastic cross section data.
+ * Check this before attempting to extract the ESZE2 block.
+ */
+  bool XSSEPRDataExtractor::isEPRVersion14() const
+{
+  return d_nxs[5] == 3;
+}
+
 // Check if old fluorescence data is present
 /*! \details Check this before attempting to extract the JFLO block.
  */
@@ -66,14 +76,6 @@ bool XSSEPRDataExtractor::hasOldFluorescenceData() const
 bool XSSEPRDataExtractor::hasFluorescenceData() const
 {
   return d_subsh_block[4*d_nxs[6]] != 0;
-}
-
-// Check if additional (total and transport) elastic cross section data is present
-/*! \details Check this before attempting to extract the ESZE2 block.
- */
-  bool XSSEPRDataExtractor::hasAdditionalElasticCrossSectionData() const
-{
-  return d_nxs[5] == 3;
 }
 
 // Extract the atomic number
@@ -290,7 +292,7 @@ XSSEPRDataExtractor::extractElectronTotalCrossSection() const
 Teuchos::ArrayView<const double>
 XSSEPRDataExtractor::extractElasticTransportCrossSection() const
 {
-  if( hasAdditionalElasticCrossSectionData() )
+  if( isEPRVersion14() )
     return d_esze2_block( 0, d_nxs[7] );
   else
     return Teuchos::ArrayView<const double>();
@@ -300,7 +302,7 @@ XSSEPRDataExtractor::extractElasticTransportCrossSection() const
 Teuchos::ArrayView<const double>
 XSSEPRDataExtractor::extractElasticTotalCrossSection() const
 {
-  if( hasAdditionalElasticCrossSectionData() )
+  if( isEPRVersion14() )
     return d_esze2_block( d_nxs[7], d_nxs[7] );
   else
     return Teuchos::ArrayView<const double>();

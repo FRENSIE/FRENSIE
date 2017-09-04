@@ -59,13 +59,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, hasFluorescenceData )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the XSSEPRDataExtractor can check if additional elastic cross
-// section data is present
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, hasAdditionalElasticCrossSectionData )
+// Check that the XSSEPRDataExtractor can check if the file is version eprdata14
+TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, isEPRVersion14 )
 {
-  TEST_ASSERT( !b_xss_data_extractor->hasAdditionalElasticCrossSectionData() );
-  TEST_ASSERT( !pb_xss_data_extractor->hasAdditionalElasticCrossSectionData() );
-  TEST_ASSERT( pb_erp14_xss_data_extractor->hasAdditionalElasticCrossSectionData() );
+  TEST_ASSERT( !b_xss_data_extractor->isEPRVersion14() );
+  TEST_ASSERT( !pb_xss_data_extractor->isEPRVersion14() );
+  TEST_ASSERT( pb_erp14_xss_data_extractor->isEPRVersion14() );
 }
 
 //---------------------------------------------------------------------------//

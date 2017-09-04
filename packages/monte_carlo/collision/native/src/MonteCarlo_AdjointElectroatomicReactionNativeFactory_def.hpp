@@ -17,7 +17,6 @@
 #include "MonteCarlo_DecoupledElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_HybridElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticAdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectroatomicReaction.hpp"
@@ -133,7 +132,6 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution> analytical_distribution;
   ElasticFactory::createScreenedRutherfordElasticDistribution(
     analytical_distribution,
-    tabular_distribution,
     raw_adjoint_electroatom_data.getAtomicNumber() );
 
 
@@ -295,67 +293,6 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 
   elastic_reaction.reset(
     new CutoffElasticAdjointElectroatomicReaction<Utility::LinLin>(
-                          energy_grid,
-                          elastic_cross_section,
-                          threshold_energy_index,
-                          grid_searcher,
-                          distribution ) );
-}
-
-// Create the screened Rutherford elastic scattering adjoint electroatomic reaction
-template<typename TwoDInterpPolicy>
-void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
-        const Data::AdjointElectronPhotonRelaxationDataContainer&
-            raw_adjoint_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
-        const double cutoff_angle_cosine,
-        const bool correlated_sampling_mode_on,
-        const double evaluation_tol )
-{
-  // Make sure the energy grid is valid
-  testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().back() >=
-                    energy_grid[energy_grid.size()-1] );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
-
-  // Create the cutoff elastic scattering distribution
-  std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
-    cutoff_distribution;
-
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
-    cutoff_distribution,
-    raw_adjoint_electroatom_data,
-    cutoff_angle_cosine,
-    correlated_sampling_mode_on,
-    evaluation_tol );
-
-
-  // Create the screened Rutherford elastic scattering distribution
-  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
-    distribution;
-
-  ElasticFactory::createScreenedRutherfordElasticDistribution(
-    distribution,
-    cutoff_distribution,
-    raw_adjoint_electroatom_data.getAtomicNumber() );
-
-  // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> elastic_cross_section;
-  elastic_cross_section.assign(
-    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSection().begin(),
-    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSection().end() );
-
-  // Screened Rutherford elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
-    raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
-
-
-  elastic_reaction.reset(
-    new ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLin>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,

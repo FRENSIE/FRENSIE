@@ -110,14 +110,14 @@ public:
   ~XSSEPRDataExtractor()
   { /* ... */ }
 
+  //! Check if the file version is eprdata14
+  bool isEPRVersion14() const;
+
   //! Check if old fluorescence data is present
   bool hasOldFluorescenceData() const;
 
   //! Check if fluorescence data is present
   bool hasFluorescenceData() const;
-
-  //! Check if additional (total and transport) elastic cross section data is present
-  bool hasAdditionalElasticCrossSectionData() const;
 
   //! Extract the atomic number
   unsigned extractAtomicNumber() const;

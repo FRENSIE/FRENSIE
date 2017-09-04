@@ -149,7 +149,7 @@ class ScreenedRutherfordElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createScreenedRutherfordElasticReaction( self.data, 0.9, "LinLinLog", True, 1e-7 )
+        self.reaction = Collision.createScreenedRutherfordElasticReaction( self.data )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createScreenedRutherfordElasticReaction getThresholdEnergy method"
