@@ -27,7 +27,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use simple analytical photon angular distribution
   d_angular_distribution_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle,
+           &ThisType::SampleDipoleAngle,
            std::cref( *this ),
            std::placeholders::_1,
            std::placeholders::_2 );
@@ -51,7 +51,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use detailed photon angular distribution
   d_angular_distribution_func = std::bind<double>(
-            &BremsstrahlungElectronScatteringDistribution::Sample2BSAngle,
+            &ThisType::Sample2BSAngle,
             std::cref( *this ),
             std::placeholders::_1,
             std::placeholders::_2 );
@@ -93,11 +93,10 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
   }
   else
   {
-      // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>(
-           &TwoDDist::sampleSecondaryConditionalExact,
-           std::cref( *d_bremsstrahlung_scattering_distribution ),
-           std::placeholders::_1 );
+    // Set the correlated exact sample routine
+    d_sample_func = std::bind<double>( &ThisType::samplePhotonExact,
+                                       std::cref( *this ),
+                                       std::placeholders::_1 );
   }
 }
 
@@ -224,7 +223,7 @@ void BremsstrahlungElectronScatteringDistribution::sample(
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,
                                                      photon_energy );
 
-  testPostcondition( incoming_energy > photon_energy );
+  testPostcondition( incoming_energy >= photon_energy );
   testPostcondition( photon_energy > 0.0 );
   testPostcondition( photon_angle_cosine <= 1.0 );
   testPostcondition( photon_angle_cosine >= -1.0 );
@@ -277,12 +276,35 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   testPostcondition( photon_angle_cosine >= -1.0 );
 }
 
+// Sample the bremsstrahlung photon energy using a exact correlated routine
+/*! \details When sampling exact it is possible to sample a non-realistic
+ *  photon energy. Whenever a non-realistic photon energy is sampled it is
+ *  defaulted to the max allowed energy.
+ */
+double BremsstrahlungElectronScatteringDistribution::samplePhotonExact(
+            const double incoming_energy ) const
+{
+  // Sample correlated exact
+  double photon_energy =
+    d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalExact(
+        incoming_energy );
+
+  // Set the knock on energy to the max allowed energy
+  if ( photon_energy > incoming_energy )
+    photon_energy = incoming_energy;
+
+  testPostcondition( photon_energy > 0.0 );
+  testPostcondition( photon_energy <= incoming_energy );
+
+  return photon_energy;
+}
+
 // Sample the outgoing photon direction from the analytical function
 double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                                           const double incoming_electron_energy,
                                           const double photon_energy  ) const
 {
-  testPrecondition( incoming_electron_energy > photon_energy );
+  testPrecondition( incoming_electron_energy >= photon_energy );
   testPrecondition( photon_energy > 0.0 );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
@@ -309,7 +331,7 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                         const double incoming_electron_energy,
                                         const double photon_energy ) const
 {
-  testPrecondition( incoming_electron_energy > photon_energy );
+  testPrecondition( incoming_electron_energy >= photon_energy );
   testPrecondition( photon_energy > 0.0 );
 
   double outgoing_electron_energy = incoming_electron_energy - photon_energy;

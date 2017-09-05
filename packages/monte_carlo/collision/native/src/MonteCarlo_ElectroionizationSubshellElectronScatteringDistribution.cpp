@@ -299,7 +299,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
 }
 
 // Sample an knock on energy and direction from the distribution
-void ElectroionizationSubshellElectronScatteringDistribution::sample(
+void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSecondary(
                const double incoming_energy,
                double& outgoing_energy,
                double& knock_on_energy,
@@ -309,7 +309,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Sample energy and angle cosine for the knock on electron
   this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
-  outgoing_energy = incoming_energy - knock_on_energy - d_binding_energy;
+  outgoing_energy = (incoming_energy - d_binding_energy) - knock_on_energy;
 
   // Calculate the outgoing angle cosine for the primary electron
   scattering_angle_cosine = outgoingAngle( incoming_energy,
@@ -348,11 +348,11 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double scattering_angle_cosine, knock_on_angle_cosine;
 
   // Sample the distribution
-  sample( electron.getEnergy(),
-          outgoing_energy,
-          knock_on_energy,
-          scattering_angle_cosine,
-          knock_on_angle_cosine );
+  this->samplePrimaryAndSecondary( electron.getEnergy(),
+                                   outgoing_energy,
+                                   knock_on_energy,
+                                   scattering_angle_cosine,
+                                   knock_on_angle_cosine );
 
   // Create new elecrton
   Teuchos::RCP<ParticleState> knock_on_electron(
@@ -407,7 +407,6 @@ double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnExa
 
   return knock_on_energy;
 }
-
 
 // Calculate the outgoing angle cosine
 double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(

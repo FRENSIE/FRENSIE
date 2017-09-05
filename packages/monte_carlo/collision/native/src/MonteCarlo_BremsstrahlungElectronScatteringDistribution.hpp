@@ -22,6 +22,9 @@ class BremsstrahlungElectronScatteringDistribution : public ElectronScatteringDi
 
 public:
 
+  //! Typedef for this type
+  typedef BremsstrahlungElectronScatteringDistribution ThisType;
+
   //! Typedef for the two d distributions
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
@@ -84,6 +87,9 @@ public:
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
+
+  // Sample the bremsstrahlung photon energy using a exact correlated routine
+  double samplePhotonExact( const double incoming_energy ) const;
 
   // Sample the outgoing photon angle from a dipole distribution
   double SampleDipoleAngle(  const double incoming_electron_energy,

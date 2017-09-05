@@ -145,11 +145,11 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  native_distribution->sample( incoming_energy,
-                               outgoing_energy,
-                               knock_on_energy,
-                               scattering_angle_cosine,
-                               knock_on_angle_cosine );
+  native_distribution->samplePrimaryAndSecondary( incoming_energy,
+                                                  outgoing_energy,
+                                                  knock_on_energy,
+                                                  scattering_angle_cosine,
+                                                  knock_on_angle_cosine );
 
   // Test original electron
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9645918284466900, 1e-12 );
