@@ -413,6 +413,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     first_subshell_loc,
     num_tables[first_subshell],
     binding_energies[first_subshell],
+    xss_data_extractor->isEPRVersion14(),
     eion_block,
     first_subshell_distribution );
 
@@ -490,6 +491,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
     last_subshell_loc,
     num_tables[last_subshell],
     binding_energies[last_subshell],
+    xss_data_extractor->isEPRVersion14(),
     eion_block,
     last_subshell_distribution );
 

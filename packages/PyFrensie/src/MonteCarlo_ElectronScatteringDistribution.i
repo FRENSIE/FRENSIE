@@ -153,7 +153,14 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 %apply double& OUTPUT { double& knock_on_energy };
 %apply double& OUTPUT { double& knock_on_angle_cosine };
 
+%apply double& OUTPUT { double& knock_on_energy };
+%apply double& OUTPUT { double& knock_on_angle_cosine };
+
 %include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
+
+%feature("autodoc",
+"samplePrimaryAndSecondary(ElectroionizationSubshellElectronScatteringDistribution self, const double incoming_energy) -> double, double, double, double")
+MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributio::samplePrimaryAndSecondary;
 
 // Basic electron scattering distribution interface setup
 %electron_distribution_interface_setup( ElectroionizationSubshellElectronScatteringDistribution )

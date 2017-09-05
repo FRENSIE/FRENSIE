@@ -27,9 +27,18 @@ public:
     const unsigned table_location,
     const unsigned number_of_tables,
     const double binding_energy,
+    const bool is_eprdata14,
     const Teuchos::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
+    const double evaluation_tol = 1e-7 );
+
+  //! Create a electroionization subshell distribution
+  static void createElectroionizationSubshellDistribution(
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+      electroionization_subshell_distribution,
+    const unsigned subshell,
     const double evaluation_tol = 1e-7 );
 
 protected:
@@ -39,6 +48,7 @@ protected:
     const unsigned table_info_location,
     const unsigned table_location,
     const unsigned number_of_tables,
+    const bool is_eprdata14,
     const Teuchos::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
       subshell_distribution,

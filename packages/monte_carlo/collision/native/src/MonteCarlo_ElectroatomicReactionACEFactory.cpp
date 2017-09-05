@@ -148,8 +148,8 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
 
 // Create the subshell electroionization electroatomic reaction
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
-        const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& electroionization_subshell_reaction,
     const unsigned subshell )
@@ -167,11 +167,16 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
   Teuchos::Array<Data::SubshellType> subshell_order(
                         subshell_endf_designators.size() );
 
-    for( unsigned i = 0; i < subshell_order.size(); ++i )
-    {
-      subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
-                      (unsigned)subshell_endf_designators[i] );
-    }
+  unsigned shell_index = 0;
+
+  for( unsigned i = 0; i < subshell_order.size(); ++i )
+  {
+    subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
+                    (unsigned)subshell_endf_designators[i] );
+
+    if ( subshell == subshell_order[i] )
+      shell_index = i;
+  }
 
   // Extract the subshell binding energies
   Teuchos::ArrayView<const double> binding_energies =
@@ -179,9 +184,6 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
 
   // Extract the number of subshells (N_s)
   unsigned num_subshells = subshell_order.size();
-
-  // Extract the number of points in the energy grid
-  unsigned num_energy_points = energy_grid.size();
 
   // Extract the subshell cross sections
   Teuchos::ArrayView<const double> raw_subshell_cross_sections =
@@ -205,15 +207,15 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
   Teuchos::Array<double> table_loc(eion_block(2*num_subshells,num_subshells));
 
   // Subshell table info realtive to the EION Block
-  unsigned subshell_info = table_info[subshell]- eion_loc - 1;
+  unsigned subshell_info = table_info[shell_index]- eion_loc - 1;
 
   // Subshell table loc realtive to the EION Block
-  unsigned subshell_loc = table_loc[subshell]- eion_loc - 1;
+  unsigned subshell_loc = table_loc[shell_index]- eion_loc - 1;
 
 
   // Subshell cross section without zeros removed
   Teuchos::ArrayView<const double> raw_subshell_cross_section =
-  raw_subshell_cross_sections( subshell*num_energy_points,num_energy_points );
+  raw_subshell_cross_sections( subshell*energy_grid.size(),energy_grid.size() );
 
   // Electroionization cross section with zeros removed
   Teuchos::ArrayRCP<double> subshell_cross_section;
@@ -234,12 +236,13 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
 
   // Create the electroionization subshell distribution
   ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
-      subshell_info,
-      subshell_loc,
-      num_tables[subshell],
-      binding_energies[subshell],
-      eion_block,
-      electroionization_subshell_distribution );
+    subshell_info,
+    subshell_loc,
+    num_tables[shell_index],
+    binding_energies[shell_index],
+    raw_electroatom_data.isEPRVersion14(),
+    eion_block,
+    electroionization_subshell_distribution );
 
 
   // Create the subshell electroelectric reaction
@@ -248,7 +251,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
             energy_grid,
             subshell_cross_section,
             threshold_energy_index,
-            subshell_order[subshell],
+            subshell_order[shell_index],
             electroionization_subshell_distribution ) );
 }
 
@@ -275,11 +278,11 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
   Teuchos::Array<Data::SubshellType> subshell_order(
                         subshell_endf_designators.size() );
 
-    for( unsigned i = 0; i < subshell_order.size(); ++i )
-    {
-      subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
-                      (unsigned)subshell_endf_designators[i] );
-    }
+  for( unsigned i = 0; i < subshell_order.size(); ++i )
+  {
+    subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
+                    (unsigned)subshell_endf_designators[i] );
+  }
 
   // Extract the subshell binding energies
   Teuchos::ArrayView<const double> binding_energies =
@@ -314,19 +317,19 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 
  std::shared_ptr<ElectroatomicReaction> electroionization_subshell_reaction;
 
-  for( unsigned subshell = 0; subshell < num_subshells; ++subshell )
+  for( unsigned shell_index = 0; shell_index < num_subshells; ++shell_index )
   {
 
     // Subshell table info realtive to the EION Block
-    unsigned subshell_info = table_info[subshell]- eion_loc - 1;
+    unsigned subshell_info = table_info[shell_index]- eion_loc - 1;
 
     // Subshell table loc realtive to the EION Block
-    unsigned subshell_loc = table_loc[subshell]- eion_loc - 1;
+    unsigned subshell_loc = table_loc[shell_index]- eion_loc - 1;
 
 
     // Subshell cross section without zeros removed
     Teuchos::ArrayView<const double> raw_subshell_cross_section =
-    raw_subshell_cross_sections( subshell*num_energy_points,num_energy_points );
+    raw_subshell_cross_sections( shell_index*energy_grid.size(),energy_grid.size() );
 
     // Electroionization cross section with zeros removed
     Teuchos::ArrayRCP<double> subshell_cross_section;
@@ -349,10 +352,11 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
     ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
         subshell_info,
         subshell_loc,
-        num_tables[subshell],
-        binding_energies[subshell],
-    eion_block,
-    electroionization_subshell_distribution );
+        num_tables[shell_index],
+        binding_energies[shell_index],
+        raw_electroatom_data.isEPRVersion14(),
+        eion_block,
+        electroionization_subshell_distribution );
 
 
     // Create the subshell electroelectric reaction
@@ -361,7 +365,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
-              subshell_order[subshell],
+              subshell_order[shell_index],
               electroionization_subshell_distribution ) );
 
     electroionization_subshell_reactions.push_back(

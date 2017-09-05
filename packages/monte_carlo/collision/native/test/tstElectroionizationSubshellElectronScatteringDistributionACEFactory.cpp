@@ -26,10 +26,8 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  ace_electroionization_distribution;
+  ace_electroionization_distribution, epr14_electroionization_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -38,13 +36,13 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    getBindingEnergy )
 {
+  // Get binding energy
+  double binding_energy = ace_electroionization_distribution->getBindingEnergy();
+  TEST_EQUALITY_CONST( binding_energy, 8.829E-02 );
 
   // Get binding energy
-  double binding_energy =
-    ace_electroionization_distribution->getBindingEnergy();
-
-  // Test original electron
-  TEST_EQUALITY_CONST( binding_energy, 8.829000000000E-02 );
+  binding_energy = epr14_electroionization_distribution->getBindingEnergy();
+  TEST_EQUALITY_CONST( binding_energy, 8.829E-02 );
 }
 
 //---------------------------------------------------------------------------//
@@ -54,26 +52,33 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 {
   // Get min energy
   double min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy(
-                                                                      8.829E-02 );
-
-  // Test original electron
+    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
   TEST_EQUALITY_CONST( min_energy, 0.0 );
 
   // Get min energy
   min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy(
-                                                                      1e5 );
-
-  // Test original electron
+    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
   UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 
   // Get min energy
   min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy(
-                                                                      2.0 );
+    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 
-  // Test original electron
+
+  // Use eprdata14 file
+  min_energy =
+    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
+  TEST_EQUALITY_CONST( min_energy, 0.0 );
+
+  // Get min energy
+  min_energy =
+    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
+  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+
+  // Get min energy
+  min_energy =
+    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
   UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 }
 
@@ -84,26 +89,32 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 {
   // Get max energy
   double max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy(
-                                                                      8.829E-02 );
-
-  // Test original electron
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
   TEST_EQUALITY_CONST( max_energy, 0.0 );
 
   // Get max energy
   max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy(
-                                                                      1e5 );
-
-  // Test original electron
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
 
   // Get max energy
   max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy(
-                                                                      2.0 );
+    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
 
-  // Test original electron
+  // Use eprdata14 file
+  max_energy =
+    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
+  TEST_EQUALITY_CONST( max_energy, 0.0 );
+
+  // Get max energy
+  max_energy =
+    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
+
+  // Get max energy
+  max_energy =
+    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
 }
 
@@ -133,6 +144,29 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1e5, 1.752970e2 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.399431656723E-07, 1e-12 );
+
+  // Use eprdata14 file
+  pdf;
+  pdf = epr14_electroionization_distribution->evaluatePDF( 8.829e-2 + 1e-8, 1e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
+
+  pdf = epr14_electroionization_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-8 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.1109988877100814e+07, 1e-12 );
+
+  pdf = epr14_electroionization_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.8322344822874322e+02, 1e-12 );
+
+  pdf = epr14_electroionization_distribution->evaluatePDF( 1e-1, 1e-2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 5.1889706381677354e+02, 1e-6 );
+
+  pdf = epr14_electroionization_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919, 1e-12 );
+
+  pdf = epr14_electroionization_distribution->evaluatePDF( 1.0, 9.7163E-02 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0453945777097085, 1e-12 );
+
+  pdf = epr14_electroionization_distribution->evaluatePDF( 1e5, 1.752970e2 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 4.3994316567231340e-07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -147,9 +181,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double incoming_energy = 1.0;
-
   double knock_on_energy, knock_on_angle_cosine;
+  double incoming_energy = 1.0;
 
   // sample the electron
   ace_electroionization_distribution->sample( incoming_energy,
@@ -160,17 +193,31 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
   TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
 
+
+  // sample the electron using eprdata14 file
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  epr14_electroionization_distribution->sample( incoming_energy,
+                                                knock_on_energy,
+                                                knock_on_angle_cosine );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
+
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   sample )
+                   samplePrimaryAndSecondary )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
 
@@ -178,11 +225,31 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  ace_electroionization_distribution->sample( incoming_energy,
-                                              outgoing_energy,
-                                              knock_on_energy,
-                                              scattering_angle_cosine,
-                                              knock_on_angle_cosine );
+  ace_electroionization_distribution->samplePrimaryAndSecondary(
+        incoming_energy,
+        outgoing_energy,
+        knock_on_energy,
+        scattering_angle_cosine,
+        knock_on_angle_cosine );
+
+  // Test original electron
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.964446703542646, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 8.706573789423E-01, 1e-12 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
+
+
+  // sample the electron using the eprdata14 file
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  epr14_electroionization_distribution->samplePrimaryAndSecondary(
+        incoming_energy,
+        outgoing_energy,
+        knock_on_energy,
+        scattering_angle_cosine,
+        knock_on_angle_cosine );
 
   // Test original electron
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.964446703542646, 1e-12 );
@@ -204,10 +271,10 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
   unsigned trials = 0.0;
-
   double incoming_energy = 1.0;
-
   double knock_on_energy, scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
@@ -219,6 +286,21 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 
   // Test trials
   TEST_EQUALITY_CONST( trials, 1.0 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
+
+
+  // sample the electron using the eprdata14 file
+  epr14_electroionization_distribution->sampleAndRecordTrials(
+                                                        incoming_energy,
+                                                        knock_on_energy,
+                                                        knock_on_angle_cosine,
+                                                        trials );
+
+  // Test trials
+  TEST_EQUALITY_CONST( trials, 2.0 );
 
   // Test knock-on electron
   TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
@@ -242,21 +324,41 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   Data::SubshellType shell_of_interaction;
 
   MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.0 );
+  electron.setEnergy( 1.5 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
-  // Analytically scatter electron
+  // Scatter electron
   ace_electroionization_distribution->scatterElectron( electron,
                                                        bank,
                                                        shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.964446703542646, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.706573789423E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.3707352378289799, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.279436961765390, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.105262105768E-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5457978376168189e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0974762171020106e-02, 1e-12 );
+
+  bank.pop();
+
+  // Scatter electron using the eprdata14 file
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  electron.setEnergy( 1.5 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Sscatter electron
+  epr14_electroionization_distribution->scatterElectron( electron,
+                                                         bank,
+                                                         shell_of_interaction );
+
+  // Test original electron
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.8150176146343149e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.3712481539418249, 1e-12 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5304242711985564e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0461846058175217e-02, 1e-12 );
 
 }
 
@@ -265,24 +367,34 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace_file_name, test_ace_table_name;
+std::string test_ace12_file_name, test_ace12_table_name,
+            test_ace14_file_name, test_ace14_table_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_ace_file",
-                   &test_ace_file_name,
+  clp().setOption( "test_ace12_file",
+                   &test_ace12_file_name,
                    "Test ACE file name" );
-  clp().setOption( "test_ace_table",
-                   &test_ace_table_name,
-                   "Test ACE table name" );
+  clp().setOption( "test_ace12_table",
+                   &test_ace12_table_name,
+                   "Test ACE12 table name" );
+
+  clp().setOption( "test_ace14_file",
+                   &test_ace14_file_name,
+                   "Test ACE14 file name" );
+  clp().setOption( "test_ace14_table",
+                   &test_ace14_table_name,
+                   "Test ACE14 table name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
+  // Create eprdata12 distribution
+  {
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-        new Data::ACEFileHandler( test_ace_file_name,
-                                  test_ace_table_name,
+        new Data::ACEFileHandler( test_ace12_file_name,
+                                  test_ace12_table_name,
                                   1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
@@ -320,35 +432,36 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Extract the location of knock-on tables by subshell
   Teuchos::Array<double> table_loc(eion_block(2*num_shells,num_shells));
 
-  // Subshell
-  unsigned subshell = 0;
+  // Subshell index
+  unsigned shell_index = 0;
 
   // Subshell table info realtive to the EION Block
-  unsigned subshell_info = table_info[subshell]- eion_loc - 1;
+  unsigned subshell_info = table_info[shell_index]- eion_loc - 1;
 
   // Subshell table loc realtive to the EION Block
-  unsigned subshell_loc = table_loc[subshell]- eion_loc - 1;
+  unsigned subshell_loc = table_loc[shell_index]- eion_loc - 1;
 
   // Extract the energies for which knock-on sampling tables are given
   Teuchos::Array<double> table_energy_grid(eion_block( subshell_info,
-                                                       num_tables[subshell] ) );
+                                                       num_tables[shell_index] ) );
 
   // Extract the length of the knock-on sampling tables
   Teuchos::Array<double> table_length(eion_block(
-                               subshell_info + num_tables[subshell],
-                               num_tables[subshell] ) );
+                               subshell_info + num_tables[shell_index],
+                               num_tables[shell_index] ) );
 
   // Extract the offset of the knock-on sampling tables
   Teuchos::Array<double> table_offset(eion_block(
-                             subshell_info + 2*num_tables[subshell],
-                             num_tables[subshell] ) );
+                             subshell_info + 2*num_tables[shell_index],
+                             num_tables[shell_index] ) );
 
   // Create the electroionization subshell distribution
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
     subshell_info,
     subshell_loc,
-    num_tables[subshell],
-    binding_energies[subshell],
+    num_tables[shell_index],
+    binding_energies[shell_index],
+    xss_data_extractor->isEPRVersion14(),
     eion_block,
     ace_electroionization_distribution,
     1e-6 );
@@ -356,6 +469,90 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();
+  }
+
+
+  // Create eprdata14 distribution
+  {
+  // Create a file handler and data extractor
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+        new Data::ACEFileHandler( test_ace14_file_name,
+                                  test_ace14_table_name,
+                                  1u ) );
+  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+        new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                       ace_file_handler->getTableJXSArray(),
+                                       ace_file_handler->getTableXSSArray() ) );
+
+  // Extract the cross sections energy grid
+  Teuchos::ArrayView<const double> energy_grid =
+    xss_data_extractor->extractElectronEnergyGrid() ;
+
+  // Extract the subshell information
+  Teuchos::ArrayView<const double> subshell_endf_designators =
+    xss_data_extractor->extractSubshellENDFDesignators();
+
+  // Extract the subshell binding energies
+  Teuchos::ArrayView<const double> binding_energies =
+    xss_data_extractor->extractSubshellBindingEnergies();
+
+  // Extract the electroionization data block (EION)
+  Teuchos::ArrayView<const double> eion_block(
+    xss_data_extractor->extractEIONBlock() );
+
+  // Extract the location of info about first knock-on table relative to the EION block
+  unsigned eion_loc = xss_data_extractor->returnEIONLoc();
+
+  // Extract the number of subshells (N_s)
+  int num_shells = subshell_endf_designators.size();
+
+  // Extract the number of knock-on tables by subshell (N_i)
+  Teuchos::Array<double> num_tables(eion_block(0,num_shells));
+
+  // Extract the location of info about knock-on tables by subshell
+  Teuchos::Array<double> table_info(eion_block(num_shells,num_shells));
+
+  // Extract the location of knock-on tables by subshell
+  Teuchos::Array<double> table_loc(eion_block(2*num_shells,num_shells));
+
+  // Subshell index
+  unsigned shell_index = 0;
+
+  // Subshell table info realtive to the EION Block
+  unsigned subshell_info = table_info[shell_index]- eion_loc - 1;
+
+  // Subshell table loc realtive to the EION Block
+  unsigned subshell_loc = table_loc[shell_index]- eion_loc - 1;
+
+  // Extract the energies for which knock-on sampling tables are given
+  Teuchos::Array<double> table_energy_grid(eion_block( subshell_info,
+                                                       num_tables[shell_index] ) );
+
+  // Extract the length of the knock-on sampling tables
+  Teuchos::Array<double> table_length(eion_block(
+                               subshell_info + num_tables[shell_index],
+                               num_tables[shell_index] ) );
+
+  // Extract the offset of the knock-on sampling tables
+  Teuchos::Array<double> table_offset(eion_block(
+                             subshell_info + 2*num_tables[shell_index],
+                             num_tables[shell_index] ) );
+
+  // Create the electroionization subshell distribution
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
+    subshell_info,
+    subshell_loc,
+    num_tables[shell_index],
+    binding_energies[shell_index],
+    xss_data_extractor->isEPRVersion14(),
+    eion_block,
+    epr14_electroionization_distribution,
+    1e-6 );
+
+  // Clear setup data
+  ace_file_handler.reset();
+  xss_data_extractor.reset();
+  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

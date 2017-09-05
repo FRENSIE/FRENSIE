@@ -297,7 +297,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
 }
 
 // Sample an knock on energy and direction from the distribution
-void ElectroionizationSubshellElectronScatteringDistribution::sample(
+void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSecondary(
                const double incoming_energy,
                double& outgoing_energy,
                double& knock_on_energy,
@@ -347,11 +347,11 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double scattering_angle_cosine, knock_on_angle_cosine;
 
   // Sample the distribution
-  sample( electron.getEnergy(),
-          outgoing_energy,
-          knock_on_energy,
-          scattering_angle_cosine,
-          knock_on_angle_cosine );
+  samplePrimaryAndSecondary( electron.getEnergy(),
+                             outgoing_energy,
+                             knock_on_energy,
+                             scattering_angle_cosine,
+                             knock_on_angle_cosine );
 
   // Create new elecrton
   Teuchos::RCP<ParticleState> knock_on_electron(

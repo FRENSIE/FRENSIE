@@ -227,7 +227,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   sample_ace )
+                   samplePrimaryAndSecondary_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -241,11 +241,12 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  ace_electroionization_distribution->sample( incoming_energy,
-                                              outgoing_energy,
-                                              knock_on_energy,
-                                              scattering_angle_cosine,
-                                              knock_on_angle_cosine );
+  ace_electroionization_distribution->samplePrimaryAndSecondary(
+                                                        incoming_energy,
+                                                        outgoing_energy,
+                                                        knock_on_energy,
+                                                        scattering_angle_cosine,
+                                                        knock_on_angle_cosine );
 
   // Test original electron
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.964446703542646, 1e-12 );

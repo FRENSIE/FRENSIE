@@ -68,6 +68,10 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 }
 
 // Create the energy loss function
+/*! \details If the eprdata12 library is used the TwoDInterpPolicy will be set
+ *  to LinLinLin to match MCNP6.1. If the eprdata14 library is used the
+ *  TwoDInterpPolicy will be set to LogLogLog to match MCNP6.2.
+ */
 void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>& scattering_function,
@@ -107,12 +111,25 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
           true ) );
   }
 
-  // Create the scattering function
-  scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+  // Check if the file version is eprdata14 or eprdata12
+  if ( raw_electroatom_data.isEPRVersion14() )
+  {
+    // Create the scattering function with LogLogLog interp (eprdata14)
+    scattering_function.reset(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
             function_data,
             1e-6,
             evaluation_tol ) );
+  }
+  else
+  {
+    // Create the scattering function with LinLinLin interp (eprdata12)
+    scattering_function.reset(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+            function_data,
+            1e-6,
+            evaluation_tol ) );
+  }
 }
 
 } // end MonteCarlo namespace

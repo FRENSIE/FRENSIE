@@ -81,11 +81,11 @@ public:
                double& knock_on_angle_cosine  ) const;
 
   // Sample the distribution
-  void sample( const double incoming_energy,
-               double& outgoing_energy,
-               double& knock_on_energy,
-               double& scattering_angle_cosine,
-               double& knock_on_angle_cosine ) const;
+  void samplePrimaryAndSecondary( const double incoming_energy,
+                                  double& outgoing_energy,
+                                  double& knock_on_energy,
+                                  double& scattering_angle_cosine,
+                                  double& knock_on_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
