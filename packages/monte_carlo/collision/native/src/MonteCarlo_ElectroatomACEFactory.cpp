@@ -48,9 +48,21 @@ void ElectroatomACEFactory::createElectroatomCore(
                   properties.getNumberOfElectronHashGridBins() ) );
 
   // Create the elastic scattering reaction
-  if ( properties.isElasticModeOn() )
+  if ( properties.isElasticModeOn() ) // Create the decoupled elastic scattering reaction
   {
-    // Create the cutoff elastic scattering reaction
+    // Check the ACE file version
+    if( raw_electroatom_data.isEPRVersion14() )
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
+
+      ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer );
+    }
+    else // Create the cutoff elastic scattering reaction
     {
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
