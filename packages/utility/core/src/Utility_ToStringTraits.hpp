@@ -15,7 +15,6 @@
 #include <iterator>
 #include <stdexcept>
 #include <complex>
-#include <initializer_list>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
@@ -311,11 +310,25 @@ inline std::string toString( const T& obj )
   return Utility::ToStringTraits<T>::toString( obj );
 }
 
+// Convert an initializer list to a string
+template<typename T>
+inline std::string toString( std::initializer_list<T> obj )
+{
+  return Utility::ToStringTraits<std::initializer_list<T> >::toString( obj );
+}
+
 // Place the object in a stream
 template<typename T>
 inline void toStream( std::ostream& os, const T& obj )
 {
   Utility::ToStringTraits<T>::toStream( os, obj );
+}
+
+// Place an initializer list in a stream
+template<typename T>
+void toStream( std::ostream& os, std::initializer_list<T> obj )
+{
+  Utility::ToStringTraits<std::initializer_list<T> >::toStream( os, obj );
 }
 
 } // end Utility namespace

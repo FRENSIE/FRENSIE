@@ -708,5 +708,68 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( quantity_toStream,
 }
 
 //---------------------------------------------------------------------------//
+// Check that an initializer list can be converted to a string
+BOOST_AUTO_TEST_CASE_TEMPLATE( initializer_list_toString,
+                               T,
+                               ComplexTestTypes )
+{
+  BOOST_CHECK_EQUAL( Utility::toString<T>( {} ), std::string("{}") );
+
+  BOOST_CHECK_EQUAL( Utility::toString( {T(0)} ),
+                     std::string("{") + Utility::toString(T(0)) +
+                     std::string("}") );
+
+  BOOST_CHECK_EQUAL( Utility::toString( {T(0),T(1)} ),
+                     std::string("{") + Utility::toString(T(0)) + ", " +
+                     Utility::toString(T(1)) + "}" );
+  
+  BOOST_CHECK_EQUAL( Utility::toString( {T(0),T(1),T(2)} ),
+                     std::string("{") + Utility::toString(T(0)) + ", " +
+                     Utility::toString(T(1)) + ", " +
+                     Utility::toString(T(2)) + "}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an initializer list can be placed in a stream
+BOOST_AUTO_TEST_CASE_TEMPLATE( initializer_list_toStream,
+                               T,
+                               ComplexTestTypes )
+{
+  std::ostringstream oss;
+
+  Utility::toStream<T>( oss, {} );
+  
+  BOOST_CHECK_EQUAL( oss.str(), std::string("{}") );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, {T(0)} );
+
+  BOOST_CHECK_EQUAL( oss.str(),
+                     std::string("{") + Utility::toString(T(0)) +
+                     std::string("}") );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, {T(0),T(1)} );
+
+  BOOST_CHECK_EQUAL( oss.str(),
+                     std::string("{") + Utility::toString(T(0)) + ", " +
+                     Utility::toString(T(1)) + "}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, {T(0),T(1),T(2)} );
+  
+  BOOST_CHECK_EQUAL( oss.str(),
+                     std::string("{") + Utility::toString(T(0)) + ", " +
+                     Utility::toString(T(1)) + ", " +
+                     Utility::toString(T(2)) + "}" );
+}
+
+//---------------------------------------------------------------------------//
 // end tstToStringTraits.cpp
 //---------------------------------------------------------------------------//

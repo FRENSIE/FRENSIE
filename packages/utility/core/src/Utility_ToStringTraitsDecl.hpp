@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <string>
+#include <initializer_list>
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
@@ -46,16 +47,34 @@ struct ToStringTraits
 template<typename T>
 std::string toString( const T& obj );
 
+/*! Convert an initializer list to a string
+ *
+ * This overload can be used with brace-enclosed initializer lists (e.g.
+ * {1, 2, ...}).
+ * \ingroup to_string_traits
+ */
+template<typename T>
+std::string toString( std::initializer_list<T> obj );
+
 /*! Place the object in a stream
  *
  * Use this method when the behavior of stream operator << for type T is
  * insufficient for some reason (e.g. preserving floating point precision by
  * default). This method can be overloaded for custom types or the 
  * Utility::ToStringTraits class can be specialized for the custom type.
-* \ingroup to_string_traits
+ * \ingroup to_string_traits
  */
 template<typename T>
 void toStream( std::ostream& os, const T& obj );
+
+/*! Place an initializer list in a stream
+ *
+ * This overload can be used with brace-enclosed initializer lists (e.g.
+ * {1, 2, ...}).
+ * \ingroup to_string_traits
+ */
+template<typename T>
+void toStream( std::ostream& os, std::initializer_list<T> obj ); 
 
 //! Container element deliminators
 extern const char* container_element_delims;
