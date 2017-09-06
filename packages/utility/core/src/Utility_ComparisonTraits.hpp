@@ -443,11 +443,13 @@ public:
     std::ostringstream oss;
 
     oss << std::string( RightShift, ' ' )
-        << "size(" << detailed_left_name << ") " << Policy::template getOperatorName<size_t>()
-        << " size(" << detailed_right_name << ") "
+        << detailed_left_name << ".size() "
+        << Policy::template getOperatorName<size_t>() << " "
+        << detailed_right_name << ".size() "
         << "|| there exists at least one index i such that "
-        << detailed_left_name << "[i] " << Policy::template getOperatorName<ValueType>()
-        << " " << detailed_right_name << "[i]: ";
+        << detailed_left_name << "[i] "
+        << Policy::template getOperatorName<ValueType>() << " "
+        << detailed_right_name << "[i]: ";
 
     return oss.str();
   }

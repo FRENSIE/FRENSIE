@@ -178,11 +178,9 @@ TARGET_LINK_LIBRARIES(tstView utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(View_test tstView --report_level=detailed)
 SET_PROPERTY(TEST View_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstArrayView
-  tstArrayView.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstArrayView utility_core)
-ADD_TEST(ArrayView_test tstArrayView)
+ADD_EXECUTABLE(tstArrayView tstArrayView.cpp)
+TARGET_LINK_LIBRARIES(tstArrayView utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(ArrayView_test tstArrayView --report_level=detailed)
 SET_PROPERTY(TEST ArrayView_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstArray

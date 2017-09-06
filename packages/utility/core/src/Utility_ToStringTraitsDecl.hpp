@@ -53,7 +53,7 @@ std::string toString( const T& obj );
  * {1, 2, ...}).
  * \ingroup to_string_traits
  */
-template<typename T>
+template<typename T = int>
 std::string toString( std::initializer_list<T> obj );
 
 /*! Place the object in a stream
@@ -73,7 +73,7 @@ void toStream( std::ostream& os, const T& obj );
  * {1, 2, ...}).
  * \ingroup to_string_traits
  */
-template<typename T>
+template<typename T = int>
 void toStream( std::ostream& os, std::initializer_list<T> obj ); 
 
 //! Container element deliminators

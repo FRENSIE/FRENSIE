@@ -234,12 +234,20 @@ inline ArrayView<T2> av_reinterpret_cast( const ArrayView<T1>& array_view )
                         reinterpret_cast<T2*>( const_cast<ArrayView<T1>&>(array_view).end() ) );
 }
 
+/*! Partial specialization of ToStringTraits for Utility::ArrayView
+ * \ingroup view
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<Utility::ArrayView<T> > : public ToStringTraits<Utility::View<T*> >
+{ /* ... */ };
+
 /*! Partial specialization of ComparisonTraits for Utility::ArrayView
  * \ingroup view
  * \ingropu comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<Utility::ArrayView<T> > : public Details::ComparisonTraitsSequenceContainerHelper<Utility::ArrayView,T>
+struct ComparisonTraits<Utility::ArrayView<T> > : public ComparisonTraits<Utility::View<T*> >
 { /* ... */ };
   
 } // end Utility namespace

@@ -713,7 +713,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( initializer_list_toString,
                                T,
                                ComplexTestTypes )
 {
-  BOOST_CHECK_EQUAL( Utility::toString<T>( {} ), std::string("{}") );
+  BOOST_CHECK_EQUAL( Utility::toString( {} ), std::string("{}") );
 
   BOOST_CHECK_EQUAL( Utility::toString( {T(0)} ),
                      std::string("{") + Utility::toString(T(0)) +
@@ -737,7 +737,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( initializer_list_toStream,
 {
   std::ostringstream oss;
 
-  Utility::toStream<T>( oss, {} );
+  Utility::toStream( oss, {} );
   
   BOOST_CHECK_EQUAL( oss.str(), std::string("{}") );
 
