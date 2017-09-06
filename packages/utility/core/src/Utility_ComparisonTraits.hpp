@@ -444,10 +444,10 @@ public:
 
     oss << std::string( RightShift, ' ' )
         << "size(" << detailed_left_name << ") " << Policy::template getOperatorName<size_t>()
-        << "size(" << detailed_right_name << ") "
+        << " size(" << detailed_right_name << ") "
         << "|| there exists at least one index i such that "
         << detailed_left_name << "[i] " << Policy::template getOperatorName<ValueType>()
-        << detailed_right_name << " [i]: ";
+        << " " << detailed_right_name << "[i]: ";
 
     return oss.str();
   }
