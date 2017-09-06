@@ -35,7 +35,20 @@ ElectronPhotonRelaxationXsdirEntry::ElectronPhotonRelaxationXsdirEntry(
 
   AtomType atom = convertAtomicNumberToAtomTypeEnum( d_atomic_number );
 
-  d_alias = convertAtomTypeEnumToString( atom );
+  unsigned table_version = this->getTableVersion();
+
+  // Check the table version
+  if ( table_version == 14 )
+  {
+    std::ostringstream oss;
+    oss.precision( 1 );
+    oss << convertAtomTypeEnumToString( atom )
+        << "_v" << this->getTableVersion();
+
+    d_alias = oss.str();
+  }
+  else
+    d_alias = convertAtomTypeEnumToString( atom );
 
   // Make sure the atomic number is valid
   testPostcondition( d_atomic_number > 0 );

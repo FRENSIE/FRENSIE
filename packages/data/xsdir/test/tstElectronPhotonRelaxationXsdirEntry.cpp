@@ -28,6 +28,9 @@
 std::string line_a( "  1000.12p      0.999242  mcplib12 0 1        1     1898 0 0 0.00000E+00" );
 std::string line_b( "100000.12p    254.792000 xmc/eprdata12 0 1  2114874   156679 0 0 0.00000E+00   " );
 
+std::string line_c( "  1000.14p      0.999242  xmc/eprdata14 0 1        1    12747 0 0 0.00000E+00" );
+std::string line_d( "100000.14p    254.792000  mcplib14 0 1  2114874   156679 0 0 0.00000E+00   " );
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -39,7 +42,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, getTableAlias )
   Data::XsdirEntry::extractTableTokensFromXsdirLine( line_a, entry_tokens );
 
   Teuchos::RCP<Data::XsdirEntry> entry(
-	     new Data::ElectronPhotonRelaxationXsdirEntry( entry_tokens ) );
+             new Data::ElectronPhotonRelaxationXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "H" );
 
@@ -48,6 +51,18 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, getTableAlias )
   entry.reset(new Data::ElectronPhotonRelaxationXsdirEntry( entry_tokens ));
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "Fm" );
+
+  Data::XsdirEntry::extractTableTokensFromXsdirLine( line_c, entry_tokens );
+
+  entry.reset(new Data::ElectronPhotonRelaxationXsdirEntry( entry_tokens ));
+
+  TEST_EQUALITY_CONST( entry->getTableAlias(), "H_v14" );
+
+  Data::XsdirEntry::extractTableTokensFromXsdirLine( line_d, entry_tokens );
+
+  entry.reset(new Data::ElectronPhotonRelaxationXsdirEntry( entry_tokens ));
+
+  TEST_EQUALITY_CONST( entry->getTableAlias(), "Fm_v14" );
 }
 
 //---------------------------------------------------------------------------//
@@ -121,43 +136,148 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, addInfoToParameterList )
   TEST_EQUALITY_CONST( sublist_b.get<double>( Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
 		       254.792000 );
 
-  // Make sure important info will not be overridden
-  Teuchos::ParameterList& sublist_c =
-    parameter_list.sublist( "Fm-254_293.6K_v7" );
+//  // Make sure important info will not be overridden
+//  Teuchos::ParameterList& sublist_c =
+//    parameter_list.sublist( "Fm-254_293.6K_v7" );
 
-  sublist_c.set<int>(
-		    Data::CrossSectionsXMLProperties::atomic_number_prop,
-		    100 );
-  sublist_c.set(
-	      Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
-	      255.0 );
-  sublist_c.set( Data::CrossSectionsXMLProperties::temperature_prop,
-		 2.5301E-08 );
+//  sublist_c.set<int>(
+//		    Data::CrossSectionsXMLProperties::atomic_number_prop,
+//		    100 );
+//  sublist_c.set(
+//	      Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
+//	      255.0 );
+//  sublist_c.set( Data::CrossSectionsXMLProperties::temperature_prop,
+//		 2.5301E-08 );
+
+//  entry->addInfoToParameterList( sublist_c );
+
+//  TEST_EQUALITY_CONST( sublist_c.numParams(), 11 );
+//  TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_path_prop ),
+//		       "xmc/eprdata12" );
+//  TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_type_prop ),
+//		       Data::CrossSectionsXMLProperties::ace_file );
+//  TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_table_name_prop ),
+//		       "100000.12p" );
+//  TEST_EQUALITY_CONST( sublist_c.get<int>( Data::CrossSectionsXMLProperties::photoatomic_file_start_line_prop ),
+//		       2114874 );
+//  TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_path_prop ),
+//		       "xmc/eprdata12" );
+//  TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_type_prop ),
+//		       Data::CrossSectionsXMLProperties::ace_file );
+//  TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_table_name_prop ),
+//		       "100000.12p" );
+//  TEST_EQUALITY_CONST( sublist_c.get<int>( Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop ),
+//		       2114874 );
+//  TEST_EQUALITY_CONST( sublist_c.get<int>( Data::CrossSectionsXMLProperties::atomic_number_prop ),
+//		       100 );
+//  TEST_EQUALITY_CONST( sublist_c.get<double>( Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
+//		       255.0 );
+//  TEST_EQUALITY_CONST( sublist_c.get<double>( Data::CrossSectionsXMLProperties::temperature_prop ),
+//		       2.5301E-08  );
+
+
+
+
+
+  Data::XsdirEntry::extractTableTokensFromXsdirLine( line_c, entry_tokens );
+
+  entry.reset(new Data::ElectronPhotonRelaxationXsdirEntry( entry_tokens ) );
+
+  Teuchos::ParameterList& sublist_c =
+    parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_c );
 
-  TEST_EQUALITY_CONST( sublist_c.numParams(), 11 );
+  TEST_EQUALITY_CONST( sublist_c.numParams(), 10 );
   TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_path_prop ),
-		       "xmc/eprdata12" );
+		       "xmc/eprdata14" );
   TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_type_prop ),
 		       Data::CrossSectionsXMLProperties::ace_file );
   TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_table_name_prop ),
-		       "100000.12p" );
+		       "1000.14p" );
   TEST_EQUALITY_CONST( sublist_c.get<int>( Data::CrossSectionsXMLProperties::photoatomic_file_start_line_prop ),
-		       2114874 );
+		       1 );
   TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_path_prop ),
-		       "xmc/eprdata12" );
+		       "xmc/eprdata14" );
   TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_type_prop ),
 		       Data::CrossSectionsXMLProperties::ace_file );
   TEST_EQUALITY_CONST( sublist_c.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_table_name_prop ),
-		       "100000.12p" );
+		       "1000.14p" );
   TEST_EQUALITY_CONST( sublist_c.get<int>( Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop ),
-		       2114874 );
+		       1 );
   TEST_EQUALITY_CONST( sublist_c.get<int>( Data::CrossSectionsXMLProperties::atomic_number_prop ),
-		       100 );
+		       1 );
   TEST_EQUALITY_CONST( sublist_c.get<double>( Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
+		       0.999242 );
+
+  Data::XsdirEntry::extractTableTokensFromXsdirLine( line_d, entry_tokens );
+
+  entry.reset(new Data::ElectronPhotonRelaxationXsdirEntry( entry_tokens ) );
+
+  Teuchos::ParameterList& sublist_d =
+    parameter_list.sublist( entry->getTableAlias() );
+
+  entry->addInfoToParameterList( sublist_d );
+
+  TEST_EQUALITY_CONST( sublist_d.numParams(), 10 );
+  TEST_EQUALITY_CONST( sublist_d.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_path_prop ),
+		       "mcplib14" );
+  TEST_EQUALITY_CONST( sublist_d.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_type_prop ),
+		       Data::CrossSectionsXMLProperties::ace_file );
+  TEST_EQUALITY_CONST( sublist_d.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_table_name_prop ),
+		       "100000.14p" );
+  TEST_EQUALITY_CONST( sublist_d.get<int>( Data::CrossSectionsXMLProperties::photoatomic_file_start_line_prop ),
+		       2114874 );
+  TEST_EQUALITY_CONST( sublist_d.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_path_prop ),
+		       "mcplib14" );
+  TEST_EQUALITY_CONST( sublist_d.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_type_prop ),
+		       Data::CrossSectionsXMLProperties::ace_file );
+  TEST_EQUALITY_CONST( sublist_d.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_table_name_prop ),
+		       "100000.14p" );
+  TEST_EQUALITY_CONST( sublist_d.get<int>( Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop ),
+		       2114874 );
+  TEST_EQUALITY_CONST( sublist_d.get<int>( Data::CrossSectionsXMLProperties::atomic_number_prop ),
+		       100 );
+  TEST_EQUALITY_CONST( sublist_d.get<double>( Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
+		       254.792000 );
+
+  // Make sure important info will not be overridden
+  Teuchos::ParameterList& sublist_e =
+    parameter_list.sublist( "Fm-254_293.6K_v7" );
+
+  sublist_e.set<int>(
+		    Data::CrossSectionsXMLProperties::atomic_number_prop,
+		    100 );
+  sublist_e.set(
+	      Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
+	      255.0 );
+  sublist_e.set( Data::CrossSectionsXMLProperties::temperature_prop,
+		 2.5301E-08 );
+
+  entry->addInfoToParameterList( sublist_e );
+
+  TEST_EQUALITY_CONST( sublist_e.numParams(), 11 );
+  TEST_EQUALITY_CONST( sublist_e.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_path_prop ),
+		       "mcplib14" );
+  TEST_EQUALITY_CONST( sublist_e.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_file_type_prop ),
+		       Data::CrossSectionsXMLProperties::ace_file );
+  TEST_EQUALITY_CONST( sublist_e.get<std::string>( Data::CrossSectionsXMLProperties::photoatomic_table_name_prop ),
+		       "100000.14p" );
+  TEST_EQUALITY_CONST( sublist_e.get<int>( Data::CrossSectionsXMLProperties::photoatomic_file_start_line_prop ),
+		       2114874 );
+  TEST_EQUALITY_CONST( sublist_e.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_path_prop ),
+		       "mcplib14" );
+  TEST_EQUALITY_CONST( sublist_e.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_file_type_prop ),
+		       Data::CrossSectionsXMLProperties::ace_file );
+  TEST_EQUALITY_CONST( sublist_e.get<std::string>( Data::CrossSectionsXMLProperties::electroatomic_table_name_prop ),
+		       "100000.14p" );
+  TEST_EQUALITY_CONST( sublist_e.get<int>( Data::CrossSectionsXMLProperties::electroatomic_file_start_line_prop ),
+		       2114874 );
+  TEST_EQUALITY_CONST( sublist_e.get<int>( Data::CrossSectionsXMLProperties::atomic_number_prop ),
+		       100 );
+  TEST_EQUALITY_CONST( sublist_e.get<double>( Data::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
 		       255.0 );
-  TEST_EQUALITY_CONST( sublist_c.get<double>( Data::CrossSectionsXMLProperties::temperature_prop ),
+  TEST_EQUALITY_CONST( sublist_e.get<double>( Data::CrossSectionsXMLProperties::temperature_prop ),
 		       2.5301E-08  );
 }
 

@@ -107,6 +107,8 @@ XsdirEntry::TableType XsdirEntry::extractTableTypeFromEntryTokens(
       return S_ALPHA_BETA_TABLE;
     else if( entry_tokens.front().find( "12p" ) < entry_tokens.front().size() )
       return ELECTRON_PHOTON_RELAXATION_TABLE;
+    else if( entry_tokens.front().find( "14p" ) < entry_tokens.front().size() )
+      return ELECTRON_PHOTON_RELAXATION_TABLE;
     else if( entry_tokens.front().find_last_of( "u" ) ==
 	     entry_tokens.front().size()-1 )
       return PHOTONUCLEAR_TABLE;
