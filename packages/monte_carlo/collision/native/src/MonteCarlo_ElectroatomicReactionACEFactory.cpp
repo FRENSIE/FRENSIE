@@ -11,7 +11,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
@@ -28,6 +30,67 @@
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Create a Decoupled elastic scattering electroatomic reaction
+void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
+      const Data::XSSEPRDataExtractor& raw_electroatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+  // Make sure the ACE file version is valid
+  testPrecondition( raw_electroatom_data.isEPRVersion14() );
+
+
+  // Create the cutoff elastic scattering distribution
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
+  ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
+    tabular_distribution,
+    raw_electroatom_data );
+
+  // Create the screened Rutherford elastic scattering distribution
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution> analytical_distribution;
+  ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+    analytical_distribution,
+    raw_electroatom_data.extractAtomicNumber() );
+
+  // Index of first non zero cross section in the energy grid
+  unsigned threshold_energy_index;
+
+  // Remove all cross sections equal to zero
+  Teuchos::ArrayRCP<double> total_elastic_cross_section;
+  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+                      energy_grid,
+                      raw_electroatom_data.extractElasticTotalCrossSection(),
+                      total_elastic_cross_section,
+                      threshold_energy_index );
+
+  Teuchos::ArrayView<const double> cutoff_elastic_cross_section =
+                    raw_electroatom_data.extractElasticCutoffCrossSection();
+
+  // Calculate sampling ratios
+  Teuchos::ArrayRCP<double> sampling_ratios( total_elastic_cross_section.size() );
+  for( unsigned i = 0; i < sampling_ratios.size(); ++i )
+  {
+    sampling_ratios[i] = cutoff_elastic_cross_section[i+threshold_energy_index]/
+                            total_elastic_cross_section[i];
+  }
+
+  elastic_reaction.reset(
+    new DecoupledElasticElectroatomicReaction<Utility::LinLin>(
+                energy_grid,
+                total_elastic_cross_section,
+                sampling_ratios,
+                threshold_energy_index,
+                grid_searcher,
+                tabular_distribution,
+                analytical_distribution ) );
+}
 
 // Create an cutoff elastic scattering electroatomic reaction
 void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
@@ -70,6 +133,72 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
                           distribution ) );
 }
 
+// Create a screened Rutherford elastic scattering electroatomic reaction
+void ElectroatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
+      const Data::XSSEPRDataExtractor& raw_electroatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+  // Make sure the ACE file version is valid
+  testPrecondition( raw_electroatom_data.isEPRVersion14() );
+
+
+  // Create the screened Rutherford elastic scattering distribution
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution> distribution;
+  ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+    distribution,
+    raw_electroatom_data.extractAtomicNumber() );
+
+  // Extract the total elastic cross section
+  Teuchos::ArrayView<const double> total_elastic_cross_section =
+    raw_electroatom_data.extractElasticTotalCrossSection();
+
+  // Extract the cutoff elastic cross section
+  Teuchos::ArrayView<const double> cutoff_elastic_cross_section =
+    raw_electroatom_data.extractElasticCutoffCrossSection();
+
+  // Calculate the screened Rutherford elastic cross section
+  Teuchos::ArrayRCP<double> elastic_cross_section( cutoff_elastic_cross_section.size() );
+  for ( unsigned i = 0; i < elastic_cross_section.size(); ++i )
+  {
+    elastic_cross_section[i] =
+        total_elastic_cross_section[i] - cutoff_elastic_cross_section[i];
+
+    // Check for cross sections below roundoff error
+    if( elastic_cross_section[i] != 0.0 &&
+        elastic_cross_section[i]/cutoff_elastic_cross_section[i] < 1e-8 )
+    {
+      elastic_cross_section[i] = 0.0;
+    }
+
+    testPostcondition( elastic_cross_section[i] >= 0.0 );
+  }
+
+  // Index of first non zero cross section in the energy grid
+  unsigned threshold_energy_index;
+
+  // Remove all cross sections equal to zero
+  Teuchos::ArrayRCP<double> sr_elastic_cross_section;
+  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+                              energy_grid,
+                              elastic_cross_section,
+                              sr_elastic_cross_section,
+                              threshold_energy_index );
+
+  elastic_reaction.reset(
+    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
+                          energy_grid,
+                          sr_elastic_cross_section,
+                          threshold_energy_index,
+                          grid_searcher,
+                          distribution ) );
+}
 
 // Create an atomic excitation electroatomic reaction
 void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
@@ -468,6 +597,37 @@ void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
 
   // Find the first non-zero cross section value
   Teuchos::ArrayView<const double>::iterator start =
+    std::find_if( raw_cross_section.begin(),
+          raw_cross_section.end(),
+          ElectroatomicReactionACEFactory::notEqualZero );
+
+  // Remove the zeros from the cross section
+  cross_section.assign( start, raw_cross_section.end() );
+
+  // Determine the threshold energy index of the reaction
+  threshold_energy_index = energy_grid.size() - cross_section.size();
+
+  // Make sure the cross section is valid
+  testPostcondition( cross_section.size() > 1 );
+}
+
+// Remove the zeros from a cross section
+void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+             const Teuchos::ArrayRCP<const double>& energy_grid,
+             const Teuchos::ArrayRCP<const double>& raw_cross_section,
+             Teuchos::ArrayRCP<double>& cross_section,
+             unsigned& threshold_energy_index )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( energy_grid.size() > 1 );
+
+  // Make sure the raw cross section is valid
+  testPrecondition( raw_cross_section.size() == energy_grid.size() );
+
+  cross_section.clear();
+
+  // Find the first non-zero cross section value
+  Teuchos::ArrayRCP<const double>::iterator start =
     std::find_if( raw_cross_section.begin(),
           raw_cross_section.end(),
           ElectroatomicReactionACEFactory::notEqualZero );

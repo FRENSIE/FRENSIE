@@ -55,7 +55,7 @@ public:
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
@@ -65,7 +65,7 @@ public:
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
@@ -76,7 +76,7 @@ public:
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
@@ -86,7 +86,7 @@ public:
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
@@ -96,7 +96,7 @@ public:
   static void createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
@@ -104,7 +104,7 @@ public:
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
@@ -114,7 +114,7 @@ public:
   static void createAtomicExcitationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization electroatomic reaction
@@ -123,7 +123,7 @@ public:
   static void createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
     const bool correlated_sampling_mode_on,
@@ -136,7 +136,7 @@ public:
   static void createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
         electroionization_subshell_reactions,
     const bool correlated_sampling_mode_on,
@@ -149,7 +149,7 @@ public:
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
     const bool correlated_sampling_mode_on,

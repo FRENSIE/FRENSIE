@@ -34,7 +34,7 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
         const bool correlated_sampling_mode_on,
         const double evaluation_tol )
@@ -85,7 +85,7 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
         const bool correlated_sampling_mode_on,
         const double evaluation_tol )
@@ -152,7 +152,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const bool correlated_sampling_mode_on,
@@ -257,7 +257,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
         const double cutoff_angle_cosine,
         const bool correlated_sampling_mode_on,
@@ -306,7 +306,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
         const double cutoff_angle_cosine,
         const bool correlated_sampling_mode_on,
@@ -356,7 +356,7 @@ template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<AdjointElectroatomicReaction>& electroionization_subshell_reaction,
     const bool correlated_sampling_mode_on,
@@ -409,7 +409,7 @@ template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<AdjointElectroatomicReaction> >&
         electroionization_subshell_reactions,
     const bool correlated_sampling_mode_on,
@@ -450,7 +450,7 @@ template< typename TwoDInterpPolicy>
 void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction,
         const bool correlated_sampling_mode_on,
         const bool unit_based_interpolation_mode_on,

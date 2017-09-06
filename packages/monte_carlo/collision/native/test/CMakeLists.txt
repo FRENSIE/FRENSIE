@@ -945,6 +945,13 @@ TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_n
 ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST ElectroatomicReactionACEFactory_test PROPERTY LABELS electron ace)
 
+ADD_EXECUTABLE(tstElectroatomicReactionEPR14Factory
+  tstElectroatomicReactionEPR14Factory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElectroatomicReactionEPR14Factory monte_carlo_collision_native)
+ADD_TEST(ElectroatomicReactionEPR14Factory_test tstElectroatomicReactionEPR14Factory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt" --test_ace_table=82000.14p)
+SET_PROPERTY(TEST ElectroatomicReactionEPR14Factory_test PROPERTY LABELS electron ace14)
+
 ADD_EXECUTABLE(tstElectroatomicReactionNativeFactory
   tstElectroatomicReactionNativeFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

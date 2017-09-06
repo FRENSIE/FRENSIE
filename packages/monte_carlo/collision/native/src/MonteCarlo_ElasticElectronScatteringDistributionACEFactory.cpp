@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_HistogramDistribution.hpp"
+#include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -96,7 +97,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   {
     // Set the scattering function with LogLogLog interp (eprdata14)
     scattering_function.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+      new Utility::ElasticTwoDDistribution<Utility::LogLogLog>(
         function_data ) );
   }
   else

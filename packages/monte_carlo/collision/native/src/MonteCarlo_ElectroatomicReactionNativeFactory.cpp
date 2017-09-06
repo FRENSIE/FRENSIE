@@ -19,7 +19,7 @@ namespace MonteCarlo{
 void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
-            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
@@ -59,7 +59,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
-            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
