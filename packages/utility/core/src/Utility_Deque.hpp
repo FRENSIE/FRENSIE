@@ -48,7 +48,7 @@ struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCom
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<std::deque<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::deque,T>
+struct ComparisonTraits<std::deque<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::deque<T> >
 { /* ... */ };
   
 } // end Utility namespace

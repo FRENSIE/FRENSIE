@@ -21,15 +21,6 @@
 #include "Utility_ArrayView.hpp"
 #include "Utility_Tuple.hpp"
 
-typedef unsigned char uchar;
-typedef signed char schar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef long long longlong;
-typedef unsigned long long ulonglong;
-typedef std::string string;
-
 //---------------------------------------------------------------------------//
 // Template Test Types
 //---------------------------------------------------------------------------//

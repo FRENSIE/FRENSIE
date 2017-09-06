@@ -49,7 +49,7 @@ struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCo
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<std::vector<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::vector,T>
+struct ComparisonTraits<std::vector<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::vector<T> >
 { /* ... */ };
   
 } // end Utility namespace

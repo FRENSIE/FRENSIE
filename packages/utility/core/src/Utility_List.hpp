@@ -95,7 +95,7 @@ public:
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<std::list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::list,T>
+struct ComparisonTraits<std::list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::list<T> >
 { /* ... */ };
 
 /*! Partial specialization of ComparisonTraits for std::forward_list
@@ -103,7 +103,7 @@ struct ComparisonTraits<std::list<T> > : public Details::ComparisonTraitsSequenc
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<std::forward_list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::forward_list,T>
+struct ComparisonTraits<std::forward_list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::forward_list<T> >
 { /* ... */ };
   
 } // end Utility namespace

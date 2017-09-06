@@ -252,7 +252,7 @@ std::ostream& operator<<( std::ostream& os, const Utility::View<T>& view )
  * \ingropu comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<Utility::View<T> > : public Details::ComparisonTraitsSequenceContainerHelper<Utility::View,T>
+struct ComparisonTraits<Utility::View<T> > : public Details::ComparisonTraitsSequenceContainerHelper<Utility::View<T> >
 { /* ... */ };
   
 } // end Utility namespace

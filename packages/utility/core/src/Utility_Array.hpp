@@ -32,6 +32,14 @@ namespace Utility{
 template<typename T, size_t N>
 struct ToStringTraits<std::array<T,N> > : public Details::ToStringTraitsIteratorHelper<std::array<T,N> >
 { /* ... */ };
+
+/*! Partial specialization of ComparisonTraits for std::array
+ * \ingroup array
+ * \ingropu comparison_traits
+ */
+template<typename T, size_t N>
+struct ComparisonTraits<std::array<T,N> > : public Details::ComparisonTraitsSequenceContainerHelper<std::array<T,N> >
+{ /* ... */ };
   
 } // end Utility namespace
 

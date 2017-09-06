@@ -183,32 +183,24 @@ TARGET_LINK_LIBRARIES(tstArrayView utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(ArrayView_test tstArrayView --report_level=detailed)
 SET_PROPERTY(TEST ArrayView_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstArray
-  tstArray.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstArray utility_core)
-ADD_TEST(Array_test tstArray)
+ADD_EXECUTABLE(tstArray tstArray.cpp)
+TARGET_LINK_LIBRARIES(tstArray utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(Array_test tstArray --report_level=detailed)
 SET_PROPERTY(TEST Array_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstVector
-  tstVector.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstVector utility_core)
-ADD_TEST(Vector_test tstVector)
+ADD_EXECUTABLE(tstVector tstVector.cpp)
+TARGET_LINK_LIBRARIES(tstVector utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(Vector_test tstVector --report_level=detailed)
 SET_PROPERTY(TEST Vector_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstList
-  tstList.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstList utility_core)
-ADD_TEST(List_test tstList)
+ADD_EXECUTABLE(tstList tstList.cpp)
+TARGET_LINK_LIBRARIES(tstList utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(List_test tstList --report_level=detailed)
 SET_PROPERTY(TEST List_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstDeque
-  tstDeque.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstDeque utility_core)
-ADD_TEST(Deque_test tstDeque)
+ADD_EXECUTABLE(tstDeque tstDeque.cpp)
+TARGET_LINK_LIBRARIES(tstDeque utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(Deque_test tstDeque --report_level=detailed)
 SET_PROPERTY(TEST Deque_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstSet

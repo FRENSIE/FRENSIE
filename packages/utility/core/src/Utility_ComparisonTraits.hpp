@@ -707,18 +707,17 @@ struct AssociativeContainerComparisonPolicyHelper<Utility::EqualityComparisonPol
 /*! The comparison traits helper for stl compliant sequence containers
  * \ingroup comparison_traits
  */
-template<template<typename,typename...> class STLCompliantSequenceContainer,
-         typename T>
+template<typename STLCompliantSequenceContainer>
 struct ComparisonTraitsSequenceContainerHelper
 {
 private:
   
   // Typedef for this type
-  typedef ComparisonTraitsSequenceContainerHelper<STLCompliantSequenceContainer,T> ThisType;
+  typedef ComparisonTraitsSequenceContainerHelper<STLCompliantSequenceContainer> ThisType;
 
   // Typedef for is_convertible result
   template<typename T2>
-  struct IsConvertible : public std::is_convertible<T2,typename STLCompliantSequenceContainer<T>::value_type>
+  struct IsConvertible : public std::is_convertible<T2,typename STLCompliantSequenceContainer::value_type>
   { /* ... */ };
 
 public:
@@ -729,17 +728,17 @@ public:
   { /* ... */ };
     
   //! The extra data type (usually a comparison tolerance)
-  typedef typename Utility::ComparisonTraits<typename STLCompliantSequenceContainer<T>::value_type>::ExtraDataType ExtraDataType;
+  typedef typename Utility::ComparisonTraits<typename STLCompliantSequenceContainer::value_type>::ExtraDataType ExtraDataType;
   
 public:
 
   //! Create a comparison header
   template<typename ComparisonPolicy, size_t RightShift>
   static inline std::string createComparisonHeader(
-                           const STLCompliantSequenceContainer<T>& left_value,
+                           const STLCompliantSequenceContainer& left_value,
                            const std::string& left_name,
                            const bool log_left_name,
-                           const STLCompliantSequenceContainer<T>& right_value,
+                           const STLCompliantSequenceContainer& right_value,
                            const std::string& right_name,
                            const bool log_right_name,
                            const std::string& name_suffix,
@@ -762,7 +761,7 @@ public:
   createComparisonHeader( std::initializer_list<T2> left_value,
                           const std::string& left_name,
                           const bool log_left_name,
-                          const STLCompliantSequenceContainer<T>& right_value,
+                          const STLCompliantSequenceContainer& right_value,
                           const std::string& right_name,
                           const bool log_right_name,
                           const std::string& name_suffix,
@@ -783,7 +782,7 @@ public:
   template<typename ComparisonPolicy, size_t RightShift, typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,std::string>::type
   createComparisonHeader(
-                           const STLCompliantSequenceContainer<T>& left_value,
+                           const STLCompliantSequenceContainer& left_value,
                            const std::string& left_name,
                            const bool log_left_name,
                            std::initializer_list<T2> right_value,
@@ -806,10 +805,10 @@ public:
   //! Compare two sequence containers
   template<typename ComparisonPolicy, size_t RightShift>
   static inline bool compare(
-                          const STLCompliantSequenceContainer<T>& left_value,
+                          const STLCompliantSequenceContainer& left_value,
                           const std::string& left_name,
                           const bool log_left_name,
-                          const STLCompliantSequenceContainer<T>& right_value,
+                          const STLCompliantSequenceContainer& right_value,
                           const std::string& right_name,
                           const bool log_right_name,
                           const std::string& name_suffix,
@@ -836,7 +835,7 @@ public:
   compare( std::initializer_list<T2> left_value,
            const std::string& left_name,
            const bool log_left_name,
-           const STLCompliantSequenceContainer<T>& right_value,
+           const STLCompliantSequenceContainer& right_value,
            const std::string& right_name,
            const bool log_right_name,
            const std::string& name_suffix,
@@ -860,7 +859,7 @@ public:
   //! Compare two sequence containers
   template<typename ComparisonPolicy, size_t RightShift, typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
-  compare( const STLCompliantSequenceContainer<T>& left_value,
+  compare( const STLCompliantSequenceContainer& left_value,
            const std::string& left_name,
            const bool log_left_name,
            std::initializer_list<T2> right_value,
@@ -952,7 +951,7 @@ struct ComparisonTraitsAssociativeContainerHelper
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<std::initializer_list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::initializer_list,T>
+struct ComparisonTraits<std::initializer_list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::initializer_list<T> >
 { /* ... */ };
 
 // Create a comparison header
