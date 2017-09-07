@@ -322,6 +322,8 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
 
   testPostcondition( photon_angle_cosine <= 1.0 );
   testPostcondition( photon_angle_cosine >= -1.0 );
+
+  return photon_angle_cosine;
 }
 
 /* Sample the outgoing photon direction using the 2BS sampling routine of
