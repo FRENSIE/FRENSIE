@@ -82,6 +82,24 @@ struct ComparisonTraits<std::unordered_map<Key,T> > : public Details::Comparison
 
 namespace std{
 
+/*! Compare two map elements
+ * 
+ * The most common usage of this overload is when either LeftKey or RightKey
+ * only differ based on their const qualification (the value_type of a 
+ * std::map and std::unordered_map with template parameters Key and T is
+ * std::pair<const Key,T>).
+ * \ingroup map
+ * \ingroup comparison_traits
+ */
+template<typename LeftKey, typename LeftT,
+         typename RightKey, typename RightT>
+inline bool operator==( const std::pair<LeftKey,LeftT>& left_value,
+                        const std::pair<RightKey,RightT>& right_value )
+{
+  return left_value.first == right_value.first &&
+    left_value.second == right_value.second;
+}
+
 /*! Place a std::map in a stream
  * \ingroup map
  */
