@@ -251,8 +251,12 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   double photon_energy, photon_angle_cosine;
   this->sample( electron.getEnergy(), photon_energy, photon_angle_cosine );
 
-  // Set the new electron energy
-  electron.setEnergy( electron.getEnergy() - photon_energy );
+  // Set the new electron energy (if zero then set as gone)
+  double outgoing_energy = electron.getEnergy() - photon_energy;
+  if( outgoing_energy > 0.0 )
+    electron.setEnergy( outgoing_energy );
+  else
+    electron.setAsGone();
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
