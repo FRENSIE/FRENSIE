@@ -67,7 +67,7 @@ struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromString
  * \ingroup comparison_traits
  */
 template<typename Key, typename T>
-struct ComparisonTraits<std::map<Key,T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::map,Key,T>
+struct ComparisonTraits<std::map<Key,T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::map<Key,T> >
 { /* ... */ };
 
 /*! Partial specialization of ComparisonTraits for std::unordered_map
@@ -75,7 +75,7 @@ struct ComparisonTraits<std::map<Key,T> > : public Details::ComparisonTraitsAsso
  * \ingroup comparison_traits
  */
 template<typename Key, typename T>
-struct ComparisonTraits<std::unordered_map<Key,T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::unordered_map,Key,T>
+struct ComparisonTraits<std::unordered_map<Key,T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::unordered_map<Key,T> >
 { /* ... */ };
   
 } // end Utility namespace

@@ -66,7 +66,7 @@ struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTrai
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<std::set<T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::set,T>
+struct ComparisonTraits<std::set<T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::set<T> >
 { /* ... */ };
 
 /*! Partial specialization of ComparisonTraits for std::unordered_set
@@ -74,7 +74,7 @@ struct ComparisonTraits<std::set<T> > : public Details::ComparisonTraitsAssociat
  * \ingroup comparison_traits
  */
 template<typename T>
-struct ComparisonTraits<std::unordered_set<T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::unordered_set,T>
+struct ComparisonTraits<std::unordered_set<T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::unordered_set<T> >
 { /* ... */ };
   
 } // end Utility namespace

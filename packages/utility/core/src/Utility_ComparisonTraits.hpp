@@ -161,9 +161,11 @@ struct ComparisonTraits<T,typename std::enable_if<std::is_const<T>::value || std
 
 namespace Details{
 
-//! Create a detailed container name
+/*! Create a detailed container name
+ * \ingroup comparison_traits
+ */
 template<typename Container>
-static inline std::string createDetailedContainerName(
+inline std::string createDetailedContainerName(
                                                const Container& value,
                                                const std::string& name,
                                                const bool log_name,
@@ -543,42 +545,182 @@ public:
   }
 };
 
+/*! The associative container element comparison helper
+ * \ingroup comparison_traits
+ */
+template<bool LeftContainerIsDominant>
+struct STLCompliantAssociativeContainerElementComparisonHelper
+{
+  template<size_t RightShift,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
+  static inline bool compareElements(
+                            const LeftContainer& left_container,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_container,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            std::ostream& log,
+                            const bool log_comparison_details = false,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    typename LeftContainer::const_iterator left_it, left_end;
+    left_it = left_container.begin();
+    left_end = left_container.end();
+
+    bool success = true;
+    std::ostringstream detailed_name_suffix;
+      
+    while( left_it != left_end )
+    {
+      if( name_suffix.size() > 0 )
+        detailed_name_suffix.str( name_suffix );
+      else
+        detailed_name_suffix.str( "" );
+      
+      detailed_name_suffix.clear();
+
+      detailed_name_suffix << " contains " << Utility::toString( *left_it );
+
+      const bool right_container_has_value =
+        std::find( right_container.begin(), right_container.end(), *left_it ) != right_container.end();
+          
+      bool local_success =
+        Utility::ComparisonTraits<bool>::template compare<Utility::EqualityComparisonPolicy,RightShift>(
+                                                    true,
+                                                    left_name,
+                                                    true,
+                                                    right_container_has_value,
+                                                    right_name,
+                                                    true,
+                                                    detailed_name_suffix.str(),
+                                                    log,
+                                                    log_comparison_details );
+        
+      if( !local_success )
+        success = false;
+
+      ++left_it;
+    }
+
+    return success;
+  }
+};
+
+/*! \brief Specialization of the 
+ * STLCompliantAssociativeContainerElementComparisonHelper for dominant
+ * right containers.
+ * \ingroup comparison_traits
+ */
+template<>
+struct STLCompliantAssociativeContainerElementComparisonHelper<false>
+{
+  template<size_t RightShift,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
+  static inline bool compareElements(
+                            const LeftContainer& left_container,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_container,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            std::ostream& log,
+                            const bool log_comparison_details = false,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    typename RightContainer::const_iterator right_it, right_end;
+    right_it = right_container.begin();
+    right_end = right_container.end();
+
+    bool success = true;
+    std::ostringstream detailed_name_suffix;
+      
+    while( right_it != right_end )
+    {
+      if( name_suffix.size() > 0 )
+        detailed_name_suffix.str( name_suffix );
+      else
+        detailed_name_suffix.str( "" );
+      
+      detailed_name_suffix.clear();
+
+      detailed_name_suffix << " contains " << Utility::toString( *right_it );
+
+      const bool left_container_has_value =
+        std::find( left_container.begin(), left_container.end(), *right_it ) != left_container.end();
+          
+      bool local_success =
+        Utility::ComparisonTraits<bool>::template compare<Utility::EqualityComparisonPolicy,RightShift>(
+                                                    left_container_has_value,
+                                                    left_name,
+                                                    true,
+                                                    true,
+                                                    right_name,
+                                                    true,
+                                                    detailed_name_suffix.str(),
+                                                    log,
+                                                    log_comparison_details );
+        
+      if( !local_success )
+        success = false;
+
+      ++right_it;
+    }
+
+    return success;
+  }
+};
+
 /*! The comparison policy helper for stl compliant associative containers
  * \ingroup comparison_traits
  */
-template<typename Policy, typename STLCompliantAssociativeContainer, typename Enabled = void>
+template<typename Policy, typename Enabled = void>
 struct AssociativeContainerComparisonPolicyHelper
 {
   /*! \brief Create the comparison header (this won't compile if this class is
    * not specialized for the comparison policy of interest).
    */
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
   static inline std::string createComparisonHeader(
-       const STLCompliantAssociativeContainer& left_value,
-       const std::string& left_name,
-       const bool log_left_name,
-       const STLCompliantAssociativeContainer& right_value,
-       const std::string& right_name,
-       const bool log_right_name,
-       const std::string& name_suffix,
-       const typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType& extra_data = 
-       typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType() )
+                            const LeftContainer& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
   { return Policy::cannotCompareAssociativeContainersWithThisPolicy(); }
 
   /*! \brief Compare two containers (this won't compile if this class is not
    * specialized for the comparison policy of interest).
    */
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
   static inline bool compare(
-     const STLCompliantAssociativeContainer& left_value,
-     const std::string& left_name,
-     const bool log_left_name,
-     const STLCompliantAssociativeContainer& right_value,
-     const std::string& right_name,
-     const bool log_right_name,
-     const std::string& name_suffix,
-     std::ostream& log,
-     const bool log_comparison_details = false,
-     const typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType& extra_data =
-     typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType() )
+                            const LeftContainer& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            std::ostream& log,
+                            const bool log_comparison_details = false,
+                            const ExtraDataType& extra_data = ExtraDataType() )
   { return Policy::cannotCompareAssociativeContainersWithThisPolicy();  }
 };
 
@@ -586,120 +728,257 @@ struct AssociativeContainerComparisonPolicyHelper
  * for Utility::EqualityComparisonPolicy
  * \ingroup comparison_traits
  */
-template<typename STLCompliantAssociativeContainer>
-struct AssociativeContainerComparisonPolicyHelper<Utility::EqualityComparisonPolicy,STLCompliantAssociativeContainer>
+template<typename Policy>
+struct AssociativeContainerComparisonPolicyHelper<Policy,typename std::enable_if<std::is_same<Policy,Utility::EqualityComparisonPolicy>::value>::type>
 {
+private:
+
+  // Typedef of this type
+  typedef AssociativeContainerComparisonPolicyHelper<Policy,typename std::enable_if<std::is_same<Policy,Utility::EqualityComparisonPolicy>::value>::type> ThisType;
+
+public:
+  
   //! Create the comparison header
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
   static inline std::string createComparisonHeader(
-       const STLCompliantAssociativeContainer& left_value,
-       const std::string& left_name,
-       const bool log_left_name,
-       const STLCompliantAssociativeContainer& right_value,
-       const std::string& right_name,
-       const bool log_right_name,
-       const std::string& name_suffix,
-       const typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType& = 
-       typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType() )
+                            const LeftContainer& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
   {
+    typedef typename std::conditional<LeftContainerIsDominant,typename LeftContainer::value_type,typename RightContainer::value_type>::type ValueType;
+    
+    std::string detailed_left_name =
+      Details::createDetailedContainerName( left_value,
+                                            left_name,
+                                            log_left_name,
+                                            name_suffix );
+
+    std::string detailed_right_name =
+      Details::createDetailedContainerName( right_value,
+                                            right_name,
+                                            log_right_name,
+                                            name_suffix );
+
     std::ostringstream oss;
 
-    if( log_left_name )
-    {
-      oss << left_name;
-    
-      if( !name_suffix.empty() )
-        oss << name_suffix;
-    }
-    else
-      oss << Utility::toString( left_value );
-
-    oss << " has the same contents as ";
-
-    if( log_right_name )
-    {
-      oss << right_name;
-
-      if( !name_suffix.empty() )
-        oss << name_suffix;
-    }
-    else
-      oss << Utility::toString( right_value );
+    oss << std::string( RightShift, ' ' )
+        << detailed_left_name << " has the same contents as "
+        << detailed_right_name << ": ";
 
     return oss.str();
   }
 
   //! Compare two containers
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
   static inline bool compare(
-     const STLCompliantAssociativeContainer& left_value,
-     const std::string& left_name,
-     const bool log_left_name,
-     const STLCompliantAssociativeContainer& right_value,
-     const std::string& right_name,
-     const bool log_right_name,
-     const std::string& name_suffix,
-     std::ostream& log,
-     const bool log_comparison_details = false,
-     const typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType& =
-     typename QuantityTraits<typename STLCompliantAssociativeContainer::value_type>::RawType() )
+                            const LeftContainer& left_container,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_container,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            std::ostream& log,
+                            const bool log_comparison_details = false,
+                            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    std::ostringstream detailed_name_suffix;
-    
-    if( name_suffix.size() > 0 )
-      detailed_name_suffix << name_suffix;
+    typedef typename std::conditional<LeftContainerIsDominant,typename LeftContainer::value_type,typename RightContainer::value_type>::type ValueType;
 
-    detailed_name_suffix << " size";
+    if( log_comparison_details )
+    {
+      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
+                                                               left_container,
+                                                               left_name,
+                                                               log_left_name,
+                                                               right_container,
+                                                               right_name,
+                                                               log_right_name,
+                                                               name_suffix,
+                                                               extra_data );
+    }
+    
+    std::ostringstream local_log, detailed_name_suffix;
+    
+    if( log_comparison_details )
+      detailed_name_suffix << name_suffix << ".size()";
 
     bool success =
-      Utility::ComparisonTraits<size_t>::template compare<Utility::EqualityComparisonPolicy>(
-                       std::distance( left_value.begin(), left_value.end() ),
-                       left_name,
-                       log_left_name,
-                       std::distance( right_value.begin(), right_value.end() ),
-                       right_name,
-                       log_right_name,
-                       detailed_name_suffix.str(),
-                       log,
-                       log_comparison_details );
+      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+               std::distance( left_container.begin(), left_container.end() ),
+               left_name,
+               log_left_name,
+               std::distance( right_container.begin(), right_container.end() ),
+               right_name,
+               log_right_name,
+               (log_comparison_details ? detailed_name_suffix.str() : name_suffix),
+               local_log,
+               log_comparison_details );
 
     // Only test the individual container elements if the sizes are the same
     if( success )
     {
-      typename STLCompliantAssociativeContainer::const_iterator left_it, left_end;
-      left_it = left_value.begin();
-      left_end = left_value.end();
+      success =
+        STLCompliantAssociativeContainerElementComparisonHelper<LeftContainerIsDominant>::template compareElements<Details::incrementRightShift(RightShift)>(
+                                                      left_container,
+                                                      left_name,
+                                                      log_left_name,
+                                                      right_container,
+                                                      right_name,
+                                                      log_right_name,
+                                                      name_suffix,
+                                                      local_log,
+                                                      log_comparison_details,
+                                                      extra_data );
+    }
+
+    if( log_comparison_details )
+    {
+      Utility::reportComparisonPassFail( success, log );
+      log << local_log.str();
+    }
+
+    return success;
+  }
+};
+
+/*! \brief Partial specialization of AssociativeContainerComparisonPolicyHelper
+ * for Utility::InequalityComparisonPolicy
+ * \ingroup comparison_traits
+ */
+template<typename Policy>
+struct AssociativeContainerComparisonPolicyHelper<Policy,typename std::enable_if<std::is_same<Policy,Utility::InequalityComparisonPolicy>::value>::type>
+{
+private:
+
+  // Typedef of this type
+  typedef AssociativeContainerComparisonPolicyHelper<Policy,typename std::enable_if<std::is_same<Policy,Utility::InequalityComparisonPolicy>::value>::type> ThisType;
+
+public:
+  
+  //! Create the comparison header
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
+  static inline std::string createComparisonHeader(
+                            const LeftContainer& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    typedef typename std::conditional<LeftContainerIsDominant,typename LeftContainer::value_type,typename RightContainer::value_type>::type ValueType;
+    
+    std::string detailed_left_name =
+      Details::createDetailedContainerName( left_value,
+                                            left_name,
+                                            log_left_name,
+                                            name_suffix );
+
+    std::string detailed_right_name =
+      Details::createDetailedContainerName( right_value,
+                                            right_name,
+                                            log_right_name,
+                                            name_suffix );
+
+    std::ostringstream oss;
+
+    oss << std::string( RightShift, ' ' )
+        << detailed_left_name << " does not have the same contents as "
+        << detailed_right_name << ": ";
+
+    return oss.str();
+  }
+
+  //! Compare two containers
+  template<size_t RightShift,
+           bool LeftContainerIsDominant,
+           typename LeftContainer,
+           typename RightContainer,
+           typename ExtraDataType>
+  static inline bool compare(
+                            const LeftContainer& left_container,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const RightContainer& right_container,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            std::ostream& log,
+                            const bool log_comparison_details = false,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    typedef typename std::conditional<LeftContainerIsDominant,typename LeftContainer::value_type,typename RightContainer::value_type>::type ValueType;
+
+    if( log_comparison_details )
+    {
+      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
+                                                               left_container,
+                                                               left_name,
+                                                               log_left_name,
+                                                               right_container,
+                                                               right_name,
+                                                               log_right_name,
+                                                               name_suffix,
+                                                               extra_data );
+    }
+    
+    std::ostringstream local_log, detailed_name_suffix;
+    
+    if( log_comparison_details )
+      detailed_name_suffix << name_suffix << ".size()";
+
+    bool success =
+      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+               std::distance( left_container.begin(), left_container.end() ),
+               left_name,
+               false,
+               std::distance( right_container.begin(), right_container.end() ),
+               right_name,
+               false,
+               name_suffix,
+               log,
+               false );
+
+    // Only test the individual container elements if the sizes are the same
+    if( !success )
+    {
+      typename LeftContainer::const_iterator left_it, left_end;
+      left_it = left_container.begin();
+      left_end = left_container.end();
       
       while( left_it != left_end )
       {
-        if( name_suffix.size() > 0 )
-          detailed_name_suffix.str( name_suffix );
-        else
-          detailed_name_suffix.str( "" );
-        
-        detailed_name_suffix.clear();
-
-        detailed_name_suffix << ".contains("
-                             << Utility::toString( *left_it ) << ")";
-          
-        bool local_success =
-          Utility::ComparisonTraits<bool>::template compare<Utility::EqualityComparisonPolicy>(
-               true,
-               left_name,
-               log_left_name,
-               std::find( right_value.begin(), right_value.end(), *left_it ) !=
-               right_value.end(),
-               right_name,
-               log_right_name,
-               detailed_name_suffix.str(),
-               log,
-               log_comparison_details );
-        
-        if( !local_success )
-          success = false;
-
+        if( std::find( right_container.begin(), right_container.end(), *left_it ) == right_container.end() )
+        {
+          success = true;
+          break;
+        }
+       
         ++left_it;
       }
     }
 
+    if( log_comparison_details )
+      Utility::reportComparisonPassFail( success, log );
+    
     return success;
   }
 };
@@ -885,63 +1164,178 @@ public:
 };
 
 //! The comparison traits helper for stl compliant associative containers
-template<template<typename...> class STLCompliantAssociativeContainer,
-         typename... Types>
+template<typename STLCompliantAssociativeContainer>
 struct ComparisonTraitsAssociativeContainerHelper
 {
+private:
+
+  // Typedef for this type
+  typedef ComparisonTraitsAssociativeContainerHelper<STLCompliantAssociativeContainer> ThisType;
+
+  // Typedef for is_convertible result
+  template<typename T2>
+  struct IsConvertible : public std::is_convertible<T2,typename STLCompliantAssociativeContainer::value_type>
+  { /* ... */ };
+
+public:
+  
   //! Check if the comparison is allowed
   template<typename ComparisonPolicy>
-  struct IsComparisonAllowed : public std::conditional<std::is_same<ComparisonPolicy,Utility::EqualityComparisonPolicy>::value, std::true_type, std::false_type>::type
+  struct IsComparisonAllowed : public std::conditional<std::is_same<ComparisonPolicy,Utility::EqualityComparisonPolicy>::value || std::is_same<ComparisonPolicy,Utility::InequalityComparisonPolicy>::value, std::true_type, std::false_type>::type
   { /* ... */ };
   
   //! The extra data type (usually a comparison tolerance)
-  typedef typename Utility::ComparisonTraits<typename STLCompliantAssociativeContainer<Types...>::value_type>::ExtraDataType ExtraDataType;
+  typedef typename Utility::ComparisonTraits<typename STLCompliantAssociativeContainer::value_type>::ExtraDataType ExtraDataType;
 
   //! Create a comparison header
-  template<typename ComparisonPolicy>
-  static std::string createComparisonHeader(
-                 const STLCompliantAssociativeContainer<Types...>& left_value,
-                 const std::string& left_name,
-                 const bool log_left_name,
-                 const STLCompliantAssociativeContainer<Types...>& right_value,
-                 const std::string& right_name,
-                 const bool log_right_name,
-                 const std::string& name_suffix,
-                 const ExtraDataType& = ExtraDataType() )
+  template<typename ComparisonPolicy, size_t RightShift>
+  static inline std::string createComparisonHeader(
+                           const STLCompliantAssociativeContainer& left_value,
+                           const std::string& left_name,
+                           const bool log_left_name,
+                           const STLCompliantAssociativeContainer& right_value,
+                           const std::string& right_name,
+                           const bool log_right_name,
+                           const std::string& name_suffix,
+                           const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy,STLCompliantAssociativeContainer<Types...> >::createComparisonHeader(
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<RightShift,true>(
                                                                 left_value,
                                                                 left_name,
                                                                 log_left_name,
                                                                 right_value,
                                                                 right_name,
                                                                 log_right_name,
-                                                                name_suffix );
+                                                                name_suffix,
+                                                                extra_data );
   }
 
-  //! Compare two associative containers
-  template<typename ComparisonPolicy>
-  static inline bool compare(
-                 const STLCompliantAssociativeContainer<Types...>& left_value,
-                 const std::string& left_name,
-                 const bool log_left_name,
-                 const STLCompliantAssociativeContainer<Types...>& right_value,
-                 const std::string& right_name,
-                 const bool log_right_name,
-                 const std::string& name_suffix,
-                 std::ostream& log,
-                 const bool log_comparison_details = false,
-                 const ExtraDataType& = ExtraDataType() )
+  //! Create a comparison header
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,std::string>::type
+  createComparisonHeader( std::initializer_list<T2> left_value,
+                          const std::string& left_name,
+                          const bool log_left_name,
+                          const STLCompliantAssociativeContainer& right_value,
+                          const std::string& right_name,
+                          const bool log_right_name,
+                          const std::string& name_suffix,
+                          const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy,STLCompliantAssociativeContainer<Types...> >::compare(
-                                                      left_value,
-                                                      left_name,
-                                                      log_left_name,
-                                                      right_value,
-                                                      right_name,
-                                                      log_right_name,
-                                                      name_suffix,
-                                                      log_comparison_details );
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<RightShift,false>(
+                                                                left_value,
+                                                                left_name,
+                                                                log_left_name,
+                                                                right_value,
+                                                                right_name,
+                                                                log_right_name,
+                                                                name_suffix,
+                                                                extra_data );
+  }
+
+  //! Create a comparison header
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,std::string>::type
+  createComparisonHeader(
+                           const STLCompliantAssociativeContainer& left_value,
+                           const std::string& left_name,
+                           const bool log_left_name,
+                           std::initializer_list<T2> right_value,
+                           const std::string& right_name,
+                           const bool log_right_name,
+                           const std::string& name_suffix,
+                           const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template createComparisonHeader<RightShift,true>(
+                                                                left_value,
+                                                                left_name,
+                                                                log_left_name,
+                                                                right_value,
+                                                                right_name,
+                                                                log_right_name,
+                                                                name_suffix,
+                                                                extra_data );
+  }
+  
+  //! Compare two sequence containers
+  template<typename ComparisonPolicy, size_t RightShift>
+  static inline bool compare(
+                          const STLCompliantAssociativeContainer& left_value,
+                          const std::string& left_name,
+                          const bool log_left_name,
+                          const STLCompliantAssociativeContainer& right_value,
+                          const std::string& right_name,
+                          const bool log_right_name,
+                          const std::string& name_suffix,
+                          std::ostream& log,
+                          const bool log_comparison_details = false,
+                          const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
+                                                        left_value,
+                                                        left_name,
+                                                        log_left_name,
+                                                        right_value,
+                                                        right_name,
+                                                        log_right_name,
+                                                        name_suffix,
+                                                        log,
+                                                        log_comparison_details,
+                                                        extra_data );
+  }
+
+  //! Compare two sequence containers
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
+  compare( std::initializer_list<T2> left_value,
+           const std::string& left_name,
+           const bool log_left_name,
+           const STLCompliantAssociativeContainer& right_value,
+           const std::string& right_name,
+           const bool log_right_name,
+           const std::string& name_suffix,
+           std::ostream& log,
+           const bool log_comparison_details = false,
+           const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,false>(
+                                                        left_value,
+                                                        left_name,
+                                                        log_left_name,
+                                                        right_value,
+                                                        right_name,
+                                                        log_right_name,
+                                                        name_suffix,
+                                                        log,
+                                                        log_comparison_details,
+                                                        extra_data );
+  }
+
+  //! Compare two sequence containers
+  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
+  compare( const STLCompliantAssociativeContainer& left_value,
+           const std::string& left_name,
+           const bool log_left_name,
+           std::initializer_list<T2> right_value,
+           const std::string& right_name,
+           const bool log_right_name,
+           const std::string& name_suffix,
+           std::ostream& log,
+           const bool log_comparison_details = false,
+           const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
+                                                        left_value,
+                                                        left_name,
+                                                        log_left_name,
+                                                        right_value,
+                                                        right_name,
+                                                        log_right_name,
+                                                        name_suffix,
+                                                        log,
+                                                        log_comparison_details,
+                                                        extra_data );
   }
 };
   

@@ -203,11 +203,9 @@ TARGET_LINK_LIBRARIES(tstDeque utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(Deque_test tstDeque --report_level=detailed)
 SET_PROPERTY(TEST Deque_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSet
-  tstSet.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSet utility_core)
-ADD_TEST(Set_test tstSet)
+ADD_EXECUTABLE(tstSet tstSet.cpp)
+TARGET_LINK_LIBRARIES(tstSet utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(Set_test tstSet --report_level=detailed)
 SET_PROPERTY(TEST Set_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstMap
