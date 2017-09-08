@@ -220,6 +220,11 @@ TARGET_LINK_LIBRARIES(tstVariant utility_core)
 ADD_TEST(Variant_test tstVariant)
 SET_PROPERTY(TEST Variant_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstGlobalMPISession tstGlobalMPISession.cpp)
+TARGET_LINK_LIBRARIES(tstGlobalMPISession utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(GlobalMPISession_test tstGlobalMPISession --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISession_test PROPERTY LABELS utility_core)
+
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
 

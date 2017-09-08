@@ -32,7 +32,13 @@ MACRO(ENABLE_BOOST_SUPPORT)
     UNSET(Boost_INCLUDE_DIRS)
 
     # Find the Boost package and the required components
-    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS log program_options serialization)
+    SET(BOOST_COMPONENTS_LIST log program_options serialization)
+
+    IF(FRENSIE_ENABLE_MPI)
+      SET(BOOST_COMPONENTS_LIST ${BOOST_COMPONENTS_LIST} mpi)
+    ENDIF()
+    
+    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS_LIST})
 
     # Set the include paths for Boost
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})

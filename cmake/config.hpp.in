@@ -14,7 +14,7 @@
 ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_MPI
 
 #ifdef HAVE_${PROJECT_NAME}_MPI
-#include <mpi.h>
+#include <boost/mpi.hpp>
 #endif
 
 ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_OPENMP

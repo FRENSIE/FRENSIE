@@ -11,9 +11,97 @@
 
 // FRENSIE Includes
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_LoggingMacros.hpp"
+#include "FRENSIE_config.hpp"
 
 namespace Utility{
+
+#ifdef HAVE_FRENSIE_OPENMP
+  
+/*! The OpenMP timer
+ *
+ * This class wraps calls to omp_get_wtime().
+ */
+class OpenMPTimer : public Timer
+{
+
+public:
+
+  //! Constructor
+  OpenMPTimer() noexcept
+    : d_start_time_point( 0.0 ),
+      d_duration( std::chrono::duration<double>::zero() ),
+      d_is_running( false )
+  { /* ... */ }
+
+  //! Destructor
+  ~OpenMPTimer()
+  { /* ... */ }
+
+  //! Check if the timer is stopped
+  bool isStopped() const override
+  { return !d_is_running; }
+
+  //! Get the elapsed time (in seconds)
+  std::chrono::duration<double> elapsed() const override
+  {
+    if( d_is_running )
+    {
+      return d_duration +
+        std::chrono::duration<double>(omp_get_wtime()-d_start_time_point);
+    }
+    else
+      return d_duration;
+  }
+
+  //! Start the timer
+  void start() override
+  {
+    if( !d_is_running )
+    {
+      d_duration = std::chrono::duration<double>::zero();
+
+      d_start_time_point = omp_get_wtime();
+
+      d_is_running = true;
+    }
+  }
+
+  //! Stop the timer
+  void stop() override
+  {
+    if( d_is_running )
+    {
+      d_duration += std::chrono::duration<double>(omp_get_wtime()-d_start_time_point);
+
+      d_is_running = false;
+    }
+  }
+
+  //! Resume the timer
+  void resume() override
+  {
+    if( !d_is_running )
+    {
+      d_start_time_point = omp_get_wtime();
+
+      d_is_running = true;
+    }
+  }
+
+private:
+
+  // The start time point
+  double d_start_time_point;
+
+  // The timer duration
+  std::chrono::duration<double> d_duration;
+
+  // Record when the time is running
+  bool d_is_running;
+};
+
+#endif // end HAVE_FRENSIE_OPENMP
 
 // Initialize static member data
 unsigned GlobalOpenMPSession::threads = 1u;
@@ -24,19 +112,71 @@ unsigned GlobalOpenMPSession::threads = 1u;
  */
 void GlobalOpenMPSession::setNumberOfThreads( const unsigned number_of_threads)
 {
-  // Make sure at least one thread has been requested
-  testPrecondition( number_of_threads > 0 );
-
 #ifdef HAVE_FRENSIE_OPENMP
   GlobalOpenMPSession::threads = number_of_threads;
 #else
   if( number_of_threads > 1u )
   {
-    std::cerr << "Warning: " << number_of_threads << " requested during a "
-	      << "serial run! Reconfigure FRENSIE with OpenMP turned on to "
-	      << "activate multiple threads!"
-	      << std::endl;
+    FRENSIE_LOG_TAGGED_WARNING( "GlobalOpenMPSession",
+                                "call to setNumberOfThreads ignored since "
+                                "FRENSIE has not been configured to use "
+                                "OpenMP (only a single thread can be used)!" );
   }
+#endif
+}
+
+// Get the number of threads that have been requested in parallel blocks
+/*! \details The return value from this function can be used to manually set
+ * the number of threads that are active within omp parallel blocks.
+ */
+unsigned GlobalOpenMPSession::getRequestedNumberOfThreads()
+{
+  return GlobalOpenMPSession::threads;
+}
+
+// Get the default number of threads used in the current parallel scope
+/*! \details If OpenMP is not used or if the program execution state is not
+ * within an omp parallel block only the master thread will be active
+ */
+unsigned GlobalOpenMPSession::getNumberOfThreads()
+{
+#ifdef HAVE_FRENSIE_OPENMP
+  return omp_get_num_threads();
+#else
+  return 1u;
+#endif
+}
+
+// Get the thread id within the current parallel scope
+/*! \details If OpenMP is not used or if the program execution state is not
+ *  within an omp parallel block the master thread id (0) will be returned.
+ */
+unsigned GlobalOpenMPSession::getThreadId()
+{
+#ifdef HAVE_FRENSIE_OPENMP
+  return omp_get_thread_num();
+#else
+  return 0u;
+#endif
+}
+
+// Return if OpenMP has been configured for use
+bool GlobalOpenMPSession::isOpenMPUsed()
+{
+#ifdef HAVE_FRENSIE_OPENMP
+  return true;
+#else
+  return false;
+#endif
+}
+
+// Create a timer
+std::shared_ptr<Timer> GlobalOpenMPSession::createTimer()
+{
+#ifdef HAVE_FRENSIE_OPENMP
+  return std::shared_ptr<Timer>( new OpenMPTimer() );
+#else
+  return Utility::createDefaultTimer();
 #endif
 }
 

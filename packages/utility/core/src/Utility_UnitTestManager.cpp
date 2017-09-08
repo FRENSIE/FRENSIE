@@ -883,10 +883,10 @@ void UnitTestManager::addUnitTest( UnitTest& test )
  */
 int UnitTestManager::runUnitTests( int* argc, char*** argv )
 {
-  Utility::GlobalMPISession& mpi_session =
-    Utility::GlobalMPISession::initialize( argc, argv, &d_data->getReportSink() );
-  
-  const double program_start_time = mpi_session.getWallTime();
+  Utility::GlobalMPISession mpi_session( argc, argv );
+
+  std::shared_ptr<Timer> program_timer = mpi_session.createTimer();
+  program_timer->start();
 
   // Set up the logs - we will use an ostringstream as the log sink so that
   // we can intercept log entries and format them before passing them to
@@ -906,7 +906,9 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv )
   // All output will be redirected to the log
   d_data->redirectStdOutput( log );
 
-  const double init_start_time = mpi_session.getWallTime();
+  std::shared_ptr<Timer> init_timer = mpi_session.createTimer();
+  init_timer->start();
+  
   size_t init_checkpoint = 0;
   
   try{
@@ -914,7 +916,7 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv )
   }
   __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, init_checkpoint );
 
-  const double init_time = mpi_session.getWallTime() - init_start_time;
+  init_timer->stop();
 
   d_data->restoreStdOutput();
   
@@ -922,7 +924,7 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv )
   bool global_success = mpi_session.isGloballyTrue( local_success );
     
   this->summarizeInitializationResults( log,
-                                        init_time,
+                                        init_timer->elapsed().count(),
                                         local_success,
                                         global_success );
 
@@ -948,10 +950,9 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv )
       
       global_success = mpi_session.isGloballyTrue( local_success );
 
-      const double program_execution_time =
-        mpi_session.getWallTime() - program_start_time;
+      program_timer->stop();
       
-      this->summarizeTestStats( program_execution_time,
+      this->summarizeTestStats( program_timer->elapsed().count(),
                                 local_success,
                                 global_success );
     }
@@ -1082,20 +1083,20 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
       this->printUnitTestHeader( d_data->getRunTestCounter(), unit_test );
       
       // Run the test
-      const double test_start_time =
-        Utility::GlobalMPISession::getWallTime();
+      std::shared_ptr<Timer> test_timer =
+        Utility::GlobalMPISession::createTimer();
+      test_timer->start();
       
       const bool local_test_success =
         this->runUnitTest( unit_test, log );
 
-      const double test_time =
-        Utility::GlobalMPISession::getWallTime() - test_start_time;
+      test_timer->stop();
       
       // Update test stats
       if( local_test_success )
         ++(d_data->getPassedTestCounter());
       
-      d_data->getTotalUnitTestExecutionTime() += test_time;
+      d_data->getTotalUnitTestExecutionTime() += test_timer->elapsed().count();
       
       // Report the test results
       const bool global_test_success =
@@ -1103,7 +1104,7 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
       
       this->reportTestResult( unit_test,
                               log,
-                              test_time,
+                              test_timer->elapsed().count(),
                               local_test_success,
                               global_test_success,
                               global_failed_tests,

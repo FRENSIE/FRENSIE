@@ -13,42 +13,155 @@
 #include <iostream>
 #include <memory>
 
+// Boost Includes
+#include <boost/core/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+
+// FRENSIE Includes
+#include "Utility_Timer.hpp"
+
+/*! \defgroup mpi MPI
+ * 
+ * A custom MPI interface has been created using insights gained by using
+ * both the boost::mpi library and the Teuchos::Comm library. Like the 
+ * Teuchos::Comm library, the FRENSIE MPI interface can be used whether or not
+ * the external MPI libraries have been built (without having to enclose
+ * interface code in preprocessor logic blocks). To accomplish this behavior
+ * the FRENSIE MPI interface simply provides wrappers around various 
+ * boost::mpi methods and classes.
+ * \ingroup traits
+ */
+
 namespace Utility{
 
-//! The global mpi session class
-class GlobalMPISession
+/*! The global mpi session class
+ * 
+ * This class is based off of the Teuchos::GlobalMPISession class and the
+ * boost::mpi::environment class.
+ * \ingroup mpi
+ */
+class GlobalMPISession : private boost::noncopyable
 {
   
 public:
 
-  //! Initialize the mpi session
-  static GlobalMPISession& initialize( int* argc,
-                                       char*** argv,
-                                       std::ostream* out = &std::cout );
+  //! The mpi single thread support level tag
+  struct SingleThreading
+  { /* ... */ };
 
-  //! Return the global mpi session instance
-  static GlobalMPISession& getInstance();
-  
+  //! The mpi funneled thread support level tag
+  struct FunneledThreading
+  { /* ... */ };
+
+  //! The mpi serialized thread support level tag
+  struct SerializedThreading
+  { /* ... */ };
+
+  //! The mpi multiple threading support level tag
+  struct MultipleThreading
+  { /* ... */ };
+
+  //! Detault constructor
+  explicit GlobalMPISession( bool abort_on_exception = true );
+
+  //! Constructor with threading level
+  template<typename ThreadSupportLevelTag>
+  explicit GlobalMPISession( ThreadSupportLevelTag level,
+                             bool abort_on_exception = true );
+
+  //! Constructor with command-line inputs
+  GlobalMPISession( int& argc, char**& argv, bool abort_on_exception = true );
+
+  //! Constructor with command-line inputs and threading level
+  template<typename ThreadSupportLevelTag>
+  GlobalMPISession( int& argc, char**& argv, ThreadSupportLevelTag level,
+                    bool abort_on_exception = true );
+
   //! Destructor
   ~GlobalMPISession();
 
+  //! Initialize an output stream
+  void initializeOutputStream( boost::shared_ptr<std::ostream>& os,
+                               const int root_process = 0,
+                               const bool limit_logging_to_root = false );
+
+  //! Initialize logs
+  void initializeLogs( boost::shared_ptr<std::ostream>& log_sink,
+                       const int root_process = 0,
+                       const bool limit_logging_to_root = false,
+                       const bool synchronous_logging = true );
+
+  //! Initialize error log
+  void initializeErrorLog( boost::shared_ptr<std::ostream>& log_sink,
+                           const int root_process = 0,
+                           const bool limit_logging_to_root = false,
+                           const bool synchronous_logging = true );
+
+  //! Initialize warning log
+  void initializeWarningLog( boost::shared_ptr<std::ostream>& log_sink,
+                             const int root_process = 0,
+                             const bool limit_logging_to_root = false,
+                             const bool synchronous_logging = true );
+
+  //! Initialize notification log
+  void initializeNotificationLog( boost::shared_ptr<std::ostream>& log_sink,
+                                  const int root_process = 0,
+                                  const bool limit_logging_to_root = false,
+                                  const bool synchronous_logging = true );
+
+  //! Check if MPI has been configured for use
+  static bool isMPIUsed();
+
+  //! Create a timer
+  static std::shared_ptr<Timer> createTimer();
+
+  //! Abort all MPI processes
+  static void abort( int error_code );
+
   //! Check if mpi has been initialized
-  static bool isMPIInitialized();
+  static bool initialized();
 
   //! Check if MPI has been finalized
-  static bool isMPIFinalized();
+  static bool finalized();
 
-  //! Return the rank of the calling process
+  //! Get the maximum tag value
+  static int maxTag();
+
+  //! Get the maximum tag value (mirror boost::mpi interface)
+  static int max_tag();
+
+  //! Get the tag value used for collective operations
+  static int collectivesTag();
+
+  //! Get the tag value used for collective operations (mirror boost::mpi interface)
+  static int collectives_tag();
+
+  //! Get the name of the calling processor
+  static std::string processorName();
+
+  //! Get the name of the calling processor (mirror boost::mpi interface)
+  static std::string processor_name();
+
+  //! Get the current level of thread support
+  static int threadLevel();
+
+  //! Get the current level of thread support (mirror boost::mpi interface)
+  static int thread_level();
+
+  //! Check if the calling process is the main thread
+  static bool isMainThread();
+
+  //! Check if the calling process is the main thread (mirror boost::mpi interface)
+  static bool is_main_thread();
+
+  //! Return the rank of the calling process (w.r.t. MPI_COMM_WORLD)
   static int getRank();
 
-  //! Return the number of processes in MPI_COMM_WORLD
+  //! Return the number of processes (w.r.t. MPI_COMM_WORLD)
   static int getSize();
 
   //! Create an mpi synchronization point
   static void barrier();
-
-  //! Get the wall time (in sec)
-  static double getWallTime();
 
   //! Sum a set of integers across all processes
   static int sum( const int local_value );
@@ -60,21 +173,16 @@ public:
   static bool isGloballyTrue( const bool local_boolean );
 
   //! Check if a boolean is false on all processes
-  static bool isGloballyFalse(const bool local_boolean );
+  static bool isGloballyFalse( const bool local_boolean );
 
 private:
 
-  // Constructor
-  GlobalMPISession();
+  // Initialize rank and size
+  static void initializeRankAndSize();
 
-  // The singleton instance
-  static std::unique_ptr<GlobalMPISession> s_instance;
-
-  // The mpi initialized flag
-  static bool s_is_mpi_initialized;
-
-  // The mpi finialized state
-  static bool s_is_mpi_finalized;
+  // The global mpi session implementation
+  class GlobalMPISessionImpl;
+  std::unique_ptr<GlobalMPISessionImpl> d_impl;
 
   // The MPI_COMM_WORLD rank
   static int s_rank;
