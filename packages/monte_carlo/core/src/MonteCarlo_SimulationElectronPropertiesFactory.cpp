@@ -16,7 +16,7 @@
 
 namespace MonteCarlo{
 
-//! Initialize the simulation properties
+// Initialize the simulation properties
 void SimulationElectronPropertiesFactory::initializeProperties(
                              const Teuchos::ParameterList& properties,
                              SimulationElectronProperties& electron_properties,
@@ -245,7 +245,26 @@ void SimulationElectronPropertiesFactory::initializeProperties(
   if( properties.isParameter( "Electron Unit Based Interpolation" ) )
   {
     if( !properties.get<bool>( "Electron Unit Based Interpolation" ) )
-      electron_properties.setUnitBasedInterpolationModeOff();
+    {
+      if( electron_properties.getBremsstrahlungTwoDInterpPolicy() ==
+                                                    LINLINLOG_INTERPOLATION )
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                         "Error: bremsstrahlung TwoDInterpPolicy "
+                         << electron_properties.getBremsstrahlungTwoDInterpPolicy() <<
+                         " is not compatible with exact interpolation!" );
+      }
+      else if( electron_properties.getElectroionizationTwoDInterpPolicy() ==
+                                                    LINLINLOG_INTERPOLATION )
+      {
+        THROW_EXCEPTION( std::runtime_error,
+                         "Error: electroionization TwoDInterpPolicy "
+                         << electron_properties.getElectroionizationTwoDInterpPolicy() <<
+                         " is not compatible with exact interpolation!" );
+      }
+      else
+        electron_properties.setUnitBasedInterpolationModeOff();
+    }
   }
 
   properties.unused( *os_warn );

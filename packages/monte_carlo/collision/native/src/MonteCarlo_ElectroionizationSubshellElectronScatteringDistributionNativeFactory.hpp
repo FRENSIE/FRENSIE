@@ -21,6 +21,8 @@ class ElectroionizationSubshellElectronScatteringDistributionNativeFactory
 
 public:
 
+  using ThisType = ElectroionizationSubshellElectronScatteringDistributionNativeFactory;
+
   //! Create a electroionization subshell distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createElectroionizationSubshellDistribution(
@@ -45,6 +47,14 @@ public:
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
       subshell_distribution,
     const double evaluation_tol );
+
+private:
+
+  //! Return if the TwoDInterpPolicy is compatible with the unit based sampling mode
+  template <typename TwoDInterpPolicy>
+  static bool isCompatibleWithUnitBaseSamplingMode(
+        const bool unit_based_interpolation_mode_on );
+
 };
 
 } // end MonteCarlo namespace

@@ -100,9 +100,6 @@ public:
 
 protected:
 
-  // Sample the knock-on energy using a exact correlated routine
-  double sampleKnockOnExact( const double incoming_energy ) const;
-
   // Calculate the outgoing angle cosine
   double outgoingAngle( const double incoming_energy,
                         const double outgoing_energy ) const;

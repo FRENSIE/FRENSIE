@@ -21,6 +21,8 @@ class BremsstrahlungElectronScatteringDistributionNativeFactory
 
 public:
 
+  using ThisType = BremsstrahlungElectronScatteringDistributionNativeFactory;
+
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog>
   static void createBremsstrahlungDistribution(
@@ -73,6 +75,13 @@ public:
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         energy_loss_function,
     const double evaluation_tol = 1e-7 );
+
+private:
+
+  //! Return if the TwoDInterpPolicy is compatible with the nit based sampling mode
+  template <typename TwoDInterpPolicy>
+  static bool isCompatibleWithUnitBaseSamplingMode(
+        const bool unit_based_interpolation_mode_on );
 };
 
 } // end MonteCarlo namespace

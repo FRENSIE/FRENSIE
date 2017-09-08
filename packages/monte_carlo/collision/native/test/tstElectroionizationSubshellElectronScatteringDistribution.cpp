@@ -288,8 +288,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                                 knock_on_angle_cosine );
 
   // Test knock-on electron at the max random number
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.677955763159096, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 2.776500E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 6.680945582865936982e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 2.696314156988312136e-05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -588,6 +588,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                                pdf ) );
   }
 
+  {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
@@ -602,6 +603,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                             binding_energy,
                             true,
                             true ) );
+  }
+  {
+  // Create the scattering function
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+            function_data,
+            1e-6,
+            1e-16 ) );
 
   // Create the distributions
   exact_electroionization_distribution.reset(
@@ -610,6 +619,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                             binding_energy,
                             true,
                             false ) );
+  }
   }
 
   // Initialize the random number generator

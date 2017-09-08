@@ -29,6 +29,9 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
+  // Make sure the TwoDInterpPolicy and unit based sampling mode are compatible
+  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>( unit_based_interpolation_mode_on ) );
+
   // Get the energies for which knock-on sampling tables are given
   std::vector<double> energy_grid =
         raw_electroionization_data.getElectroionizationEnergyGrid( subshell );
@@ -37,11 +40,12 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
 
   // Create the subshell distribution
-  createSubshellDistribution<TwoDInterpPolicy>( raw_electroionization_data,
-                              energy_grid,
-                              subshell,
-                              subshell_distribution,
-                              evaluation_tol );
+  ThisType::createSubshellDistribution<TwoDInterpPolicy>(
+                                                    raw_electroionization_data,
+                                                    energy_grid,
+                                                    subshell,
+                                                    subshell_distribution,
+                                                    evaluation_tol );
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
@@ -93,6 +97,17 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
             function_data,
             1e-6,
             evaluation_tol ) );
+}
+
+// Return if the TwoDInterpPolicy is compatible with the correlated sampling mode
+template <typename TwoDInterpPolicy>
+bool ElectroionizationSubshellElectronScatteringDistributionNativeFactory::isCompatibleWithUnitBaseSamplingMode(
+        const bool correlated_sampling_mode_on )
+{
+  if( TwoDInterpPolicy::name() == "LinLinLog" && !correlated_sampling_mode_on )
+    return false;
+  else
+    return true;
 }
 
 } // end MonteCarlo namespace

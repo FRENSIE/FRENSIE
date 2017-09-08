@@ -25,10 +25,14 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
+  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
+  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
+                        unit_based_interpolation_mode_on ) );
+
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
 
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction<TwoDInterpPolicy>(
+  ThisType:createEnergyLossFunction<TwoDInterpPolicy>(
         raw_electroatom_data,
         bremsstrahlung_energy_grid,
         energy_loss_function,
@@ -50,11 +54,15 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
+  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
+  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
+                        unit_based_interpolation_mode_on ) );
+
   // Get the energy grid for bremsstrahlung energy distributions
   std::vector<double> bremsstrahlung_energy_grid =
         raw_electroatom_data.getBremsstrahlungEnergyGrid();
 
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
+  ThisType:createBremsstrahlungDistribution<TwoDInterpPolicy>(
     raw_electroatom_data,
     bremsstrahlung_energy_grid,
     scattering_distribution,
@@ -75,10 +83,14 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
+  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
+  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
+                        unit_based_interpolation_mode_on ) );
+
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
 
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction<TwoDInterpPolicy>(
+  ThisType:createEnergyLossFunction<TwoDInterpPolicy>(
         raw_electroatom_data,
         bremsstrahlung_energy_grid,
         energy_loss_function,
@@ -102,7 +114,11 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
+  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
+  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
+                        unit_based_interpolation_mode_on ) );
+
+  ThisType:createBremsstrahlungDistribution<TwoDInterpPolicy>(
     raw_electroatom_data,
     atomic_number,
     raw_electroatom_data.getBremsstrahlungEnergyGrid(),
@@ -147,6 +163,17 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
             function_data,
             1e-6,
             evaluation_tol ) );
+}
+
+// Return if the TwoDInterpPolicy is compatible with the unit basampling mode
+template <typename TwoDInterpPolicy>
+bool BremsstrahlungElectronScatteringDistributionNativeFactory::isCompatibleWithUnitBaseSamplingMode(
+        const bool unit_based_interpolation_mode_on )
+{
+  if( TwoDInterpPolicy::name() == "LinLinLog" && !unit_based_interpolation_mode_on )
+    return false;
+  else
+    return true;
 }
 
 } // end MonteCarlo namespace

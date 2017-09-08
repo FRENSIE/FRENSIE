@@ -80,9 +80,10 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
   else
   {
     // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>( &ThisType::sampleKnockOnExact,
-                                       std::cref( *this ),
-                                       std::placeholders::_1 );
+    d_sample_func = std::bind<double>(
+            &TwoDDist::sampleSecondaryConditionalExact,
+            std::cref( *d_electroionization_subshell_scattering_distribution ),
+            std::placeholders::_1 );
   }
 }
 
@@ -292,10 +293,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
-
   testPostcondition( knock_on_energy > 0.0 );
-  testPostcondition( knock_on_energy <=
-                     this->getMaxSecondaryEnergyAtIncomingEnergy(incoming_energy) );
+//  testPostcondition( knock_on_energy <=
+//                     this->getMaxSecondaryEnergyAtIncomingEnergy(incoming_energy)*(1.0+1e-5) );
 }
 
 // Sample an knock on energy and direction from the distribution
@@ -316,7 +316,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSe
                                            outgoing_energy );
 
   testPostcondition( knock_on_energy > 0.0 );
-  testPostcondition( knock_on_energy <= outgoing_energy );
+//  testPostcondition( knock_on_energy <= outgoing_energy*(1.0+1e-5) );
   testPostcondition( knock_on_angle_cosine <= 1.0 );
   testPostcondition( knock_on_angle_cosine >= 0.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
@@ -369,43 +369,22 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   // Bank the knock-on electron
   bank.push( knock_on_electron );
 
+  if( outgoing_energy > 0.0 )
+  {
+    // Set the outgoing electron energy
+    electron.setEnergy( outgoing_energy );
 
-  // Set the outgoing electron energy
-  electron.setEnergy( outgoing_energy );
-
-  // Set the new direction of the primary electron
-  electron.rotateDirection( scattering_angle_cosine,
-                            this->sampleAzimuthalAngle() );
+    // Set the new direction of the primary electron
+    electron.rotateDirection( scattering_angle_cosine,
+                              this->sampleAzimuthalAngle() );
+  }
+  else
+  {
+    electron.setAsGone();
+  }
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
-}
-
-// Sample the knock-on energy using a exact correlated routine
-/*! \details When sampling exact it is possible to sample a non-realistic
- *  knock-on energy. Whenever a non-realistic knock-energy is sampled it is
- *  defaulted to the max allowed energy.
- */
-double ElectroionizationSubshellElectronScatteringDistribution::sampleKnockOnExact(
-            const double incoming_energy ) const
-{
-  // Sample correlated exact
-  double knock_on_energy =
-    d_electroionization_subshell_scattering_distribution->sampleSecondaryConditionalExact(
-        incoming_energy );
-
-  // Get the max allowed knock on energy at the given incoming energy
-  double max_knock_on_energy =
-                this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
-
-  // Set the knock on energy to the max allowed energy
-  if ( knock_on_energy > max_knock_on_energy )
-    knock_on_energy = max_knock_on_energy;
-
-  testPostcondition( knock_on_energy > 0.0 );
-  testPostcondition( knock_on_energy <= max_knock_on_energy );
-
-  return knock_on_energy;
 }
 
 // Calculate the outgoing angle cosine

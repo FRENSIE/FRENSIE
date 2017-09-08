@@ -333,7 +333,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 {
   bool dipole_distribution_mode_on = true;
   bool correlated_sampling_mode_on = true;
-  bool unit_based_interpolation_mode_on = false;
+  bool unit_based_interpolation_mode_on = true;
 
   reaction =
     MonteCarlo::createBremsstrahlungReaction( *data_container,
@@ -375,7 +375,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 {
   bool dipole_distribution_mode_on = false;
   bool correlated_sampling_mode_on = true;
-  bool unit_based_interpolation_mode_on = false;
+  bool unit_based_interpolation_mode_on = true;
 
   reaction =
     MonteCarlo::createBremsstrahlungReaction( *data_container,
