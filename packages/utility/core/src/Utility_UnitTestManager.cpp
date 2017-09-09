@@ -881,7 +881,7 @@ void UnitTestManager::addUnitTest( UnitTest& test )
 /*! \details This is all that needs be called from the main function (return
  * the value that is returned from this method).
  */
-int UnitTestManager::runUnitTests( int* argc, char*** argv )
+int UnitTestManager::runUnitTests( int& argc, char**& argv )
 {
   Utility::GlobalMPISession mpi_session( argc, argv );
 
@@ -912,7 +912,7 @@ int UnitTestManager::runUnitTests( int* argc, char*** argv )
   size_t init_checkpoint = 0;
   
   try{
-    d_data->getInitializer().initializeUnitTestManager( *argc, *argv, init_checkpoint );
+    d_data->getInitializer().initializeUnitTestManager( argc, argv, init_checkpoint );
   }
   __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, init_checkpoint );
 
@@ -994,9 +994,9 @@ void DistributedUnitTestManager::flushLogsAndAddToReport(
   // This will flush all pending log entries to the global log
   if( proc == REPORT_ON_ALL_PROCS )
   {
-    for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
     {
-      if( i == Utility::GlobalMPISession::getRank() )
+      if( i == Utility::GlobalMPISession::rank() )
       {
         std::ostringstream log_header_stream;
         log_header_stream << "Proc " << i << " log";
@@ -1009,7 +1009,7 @@ void DistributedUnitTestManager::flushLogsAndAddToReport(
   }
   else
   {
-    if( Utility::GlobalMPISession::getRank() == proc )
+    if( Utility::GlobalMPISession::rank() == proc )
       UnitTestManager::flushLogsAndAddToReport( log, "", proc );
   }
 }
@@ -1023,7 +1023,7 @@ void UnitTestManager::printHelpMessage()
 // Print the help message
 void DistributedUnitTestManager::printHelpMessage()
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printHelpMessage();
 
   Utility::GlobalMPISession::barrier();
@@ -1045,7 +1045,7 @@ void UnitTestManager::printTestDetails()
 // Print the test details
 void DistributedUnitTestManager::printTestDetails()
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printTestDetails();
 
   Utility::GlobalMPISession::barrier();
@@ -1134,7 +1134,7 @@ void UnitTestManager::printSortingTestsNotification()
 // Print the sorting tests notification
 void DistributedUnitTestManager::printSortingTestsNotification()
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printSortingTestsNotification();
 
   Utility::GlobalMPISession::barrier();
@@ -1149,7 +1149,7 @@ void UnitTestManager::printRunningTestsNotification()
 // Print the running tests notification
 void DistributedUnitTestManager::printRunningTestsNotification()
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printRunningTestsNotification();
 
   Utility::GlobalMPISession::barrier();
@@ -1168,7 +1168,7 @@ void DistributedUnitTestManager::printUnitTestHeader(
                                                     const int unit_test_id,
                                                     const UnitTest& unit_test )
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printUnitTestHeader( unit_test_id, unit_test );
 
   Utility::GlobalMPISession::barrier();
@@ -1265,7 +1265,7 @@ void UnitTestManager::printOperationFailedNotification()
 // Print the operation failed notification
 void DistributedUnitTestManager::printOperationFailedNotification()
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printOperationPassedNotification();
 
   Utility::GlobalMPISession::barrier();
@@ -1280,7 +1280,7 @@ void UnitTestManager::printOperationPassedNotification()
 // Print the operation passed notification
 void DistributedUnitTestManager::printOperationPassedNotification()
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printOperationPassedNotification();
 
   Utility::GlobalMPISession::barrier();
@@ -1310,11 +1310,11 @@ void DistributedUnitTestManager::printOperationTime( const double time_in_sec,
                                                      const bool wrapped,
                                                      const bool goto_newline )
 {
-  for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
+  for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
   {
-    if( Utility::GlobalMPISession::getRank() == i )
+    if( Utility::GlobalMPISession::rank() == i )
     {
-      if( i < Utility::GlobalMPISession::getSize() - 1 )
+      if( i < Utility::GlobalMPISession::size() - 1 )
         UnitTestManager::printOperationTime( time_in_sec, wrapped, false );
       else
         UnitTestManager::printOperationTime( time_in_sec, wrapped, goto_newline );
@@ -1341,7 +1341,7 @@ void DistributedUnitTestManager::printOperationLocation(
                                                   const std::string& file_name,
                                                   const size_t line_number )
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printOperationLocation( file_name, line_number );
 
   Utility::GlobalMPISession::barrier();
@@ -1365,7 +1365,7 @@ void UnitTestManager::printOperationLog( const bool local_success,
     d_data->getReportSink() << std::endl;
   }
   
-  UnitTestManager::flushLogsAndAddToReport( log, "", Utility::GlobalMPISession::getRank() );
+  UnitTestManager::flushLogsAndAddToReport( log, "", Utility::GlobalMPISession::rank() );
 }
 
 // Print the operation log
@@ -1373,13 +1373,13 @@ void DistributedUnitTestManager::printOperationLog( const bool local_success,
                                                     const std::string&,
                                                     std::ostringstream& log )
 {
-  if( Utility::GlobalMPISession::getSize() == 1 )
+  if( Utility::GlobalMPISession::size() == 1 )
     UnitTestManager::printOperationLog( local_success, "", log );
   else
   {
-    for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
     {
-      if( Utility::GlobalMPISession::getRank() == i )
+      if( Utility::GlobalMPISession::rank() == i )
       {
         if( this->shouldUnitTestDetailsBeReported( local_success ) )
         {
@@ -1437,9 +1437,9 @@ void UnitTestManager::printFailedTestSummaryHeader(
 void DistributedUnitTestManager::printFailedTestSummaryHeader(
                                                            const std::string& )
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
   {
-    if( Utility::GlobalMPISession::getSize() == 1 )
+    if( Utility::GlobalMPISession::size() == 1 )
       UnitTestManager::printFailedTestSummaryHeader( "" );
     else
       UnitTestManager::printFailedTestSummaryHeader( "on at least one proc" );
@@ -1471,7 +1471,7 @@ void DistributedUnitTestManager::printFailedTestName(
                            const std::set<std::string>& local_failed_tests_set,
                            const bool goto_newline )
 {
-  if( Utility::GlobalMPISession::getSize() == 1 )
+  if( Utility::GlobalMPISession::size() == 1 )
   {
     UnitTestManager::printFailedTestName( global_failed_test_name,
                                           "",
@@ -1482,9 +1482,9 @@ void DistributedUnitTestManager::printFailedTestName(
   {
     bool report_line_started = false;
     
-    for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
     {
-      if( Utility::GlobalMPISession::getRank() == i )
+      if( Utility::GlobalMPISession::rank() == i )
       {
         if( local_failed_tests_set.count( global_failed_test_name ) )
         {
@@ -1518,7 +1518,7 @@ void DistributedUnitTestManager::printFailedTestName(
       Utility::GlobalMPISession::barrier();
     }
 
-    if( Utility::GlobalMPISession::getRank() == 0 )
+    if( Utility::GlobalMPISession::rank() == 0 )
     {
       UnitTestManager::printFailedTestName( "",
                                             "",
@@ -1576,13 +1576,13 @@ void UnitTestManager::printUnitTestStats( const std::string& summary_header )
 void DistributedUnitTestManager::printUnitTestStats(
                                             const std::string& summary_header )
 {
-  if( Utility::GlobalMPISession::getSize() == 1 )
+  if( Utility::GlobalMPISession::size() == 1 )
     UnitTestManager::printUnitTestStats( summary_header );
   else
   {
-    for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
     {
-      if( Utility::GlobalMPISession::getRank() == i )
+      if( Utility::GlobalMPISession::rank() == i )
       {
         std::ostringstream oss;
         oss << summary_header << " For Proc " << i;
@@ -1601,7 +1601,7 @@ void DistributedUnitTestManager::printUnitTestStats(
     int reduced_passed_counter =
       Utility::GlobalMPISession::sum(this->getNumberOfPassedTests());
 
-    if( Utility::GlobalMPISession::getRank() == 0 )
+    if( Utility::GlobalMPISession::rank() == 0 )
     {
       this->printGivenUnitTestStats( summary_header + " For All Procs",
                                      reduced_total,
@@ -1651,7 +1651,7 @@ void UnitTestManager::printProgramExecutionTimeHeader(
 void DistributedUnitTestManager::printProgramExecutionTimeHeader(
                                           const double program_execution_time )
 {
-  if( Utility::GlobalMPISession::getRank() == 0 )
+  if( Utility::GlobalMPISession::rank() == 0 )
     UnitTestManager::printProgramExecutionTimeHeader( program_execution_time );
 
   Utility::GlobalMPISession::barrier();
@@ -1704,14 +1704,14 @@ void DistributedUnitTestManager::printTestResult( const std::string& header,
                                                   const bool local_success,
                                                   const bool global_success )
 {
-  if( Utility::GlobalMPISession::getSize() == 1 )
+  if( Utility::GlobalMPISession::size() == 1 )
     UnitTestManager::printTestResult( header, local_success, global_success );
   else
   {
     // Print the result for each process
-    for( int i = 0; i < Utility::GlobalMPISession::getSize(); ++i )
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
     {
-      if( Utility::GlobalMPISession::getRank() == i )
+      if( Utility::GlobalMPISession::rank() == i )
       {
         std::ostringstream oss;
         oss << header << " For Proc " << i;

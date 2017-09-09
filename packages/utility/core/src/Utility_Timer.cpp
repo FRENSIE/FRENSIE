@@ -15,7 +15,7 @@ namespace Utility{
 // Create a default timer
 std::shared_ptr<Timer> createDefaultTimer()
 {
-  return std::shared_ptr<Timer>( new StandardTimer<std::high_resolution_clock>() );
+  return std::shared_ptr<Timer>( new StandardTimer<std::chrono::high_resolution_clock>() );
 }
   
 } // end Utility namespace

@@ -9,12 +9,21 @@
 #ifndef UTILITY_STANDARD_TIMER_HPP
 #define UTILITY_STANDARD_TIMER_HPP
 
+// Std Lib Includes
+#include <chrono>
+
 // FRENSIE Includes
 #include "Utility_Timer.hpp"
 
 namespace Utility{
 
-//! The standard timer class
+/*! The standard timer class
+ * 
+ * Any of the standard library clocks (std::chrono::system_clock, 
+ * std::chrono::steady_clock and std::chrono::high_resolution_clock) can be 
+ * used as the clock for the timer. It is also possible to use any other
+ * clock as long as it conforms to the standard library clock interface.
+ */
 template<typename STLCompliantClock>
 class StandardTimer : public Timer
 {
@@ -22,7 +31,7 @@ class StandardTimer : public Timer
 public:
 
   //! Constructor
-  StandardTimer() noexcept;
+  StandardTimer();
 
   //! Destructor
   ~StandardTimer();
@@ -31,7 +40,7 @@ public:
   bool isStopped() const override;
 
   //! Get the elapsed time (in seconds)
-  std::chrono::duration<double> elpased() const override;
+  std::chrono::duration<double> elapsed() const override;
 
   //! Start the timer
   void start() override;

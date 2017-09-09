@@ -33,7 +33,7 @@ bool StandardTimer<STLCompliantClock>::isStopped() const
 
 // Get the elapsed time (in seconds)
 template<typename STLCompliantClock>
-std::chrono::duration<double> StandardTimer<STLCompliantClock>::elpased() const
+std::chrono::duration<double> StandardTimer<STLCompliantClock>::elapsed() const
 {
   if( d_is_running )
   {

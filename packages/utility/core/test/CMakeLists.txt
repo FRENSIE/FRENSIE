@@ -220,9 +220,41 @@ TARGET_LINK_LIBRARIES(tstVariant utility_core)
 ADD_TEST(Variant_test tstVariant)
 SET_PROPERTY(TEST Variant_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstGlobalMPISessionInit tstGlobalMPISessionInit.cpp)
+TARGET_LINK_LIBRARIES(tstGlobalMPISessionInit utility_core ${BOOST_TEST_LIBRARY})
+
+SET(MPI_TEST_EXEC_PREAMBLE "")
+
+IF(${FRENSIE_ENABLE_MPI})
+  SET(MPI_TEST_EXEC_PREAMBLE ${MPIEXEC} -n 4)
+ENDIF()
+
+ADD_TEST(GlobalMPISessionDefaultInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=default --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionDefaultInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionAdvancedInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=advanced --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionAdvancedInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionBasicSingleThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=basic_single --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionBasicSingleThreadingInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionAdvancedSingleThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=advanced_single --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionAdvancedSingleThreadingInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionBasicFunneledThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=basic_funneled --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionBasicFunneledThreadingInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionAdvancedFunneledThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=advanced_funneled --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionAdvancedFunneledThreadingInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionBasicSerializedThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=basic_serialized --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionBasicSerializedThreadingInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionAdvancedSerializedThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=advanced_serialized --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionAdvancedSerializedThreadingInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionBasicMultipleThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=basic_multiple --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionBasicMultipleThreadingInit_test PROPERTY LABELS utility_core)
+ADD_TEST(GlobalMPISessionAdvancedMultipleThreadingInit_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISessionInit --constructor_type=advanced_multiple --report_level=detailed)
+SET_PROPERTY(TEST GlobalMPISessionAdvancedMultipleThreadingInit_test PROPERTY LABELS utility_core)
+
+UNSET(MPI_TEST_EXEC_PREAMBLE)
+
 ADD_EXECUTABLE(tstGlobalMPISession tstGlobalMPISession.cpp)
 TARGET_LINK_LIBRARIES(tstGlobalMPISession utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(GlobalMPISession_test tstGlobalMPISession --report_level=detailed)
+ADD_TEST(GlobalMPISession_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISession --report_level=detailed)
 SET_PROPERTY(TEST GlobalMPISession_test PROPERTY LABELS utility_core)
 
 # All FRENSIE unit test framework dependencies have been tested. All tests

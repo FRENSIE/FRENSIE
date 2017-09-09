@@ -91,7 +91,7 @@ public:
   void addUnitTest( UnitTest& test );
 
   //! Parse command-line options and run registered unit tests
-  int runUnitTests( int* argc, char*** argv );
+  int runUnitTests( int& argc, char**& argv );
 
 protected:
 
@@ -244,8 +244,8 @@ private:
                                                                       \
       LOG_STREAM << "Caught unexpected std::exception";              \
                                                                         \
-      if( Utility::GlobalMPISession::getSize() > 1 )                    \
-        LOG_STREAM << " on proc " << Utility::GlobalMPISession::getRank(); \
+      if( Utility::GlobalMPISession::size() > 1 )                    \
+        LOG_STREAM << " on proc " << Utility::GlobalMPISession::rank(); \
                                                                         \
       if( CHECKPOINT_LINE_NUMBER > 0 )                                  \
       {                                                               \
@@ -267,8 +267,8 @@ private:
                                                                       \
       LOG_STREAM << "Caught unexpected unknown exception";           \
                                                                         \
-      if( Utility::GlobalMPISession::getSize() > 1 )                  \
-        LOG_STREAM << " on proc " << Utility::GlobalMPISession::getRank(); \
+      if( Utility::GlobalMPISession::size() > 1 )                  \
+        LOG_STREAM << " on proc " << Utility::GlobalMPISession::rank(); \
                                                                         \
       LOG_STREAM << "!"<< std::endl;                                   \
     }                                                                   \

@@ -19,98 +19,6 @@
 
 namespace Utility{
 
-// Initialize static member data
-int GlobalMPISession::s_rank = 0;
-int GlobalMPISession::s_size = 1;
-
-/*! The GlobalMPISession implementation
- * \ingroup mpi
- */
-class GlobalMPISession::GlobalMPISessionImpl
-{
-
-public:
-
-  //! Detault constructor
-  GlobalMPISessionImpl( bool abort_on_exception = true )
-#ifdef HAVE_FRENSIE_MPI
-    : d_environment( abort_on_exception )
-#endif
-  { /* ... */ }
-
-  //! Constructor with threading level
-  GlobalMPISessionImpl( boost::mpi::threading::level level,
-                               bool abort_on_exception )
-#ifdef HAVE_FRENSIE_MPI
-    : d_environment( level, abort_on_exception )
-#endif
-  { /* ... */ }
-
-  //! Constructor with command-line inputs
-  GlobalMPISessionImpl( int& argc, char**& argv, bool abort_on_exception )
-#ifdef HAVE_FRENSIE_MPI
-    : d_environment( argc, argv, abort_on_exception )
-#endif
-  { /* ... */ }
-
-  //! Constructor with command-line inputs and threading level
-  GlobalMPISessionImpl( int& argc, char**& argv,
-                               boost::mpi::threading::level level,
-                               bool abort_on_exception )
-#ifdef HAVE_FRENSIE_MPI
-    : d_environment( argc, argv, level, abort_on_exception )
-#endif
-  { /* ... */ }
-
-  //! Destructor
-  ~GlobalMPISessionImpl()
-  {
-#ifdef HAVE_FRENSIE_MPI
-    // Restore stream buffers
-    StreamList::iterator stream_it, stream_end;
-    stream_it = d_streams.begin();
-    stream_end = d_streams.end();
-
-    while( stream_it != stream_end )
-    {
-      (*stream_it)->rdbuf( d_stream_buffer_cache[stream_it->get()] );
-      
-      ++stream_it;
-    }
-#endif
-  }
-
-  //! Cache a stream buffer
-  void cacheStreamBuffer( boost::shared_ptr<std::ostream>& os )
-  {
-#ifdef HAVE_FRENSIE_MPI
-    StreamBufferCache::iterator it = 
-      d_stream_buffer_cache.find( os.get() );
-
-    if( it == d_stream_buffer_cache.end() )
-    {
-      d_stream_buffer_cache[os.get()] = os->rdbuf();
-      d_streams.push_back( os );
-    }
-#endif
-  }
-
-private:
-
-#ifdef HAVE_FRENSIE_MPI
-  // The boost mpi environment
-  boost::mpi::environment d_environment;
-
-  // The streams that have cached stream buffers
-  typedef std::list<boost::shared_ptr<std::ostream> > StreamList;
-  StreamList d_streams;
-
-  // The stream buffer cache
-  typedef std::map<std::ostream*,std::streambuf*> StreamBufferCache;
-  StreamBufferCache d_stream_buffer_cache;
-#endif
-};
-
 #ifdef HAVE_FRENSIE_MPI
 
 /*! The mpi timer
@@ -187,51 +95,189 @@ private:
   std::chrono::duration<double> d_duration;
 };
 
-/*! \brief The ThreadSupportLevelTraits class
+/*! The ThreadingSupportLevelTagTraits traits class
  * \ingroup mpi
  * \ingroup traits
  */
-template<typename ThreadSupportLevelTag>
-struct ThreadSupportLevelTraits
+template<typename ThreadingSupportLevelTag>
+struct ThreadingSupportLevelTagTraits
 { /* ... */ };
 
-/*! \brief Specialization of ThreadSupportLevelTraits class for
- * GlobalMPISession::SingleThreading
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+ * GlobalMPISession::SingleThreadingTag
  * \ingroup mpi
  * \ingroup traits
  */
 template<>
-struct ThreadSupportLevelTraits<GlobalMPISession::SingleThreading> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::single>
+struct ThreadingSupportLevelTagTraits<GlobalMPISession::SingleThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::single>
 { /* ... */ };
 
-/*! \brief Specialization of ThreadSupportLevelTraits class for
- * GlobalMPISession::FunneledThreading
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+ * GlobalMPISession::FunneledThreadingTag
  * \ingroup mpi
  * \ingroup traits
  */
 template<>
-struct ThreadSupportLevelTraits<GlobalMPISession::FunneledThreading> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::funneled>
+struct ThreadingSupportLevelTagTraits<GlobalMPISession::FunneledThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::funneled>
 { /* ... */ };
 
-/*! \brief Specialization of ThreadSupportLevelTraits class for
- * GlobalMPISession::FunneledThreading
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+ * GlobalMPISession::SerializedThreadingTag
  * \ingroup mpi
  * \ingroup traits
  */
 template<>
-struct ThreadSupportLevelTraits<GlobalMPISession::SerializedThreading> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::serialized>
+struct ThreadingSupportLevelTagTraits<GlobalMPISession::SerializedThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::serialized>
 { /* ... */ };
 
-/*! \brief Specialization of ThreadSupportLevelTraits class for
- * GlobalMPISession::MultipleThreading
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+ * GlobalMPISession::MultipleThreadingTag
  * \ingroup mpi
  * \ingroup traits
  */
 template<>
-struct ThreadSupportLevelTraits<GlobalMPISession::MultipleThreading> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::multiple>
+struct ThreadingSupportLevelTagTraits<GlobalMPISession::MultipleThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::multiple>
 { /* ... */ };
   
 #endif // end HAVE_FRENSIE_MPI
+
+// Initialize static member data
+GlobalMPISession::SingleThreadingTag GlobalMPISession::SingleThreading;
+GlobalMPISession::FunneledThreadingTag GlobalMPISession::FunneledThreading;
+GlobalMPISession::SerializedThreadingTag GlobalMPISession::SerializedThreading;
+GlobalMPISession::MultipleThreadingTag GlobalMPISession::MultipleThreading;
+int GlobalMPISession::s_rank = 0;
+int GlobalMPISession::s_size = 1;
+
+// Convert a GlobalMPISession::SingleThreadingTag to an int
+GlobalMPISession::SingleThreadingTag::operator int() const
+{
+#ifdef HAVE_FRENSIE_MPI
+  return boost::mpi::threading::single;
+#else 
+  return 0;
+#endif 
+}
+
+// Convert a GlobalMPISession::FunneledThreadingTag to an int
+GlobalMPISession::FunneledThreadingTag::operator int() const
+{
+#ifdef HAVE_FRENSIE_MPI
+  return boost::mpi::threading::funneled;
+#else 
+  return 0;
+#endif 
+}
+
+// Convert a GlobalMPISession::SerializedThreadingTag to an int
+GlobalMPISession::SerializedThreadingTag::operator int() const
+{
+#ifdef HAVE_FRENSIE_MPI
+  return boost::mpi::threading::serialized;
+#else 
+  return 0;
+#endif 
+}
+
+// Convert a GlobalMPISession::MultipleThreadingTag to an int
+GlobalMPISession::MultipleThreadingTag::operator int() const
+{
+#ifdef HAVE_FRENSIE_MPI
+  return boost::mpi::threading::multiple;
+#else 
+  return 0;
+#endif 
+}
+
+/*! The GlobalMPISession implementation
+ * \ingroup mpi
+ */
+class GlobalMPISession::GlobalMPISessionImpl
+{
+
+public:
+
+  //! Detault constructor
+  GlobalMPISessionImpl( bool abort_on_exception = true )
+#ifdef HAVE_FRENSIE_MPI
+    : d_environment( abort_on_exception )
+#endif
+  { /* ... */ }
+
+  //! Constructor with threading level
+  template<typename ThreadSupportLevelTag>
+  GlobalMPISessionImpl( ThreadSupportLevelTag level,
+                        typename std::enable_if<std::is_empty<ThreadSupportLevelTag>::value,bool>::type abort_on_exception )
+#ifdef HAVE_FRENSIE_MPI
+    : d_environment( ThreadingSupportLevelTagTraits<ThreadSupportLevelTag>::value, abort_on_exception )
+#endif
+  { /* ... */ }
+
+  //! Constructor with command-line inputs
+  GlobalMPISessionImpl( int& argc, char**& argv, bool abort_on_exception )
+#ifdef HAVE_FRENSIE_MPI
+    : d_environment( argc, argv, abort_on_exception )
+#endif
+  { /* ... */ }
+
+  //! Constructor with command-line inputs and threading level
+  template<typename ThreadSupportLevelTag>
+  GlobalMPISessionImpl( int& argc, char**& argv,
+                        ThreadSupportLevelTag level,
+                        typename std::enable_if<std::is_empty<ThreadSupportLevelTag>::value,bool>::type abort_on_exception )
+#ifdef HAVE_FRENSIE_MPI
+    : d_environment( argc, argv, ThreadingSupportLevelTagTraits<ThreadSupportLevelTag>::value, abort_on_exception )
+#endif
+  { /* ... */ }
+
+  //! Destructor
+  ~GlobalMPISessionImpl()
+  {
+#ifdef HAVE_FRENSIE_MPI
+    // Restore stream buffers
+    StreamList::iterator stream_it, stream_end;
+    stream_it = d_streams.begin();
+    stream_end = d_streams.end();
+
+    while( stream_it != stream_end )
+    {
+      (*stream_it)->rdbuf( d_stream_buffer_cache[stream_it->get()] );
+      
+      ++stream_it;
+    }
+#endif
+  }
+
+  //! Cache a stream buffer
+  void cacheStreamBuffer( boost::shared_ptr<std::ostream>& os )
+  {
+#ifdef HAVE_FRENSIE_MPI
+    StreamBufferCache::iterator it = 
+      d_stream_buffer_cache.find( os.get() );
+
+    if( it == d_stream_buffer_cache.end() )
+    {
+      d_stream_buffer_cache[os.get()] = os->rdbuf();
+      d_streams.push_back( os );
+    }
+#endif
+  }
+
+private:
+
+#ifdef HAVE_FRENSIE_MPI
+  // The boost mpi environment
+  boost::mpi::environment d_environment;
+
+  // The streams that have cached stream buffers
+  typedef std::list<boost::shared_ptr<std::ostream> > StreamList;
+  StreamList d_streams;
+
+  // The stream buffer cache
+  typedef std::map<std::ostream*,std::streambuf*> StreamBufferCache;
+  StreamBufferCache d_stream_buffer_cache;
+#endif
+};
 
 // Detault constructor
 GlobalMPISession::GlobalMPISession( bool abort_on_exception )
@@ -240,11 +286,34 @@ GlobalMPISession::GlobalMPISession( bool abort_on_exception )
   this->initializeRankAndSize();
 }
 
-// Constructor with threading level
-template<typename ThreadSupportLevelTag>
-GlobalMPISession::GlobalMPISession( ThreadSupportLevelTag level_tag,
+// Constructor for single threading support level
+GlobalMPISession::GlobalMPISession( SingleThreadingTag level,
                                     bool abort_on_exception )
-  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( ThreadSupportLevelTraits<ThreadSupportLevelTag>::value, abort_on_exception ) )
+  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( level, abort_on_exception ) )
+{
+  this->initializeRankAndSize();
+}
+
+// Constructor for funneled threading support level
+GlobalMPISession::GlobalMPISession( FunneledThreadingTag level,
+                                    bool abort_on_exception )
+  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( level, abort_on_exception ) )
+{
+  this->initializeRankAndSize();
+}
+
+// Constructor for serialized threading support level
+GlobalMPISession::GlobalMPISession( SerializedThreadingTag level,
+                                    bool abort_on_exception )
+    : d_impl( new GlobalMPISession::GlobalMPISessionImpl( level, abort_on_exception ) )
+{
+  this->initializeRankAndSize();
+}
+
+// Constructor for multiple threading support level
+GlobalMPISession::GlobalMPISession( MultipleThreadingTag level,
+                                    bool abort_on_exception )
+    : d_impl( new GlobalMPISession::GlobalMPISessionImpl( level, abort_on_exception ) )
 {
   this->initializeRankAndSize();
 }
@@ -257,19 +326,48 @@ GlobalMPISession::GlobalMPISession( int& argc, char**& argv,
   this->initializeRankAndSize();
 }
 
-// Constructor with command-line inputs and threading level
-template<typename ThreadSupportLevelTag>
+// Constructor with command-line inputs for single threading support level
 GlobalMPISession::GlobalMPISession( int& argc, char**& argv,
-                                    ThreadSupportLevelTag level_tag,
+                                    SingleThreadingTag level,
                                     bool abort_on_exception )
-  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( argc, argv, ThreadSupportLevelTraits<ThreadSupportLevelTag>::value, abort_on_exception ) )
+  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( argc, argv, level, abort_on_exception ) )
+{
+  this->initializeRankAndSize();
+}
+
+// Constructor with command-line inputs for funneled threading support level
+GlobalMPISession::GlobalMPISession( int& argc, char**& argv,
+                                    FunneledThreadingTag level,
+                                    bool abort_on_exception )
+  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( argc, argv, level, abort_on_exception ) )
+{
+  this->initializeRankAndSize();
+}
+
+// Constructor with command-line inputs for serialized threading support level
+GlobalMPISession::GlobalMPISession( int& argc, char**& argv,
+                                    SerializedThreadingTag level,
+                                    bool abort_on_exception )
+  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( argc, argv, level, abort_on_exception ) )
+{
+  this->initializeRankAndSize();
+}
+
+// Constructor with command-line inputs for multiple threading support level
+GlobalMPISession::GlobalMPISession( int& argc, char**& argv,
+                                    MultipleThreadingTag level,
+                                    bool abort_on_exception )
+  : d_impl( new GlobalMPISession::GlobalMPISessionImpl( argc, argv, level, abort_on_exception ) )
 {
   this->initializeRankAndSize();
 }
 
 // Destructor
 GlobalMPISession::~GlobalMPISession()
-{ /* ... */ }
+{ 
+  s_rank = 0;
+  s_size = 1;
+}
 
 // Initialize rank and size
 void GlobalMPISession::initializeRankAndSize()
@@ -473,7 +571,7 @@ void GlobalMPISession::initializeOutputStream(
   {
     if( limit_logging_to_root )
     {
-      if( this->getRank() != root_process && os.get() )
+      if( this->rank() != root_process && os.get() )
       {
         d_impl->cacheStreamBuffer( os );
         
@@ -592,13 +690,13 @@ void GlobalMPISession::initializeNotificationLog(
 }
 
 // Return the rank of the calling process (w.r.t. MPI_COMM_WORLD)
-int GlobalMPISession::getRank()
+int GlobalMPISession::rank()
 {
   return s_rank;
 }
 
 // Return the number of processes (w.r.t. MPI_COMM_WORLD)
-int GlobalMPISession::getSize()
+int GlobalMPISession::size()
 {
   return s_size;
 }

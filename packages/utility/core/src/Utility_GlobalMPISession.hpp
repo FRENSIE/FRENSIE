@@ -46,35 +46,81 @@ class GlobalMPISession : private boost::noncopyable
 public:
 
   //! The mpi single thread support level tag
-  struct SingleThreading
-  { /* ... */ };
+  struct SingleThreadingTag
+  { 
+    operator int() const;
+  };
+
+  //! The mpi single thread support level tag object
+  static SingleThreadingTag SingleThreading;
 
   //! The mpi funneled thread support level tag
-  struct FunneledThreading
-  { /* ... */ };
+  struct FunneledThreadingTag
+  { 
+    operator int() const;
+  };
+
+  //! The mpi funneled thread support level tag object
+  static FunneledThreadingTag FunneledThreading;
 
   //! The mpi serialized thread support level tag
-  struct SerializedThreading
-  { /* ... */ };
+  struct SerializedThreadingTag
+  { 
+    operator int() const;
+  };
+
+  //! The mpi serialized thread support level tag object
+  static SerializedThreadingTag SerializedThreading;
 
   //! The mpi multiple threading support level tag
-  struct MultipleThreading
-  { /* ... */ };
+  struct MultipleThreadingTag
+  { 
+    operator int() const;
+  };
+
+  //! The mpi multiple threading support level tag object
+  static MultipleThreadingTag MultipleThreading;
 
   //! Detault constructor
   explicit GlobalMPISession( bool abort_on_exception = true );
 
-  //! Constructor with threading level
-  template<typename ThreadSupportLevelTag>
-  explicit GlobalMPISession( ThreadSupportLevelTag level,
+  //! Constructor for single threading support level
+  explicit GlobalMPISession( SingleThreadingTag level,
+                             bool abort_on_exception = true );
+
+  //! Constructor for funneled threading support level
+  explicit GlobalMPISession( FunneledThreadingTag level,
+                             bool abort_on_exception = true );
+
+  //! Constructor for serialized threading support level
+  explicit GlobalMPISession( SerializedThreadingTag level,
+                             bool abort_on_exception = true );
+
+  //! Constructor for multiple threading support level
+  explicit GlobalMPISession( MultipleThreadingTag level,
                              bool abort_on_exception = true );
 
   //! Constructor with command-line inputs
   GlobalMPISession( int& argc, char**& argv, bool abort_on_exception = true );
 
-  //! Constructor with command-line inputs and threading level
-  template<typename ThreadSupportLevelTag>
-  GlobalMPISession( int& argc, char**& argv, ThreadSupportLevelTag level,
+  //! Constructor with command-line inputs for single threading support level
+  GlobalMPISession( int& argc, char**& argv,
+                    SingleThreadingTag level,
+                    bool abort_on_exception = true );
+
+  //! Constructor with command-line inputs for funneled threading support level
+  GlobalMPISession( int& argc, char**& argv,
+                    FunneledThreadingTag level,
+                    bool abort_on_exception = true );
+
+  //! Constructor with command-line inputs for serialized threading support level
+  GlobalMPISession( int& argc, char**& argv,
+                    SerializedThreadingTag level,
+                    bool abort_on_exception = true );
+
+  //! Constructor with command-line inputs for multiple threading support level
+  GlobalMPISession( int& argc, char**& argv,
+                    MultipleThreadingTag level,
                     bool abort_on_exception = true );
 
   //! Destructor
@@ -84,6 +130,12 @@ public:
   void initializeOutputStream( boost::shared_ptr<std::ostream>& os,
                                const int root_process = 0,
                                const bool limit_logging_to_root = false );
+
+  //! Restore an output stream
+  void restoreOutputStream( boost::shared_ptr<std::ostream>& os );
+
+  //! Restore all output streams
+  void restoreOutputStreams();
 
   //! Initialize logs
   void initializeLogs( boost::shared_ptr<std::ostream>& log_sink,
@@ -155,10 +207,10 @@ public:
   static bool is_main_thread();
 
   //! Return the rank of the calling process (w.r.t. MPI_COMM_WORLD)
-  static int getRank();
+  static int rank();
 
   //! Return the number of processes (w.r.t. MPI_COMM_WORLD)
-  static int getSize();
+  static int size();
 
   //! Create an mpi synchronization point
   static void barrier();
