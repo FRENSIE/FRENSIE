@@ -273,6 +273,11 @@ IF(${FRENSIE_ENABLE_MPI})
   SET_PROPERTY(TEST GlobalMPISession_4_test PROPERTY LABELS utility_core)
 ENDIF()
 
+ADD_EXECUTABLE(tstUnitTest tstUnitTest.cpp)
+TARGET_LINK_LIBRARIES(tstUnitTest utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(UnitTest_test tstUnitTest --report_level=detailed)
+SET_PROPERTY(TEST UnitTest_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstUnitTestDataTable tstUnitTestDataTable.cpp)
 TARGET_LINK_LIBRARIES(tstUnitTestDataTable utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(UnitTestDataTable_test tstUnitTestDataTable --report_level=detailed)
