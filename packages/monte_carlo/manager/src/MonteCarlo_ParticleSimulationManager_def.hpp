@@ -474,6 +474,14 @@ void ParticleSimulationManager<GeometryHandler,
                                                       ray_start_point,
                                                       particle.getPosition() );
 
+        // Make sure the position and direction are valid
+        testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( particle.getXPosition() ) );
+        testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( particle.getYPosition() ) );
+        testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( particle.getZPosition() ) );
+
+        // Make sure the direction is a unit vector
+        testPrecondition( Utility::validDirection( particle.getDirection() ) );
+
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank );
 

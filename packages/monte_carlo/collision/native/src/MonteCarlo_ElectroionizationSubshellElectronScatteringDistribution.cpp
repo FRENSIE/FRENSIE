@@ -341,6 +341,14 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                                 ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const
 {
+  // Make sure the position and direction are valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( electron.getXPosition() ) );
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( electron.getYPosition() ) );
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( electron.getZPosition() ) );
+
+  // Make sure the direction is a unit vector
+  testPrecondition( Utility::validDirection( electron.getDirection() ) );
+
   // The energy of the outgoing and knock-on electron
   double outgoing_energy, knock_on_energy;
 
