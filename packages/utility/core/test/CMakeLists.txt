@@ -220,13 +220,18 @@ TARGET_LINK_LIBRARIES(tstVariant utility_core)
 ADD_TEST(Variant_test tstVariant)
 SET_PROPERTY(TEST Variant_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstGlobalMPISessionInit tstGlobalMPISessionInit.cpp)
-TARGET_LINK_LIBRARIES(tstGlobalMPISessionInit utility_core ${BOOST_TEST_LIBRARY})
-
 ADD_EXECUTABLE(tstStandardTimer tstStandardTimer.cpp)
 TARGET_LINK_LIBRARIES(tstStandardTimer utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(StandardTimer_test tstStandardTimer)
 SET_PROPERTY(TEST StandardTimer_test PROPERTY LABLES utility_core)
+
+ADD_EXECUTABLE(tstGlobalOpenMPSession tstGlobalOpenMPSession.cpp)
+TARGET_LINK_LIBRARIES(tstGlobalOpenMPSession utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(GlobalOpenMPSession_test tstGlobalOpenMPSession)
+SET_PROPERTY(TEST GlobalOpenMPSession_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstGlobalMPISessionInit tstGlobalMPISessionInit.cpp)
+TARGET_LINK_LIBRARIES(tstGlobalMPISessionInit utility_core ${BOOST_TEST_LIBRARY})
 
 SET(MPI_TEST_EXEC_PREAMBLE "")
 
