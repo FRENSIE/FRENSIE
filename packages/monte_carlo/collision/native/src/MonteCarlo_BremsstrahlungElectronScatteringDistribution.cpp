@@ -27,7 +27,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use simple analytical photon angular distribution
   d_angular_distribution_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle,
+           &ThisType::SampleDipoleAngle,
            std::cref( *this ),
            std::placeholders::_1,
            std::placeholders::_2 );
@@ -51,7 +51,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use detailed photon angular distribution
   d_angular_distribution_func = std::bind<double>(
-            &BremsstrahlungElectronScatteringDistribution::Sample2BSAngle,
+            &ThisType::Sample2BSAngle,
             std::cref( *this ),
             std::placeholders::_1,
             std::placeholders::_2 );
@@ -93,7 +93,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
   }
   else
   {
-      // Set the correlated exact sample routine
+    // Set the correlated exact sample routine
     d_sample_func = std::bind<double>(
            &TwoDDist::sampleSecondaryConditionalExact,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
@@ -251,20 +251,9 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   // Incoming electron energy
   double incoming_energy = electron.getEnergy();
 
-  // energy of the bremsstrahlung photon
-  double photon_energy;
-
-  // photon outgoing angle cosine
-  double photon_angle_cosine;
-
   // Sample bremsstrahlung photon energy and angle cosine
-  this->sample( incoming_energy, photon_energy, photon_angle_cosine );
-
-  // Set the new electron energy
-  electron.setEnergy( incoming_energy - photon_energy );
-
-  // Increment the electron generation number
-  electron.incrementGenerationNumber();
+  double photon_energy, photon_angle_cosine;
+  this->sample( electron.getEnergy(), photon_energy, photon_angle_cosine );
 
   // Create new photon
   Teuchos::RCP<PhotonState> bremsstrahlung_photon(
@@ -279,6 +268,18 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
+
+  // Set the new electron energy
+  electron.setEnergy( electron.getEnergy() - photon_energy );
+
+  // Increment the electron generation number
+  electron.incrementGenerationNumber();
+
+  testPostcondition( photon_energy > 0.0 );
+  testPostcondition( electron.getEnergy() > 0.0 );
+  testPostcondition( photon_angle_cosine <= 1.0 );
+  testPostcondition( photon_angle_cosine >= -1.0 );
+
 }
 
 // Sample the outgoing photon direction from the analytical function
@@ -286,6 +287,10 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                                           const double incoming_electron_energy,
                                           const double photon_energy  ) const
 {
+  // Make sure the energies are valid
+  testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_electron_energy );
+
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared(
                           Utility::PhysicalConstants::electron_rest_mass_energy,
@@ -307,6 +312,10 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                         const double incoming_electron_energy,
                                         const double photon_energy ) const
 {
+  // Make sure the energies are valid
+  testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_electron_energy );
+
   double outgoing_electron_energy = incoming_electron_energy - photon_energy;
   double ratio = outgoing_electron_energy/incoming_electron_energy;
   double two_ratio = 2.0*ratio;

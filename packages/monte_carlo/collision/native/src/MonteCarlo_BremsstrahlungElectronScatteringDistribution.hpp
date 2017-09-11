@@ -22,6 +22,9 @@ class BremsstrahlungElectronScatteringDistribution : public ElectronScatteringDi
 
 public:
 
+  //! Typedef for this type
+  typedef BremsstrahlungElectronScatteringDistribution ThisType;
+
   //! Typedef for the two d distributions
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 

@@ -293,11 +293,12 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
                                          knock_on_energy );
 
+  testPostcondition( knock_on_energy > 0.0 );
   testPostcondition( incoming_energy > knock_on_energy );
 }
 
 // Sample an knock on energy and direction from the distribution
-void ElectroionizationSubshellElectronScatteringDistribution::sample(
+void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSecondary(
                const double incoming_energy,
                double& outgoing_energy,
                double& knock_on_energy,
@@ -307,7 +308,12 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Sample knock-on electron energy and outgoing angle
   this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
-  outgoing_energy = incoming_energy - knock_on_energy - d_binding_energy;
+  /* NOTE: When calculating the outgoing energy the binding energy should be
+   * subtracted from the incoming energy first to ensure a non-negative result.
+   * Otherwise, for the max knock on energy ( ie: (E_in - E_b)/2 ), roundoff
+   * error can sometimes cause a negative outgoing energy to be calculated.
+   */
+  outgoing_energy = (incoming_energy - d_binding_energy) - knock_on_energy;
 
   // Calculate the outgoing angle cosine for the primary electron
   scattering_angle_cosine = outgoingAngle( incoming_energy,
@@ -317,9 +323,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   testPostcondition( knock_on_energy > 0.0 );
   testPostcondition( outgoing_energy > 0.0 );
   testPostcondition( knock_on_angle_cosine <= 1.0 );
-  testPostcondition( knock_on_angle_cosine >= -1.0 );
+  testPostcondition( knock_on_angle_cosine >= 0.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
-  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine >= 0.0 );
 }
 
 // Sample an knock on energy and direction and record the number of trials
@@ -347,11 +353,11 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double scattering_angle_cosine, knock_on_angle_cosine;
 
   // Sample the distribution
-  sample( electron.getEnergy(),
-          outgoing_energy,
-          knock_on_energy,
-          scattering_angle_cosine,
-          knock_on_angle_cosine );
+  samplePrimaryAndSecondary( electron.getEnergy(),
+                             outgoing_energy,
+                             knock_on_energy,
+                             scattering_angle_cosine,
+                             knock_on_angle_cosine );
 
   // Create new elecrton
   Teuchos::RCP<ParticleState> knock_on_electron(
@@ -402,6 +408,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
          sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
              ( energy_ratio*normalized_incoming_energy + 2.0 ) );
 
+  testPostcondition( angle_cosine >= 0.0 );
   testPostcondition( angle_cosine <= 1.0 );
 
   return angle_cosine;
