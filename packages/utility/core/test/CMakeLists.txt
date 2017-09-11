@@ -213,21 +213,19 @@ TARGET_LINK_LIBRARIES(tstMap utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(Map_test tstMap --report_level=detailed)
 SET_PROPERTY(TEST Map_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstVariant
-  tstVariant.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstVariant utility_core)
-ADD_TEST(Variant_test tstVariant)
+ADD_EXECUTABLE(tstVariant tstVariant.cpp)
+TARGET_LINK_LIBRARIES(tstVariant utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(Variant_test tstVariant --report_level=detailed)
 SET_PROPERTY(TEST Variant_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstStandardTimer tstStandardTimer.cpp)
 TARGET_LINK_LIBRARIES(tstStandardTimer utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(StandardTimer_test tstStandardTimer)
+ADD_TEST(StandardTimer_test tstStandardTimer --report_level=detailed)
 SET_PROPERTY(TEST StandardTimer_test PROPERTY LABLES utility_core)
 
 ADD_EXECUTABLE(tstGlobalOpenMPSession tstGlobalOpenMPSession.cpp)
 TARGET_LINK_LIBRARIES(tstGlobalOpenMPSession utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(GlobalOpenMPSession_test tstGlobalOpenMPSession)
+ADD_TEST(GlobalOpenMPSession_test tstGlobalOpenMPSession --report_level=detailed)
 SET_PROPERTY(TEST GlobalOpenMPSession_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstGlobalMPISessionInit tstGlobalMPISessionInit.cpp)
