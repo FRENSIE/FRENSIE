@@ -145,9 +145,14 @@ UnitTestDataTable::ColumnInitializer& operator<<(
 // Constructor
 UnitTestDataTable::UnitTestDataTable( const std::string& name )
   : d_name( name ),
+    d_column_initializer( new ColumnInitializer( this ) ),
     d_column_name_index_map(),
     d_row_order(),
     d_row_name_map()
+{ /* ... */ }
+
+// Destructor
+UnitTestDataTable::~UnitTestDataTable()
 { /* ... */ }
 
 // Get the data table name
@@ -171,9 +176,9 @@ void UnitTestDataTable::addColumn( const std::string& column_name )
 }
 
 // Create the columns
-UnitTestDataTable::ColumnInitializer UnitTestDataTable::columns()
+UnitTestDataTable::ColumnInitializer& UnitTestDataTable::columns()
 {
-  return UnitTestDataTable::ColumnInitializer( this );
+  return *d_column_initializer;
 }
 
 // Check if a column exists
@@ -257,14 +262,6 @@ UnitTestDataTable::getRow( const std::string& row_name ) const
                       "table because it does not exist!" );
 
   return *(d_row_name_map.find(row_name)->second);
-}
-
-// Get a table element
-Utility::Variant& UnitTestDataTable::getElement(
-                                               const std::string& row_name,
-                                               const std::string& column_name )
-{
-  return this->getRow( row_name )[this->getColumnIndex( column_name )];
 }
 
 // Get a table element

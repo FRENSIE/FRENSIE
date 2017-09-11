@@ -273,6 +273,11 @@ IF(${FRENSIE_ENABLE_MPI})
   SET_PROPERTY(TEST GlobalMPISession_4_test PROPERTY LABELS utility_core)
 ENDIF()
 
+ADD_EXECUTABLE(tstUnitTestDataTable tstUnitTestDataTable.cpp)
+TARGET_LINK_LIBRARIES(tstUnitTestDataTable utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(UnitTestDataTable_test tstUnitTestDataTable --report_level=detailed)
+SET_PROPERTY(TEST UnitTestDataTable_test PROPERTY LABELS utility_core)
+
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
 

@@ -33,8 +33,7 @@ public:
   UnitTestDataTable( const std::string& name );
 
   //! Destructor
-  virtual ~UnitTestDataTable()
-  { /* ... */ }
+  ~UnitTestDataTable();
 
   //! Get the data table name
   const std::string& getName() const;
@@ -43,7 +42,7 @@ public:
   void addColumn( const std::string& column_name );
 
   //! Create the columns
-  ColumnInitializer columns();
+  ColumnInitializer& columns();
 
   //! Check if a column exists
   bool doesColumnExist( const std::string& column_name ) const;
@@ -73,10 +72,6 @@ public:
   const Row& getRow( const std::string& row_name ) const;
 
   //! Get a table element
-  Utility::Variant& getElement( const std::string& row_name,
-                                const std::string& column_name );
-
-  //! Get a table element
   const Utility::Variant& getElement( const std::string& row_name,
                                       const std::string& column_name ) const;
 
@@ -89,6 +84,9 @@ private:
 
   // The data table name
   std::string d_name;
+
+  // The column initializer
+  std::unique_ptr<ColumnInitializer> d_column_initializer;
 
   // The column name index map
   typedef std::map<std::string,size_t> ColumnNameIndexMap;
