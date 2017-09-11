@@ -126,40 +126,40 @@ public:
   //! Destructor
   ~GlobalMPISession();
 
-  //! Initialize an output stream
-  void initializeOutputStream( boost::shared_ptr<std::ostream>& os,
-                               const int root_process = 0,
-                               const bool limit_logging_to_root = false );
-
-  //! Restore an output stream
-  void restoreOutputStream( boost::shared_ptr<std::ostream>& os );
-
-  //! Restore all output streams
-  void restoreOutputStreams();
-
   //! Initialize logs
-  void initializeLogs( boost::shared_ptr<std::ostream>& log_sink,
+  void initializeLogs( boost::shared_ptr<std::ostream> log_sink,
                        const int root_process = 0,
                        const bool limit_logging_to_root = false,
                        const bool synchronous_logging = true );
 
   //! Initialize error log
-  void initializeErrorLog( boost::shared_ptr<std::ostream>& log_sink,
+  void initializeErrorLog( boost::shared_ptr<std::ostream> log_sink,
                            const int root_process = 0,
                            const bool limit_logging_to_root = false,
                            const bool synchronous_logging = true );
 
   //! Initialize warning log
-  void initializeWarningLog( boost::shared_ptr<std::ostream>& log_sink,
+  void initializeWarningLog( boost::shared_ptr<std::ostream> log_sink,
                              const int root_process = 0,
                              const bool limit_logging_to_root = false,
                              const bool synchronous_logging = true );
 
   //! Initialize notification log
-  void initializeNotificationLog( boost::shared_ptr<std::ostream>& log_sink,
+  void initializeNotificationLog( boost::shared_ptr<std::ostream> log_sink,
                                   const int root_process = 0,
                                   const bool limit_logging_to_root = false,
                                   const bool synchronous_logging = true );
+
+  //! Initialize an output stream
+  static void initializeOutputStream( boost::shared_ptr<std::ostream> os,
+                                      const int root_process = 0,
+                                      const bool limit_logging_to_root = false );
+
+  //! Restore an output stream
+  static void restoreOutputStream( boost::shared_ptr<std::ostream> os );
+
+  //! Restore all output streams
+  static void restoreOutputStreams();
 
   //! Check if MPI has been configured for use
   static bool isMPIUsed();

@@ -189,7 +189,107 @@ GlobalMPISession::MultipleThreadingTag::operator int() const
 #endif 
 }
 
+/*! The output stream cache
+ *
+ * This class stores the stream buffers that get replaced when output
+ * is suppressed on a certain process by the Utility::GlobalMPISession. These
+ * stream buffers can be restored manually or the user can simply wait until
+ * an object of this class is destroyed, at which point all of the cached
+ * streams will have their buffers restored.
+ * \ingroup mpi
+ */
+class OutputStreamCache
+{
+
+public:
+
+  //! Constructor
+  OutputStreamCache()
+  { /* ... */ }
+
+  //! Destructor
+  ~OutputStreamCache()
+  {
+    this->restoreStreamBuffers();
+  }
+
+  //! Cache a stream buffer
+  void cacheStreamBuffer( boost::shared_ptr<std::ostream> os )
+  {
+#ifdef HAVE_FRENSIE_MPI
+    StreamBufferCache::iterator it = 
+      d_stream_buffer_cache.find( os.get() );
+
+    if( it == d_stream_buffer_cache.end() )
+    {
+      d_stream_buffer_cache[os.get()] = os->rdbuf();
+      d_streams.push_back( os );
+    }
+#endif
+  }
+
+  //! Restore a stream buffer
+  void restoreStreamBuffer( boost::shared_ptr<std::ostream> os )
+  {
+#ifdef HAVE_FRENSIE_MPI
+    StreamBufferCache::iterator it = 
+      d_stream_buffer_cache.find( os.get() );
+
+    if( it != d_stream_buffer_cache.end() )
+    {
+      os->rdbuf( it->second );
+
+      d_stream_buffer_cache.erase( it );
+      
+      d_streams.remove( os );
+    }
+#endif
+  }
+
+  //! Restore all stream buffers
+  void restoreStreamBuffers()
+  {
+#ifdef HAVE_FRENSIE_MPI
+    StreamList::iterator list_it, list_end;
+    list_it = d_streams.begin();
+    list_end = d_streams.end();
+
+    while( list_it != list_end )
+    {
+      StreamBufferCache::iterator buffer_cache_it =
+        d_stream_buffer_cache.find( list_it->get() );
+
+      if( buffer_cache_it != d_stream_buffer_cache.end() )
+        (*list_it)->rdbuf( buffer_cache_it->second );
+      
+      ++list_it;
+    }
+
+    // Clear the cache
+    d_stream_buffer_cache.clear();
+    d_streams.clear();
+#endif
+  }
+
+private:
+
+#ifdef HAVE_FRENSIE_MPI
+  // The streams that have cached stream buffers
+  typedef std::list<boost::shared_ptr<std::ostream> > StreamList;
+  StreamList d_streams;
+
+  // The stream buffer cache
+  typedef std::map<std::ostream*,std::streambuf*> StreamBufferCache;
+  StreamBufferCache d_stream_buffer_cache;
+#endif
+};
+
 /*! The GlobalMPISession implementation
+ *
+ * This class simply wraps the boost::mpi::environment object and provides
+ * some additional constructors to help with initialization. It MPI has not
+ * been configured for use this class is empty but the constructors can 
+ * still be used (dummy initialization).
  * \ingroup mpi
  */
 class GlobalMPISession::GlobalMPISessionImpl
@@ -232,52 +332,27 @@ public:
 
   //! Destructor
   ~GlobalMPISessionImpl()
-  {
-#ifdef HAVE_FRENSIE_MPI
-    // Restore stream buffers
-    StreamList::iterator stream_it, stream_end;
-    stream_it = d_streams.begin();
-    stream_end = d_streams.end();
-
-    while( stream_it != stream_end )
-    {
-      (*stream_it)->rdbuf( d_stream_buffer_cache[stream_it->get()] );
-      
-      ++stream_it;
-    }
-#endif
+  { 
+    s_ostream_cache.restoreStreamBuffers();
   }
 
-  //! Cache a stream buffer
-  void cacheStreamBuffer( boost::shared_ptr<std::ostream>& os )
-  {
-#ifdef HAVE_FRENSIE_MPI
-    StreamBufferCache::iterator it = 
-      d_stream_buffer_cache.find( os.get() );
-
-    if( it == d_stream_buffer_cache.end() )
-    {
-      d_stream_buffer_cache[os.get()] = os->rdbuf();
-      d_streams.push_back( os );
-    }
-#endif
-  }
+  //! Get the output stream cache
+  static OutputStreamCache& getOutputStreamCache()
+  { return s_ostream_cache; }
 
 private:
+
+  // The output stream cache
+  static OutputStreamCache s_ostream_cache;
 
 #ifdef HAVE_FRENSIE_MPI
   // The boost mpi environment
   boost::mpi::environment d_environment;
-
-  // The streams that have cached stream buffers
-  typedef std::list<boost::shared_ptr<std::ostream> > StreamList;
-  StreamList d_streams;
-
-  // The stream buffer cache
-  typedef std::map<std::ostream*,std::streambuf*> StreamBufferCache;
-  StreamBufferCache d_stream_buffer_cache;
 #endif
 };
+
+// Initialize the output stream cache
+OutputStreamCache GlobalMPISession::GlobalMPISessionImpl::s_ostream_cache;
 
 // Detault constructor
 GlobalMPISession::GlobalMPISession( bool abort_on_exception )
@@ -562,22 +637,46 @@ bool GlobalMPISession::is_main_thread()
  * can be used to limit stream output to a single process.
  */
 void GlobalMPISession::initializeOutputStream(
-                                           boost::shared_ptr<std::ostream>& os,
-                                           const int root_process,
-                                           const bool limit_logging_to_root )
+                                            boost::shared_ptr<std::ostream> os,
+                                            const int root_process,
+                                            const bool limit_logging_to_root )
 {
 #ifdef HAVE_FRENSIE_MPI
   if( GlobalMPISession::initialized() && !GlobalMPISession::finalized() )
   {
     if( limit_logging_to_root )
     {
-      if( this->rank() != root_process && os.get() )
+      if( GlobalMPISession::rank() != root_process && os.get() )
       {
-        d_impl->cacheStreamBuffer( os );
+        GlobalMPISessionImpl::getOutputStreamCache().cacheStreamBuffer( os );
         
         os->rdbuf( NULL );
       }
     }
+  }
+#endif
+}
+
+// Restore an output stream
+void GlobalMPISession::restoreOutputStream(
+                                           boost::shared_ptr<std::ostream> os )
+{
+  #ifdef HAVE_FRENSIE_MPI
+  if( GlobalMPISession::initialized() && !GlobalMPISession::finalized() )
+  {
+    GlobalMPISessionImpl::getOutputStreamCache().restoreStreamBuffer( os );
+  }
+#endif
+}
+
+// Restore all output streams
+void GlobalMPISession::restoreOutputStreams()
+{
+#ifdef HAVE_FRENSIE_MPI
+  
+  if( GlobalMPISession::initialized() && !GlobalMPISession::finalized() )
+  {
+    GlobalMPISessionImpl::getOutputStreamCache().restoreStreamBuffers();
   }
 #endif
 }
@@ -589,10 +688,10 @@ void GlobalMPISession::initializeOutputStream(
  * (synchronous or asynchronous) can also be specified.
  */
 void GlobalMPISession::initializeLogs(
-                                     boost::shared_ptr<std::ostream>& log_sink,
-                                     const int root_process,
-                                     const bool limit_logging_to_root,
-                                     const bool synchronous_logging )
+                                      boost::shared_ptr<std::ostream> log_sink,
+                                      const int root_process,
+                                      const bool limit_logging_to_root,
+                                      const bool synchronous_logging )
 {
   this->initializeOutputStream(log_sink, root_process, limit_logging_to_root);
 
@@ -615,7 +714,7 @@ void GlobalMPISession::initializeLogs(
  * can be used to limit error logging to a single process. The type of 
  * error logging (synchronous or asynchronous) can also be specified.
  */
-void GlobalMPISession::initializeErrorLog( boost::shared_ptr<std::ostream>& log_sink,
+void GlobalMPISession::initializeErrorLog( boost::shared_ptr<std::ostream> log_sink,
                                            const int root_process,
                                            const bool limit_logging_to_root,
                                            const bool synchronous_logging )
@@ -642,10 +741,10 @@ void GlobalMPISession::initializeErrorLog( boost::shared_ptr<std::ostream>& log_
  * warning logging (synchronous or asynchronous) can also be specified.
  */
 void GlobalMPISession::initializeWarningLog(
-                                     boost::shared_ptr<std::ostream>& log_sink,
-                                     const int root_process,
-                                     const bool limit_logging_to_root,
-                                     const bool synchronous_logging )
+                                      boost::shared_ptr<std::ostream> log_sink,
+                                      const int root_process,
+                                      const bool limit_logging_to_root,
+                                      const bool synchronous_logging )
 {
   this->initializeOutputStream(log_sink, root_process, limit_logging_to_root);
 
@@ -669,10 +768,10 @@ void GlobalMPISession::initializeWarningLog(
  * notification logging (synchronous or asynchronous) can also be specified.
  */
 void GlobalMPISession::initializeNotificationLog(
-                                     boost::shared_ptr<std::ostream>& log_sink,
-                                     const int root_process,
-                                     const bool limit_logging_to_root,
-                                     const bool synchronous_logging )
+                                      boost::shared_ptr<std::ostream> log_sink,
+                                      const int root_process,
+                                      const bool limit_logging_to_root,
+                                      const bool synchronous_logging )
 {
   this->initializeOutputStream(log_sink, root_process, limit_logging_to_root);
 

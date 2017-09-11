@@ -223,6 +223,11 @@ SET_PROPERTY(TEST Variant_test PROPERTY LABELS utility_core)
 ADD_EXECUTABLE(tstGlobalMPISessionInit tstGlobalMPISessionInit.cpp)
 TARGET_LINK_LIBRARIES(tstGlobalMPISessionInit utility_core ${BOOST_TEST_LIBRARY})
 
+ADD_EXECUTABLE(tstStandardTimer tstStandardTimer.cpp)
+TARGET_LINK_LIBRARIES(tstStandardTimer utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(StandardTimer_test tstStandardTimer)
+SET_PROPERTY(TEST StandardTimer_test PROPERTY LABLES utility_core)
+
 SET(MPI_TEST_EXEC_PREAMBLE "")
 
 IF(${FRENSIE_ENABLE_MPI})
@@ -254,8 +259,16 @@ UNSET(MPI_TEST_EXEC_PREAMBLE)
 
 ADD_EXECUTABLE(tstGlobalMPISession tstGlobalMPISession.cpp)
 TARGET_LINK_LIBRARIES(tstGlobalMPISession utility_core ${BOOST_TEST_LIBRARY})
-ADD_TEST(GlobalMPISession_test ${MPI_TEST_EXEC_PREAMBLE} tstGlobalMPISession --report_level=detailed)
+ADD_TEST(GlobalMPISession_test tstGlobalMPISession --report_level=detailed)
 SET_PROPERTY(TEST GlobalMPISession_test PROPERTY LABELS utility_core)
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_TEST(GlobalMPISession_2_test ${MPIEXEC} -n 2 tstGlobalMPISession --report_level=detailed)
+  SET_PROPERTY(TEST GlobalMPISession_2_test PROPERTY LABELS utility_core)
+  
+  ADD_TEST(GlobalMPISession_4_test ${MPIEXEC} -n 4 tstGlobalMPISession --report_level=detailed)
+  SET_PROPERTY(TEST GlobalMPISession_4_test PROPERTY LABELS utility_core)
+ENDIF()
 
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
