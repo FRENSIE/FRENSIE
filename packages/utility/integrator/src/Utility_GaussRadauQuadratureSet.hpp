@@ -9,7 +9,11 @@
 #ifndef UTILITY_GAUSS_RADAU_QUADRATURE_SET_HPP
 #define UTILITY_GAUSS_RADAU_QUADRATURE_SET_HPP
 
+<<<<<<< HEAD
 // Std Includes
+=======
+//FRENSIE includes
+>>>>>>> 45c84f6af3ac28b42c3bc2ae8c477d48e6054ce4
 #include <vector>
 
 namespace Utility{
