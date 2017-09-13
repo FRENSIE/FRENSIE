@@ -452,35 +452,11 @@ void ParticleSimulationManager<GeometryHandler,
       // A collision occurs in this cell
       else
       {
-<<<<<<< HEAD
-        #pragma omp flush( d_end_simulation )
-        if( d_end_simulation )
-        {
-          // Print particle information
-          #pragma omp critical( ostream_update )
-          {
-            std::cerr << " History #: " << particle.getHistoryNumber()
-                      << " Collision #: " << particle.getCollisionNumber()
-                      << " Time: " << particle.getTime()
-                      << std::endl;
-          }
-
-          particle.setAsGone();
-          break;
-        }
-
-        // Advance the particle to the collision site
-        double distance_to_collision =
-          remaining_subtrack_op/cell_total_macro_cross_section;
-
-        particle.advance( distance_to_collision );
-=======
   	    // Advance the particle to the collision site
   	    double distance_to_collision =
             remaining_subtrack_op/cell_total_macro_cross_section;
 
   	    particle.advance( distance_to_collision );
->>>>>>> 45c84f6af3ac28b42c3bc2ae8c477d48e6054ce4
 
         GMI::advanceInternalRayBySubstep( distance_to_collision );
 
@@ -503,23 +479,17 @@ void ParticleSimulationManager<GeometryHandler,
                                                       particle.getPosition() );
 
         // Undergo a collision with the material in the cell
-<<<<<<< HEAD
         CMI::collideWithCellMaterial( particle, bank );
 
         if( !particle.isGone() )
         {
           GMI::changeInternalRayDirection( particle.getDirection() );
-=======
-        CMI::collideWithCellMaterial( particle, bank, true );
-        
->>>>>>> 45c84f6af3ac28b42c3bc2ae8c477d48e6054ce4
 
-        GMI::changeInternalRayDirection( particle.getDirection() );
-
-        // Cache the current position of the new ray
-        ray_start_point[0] = particle.getXPosition();
-        ray_start_point[1] = particle.getYPosition();
-        ray_start_point[2] = particle.getZPosition();
+          // Cache the current position of the new ray
+          ray_start_point[0] = particle.getXPosition();
+          ray_start_point[1] = particle.getYPosition();
+          ray_start_point[2] = particle.getZPosition();
+        }
 
         // Make sure the energy is above the cutoff
         if( particle.getEnergy() <
