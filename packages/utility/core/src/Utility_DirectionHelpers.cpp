@@ -24,11 +24,9 @@ inline bool isNotNanOrInf( const double x_component,
                            const double y_component,
                            const double z_component )
 {
-  remember( typedef Teuchos::ScalarTraits<double> ST );
-
-  return !ST::isnaninf( x_component ) &&
-         !ST::isnaninf( y_component ) &&
-         !ST::isnaninf( z_component );
+  return !Teuchos::ScalarTraits<double>::isnaninf( x_component ) &&
+         !Teuchos::ScalarTraits<double>::isnaninf( y_component ) &&
+         !Teuchos::ScalarTraits<double>::isnaninf( z_component );
 }
 
 // Test if the direction is valid
