@@ -26,8 +26,8 @@ namespace Utility{
  * to ensure persistance during testing.
  * \ingroup unit_test_framework
  */
-template<template<typename,typename...> class TemplateUnitTest,
-         size_t N,
+template<template<typename...> class TemplateUnitTest,
+         bool expand_inner_tuples,
          typename... Types>
 class TemplateUnitTestWrapper
 {
@@ -52,10 +52,10 @@ private:
 /*! The specialization of TemplateUnitTestWrapper for std::tuple
  * \ingroup unit_test_framework
  */
-template<template<typename,typename...> class TemplateUnitTest,
-         size_t N,
+template<template<typename...> class TemplateUnitTest,
+         bool expand_inner_tuples,
          typename... Types>
-class TemplateUnitTestWrapper<TemplateUnitTest,N,std::tuple<Types...> > : public TemplateUnitTestWrapper<TemplateUnitTest,N,Types...>
+class TemplateUnitTestWrapper<TemplateUnitTest,expand_inner_tuples,std::tuple<Types...> > : public TemplateUnitTestWrapper<TemplateUnitTest,expand_inner_tuples,Types...>
 { /* ... */ };
   
 } // end Utility namespace

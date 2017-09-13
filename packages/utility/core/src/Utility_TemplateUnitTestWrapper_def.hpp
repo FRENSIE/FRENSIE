@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
+#include "Utility_TypeTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -21,73 +22,69 @@ namespace Utility{
 namespace Details{
   
 //! The template unit test instantiation helper
-template<size_t I, size_t N, typename... Types, typename Enabled = void>
+template<size_t I, typename TupleTypeWrapper, typename Enabled = void>
 struct TemplateUnitTestInstantiationHelper
 {
   //! Instantiate the template unit test template I
-  template<template<typename,typename...> class TemplateUnitTest>
+  template<template<typename...> class TemplateUnitTest,
+           bool expand_inner_tuples>
   static inline void instantiateUnitTest(
                   std::vector<std::shared_ptr<Utility::UnitTest> >& test_list )
   {
-    typedef Utility::TupleSlice<I*N,N,std::tuple<Types...> >::type SliceType;
-    
-    test_list[I].reset( new TemplateUnitTest<SliceType>() );
+    typedef typename Utility::TupleElement<I,TupleTypeWrapper>::type IType;
 
-    TemplateUnitTestInstantiationHelper<I+1,N,Types...>::instantiateUnitTest<TemplateUnitTest>( test_list, type_names );
+    if( Utility::IsTuple<IType>::value )
+    {
+      test_list[I].reset( new TemplateUnitTest<std::integral_constant<bool,expand_inner_tuples>,IType>() );
+    }
+    else
+    {
+      test_list[I].reset( new TemplateUnitTest<IType>() );
+    }
+
+    TemplateUnitTestInstantiationHelper<I+1,TupleTypeWrapper>::template instantiateUnitTest<TemplateUnitTest,expand_inner_tuples>( test_list );
   }                   
-};
-
-/*! \brief Partial specialization of unit test instantiation helper 
- * (I == Utility::TupleSize, which is for the last element)
- */
-template<size_t I, typename TupleType>
-struct TemplateUnitTestInstantiationHelper<I,TupleType,typename std::enable_if<I==Utility::TupleSize<TupleType>::value-1>::type>
-{
-  //! Instantiate the template unit test type I
-  template<template<typename,typename...> class TemplateUnitTest>
-  static inline void instantiateUnitTest(
-                   std::vector<std::shared_ptr<Utility::UnitTest> >&,
-                   const std::vector<std::string>& )
-  { /* ... */ }
 };
 
 /*! \brief Partial specialization of unit test instantiation helper 
  * (I == Utility::TupleSize, which is past the last element)
  */
-template<size_t I, typename TupleType>
-struct TemplateUnitTestInstantiationHelper<I,TupleType,typename std::enable_if<I==Utility::TupleSize<TupleType>::value>::type>
+template<size_t I, typename TupleTypeWrapper>
+struct TemplateUnitTestInstantiationHelper<I,TupleTypeWrapper,typename std::enable_if<I==Utility::TupleSize<TupleTypeWrapper>::value>::type>
 {
   //! Instantiate the template unit test type I
-  template<template<typename,typename...> class TemplateUnitTest>
+  template<template<typename...> class TemplateUnitTest,
+           bool expand_inner_tuples>
   static inline void instantiateUnitTest(
-                   std::vector<std::shared_ptr<Utility::UnitTest> >&,
-                   const std::vector<std::string>& )
+                            std::vector<std::shared_ptr<Utility::UnitTest> >& )
   { /* ... */ }
 };
 
 } // end Details namespace
 
 // Constructor
-template<template<typename,typename...> class TemplateUnitTest,
-         size_t N,
+template<template<typename...> class TemplateUnitTest,
+         bool expand_inner_tuples,
          typename... Types>
-TemplateUnitTestWrapper<TemplateUnitTest,Types...>::TemplateUnitTestWrapper()
-  : d_instantiated_tests( Utility::TupleSize<std::tuple<Types...> >::value/N )
+TemplateUnitTestWrapper<TemplateUnitTest,expand_inner_tuples,Types...>::TemplateUnitTestWrapper()
+  : d_instantiated_tests( Utility::TupleSize<std::tuple<Types...> >::value )
 {
   // Make sure that the number of types is a multiple of N
-  testStaticPrecondition( sizeof(Types...) % N == 0 );
-  
-  Details::TemplateUnitTestInstantiationHelper<0,N,Types...>::instantiate<TemplateUnitTest>( d_instantiated_tests );
+  Details::TemplateUnitTestInstantiationHelper<0,std::tuple<Types...> >::template instantiateUnitTest<TemplateUnitTest,expand_inner_tuples>( d_instantiated_tests );
 }
 
 // Destructor
-template<template<typename,typename...> class TemplateUnitTest, typename Types>
-TemplateUnitTestWrapper<TemplateUnitTest,Types>::~TemplateUnitTestWrapper()
+template<template<typename...> class TemplateUnitTest,
+         bool expand_inner_tuples,
+         typename... Types>
+TemplateUnitTestWrapper<TemplateUnitTest,expand_inner_tuples,Types...>::~TemplateUnitTestWrapper()
 { /* ... */ }
 
 // Return the number of instantiated tests
-template<template<typename,typename...> class TemplateUnitTest, typename Types>
-size_t TemplateUnitTestWrapper<TemplateUnitTest,Types>::getNumberOfTests() const
+template<template<typename...> class TemplateUnitTest,
+         bool expand_inner_tuples,
+         typename... Types>
+size_t TemplateUnitTestWrapper<TemplateUnitTest,expand_inner_tuples,Types...>::getNumberOfTests() const
 {
   return d_instantiated_tests.size();
 }

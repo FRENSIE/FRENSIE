@@ -40,11 +40,24 @@ struct TypeNameTraits
 template<typename T>
 std::string typeName();
 
+/*! return the parameter pack type name
+ * \ingroup type_name_traits
+ */
+template<typename... Types>
+typename std::enable_if<(sizeof...(Types)>1),std::string>::type typeName();
+
 /*! Return the type name
  * \ingroup type_name_traits
  */
 template<typename T>
 std::string typeName( const T& obj );
+
+/*! Return the type names
+ * \ingroup type_name_traits
+ */
+template<typename... Types>
+typename std::enable_if<(sizeof...(Types)>1),std::string>::type
+typeName( const Types&... obj );
   
 } // end Utility namespace
 

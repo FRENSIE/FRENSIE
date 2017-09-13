@@ -9,6 +9,9 @@
 #ifndef UTILITY_TEMPLATE_UNIT_TEST_HPP
 #define UTILITY_TEMPLATE_UNIT_TEST_HPP
 
+// Boost Includes
+#include <boost/mpl/list.hpp>
+
 // FRENSIE Includes
 #include "Utility_UnitTest.hpp"
 #include "Utility_Tuple.hpp"
@@ -19,21 +22,19 @@ namespace Utility{
  * \ingroup unit_test_framework
  */
 template<typename... Types>
-class TemplateUnitTest
+class TemplateUnitTest : public UnitTest
 {
 
 public:
 
   //! Constructor
   TemplateUnitTest( const std::string& group_name,
-                    const std::string& test_name,
-                    const std::string& data_name = "" );
+                    const std::string& test_name );
 
   //! Constructor with template parameter name
   TemplateUnitTest( const std::string& group_name,
                     const std::string& test_name,
-                    const std::string& template_param_pack_name,
-                    const std::string& data_name = "" );
+                    const std::string& template_param_pack_name );
 
   //! Destructor
   ~TemplateUnitTest()
@@ -43,7 +44,7 @@ public:
   template<size_t N>
   struct _T
   {
-    typedef typename Utility::TupleElement<N,std::tuple<Types...> >::type;
+    typedef typename Utility::TupleElement<N,std::tuple<Types...> >::type get;
   };
 };
 
@@ -51,16 +52,45 @@ public:
  * \ingroup unit_test_framework
  */
 template<typename... Types>
-class TemplateUnitTest<std::tuple<Types...> > : public TemplateUnitTest<Types...>
-{ /* ... */ };
+class TemplateUnitTest<std::true_type,std::tuple<Types...> > : public TemplateUnitTest<Types...>
+{ 
+public:
 
-/*! Partial specialization of TemplateUnitTest for empty std::tuple type
+  //! Constructor
+  TemplateUnitTest( const std::string& group_name,
+                    const std::string& test_name )
+    : TemplateUnitTest<Types...>( group_name, test_name )
+  { /* ... */ }
+
+  //! Constructor with template parameter name
+  TemplateUnitTest( const std::string& group_name,
+                    const std::string& test_name,
+                    const std::string& template_param_pack_name )
+    : TemplateUnitTest<Types...>( group_name, test_name, template_param_pack_name )
+  { /* ... */ }
+};
+
+/*! Partial specialization of TemplateUnitTest for std::tuple type
  * \ingroup unit_test_framework
  */
-template<>
-class TemplateUnitTest<std::tuple<> >
-{ /* ... */ };
+template<typename... Types>
+class TemplateUnitTest<std::false_type,std::tuple<Types...> > : public TemplateUnitTest<std::tuple<Types...> >
+{
+public:
 
+  //! Constructor
+  TemplateUnitTest( const std::string& group_name,
+                    const std::string& test_name )
+    : TemplateUnitTest<std::tuple<Types...> >( group_name, test_name )
+  { /* ... */ }
+
+  //! Constructor with template parameter name
+  TemplateUnitTest( const std::string& group_name,
+                    const std::string& test_name,
+                    const std::string& template_param_pack_name )
+    : TemplateUnitTest<std::tuple<Types...> >( group_name, test_name, template_param_pack_name )
+  { /* ... */ }
+};
   
 } // end Utility namespace
 

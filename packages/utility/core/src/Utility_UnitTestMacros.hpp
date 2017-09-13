@@ -152,15 +152,15 @@
   ElementType column_name = \
     this->getConcreteDataTableElement<ElementType>( #column_name )
 
-//! Define a template unit test
-#define FRENSIE_UNIT_TEST_TEMPLATE( TEST_GROUP, TEST_NAME, PackSize, ... ) \
-  template<typename TypeTuple>                                          \
-  class TEST_GROUP##_##TEST_NAME##_UnitTest : public Utility::TemplateUnitTest<typename Utility::TupleSlice<0,PackSize,TupleType>::type> \
+//! Define a template unit test (generic)
+#define __FRENSIE_UNIT_TEST_TEMPLATE_DEF__( TEST_GROUP, TEST_NAME, EXPAND_INNER_TUPLES, ... ) \
+  template<typename... Types>                                           \
+  class TEST_GROUP##_##TEST_NAME##_UnitTest : public Utility::TemplateUnitTest<Types...> \
   {                                                                     \
     TEST_GROUP##_##TEST_NAME##_UnitTest()                               \
-      : Utility::TemplateUnitTest<typename Utility::TupleSlice<0,PackSize,TupleType>::type>( #TEST_GROUP, #TEST_NAME ) {} \
-    std::string getFile() const override                                \
-    { return __FILE__; }                                                \
+      : Utility::TemplateUnitTest<T>( #TEST_GROUP, #TEST_NAME ) {} \
+    std::string getFile() const override                           \
+      { return __FILE__; }                                                \
     size_t getLineNumber() const override                               \
     { return __LINE__; }                                                \
     void runImpl( std::ostream& os,                                     \
@@ -169,16 +169,54 @@
                   size_t& number_of_passed_checks,                      \
                   size_t& last_checkpoint_line_number ) const override; \
   };                                                                    \
-  Utility::TemplateUnitTestWrapper<TEST_GROUP##_##TEST_NAME##_UnitTest,PackSize,__VA_ARGS__> \
+  Utility::TemplateUnitTestWrapper<TEST_GROUP##_##TEST_NAME##_UnitTest,EXPAND_INNER_TUPLES,__VA_ARGS__> \
     s_##TEST_GROUP##_##TEST_NAME##_UnitTest_template_wrapper();           \
                                                                         \
-  template<typename TupleType>                                          \
-  void TEST_GROUP##_##TEST_NAME##_UnitTest<TupleType>::runImpl(         \
+  template<typename... Types>                                           \
+  void TEST_GROUP##_##TEST_NAME##_UnitTest<Types...>::runImpl(         \
                                          std::ostream& log,             \
                                          bool& __SUCCESS__,             \
                                          size_t& __NUMBER_OF_CHECKS__,  \
                                          size_t& __NUMBER_OF_PASSED_CHECKS__, \
                                          size_t& __CHECKPOINT__ ) const \
+
+//! Define a template unit test (expand any tuples in the type list)
+#define FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TEST_GROUP, TEST_NAME, ... ) \
+  __FRENSIE_UNIT_TEST_TEMPLATE_DEF__( TEST_GROUP, TEST_NAME, true, __VA_ARGS__ )
+
+//! Define a template unit test
+#define FRENSIE_UNIT_TEST_TEMPLATE( TEST_GROUP, TEST_NAME, ... ) \
+  __FRENSIE_UNIT_TEST_TEMPLATE_DEF__( TEST_GROUP, TEST_NAME, false, __VA_ARGS__ )
+
+//! Access the first template unit test template parameter (can only be used with template unit tests)
+#define _T0 typename _T<0>::get
+
+//! Access the second template unit test template parameter (can only be used with template unit tests)
+#define _T1 typename _T<1>::get
+
+//! Access the third template unit test template parameter (can only be used with template unit tests)
+#define _T2 typename _T<2>::get
+
+//! Access the fourth template unit test template parameter (can only be used with template unit tests)
+#define _T3 typename _T<3>::get
+
+//! Access the fifth template unit test template parameter (can only be used with template unit tests)
+#define _T4 typename _T<4>::get
+
+//! Access the sixth template unit test template parameter (can only be used with template unit tests)
+#define _T5 typename _T<5>::get
+
+//! Access the seventh template unit test template parameter (can only be used with template unit tests)
+#define _T6 typename _T<6>::get
+
+//! Access the eighth template unit test template parameter (can only be used with template unit tests)
+#define _T7 typename _T<7>::get
+
+//! Access the ninth template unit test template parameter (can only be used with template unit tests)
+#define _T8 typename _T<8>::get
+
+//! Access the tenth template unit test template parameter (can only be used with template unit tests)
+#define _T9 typename _T<9>::get
 
 #define __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ) \
   if( !local_result )                                                   \

@@ -283,6 +283,26 @@ TARGET_LINK_LIBRARIES(tstUnitTestDataTable utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(UnitTestDataTable_test tstUnitTestDataTable --report_level=detailed)
 SET_PROPERTY(TEST UnitTestDataTable_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstDataUnitTest tstDataUnitTest.cpp)
+TARGET_LINK_LIBRARIES(tstDataUnitTest utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(DataUnitTest_test tstDataUnitTest --report_level=detailed)
+SET_PROPERTY(TEST DataUnitTest_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstDataUnitTestWrapper tstDataUnitTestWrapper.cpp)
+TARGET_LINK_LIBRARIES(tstDataUnitTestWrapper utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(DataUnitTestWrapper_test tstDataUnitTestWrapper --report_level=detailed)
+SET_PROPERTY(TEST DataUnitTestWrapper_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstTemplateUnitTest tstTemplateUnitTest.cpp)
+TARGET_LINK_LIBRARIES(tstTemplateUnitTest utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(TemplateUnitTest_test tstTemplateUnitTest --report_level=detailed)
+SET_PROPERTY(TEST TemplateUnitTest_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstTemplateUnitTestWrapper tstTemplateUnitTestWrapper.cpp)
+TARGET_LINK_LIBRARIES(tstTemplateUnitTestWrapper utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(TemplateUnitTestWrapper_test tstTemplateUnitTestWrapper --report_level=detailed)
+SET_PROPERTY(TEST TemplateUnitTestWrapper_test PROPERTY LABELS utility_core)
+
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
 

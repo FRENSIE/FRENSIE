@@ -31,7 +31,7 @@ public:
   //! Constuctor
   template<typename DataTableCreator>
   DataUnitTestWrapper( const std::string& table_name,
-                       DataTableCreator& data_table_creator );
+                       const DataTableCreator& data_table_creator );
 
   //! Destructor
   ~DataUnitTestWrapper()
@@ -53,8 +53,8 @@ private:
 template<typename UnitTestType>
 template<typename DataTableCreator>
 DataUnitTestWrapper<UnitTestType>::DataUnitTestWrapper(
-                                         const std::string& table_name,
-                                         DataTableCreator& data_table_creator )
+                                   const std::string& table_name,
+                                   const DataTableCreator& data_table_creator )
   : d_data_table( new UnitTestDataTable( table_name ) ),
     d_instantiated_tests()
 {
@@ -65,7 +65,7 @@ DataUnitTestWrapper<UnitTestType>::DataUnitTestWrapper(
   const std::vector<std::string>& row_names = d_data_table->getRowNames();
 
   // Create a unit test for each row
-  d_instantiated_test.resize( row_names.size() );
+  d_instantiated_tests.resize( row_names.size() );
   
   for( size_t i = 0; i < row_names.size(); ++i )
   {
