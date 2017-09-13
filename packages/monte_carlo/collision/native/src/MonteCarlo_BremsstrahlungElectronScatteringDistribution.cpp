@@ -276,7 +276,6 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   electron.incrementGenerationNumber();
 
   testPostcondition( photon_energy > 0.0 );
-  testPostcondition( electron.getEnergy() > 0.0 );
   testPostcondition( photon_angle_cosine <= 1.0 );
   testPostcondition( photon_angle_cosine >= -1.0 );
 

@@ -188,7 +188,6 @@ bool BremsstrahlungElectronScatteringDistributionNativeFactory::isCompatibleWith
     return true;
 }
 
-
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP

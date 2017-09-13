@@ -289,6 +289,10 @@ void ParticleSimulationManager<GeometryHandler,
                                                    ParticleStateType& particle,
                                                    ParticleBank& bank ) const
 {
+  // Make sure the particle position and direction are valid
+  testPrecondition( Utility::validDirection( particle.getDirection() ) );
+  testPrecondition( Utility::isNotNanOrInf( particle.getPosition() ) );
+
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
   double subtrack_start_time;
@@ -325,9 +329,9 @@ void ParticleSimulationManager<GeometryHandler,
       #pragma omp critical( ostream_update )
       {
         std::cerr << " History #: " << particle.getHistoryNumber()
-                      << " Collision #: " << particle.getCollisionNumber()
+                  << " Collision #: " << particle.getCollisionNumber()
                   << " Time: " << particle.getTime()
-                      << std::endl;
+                  << std::endl;
       }
 
       particle.setAsGone();
@@ -347,9 +351,9 @@ void ParticleSimulationManager<GeometryHandler,
         #pragma omp critical( ostream_update )
         {
           std::cerr << " History #: " << particle.getHistoryNumber()
-                        << " Collision #: " << particle.getCollisionNumber()
+                    << " Collision #: " << particle.getCollisionNumber()
                     << " Time: " << particle.getTime()
-                        << std::endl;
+                    << std::endl;
         }
 
         particle.setAsGone();
@@ -381,8 +385,8 @@ void ParticleSimulationManager<GeometryHandler,
 
       if( op_to_surface_hit < remaining_subtrack_op )
       {
-              // Advance the particle to the cell boundary
-              particle.advance( distance_to_surface_hit );
+        // Advance the particle to the cell boundary
+        particle.advance( distance_to_surface_hit );
 
         // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
@@ -422,13 +426,13 @@ void ParticleSimulationManager<GeometryHandler,
         }
 
         // Find the cell on the other side of the surface hit
-              try
-              {
-                cell_entering = GMI::findCellContainingInternalRay();
-              }
-              CATCH_LOST_PARTICLE_AND_BREAK( particle );
+        try
+        {
+          cell_entering = GMI::findCellContainingInternalRay();
+        }
+        CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
-              particle.setCell( cell_entering );
+        particle.setCell( cell_entering );
 
         // Update the observers: particle entering cell event
         EMI::updateObserversFromParticleEnteringCellEvent( particle,

@@ -25,9 +25,9 @@ Ray::Ray( const double x_position,
     d_deep_copy_initialization( true )
 {
   // Make sure the position is valid
-  testPrecondition( !ST::isnaninf( d_position[0] ) );
-  testPrecondition( !ST::isnaninf( d_position[1] ) );
-  testPrecondition( !ST::isnaninf( d_position[2] ) );
+  testPrecondition( !ST::isnaninf( x_position ) );
+  testPrecondition( !ST::isnaninf( y_position ) );
+  testPrecondition( !ST::isnaninf( z_position ) );
   // Make sure the direction is a unit vector
   testPrecondition( Utility::validDirection( x_direction,
 					     y_direction,
@@ -50,9 +50,9 @@ Ray::Ray( const double position[3],
     d_deep_copy_initialization( true )
 {
   // Make sure the position and direction are valid
-  testPrecondition( !ST::isnaninf( d_position[0] ) );
-  testPrecondition( !ST::isnaninf( d_position[1] ) );
-  testPrecondition( !ST::isnaninf( d_position[2] ) );
+  testPrecondition( !ST::isnaninf( position[0] ) );
+  testPrecondition( !ST::isnaninf( position[1] ) );
+  testPrecondition( !ST::isnaninf( position[2] ) );
   // Make sure the direction is a unit vector
   testPrecondition( Utility::validDirection( direction[0],
 					     direction[1],
@@ -85,9 +85,7 @@ Ray::Ray( double position[3],
     testPrecondition( !ST::isnaninf( d_position[1] ) );
     testPrecondition( !ST::isnaninf( d_position[2] ) );
     // Make sure the direction is a unit vector
-    testPrecondition( Utility::validDirection( direction[0],
-					       direction[1],
-					       direction[2] ) );
+    testPrecondition( Utility::validDirection( d_direction ) );
     d_position = new double[3];
     d_position[0] = position[0];
     d_position[1] = position[1];

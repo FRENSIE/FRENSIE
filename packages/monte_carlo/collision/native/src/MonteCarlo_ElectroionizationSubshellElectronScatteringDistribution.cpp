@@ -79,7 +79,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
   }
   else
   {
-      // Set the correlated exact sample routine
+    // Set the correlated exact sample routine
     d_sample_func = std::bind<double>(
             &TwoDDist::sampleSecondaryConditionalExact,
             std::cref( *d_electroionization_subshell_scattering_distribution ),
@@ -337,7 +337,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTri
 {
   trials++;
 
-  sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
+  this->sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 }
 
 // Randomly scatter the electron
@@ -353,11 +353,11 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double scattering_angle_cosine, knock_on_angle_cosine;
 
   // Sample the distribution
-  samplePrimaryAndSecondary( electron.getEnergy(),
-                             outgoing_energy,
-                             knock_on_energy,
-                             scattering_angle_cosine,
-                             knock_on_angle_cosine );
+  this->samplePrimaryAndSecondary( electron.getEnergy(),
+                                   outgoing_energy,
+                                   knock_on_energy,
+                                   scattering_angle_cosine,
+                                   knock_on_angle_cosine );
 
   // Create new elecrton
   Teuchos::RCP<ParticleState> knock_on_electron(

@@ -79,7 +79,7 @@ public:
 
 private:
 
-  //! Return if the TwoDInterpPolicy is compatible with the nit based sampling mode
+  //! Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
   template <typename TwoDInterpPolicy>
   static bool isCompatibleWithUnitBaseSamplingMode(
     const bool unit_based_interpolation_mode_on );
