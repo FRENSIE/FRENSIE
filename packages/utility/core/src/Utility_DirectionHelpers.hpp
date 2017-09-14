@@ -89,6 +89,16 @@ inline bool validDirection( const double direction[3] )
 }
 
 // Test if the vector is not nan or inf
+inline bool isNotNanOrInf( const double x_component,
+                           const double y_component,
+                           const double z_component )
+{
+return !Teuchos::ScalarTraits<double>::isnaninf( x_component ) &&
+       !Teuchos::ScalarTraits<double>::isnaninf( y_component ) &&
+       !Teuchos::ScalarTraits<double>::isnaninf( z_component );
+}
+
+// Test if the vector is not nan or inf
 inline bool isNotNanOrInf( const double vector[3] )
 {
   return isNotNanOrInf( vector[0], vector[1], vector[2] );

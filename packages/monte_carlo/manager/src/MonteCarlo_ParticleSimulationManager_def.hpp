@@ -28,6 +28,7 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_DirectionHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
@@ -297,12 +298,12 @@ void ParticleSimulationManager<GeometryHandler,
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
   double subtrack_start_time;
   double ray_start_point[3];
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
   // Cache the start point of the ray
   ray_start_point[0] = particle.getXPosition();
   ray_start_point[1] = particle.getYPosition();
   ray_start_point[2] = particle.getZPosition();
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
   // Surface information
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
   Teuchos::Array<double> surface_normal( 3 );
@@ -315,10 +316,10 @@ void ParticleSimulationManager<GeometryHandler,
   if( particle.getEnergy() <
       d_properties->getMinParticleEnergy<ParticleStateType>() )
     particle.setAsGone();
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
   // Set the ray
   GMI::setInternalRay( particle.ray(), particle.getCell() );
-
+  testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
   while( !particle.isLost() && !particle.isGone() )
   {
 
@@ -363,49 +364,53 @@ void ParticleSimulationManager<GeometryHandler,
       // Fire a ray at the cell currently containing the particle
       try
       {
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         distance_to_surface_hit = GMI::fireInternalRay( surface_hit );
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
       }
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
       // Get the total cross section for the cell
       if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
               cell_total_macro_cross_section =
                 CMI::getMacroscopicTotalCrossSection( particle );
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
       }
       else
               cell_total_macro_cross_section = 0.0;
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
       // Convert the distance to the surface to optical path
       op_to_surface_hit =
           distance_to_surface_hit*cell_total_macro_cross_section;
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
-    
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
       if( op_to_surface_hit < remaining_subtrack_op )
       {
         // Advance the particle to the cell boundary
         particle.advance( distance_to_surface_hit );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
                                                        particle.getCell(),
                                                        distance_to_surface_hit,
                                                        subtrack_start_time );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Update the observers: particle leaving cell event
         EMI::updateObserversFromParticleLeavingCellEvent( particle,
                                                           particle.getCell() );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
 
         // Advance the ray to the cell boundary
         // Note: this is done after so that the particle direction is not
         // altered before the estimators are updated
         bool reflected = GMI::advanceInternalRayToCellBoundary(
                                                   surface_normal.getRawPtr() );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Update the observers: particle crossing surface event
         EMI::updateObserversFromParticleCrossingSurfaceEvent(
                                                   particle,
@@ -413,27 +418,27 @@ void ParticleSimulationManager<GeometryHandler,
                                                   surface_normal.getRawPtr() );
 
 
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         if( reflected )
         {
           particle.setDirection( GMI::getInternalRayDirection() );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
           // Update the observers: particle crossing surface event
           EMI::updateObserversFromParticleCrossingSurfaceEvent(
                                                   particle,
                                                   surface_hit,
                                                   surface_normal.getRawPtr() );
         }
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Find the cell on the other side of the surface hit
         try
         {
           cell_entering = GMI::findCellContainingInternalRay();
         }
         CATCH_LOST_PARTICLE_AND_BREAK( particle );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         particle.setCell( cell_entering );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Update the observers: particle entering cell event
         EMI::updateObserversFromParticleEnteringCellEvent( particle,
                                                            cell_entering );
@@ -447,40 +452,40 @@ void ParticleSimulationManager<GeometryHandler,
 
               // Update the remaining subtrack mfp
               remaining_subtrack_op -= op_to_surface_hit;
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
       }
-
       // A collision occurs in this cell
       else
       {
   	    // Advance the particle to the collision site
   	    double distance_to_collision =
             remaining_subtrack_op/cell_total_macro_cross_section;
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
   	    particle.advance( distance_to_collision );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         GMI::advanceInternalRayBySubstep( distance_to_collision );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
           // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
                                                        particle.getCell(),
                                                        distance_to_collision,
                                                        subtrack_start_time );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Update the observers: particle colliding in cell event
         EMI::updateObserversFromParticleCollidingInCellEvent(
                                           particle,
                                           1.0/cell_total_macro_cross_section );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Update the global observers: particle subtrack ending global event
         EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
                                                       particle,
                                                       ray_start_point,
                                                       particle.getPosition() );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank );
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         if( !particle.isGone() )
         {
           GMI::changeInternalRayDirection( particle.getDirection() );
@@ -490,12 +495,12 @@ void ParticleSimulationManager<GeometryHandler,
           ray_start_point[1] = particle.getYPosition();
           ray_start_point[2] = particle.getZPosition();
         }
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // Make sure the energy is above the cutoff
         if( particle.getEnergy() <
             d_properties->getMinParticleEnergy<ParticleStateType>() )
           particle.setAsGone();
-
+testPrecondition( Utility::isNotNanOrInf(particle.getPosition() ) );
         // This subtrack is finished
         break;
       }
