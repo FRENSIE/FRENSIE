@@ -25,45 +25,45 @@ void reportPassFail( const bool result, std::ostream& log )
     log << Utility::Red( "FAILED" );
 }
 
-// Check the reault and add "Passed" or "FAILED" to the log with location
-void reportPassFailWithLocation( const bool result,
-                                 std::ostream& log,
-                                 const std::string& file,
-                                 const size_t line_number )
+//! Log the location of a check
+void reportCheckLocationWithPadding( const std::string& file,
+                                     const size_t line_number,
+                                     std::ostream& log,
+                                     const std::string& line_padding )
 {
-  Utility::reportPassFail( result, log );
-
-  if( !result )
-  {
-    std::ostringstream oss;
-    oss << file << ":" << line_number;
-    
-    log << " ==> " << Utility::BoldCyan( oss.str() );
-  }
+  log << line_padding << "==> "
+      << Utility::BoldCyan("Location: " )
+      << Utility::Bold(file + ":" + Utility::toString( line_number ) );
 }
 
-// Log the details and result of a check
-void logCheckDetailsAndResult( const std::string& check_header,
-                               const std::string& check_details,
-                               const bool check_result,
-                               const bool pass_required,
-                               const std::string& file,
-                               const size_t line_number,
-                               std::ostream& log )
+// Report the check type that is being conducted
+void reportCheckTypeWithPadding( const bool pass_required,
+                                 std::ostream& log,
+                                 const std::string& line_padding )
 {
+  log << line_padding;
+  
   if( pass_required )
-    log << "Require";
+    log << "Require ";
   else
-    log << "Check";
+    log << "Check ";
 
-  log << " that " << check_header;
+  log << "that ";
+}
 
-  Utility::reportPassFailWithLocation( check_result, log, file, line_number );
+// Log some extra check details
+void logExtraCheckDetailsWithPadding( const bool check_result,
+                                      const std::string& file,
+                                      const size_t line_number,
+                                      std::ostream& log,
+                                      const std::string& line_padding )
+{
+  if( !check_result )
+  {
+    Utility::reportCheckLocationWithPadding( file, line_number, log, line_padding );
 
-  log << std::endl;
-
-  if( check_details.size() > 0 )
-    log << check_details << std::endl;
+    log << "\n";
+  }
 }
 
 } // end Utility namespace

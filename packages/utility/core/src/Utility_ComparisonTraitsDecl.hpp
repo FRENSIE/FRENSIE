@@ -32,6 +32,16 @@
 
 namespace Utility{
 
+namespace Details{
+
+/*! Increment the right shift
+ * \ingroup comparison_traits
+ */
+constexpr size_t incrementRightShift( const size_t right_shift )
+{ return right_shift+2; }
+
+} // end Details namespace
+
 /*! \brief This structure defines the comparison that can be used to compare
  * two values of arrays of values.
  *
@@ -87,7 +97,9 @@ struct ComparisonTraits
    * \param[in] tol The testing tolerance used to compare floating point
    * values. This will be ignored with integer comparisons.
    */
-  template<typename ComparisonPolicy, size_t RightShift = 0>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift = 0,
+           size_t DetailsRightShift = Details::incrementRightShift(HeaderRightShift)>
   static bool compare( const T& left_value,
                        const std::string& left_name,
                        const bool log_left_name,
@@ -121,7 +133,10 @@ std::string createComparisonHeader(
  * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T>
 bool compare( const T& left_value,
               const std::string& left_name,
               const T& right_value,
@@ -153,7 +168,10 @@ std::string createComparisonHeader(
  * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T>
 bool compare( T& left_value,
               const std::string& left_name,
               T& right_value,
@@ -185,7 +203,11 @@ std::string createComparisonHeader(
  * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 bool compare( T1&& left_value,
               const std::string& left_name,
               const T2& right_value,
@@ -221,7 +243,8 @@ std::string createComparisonHeader(
  * \ingroup comparison_traits
  */
 template<typename ComparisonPolicy,
-         size_t RightShift,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
          typename Container,
          typename T = typename Container::value_type>
 bool compare(
@@ -256,7 +279,11 @@ std::string createComparisonHeader(
  * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 bool compare( T1&& left_value,
               const std::string& left_name,
               T2& right_value,
@@ -292,7 +319,8 @@ std::string createComparisonHeader(
  * \ingroup comparison_traits
  */
 template<typename ComparisonPolicy,
-         size_t RightShift,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
          typename Container,
          typename T = typename Container::value_type>
 bool compare(
@@ -327,7 +355,11 @@ std::string createComparisonHeader(
  * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 bool compare( const T1& left_value,
               const std::string& left_name,
               T2&& right_value,
@@ -363,7 +395,8 @@ std::string createComparisonHeader(
  * \ingroup comparison_traits
  */
 template<typename ComparisonPolicy,
-         size_t RightShift,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
          typename Container,
          typename T = typename Container::value_type>
 bool compare(
@@ -398,7 +431,11 @@ std::string createComparisonHeader(
  * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 bool compare( T1& left_value,
               const std::string& left_name,
               T2&& right_value,
@@ -434,7 +471,8 @@ std::string createComparisonHeader(
  * \ingroup comparison_traits
  */
 template<typename ComparisonPolicy,
-         size_t RightShift,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
          typename Container,
          typename T = typename Container::value_type>
 bool compare(
@@ -469,7 +507,10 @@ std::string createComparisonHeader(
  * This function provides a shortcut to the ComparisonTraits::compare method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T>
 bool compare( T&& left_value,
               const std::string& left_name,
               T&& right_value,

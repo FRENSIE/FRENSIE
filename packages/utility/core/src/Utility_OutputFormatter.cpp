@@ -15,6 +15,13 @@
 
 namespace Utility{
 
+#ifdef TTY_FORMATTING_SUPPORTED
+// We need to cache the cout and cerr stream buffers right away in case their
+// buffers get redirected at some point
+static const std::streambuf* cout_streambuf = std::cout.rdbuf();
+static const std::streambuf* cerr_streambuf = std::cerr.rdbuf();
+#endif // end TTY_FORMATTING_SUPPORTED
+
 // Default constructor
 OutputFormatter::OutputFormatter()
   : d_formatted_string()
@@ -170,9 +177,9 @@ std::string OutputFormatter::getResetFormatSpecString() const
 bool OutputFormatter::useFormattedString( std::ostream& os ) const
 {
 #ifdef TTY_FORMATTING_SUPPORTED
-  if( os.rdbuf() == std::cout.rdbuf() )
+  if( os.rdbuf() == cout_streambuf )
     return isatty(1);
-  else if( os.rdbuf() == std::cerr.rdbuf() )
+  else if( os.rdbuf() == cerr_streambuf )
     return isatty(2);
   else
     return false;

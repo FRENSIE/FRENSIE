@@ -78,7 +78,8 @@ protected:
 
   //! Print the operation location
   void printOperationLocation( const std::string& file_name,
-                               const size_t line_number ) override;
+                               const size_t line_number,
+                               const std::string& padding ) override;
 
   //! Print the operation log
   void printOperationLog( const bool local_success,
@@ -91,6 +92,7 @@ protected:
   //! Print failed test name
   void printFailedTestName(const std::string& global_failed_test_name,
                            const std::string& test_details,
+                           const std::string& line_padding,
                            const std::set<std::string>& local_failed_tests_set,
                            const bool goto_newline ) override;
 
@@ -282,6 +284,24 @@ public:
   //! Return the passed test counter
   const int& getPassedTestCounter() const;
 
+  //! Return the checks counter
+  size_t& getChecksCounter();
+
+  //! Return the checks counter
+  const size_t& getChecksCounter() const;
+
+  //! Return the passed checks counter
+  size_t& getPassedChecksCounter();
+
+  //! Return the passed checks counter
+  const size_t& getPassedChecksCounter() const;
+
+  //! Return the unexpected exceptions counter
+  size_t& getUnexpectedExceptionsCounter();
+
+  //! Return the unexpected exceptions counter
+  const size_t& getUnexpectedExceptionsCounter() const;
+
   //! Return the total unit test execution time
   double& getTotalUnitTestExecutionTime();
 
@@ -384,6 +404,15 @@ private:
   // The passed test counter
   int d_passed_test_counter;
 
+  // The checks counter
+  size_t d_checks_counter;
+
+  // The passed checks counter
+  size_t d_passed_checks_counter;
+
+  // The unexpected exceptions counter
+  size_t d_unexpected_exceptions_counter;
+
   // The total unit test execution time (s)
   double d_total_unit_test_execution_time;
 };
@@ -393,10 +422,10 @@ std::string UnitTestManager::Data::getReportLevels()
 {
   std::ostringstream oss;
   
-  oss << Detailed << " "
-      << Basic << " "
-      << Nothing << " "
-      << Auto;
+  oss << Utility::toString( Detailed ) << ", "
+      << Utility::toString( Basic ) << ", "
+      << Utility::toString( Nothing ) << ", "
+      << Utility::toString( Auto );
 
   return oss.str();
 }
@@ -419,6 +448,8 @@ UnitTestManager::Data::Data()
     d_number_of_benchmark_samples( 1 ),
     d_run_test_counter( 0 ),
     d_passed_test_counter( 0 ),
+    d_checks_counter( 0 ),
+    d_passed_checks_counter( 0 ),
     d_total_unit_test_execution_time( 0.0 )
 {
   // Initialize the command line options
@@ -450,7 +481,7 @@ UnitTestManager::Data::Data()
      "only data table row names that match the regex will be executed")
     ("benchmark_samples,b",
      boost::program_options::value<size_t>()->default_value( d_number_of_benchmark_samples ),
-     "set the number of times to run each benchmark (the reported time will"
+     "set the number of times to run each benchmark (the reported time will "
      "be the average of all samples)");
 }
 
@@ -630,7 +661,12 @@ void UnitTestManager::Data::printHelpMessage()
 bool UnitTestManager::Data::groupListRequested() const
 {
   if( d_command_line_arguments.count( "show_groups" ) )
-    return true;
+  {
+    if( d_command_line_arguments["show_groups"].as<bool>() )
+      return true;
+    else
+      return false;
+  }
   else
     return false;
 }
@@ -666,7 +702,12 @@ void UnitTestManager::Data::printGroupList()
 bool UnitTestManager::Data::testListRequested() const
 {
   if( d_command_line_arguments.count( "show_tests" ) )
-    return true;
+  {
+    if( d_command_line_arguments["show_tests"].as<bool>() )
+      return true;
+    else
+      return false;
+  }
   else
     return false;
 }
@@ -703,8 +744,13 @@ void UnitTestManager::Data::printTestList()
 // Check if a data list was requested
 bool UnitTestManager::Data::dataListRequested() const
 {
-  if( d_command_line_arguments.count( "show_data" ) )
-    return true;
+    if( d_command_line_arguments.count( "show_data" ) )
+  {
+    if( d_command_line_arguments["show_data"].as<bool>() )
+      return true;
+    else
+      return false;
+  }
   else
     return false;
 }
@@ -810,6 +856,42 @@ const int& UnitTestManager::Data::getPassedTestCounter() const
   return d_passed_test_counter;
 }
 
+// Return the checks counter
+size_t& UnitTestManager::Data::getChecksCounter()
+{
+  return d_checks_counter;
+}
+
+// Return the checks counter
+const size_t& UnitTestManager::Data::getChecksCounter() const
+{
+  return d_checks_counter;
+}
+
+// Return the passed checks counter
+size_t& UnitTestManager::Data::getPassedChecksCounter()
+{
+  return d_passed_checks_counter;
+}
+
+// Return the passed checks counter
+const size_t& UnitTestManager::Data::getPassedChecksCounter() const
+{
+  return d_passed_checks_counter;
+}
+
+// Return the unexpected exception counter
+size_t& UnitTestManager::Data::getUnexpectedExceptionsCounter()
+{
+  return d_unexpected_exceptions_counter;
+}
+
+// Return the unexpected exception counter
+const size_t& UnitTestManager::Data::getUnexpectedExceptionsCounter() const
+{
+  return d_unexpected_exceptions_counter;
+}
+
 // Return the total unit test execution time
 double& UnitTestManager::Data::getTotalUnitTestExecutionTime()
 {
@@ -885,9 +967,6 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
 {
   Utility::GlobalMPISession mpi_session( argc, argv );
 
-  std::shared_ptr<Timer> program_timer = mpi_session.createTimer();
-  program_timer->start();
-
   // Set up the logs - we will use an ostringstream as the log sink so that
   // we can intercept log entries and format them before passing them to
   // the actual test sink
@@ -914,48 +993,51 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
   try{
     d_data->getInitializer().initializeUnitTestManager( argc, argv, init_checkpoint );
   }
-  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, init_checkpoint );
+  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, init_checkpoint, d_data->getUnexpectedExceptionsCounter() );
 
   init_timer->stop();
 
   d_data->restoreStdOutput();
-  
+
   // Make sure that every node initialized successfully
   bool global_success = mpi_session.isGloballyTrue( local_success );
-    
-  this->summarizeInitializationResults( log,
-                                        init_timer->elapsed().count(),
-                                        local_success,
-                                        global_success );
+
+  // Check if any special cases were requested
+  if( d_data->helpMessageRequested() )
+  {
+    this->printHelpMessage();
+
+    return 0;
+  }
+  // Test details requested
+  else if( d_data->groupListRequested() ||
+           d_data->testListRequested() ||
+           d_data->dataListRequested() )
+  {
+    return 0;
+  }
 
   // Initialization was globally successful - proceed to unit test execution
   if( global_success )
   {
-    // Help message requested
-    if( d_data->helpMessageRequested() )
-    {
-      this->printHelpMessage();
-    }
-    // Test details requested
-    else if( d_data->groupListRequested() ||
-             d_data->testListRequested() ||
-             d_data->dataListRequested() )
-    {
-      this->printTestDetails();
-    }
-    // Run unit tests
-    else
-    {
-      local_success = this->runUnitTests( log );
-      
-      global_success = mpi_session.isGloballyTrue( local_success );
+    this->summarizeInitializationResults( log,
+                                          init_timer->elapsed().count(),
+                                          local_success,
+                                          global_success );
 
-      program_timer->stop();
+    std::shared_ptr<Timer> test_timer = mpi_session.createTimer();
+    test_timer->start();
+    
+    // Run unit tests
+    local_success = this->runUnitTests( log );
       
-      this->summarizeTestStats( program_timer->elapsed().count(),
-                                local_success,
-                                global_success );
-    }
+    global_success = mpi_session.isGloballyTrue( local_success );
+
+    test_timer->stop();
+      
+    this->summarizeTestStats( test_timer->elapsed().count(),
+                              local_success,
+                              global_success );
   }
 
   // Summarize the test results
@@ -1066,8 +1148,10 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
 
     this->printRunningTestsNotification();
   }
-  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, 0 );
+  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, 0, d_data->getUnexpectedExceptionsCounter() );
 
+  const std::string details_padding( s_details_right_shift, ' ' );
+  
   for( Data::UnitTests::const_iterator test_it = d_data->getUnitTests().begin();
        test_it != d_data->getUnitTests().end();
        ++test_it )
@@ -1108,7 +1192,8 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
                               local_test_success,
                               global_test_success,
                               global_failed_tests,
-                              local_failed_tests_set );
+                              local_failed_tests_set,
+                              details_padding );
       
       if( !local_test_success )
         local_success = false;
@@ -1207,10 +1292,10 @@ bool UnitTestManager::runUnitTest( const UnitTest& unit_test,
   // All output will be redirected to the log
   d_data->redirectStdOutput( log );
 
-  size_t number_of_checks = 0, number_of_passed_checks = 0;
+  
 
   const bool result =
-    unit_test.run( log, number_of_checks, number_of_passed_checks );
+    unit_test.run( log, d_data->getChecksCounter(), d_data->getPassedChecksCounter(), d_data->getUnexpectedExceptionsCounter() );
   
   // Flush all logs
   FRENSIE_FLUSH_ALL_LOGS();
@@ -1229,17 +1314,18 @@ void UnitTestManager::reportTestResult(
                                 const bool local_success,
                                 const bool global_success,
                                 std::vector<std::string>& global_failed_tests,
-                                std::set<std::string>& local_failed_tests_set )
+                                std::set<std::string>& local_failed_tests_set,
+                                const std::string& padding )
 {
   // Record the tests that failed on this processes
   if( !local_success )
     local_failed_tests_set.insert( unit_test.getFullName() );
-  
+
   // Report the result of the test
   if( !global_success )
   {
     global_failed_tests.push_back( unit_test.getFullName() );
-
+    
     this->printOperationFailedNotification();
   }
   else
@@ -1251,9 +1337,14 @@ void UnitTestManager::reportTestResult(
   // Report the test details
   if( this->shouldUnitTestDetailsBeReported( global_success ) )
   {
-    this->printOperationLocation( unit_test.getFile(), unit_test.getLineNumber() );
+    this->printOperationLocation( unit_test.getFile(),
+                                  unit_test.getLineNumber(),
+                                  padding );
     this->printOperationLog( local_success, "", log );
   }
+
+  log.str( "" );
+  log.clear();
 }
 
 // Print the operation failed notification
@@ -1266,7 +1357,7 @@ void UnitTestManager::printOperationFailedNotification()
 void DistributedUnitTestManager::printOperationFailedNotification()
 {
   if( Utility::GlobalMPISession::rank() == 0 )
-    UnitTestManager::printOperationPassedNotification();
+    UnitTestManager::printOperationFailedNotification();
 
   Utility::GlobalMPISession::barrier();
 }
@@ -1326,23 +1417,24 @@ void DistributedUnitTestManager::printOperationTime( const double time_in_sec,
 
 // Print the operation location
 void UnitTestManager::printOperationLocation( const std::string& file_name,
-                                              const size_t line_number )
+                                              const size_t line_number,
+                                              const std::string& padding )
 {
-  std::ostringstream oss;
-  oss << file_name << ":" << line_number;
-  
-  d_data->getReportSink() << "  " << Utility::BoldCyan("Location:") << " "
-                          << Utility::Bold(oss.str())
-                          << std::endl;
+  Utility::reportCheckLocationWithPadding( file_name,
+                                           line_number,
+                                           d_data->getReportSink(),
+                                           padding );
+  d_data->getReportSink() << std::endl;
 }
 
 // Print the operation location
 void DistributedUnitTestManager::printOperationLocation(
                                                   const std::string& file_name,
-                                                  const size_t line_number )
+                                                  const size_t line_number,
+                                                  const std::string& padding )
 {
   if( Utility::GlobalMPISession::rank() == 0 )
-    UnitTestManager::printOperationLocation( file_name, line_number );
+    UnitTestManager::printOperationLocation( file_name, line_number, padding );
 
   Utility::GlobalMPISession::barrier();
 }
@@ -1414,6 +1506,7 @@ void UnitTestManager::summarizeFailedTests(
     {
       this->printFailedTestName( global_failed_tests[i],
                                  "",
+                                 std::string( s_details_right_shift, ' ' ),
                                  local_failed_tests_set,
                                  true );
     }
@@ -1452,10 +1545,11 @@ void DistributedUnitTestManager::printFailedTestSummaryHeader(
 void UnitTestManager::printFailedTestName(
                                 const std::string& global_failed_test_name,
                                 const std::string& test_details,
+                                const std::string& padding,
                                 const std::set<std::string>&,
                                 const bool goto_newline )
 {
-  d_data->getReportSink() << global_failed_test_name;
+  d_data->getReportSink() << padding << global_failed_test_name;
 
   if( test_details.size() > 0 )
     d_data->getReportSink() << test_details;
@@ -1468,6 +1562,7 @@ void UnitTestManager::printFailedTestName(
 void DistributedUnitTestManager::printFailedTestName(
                            const std::string& global_failed_test_name,
                            const std::string&,
+                           const std::string& padding,
                            const std::set<std::string>& local_failed_tests_set,
                            const bool goto_newline )
 {
@@ -1475,6 +1570,7 @@ void DistributedUnitTestManager::printFailedTestName(
   {
     UnitTestManager::printFailedTestName( global_failed_test_name,
                                           "",
+                                          padding,
                                           local_failed_tests_set,
                                           goto_newline );
   }
@@ -1501,6 +1597,7 @@ void DistributedUnitTestManager::printFailedTestName(
           {
             UnitTestManager::printFailedTestName( global_failed_test_name,
                                                   oss.str(),
+                                                  padding,
                                                   local_failed_tests_set,
                                                   false );
             report_line_started = true;
@@ -1509,6 +1606,7 @@ void DistributedUnitTestManager::printFailedTestName(
           {
             UnitTestManager::printFailedTestName( "",
                                                   oss.str(),
+                                                  "",
                                                   local_failed_tests_set,
                                                   false );
           }
@@ -1520,8 +1618,7 @@ void DistributedUnitTestManager::printFailedTestName(
 
     if( Utility::GlobalMPISession::rank() == 0 )
     {
-      UnitTestManager::printFailedTestName( "",
-                                            "",
+      UnitTestManager::printFailedTestName( "", "", "",
                                             local_failed_tests_set,
                                             goto_newline );
     }
@@ -1558,7 +1655,7 @@ void UnitTestManager::summarizeTestStats( const double program_execution_time,
                                           const bool local_success,
                                           const bool global_success )
 {
-  this->printUnitTestStats( "Test Statistics Summary" );
+  this->printUnitTestStats( "Test Stats. Summary" );
   this->printProgramExecutionTimeHeader( program_execution_time );
 }
 
@@ -1569,6 +1666,9 @@ void UnitTestManager::printUnitTestStats( const std::string& summary_header )
                                  d_data->getUnitTests().size(),
                                  d_data->getRunTestCounter(),
                                  d_data->getPassedTestCounter(),
+                                 d_data->getChecksCounter(),
+                                 d_data->getPassedChecksCounter(),
+                                 d_data->getUnexpectedExceptionsCounter(),
                                  d_data->getTotalUnitTestExecutionTime() );
 }
 
@@ -1600,6 +1700,12 @@ void DistributedUnitTestManager::printUnitTestStats(
       Utility::GlobalMPISession::sum(this->getNumberOfRunTests());
     int reduced_passed_counter =
       Utility::GlobalMPISession::sum(this->getNumberOfPassedTests());
+    int reduced_checks_counter =
+      Utility::GlobalMPISession::sum(this->getNumberOfChecks());
+    int reduced_passed_checks_counter =
+      Utility::GlobalMPISession::sum(this->getNumberOfPassedChecks());
+    int reduced_unexpected_exceptions_counter =
+      Utility::GlobalMPISession::sum(this->getNumberOfUnexpectedExceptions());
 
     if( Utility::GlobalMPISession::rank() == 0 )
     {
@@ -1607,6 +1713,9 @@ void DistributedUnitTestManager::printUnitTestStats(
                                      reduced_total,
                                      reduced_run_counter,
                                      reduced_passed_counter,
+                                     reduced_checks_counter,
+                                     reduced_passed_checks_counter,
+                                     reduced_unexpected_exceptions_counter,
                                      -1.0 );
     }
 
@@ -1616,24 +1725,45 @@ void DistributedUnitTestManager::printUnitTestStats(
 
 // Print the unit test stats
 void UnitTestManager::printGivenUnitTestStats(
-                                           const std::string& summary_header,
-                                           const int number_of_tests,
-                                           const int number_of_tests_run,
-                                           const int number_of_tests_passed,
-                                           const double total_test_exec_time )
+                                     const std::string& summary_header,
+                                     const int number_of_tests,
+                                     const int number_of_tests_run,
+                                     const int number_of_tests_passed,
+                                     const int number_of_checks,
+                                     const int number_of_passed_checks,
+                                     const int number_of_unexpected_exceptions,
+                                     const double total_test_exec_time )
 {
-  d_data->getReportSink() << Utility::Bold(summary_header + ":") << " "
-                          << "total: " << number_of_tests << " "
-                          << Utility::Magenta("skipped:") << " "
-                          << number_of_tests - number_of_tests_run
-                          << "run: " << number_of_tests_run << " "
-                          << Utility::Green("passed:") << " "
-                          << number_of_tests_passed << " "
-                          << Utility::Red("failed:") << " "
-                          << number_of_tests_run - number_of_tests_passed;
+  const std::string primary_line_padding( s_details_right_shift, ' ' );
+  const std::string secondary_line_padding( Details::incrementRightShift(s_details_right_shift), ' ' );
+  const std::string tertiary_line_padding( Details::incrementRightShift(Details::incrementRightShift(s_details_right_shift)), ' ' );
+  
+  d_data->getReportSink() << "\n"
+                          << Utility::Bold(summary_header + ": ") << "\n"
+                          << primary_line_padding
+                          << "total test: " << number_of_tests << "\n"
+                          << secondary_line_padding
+                          << Utility::BoldMagenta("skipped: " + Utility::toString(number_of_tests - number_of_tests_run)) << "\n"
+                          << secondary_line_padding
+                          << "run:     " << number_of_tests_run << "\n"
+                          << tertiary_line_padding
+                          << Utility::Green("passed: " + Utility::toString(number_of_tests_passed)) << "\n"
+                          << tertiary_line_padding
+                          << Utility::Red("failed: " + Utility::toString(number_of_tests_run - number_of_tests_passed)) << "\n"
+                          << primary_line_padding
+                          << "total checks: " << number_of_checks << "\n"
+                          << secondary_line_padding
+                          << Utility::Green("passed: " + Utility::toString(number_of_passed_checks)) << "\n"
+                          << secondary_line_padding
+                          << Utility::Red("failed: " + Utility::toString(number_of_checks - number_of_passed_checks)) << "\n"
+                          << primary_line_padding
+                          << Utility::Red("unexpected exceptions: " + Utility::toString(number_of_unexpected_exceptions));
 
   if( total_test_exec_time >= 0.0 )
-    d_data->getReportSink() << " time: " << total_test_exec_time;
+  {
+    d_data->getReportSink() << "\n" << primary_line_padding
+                            << "total test time:  " << total_test_exec_time << " sec";
+  }
 
   d_data->getReportSink() << std::endl;
 }
@@ -1673,6 +1803,24 @@ int UnitTestManager::getNumberOfRunTests() const
 int UnitTestManager::getNumberOfPassedTests() const
 {
   return d_data->getPassedTestCounter();
+}
+
+// Return the number of checks
+int UnitTestManager::getNumberOfChecks() const
+{
+  return d_data->getChecksCounter();
+}
+
+// Return the number of passed checks
+int UnitTestManager::getNumberOfPassedChecks() const
+{
+  return d_data->getPassedChecksCounter();
+}
+
+// Return the number of unexpected exceptions
+int UnitTestManager::getNumberOfUnexpectedExceptions() const
+{
+  return d_data->getUnexpectedExceptionsCounter();
 }
 
 // Summarize the results

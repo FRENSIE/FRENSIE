@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   FRENSIE_UnitTestHarnessWithMain.hpp
+//! \file   Utility_UnitTestHarnessWithMain.hpp
 //! \author Alex Robinson
 //! \brief  The FRENSIE unit test harness header with a default main function
 //!         provided
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FRENSIE_UNIT_TEST_HARNESS_WITH_MAIN_HPP
-#define FRENSIE_UNIT_TEST_HARNESS_WITH_MAIN_HPP
+#ifndef UTILITY_UNIT_TEST_HARNESS_WITH_MAIN_HPP
+#define UTILITY_UNIT_TEST_HARNESS_WITH_MAIN_HPP
 
 // Std Lib Includes
 #include <csignal>
 
 // FRENSIE Includes
-#include "FRENSIE_UnitTestHarnessWithMain.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //! A custom signal handler for seg faults
 void SegFaultSignalHandler( int signal )      
@@ -30,11 +30,11 @@ int main( int argc, char** argv )
   Utility::UnitTestManager& unit_test_manager =
     Utility::UnitTestManager::getInstance();
 
-  return unit_test_manager.runUnitTests( &argc, &argv );
+  return unit_test_manager.runUnitTests( argc, argv );
 }
 
-#endif // end FRENSIE_UNIT_TEST_HARNESS_WITH_MAIN_HPP
+#endif // end UTILITY_UNIT_TEST_HARNESS_WITH_MAIN_HPP
 
 //---------------------------------------------------------------------------//
-// end FRENSIE_UnitTestHarnessWithMain.hpp
+// end Utility_UnitTestHarnessWithMain.hpp
 //---------------------------------------------------------------------------//

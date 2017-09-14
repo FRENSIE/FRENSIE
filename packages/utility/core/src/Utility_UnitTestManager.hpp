@@ -20,6 +20,8 @@
 // FRENSIE Includes
 #include "Utility_UnitTest.hpp"
 #include "Utility_GlobalMPISession.hpp"
+#include "Utility_ComparisonTraits.hpp"
+#include "Utility_UnitTestHelpers.hpp"
 #include "Utility_LoggingMacros.hpp"
 
 namespace Utility{
@@ -29,6 +31,10 @@ class UnitTestManager
 {
 
 public:
+
+  //! Get the test details starting right shift
+  static constexpr int getTestDetailsStartingRightShift()
+  { return s_details_right_shift; }
 
   //! The initializer
   class Initializer
@@ -93,6 +99,24 @@ public:
   //! Parse command-line options and run registered unit tests
   int runUnitTests( int& argc, char**& argv );
 
+  //! Return the number of tests
+  int getNumberOfTests() const;
+
+  //! Return the current number of run tests
+  int getNumberOfRunTests() const;
+
+  //! Return the current number of passed tests
+  int getNumberOfPassedTests() const;
+
+  //! Return the number of checks
+  int getNumberOfChecks() const;
+
+  //! Return the number of passed checks
+  int getNumberOfPassedChecks() const;
+
+  //! Return the number of unexpected exceptions
+  int getNumberOfUnexpectedExceptions() const;  
+
 protected:
 
   // Constructor
@@ -132,7 +156,8 @@ protected:
 
   //! Print the operation location
   virtual void printOperationLocation( const std::string& file_name,
-                                       const size_t line_number );
+                                       const size_t line_number,
+                                       const std::string& padding );
 
   //! Print the operation log
   virtual void printOperationLog( const bool local_success,
@@ -146,6 +171,7 @@ protected:
   virtual void printFailedTestName(
                            const std::string& global_failed_test_name,
                            const std::string& test_details,
+                           const std::string& padding,
                            const std::set<std::string>& local_failed_tests_set,
                            const bool goto_newline );
 
@@ -157,20 +183,14 @@ protected:
                                 const int number_of_tests,
                                 const int number_of_tests_run,
                                 const int number_of_tests_passed,
+                                const int number_of_checks,
+                                const int number_of_passed_checks,
+                                const int number_of_unexpected_exceptions,
                                 const double total_test_exec_time );
 
   //! Print the program execution time header
   virtual void printProgramExecutionTimeHeader(
                                          const double program_execution_time );
-
-  //! Return the number of tests
-  int getNumberOfTests() const;
-
-  //! Return the current number of run tests
-  int getNumberOfRunTests() const;
-
-  //! Return the current number of passed tests
-  int getNumberOfPassedTests() const;
 
   //! Print the test result header
   virtual void printTestResult( const std::string& header,
@@ -198,7 +218,8 @@ private:
                          const bool local_success,
                          const bool global_success,
                          std::vector<std::string>& global_failed_tests,
-                         std::set<std::string>& local_failed_tests_set );
+                         std::set<std::string>& local_failed_tests_set,
+                         const std::string& padding );
 
   // Summarize the initialization results
   void summarizeInitializationResults(
@@ -227,33 +248,48 @@ private:
   // Manager instance
   static std::unique_ptr<UnitTestManager> s_instance;
 
+  // The starting right shift for test details
+  static constexpr int s_details_right_shift = 2;
+
   // We will use the PIMPL idiom
   class Data;
 
   std::unique_ptr<Data> d_data;
 };
 
-#define __FRENSIE_TEST_CATCH_STATEMENTS__( LOG_STREAM, VERBOSE, SUCCESS_VALUE, CHECKPOINT_LINE_NUMBER ) \
+#define __FRENSIE_TEST_CATCH_STATEMENTS__( LOG_STREAM, VERBOSE, SUCCESS_VALUE, CHECKPOINT_LINE_NUMBER, UNEXPECTED_EXCEPTION_COUNTER ) \
   catch( const std::exception& exception )                              \
   {                                                                   \
     SUCCESS_VALUE = false;                                            \
+                                                                      \
+    ++UNEXPECTED_EXCEPTION_COUNTER;                                   \
                                                                       \
     if( VERBOSE )                                              \
     {                                                               \
       FRENSIE_FLUSH_ALL_LOGS();                                       \
                                                                       \
-      LOG_STREAM << "Caught unexpected std::exception";              \
+      std::string line_padding( Utility::UnitTestManager::getTestDetailsStartingRightShift(), ' ' ); \
                                                                         \
-      if( Utility::GlobalMPISession::size() > 1 )                    \
+      LOG_STREAM << " ... Caught unexpected std::exception";            \
+                                                                        \
+      if( Utility::GlobalMPISession::size() > 1 )                       \
         LOG_STREAM << " on proc " << Utility::GlobalMPISession::rank(); \
+      else                                                              \
+        LOG_STREAM << " ";                                              \
+                                                                        \
+      Utility::reportCheckLocationWithPadding( __FILE__, __LINE__, LOG_STREAM, "" ); \
+      LOG_STREAM << "\n"                                               \
+                 << std::string( Details::incrementRightShift(Utility::UnitTestManager::getTestDetailsStartingRightShift()), ' ' ) \
+                 << exception.what();                                   \
                                                                         \
       if( CHECKPOINT_LINE_NUMBER > 0 )                                  \
       {                                                               \
-          LOG_STREAM << "(last checkpoint at line "                     \
-                     << CHECKPOINT_LINE_NUMBER << ")";               \
-      }                                                            \
-                                                                     \
-      LOG_STREAM << "!\n" << exception.what() << std::flush;         \
+        LOG_STREAM << "\n" << std::string( Utility::UnitTestManager::getTestDetailsStartingRightShift(), ' ' ) \
+                   << "Last unit test checkpoint at line "                \
+                   << CHECKPOINT_LINE_NUMBER;                           \
+      }                                                                 \
+                                                                        \
+      LOG_STREAM << std::endl;                                              \
     }                                                                   \
   }                                                                     \
                                                                         \
@@ -261,16 +297,29 @@ private:
   {                                                                   \
     SUCCESS_VALUE = false;                                            \
                                                                       \
-    if( VERBOSE )                                              \
+    ++UNEXPECTED_EXCEPTION_COUNTER;                                   \
+                                                                      \
+    if( VERBOSE )                                                     \
     {                                                               \
       FRENSIE_FLUSH_ALL_LOGS();                                       \
                                                                       \
-      LOG_STREAM << "Caught unexpected unknown exception";           \
+      LOG_STREAM << " ... Caught unexpected unknown exception";         \
                                                                         \
-      if( Utility::GlobalMPISession::size() > 1 )                  \
+      if( Utility::GlobalMPISession::size() > 1 )                       \
         LOG_STREAM << " on proc " << Utility::GlobalMPISession::rank(); \
+      else                                                              \
+        LOG_STREAM << " ";                                              \
                                                                         \
-      LOG_STREAM << "!"<< std::endl;                                   \
+      Utility::reportCheckLocationWithPadding( __FILE__, __LINE__, LOG_STREAM, "" ); \
+                                                                        \
+      if( CHECKPOINT_LINE_NUMBER > 0 )                                  \
+      {                                                               \
+        LOG_STREAM << "\n" << std::string( Utility::UnitTestManager::getTestDetailsStartingRightShift(), ' ' ) \
+                   << "Last unit test checkpoint at line "                \
+                   << CHECKPOINT_LINE_NUMBER;                           \
+      }                                                                 \
+                                                                        \
+      LOG_STREAM << std::endl;                                          \
     }                                                                   \
   }
   

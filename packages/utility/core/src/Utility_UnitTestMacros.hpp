@@ -24,9 +24,18 @@
 
 //! The success variable name
 #define __SUCCESS__ success
+
+//! The numer of checks variable name
 #define __NUMBER_OF_CHECKS__ number_of_checks
+
+//! The number of passed checks variable name
 #define __NUMBER_OF_PASSED_CHECKS__ number_of_passed_checks
+
+//! The checkpoint variable name
 #define __CHECKPOINT__ last_checkpoint_line_number
+
+//! The starting indentation for local checks
+#define INDENT Utility::UnitTestManager::getTestDetailsStartingRightShift()
 
 #define FRENSIE_CHECKPOINT() __CHECKPOINT__ = __LINE__
 
@@ -78,12 +87,14 @@
 #define FRENSIE_UNIT_TEST( TEST_GROUP, TEST_NAME )      \
   class TEST_GROUP##_##TEST_NAME##_UnitTest : public Utility::UnitTest \
   {                                                                    \
+  public:                                                              \
     TEST_GROUP##_##TEST_NAME##_UnitTest()                              \
       : Utility::UnitTest( #TEST_GROUP, #TEST_NAME ){}                 \
     std::string getFile() const override                               \
     { return __FILE__; }                                               \
     size_t getLineNumber() const override                              \
     { return __LINE__; }                                               \
+  private:                                                             \
     void runImpl( std::ostream& os,                                    \
                   bool& success,                                        \
                   size_t& number_of_checks,                             \
@@ -228,7 +239,7 @@
   }                                                                   \
   else                                                                \
   {                                                                 \
-    ++__NUMBER_OF_PASSED_CHECKS__
+    ++__NUMBER_OF_PASSED_CHECKS__;                                  \
   }                                                                 
 
 #define __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, RETURN_ON_FAILURE ) \
@@ -236,21 +247,12 @@
     ++__NUMBER_OF_CHECKS__;                                             \
     FRENSIE_CHECKPOINT();                                               \
                                                                         \
-    const std::ostringstream local_log;                                 \
+    Utility::reportCheckType<INDENT>( RETURN_ON_FAILURE, log );         \
                                                                         \
     const bool local_result =                                           \
-      Utility::compare<ComparePolicy>( lhs, #lhs, rhs, #rhs, local_log, extra_data ); \
+      Utility::compare<ComparePolicy,0,Utility::Details::incrementRightShift(INDENT)>( lhs, #lhs, rhs, #rhs, log, extra_data, true ); \
                                                                         \
-    const std::string comparison_header =                               \
-      Utility::createComparisonHeader<ComparePolicy>( lhs, #lhs, rhs, #rhs, extra_data ); \
-                                                                        \
-    Utility::logCheckDetailsAndResult( comparison_header, \
-                                       local_log.str(),                 \
-                                       local_result,                    \
-                                       RETURN_ON_FAILURE,               \
-                                       __FILE__,                        \
-                                       __LINE__,                        \
-                                       log );                           \
+    Utility::logExtraCheckDetails<Utility::Details::incrementRightShift(INDENT)>( local_result, __FILE__, __LINE__, log ); \
                                                                         \
     __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ); \
   }
@@ -310,10 +312,10 @@
   }
 
 #define __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, 0, log, test_success, false )
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (Utility::ComparisonTraits<std::common_type<std::decay<decltype(lhs)>::type,std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, false )
 
 #define __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( ComparePolicy, lhs, rhs, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, 0, log, test_success, true )
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (Utility::ComparisonTraits<std::common_type<std::decay<decltype(lhs)>::type,std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, true )
 
 #define __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, extra_data, log, test_success ) \
   __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, false )
@@ -370,16 +372,10 @@
   __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success )
 
 #define FRENSIE_CHECK_SMALL( value, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::CloseComparisonPolicy, value, 0, tol, log, success )
-
-#define FRENSIE_CHECK_SMALL( value, tol )    \
   __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, value, 0, tol, log, success )
 
-#define FRENSIE_REQUIRE_CLOSE( value, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success )
-
-#define FRENSIE_CHECK_FLOATING_EQUALITY( lhs, rhs, tol ) \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success )
+#define FRENSIE_REQUIRE_SMALL( value, tol )    \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, value, 0, tol, log, success )
 
 #define FRENSIE_REQUIRE_FLOATING_EQUALITY( lhs, rhs, tol ) \
   __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success )

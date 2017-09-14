@@ -35,7 +35,8 @@ public:
   //! Run the unit test and place report in output stream
   bool run( std::ostream& os,
             size_t& number_of_checks,
-            size_t& number_of_passed_checks ) const;
+            size_t& number_of_passed_checks,
+            size_t& number_of_unexpected_exceptions ) const;
 
   //! Return the group name
   const std::string& getGroupName() const;

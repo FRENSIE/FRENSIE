@@ -271,7 +271,9 @@ struct ComparisonTraits<std::tuple<Types...>,typename std::enable_if<Utility::Tu
                            const ExtraDataType& extra_data = ExtraDataType() );
 
   //! Compare two tuples
-  template<typename ComparisonPolicy, size_t RightShift>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift = 0,
+           size_t DetailsRightShift = Details::incrementRightShift(HeaderRightShift)>
   static bool compare( const std::tuple<Types...>& left_value,
                        const std::string& left_name,
                        const bool log_left_name,
@@ -322,7 +324,9 @@ struct ComparisonTraits<std::tuple<T> >
   }
   
   //! Compare two tuples
-  template<typename ComparisonPolicy, size_t RightShift>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift = 0,
+           size_t DetailsRightShift = Details::incrementRightShift(HeaderRightShift)>
   static bool compare( const std::tuple<T>& left_value,
                        const std::string& left_name,
                        const bool log_left_name,
@@ -334,7 +338,7 @@ struct ComparisonTraits<std::tuple<T> >
                        const bool log_comparison_details = false,
                        const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return Utility::ComparisonTraits<T>::template compare<ComparisonPolicy,RightShift>(
+    return Utility::ComparisonTraits<T>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                 Utility::get<0>( left_value ),
                                                 left_name,
                                                 log_left_name,
@@ -376,7 +380,9 @@ struct ComparisonTraits<std::pair<T1,T2> >
                            const ExtraDataType& extra_data = ExtraDataType() );
 
   //! Compare two tuples
-  template<typename ComparisonPolicy, size_t RightShift>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift = 0,
+           size_t DetailsRightShift = Details::incrementRightShift(HeaderRightShift)>
   static bool compare( const std::pair<T1,T2>& left_value,
                        const std::string& left_name,
                        const bool log_left_name,

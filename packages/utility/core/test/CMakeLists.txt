@@ -303,6 +303,11 @@ TARGET_LINK_LIBRARIES(tstTemplateUnitTestWrapper utility_core ${BOOST_TEST_LIBRA
 ADD_TEST(TemplateUnitTestWrapper_test tstTemplateUnitTestWrapper --report_level=detailed)
 SET_PROPERTY(TEST TemplateUnitTestWrapper_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstFRENSIEUnitTestFrameworkDefaultInit tstFRENSIEUnitTestFrameworkDefaultInit)
+TARGET_LINK_LIBRARIES(tstFRENSIEUnitTestFrameworkDefaultInit utility_core)
+ADD_TEST(FRENSIEUnitTestFrameworkDefaultInit_test tstFRENSIEUnitTestFrameworkDefaultInit --report_level=detailed)
+SET_PROPERTY(TEST FRENSIEUnitTestFrameworkDefaultInit_test PROPERTY LABELS utility_core)
+
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
 

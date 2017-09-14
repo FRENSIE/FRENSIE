@@ -72,7 +72,8 @@ size_t UnitTest::getCreationOrderIndex() const
 // Run the unit test and place report in output stream
 bool UnitTest::run( std::ostream& os,
                     size_t& number_of_checks,
-                    size_t& number_of_passed_checks ) const
+                    size_t& number_of_passed_checks,
+                    size_t& number_of_unexpected_exceptions ) const
 {
   bool success = true;
 
@@ -85,7 +86,7 @@ bool UnitTest::run( std::ostream& os,
                    number_of_passed_checks,
                    checkpoint );
   }
-  __FRENSIE_TEST_CATCH_STATEMENTS__( os, true, success, checkpoint );
+  __FRENSIE_TEST_CATCH_STATEMENTS__( os, true, success, checkpoint, number_of_unexpected_exceptions );
 
   return success;
 }

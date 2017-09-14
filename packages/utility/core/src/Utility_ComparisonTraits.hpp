@@ -28,12 +28,6 @@ namespace Utility{
 
 namespace Details{
 
-/*! Increment the right shift
- * \ingroup comparison_traits
- */
-constexpr size_t incrementRightShift( const size_t right_shift )
-{ return right_shift+2; }
-
 /*! Default implementation of the createComparisonHeader method
  * \ingroup comparison_traits
  */
@@ -131,7 +125,9 @@ inline std::string ComparisonTraits<T,Enabled>::createComparisonHeader(
 
 // Compare two values of a type (default)
 template<typename T, typename Enabled>
-template<typename ComparisonPolicy, size_t RightShift>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t>
 inline bool ComparisonTraits<T,Enabled>::compare(
                                              const T& left_value,
                                              const std::string& left_name,
@@ -144,7 +140,7 @@ inline bool ComparisonTraits<T,Enabled>::compare(
                                              const bool log_comparison_details,
                                              const ExtraDataType& extra_data )
 {
-  return Details::compareImpl<ComparisonPolicy,RightShift>(
+  return Details::compareImpl<ComparisonPolicy,HeaderRightShift>(
                                       left_value, left_name, log_left_name,
                                       right_value, right_name, log_right_name,
                                       name_suffix, log, log_comparison_details,
@@ -214,7 +210,8 @@ struct SequenceContainerComparisonPolicyHelper
   /*! \brief Compare two containers (this won't compile if this class is not
    * specialized for the comparison policy of interest).
    */
-  template<size_t RightShift,
+  template<size_t HeaderRightShift,
+           size_t DetailsRightShift,
            bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
@@ -292,7 +289,8 @@ private:
   }
 
   //! Compare two containers
-  template<size_t RightShift,
+  template<size_t HeaderRightShift,
+           size_t DetailsRightShift,
            bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
@@ -313,7 +311,7 @@ private:
 
     if( log_comparison_details )
     {
-      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
+      log << ThisType::template createComparisonHeader<HeaderRightShift,LeftContainerIsDominant>(
                                                                left_container,
                                                                left_name,
                                                                log_left_name,
@@ -331,7 +329,7 @@ private:
       detailed_name_suffix << name_suffix << ".size()";
         
     bool success =
-        Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+      Utility::ComparisonTraits<size_t>::template compare<Policy,DetailsRightShift,Details::incrementRightShift(DetailsRightShift)>(
                std::distance( left_container.begin(), left_container.end() ),
                left_name,
                log_left_name,
@@ -368,7 +366,7 @@ private:
         detailed_name_suffix << "[" << index << "]";
           
         bool local_success =
-          Utility::ComparisonTraits<ValueType>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+          Utility::ComparisonTraits<ValueType>::template compare<Policy,DetailsRightShift,Details::incrementRightShift(DetailsRightShift)>(
                                              static_cast<ValueType>(*left_it),
                                              left_name,
                                              log_left_name,
@@ -457,7 +455,8 @@ public:
   }
 
   //! Compare two containers
-  template<size_t RightShift,
+  template<size_t HeaderRightShift,
+           size_t DetailsRightShift,
            bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
@@ -478,7 +477,7 @@ public:
 
     if( log_comparison_details )
     {
-      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
+      log << ThisType::template createComparisonHeader<HeaderRightShift,LeftContainerIsDominant>(
                                                                left_container,
                                                                left_name,
                                                                log_left_name,
@@ -490,7 +489,7 @@ public:
     }
 
     bool success =
-      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+      Utility::ComparisonTraits<size_t>::template compare<Policy,DetailsRightShift,Details::incrementRightShift(DetailsRightShift)>(
                std::distance( left_container.begin(), left_container.end() ),
                left_name,
                false,
@@ -515,7 +514,7 @@ public:
       while( left_it != left_end )
       {
         bool local_success =
-          Utility::ComparisonTraits<ValueType>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+          Utility::ComparisonTraits<ValueType>::template compare<Policy,DetailsRightShift,Details::incrementRightShift(DetailsRightShift)>(
                                              static_cast<ValueType>(*left_it),
                                              left_name,
                                              false,
@@ -656,7 +655,7 @@ struct STLCompliantAssociativeContainerElementComparisonHelper<false>
         std::find( left_container.begin(), left_container.end(), *right_it ) != left_container.end();
           
       bool local_success =
-        Utility::ComparisonTraits<bool>::template compare<Utility::EqualityComparisonPolicy,RightShift>(
+        Utility::ComparisonTraits<bool>::template compare<Utility::EqualityComparisonPolicy,RightShift,Details::incrementRightShift(RightShift)>(
                                                     left_container_has_value,
                                                     left_name,
                                                     true,
@@ -705,7 +704,8 @@ struct AssociativeContainerComparisonPolicyHelper
   /*! \brief Compare two containers (this won't compile if this class is not
    * specialized for the comparison policy of interest).
    */
-  template<size_t RightShift,
+  template<size_t HeaderRightShift,
+           size_t DetailsRightShift,
            bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
@@ -778,7 +778,8 @@ public:
   }
 
   //! Compare two containers
-  template<size_t RightShift,
+  template<size_t HeaderRightShift,
+           size_t DetailsRightShift,
            bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
@@ -799,7 +800,7 @@ public:
 
     if( log_comparison_details )
     {
-      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
+      log << ThisType::template createComparisonHeader<HeaderRightShift,LeftContainerIsDominant>(
                                                                left_container,
                                                                left_name,
                                                                log_left_name,
@@ -816,7 +817,7 @@ public:
       detailed_name_suffix << name_suffix << ".size()";
 
     bool success =
-      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+      Utility::ComparisonTraits<size_t>::template compare<Policy,DetailsRightShift,Details::incrementRightShift(DetailsRightShift)>(
                std::distance( left_container.begin(), left_container.end() ),
                left_name,
                log_left_name,
@@ -831,7 +832,7 @@ public:
     if( success )
     {
       success =
-        STLCompliantAssociativeContainerElementComparisonHelper<LeftContainerIsDominant>::template compareElements<Details::incrementRightShift(RightShift)>(
+        STLCompliantAssociativeContainerElementComparisonHelper<LeftContainerIsDominant>::template compareElements<DetailsRightShift>(
                                                       left_container,
                                                       left_name,
                                                       log_left_name,
@@ -908,7 +909,8 @@ public:
   }
 
   //! Compare two containers
-  template<size_t RightShift,
+  template<size_t HeaderRightShift,
+           size_t DetailsRightShift,
            bool LeftContainerIsDominant,
            typename LeftContainer,
            typename RightContainer,
@@ -929,7 +931,7 @@ public:
 
     if( log_comparison_details )
     {
-      log << ThisType::template createComparisonHeader<RightShift,LeftContainerIsDominant>(
+      log << ThisType::template createComparisonHeader<HeaderRightShift,LeftContainerIsDominant>(
                                                                left_container,
                                                                left_name,
                                                                log_left_name,
@@ -946,7 +948,7 @@ public:
       detailed_name_suffix << name_suffix << ".size()";
 
     bool success =
-      Utility::ComparisonTraits<size_t>::template compare<Policy,Details::incrementRightShift(RightShift)>(
+      Utility::ComparisonTraits<size_t>::template compare<Policy,DetailsRightShift,Details::incrementRightShift(DetailsRightShift)>(
                std::distance( left_container.begin(), left_container.end() ),
                left_name,
                false,
@@ -1082,7 +1084,9 @@ public:
   }
   
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, size_t RightShift>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t DetailsRightShift>
   static inline bool compare(
                           const STLCompliantSequenceContainer& left_value,
                           const std::string& left_name,
@@ -1095,7 +1099,7 @@ public:
                           const bool log_comparison_details = false,
                           const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<HeaderRightShift,DetailsRightShift,true>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -1109,7 +1113,10 @@ public:
   }
 
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t DetailsRightShift,
+           typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
   compare( std::initializer_list<T2> left_value,
            const std::string& left_name,
@@ -1122,7 +1129,7 @@ public:
            const bool log_comparison_details = false,
            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,false>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<HeaderRightShift,DetailsRightShift,false>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -1136,7 +1143,10 @@ public:
   }
 
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t DetailsRightShift,
+           typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
   compare( const STLCompliantSequenceContainer& left_value,
            const std::string& left_name,
@@ -1149,7 +1159,7 @@ public:
            const bool log_comparison_details = false,
            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
+    return SequenceContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<HeaderRightShift,DetailsRightShift,true>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -1258,7 +1268,9 @@ public:
   }
   
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, size_t RightShift>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t DetailsRightShift>
   static inline bool compare(
                           const STLCompliantAssociativeContainer& left_value,
                           const std::string& left_name,
@@ -1271,7 +1283,7 @@ public:
                           const bool log_comparison_details = false,
                           const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<HeaderRightShift,DetailsRightShift,true>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -1285,7 +1297,10 @@ public:
   }
 
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t DetailsRightShift,
+           typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
   compare( std::initializer_list<T2> left_value,
            const std::string& left_name,
@@ -1298,7 +1313,7 @@ public:
            const bool log_comparison_details = false,
            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,false>(
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<HeaderRightShift,DetailsRightShift,false>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -1312,7 +1327,10 @@ public:
   }
 
   //! Compare two sequence containers
-  template<typename ComparisonPolicy, size_t RightShift, typename T2>
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t DetailsRightShift,
+           typename T2>
   static inline typename std::enable_if<ThisType::IsConvertible<T2>::value,bool>::type
   compare( const STLCompliantAssociativeContainer& left_value,
            const std::string& left_name,
@@ -1325,7 +1343,7 @@ public:
            const bool log_comparison_details = false,
            const ExtraDataType& extra_data = ExtraDataType() )
   {
-    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<RightShift,true>(
+    return AssociativeContainerComparisonPolicyHelper<ComparisonPolicy>::template compare<HeaderRightShift,DetailsRightShift,true>(
                                                         left_value,
                                                         left_name,
                                                         log_left_name,
@@ -1370,7 +1388,10 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T>
 inline bool compare(
                  const T& left_value,
                  const std::string& left_name,
@@ -1381,7 +1402,7 @@ inline bool compare(
                  const bool log_comparison_details,
                  const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<T>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                       left_value,
                                                       left_name,
                                                       true,
@@ -1416,7 +1437,10 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T>
 inline bool compare(
                  T& left_value,
                  const std::string& left_name,
@@ -1427,7 +1451,7 @@ inline bool compare(
                  const bool log_comparison_details,
                  const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<T>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                         left_value,
                                                         left_name,
                                                         true,
@@ -1462,7 +1486,11 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 inline bool compare(
                 T1&& left_value,
                 const std::string& left_name,
@@ -1473,7 +1501,7 @@ inline bool compare(
                 const bool log_comparison_details,
                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T2>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<T2>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                        left_value,
                                                        left_name,
                                                        false,
@@ -1508,7 +1536,11 @@ std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename Container,
+         typename T>
 bool compare(
          std::initializer_list<T> left_value,
          const std::string& left_name,
@@ -1519,7 +1551,7 @@ bool compare(
          const bool log_comparison_details,
          const std::string& name_suffix )
 {
-  return ComparisonTraits<Container>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<Container>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                        left_value,
                                                        left_name,
                                                        false,
@@ -1554,7 +1586,11 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 inline bool compare(
                 T1&& left_value,
                 const std::string& left_name,
@@ -1565,7 +1601,7 @@ inline bool compare(
                 const bool log_comparison_details,
                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T2>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<T2>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                        left_value,
                                                        left_name,
                                                        false,
@@ -1600,7 +1636,11 @@ std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename Container,
+         typename T>
 bool compare(
          std::initializer_list<T> left_value,
          const std::string& left_name,
@@ -1611,7 +1651,7 @@ bool compare(
          const bool log_comparison_details,
          const std::string& name_suffix )
 {
-  return ComparisonTraits<Container>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<Container>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                        left_value,
                                                        left_name,
                                                        false,
@@ -1646,7 +1686,11 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 inline bool compare(
                 const T1& left_value,
                 const std::string& left_name,
@@ -1657,7 +1701,7 @@ inline bool compare(
                 const bool log_comparison_details,
                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T1>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<T1>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                       left_value,
                                                       left_name,
                                                       true,
@@ -1692,7 +1736,11 @@ std::string createComparisonHeader(
 }
   
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename Container,
+         typename T>
 bool compare(
          const Container& left_value,
          const std::string& left_name,
@@ -1703,7 +1751,7 @@ bool compare(
          const bool log_comparison_details,
          const std::string& name_suffix )
 {
-  return ComparisonTraits<Container>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<Container>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                        left_value,
                                                        left_name,
                                                        true,
@@ -1738,7 +1786,11 @@ inline std::string createComparisonHeader(
 }
   
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
 inline bool compare(
                T1& left_value,
                const std::string& left_name,
@@ -1749,7 +1801,7 @@ inline bool compare(
                const bool log_comparison_details,
                const std::string& name_suffix )
 {
-  return ComparisonTraits<T1>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<T1>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                       left_value,
                                                       left_name,
                                                       true,
@@ -1784,7 +1836,11 @@ std::string createComparisonHeader(
 }
   
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename Container,
+         typename T>
 bool compare(
          Container& left_value,
          const std::string& left_name,
@@ -1795,7 +1851,7 @@ bool compare(
          const bool log_comparison_details,
          const std::string& name_suffix )
 {
-  return ComparisonTraits<Container>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<Container>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                        left_value,
                                                        left_name,
                                                        true,
@@ -1830,7 +1886,10 @@ inline std::string createComparisonHeader(
 }
 
 // Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy, size_t RightShift, typename T>
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T>
 inline bool compare(
                  T&& left_value,
                  const std::string& left_name,
@@ -1841,7 +1900,7 @@ inline bool compare(
                  const bool log_comparison_details,
                  const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::template compare<ComparisonPolicy,RightShift>(
+  return ComparisonTraits<T>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                         left_value,
                                                         left_name,
                                                         false,
