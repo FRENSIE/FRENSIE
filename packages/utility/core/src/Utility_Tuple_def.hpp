@@ -175,6 +175,54 @@ inline void FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::valu
 
 namespace Details{
 
+/*! The zero tuple element initializer
+ * \ingroup tuple
+ */
+//! The helper class that is used to compare tuple members
+template<size_t I, typename TupleType, typename Enabled = void>
+struct ZeroTupleElementInitializer
+{
+  //! Initialize element I to zero
+  static inline void zeroElement( const TupleType& mirror_tuple,
+                                  TupleType& zero_tuple )
+  {
+    Utility::get<I>( zero_tuple ) = Utility::Details::ZeroHelper<typename Utility::TupleElement<I,TupleType>::type>::zero( Utility::get<I>( mirror_tuple ) );
+
+    ZeroTupleElementInitializer<I+1,TupleType>::zeroElement( mirror_tuple, zero_tuple );
+  }
+};
+
+/*! Partial specialization of ZeroTupleElementInitializer for I==TupleSize
+ * \ingroup tuple
+ */
+//! The helper class that is used to compare tuple members
+template<size_t I, typename TupleType>
+struct ZeroTupleElementInitializer<I,TupleType,typename std::enable_if<I==Utility::TupleSize<TupleType>::value>::type>
+{
+  //! Initialize element I to zero
+  static inline void zeroElement( const TupleType& mirror_tuple,
+                                  TupleType& zero_tuple )
+  { /* ... */ }
+};  
+
+/*! Partial specialization of the zero helper for tuples
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
+template<typename TupleType>
+struct ZeroHelper<TupleType,typename std::enable_if<Utility::IsTuple<TupleType>::value>::type>
+{
+  //! Return the zero object
+  static inline TupleType zero( const TupleType& tuple )
+  {
+    TupleType zero_tuple;
+
+    Utility::Details::ZeroTupleElementInitializer<0,TupleType>::zeroElement( tuple, zero_tuple );
+
+    return zero_tuple;
+  }
+};
+
 //! The helper class for converting extra data to the desired type
 template<typename T, typename Enabled = void>
 struct ExtraDataConversionHelper

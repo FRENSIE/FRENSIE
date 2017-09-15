@@ -40,13 +40,25 @@ struct ToStringTraits<std::array<T,N> > : public Details::ToStringTraitsIterator
 template<typename T, size_t N>
 struct ComparisonTraits<std::array<T,N> > : public Details::ComparisonTraitsSequenceContainerHelper<std::array<T,N> >
 { /* ... */ };
+
+namespace Details{
+
+/*! Partial specialization of the zero helper for std::array
+ * \ingroup array
+ * \ingroup comparison_traits
+ */
+template<typename T, size_t N>
+struct ZeroHelper<std::array<T,N> > : public STLCompliantContainerZeroHelper<std::array<T,N> >
+{ /* ... */ };
+  
+} // end Details namespace
   
 } // end Utility namespace
 
 namespace std{
 
 /*! Create a view of an array
- * \ingroup vector
+ * \ingroup array
  * \ingroup view
  */
 template<typename T, size_t N>
@@ -62,8 +74,8 @@ inline Utility::ArrayView<T> operator|( std::array<T,N>& array,
                                 slice.extent() );
 }
 
-/*! Create a const view of a vector
- * \ingroup vector
+/*! Create a const view of an array
+ * \ingroup array
  * \ingroup view
  */
 template<typename T, size_t N>

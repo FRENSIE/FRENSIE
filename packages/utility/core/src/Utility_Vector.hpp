@@ -51,6 +51,18 @@ struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCo
 template<typename T>
 struct ComparisonTraits<std::vector<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::vector<T> >
 { /* ... */ };
+
+namespace Details{
+
+/*! Partial specialization of the zero helper for std::vector
+ * \ingroup vector
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ZeroHelper<std::vector<T> > : public STLCompliantContainerZeroHelper<std::vector<T> >
+{ /* ... */ };
+  
+} // end Details namespace
   
 } // end Utility namespace
 

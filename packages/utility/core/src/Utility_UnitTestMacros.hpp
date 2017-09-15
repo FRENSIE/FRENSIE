@@ -257,56 +257,87 @@
     __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ); \
   }
 
-#define __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, RETURN_ON_FAILURE )   \
+#define __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, log, test_success, RETURN_ON_FAILURE ) \
   {                                                                     \
     ++__NUMBER_OF_CHECKS__;                                             \
     FRENSIE_CHECKPOINT();                                               \
                                                                         \
-    std::ostringstream oss;                                             \
-    oss << #statement << " does not throw exception: ";                 \
+    Utility::reportCheckType<INDENT>( RETURN_ON_FAILURE, log );         \
+    log << "\"" << #statement << "\" does not throw exception: ";       \
                                                                         \
-    const bool local_result = true;                                     \
+    bool local_result = true;                                           \
+    std::ostringstream local_log;                                       \
                                                                         \
     try{ statement; }                                                   \
-    catch( ... ) { local_result = false; }                              \
+    catch( const std::exception& exception )                            \
+    {                                                                 \
+      local_result = false;                                           \
                                                                         \
-    Utility::logCheckDetailsAndResult( oss.str(),        \
-                                       "",                              \
-                                       local_result,                    \
-                                       RETURN_ON_FAILURE,               \
-                                       __FILE__,                        \
-                                       __LINE__,                        \
-                                       log );                           \
+      local_log << std::string( Utility::Details::incrementRightShift(INDENT), ' ' ) \
+                << "Caught std::exception with message \""              \
+                << Utility::toString( exception ) << "\" ";              \
+    }                                                                   \
+    catch( const int error_code )                                       \
+    {                                                                 \
+      local_result = false;                                           \
+                                                                      \
+      local_log << std::string( Utility::Details::incrementRightShift(INDENT), ' ' ) \
+                << "Caught error code with value " << error_code << " "; \
+    }                                                                   \
+    catch( ... )                                                        \
+    {                                                                 \
+      local_result = false;                                             \
+                                                                        \
+      local_log << std::string( Utility::Details::incrementRightShift(INDENT), ' ' ) \
+                << "Caught exception of unknown type ";                \
+    }                                                                   \
+                                                                        \
+    Utility::reportComparisonPassFail( local_result, log );             \
+    if( !local_log.str().empty() )                                      \
+    {                                                                 \
+      log << local_log.str();                                           \
+      Utility::logExtraCheckDetails<0>( local_result, __FILE__, __LINE__, log ); \
+    }                                                                   \
+    else                                                                \
+    {                                                                 \
+      Utility::logExtraCheckDetails<Utility::Details::incrementRightShift(INDENT)>( local_result, __FILE__, __LINE__, log ); \
+    }                                                                   \
                                                                         \
     __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ); \
   }
 
-#define __FRENSIE_CHECK_THROW_WITH_OPTIONAL_RETURN__( statement, Exception, RETURN_ON_FAILURE ) \
+#define __FRENSIE_CHECK_THROW_WITH_OPTIONAL_RETURN__( statement, Exception, log, test_success, RETURN_ON_FAILURE ) \
   {                                                                     \
     ++__NUMBER_OF_CHECKS__;                                             \
     FRENSIE_CHECKPOINT();                                               \
                                                                         \
-    std::ostringstream oss;                                             \
-    oss << #statement << " throws exception of type " << #Exception << ": "; \
+    Utility::reportCheckType<INDENT>( RETURN_ON_FAILURE, log );         \
+    log << "\"" << #statement << "\" throws exception of type "         \
+        << #Exception << ": ";                                          \
                                                                         \
+    bool local_result = false;                                          \
     std::ostringstream local_log;                                       \
                                                                         \
-    const bool local_result = false;                                    \
-                                                                        \
     try{ statement; }                                                   \
-    catch( Exception& exception )                                       \
+    catch( Exception& exception ) { local_result = true; }              \
+    catch( ... )                                                        \
     {                                                                 \
-      local_result = true;                                              \
-      local_log << Utility::toString( exception );                      \
+      local_result = false;                                             \
+                                                                        \
+      local_log << std::string( Utility::Details::incrementRightShift(INDENT), ' ' ) \
+                << "Caught exception of unknown type ";                 \
     }                                                                   \
                                                                         \
-    Utility::logCheckDetailsAndResult( oss.str(),                       \
-                                       local_log.str(),                 \
-                                       local_result,                    \
-                                       RETURN_ON_FAILURE,               \
-                                       __FILE__,                        \
-                                       __LINE__,                        \
-                                       log );                           \
+  Utility::reportComparisonPassFail( local_result, log );               \
+  if( !local_log.str().empty() )                                        \
+  {                                                                   \
+      log << local_log.str();                                           \
+      Utility::logExtraCheckDetails<0>( local_result, __FILE__, __LINE__, log ); \
+  }                                                                     \
+  else                                                                  \
+  {                                                                   \
+    Utility::logExtraCheckDetails<Utility::Details::incrementRightShift(INDENT)>( local_result, __FILE__, __LINE__, log ); \
+  }                                                                     \
                                                                         \
     __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ); \
   }
@@ -354,16 +385,16 @@
   __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::GreaterThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
 
 #define FRENSIE_CHECK_LESS( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::GreaterThanComparisonPolicy, lhs, rhs, log, success )
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::LessThanComparisonPolicy, lhs, rhs, log, success )
 
 #define FRENSIE_REQUIRE_LESS( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::GreaterThanComparisonPolicy, lhs, rhs, log, success )
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::LessThanComparisonPolicy, lhs, rhs, log, success )
 
 #define FRENSIE_CHECK_LESS_OR_EQUAL( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::GreaterThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::LessThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
 
 #define FRENSIE_REQUIRE_LESS_OR_EQUAL( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::GreaterThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::LessThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
 
 #define FRENSIE_CHECK_CLOSE( lhs, rhs, tol )    \
   __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success )
@@ -372,25 +403,28 @@
   __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success )
 
 #define FRENSIE_CHECK_SMALL( value, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, value, 0, tol, log, success )
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::CloseComparisonPolicy, value, Utility::Details::zero(value), tol, log, success )
 
 #define FRENSIE_REQUIRE_SMALL( value, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, value, 0, tol, log, success )
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, value, Utility::Details::zero(value), tol, log, success )
+
+#define FRENSIE_CHECK_FLOATING_EQUALITY( lhs, rhs, tol ) \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success )
 
 #define FRENSIE_REQUIRE_FLOATING_EQUALITY( lhs, rhs, tol ) \
   __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success )
 
 #define FRENSIE_CHECK_NO_THROW( statement )     \
-  __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, false )
+  __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, log, success, false )
 
 #define FRENSIE_REQUIRE_NO_THROW( statement )   \
-  __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, true )
+  __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, log, success, false )
 
 #define FRENSIE_CHECK_THROW( statement, Exception )     \
-  __FRENSIE_CHECK_THROW_WITH_OPTIONAL_RETURN__( statement, Exception, false )
+  __FRENSIE_CHECK_THROW_WITH_OPTIONAL_RETURN__( statement, Exception, log, success, false )
 
 #define FRENSIE_REQUIRE_THROW( statement, Exception )     \
-  __FRENSIE_CHECK_THROW_WITH_OPTIONAL_RETURN__( statement, Exception, true )
+  __FRENSIE_CHECK_THROW_WITH_OPTIONAL_RETURN__( statement, Exception, log, success, true )
 
 #endif // end UTILITY_UNIT_TEST_MACROS_HPP
 

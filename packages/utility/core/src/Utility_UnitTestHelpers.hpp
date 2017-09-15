@@ -64,6 +64,56 @@ inline void logExtraCheckDetails( const bool check_result,
   Utility::logExtraCheckDetailsWithPadding( check_result, file, line_number, log, std::string( RightShift, ' ' ) );
 }
 
+//! Log last checkpoint
+void logLastCheckpointWithPadding( const size_t last_checkpoint,
+                                   std::ostream& log,
+                                   const std::string& line_padding = "" );
+
+//! Log last checkpoint
+template<size_t RightShift>
+inline void logLastCheckpoint( const size_t last_checkpoint,
+                               std::ostream& log )
+{
+  Utility::logLastCheckpointWithPadding( last_checkpoint, log, std::string( RightShift, ' ' ) );
+}
+
+//! Log std::exception details
+void logExceptionDetailsWithPadding(
+                                 const std::exception& exception,
+                                 const std::string& file,
+                                 const size_t line_number,
+                                 std::ostream& log,
+                                 const std::string& header_suffix = "",
+                                 const std::string& line_padding = "" );
+
+//! Log std::exception details
+template<size_t RightShift>
+inline void logExceptionDetails( const std::exception& exception,
+                                 const std::string& file,
+                                 const size_t line_number,
+                                 std::ostream& log,
+                                 const std::string& header_suffix = "" )
+{
+  Utility::logExceptionDetailsWithPadding( exception, file, line_number, log, header_suffix, std::string( RightShift, ' ' ) );
+}
+
+//! Log unknown exception details
+void logUnknownExceptionDetailsWithPadding( const std::string& file,
+                                            const size_t line_number,
+                                            std::ostream& log,
+                                            const std::string& header_suffix = "",
+                                            const std::string& line_padding = "" );
+
+//! Log unknown exception details
+template<size_t RightShift>
+inline void logUnknownExceptionDetails( const std::string& file,
+                                        const size_t line_number,
+                                        std::ostream& log,
+                                        const std::string& header_suffix = "" )
+{
+  Utility::logUnknownExceptionDetailsWithPadding( file, line_number, log, header_suffix, std::string( RightShift, ' ' ) );
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_TESTING_HELPERS_HPP

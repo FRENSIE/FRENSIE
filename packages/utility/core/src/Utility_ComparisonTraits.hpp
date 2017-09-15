@@ -28,6 +28,83 @@ namespace Utility{
 
 namespace Details{
 
+/*! The zero helper
+ * \ingroup comparison_traits
+ */
+template<typename T, typename Enabled = void>
+struct ZeroHelper;
+
+/*! Partial specialization of the zero helper for arithmetic types
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ZeroHelper<T,typename std::enable_if<std::is_arithmetic<T>::value>::type>
+{
+  //! Return the zero object
+  static inline T zero( const T )
+  { return Utility::QuantityTraits<T>::zero(); }
+};
+
+/*! Partial specialization of the zero helper for quantity types
+ * \ingroup comparison_traits
+ */
+template<typename Unit, typename T>
+struct ZeroHelper<boost::units::quantity<Unit,T> >
+{
+  //! Return the zero object
+  static inline boost::units::quantity<Unit,T> zero( const boost::units::quantity<Unit,T> )
+  { return Utility::QuantityTraits<boost::units::quantity<Unit,T> >::zero(); }
+};
+
+/*! Specialization of the zero helper for std::string
+ * \ingroup comparison_traits
+ */
+template<>
+struct ZeroHelper<std::string>
+{
+  //! Return the zero object
+  static inline std::string zero( const std::string& )
+  { return std::string(); }
+};
+
+/*! STL compliant containre zero helper implementation 
+ * 
+ * A partial specialization of ZeroHelper must be made for the container type
+ * and it should inherit from this struct.
+ * \ingroup comparison_traits
+ */
+template<typename STLCompliantContainer>
+struct STLCompliantContainerZeroHelper
+{
+  //! Return the zero object
+  static inline STLCompliantContainer zero( const STLCompliantContainer& mirror_obj )
+  {
+    STLCompliantContainer zero_obj( mirror_obj );
+
+    typename STLCompliantContainer::iterator it, end_it;
+    it = zero_obj.begin();
+    end_it = zero_obj.end();
+
+    while( it != end_it )
+    {
+      *it = Utility::Details::ZeroHelper<typename STLCompliantContainer::value_type>::zero( *it );
+      
+      ++it;
+    }
+
+    return zero_obj;
+  }
+};
+
+/*! Create the zero object
+ * \ingroup comparison_traits
+ */
+template<typename T>
+inline T zero( const T& mirror_obj )
+{
+  return Utility::Details::ZeroHelper<T>::zero( mirror_obj );
+}
+
 /*! Default implementation of the createComparisonHeader method
  * \ingroup comparison_traits
  */

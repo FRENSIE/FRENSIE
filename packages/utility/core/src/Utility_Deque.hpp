@@ -50,6 +50,18 @@ struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCom
 template<typename T>
 struct ComparisonTraits<std::deque<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::deque<T> >
 { /* ... */ };
+
+namespace Details{
+
+/*! Partial specialization of the zero helper for std::deque
+ * \ingroup deque
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ZeroHelper<std::deque<T> > : public STLCompliantContainerZeroHelper<std::deque<T> >
+{ /* ... */ };
+  
+} // end Details namespace
   
 } // end Utility namespace
 

@@ -76,6 +76,26 @@ struct ComparisonTraits<std::set<T> > : public Details::ComparisonTraitsAssociat
 template<typename T>
 struct ComparisonTraits<std::unordered_set<T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::unordered_set<T> >
 { /* ... */ };
+
+namespace Details{
+
+/*! Partial specialization of the zero helper for std::set
+ * \ingroup set
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ZeroHelper<std::set<T> > : public STLCompliantContainerZeroHelper<std::set<T> >
+{ /* ... */ };
+
+/*! Partial specialization of the zero helper for std::unordered_set
+ * \ingroup set
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ZeroHelper<std::unordered_set<T> > : public STLCompliantContainerZeroHelper<std::unordered_set<T> >
+{ /* ... */ };
+  
+} // end Details namespace
   
 } // end Utility namespace
 

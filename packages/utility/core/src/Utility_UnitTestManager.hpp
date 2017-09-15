@@ -257,7 +257,7 @@ private:
   std::unique_ptr<Data> d_data;
 };
 
-#define __FRENSIE_TEST_CATCH_STATEMENTS__( LOG_STREAM, VERBOSE, SUCCESS_VALUE, CHECKPOINT_LINE_NUMBER, UNEXPECTED_EXCEPTION_COUNTER ) \
+#define __FRENSIE_TEST_CATCH_STATEMENTS__( LOG_STREAM, VERBOSE, SUCCESS_VALUE, CHECKPOINT_LINE_NUMBER, UNEXPECTED_EXCEPTION_COUNTER, RIGHT_SHIFT ) \
   catch( const std::exception& exception )                              \
   {                                                                   \
     SUCCESS_VALUE = false;                                            \
@@ -267,29 +267,15 @@ private:
     if( VERBOSE )                                              \
     {                                                               \
       FRENSIE_FLUSH_ALL_LOGS();                                       \
-                                                                      \
-      std::string line_padding( Utility::UnitTestManager::getTestDetailsStartingRightShift(), ' ' ); \
                                                                         \
-      LOG_STREAM << " ... Caught unexpected std::exception";            \
+      std::ostringstream proc_id( "" );                                \
                                                                         \
       if( Utility::GlobalMPISession::size() > 1 )                       \
-        LOG_STREAM << " on proc " << Utility::GlobalMPISession::rank(); \
-      else                                                              \
-        LOG_STREAM << " ";                                              \
+        proc_id << "on proc " << Utility::GlobalMPISession::rank();    \
                                                                         \
-      Utility::reportCheckLocationWithPadding( __FILE__, __LINE__, LOG_STREAM, "" ); \
-      LOG_STREAM << "\n"                                               \
-                 << std::string( Details::incrementRightShift(Utility::UnitTestManager::getTestDetailsStartingRightShift()), ' ' ) \
-                 << exception.what();                                   \
+      Utility::logExceptionDetails<RIGHT_SHIFT>( exception, __FILE__, __LINE__, LOG_STREAM, proc_id.str() ); \
                                                                         \
-      if( CHECKPOINT_LINE_NUMBER > 0 )                                  \
-      {                                                               \
-        LOG_STREAM << "\n" << std::string( Utility::UnitTestManager::getTestDetailsStartingRightShift(), ' ' ) \
-                   << "Last unit test checkpoint at line "                \
-                   << CHECKPOINT_LINE_NUMBER;                           \
-      }                                                                 \
-                                                                        \
-      LOG_STREAM << std::endl;                                              \
+      Utility::logLastCheckpoint<RIGHT_SHIFT>( CHECKPOINT_LINE_NUMBER, LOG_STREAM ); \
     }                                                                   \
   }                                                                     \
                                                                         \
@@ -303,23 +289,14 @@ private:
     {                                                               \
       FRENSIE_FLUSH_ALL_LOGS();                                       \
                                                                       \
-      LOG_STREAM << " ... Caught unexpected unknown exception";         \
+      std::ostringstream proc_id( "" );                                \
                                                                         \
       if( Utility::GlobalMPISession::size() > 1 )                       \
-        LOG_STREAM << " on proc " << Utility::GlobalMPISession::rank(); \
-      else                                                              \
-        LOG_STREAM << " ";                                              \
+        proc_id << "on proc " << Utility::GlobalMPISession::rank();    \
+                                                                      \
+      Utility::logUnknownExceptionDetails<RIGHT_SHIFT>( __FILE__, __LINE__, LOG_STREAM, proc_id.str() ); \
                                                                         \
-      Utility::reportCheckLocationWithPadding( __FILE__, __LINE__, LOG_STREAM, "" ); \
-                                                                        \
-      if( CHECKPOINT_LINE_NUMBER > 0 )                                  \
-      {                                                               \
-        LOG_STREAM << "\n" << std::string( Utility::UnitTestManager::getTestDetailsStartingRightShift(), ' ' ) \
-                   << "Last unit test checkpoint at line "                \
-                   << CHECKPOINT_LINE_NUMBER;                           \
-      }                                                                 \
-                                                                        \
-      LOG_STREAM << std::endl;                                          \
+      Utility::logLastCheckpoint<RIGHT_SHIFT>( CHECKPOINT_LINE_NUMBER, LOG_STREAM ); \
     }                                                                   \
   }
   

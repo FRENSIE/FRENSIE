@@ -993,7 +993,7 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
   try{
     d_data->getInitializer().initializeUnitTestManager( argc, argv, init_checkpoint );
   }
-  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, init_checkpoint, d_data->getUnexpectedExceptionsCounter() );
+  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, init_checkpoint, d_data->getUnexpectedExceptionsCounter(), s_details_right_shift );
 
   init_timer->stop();
 
@@ -1148,7 +1148,7 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
 
     this->printRunningTestsNotification();
   }
-  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, 0, d_data->getUnexpectedExceptionsCounter() );
+  __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, 0, d_data->getUnexpectedExceptionsCounter(), s_details_right_shift );
 
   const std::string details_padding( s_details_right_shift, ' ' );
   
@@ -1741,7 +1741,8 @@ void UnitTestManager::printGivenUnitTestStats(
   d_data->getReportSink() << "\n"
                           << Utility::Bold(summary_header + ": ") << "\n"
                           << primary_line_padding
-                          << "total test: " << number_of_tests << "\n"
+                          << Utility::Underlined("total tests:") << " "
+                          << number_of_tests << "\n"
                           << secondary_line_padding
                           << Utility::BoldMagenta("skipped: " + Utility::toString(number_of_tests - number_of_tests_run)) << "\n"
                           << secondary_line_padding
@@ -1751,13 +1752,15 @@ void UnitTestManager::printGivenUnitTestStats(
                           << tertiary_line_padding
                           << Utility::Red("failed: " + Utility::toString(number_of_tests_run - number_of_tests_passed)) << "\n"
                           << primary_line_padding
-                          << "total checks: " << number_of_checks << "\n"
+                          << Utility::Underlined("total checks:") << " "
+                          << number_of_checks << "\n"
                           << secondary_line_padding
                           << Utility::Green("passed: " + Utility::toString(number_of_passed_checks)) << "\n"
                           << secondary_line_padding
                           << Utility::Red("failed: " + Utility::toString(number_of_checks - number_of_passed_checks)) << "\n"
                           << primary_line_padding
-                          << Utility::Red("unexpected exceptions: " + Utility::toString(number_of_unexpected_exceptions));
+                          << Utility::StaticOutputFormatter<UnderlinedTextFormat,RedTextColor,DefaultTextBackgroundColor>("unexpected exceptions:")
+                          << " " << Utility::Red(Utility::toString(number_of_unexpected_exceptions));
 
   if( total_test_exec_time >= 0.0 )
   {

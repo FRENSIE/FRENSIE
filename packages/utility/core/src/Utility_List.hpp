@@ -105,6 +105,26 @@ struct ComparisonTraits<std::list<T> > : public Details::ComparisonTraitsSequenc
 template<typename T>
 struct ComparisonTraits<std::forward_list<T> > : public Details::ComparisonTraitsSequenceContainerHelper<std::forward_list<T> >
 { /* ... */ };
+
+namespace Details{
+
+/*! Partial specialization of the zero helper for std::list
+ * \ingroup list
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ZeroHelper<std::list<T> > : public STLCompliantContainerZeroHelper<std::list<T> >
+{ /* ... */ };
+
+/*! Partial specialization of the zero helper for std::forward_list
+ * \ingroup list
+ * \ingroup comparison_traits
+ */
+template<typename T>
+struct ZeroHelper<std::forward_list<T> > : public STLCompliantContainerZeroHelper<std::forward_list<T> >
+{ /* ... */ };
+  
+} // end Details namespace
   
 } // end Utility namespace
 

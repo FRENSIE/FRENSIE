@@ -66,6 +66,58 @@ void logExtraCheckDetailsWithPadding( const bool check_result,
   }
 }
 
+// Log last checkpoint
+void logLastCheckpointWithPadding( const size_t last_checkpoint,
+                                   std::ostream& log,
+                                   const std::string& line_padding )
+{
+  if( last_checkpoint > 0 )
+  {
+    log << "\n" << line_padding << Utility::BoldCyan("Note:") << " "
+        << "Last unit test checkpoint at line " << last_checkpoint
+        << std::endl;
+  }
+}
+
+// Log std::exception details
+void logExceptionDetailsWithPadding( const std::exception& exception,
+                                     const std::string& file,
+                                     const size_t line_number,
+                                     std::ostream& log,
+                                     const std::string& header_suffix,
+                                     const std::string& line_padding )
+{
+  log << "\n" << line_padding
+      << "... Caught unexpected std::exception " << header_suffix;
+
+  if( !header_suffix.empty() )
+    log << " ";
+
+  log << "with message \"" << exception.what() << "\" ";
+
+  Utility::reportCheckLocationWithPadding( file, line_number, log, "" );
+
+  log << std::endl;
+}
+
+// Log unknown exception details
+void logUnknownExceptionDetailsWithPadding( const std::string& file,
+                                            const size_t line_number,
+                                            std::ostream& log,
+                                            const std::string& header_suffix,
+                                            const std::string& line_padding )
+{
+  log << "\n" << line_padding << "... Caught unexpected unknown exception "
+      << header_suffix;
+
+  if( !header_suffix.empty() )
+    log << " ";
+
+  Utility::reportCheckLocationWithPadding( file, line_number, log, "" );
+
+  log << std::endl;
+}
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

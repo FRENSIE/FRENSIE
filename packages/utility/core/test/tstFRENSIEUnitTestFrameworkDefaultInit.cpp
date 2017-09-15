@@ -46,6 +46,29 @@ FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_fail )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the REQUIRE macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_pass )
+{
+  FRENSIE_REQUIRE( true );
+
+  bool check_statement = true;
+
+  FRENSIE_REQUIRE( check_statement );
+}
+
+//---------------------------------------------------------------------------//
+// CHeck that the REQUIRE macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_fail )
+{
+  FRENSIE_REQUIRE( true );
+  FRENSIE_REQUIRE( false );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
 // Check that the CHECK_EQUAL macro behaves correctly
 FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_EQUAL_pass )
 {
@@ -250,16 +273,1100 @@ FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_EQUAL_fail )
   FRENSIE_CHECK_EQUAL( (std::unordered_map<int,double>({{0, 0.}, {1, 1.}})), (std::unordered_map<int,double>({{0, 1.}, {1, 1.}})) );
 }
 
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_EQUAL_pass )
+{
+  FRENSIE_REQUIRE_EQUAL( true, true );
+  FRENSIE_REQUIRE_EQUAL( 0, 0 );
+  FRENSIE_REQUIRE_EQUAL( 1u, 1u );
+  FRENSIE_REQUIRE_EQUAL( -2l, -2l );
+  FRENSIE_REQUIRE_EQUAL( 3ul, 3ul );
+  FRENSIE_REQUIRE_EQUAL( -4ll, -4ll );
+  FRENSIE_REQUIRE_EQUAL( 3ull, 3ull );
+  FRENSIE_REQUIRE_EQUAL( 1.0f, 1.0f );
+  FRENSIE_REQUIRE_EQUAL( -1.0, -1.0 );
+  
+  FRENSIE_REQUIRE_EQUAL( std::string( "test string" ), std::string( "test string" ) );
+
+  FRENSIE_REQUIRE_EQUAL( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_REQUIRE_EQUAL( std::make_tuple(0.), std::make_tuple(0.) );
+  FRENSIE_REQUIRE_EQUAL( std::make_tuple(0, 1.0, std::string("test string")),
+                       std::make_tuple(0, 1.0, std::string("test string")) );
+  FRENSIE_REQUIRE_EQUAL( std::make_pair(0, 1.0), std::make_pair(0, 1.0) );
+  
+  FRENSIE_REQUIRE_EQUAL( std::list<int>({0, 1, 2}), std::list<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_EQUAL( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}) );
+  FRENSIE_REQUIRE_EQUAL( std::list<std::string>({"test", "string"} ), std::list<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_EQUAL( std::forward_list<int>({0, 1, 2}), std::forward_list<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_EQUAL( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}) );
+  FRENSIE_REQUIRE_EQUAL( std::forward_list<std::string>({"test", "string"} ), std::forward_list<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_EQUAL( std::deque<int>({0, 1, 2}), std::deque<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_EQUAL( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}) );
+  FRENSIE_REQUIRE_EQUAL( std::deque<std::string>({"test", "string"} ), std::deque<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_EQUAL( (std::array<int,3>({0, 1, 2})), (std::array<int,3>({0, 1, 2})) );
+  FRENSIE_REQUIRE_EQUAL( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})) );
+  
+  FRENSIE_REQUIRE_EQUAL( std::vector<int>({0, 1, 2}), std::vector<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_EQUAL( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}) );
+  FRENSIE_REQUIRE_EQUAL( std::vector<std::string>({"test", "string"} ), std::vector<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_EQUAL( std::set<int>({0, 1, 2}), std::set<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_EQUAL( std::set<std::string>({"test", "string"}), std::set<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_EQUAL( std::unordered_set<int>({0, 1, 2}), std::unordered_set<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_EQUAL( std::unordered_set<std::string>({"test", "string"}), std::unordered_set<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_EQUAL( (std::map<int,int>({{0, 0}, {1, 1}})), (std::map<int,int>({{0, 0}, {1, 1}})) );
+  FRENSIE_REQUIRE_EQUAL( (std::map<int,double>({{0, 0.}, {1, 1.}})), (std::map<int,double>({{0, 0.}, {1, 1.}})) );
+
+  FRENSIE_REQUIRE_EQUAL( (std::unordered_map<int,int>({{0, 0}, {1, 1}})), (std::unordered_map<int,int>({{0, 0}, {1, 1}})) );
+  FRENSIE_REQUIRE_EQUAL( (std::unordered_map<int,double>({{0, 0.}, {1, 1.}})), (std::unordered_map<int,double>({{0, 0.}, {1, 1.}})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_EQUAL_fail )
+{
+  FRENSIE_REQUIRE_EQUAL( true, true );
+  FRENSIE_REQUIRE_EQUAL( false, true );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_DIFFERENT macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_DIFFERENT_pass )
+{
+  FRENSIE_CHECK_DIFFERENT( true, false );
+  FRENSIE_CHECK_DIFFERENT( 0, 1 );
+  FRENSIE_CHECK_DIFFERENT( 1u, 0u );
+  FRENSIE_CHECK_DIFFERENT( -2l, 2l );
+  FRENSIE_CHECK_DIFFERENT( 3ul, 2ul );
+  FRENSIE_CHECK_DIFFERENT( -4ll, 4ll );
+  FRENSIE_CHECK_DIFFERENT( 4ull, 3ull );
+  FRENSIE_CHECK_DIFFERENT( 1.0f, -1.0f );
+  FRENSIE_CHECK_DIFFERENT( 1.0, -1.0 );
+  
+  FRENSIE_CHECK_DIFFERENT( std::string( "lhs test string" ), std::string( "rhs test string" ) );
+
+  FRENSIE_CHECK_DIFFERENT( std::make_tuple(0), std::make_tuple(1) );
+  FRENSIE_CHECK_DIFFERENT( std::make_tuple(0.), std::make_tuple(1.) );
+  FRENSIE_CHECK_DIFFERENT( std::make_tuple(0, 1.0, std::string("test string")),
+                           std::make_tuple(1, 1.0, std::string("test string")) );
+  FRENSIE_CHECK_DIFFERENT( std::make_pair(0, 1.0), std::make_pair(1, 2.0) );
+  
+  FRENSIE_CHECK_DIFFERENT( std::list<int>({0, 1, 2}), std::list<int>({1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::list<double>({1., 1., 2.}), std::list<double>({0., 1., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::list<std::string>({"test", "string"} ), std::list<std::string>({"string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::forward_list<int>({0, 1, 2}), std::forward_list<int>({0, 1, 3}) );
+  FRENSIE_CHECK_DIFFERENT( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 3., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::forward_list<std::string>({"test", "string"} ), std::forward_list<std::string>({"test", "sing"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::deque<int>({1, 2}), std::deque<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::deque<double>({0., 2.}), std::deque<double>({0., 1., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::deque<std::string>({"test", "string"} ), std::deque<std::string>({"t", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( (std::array<int,3>({0, 3, 2})), (std::array<int,3>({0, 1, 2})) );
+  FRENSIE_CHECK_DIFFERENT( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 3.})) );
+  
+  FRENSIE_CHECK_DIFFERENT( std::vector<int>({0, 2}), std::vector<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::vector<std::string>({"tst", "string"} ), std::vector<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::set<int>({0, 2}), std::set<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::set<std::string>({"test", "string"}), std::set<std::string>({"test"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::unordered_set<int>({0, 1, 2}), std::unordered_set<int>({0, 1, 3}) );
+  FRENSIE_CHECK_DIFFERENT( std::unordered_set<std::string>({"test", "sing"}), std::unordered_set<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( (std::map<int,int>({{0, 0}, {1, 1}})), (std::map<int,int>({{0, 0}, {1, 1}, {2, 2}})) );
+  FRENSIE_CHECK_DIFFERENT( (std::map<int,double>({{0, 0.}, {1, 1.}})), (std::map<int,double>({{0, 0.}, {1, 1.}, {2, 2.}})) );
+
+  FRENSIE_CHECK_DIFFERENT( (std::unordered_map<int,int>({{0, 0}, {1, 1}, {2, 2}})), (std::unordered_map<int,int>({{0, 0}, {1, 1}})) );
+  FRENSIE_CHECK_DIFFERENT( (std::unordered_map<int,double>({{0, 0.}, {1, 1.}, {2, 2.}})), (std::unordered_map<int,double>({{0, 0.}, {1, 1.}})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_DIFFERENT macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_DIFFERENT_fail )
+{
+  FRENSIE_CHECK_DIFFERENT( true, true );
+  FRENSIE_CHECK_DIFFERENT( 0, 0 );
+  FRENSIE_CHECK_DIFFERENT( 1u, 1u );
+  FRENSIE_CHECK_DIFFERENT( -2l, -2l );
+  FRENSIE_CHECK_DIFFERENT( 3ul, 3ul );
+  FRENSIE_CHECK_DIFFERENT( -4ll, -4ll );
+  FRENSIE_CHECK_DIFFERENT( 3ull, 3ull );
+  FRENSIE_CHECK_DIFFERENT( 1.0f, 1.0f );
+  FRENSIE_CHECK_DIFFERENT( -1.0, -1.0 );
+  
+  FRENSIE_CHECK_DIFFERENT( std::string( "test string" ), std::string( "test string" ) );
+
+  FRENSIE_CHECK_DIFFERENT( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_CHECK_DIFFERENT( std::make_tuple(0.), std::make_tuple(0.) );
+  FRENSIE_CHECK_DIFFERENT( std::make_tuple(0, 1.0, std::string("test string")),
+                           std::make_tuple(0, 1.0, std::string("test string")) );
+  FRENSIE_CHECK_DIFFERENT( std::make_pair(0, 1.0), std::make_pair(0, 1.0) );
+  
+  FRENSIE_CHECK_DIFFERENT( std::list<int>({0, 1, 2}), std::list<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::list<std::string>({"test", "string"} ), std::list<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::forward_list<int>({0, 1, 2}), std::forward_list<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::forward_list<std::string>({"test", "string"} ), std::forward_list<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::deque<int>({0, 1, 2}), std::deque<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::deque<std::string>({"test", "string"} ), std::deque<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( (std::array<int,3>({0, 1, 2})), (std::array<int,3>({0, 1, 2})) );
+  FRENSIE_CHECK_DIFFERENT( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})) );
+  
+  FRENSIE_CHECK_DIFFERENT( std::vector<int>({0, 1, 2}), std::vector<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}) );
+  FRENSIE_CHECK_DIFFERENT( std::vector<std::string>({"test", "string"} ), std::vector<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::set<int>({0, 1, 2}), std::set<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::set<std::string>({"test", "string"}), std::set<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( std::unordered_set<int>({0, 1, 2}), std::unordered_set<int>({0, 1, 2}) );
+  FRENSIE_CHECK_DIFFERENT( std::unordered_set<std::string>({"test", "string"}), std::unordered_set<std::string>({"test", "string"}) );
+
+  FRENSIE_CHECK_DIFFERENT( (std::map<int,int>({{0, 0}, {1, 1}})), (std::map<int,int>({{0, 0}, {1, 1}})) );
+  FRENSIE_CHECK_DIFFERENT( (std::map<int,double>({{0, 0.}, {1, 1.}})), (std::map<int,double>({{0, 0.}, {1, 1.}})) );
+
+  FRENSIE_CHECK_DIFFERENT( (std::unordered_map<int,int>({{0, 0}, {1, 1}})), (std::unordered_map<int,int>({{0, 0}, {1, 1}})) );
+  FRENSIE_CHECK_DIFFERENT( (std::unordered_map<int,double>({{0, 0.}, {1, 1.}})), (std::unordered_map<int,double>({{0, 0.}, {1, 1.}})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_DIFFERENT macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_DIFFERENT_pass )
+{
+  FRENSIE_REQUIRE_DIFFERENT( true, false );
+  FRENSIE_REQUIRE_DIFFERENT( 0, 1 );
+  FRENSIE_REQUIRE_DIFFERENT( 1u, 0u );
+  FRENSIE_REQUIRE_DIFFERENT( -2l, 2l );
+  FRENSIE_REQUIRE_DIFFERENT( 3ul, 2ul );
+  FRENSIE_REQUIRE_DIFFERENT( -4ll, 4ll );
+  FRENSIE_REQUIRE_DIFFERENT( 4ull, 3ull );
+  FRENSIE_REQUIRE_DIFFERENT( 1.0f, -1.0f );
+  FRENSIE_REQUIRE_DIFFERENT( 1.0, -1.0 );
+  
+  FRENSIE_REQUIRE_DIFFERENT( std::string( "lhs test string" ), std::string( "rhs test string" ) );
+
+  FRENSIE_REQUIRE_DIFFERENT( std::make_tuple(0), std::make_tuple(1) );
+  FRENSIE_REQUIRE_DIFFERENT( std::make_tuple(0.), std::make_tuple(1.) );
+  FRENSIE_REQUIRE_DIFFERENT( std::make_tuple(0, 1.0, std::string("test string")),
+                           std::make_tuple(1, 1.0, std::string("test string")) );
+  FRENSIE_REQUIRE_DIFFERENT( std::make_pair(0, 1.0), std::make_pair(1, 2.0) );
+  
+  FRENSIE_REQUIRE_DIFFERENT( std::list<int>({0, 1, 2}), std::list<int>({1, 2}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::list<double>({1., 1., 2.}), std::list<double>({0., 1., 2.}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::list<std::string>({"test", "string"} ), std::list<std::string>({"string"}) );
+
+  FRENSIE_REQUIRE_DIFFERENT( std::forward_list<int>({0, 1, 2}), std::forward_list<int>({0, 1, 3}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 3., 2.}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::forward_list<std::string>({"test", "string"} ), std::forward_list<std::string>({"test", "sing"}) );
+
+  FRENSIE_REQUIRE_DIFFERENT( std::deque<int>({1, 2}), std::deque<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::deque<double>({0., 2.}), std::deque<double>({0., 1., 2.}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::deque<std::string>({"test", "string"} ), std::deque<std::string>({"t", "string"}) );
+
+  FRENSIE_REQUIRE_DIFFERENT( (std::array<int,3>({0, 3, 2})), (std::array<int,3>({0, 1, 2})) );
+  FRENSIE_REQUIRE_DIFFERENT( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 3.})) );
+  
+  FRENSIE_REQUIRE_DIFFERENT( std::vector<int>({0, 2}), std::vector<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 2.}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::vector<std::string>({"tst", "string"} ), std::vector<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_DIFFERENT( std::set<int>({0, 2}), std::set<int>({0, 1, 2}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::set<std::string>({"test", "string"}), std::set<std::string>({"test"}) );
+
+  FRENSIE_REQUIRE_DIFFERENT( std::unordered_set<int>({0, 1, 2}), std::unordered_set<int>({0, 1, 3}) );
+  FRENSIE_REQUIRE_DIFFERENT( std::unordered_set<std::string>({"test", "sing"}), std::unordered_set<std::string>({"test", "string"}) );
+
+  FRENSIE_REQUIRE_DIFFERENT( (std::map<int,int>({{0, 0}, {1, 1}})), (std::map<int,int>({{0, 0}, {1, 1}, {2, 2}})) );
+  FRENSIE_REQUIRE_DIFFERENT( (std::map<int,double>({{0, 0.}, {1, 1.}})), (std::map<int,double>({{0, 0.}, {1, 1.}, {2, 2.}})) );
+
+  FRENSIE_REQUIRE_DIFFERENT( (std::unordered_map<int,int>({{0, 0}, {1, 1}, {2, 2}})), (std::unordered_map<int,int>({{0, 0}, {1, 1}})) );
+  FRENSIE_REQUIRE_DIFFERENT( (std::unordered_map<int,double>({{0, 0.}, {1, 1.}, {2, 2.}})), (std::unordered_map<int,double>({{0, 0.}, {1, 1.}})) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_DIFFERENT macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_DIFFERENT_fail )
+{
+  FRENSIE_REQUIRE_DIFFERENT( true, false );
+  FRENSIE_REQUIRE_DIFFERENT( true, true );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_GREATER macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_GREATER_pass )
+{
+  FRENSIE_CHECK_GREATER( 1, 0 );
+  FRENSIE_CHECK_GREATER( 2u, 1u );
+  FRENSIE_CHECK_GREATER( 2l, -2l );
+  FRENSIE_CHECK_GREATER( 10ul, 3ul );
+  FRENSIE_CHECK_GREATER( 4ll, -4ll );
+  FRENSIE_CHECK_GREATER( 4ull, 3ull );
+  FRENSIE_CHECK_GREATER( 2.0f, 1.0f );
+  FRENSIE_CHECK_GREATER( 1.0, -1.0 );
+  
+  FRENSIE_CHECK_GREATER( std::string( "b" ), std::string( "a" ) );
+  FRENSIE_CHECK_GREATER( std::make_tuple(1), std::make_tuple(0) );
+  FRENSIE_CHECK_GREATER( std::make_tuple(1,2), std::make_tuple(0,1) );
+  FRENSIE_CHECK_GREATER( std::make_pair(1,2), std::make_pair(0,1) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_GREATER macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_GREATER_fail )
+{
+  FRENSIE_CHECK_GREATER( 0, 0 );
+  FRENSIE_CHECK_GREATER( 0, 1 );
+  
+  FRENSIE_CHECK_GREATER( 2u, 2u );
+  FRENSIE_CHECK_GREATER( 1u, 2u );
+  
+  FRENSIE_CHECK_GREATER( 2l, 2l );
+  FRENSIE_CHECK_GREATER( -2l, 2l );
+  
+  FRENSIE_CHECK_GREATER( 3ul, 3ul );
+  FRENSIE_CHECK_GREATER( 3ul, 10ul );
+  
+  FRENSIE_CHECK_GREATER( 4ll, 4ll );
+  FRENSIE_CHECK_GREATER( -4ll, 4ll );
+  
+  FRENSIE_CHECK_GREATER( 4ull, 4ull );
+  FRENSIE_CHECK_GREATER( 3ull, 4ull );
+  
+  FRENSIE_CHECK_GREATER( 2.0f, 2.0f );
+  FRENSIE_CHECK_GREATER( 1.0f, 2.0f );
+  
+  FRENSIE_CHECK_GREATER( 1.0, 1.0 );
+  FRENSIE_CHECK_GREATER( -1.0, 1.0 );
+  
+  FRENSIE_CHECK_GREATER( std::string( "a" ), std::string( "a" ) );
+  FRENSIE_CHECK_GREATER( std::string( "a" ), std::string( "b" ) );
+  
+  FRENSIE_CHECK_GREATER( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_CHECK_GREATER( std::make_tuple(0), std::make_tuple(1) );
+  
+  FRENSIE_CHECK_GREATER( std::make_tuple(1,2), std::make_tuple(1,2) );
+  FRENSIE_CHECK_GREATER( std::make_tuple(0,1), std::make_tuple(1,2) );
+  
+  FRENSIE_CHECK_GREATER( std::make_pair(1,2), std::make_pair(1,2) );
+  FRENSIE_CHECK_GREATER( std::make_pair(0,1), std::make_pair(1,2) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_GREATER macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_GREATER_pass )
+{
+  FRENSIE_REQUIRE_GREATER( 1, 0 );
+  FRENSIE_REQUIRE_GREATER( 2u, 1u );
+  FRENSIE_REQUIRE_GREATER( 2l, -2l );
+  FRENSIE_REQUIRE_GREATER( 10ul, 3ul );
+  FRENSIE_REQUIRE_GREATER( 4ll, -4ll );
+  FRENSIE_REQUIRE_GREATER( 4ull, 3ull );
+  FRENSIE_REQUIRE_GREATER( 2.0f, 1.0f );
+  FRENSIE_REQUIRE_GREATER( 1.0, -1.0 );
+  
+  FRENSIE_REQUIRE_GREATER( std::string( "b" ), std::string( "a" ) );
+  FRENSIE_REQUIRE_GREATER( std::make_tuple(1), std::make_tuple(0) );
+  FRENSIE_REQUIRE_GREATER( std::make_tuple(1,2), std::make_tuple(0,1) );
+  FRENSIE_REQUIRE_GREATER( std::make_pair(1,2), std::make_pair(0,1) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_GREATER macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_GREATER_fail )
+{
+  FRENSIE_REQUIRE_GREATER( 1, 0 );
+  FRENSIE_REQUIRE_GREATER( 0, 0 );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_GREATER_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_GREATER_OR_EQUAL_pass )
+{
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 0, 0 );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 1, 0 );
+
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 1u, 1u );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 2u, 1u );
+
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 2l, 2l );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 2l, -2l );
+  
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 3ul, 3ul );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 10ul, 3ul );
+
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 4ll, 4ll );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 4ll, -4ll );
+  
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 3ull, 3ull );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 4ull, 3ull );
+  
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 2.0f, 2.0f );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 2.0f, 1.0f );
+
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 1.0, 1.0 );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 1.0, -1.0 );
+  
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::string( "b" ), std::string( "b" ) );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::string( "b" ), std::string( "a" ) );
+
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_tuple(1), std::make_tuple(0) );
+
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_tuple(0,1), std::make_tuple(0,1) );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_tuple(1,2), std::make_tuple(0,1) );
+  
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_pair(0,1), std::make_pair(0,1) );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_pair(1,2), std::make_pair(0,1) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_GREATER_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_GREATER_OR_EQUAL_fail )
+{
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 0, 1 );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 1u, 2u );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( -2l, 2l );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 3ul, 10ul );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( -4ll, 4ll );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 3ull, 4ull );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( 1.0f, 2.0f );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( -1.0, 1.0 );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::string( "a" ), std::string( "b" ) );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_tuple(0), std::make_tuple(1) );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_tuple(0,1), std::make_tuple(1,2) );
+  FRENSIE_CHECK_GREATER_OR_EQUAL( std::make_pair(0,1), std::make_pair(1,2) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_GREATER_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_GREATER_OR_EQUAL_pass )
+{
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 0, 0 );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 1, 0 );
+
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 1u, 1u );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 2u, 1u );
+
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 2l, 2l );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 2l, -2l );
+  
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 3ul, 3ul );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 10ul, 3ul );
+
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 4ll, 4ll );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 4ll, -4ll );
+  
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 3ull, 3ull );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 4ull, 3ull );
+  
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 2.0f, 2.0f );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 2.0f, 1.0f );
+
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 1.0, 1.0 );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 1.0, -1.0 );
+  
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::string( "b" ), std::string( "b" ) );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::string( "b" ), std::string( "a" ) );
+
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::make_tuple(1), std::make_tuple(0) );
+
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::make_tuple(0,1), std::make_tuple(0,1) );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::make_tuple(1,2), std::make_tuple(0,1) );
+  
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::make_pair(0,1), std::make_pair(0,1) );
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( std::make_pair(1,2), std::make_pair(0,1) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_GREATER_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_GREATER_OR_EQUAL_fail )
+{
+  FRENSIE_REQUIRE_GREATER_OR_EQUAL( 0, 1 );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_LESS macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_LESS_pass )
+{
+  FRENSIE_CHECK_LESS( 0, 1 );
+  FRENSIE_CHECK_LESS( 1u, 2u );
+  FRENSIE_CHECK_LESS( -2l, 2l );
+  FRENSIE_CHECK_LESS( 3ul, 10ul );
+  FRENSIE_CHECK_LESS( -4ll, 4ll );
+  FRENSIE_CHECK_LESS( 3ull, 4ull );
+  FRENSIE_CHECK_LESS( 1.0f, 2.0f );
+  FRENSIE_CHECK_LESS( -1.0, 1.0 );
+  FRENSIE_CHECK_LESS( std::string( "a" ), std::string( "b" ) );
+  FRENSIE_CHECK_LESS( std::make_tuple(0), std::make_tuple(1) );
+  FRENSIE_CHECK_LESS( std::make_tuple(0,1), std::make_tuple(1,2) );
+  FRENSIE_CHECK_LESS( std::make_pair(0,1), std::make_pair(1,2) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_LESS macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_LESS_fail )
+{
+  FRENSIE_CHECK_LESS( 0, 0 );
+  FRENSIE_CHECK_LESS( 1, 0 );
+
+  FRENSIE_CHECK_LESS( 1u, 1u );
+  FRENSIE_CHECK_LESS( 2u, 1u );
+
+  FRENSIE_CHECK_LESS( 2l, 2l );
+  FRENSIE_CHECK_LESS( 2l, -2l );
+  
+  FRENSIE_CHECK_LESS( 3ul, 3ul );
+  FRENSIE_CHECK_LESS( 10ul, 3ul );
+
+  FRENSIE_CHECK_LESS( 4ll, 4ll );
+  FRENSIE_CHECK_LESS( 4ll, -4ll );
+  
+  FRENSIE_CHECK_LESS( 3ull, 3ull );
+  FRENSIE_CHECK_LESS( 4ull, 3ull );
+  
+  FRENSIE_CHECK_LESS( 2.0f, 2.0f );
+  FRENSIE_CHECK_LESS( 2.0f, 1.0f );
+
+  FRENSIE_CHECK_LESS( 1.0, 1.0 );
+  FRENSIE_CHECK_LESS( 1.0, -1.0 );
+  
+  FRENSIE_CHECK_LESS( std::string( "b" ), std::string( "b" ) );
+  FRENSIE_CHECK_LESS( std::string( "b" ), std::string( "a" ) );
+
+  FRENSIE_CHECK_LESS( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_CHECK_LESS( std::make_tuple(1), std::make_tuple(0) );
+
+  FRENSIE_CHECK_LESS( std::make_tuple(0,1), std::make_tuple(0,1) );
+  FRENSIE_CHECK_LESS( std::make_tuple(1,2), std::make_tuple(0,1) );
+  
+  FRENSIE_CHECK_LESS( std::make_pair(0,1), std::make_pair(0,1) );
+  FRENSIE_CHECK_LESS( std::make_pair(1,2), std::make_pair(0,1) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_LESS macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_LESS_pass )
+{
+  FRENSIE_REQUIRE_LESS( 0, 1 );
+  FRENSIE_REQUIRE_LESS( 1u, 2u );
+  FRENSIE_REQUIRE_LESS( -2l, 2l );
+  FRENSIE_REQUIRE_LESS( 3ul, 10ul );
+  FRENSIE_REQUIRE_LESS( -4ll, 4ll );
+  FRENSIE_REQUIRE_LESS( 3ull, 4ull );
+  FRENSIE_REQUIRE_LESS( 1.0f, 2.0f );
+  FRENSIE_REQUIRE_LESS( -1.0, 1.0 );
+  FRENSIE_REQUIRE_LESS( std::string( "a" ), std::string( "b" ) );
+  FRENSIE_REQUIRE_LESS( std::make_tuple(0), std::make_tuple(1) );
+  FRENSIE_REQUIRE_LESS( std::make_tuple(0,1), std::make_tuple(1,2) );
+  FRENSIE_REQUIRE_LESS( std::make_pair(0,1), std::make_pair(1,2) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_LESS macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_LESS_fail )
+{
+  FRENSIE_REQUIRE_LESS( 0, 0 );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_LESS_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_LESS_OR_EQUAL_pass )
+{
+  FRENSIE_CHECK_LESS_OR_EQUAL( 0, 0 );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 0, 1 );
+  
+  FRENSIE_CHECK_LESS_OR_EQUAL( 1u, 1u );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 1u, 2u );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( 2l, 2l );
+  FRENSIE_CHECK_LESS_OR_EQUAL( -2l, 2l );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( 3ul, 3ul );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 3ul, 10ul );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( 4ll, 4ll );
+  FRENSIE_CHECK_LESS_OR_EQUAL( -4ll, 4ll );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( 3ull, 3ull );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 3ull, 4ull );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( 1.0f, 1.0f );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 1.0f, 2.0f );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( 1.0, 1.0 );
+  FRENSIE_CHECK_LESS_OR_EQUAL( -1.0, 1.0 );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::string( "a" ), std::string( "a" ) );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::string( "a" ), std::string( "b" ) );
+
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_tuple(0), std::make_tuple(1) );
+  
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_tuple(0,1), std::make_tuple(0,1) );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_tuple(0,1), std::make_tuple(1,2) );
+  
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_pair(0,1), std::make_pair(0,1) );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_pair(0,1), std::make_pair(1,2) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_LESS_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_LESS_OR_EQUAL_fail )
+{
+  FRENSIE_CHECK_LESS_OR_EQUAL( 1, 0 );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 2u, 1u );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 2l, -2l );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 10ul, 3ul );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 4ll, -4ll );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 4ull, 3ull );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 2.0f, 1.0f );
+  FRENSIE_CHECK_LESS_OR_EQUAL( 1.0, -1.0 );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::string( "b" ), std::string( "a" ) );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_tuple(1), std::make_tuple(0) );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_tuple(1,2), std::make_tuple(0,1) );
+  FRENSIE_CHECK_LESS_OR_EQUAL( std::make_pair(1,2), std::make_pair(0,1) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_LESS_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_LESS_OR_EQUAL_pass )
+{
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 0, 0 );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 0, 1 );
+  
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 1u, 1u );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 1u, 2u );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 2l, 2l );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( -2l, 2l );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 3ul, 3ul );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 3ul, 10ul );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 4ll, 4ll );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( -4ll, 4ll );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 3ull, 3ull );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 3ull, 4ull );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 1.0f, 1.0f );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 1.0f, 2.0f );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 1.0, 1.0 );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( -1.0, 1.0 );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::string( "a" ), std::string( "a" ) );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::string( "a" ), std::string( "b" ) );
+
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::make_tuple(0), std::make_tuple(0) );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::make_tuple(0), std::make_tuple(1) );
+  
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::make_tuple(0,1), std::make_tuple(0,1) );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::make_tuple(0,1), std::make_tuple(1,2) );
+  
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::make_pair(0,1), std::make_pair(0,1) );
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( std::make_pair(0,1), std::make_pair(1,2) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_LESS_OR_EQUAL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_LESS_OR_EQUAL_fail )
+{
+  FRENSIE_REQUIRE_LESS_OR_EQUAL( 1, 0 );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_CLOSE macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_CLOSE_pass )
+{
+  FRENSIE_CHECK_CLOSE( 1.0f, 1.0f, 1e-9f );
+  FRENSIE_CHECK_CLOSE( 1.0f, (1.0f-1e-10f), 1e-9f );
+  FRENSIE_CHECK_CLOSE( 1.0f, (1.0f+1e-10f), 1e-9f );
+  
+  FRENSIE_CHECK_CLOSE( -1.0, -1.0, 1e-15 );
+  FRENSIE_CHECK_CLOSE( -1.0, -1.0-1e-16, 1e-15 );
+  FRENSIE_CHECK_CLOSE( -1.0, -1.0+1e-16, 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0-1e-16), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0+1e-16), 1e-15 );
+
+  FRENSIE_CHECK_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-16), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-16), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::list<double>({0., 1.0+1e-16, 2.}), std::list<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::forward_list<double>({0., 1.0+1e-16, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-16}), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::deque<double>({0., 1.+1e-16, 2.}), std::deque<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
+  FRENSIE_CHECK_CLOSE( (std::array<double,3>({0., 1.+1e-16, 2.})), (std::array<double,3>({0., 1., 2.-1e-16})), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::vector<double>({0., 1.+1e-16, 2.}), std::vector<double>({0., 1., 2.-1e-16}), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_CLOSE macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_CLOSE_fail )
+{
+  FRENSIE_CHECK_CLOSE( 1.0f, (1.0f-1e-8f), 1e-9f );
+  FRENSIE_CHECK_CLOSE( 1.0f, (1.0f+1e-8f), 1e-9f );
+  
+  FRENSIE_CHECK_CLOSE( -1.0, -1.0, 1e-15 );
+  FRENSIE_CHECK_CLOSE( -1.0, -1.0-1e-14, 1e-15 );
+  FRENSIE_CHECK_CLOSE( -1.0, -1.0+1e-14, 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0-1e-14), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0+1e-14), 1e-15 );
+
+  FRENSIE_CHECK_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-14), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-14), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::list<double>({0., 1.0+1e-14, 2.}), std::list<double>({0., 1., 2.-1e-14}), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::forward_list<double>({0., 1.0+1e-14, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-14}), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::deque<double>({0., 1.+1e-14, 2.}), std::deque<double>({0., 1., 2.-1e-14}), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
+  FRENSIE_CHECK_CLOSE( (std::array<double,3>({0., 1.+1e-14, 2.})), (std::array<double,3>({0., 1., 2.-1e-14})), 1e-15 );
+  
+  FRENSIE_CHECK_CLOSE( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_CLOSE( std::vector<double>({0., 1.+1e-14, 2.}), std::vector<double>({0., 1., 2.-1e-14}), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_CLOSE macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_CLOSE_pass )
+{
+  // FRENSIE_REQUIRE_CLOSE( 1.0f, 1.0f, 1e-9f );
+  // FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f-1e-10f), 1e-9f );
+  // FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f+1e-10f), 1e-9f );
+  
+  // FRENSIE_REQUIRE_CLOSE( -1.0, -1.0, 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( -1.0, -1.0-1e-16, 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( -1.0, -1.0+1e-16, 1e-15 );
+  
+  // FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0-1e-16), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0+1e-16), 1e-15 );
+
+  // FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-16), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-16), 1e-15 );
+  
+  // FRENSIE_REQUIRE_CLOSE( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::list<double>({0., 1.0+1e-16, 2.}), std::list<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  // FRENSIE_REQUIRE_CLOSE( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::forward_list<double>({0., 1.0+1e-16, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-16}), 1e-15 );
+  
+  // FRENSIE_REQUIRE_CLOSE( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::deque<double>({0., 1.+1e-16, 2.}), std::deque<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  // FRENSIE_REQUIRE_CLOSE( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( (std::array<double,3>({0., 1.+1e-16, 2.})), (std::array<double,3>({0., 1., 2.-1e-16})), 1e-15 );
+  
+  // FRENSIE_REQUIRE_CLOSE( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
+  // FRENSIE_REQUIRE_CLOSE( std::vector<double>({0., 1.+1e-16, 2.}), std::vector<double>({0., 1., 2.-1e-16}), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_CLOSE macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_CLOSE_fail )
+{
+  // FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f-1e-8f), 1e-9f );
+
+  // // We should never get here
+  // int* bad_pointer = NULL;
+  // *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_SMALL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_SMALL_pass )
+{
+  FRENSIE_CHECK_SMALL( 0.0f, 1e-9f );
+  FRENSIE_CHECK_SMALL( 1e-9, 1e-8f );
+  FRENSIE_CHECK_SMALL( -1e-9, 1e-8f );
+  
+  FRENSIE_CHECK_SMALL( 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( 1e-15, 1e-14 );
+  FRENSIE_CHECK_SMALL( -1e-15, 1e-14 );
+  
+  FRENSIE_CHECK_SMALL( std::make_tuple(0.0), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::make_tuple(1e-15), 1e-14 );
+  FRENSIE_CHECK_SMALL( std::make_tuple(-1e-15), 1e-14 );
+
+  FRENSIE_CHECK_SMALL( std::make_pair(0, 0.0), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::make_pair(0, 1e-15), 1e-14 );
+  FRENSIE_CHECK_SMALL( std::make_pair(0, -1e-15), 1e-14 );
+  
+  FRENSIE_CHECK_SMALL( std::list<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::list<double>({0., 1e-15, -1e-15}), 1e-14 );
+
+  FRENSIE_CHECK_SMALL( std::forward_list<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::forward_list<double>({0., 1e-15, -1e-15}), 1e-14 );
+
+  FRENSIE_CHECK_SMALL( std::deque<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::deque<double>({0., 1e-15, -1e-15}), 1e-14 );
+      
+  FRENSIE_CHECK_SMALL( (std::array<double,3>({0., 0., 0.})), 1e-15 );
+  FRENSIE_CHECK_SMALL( (std::array<double,3>({0., 1e-15, -1e-15})), 1e-14 );
+  
+  FRENSIE_CHECK_SMALL( std::vector<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::vector<double>({0., 1e-15, -1e-15}), 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_SMALL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_SMALL_fail )
+{
+  FRENSIE_CHECK_SMALL( 1e-8, 1e-9f );
+  FRENSIE_CHECK_SMALL( -1e-8, 1e-9f );
+  
+  FRENSIE_CHECK_SMALL( 1e-14, 1e-15 );
+  FRENSIE_CHECK_SMALL( -1e-14, 1e-15 );
+  
+  FRENSIE_CHECK_SMALL( std::make_tuple(1e-14), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::make_tuple(-1e-14), 1e-15 );
+
+  FRENSIE_CHECK_SMALL( std::make_pair(0, 1e-14), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::make_pair(0, -1e-14), 1e-15 );
+  
+  FRENSIE_CHECK_SMALL( std::list<double>({0., 1e-14, -1e-14}), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::forward_list<double>({0., 1e-14, -1e-14}), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::deque<double>({0., 1e-14, -1e-14}), 1e-15 );
+  FRENSIE_CHECK_SMALL( (std::array<double,3>({0., 1e-14, -1e-14})), 1e-15 );
+  FRENSIE_CHECK_SMALL( std::vector<double>({0., 1e-14, -1e-14}), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_SMALL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_SMALL_pass )
+{
+  FRENSIE_REQUIRE_SMALL( 0.0f, 1e-9f );
+  FRENSIE_REQUIRE_SMALL( 1e-9, 1e-8f );
+  FRENSIE_REQUIRE_SMALL( -1e-9, 1e-8f );
+  
+  FRENSIE_REQUIRE_SMALL( 0.0, 1e-15 );
+  FRENSIE_REQUIRE_SMALL( 1e-15, 1e-14 );
+  FRENSIE_REQUIRE_SMALL( -1e-15, 1e-14 );
+  
+  FRENSIE_REQUIRE_SMALL( std::make_tuple(0.0), 1e-15 );
+  FRENSIE_REQUIRE_SMALL( std::make_tuple(1e-15), 1e-14 );
+  FRENSIE_REQUIRE_SMALL( std::make_tuple(-1e-15), 1e-14 );
+
+  FRENSIE_REQUIRE_SMALL( std::make_pair(0, 0.0), 1e-15 );
+  FRENSIE_REQUIRE_SMALL( std::make_pair(0, 1e-15), 1e-14 );
+  FRENSIE_REQUIRE_SMALL( std::make_pair(0, -1e-15), 1e-14 );
+  
+  FRENSIE_REQUIRE_SMALL( std::list<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_REQUIRE_SMALL( std::list<double>({0., 1e-15, -1e-15}), 1e-14 );
+
+  FRENSIE_REQUIRE_SMALL( std::forward_list<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_REQUIRE_SMALL( std::forward_list<double>({0., 1e-15, -1e-15}), 1e-14 );
+
+  FRENSIE_REQUIRE_SMALL( std::deque<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_REQUIRE_SMALL( std::deque<double>({0., 1e-15, -1e-15}), 1e-14 );
+      
+  FRENSIE_REQUIRE_SMALL( (std::array<double,3>({0., 0., 0.})), 1e-15 );
+  FRENSIE_REQUIRE_SMALL( (std::array<double,3>({0., 1e-15, -1e-15})), 1e-14 );
+  
+  FRENSIE_REQUIRE_SMALL( std::vector<double>({0., 0., 0.}), 1e-15 );
+  FRENSIE_REQUIRE_SMALL( std::vector<double>({0., 1e-15, -1e-15}), 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_SMALL macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_SMALL_fail )
+{
+  FRENSIE_REQUIRE_SMALL( 1e-8, 1e-9f );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_FLOATING_EQUALITY macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_FLOATING_EQUALITY_pass )
+{
+  FRENSIE_CHECK_FLOATING_EQUALITY( 1.0f, 1.0f, 1e-9f );
+  FRENSIE_CHECK_FLOATING_EQUALITY( 1.0f, (1.0f-1e-10f), 1e-9f );
+  FRENSIE_CHECK_FLOATING_EQUALITY( 1.0f, (1.0f+1e-10f), 1e-9f );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( -1.0, -1.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( -1.0, -1.0-1e-16, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( -1.0, -1.0+1e-16, 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.0-1e-16), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.0+1e-16), 1e-15 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-16), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-16), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::list<double>({0., 1.0+1e-16, 2.}), std::list<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::forward_list<double>({0., 1.0+1e-16, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-16}), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::deque<double>({0., 1.+1e-16, 2.}), std::deque<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( (std::array<double,3>({0., 1.+1e-16, 2.})), (std::array<double,3>({0., 1., 2.-1e-16})), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::vector<double>({0., 1.+1e-16, 2.}), std::vector<double>({0., 1., 2.-1e-16}), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_FLOATING_EQUALITY macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_FLOATING_EQUALITY_fail )
+{
+  FRENSIE_CHECK_FLOATING_EQUALITY( 1.0f, (1.0f-1e-8f), 1e-9f );
+  FRENSIE_CHECK_FLOATING_EQUALITY( 1.0f, (1.0f+1e-8f), 1e-9f );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( -1.0, -1.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( -1.0, -1.0-1e-14, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( -1.0, -1.0+1e-14, 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.0-1e-14), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.0+1e-14), 1e-15 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-14), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-14), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::list<double>({0., 1.0+1e-14, 2.}), std::list<double>({0., 1., 2.-1e-14}), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::forward_list<double>({0., 1.0+1e-14, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-14}), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::deque<double>({0., 1.+1e-14, 2.}), std::deque<double>({0., 1., 2.-1e-14}), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( (std::array<double,3>({0., 1.+1e-14, 2.})), (std::array<double,3>({0., 1., 2.-1e-14})), 1e-15 );
+  
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( std::vector<double>({0., 1.+1e-14, 2.}), std::vector<double>({0., 1., 2.-1e-14}), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_FLOATING_EQUALITY macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_FLOATING_EQUALITY_pass )
+{
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( 1.0f, 1.0f, 1e-9f );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( 1.0f, (1.0f-1e-10f), 1e-9f );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( 1.0f, (1.0f+1e-10f), 1e-9f );
+  
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( -1.0, -1.0, 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( -1.0, -1.0-1e-16, 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( -1.0, -1.0+1e-16, 1e-15 );
+  
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.0-1e-16), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::make_tuple(-1.), std::make_tuple(-1.0+1e-16), 1e-15 );
+
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-16), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-16), 1e-15 );
+  
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::list<double>({0., 1.0+1e-16, 2.}), std::list<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::forward_list<double>({0., 1.0+1e-16, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-16}), 1e-15 );
+  
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::deque<double>({0., 1.+1e-16, 2.}), std::deque<double>({0., 1., 2.-1e-16}), 1e-15 );
+  
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( (std::array<double,3>({0., 1.+1e-16, 2.})), (std::array<double,3>({0., 1., 2.-1e-16})), 1e-15 );
+  
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( std::vector<double>({0., 1.+1e-16, 2.}), std::vector<double>({0., 1., 2.-1e-16}), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_FLOATING_EQUALITY macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_FLOATING_EQUALITY_fail )
+{
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( 1.0f, (1.0f-1e-8f), 1e-9f );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_NO_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_NO_THROW_pass )
+{
+  FRENSIE_CHECK_NO_THROW( double dummy = 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_NO_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_NO_THROW_fail )
+{
+  FRENSIE_CHECK_NO_THROW( throw std::runtime_error("fail") );
+  FRENSIE_CHECK_NO_THROW( throw 1 );
+  FRENSIE_CHECK_NO_THROW( throw std::string("fail") );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_NO_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_NO_THROW_pass )
+{
+  FRENSIE_REQUIRE_NO_THROW( double dummy = 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_NO_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_NO_THROW_fail )
+{
+  FRENSIE_REQUIRE_NO_THROW( throw std::runtime_error("fail") );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_THROW_pass )
+{
+  FRENSIE_CHECK_THROW( throw std::runtime_error("fail"), std::runtime_error );
+  FRENSIE_CHECK_THROW( throw std::logic_error("fail"), std::logic_error );
+  FRENSIE_CHECK_THROW( throw 1, int );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CHECK_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_THROW_fail )
+{
+  FRENSIE_CHECK_THROW( throw std::runtime_error("fail"), std::logic_error );
+  FRENSIE_CHECK_THROW( throw std::logic_error("fail"), std::runtime_error );
+  FRENSIE_CHECK_THROW( throw 1, std::runtime_error );
+  
+  FRENSIE_CHECK_THROW( double dummy = 0.0, std::runtime_error );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_THROW_pass )
+{
+  FRENSIE_REQUIRE_THROW( throw std::runtime_error("fail"), std::runtime_error );
+  FRENSIE_REQUIRE_THROW( throw std::logic_error("fail"), std::logic_error );
+  FRENSIE_REQUIRE_THROW( throw 1, int );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the REQUIRE_THROW macro behaves correctly
+FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_THROW_fail )
+{
+  FRENSIE_REQUIRE_THROW( throw std::runtime_error("fail"), std::logic_error );
+
+  // We should never get here
+  int* bad_pointer = NULL;
+  *bad_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that a seg. fault will be caught and reported by the unit test manager
+FRENSIE_UNIT_TEST( UnitTestHarness, SegFault_fail )
+{
+  int* invalid_pointer = NULL;
+
+  FRENSIE_CHECKPOINT();
+
+  // This should cause a seg fault
+  *invalid_pointer = 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check that an abort signal will be caught and reported by the unit test
+// manager
+FRENSIE_UNIT_TEST( UnitTestHarness, Abort_fail )
+{
+  std::raise( SIGABRT );
+}
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
 // A custom signal handler for seg faults
-void SegFaultSignalHandler( int signal )      
-{                                             
-  throw std::logic_error( "Seg Fault Detected!" ); 
+void SignalHandler( int signal )      
+{
+  if( signal == SIGSEGV )
+    throw std::logic_error( "Seg Fault Detected!" );
+  else
+    throw signal;
 }
 
 // A custom main function for running the mock unit tests
 int main( int argc, char** argv )                  
 {                                                  
-  signal( SIGSEGV, &SegFaultSignalHandler );
+  signal( SIGSEGV, &SignalHandler );
+  signal( SIGABRT, &SignalHandler );
   
   Utility::UnitTestManager& unit_test_manager =
     Utility::UnitTestManager::getInstance();
