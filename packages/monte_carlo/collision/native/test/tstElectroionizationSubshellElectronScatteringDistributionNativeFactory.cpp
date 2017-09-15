@@ -303,9 +303,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                    scatterElectron )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
@@ -327,7 +326,56 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   // Test knock-on electron
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.2778434545019750, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.056721346111550E-02, 1e-12 );
+}
 
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
+                   scatterElectron_exact )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  {
+    MonteCarlo::ElectronState electron( 0 );
+    electron.setEnergy( 8.829E-02 + 1e-15 );
+    electron.setDirection( 0.0, 0.0, 1.0 );
+
+    // Analytically scatter electron
+    exact_native_distribution->scatterElectron( electron,
+                                                bank,
+                                                shell_of_interaction );
+
+    // Test original electron
+    TEST_ASSERT( electron.isGone() );
+
+    // Test knock-on electron
+    TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.1088260343863984e-07, 1e-12 );
+    TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 9.9920072216264089e-16, 1e-12 );
+  }
+  {
+    MonteCarlo::ElectronState electron( 0 );
+    electron.setEnergy( 8.829E-02 + 1e-15 );
+    electron.setDirection( 0.0, 0.0, 1.0 );
+
+    // Analytically scatter electron
+    exact_native_distribution->scatterElectron( electron,
+                                                bank,
+                                                shell_of_interaction );
+
+    // Test original electron
+    TEST_ASSERT( electron.isGone() );
+
+    // Test knock-on electron
+    TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.1088260343863984e-07, 1e-12 );
+    TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 9.9920072216264089e-16, 1e-12 );
+  }
 }
 
 //---------------------------------------------------------------------------//

@@ -82,19 +82,19 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setEvaluati
   if( unit_based_interpolation_mode_on )
   {
     // Set the correlated unit based evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
         &TwoDDist::correlatedEvaluate,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
         std::placeholders::_2 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
         &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
         std::placeholders::_2 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
         &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
@@ -103,19 +103,19 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setEvaluati
   else
   {
     // Set the correlated exact evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
         &TwoDDist::evaluateExact,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
         std::placeholders::_2 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
         &TwoDDist::evaluateSecondaryConditionalPDFExact,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
         std::placeholders::_2 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
         &TwoDDist::evaluateSecondaryConditionalCDFExact,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1,
@@ -139,7 +139,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluate(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_func( incoming_energy, outgoing_energy );
+  return d_evaluate_function( incoming_energy, outgoing_energy );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -152,7 +152,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateP
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_pdf_func( incoming_energy, outgoing_energy );
+  return d_evaluate_pdf_function( incoming_energy, outgoing_energy );
 }
 
 // Evaluate the CDF value for a given incoming and outgoing energy
@@ -165,7 +165,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateC
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_cdf_func( incoming_energy, outgoing_energy );
+  return d_evaluate_cdf_function( incoming_energy, outgoing_energy );
 }
 
 
