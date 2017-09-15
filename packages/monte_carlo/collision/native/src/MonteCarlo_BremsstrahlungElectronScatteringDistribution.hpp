@@ -113,7 +113,7 @@ private:
                                         d_angular_distribution_func;
 
   // The sample function pointer
-  std::function<double ( const double )> d_sample_func;
+  std::function<double ( const double )> d_sample_function;
 
   // The evaluate function pointer
   std::function<double ( const double, const double )> d_evaluate_func;

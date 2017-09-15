@@ -92,7 +92,7 @@ private:
   double d_cutoff_angle_cosine;
 
   // The sample function pointer
-  std::function<double ( const double )> d_sample_func;
+  std::function<double ( const double )> d_sample_function;
 };
 
 } // end MonteCarlo namespace

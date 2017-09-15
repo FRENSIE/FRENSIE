@@ -46,7 +46,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setSampling
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
         &TwoDDist::correlatedSampleSecondaryConditional,
         std::cref( *d_ionization_subshell_dist ),
         std::placeholders::_1 );
@@ -54,7 +54,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setSampling
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
             &TwoDDist::sampleSecondaryConditional,
             std::cref( *d_ionization_subshell_dist ),
             std::placeholders::_1 );
@@ -63,7 +63,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setSampling
   else
   {
       // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
             &TwoDDist::sampleSecondaryConditionalExact,
             std::cref( *d_ionization_subshell_dist ),
             std::placeholders::_1 );
@@ -176,7 +176,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::sample(
                double& outgoing_angle_cosine ) const
 {
   // Sample knock-on electron energy
-  outgoing_energy = d_sample_func( incoming_energy );
+  outgoing_energy = d_sample_function( incoming_energy );
 
   // Calculate the outgoing angle cosine for the knock on electron
   outgoing_angle_cosine = outgoingAngle( incoming_energy, outgoing_energy );

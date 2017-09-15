@@ -817,8 +817,8 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   -> SecondaryIndepQuantity
 {
   // Make sure the secondary limit is valid
-  testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+  testPrecondition( max_secondary_indep_var_value >=
+                    min_secondary_indep_var_value );
 
   // Use this random number to do create the correlated sample
   const double random_number =
@@ -917,9 +917,8 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryI
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
   // Make sure the secondary limit is valid
-  testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
-  
+  testPrecondition( max_secondary_indep_var_value >= min_secondary_indep_var_value );
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
@@ -1523,6 +1522,9 @@ inline auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,P
                 SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
 {
+  // Make sure the secondary limit is valid
+  testPrecondition( max_secondary_indep_var >= min_secondary_indep_var );
+
   // Find the bin boundaries
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -1554,6 +1556,10 @@ inline auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,P
       return sample_functor( *lower_bin_boundary->second );
     else
     {
+      // Check to see if the min equals the max
+      if( min_secondary_indep_var == max_secondary_indep_var )
+        return min_secondary_indep_var;
+
       typename QuantityTraits<SecondaryIndepQuantity>::RawType
       intermediate_grid_length =
         TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(

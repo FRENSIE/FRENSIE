@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -105,13 +102,13 @@ private:
                         const double outgoing_energy ) const;
 
   // electroionization subshell scattering cross sections
-  std::shared_ptr<TwoDDist> d_electroionization_subshell_scattering_distribution;
+  std::shared_ptr<TwoDDist> d_electroionization_shell_distribution;
 
   // Subshell binding energy
   double d_binding_energy;
 
   // The sample function pointer
-  std::function<double ( const double )> d_sample_func;
+  std::function<double ( const double )> d_sample_function;
 
   // The evaluate function pointer
   std::function<double ( const double, const double )> d_evaluate_func;

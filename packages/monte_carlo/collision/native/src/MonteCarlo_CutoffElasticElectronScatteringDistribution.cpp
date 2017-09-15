@@ -39,7 +39,7 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   if( correlated_sampling_mode_on )
   {
     // Set the correlated unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalExact,
          std::cref( *d_full_cutoff_distribution ),
          std::placeholders::_1 );
@@ -47,7 +47,7 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditional,
          std::cref( *d_full_cutoff_distribution ),
          std::placeholders::_1 );
@@ -82,7 +82,7 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   if( correlated_sampling_mode_on )
   {
     // Set the correlated unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalExact,
          std::cref( *d_partial_cutoff_distribution ),
          std::placeholders::_1 );
@@ -90,7 +90,7 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditional,
          std::cref( *d_partial_cutoff_distribution ),
          std::placeholders::_1 );
@@ -252,7 +252,7 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   ++trials;
 
   // sample the scattering angle cosine
-  scattering_angle_cosine = d_sample_func( incoming_energy );
+  scattering_angle_cosine = d_sample_function( incoming_energy );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

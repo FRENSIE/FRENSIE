@@ -101,7 +101,7 @@ private:
   std::shared_ptr<TwoDDist> d_partial_cutoff_distribution;
 
   // The sample function pointer
-  std::function<double ( const double )> d_sample_func;
+  std::function<double ( const double )> d_sample_function;
 };
 
 } // end MonteCarlo namespace

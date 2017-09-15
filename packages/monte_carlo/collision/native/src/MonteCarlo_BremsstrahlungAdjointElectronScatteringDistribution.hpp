@@ -81,7 +81,7 @@ private:
   std::shared_ptr<TwoDDist> d_adjoint_brem_scatter_dist;
 
   // The sample function pointer
-  std::function<double ( const double )> d_sample_func;
+  std::function<double ( const double )> d_sample_function;
 
   // The evaluate function pointer
   std::function<double ( const double, const double )> d_evaluate_func;

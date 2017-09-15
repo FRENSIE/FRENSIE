@@ -75,7 +75,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::correlatedSampleSecondaryConditionalInBoundaries,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1,
@@ -85,7 +85,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditional,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
@@ -94,7 +94,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
   else
   {
     // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditionalExact,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
@@ -218,7 +218,7 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy = d_sample_func( incoming_energy );
+  photon_energy = d_sample_function( incoming_energy );
 
   // Sample the photon outgoing angle cosine
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,

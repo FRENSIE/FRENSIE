@@ -40,7 +40,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::correlatedSampleSecondaryConditional,
            std::cref( *d_adjoint_brem_scatter_dist ),
            std::placeholders::_1 );
@@ -48,7 +48,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditional,
            std::cref( *d_adjoint_brem_scatter_dist ),
            std::placeholders::_1 );
@@ -57,7 +57,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
   else
   {
       // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditionalExact,
            std::cref( *d_adjoint_brem_scatter_dist ),
            std::placeholders::_1 );
@@ -183,7 +183,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
 
-  outgoing_energy = d_sample_func( incoming_energy );
+  outgoing_energy = d_sample_function( incoming_energy );
 
   testPostcondition( outgoing_energy > incoming_energy );
 }

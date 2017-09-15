@@ -162,7 +162,7 @@ private:
   std::shared_ptr<const ElasticTraits> d_elastic_traits;
 
   // The sampling function pointer
-  std::function<double ( const double, const double )> d_sample_function;
+  std::function<double ( const double, const double )> d_sample_functiontion;
 
   // The sampling method pointer
   std::function<double ( const double )> d_sample_method;
