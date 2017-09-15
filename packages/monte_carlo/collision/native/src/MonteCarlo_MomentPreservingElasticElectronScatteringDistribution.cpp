@@ -34,7 +34,7 @@ MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticEl
   if( correlated_sampling_mode_on )
   {
     // Set the correlated unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalExact,
          std::cref( *d_discrete_scattering_distribution ),
          std::placeholders::_1 );
@@ -42,7 +42,7 @@ MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticEl
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditional,
          std::cref( *d_discrete_scattering_distribution ),
          std::placeholders::_1 );

@@ -34,26 +34,27 @@ CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDi
   if( correlated_sampling_mode_on )
   {
     // Set the correlated exact sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
-         std::cref( *d_coupled_dist ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
+    d_sample_function = [this]( const double& energy, const double& random_number )
+    {
+      return d_coupled_dist->sampleSecondaryConditionalExactWithRandomNumber(
+        energy, random_number );
+    };
   }
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
-         std::cref( *d_coupled_dist ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
+    d_sample_function = [this]( const double& energy, const double& random_number )
+    {
+      return d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
+        energy, random_number );
+    };
   }
 
-  d_sample_method = std::bind<double>(
-         &ThisType::sampleSimplifiedUnion,
-         std::cref( *this ),
-         std::placeholders::_1 );
+  // Set the sampling method
+  d_sample_method = [this]( const double& energy )
+  {
+    return this->sampleSimplifiedUnion( energy );
+  };
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine

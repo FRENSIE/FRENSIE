@@ -40,7 +40,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::correlatedSampleSecondaryConditional,
            std::cref( *d_adjoint_brem_scatter_dist ),
            std::placeholders::_1 );
@@ -48,7 +48,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditional,
            std::cref( *d_adjoint_brem_scatter_dist ),
            std::placeholders::_1 );
@@ -57,7 +57,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
   else
   {
       // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditionalExact,
            std::cref( *d_adjoint_brem_scatter_dist ),
            std::placeholders::_1 );
@@ -76,19 +76,19 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setEvaluationRoutines(
   if( unit_based_interpolation_mode_on )
   {
     // Set the correlated unit based evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
        &TwoDDist::correlatedEvaluate,
        std::cref( *d_adjoint_brem_scatter_dist ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalPDF,
        std::cref( *d_adjoint_brem_scatter_dist ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalCDF,
        std::cref( *d_adjoint_brem_scatter_dist ),
        std::placeholders::_1,
@@ -97,19 +97,19 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setEvaluationRoutines(
   else
   {
     // Set the correlated exact evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
        &TwoDDist::evaluateExact,
        std::cref( *d_adjoint_brem_scatter_dist ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
        &TwoDDist::evaluateSecondaryConditionalPDFExact,
        std::cref( *d_adjoint_brem_scatter_dist ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
        &TwoDDist::evaluateSecondaryConditionalCDFExact,
        std::cref( *d_adjoint_brem_scatter_dist ),
        std::placeholders::_1,
@@ -139,7 +139,7 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_func( incoming_energy, outgoing_energy );
+  return d_evaluate_function( incoming_energy, outgoing_energy );
 }
 
 // Evaluate the PDF
@@ -152,7 +152,7 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluatePDF(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the pdf
-  return d_evaluate_pdf_func( incoming_energy, outgoing_energy );
+  return d_evaluate_pdf_function( incoming_energy, outgoing_energy );
 }
 
 // Evaluate the PDF
@@ -165,7 +165,7 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluateCDF(
   testPrecondition( outgoing_energy > incoming_energy );
 
   // evaluate the cdf
-  return d_evaluate_cdf_func( incoming_energy, outgoing_energy );
+  return d_evaluate_cdf_function( incoming_energy, outgoing_energy );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -183,7 +183,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
 
-  outgoing_energy = d_sample_func( incoming_energy );
+  outgoing_energy = d_sample_function( incoming_energy );
 
   testPostcondition( outgoing_energy > incoming_energy );
 }

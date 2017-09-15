@@ -21,6 +21,7 @@ class ElectroionizationSubshellElectronScatteringDistributionNativeFactory
 
 public:
 
+  //! Typedef for this type
   using ThisType = ElectroionizationSubshellElectronScatteringDistributionNativeFactory;
 
   //! Create a electroionization subshell distribution
@@ -50,10 +51,10 @@ public:
 
 private:
 
-  //! Return if the TwoDInterpPolicy is compatible with the unit based sampling mode
+  //! Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
   template <typename TwoDInterpPolicy>
   static bool isCompatibleWithUnitBaseSamplingMode(
-        const bool unit_based_interpolation_mode_on );
+    const bool unit_based_interpolation_mode_on );
 
 };
 

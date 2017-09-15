@@ -21,6 +21,7 @@ class BremsstrahlungElectronScatteringDistributionNativeFactory
 
 public:
 
+  //! Typedef for this type
   using ThisType = BremsstrahlungElectronScatteringDistributionNativeFactory;
 
   //! Create a simple dipole bremsstrahlung distribution
@@ -78,10 +79,11 @@ public:
 
 private:
 
-  //! Return if the TwoDInterpPolicy is compatible with the nit based sampling mode
+  //! Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
   template <typename TwoDInterpPolicy>
   static bool isCompatibleWithUnitBaseSamplingMode(
-        const bool unit_based_interpolation_mode_on );
+    const bool unit_based_interpolation_mode_on );
+
 };
 
 } // end MonteCarlo namespace

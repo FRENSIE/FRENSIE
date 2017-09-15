@@ -55,9 +55,7 @@ public:
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  ace_electroionization_distribution, native_electroionization_distribution;
-
-Teuchos::RCP<TestElectroionizationSubshellElectronScatteringDistribution>
+  ace_electroionization_distribution, native_electroionization_distribution,
   exact_electroionization_distribution;
 
 //---------------------------------------------------------------------------//
@@ -257,8 +255,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 /* Note: This tests a bug that caused electroionization to return non-realistic
- * knock-on energies. The problem was fixed by setting the non-realistic
- * energies to the max allowed energy.
+ * knock-on energies. A unit based sampling routine was used to fix the problem.
  */
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    sample_knock_on_native_exact )
@@ -274,9 +271,9 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   double knock_on_energy, knock_on_angle_cosine;
 
   // sample the electron at the min random number
-  native_electroionization_distribution->sample( incoming_energy,
-                                                 knock_on_energy,
-                                                 knock_on_angle_cosine );
+  exact_electroionization_distribution->sample( incoming_energy,
+                                                knock_on_energy,
+                                                knock_on_angle_cosine );
 
   // Test knock-on electron at the min random number
   TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0406872554892572, 1e-12 );
@@ -390,37 +387,6 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.279436961765390, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.105262105768E-02, 1e-12 );
 
-}
-
-//---------------------------------------------------------------------------//
-// Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   outgoingAngle )
-{
-  double incoming_energy, outgoing_energy, angle_cosine;
-
-  // test for the highest energies
-  incoming_energy = 1e5; outgoing_energy = 1e5 - 1e-10;
-  angle_cosine = exact_electroionization_distribution->outgoingAngle(
-                                            incoming_energy, outgoing_energy );
-  TEST_FLOATING_EQUALITY( angle_cosine, 1.0, 1e-12 );
-
-  incoming_energy = 1e5; outgoing_energy = 0.0;
-  angle_cosine = exact_electroionization_distribution->outgoingAngle(
-                                            incoming_energy, outgoing_energy );
-  TEST_EQUALITY_CONST( angle_cosine, 0.0 );
-
-
-  // test for the lowest energies
-  incoming_energy = 1e-5; outgoing_energy = 1e-5 - 1e-18;
-  angle_cosine = exact_electroionization_distribution->outgoingAngle(
-                                            incoming_energy, outgoing_energy );
-  TEST_FLOATING_EQUALITY( angle_cosine, 1.0, 1e-12 );
-
-  incoming_energy = 1e-5; outgoing_energy = 0.0;
-  angle_cosine = exact_electroionization_distribution->outgoingAngle(
-                                            incoming_energy, outgoing_energy );
-  TEST_EQUALITY_CONST( angle_cosine, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -614,7 +580,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the distributions
   exact_electroionization_distribution.reset(
-        new TestElectroionizationSubshellElectronScatteringDistribution(
+        new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
                             binding_energy,
                             true,

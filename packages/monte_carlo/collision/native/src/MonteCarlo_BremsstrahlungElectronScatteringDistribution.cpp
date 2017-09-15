@@ -75,7 +75,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::correlatedSampleSecondaryConditionalInBoundaries,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1,
@@ -85,7 +85,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditional,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
@@ -94,7 +94,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
   else
   {
     // Set the correlated exact sample routine
-      d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditionalExact,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
@@ -113,7 +113,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
   if( unit_based_interpolation_mode_on )
   {
     // Set the correlated unit based evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -121,7 +121,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
        1e-7,
        std::placeholders::_1 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalPDFInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -129,7 +129,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
        1e-7,
        std::placeholders::_1 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalCDFInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -140,19 +140,19 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
   else
   {
     // Set the correlated exact evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
        &TwoDDist::evaluateExact,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
        &TwoDDist::evaluateSecondaryConditionalPDFExact,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
        &TwoDDist::evaluateSecondaryConditionalCDFExact,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -182,7 +182,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_func( incoming_energy, photon_energy );
+  return d_evaluate_function( incoming_energy, photon_energy );
 }
 
 // Evaluate the PDF value for a given incoming and photon energy
@@ -195,7 +195,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_pdf_func( incoming_energy, photon_energy );
+  return d_evaluate_pdf_function( incoming_energy, photon_energy );
 }
 
 // Evaluate the CDF value for a given incoming and photon energy
@@ -208,7 +208,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_cdf_func( incoming_energy, photon_energy );
+  return d_evaluate_cdf_function( incoming_energy, photon_energy );
 }
 
 // Sample the photon energy and direction from the distribution
@@ -218,7 +218,7 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy = d_sample_func( incoming_energy );
+  photon_energy = d_sample_function( incoming_energy );
 
   // Sample the photon outgoing angle cosine
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,
@@ -286,8 +286,9 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                                           const double incoming_electron_energy,
                                           const double photon_energy  ) const
 {
-  testPrecondition( incoming_electron_energy >= photon_energy );
+  // Make sure the energies are valid
   testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_electron_energy );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared(
@@ -315,8 +316,9 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                         const double incoming_electron_energy,
                                         const double photon_energy ) const
 {
-  testPrecondition( incoming_electron_energy >= photon_energy );
+  // Make sure the energies are valid
   testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_electron_energy );
 
   double outgoing_electron_energy = incoming_electron_energy - photon_energy;
   double ratio = outgoing_electron_energy/incoming_electron_energy;
