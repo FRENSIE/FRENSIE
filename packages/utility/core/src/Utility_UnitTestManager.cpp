@@ -1266,8 +1266,7 @@ bool UnitTestManager::shouldUnitTestBeRun( const UnitTest& unit_test )
   {
     if( std::regex_search(unit_test.getTestName(), d_data->getTestFilter()) )
     {
-      if( unit_test.getDataName().size() == 0 ||
-          std::regex_search(unit_test.getDataName(), d_data->getDataFilter()) )
+      if( std::regex_search(unit_test.getDataName(), d_data->getDataFilter()) )
       {
         return true;
       }
@@ -1759,13 +1758,14 @@ void UnitTestManager::printGivenUnitTestStats(
                           << secondary_line_padding
                           << Utility::Red("failed: " + Utility::toString(number_of_checks - number_of_passed_checks)) << "\n"
                           << primary_line_padding
-                          << Utility::StaticOutputFormatter<UnderlinedTextFormat,RedTextColor,DefaultTextBackgroundColor>("unexpected exceptions:")
-                          << " " << Utility::Red(Utility::toString(number_of_unexpected_exceptions));
+                          << Utility::Underlined("unexpected exceptions:")
+                          << " " << number_of_unexpected_exceptions;
 
   if( total_test_exec_time >= 0.0 )
   {
     d_data->getReportSink() << "\n" << primary_line_padding
-                            << "total test time:  " << total_test_exec_time << " sec";
+                            << Utility::Underlined("total test time:") << "  "
+                            << total_test_exec_time << " sec";
   }
 
   d_data->getReportSink() << std::endl;

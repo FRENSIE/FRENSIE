@@ -55,7 +55,7 @@ template<typename T>
 inline T DataUnitTest::getConcreteDataTableElement(
                                          const std::string& column_name ) const
 {
-  return d_data_table->getConcreteElement<T>( column_name );
+  return Utility::variant_cast<T>(this->getDataTableElement( column_name ));
 }
   
 } // end Utility namespace

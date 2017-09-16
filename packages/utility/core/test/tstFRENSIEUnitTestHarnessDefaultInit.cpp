@@ -1,14 +1,15 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstFRENSIEUnitTestFrameworkDefaultInit.cpp
+//! \file   tstFRENSIEUnitTestHarnessDefaultInit.cpp
 //! \author Alex Robinson
-//! \brief  FRENSIE Unit Test Framework test with default initialization
+//! \brief  FRENSIE Unit Test Harness test with default initialization
 //!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
 #include <iostream>
 #include <csignal>
+#include <cstdlib>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarness.hpp"
@@ -64,8 +65,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_fail )
   FRENSIE_REQUIRE( false );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -335,8 +335,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_EQUAL_fail )
   FRENSIE_REQUIRE_EQUAL( false, true );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -509,8 +508,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_DIFFERENT_fail )
   FRENSIE_REQUIRE_DIFFERENT( true, true );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -600,8 +598,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_GREATER_fail )
   FRENSIE_REQUIRE_GREATER( 0, 0 );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -711,8 +708,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_GREATER_OR_EQUAL_fail )
   FRENSIE_REQUIRE_GREATER_OR_EQUAL( 0, 1 );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -799,8 +795,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_LESS_fail )
   FRENSIE_REQUIRE_LESS( 0, 0 );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -910,8 +905,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_LESS_OR_EQUAL_fail )
   FRENSIE_REQUIRE_LESS_OR_EQUAL( 1, 0 );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -989,47 +983,46 @@ FRENSIE_UNIT_TEST( UnitTestHarness, CHECK_CLOSE_fail )
 // Check that the REQUIRE_CLOSE macro behaves correctly
 FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_CLOSE_pass )
 {
-  // FRENSIE_REQUIRE_CLOSE( 1.0f, 1.0f, 1e-9f );
-  // FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f-1e-10f), 1e-9f );
-  // FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f+1e-10f), 1e-9f );
+  FRENSIE_REQUIRE_CLOSE( 1.0f, 1.0f, 1e-9f );
+  FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f-1e-10f), 1e-9f );
+  FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f+1e-10f), 1e-9f );
   
-  // FRENSIE_REQUIRE_CLOSE( -1.0, -1.0, 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( -1.0, -1.0-1e-16, 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( -1.0, -1.0+1e-16, 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( -1.0, -1.0, 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( -1.0, -1.0-1e-16, 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( -1.0, -1.0+1e-16, 1e-15 );
   
-  // FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0-1e-16), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0+1e-16), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0-1e-16), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::make_tuple(-1.), std::make_tuple(-1.0+1e-16), 1e-15 );
 
-  // FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-16), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-16), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0-1e-16), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::make_pair(0, 1.0), std::make_pair(0, 1.0+1e-16), 1e-15 );
   
-  // FRENSIE_REQUIRE_CLOSE( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::list<double>({0., 1.0+1e-16, 2.}), std::list<double>({0., 1., 2.-1e-16}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::list<double>({0., 1., 2.}), std::list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::list<double>({0., 1.0+1e-16, 2.}), std::list<double>({0., 1., 2.-1e-16}), 1e-15 );
   
-  // FRENSIE_REQUIRE_CLOSE( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::forward_list<double>({0., 1.0+1e-16, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-16}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::forward_list<double>({0., 1., 2.}), std::forward_list<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::forward_list<double>({0., 1.0+1e-16, 2.}), std::forward_list<double>({0., 1.0, 2.0-1e-16}), 1e-15 );
   
-  // FRENSIE_REQUIRE_CLOSE( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::deque<double>({0., 1.+1e-16, 2.}), std::deque<double>({0., 1., 2.-1e-16}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::deque<double>({0., 1., 2.}), std::deque<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::deque<double>({0., 1.+1e-16, 2.}), std::deque<double>({0., 1., 2.-1e-16}), 1e-15 );
   
-  // FRENSIE_REQUIRE_CLOSE( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( (std::array<double,3>({0., 1.+1e-16, 2.})), (std::array<double,3>({0., 1., 2.-1e-16})), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( (std::array<double,3>({0., 1., 2.})), (std::array<double,3>({0., 1., 2.})), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( (std::array<double,3>({0., 1.+1e-16, 2.})), (std::array<double,3>({0., 1., 2.-1e-16})), 1e-15 );
   
-  // FRENSIE_REQUIRE_CLOSE( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
-  // FRENSIE_REQUIRE_CLOSE( std::vector<double>({0., 1.+1e-16, 2.}), std::vector<double>({0., 1., 2.-1e-16}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::vector<double>({0., 1., 2.}), std::vector<double>({0., 1., 2.}), 1e-15 );
+  FRENSIE_REQUIRE_CLOSE( std::vector<double>({0., 1.+1e-16, 2.}), std::vector<double>({0., 1., 2.-1e-16}), 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the REQUIRE_CLOSE macro behaves correctly
 FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_CLOSE_fail )
 {
-  // FRENSIE_REQUIRE_CLOSE( 1.0f, (1.0f-1e-8f), 1e-9f );
+  FRENSIE_REQUIRE_CLOSE( 1.0f, 1.1f, 1e-8f );
 
-  // // We should never get here
-  // int* bad_pointer = NULL;
-  // *bad_pointer = 1;
+  // We should never get here
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -1131,11 +1124,10 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_SMALL_pass )
 // Check that the REQUIRE_SMALL macro behaves correctly
 FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_SMALL_fail )
 {
-  FRENSIE_REQUIRE_SMALL( 1e-8, 1e-9f );
+  FRENSIE_REQUIRE_SMALL( 1e-7, 1e-8f );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -1249,11 +1241,10 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_FLOATING_EQUALITY_pass )
 // Check that the REQUIRE_FLOATING_EQUALITY macro behaves correctly
 FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_FLOATING_EQUALITY_fail )
 {
-  FRENSIE_REQUIRE_FLOATING_EQUALITY( 1.0f, (1.0f-1e-8f), 1e-9f );
+  FRENSIE_REQUIRE_FLOATING_EQUALITY( 1.0f, (1.0f-1e-6f), 1e-8f );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -1286,8 +1277,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_NO_THROW_fail )
   FRENSIE_REQUIRE_NO_THROW( throw std::runtime_error("fail") );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -1326,8 +1316,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, REQUIRE_THROW_fail )
   FRENSIE_REQUIRE_THROW( throw std::runtime_error("fail"), std::logic_error );
 
   // We should never get here
-  int* bad_pointer = NULL;
-  *bad_pointer = 1;
+  std::exit(EXIT_FAILURE);
 }
 
 //---------------------------------------------------------------------------//
@@ -1338,7 +1327,8 @@ FRENSIE_UNIT_TEST( UnitTestHarness, SegFault_fail )
 
   FRENSIE_CHECKPOINT();
 
-  // This should cause a seg fault
+  // This should cause a seg fault, which will then be handled by our
+  // custom signal handler
   *invalid_pointer = 1;
 }
 
@@ -1348,6 +1338,123 @@ FRENSIE_UNIT_TEST( UnitTestHarness, SegFault_fail )
 FRENSIE_UNIT_TEST( UnitTestHarness, Abort_fail )
 {
   std::raise( SIGABRT );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data unit test can be constructed
+FRENSIE_DATA_UNIT_TEST( UnitTestHarness, DataDrivenTest_pass )
+{
+  FETCH_FROM_TABLE( double, Input );
+  FETCH_FROM_TABLE( double, abs_Input );
+  FETCH_FROM_TABLE( double, Tolerance );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( fabs(Input), abs_Input, Tolerance );
+}
+
+FRENSIE_DATA_UNIT_TEST_TABLE( UnitTestHarness, DataDrivenTest_pass )
+{
+  COLUMNS()               << "Input" << "abs_Input" << "Tolerance";
+  NEW_ROW( "neg_input" )  << -1.0    << 1.0         << 1e-15;
+  NEW_ROW( "zero_input" ) <<  0.0    << 0.0         << 0.0;
+  NEW_ROW( "pos_input" )  <<  1.0    << 1.0         << 1e-15;
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data unit test can be constructed
+FRENSIE_DATA_UNIT_TEST_TABLE( UnitTestHarness, DataDrivenTest_fail )
+{
+  COLUMNS()                << "RawString"   << "StringChunk" << "ChunkStart" << "ChunkSize";
+  NEW_ROW( "all_words" )   << "Hello World" << "Say What?"   << 0            << 11;
+  NEW_ROW( "first_word" )  << "Hello World" << "Hi"          << 0            << 5;
+  NEW_ROW( "second_word" ) << "Hello World" << "Universe"    << 6            << 5;
+  NEW_ROW( "nothing" )     << "Hello World" << "Oops"        << 0            << 0;
+}
+
+FRENSIE_DATA_UNIT_TEST( UnitTestHarness, DataDrivenTest_fail )
+{
+  FETCH_FROM_TABLE( std::string, RawString );
+  FETCH_FROM_TABLE( std::string, StringChunk );
+  FETCH_FROM_TABLE( size_t, ChunkStart );
+  FETCH_FROM_TABLE( size_t, ChunkSize );
+
+  std::string test_chunk = RawString.substr( ChunkStart, ChunkSize );
+
+  FRENSIE_CHECK_EQUAL( test_chunk, StringChunk );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a template unit test can be constructed
+FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestRawParamPack_pass,
+                            bool, short, int, long, long long, float, double )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  T value(0);
+
+  FRENSIE_CHECK_EQUAL( value, T(0) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a template unit test can be constructed
+FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestWrappedParamPack_pass,
+                            std::tuple<bool, short, int, long, long long, float, double> )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  T value(0);
+
+  FRENSIE_CHECK_EQUAL( value, T(0) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a template unit test can be constructed
+FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestTupleTypes_pass,
+                            std::tuple<>,
+                            std::tuple<int,int>,
+                            std::tuple<int,int,int>,
+                            std::tuple<int,int,int,int> )
+{
+  FETCH_TEMPLATE_PARAM( 0, Tuple );
+
+  Tuple value;
+
+  FRENSIE_CHECK_EQUAL( value, value );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a template unit test can be constructed
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitTestHarness, TemplateTestRawExpandedTupleTypes_pass,
+                                   std::tuple<int,int>,
+                                   std::tuple<int,double>,
+                                   std::tuple<double,double>,
+                                   std::tuple<double,int> )
+{
+  FETCH_TEMPLATE_PARAM( 0, T0 );
+  FETCH_TEMPLATE_PARAM( 1, T1 );
+
+  T0 value_0(0);
+  T1 value_1(1);
+
+  FRENSIE_CHECK_EQUAL( value_0, T0(0) );
+  FRENSIE_CHECK_EQUAL( value_1, T1(1) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a template unit test can be constructed
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitTestHarness, TemplateTestWrappedExpandedTupleTypes_pass,
+                                   std::tuple<std::tuple<int,int>,
+                                              std::tuple<int,double>,
+                                              std::tuple<double,double>,
+                                              std::tuple<double,int> > )
+{
+  FETCH_TEMPLATE_PARAM( 0, T0 );
+  FETCH_TEMPLATE_PARAM( 1, T1 );
+
+  T0 value_0(0);
+  T1 value_1(1);
+
+  FRENSIE_CHECK_EQUAL( value_0, T0(0) );
+  FRENSIE_CHECK_EQUAL( value_1, T1(1) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1375,5 +1482,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstFRENSIEUnitTestFrameworkDefaultInit.cpp
+// end tstFRENSIEUnitTestHarnessDefaultInit.cpp
 //---------------------------------------------------------------------------//

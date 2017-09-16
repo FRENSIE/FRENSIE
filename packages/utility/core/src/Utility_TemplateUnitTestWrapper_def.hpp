@@ -9,13 +9,9 @@
 #ifndef UTILITY_TEMPLATE_UNIT_TEST_WRAPPER_DEF_HPP
 #define UTILITY_TEMPLATE_UNIT_TEST_WRAPPER_DEF_HPP
 
-// Boost Includes
-#include <boost/algorithm/string.hpp>
-
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_TypeTraits.hpp"
-#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
@@ -32,15 +28,10 @@ struct TemplateUnitTestInstantiationHelper
                   std::vector<std::shared_ptr<Utility::UnitTest> >& test_list )
   {
     typedef typename Utility::TupleElement<I,TupleTypeWrapper>::type IType;
-
-    if( Utility::IsTuple<IType>::value )
-    {
-      test_list[I].reset( new TemplateUnitTest<std::integral_constant<bool,expand_inner_tuples>,IType>() );
-    }
-    else
-    {
-      test_list[I].reset( new TemplateUnitTest<IType>() );
-    }
+    
+    typedef typename std::conditional<Utility::IsTuple<IType>::value,TemplateUnitTest<std::integral_constant<bool,expand_inner_tuples>,IType>,TemplateUnitTest<IType> >::type TemplateUnitTestType;
+    
+    test_list[I].reset( new TemplateUnitTestType );
 
     TemplateUnitTestInstantiationHelper<I+1,TupleTypeWrapper>::template instantiateUnitTest<TemplateUnitTest,expand_inner_tuples>( test_list );
   }                   
@@ -67,9 +58,8 @@ template<template<typename...> class TemplateUnitTest,
          bool expand_inner_tuples,
          typename... Types>
 TemplateUnitTestWrapper<TemplateUnitTest,expand_inner_tuples,Types...>::TemplateUnitTestWrapper()
-  : d_instantiated_tests( Utility::TupleSize<std::tuple<Types...> >::value )
+  : d_instantiated_tests( sizeof...(Types) )
 {
-  // Make sure that the number of types is a multiple of N
   Details::TemplateUnitTestInstantiationHelper<0,std::tuple<Types...> >::template instantiateUnitTest<TemplateUnitTest,expand_inner_tuples>( d_instantiated_tests );
 }
 

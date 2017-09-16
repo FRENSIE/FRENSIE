@@ -114,13 +114,15 @@
 #define FRENSIE_DATA_UNIT_TEST( TEST_GROUP, TEST_NAME ) \
   class TEST_GROUP##_##TEST_NAME##_UnitTest : public Utility::DataUnitTest  \
   {                                                                     \
+  public:                                                               \
     TEST_GROUP##_##TEST_NAME##_UnitTest( const std::string& data_table_row_name, \
-                                         const std::shared_ptr<const UnitTestDataTable>& data_table ) \
+                                         const std::shared_ptr<const Utility::UnitTestDataTable>& data_table ) \
       : Utility::DataUnitTest( #TEST_GROUP, #TEST_NAME, data_table_row_name, data_table ){} \
     std::string getFile() const override                               \
     { return __FILE__; }                                               \
     size_t getLineNumber() const override                              \
     { return __LINE__; }                                               \
+  private:                                                             \
     void runImpl( std::ostream& os,                                    \
                   bool& success,                                        \
                   size_t& number_of_checks,                             \
@@ -144,7 +146,7 @@
                    std::string(#TEST_GROUP)+ "_" + #TEST_NAME + "_DataTable", \
                    &TEST_GROUP##_##TEST_NAME##_DataTableCreator );      \
   \
-  void TEST_GROUP##_##TEST_NAME##_DataTableCreator( UnitTestDataTable& data_table ) \
+  void TEST_GROUP##_##TEST_NAME##_DataTableCreator( Utility::UnitTestDataTable& data_table ) \
 
 //! Create the data table columns (use the << operator to add column names)
 #define COLUMNS()                            \
@@ -156,7 +158,7 @@
 
 //! Create a new row of the table
 #define NEW_ROW( name )                          \
-  data_table.addRow( row_name )
+  data_table.addRow( name )
 
 //! Fetch data from the table (can only be used with data unit tests)
 #define FETCH_FROM_TABLE( ElementType, column_name )    \
@@ -168,12 +170,15 @@
   template<typename... Types>                                           \
   class TEST_GROUP##_##TEST_NAME##_UnitTest : public Utility::TemplateUnitTest<Types...> \
   {                                                                     \
+  public:                                                               \
     TEST_GROUP##_##TEST_NAME##_UnitTest()                               \
-      : Utility::TemplateUnitTest<T>( #TEST_GROUP, #TEST_NAME ) {} \
+      : Utility::TemplateUnitTest<Types...>( #TEST_GROUP, #TEST_NAME ) {} \
     std::string getFile() const override                           \
-      { return __FILE__; }                                                \
+    { return __FILE__; }                                                \
     size_t getLineNumber() const override                               \
     { return __LINE__; }                                                \
+  private:                                                              \
+    typedef Utility::TemplateUnitTest<Types...> BaseType;               \
     void runImpl( std::ostream& os,                                     \
                   bool& success,                                        \
                   size_t& number_of_checks,                             \
@@ -181,7 +186,7 @@
                   size_t& last_checkpoint_line_number ) const override; \
   };                                                                    \
   Utility::TemplateUnitTestWrapper<TEST_GROUP##_##TEST_NAME##_UnitTest,EXPAND_INNER_TUPLES,__VA_ARGS__> \
-    s_##TEST_GROUP##_##TEST_NAME##_UnitTest_template_wrapper();           \
+    s_##TEST_GROUP##_##TEST_NAME##_UnitTest_template_wrapper;           \
                                                                         \
   template<typename... Types>                                           \
   void TEST_GROUP##_##TEST_NAME##_UnitTest<Types...>::runImpl(         \
@@ -199,35 +204,9 @@
 #define FRENSIE_UNIT_TEST_TEMPLATE( TEST_GROUP, TEST_NAME, ... ) \
   __FRENSIE_UNIT_TEST_TEMPLATE_DEF__( TEST_GROUP, TEST_NAME, false, __VA_ARGS__ )
 
-//! Access the first template unit test template parameter (can only be used with template unit tests)
-#define _T0 typename _T<0>::get
-
-//! Access the second template unit test template parameter (can only be used with template unit tests)
-#define _T1 typename _T<1>::get
-
-//! Access the third template unit test template parameter (can only be used with template unit tests)
-#define _T2 typename _T<2>::get
-
-//! Access the fourth template unit test template parameter (can only be used with template unit tests)
-#define _T3 typename _T<3>::get
-
-//! Access the fifth template unit test template parameter (can only be used with template unit tests)
-#define _T4 typename _T<4>::get
-
-//! Access the sixth template unit test template parameter (can only be used with template unit tests)
-#define _T5 typename _T<5>::get
-
-//! Access the seventh template unit test template parameter (can only be used with template unit tests)
-#define _T6 typename _T<6>::get
-
-//! Access the eighth template unit test template parameter (can only be used with template unit tests)
-#define _T7 typename _T<7>::get
-
-//! Access the ninth template unit test template parameter (can only be used with template unit tests)
-#define _T8 typename _T<8>::get
-
-//! Access the tenth template unit test template parameter (can only be used with template unit tests)
-#define _T9 typename _T<9>::get
+//! Fetch the desired template parameter from the parameter pack
+#define FETCH_TEMPLATE_PARAM( TypeIndex, TypeAlias )     \
+  typedef typename BaseType::template _T<TypeIndex>::get TypeAlias
 
 #define __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ) \
   if( !local_result )                                                   \
@@ -325,7 +304,7 @@
       local_result = false;                                             \
                                                                         \
       local_log << std::string( Utility::Details::incrementRightShift(INDENT), ' ' ) \
-                << "Caught exception of unknown type ";                 \
+                << "Caught exception of wrong type ";                 \
     }                                                                   \
                                                                         \
   Utility::reportComparisonPassFail( local_result, log );               \
@@ -343,10 +322,10 @@
   }
 
 #define __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (Utility::ComparisonTraits<std::common_type<std::decay<decltype(lhs)>::type,std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, false )
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (typename Utility::ComparisonTraits<typename std::common_type<typename std::decay<decltype(lhs)>::type,typename std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, false )
 
 #define __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( ComparePolicy, lhs, rhs, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (Utility::ComparisonTraits<std::common_type<std::decay<decltype(lhs)>::type,std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, true )
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (typename Utility::ComparisonTraits<typename std::common_type<typename std::decay<decltype(lhs)>::type,typename std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, true )
 
 #define __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, extra_data, log, test_success ) \
   __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, false )
@@ -418,7 +397,7 @@
   __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, log, success, false )
 
 #define FRENSIE_REQUIRE_NO_THROW( statement )   \
-  __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, log, success, false )
+  __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, log, success, true )
 
 #define FRENSIE_CHECK_THROW( statement, Exception )     \
   __FRENSIE_CHECK_THROW_WITH_OPTIONAL_RETURN__( statement, Exception, log, success, false )
