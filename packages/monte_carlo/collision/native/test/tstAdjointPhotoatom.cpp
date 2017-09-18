@@ -594,7 +594,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 {
   // Sample the pair production reaction
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.95; // select pair production
+  fake_stream[0] = 0.05; // select pair production (should be 0.95 for boost 1.58)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -620,7 +620,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
   bank.pop();
 
   // Sample the triplet production reaction
-  fake_stream[0] = 0.96; // select triplet production
+  fake_stream[0] = 0.04; // select triplet production (should be 0.96 for boost 1.58)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;

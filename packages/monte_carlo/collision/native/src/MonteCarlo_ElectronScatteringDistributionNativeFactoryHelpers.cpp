@@ -19,17 +19,22 @@ namespace MonteCarlo{
 std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::string two_d_interp_policy_name,
+    const std::string sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     distribution;
 
+  MonteCarlo::CoupledElasticSamplingMethod method =
+    MonteCarlo::convertStringToCoupledElasticSamplingMethod( sampling_method );
+
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
     ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
         distribution,
         data_container,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }
@@ -38,6 +43,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
     ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
         distribution,
         data_container,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }
@@ -46,6 +52,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
     ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin>(
         distribution,
         data_container,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }

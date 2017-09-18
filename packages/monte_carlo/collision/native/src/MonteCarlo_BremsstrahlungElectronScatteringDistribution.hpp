@@ -22,6 +22,9 @@ class BremsstrahlungElectronScatteringDistribution : public ElectronScatteringDi
 
 public:
 
+  //! Typedef for this type
+  typedef BremsstrahlungElectronScatteringDistribution ThisType;
+
   //! Typedef for the two d distributions
   typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
@@ -110,16 +113,16 @@ private:
                                         d_angular_distribution_func;
 
   // The sample function pointer
-  std::function<double ( const double )> d_sample_func;
+  std::function<double ( const double )> d_sample_function;
 
   // The evaluate function pointer
-  std::function<double ( const double, const double )> d_evaluate_func;
+  std::function<double ( const double, const double )> d_evaluate_function;
 
   // The evaluatePDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_pdf_func;
+  std::function<double ( const double, const double )> d_evaluate_pdf_function;
 
   // The evaluateCDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_cdf_func;
+  std::function<double ( const double, const double )> d_evaluate_cdf_function;
 
 };
 

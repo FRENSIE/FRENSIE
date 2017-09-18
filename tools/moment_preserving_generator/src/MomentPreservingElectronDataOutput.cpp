@@ -60,7 +60,7 @@
 //std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> evaluator;
 //std::shared_ptr<TestElasticElectronMomentsEvaluator> test_evaluator;
 //std::shared_ptr<const DataGen::StandardMomentPreservingElectronDataGenerator> data_generator;
-//std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+//std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
 //    analog_distribution;
 
 ////---------------------------------------------------------------------------//
@@ -102,8 +102,8 @@
 //                             test_native_al_file_name ) );
 
 
-//  // Create the analog elastic distributions (combined Cutoff and Screened Rutherford)
-//  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution<Utility::LinLinLog>(
+//  // Create the coupled elastic distributions (combined Cutoff and Screened Rutherford)
+//  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
 //    analog_distribution,
 //    *data,
 //    1e-16,

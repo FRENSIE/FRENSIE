@@ -21,14 +21,11 @@ namespace Utility{
 
 // Test if the direction is valid
 bool validDirection( const double x_direction,
-		     const double y_direction,
-		     const double z_direction )
+                     const double y_direction,
+                     const double z_direction )
 {
   // Make sure that the coordinates are valid
-  remember( typedef Teuchos::ScalarTraits<double> ST );
-  testPrecondition( !ST::isnaninf( x_direction ) );
-  testPrecondition( !ST::isnaninf( y_direction ) );
-  testPrecondition( !ST::isnaninf( z_direction ) );
+  testPrecondition( isNotNanOrInf( x_direction, y_direction, z_direction ) );
 
   double argument =
     vectorMagnitude( x_direction, y_direction, z_direction ) - 1.0;
@@ -41,10 +38,7 @@ bool validDirection( const double x_direction,
 void normalizeDirection( double direction[3] )
 {
   // Make sure that the coordinates are valid
-  remember( typedef Teuchos::ScalarTraits<double> ST );
-  testPrecondition( !ST::isnaninf( direction[0] ) );
-  testPrecondition( !ST::isnaninf( direction[0] ) );
-  testPrecondition( !ST::isnaninf( direction[0] ) );
+  testPrecondition( isNotNanOrInf( direction ) );
 
   double magnitude = vectorMagnitude( direction );
 

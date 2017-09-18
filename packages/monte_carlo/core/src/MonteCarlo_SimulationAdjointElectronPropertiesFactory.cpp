@@ -178,8 +178,39 @@ void SimulationAdjointElectronPropertiesFactory::initializeProperties(
 
      MonteCarlo::ElasticElectronDistributionType type;
 
-    if( raw_type == "Analog" || raw_type == "analog" || raw_type == "COUPLED" )
+    if( raw_type == "Coupled" || raw_type == "coupled" || raw_type == "COUPLED" )
+    {
       type = MonteCarlo::COUPLED_DISTRIBUTION;
+
+      // Get the coupled elastic electron sampling mode - optional
+      /*! \details The coupled elastic sampling method is only used
+       *  when the elastic electron distribution type is set to coupled.
+       *  Otherwise, this entry is ignored.
+       */
+      if( properties.isParameter( "Coupled Elastic Sampling Method" ) )
+      {
+        std::string raw_method =
+        properties.get<std::string>( "Coupled Elastic Sampling Method" );
+      
+        MonteCarlo::CoupledElasticSamplingMethod method;
+
+        if( raw_method == "One D Union" || raw_method == "one d union" || raw_method == "ONE D UNION" )
+        method = MonteCarlo::ONE_D_UNION;
+        else if( raw_method == "Two D Union" || raw_method == "two d union" || raw_method == "TWO D UNION" )
+        method = MonteCarlo::TWO_D_UNION;
+        else if( raw_method == "Simplified Union" || raw_method == "simplified union" || raw_method == "SIMPLIFIED UNION" )
+        method = MonteCarlo::SIMPLIFIED_UNION;
+        else
+        {
+          THROW_EXCEPTION( std::runtime_error,
+                           "Error: coupled elastic sampling method "
+                           << raw_method <<
+                           " is not currently supported!" );
+        }
+
+        adjoint_electron_properties.setAdjointCoupledElasticSamplingMode( method );
+      }
+    }
     else if( raw_type == "Decoupled" || raw_type == "decoupled" || raw_type == "DECOUPLED" )
       type = MonteCarlo::DECOUPLED_DISTRIBUTION;
     else if( raw_type == "Hybrid" || raw_type == "hybrid" || raw_type == "HYBRID" )

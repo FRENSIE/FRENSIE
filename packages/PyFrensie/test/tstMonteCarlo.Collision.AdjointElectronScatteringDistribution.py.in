@@ -36,7 +36,7 @@ class CoupledElasticAdjointElectronScatteringDistributionTestCase(unittest.TestC
 
     def setUp(self):
         self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.adjointfile )
-        self.dist = Collision.createCoupledElasticDistribution( self.data, "LinLinLog", True, 1e-7 )
+        self.dist = Collision.createCoupledElasticDistribution( self.data, "LinLinLog", "Simplified Union", True, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createCoupledElasticDistribution adjoint evaluate method"

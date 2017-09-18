@@ -1022,6 +1022,8 @@ double DagMC::fireExternalRayWithCellHandle(
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
+  // Make sure the position and direction are valid
+  testPrecondition( Utility::isNotNanOrInf( position ) );
   // Make sure the direction is valid
   testPrecondition( Utility::validDirection( direction ) );
 
@@ -1079,6 +1081,8 @@ void DagMC::setInternalRay( const double position[3],
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
+  // Make sure the position and direction are valid
+  testPrecondition( Utility::isNotNanOrInf( position ) );
   // Make sure the direction is valid
   testPrecondition( Utility::validDirection( direction ) );
 
@@ -1104,6 +1108,8 @@ void DagMC::setInternalRay(
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
+  // Make sure the position and direction are valid
+  testPrecondition( Utility::isNotNanOrInf( position ) );
   // Make sure the direction is valid
   testPrecondition( Utility::validDirection( direction ) );
   // Make sure the cell exists
@@ -1129,6 +1135,8 @@ void DagMC::setInternalRay( const double position[3],
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
+  // Make sure the position and direction are valid
+  testPrecondition( Utility::isNotNanOrInf( position ) );
   // Make sure the direction is valid
   testPrecondition( Utility::validDirection( direction ) );
 
@@ -1223,7 +1231,7 @@ double DagMC::fireInternalRay(
   testPrecondition( DagMC::isInternalRaySet() );
 
   double distance_to_surface;
-
+  
   DagMCRay& ray = DagMC::getInternalRay();
 
   // Check if the ray has already been fired

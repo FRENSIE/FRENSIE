@@ -38,7 +38,7 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
   if( correlated_sampling_mode_on )
   {
     // Set the correlated unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
          std::cref( *d_hybrid_distribution ),
          std::placeholders::_1,
@@ -47,7 +47,7 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_func = std::bind<double>(
+    d_sample_function = std::bind<double>(
          &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
          std::cref( *d_hybrid_distribution ),
          std::placeholders::_1,
@@ -214,7 +214,7 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  scattering_angle_cosine = d_sample_func( incoming_energy, random_number );
+  scattering_angle_cosine = d_sample_function( incoming_energy, random_number );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

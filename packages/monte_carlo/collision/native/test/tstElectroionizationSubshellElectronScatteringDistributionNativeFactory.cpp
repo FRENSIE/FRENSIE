@@ -28,7 +28,7 @@
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  native_distribution;
+  native_distribution, exact_native_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -44,6 +44,32 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
   // Test original electron
   TEST_EQUALITY_CONST( binding_energy, 8.8290E-02 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the min secondary (knock-on) electron energy can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
+                   getMinSecondaryEnergyAtIncomingEnergy )
+{
+  // Get min energy
+  double min_energy =
+    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
+  TEST_EQUALITY_CONST( min_energy, 0.0 );
+
+  // Get min energy
+  min_energy =
+    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 + 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 4.9960036108132044e-16, 1e-12 );
+
+  // Get min energy
+  min_energy =
+    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
+  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+
+  // Get min energy
+  min_energy =
+    native_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -111,7 +137,6 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
-
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
@@ -135,9 +160,11 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                    samplePrimaryAndSecondary )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
+  fake_stream[1] = 0.0;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
 
@@ -159,6 +186,83 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.2778434545019750, 1e-12 );
   TEST_FLOATING_EQUALITY( knock_on_energy, 4.056721346111550E-02, 1e-12 );
 
+  incoming_energy = 8.829E-02 + 1e-5;
+    // sample the electron
+  native_distribution->samplePrimaryAndSecondary( incoming_energy,
+                                                  outgoing_energy,
+                                                  knock_on_energy,
+                                                  scattering_angle_cosine,
+                                                  knock_on_angle_cosine );
+
+  // Test original electron
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.1086341090801404e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 9.9896875190139731e-06, 1e-12 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 3.5620169782643124e-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 1.0312480982149415e-08, 1e-12 );
+
+  // sample the electron
+  native_distribution->samplePrimaryAndSecondary( incoming_energy,
+                                                  outgoing_energy,
+                                                  knock_on_energy,
+                                                  scattering_angle_cosine,
+                                                  knock_on_angle_cosine );
+
+  // Test original electron
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 7.8432913332312070e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 5e-6, 1e-12 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 7.8432913332312070e-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 5e-6, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
+                   sample_exact )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 8.829E-02 + 1e-15;
+
+  double outgoing_energy, knock_on_energy,
+         scattering_angle_cosine, knock_on_angle_cosine;
+
+  // sample the electron
+  exact_native_distribution->samplePrimaryAndSecondary( incoming_energy,
+                                                        outgoing_energy,
+                                                        knock_on_energy,
+                                                        scattering_angle_cosine,
+                                                        knock_on_angle_cosine );
+
+  // Test original electron
+  TEST_EQUALITY_CONST( scattering_angle_cosine, 0.0 );
+  TEST_EQUALITY_CONST( outgoing_energy, 0.0 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 1.1088260343863984e-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 9.9920072216264089e-16, 1e-12 );
+
+  // sample the electron
+  exact_native_distribution->samplePrimaryAndSecondary( incoming_energy,
+                                                        outgoing_energy,
+                                                        knock_on_energy,
+                                                        scattering_angle_cosine,
+                                                        knock_on_angle_cosine );
+
+  // Test original electron
+  TEST_EQUALITY_CONST( scattering_angle_cosine, 0.0 );
+  TEST_EQUALITY_CONST( outgoing_energy, 0.0 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 1.1088260343863984e-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 9.9920072216264089e-16, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -170,6 +274,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned trials = 0.0;
 
@@ -198,10 +303,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
                    scatterElectron )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.5;
-  fake_stream[1] = 0.5;
-
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
@@ -223,7 +326,56 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   // Test knock-on electron
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.2778434545019750, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.056721346111550E-02, 1e-12 );
+}
 
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
+                   scatterElectron_exact )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  {
+    MonteCarlo::ElectronState electron( 0 );
+    electron.setEnergy( 8.829E-02 + 1e-15 );
+    electron.setDirection( 0.0, 0.0, 1.0 );
+
+    // Analytically scatter electron
+    exact_native_distribution->scatterElectron( electron,
+                                                bank,
+                                                shell_of_interaction );
+
+    // Test original electron
+    TEST_ASSERT( electron.isGone() );
+
+    // Test knock-on electron
+    TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.1088260343863984e-07, 1e-12 );
+    TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 9.9920072216264089e-16, 1e-12 );
+  }
+  {
+    MonteCarlo::ElectronState electron( 0 );
+    electron.setEnergy( 8.829E-02 + 1e-15 );
+    electron.setDirection( 0.0, 0.0, 1.0 );
+
+    // Analytically scatter electron
+    exact_native_distribution->scatterElectron( electron,
+                                                bank,
+                                                shell_of_interaction );
+
+    // Test original electron
+    TEST_ASSERT( electron.isGone() );
+
+    // Test knock-on electron
+    TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.1088260343863984e-07, 1e-12 );
+    TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 9.9920072216264089e-16, 1e-12 );
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -259,6 +411,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     native_distribution,
     true,
     true );
+
+  // Create the electroionization subshell distribution
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog>(
+    *data_container,
+    *subshells.begin(),
+    binding_energy,
+    exact_native_distribution,
+    true,
+    false );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

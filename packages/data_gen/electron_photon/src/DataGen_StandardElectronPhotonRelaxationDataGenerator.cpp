@@ -2018,6 +2018,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
+        MonteCarlo::SIMPLIFIED_UNION,
         correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
@@ -2032,6 +2033,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
+        MonteCarlo::SIMPLIFIED_UNION,
         correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
@@ -2046,6 +2048,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
+        MonteCarlo::SIMPLIFIED_UNION,
         correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }

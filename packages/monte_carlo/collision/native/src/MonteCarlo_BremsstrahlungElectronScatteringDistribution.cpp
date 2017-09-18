@@ -27,7 +27,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use simple analytical photon angular distribution
   d_angular_distribution_func = std::bind<double>(
-           &BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle,
+           &ThisType::SampleDipoleAngle,
            std::cref( *this ),
            std::placeholders::_1,
            std::placeholders::_2 );
@@ -51,7 +51,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use detailed photon angular distribution
   d_angular_distribution_func = std::bind<double>(
-            &BremsstrahlungElectronScatteringDistribution::Sample2BSAngle,
+            &ThisType::Sample2BSAngle,
             std::cref( *this ),
             std::placeholders::_1,
             std::placeholders::_2 );
@@ -75,7 +75,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::correlatedSampleSecondaryConditionalInBoundaries,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1,
@@ -85,7 +85,7 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_func = std::bind<double>(
+      d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditional,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
@@ -93,8 +93,8 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
   }
   else
   {
-      // Set the correlated exact sample routine
-    d_sample_func = std::bind<double>(
+    // Set the correlated exact sample routine
+    d_sample_function = std::bind<double>(
            &TwoDDist::sampleSecondaryConditionalExact,
            std::cref( *d_bremsstrahlung_scattering_distribution ),
            std::placeholders::_1 );
@@ -113,7 +113,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
   if( unit_based_interpolation_mode_on )
   {
     // Set the correlated unit based evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -121,7 +121,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
        1e-7,
        std::placeholders::_1 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalPDFInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -129,7 +129,7 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
        1e-7,
        std::placeholders::_1 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
        &TwoDDist::correlatedEvaluateSecondaryConditionalCDFInBoundaries,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -140,19 +140,19 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
   else
   {
     // Set the correlated exact evaluation routines
-    d_evaluate_func = std::bind<double>(
+    d_evaluate_function = std::bind<double>(
        &TwoDDist::evaluateExact,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_pdf_func = std::bind<double>(
+    d_evaluate_pdf_function = std::bind<double>(
        &TwoDDist::evaluateSecondaryConditionalPDFExact,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
        std::placeholders::_2 );
 
-    d_evaluate_cdf_func = std::bind<double>(
+    d_evaluate_cdf_function = std::bind<double>(
        &TwoDDist::evaluateSecondaryConditionalCDFExact,
        std::cref( *d_bremsstrahlung_scattering_distribution ),
        std::placeholders::_1,
@@ -182,7 +182,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_func( incoming_energy, photon_energy );
+  return d_evaluate_function( incoming_energy, photon_energy );
 }
 
 // Evaluate the PDF value for a given incoming and photon energy
@@ -195,7 +195,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_pdf_func( incoming_energy, photon_energy );
+  return d_evaluate_pdf_function( incoming_energy, photon_energy );
 }
 
 // Evaluate the CDF value for a given incoming and photon energy
@@ -208,7 +208,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_cdf_func( incoming_energy, photon_energy );
+  return d_evaluate_cdf_function( incoming_energy, photon_energy );
 }
 
 // Sample the photon energy and direction from the distribution
@@ -218,13 +218,13 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy = d_sample_func( incoming_energy );
+  photon_energy = d_sample_function( incoming_energy );
 
   // Sample the photon outgoing angle cosine
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,
                                                      photon_energy );
 
-  testPostcondition( incoming_energy > photon_energy );
+  testPostcondition( incoming_energy >= photon_energy );
   testPostcondition( photon_energy > 0.0 );
   testPostcondition( photon_angle_cosine <= 1.0 );
   testPostcondition( photon_angle_cosine >= -1.0 );
@@ -248,20 +248,16 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
                           ParticleBank& bank,
                           Data::SubshellType& shell_of_interaction ) const
 {
-  // Incoming electron energy
-  double incoming_energy = electron.getEnergy();
+  // Sample the energy and angle of the bremsstrahlung photon
+  double photon_energy, photon_angle_cosine;
+  this->sample( electron.getEnergy(), photon_energy, photon_angle_cosine );
 
-  // energy of the bremsstrahlung photon
-  double photon_energy;
-
-  // photon outgoing angle cosine
-  double photon_angle_cosine;
-
-  // Sample bremsstrahlung photon energy and angle cosine
-  this->sample( incoming_energy, photon_energy, photon_angle_cosine );
-
-  // Set the new electron energy
-  electron.setEnergy( incoming_energy - photon_energy );
+  // Set the new electron energy (if zero then set as gone)
+  double outgoing_energy = electron.getEnergy() - photon_energy;
+  if( outgoing_energy > 0.0 )
+    electron.setEnergy( outgoing_energy );
+  else
+    electron.setAsGone();
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
@@ -279,6 +275,10 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
+
+  testPostcondition( photon_energy > 0.0 );
+  testPostcondition( photon_angle_cosine <= 1.0 );
+  testPostcondition( photon_angle_cosine >= -1.0 );
 }
 
 // Sample the outgoing photon direction from the analytical function
@@ -286,6 +286,10 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                                           const double incoming_electron_energy,
                                           const double photon_energy  ) const
 {
+  // Make sure the energies are valid
+  testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_electron_energy );
+
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared(
                           Utility::PhysicalConstants::electron_rest_mass_energy,
@@ -296,8 +300,13 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
 
   double parameter = -( 1.0 + beta );
 
-  return ( scaled_random_number        + parameter )/
-         ( scaled_random_number * beta + parameter );
+  double photon_angle_cosine = ( scaled_random_number        + parameter )/
+                               ( scaled_random_number * beta + parameter );
+
+  testPostcondition( photon_angle_cosine <= 1.0 );
+  testPostcondition( photon_angle_cosine >= -1.0 );
+
+  return photon_angle_cosine;
 }
 
 /* Sample the outgoing photon direction using the 2BS sampling routine of
@@ -307,6 +316,10 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                         const double incoming_electron_energy,
                                         const double photon_energy ) const
 {
+  // Make sure the energies are valid
+  testPrecondition( photon_energy > 0.0 );
+  testPrecondition( photon_energy <= incoming_electron_energy );
+
   double outgoing_electron_energy = incoming_electron_energy - photon_energy;
   double ratio = outgoing_electron_energy/incoming_electron_energy;
   double two_ratio = 2.0*ratio;
@@ -360,6 +373,9 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
 
     if( rand1 < g )
     {
+      testPostcondition( cos(theta) <= 1.0 );
+      testPostcondition( cos(theta) >= -1.0 );
+
       return cos(theta);
     }
   }

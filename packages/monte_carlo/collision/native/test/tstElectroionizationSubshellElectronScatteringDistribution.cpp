@@ -24,11 +24,39 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Structs.
+//---------------------------------------------------------------------------//
+class TestElectroionizationSubshellElectronScatteringDistribution : public MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution
+{
+public:
+  TestElectroionizationSubshellElectronScatteringDistribution(
+    const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+      electroionization_subshell_scattering_distribution,
+    const double binding_energy,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on )
+    : MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
+        electroionization_subshell_scattering_distribution,
+        binding_energy,
+        correlated_sampling_mode_on,
+        unit_based_interpolation_mode_on )
+  { /* ... */ }
+
+  ~TestElectroionizationSubshellElectronScatteringDistribution()
+  { /* ... */ }
+
+  // Allow public access to the ElectroionizationSubshellElectronScatteringDistribution protected member functions
+  using MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle;
+
+};
+
+//---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  ace_electroionization_distribution, native_electroionization_distribution;
+  ace_electroionization_distribution, native_electroionization_distribution,
+  exact_electroionization_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -226,6 +254,43 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
+/* Note: This tests a bug that caused electroionization to return non-realistic
+ * knock-on energies. A unit based sampling routine was used to fix the problem.
+ */
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   sample_knock_on_native_exact )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 6.041e-05;
+  double knock_on_energy, knock_on_angle_cosine;
+
+  // sample the electron at the min random number
+  exact_electroionization_distribution->sample( incoming_energy,
+                                                knock_on_energy,
+                                                knock_on_angle_cosine );
+
+  // Test knock-on electron at the min random number
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0406872554892572, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 1.0E-07, 1e-12 );
+
+  // sample the electron at the max random number
+  exact_electroionization_distribution->sample( incoming_energy,
+                                                knock_on_energy,
+                                                knock_on_angle_cosine );
+
+  // Test knock-on electron at the max random number
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 6.680945582865936982e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 2.696314156988312136e-05, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    samplePrimaryAndSecondary_ace )
 {
@@ -242,11 +307,11 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
   // sample the electron
   ace_electroionization_distribution->samplePrimaryAndSecondary(
-                                                        incoming_energy,
-                                                        outgoing_energy,
-                                                        knock_on_energy,
-                                                        scattering_angle_cosine,
-                                                        knock_on_angle_cosine );
+        incoming_energy,
+        outgoing_energy,
+        knock_on_energy,
+        scattering_angle_cosine,
+        knock_on_angle_cosine );
 
   // Test original electron
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.964446703542646, 1e-12 );
@@ -489,6 +554,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                                pdf ) );
   }
 
+  {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
     new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
@@ -503,6 +569,23 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                             binding_energy,
                             true,
                             true ) );
+  }
+  {
+  // Create the scattering function
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+            function_data,
+            1e-6,
+            1e-16 ) );
+
+  // Create the distributions
+  exact_electroionization_distribution.reset(
+        new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
+                            subshell_distribution,
+                            binding_energy,
+                            true,
+                            false ) );
+  }
   }
 
   // Initialize the random number generator

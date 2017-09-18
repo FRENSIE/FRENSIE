@@ -116,10 +116,10 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                                 photon_energy,
                                 photon_angle_cosine );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
   TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -147,11 +147,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                                                photon_angle_cosine,
                                                trials );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
   TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//

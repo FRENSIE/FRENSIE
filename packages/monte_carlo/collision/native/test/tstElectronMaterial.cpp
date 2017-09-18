@@ -175,7 +175,7 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
-  fake_stream[1] = 0.36; // select the elastic reaction
+  fake_stream[1] = 0.61; // select the elastic reaction (should be 0.36 for boost 1.58)
   fake_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -203,7 +203,7 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
-  fake_stream[1] = 0.36; // select the elastic reaction
+  fake_stream[1] = 0.61; // select the elastic reaction (should be 0.36 for boost 1.58)
   fake_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );

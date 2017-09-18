@@ -87,7 +87,9 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_EQUALITY_CONST( parsed_properties->getElasticTwoDInterpPolicy(),
                        MonteCarlo::LINLINLIN_INTERPOLATION );
   TEST_EQUALITY_CONST( parsed_properties->getElasticElectronDistributionMode(),
-                       MonteCarlo::HYBRID_DISTRIBUTION );
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+  TEST_EQUALITY_CONST( parsed_properties->getCoupledElasticSamplingMode(),
+                       MonteCarlo::ONE_D_UNION );
   TEST_EQUALITY_CONST( parsed_properties->getElasticCutoffAngleCosine(), 0.9 );
   TEST_ASSERT( !parsed_properties->isElectroionizationModeOn() );
   TEST_EQUALITY_CONST( parsed_properties->getElasticTwoDInterpPolicy(),

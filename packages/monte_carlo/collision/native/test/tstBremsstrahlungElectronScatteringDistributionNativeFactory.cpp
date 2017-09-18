@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_exact )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog>(
                                                  *data_container,
                                                  dipole_distribution,
                                                  true,
@@ -129,7 +129,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.61140375902222E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.561053962145298170e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 }
 
@@ -159,11 +159,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                                photon_energy,
                                photon_angle_cosine );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
   // Test
   TEST_FLOATING_EQUALITY( photon_energy, 1.51455974406695E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -193,11 +193,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                                               photon_angle_cosine,
                                               trials );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
   TEST_FLOATING_EQUALITY( photon_energy, 1.62240683985362E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//

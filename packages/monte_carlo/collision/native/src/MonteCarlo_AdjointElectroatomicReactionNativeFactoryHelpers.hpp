@@ -24,6 +24,7 @@ std::shared_ptr<AdjointElectroatomicReaction>
 createCoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const std::string two_d_interp_policy_name,
+    const std::string sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 

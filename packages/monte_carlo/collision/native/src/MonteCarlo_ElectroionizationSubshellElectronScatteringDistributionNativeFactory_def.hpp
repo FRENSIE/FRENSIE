@@ -29,6 +29,16 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
     const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
+  // Make sure the subshell is valid
+  testPrecondition( subshell >= 0 );
+  // Make sure the binding energy is valid
+  testPrecondition( binding_energy > 0.0 );
+  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
+  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
+                        unit_based_interpolation_mode_on ) );
+  // Make sure the evaluation tol is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
   // Get the energies for which knock-on sampling tables are given
   std::vector<double> energy_grid =
         raw_electroionization_data.getElectroionizationEnergyGrid( subshell );
@@ -37,11 +47,12 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
 
   // Create the subshell distribution
-  createSubshellDistribution<TwoDInterpPolicy>( raw_electroionization_data,
-                              energy_grid,
-                              subshell,
-                              subshell_distribution,
-                              evaluation_tol );
+  ThisType::createSubshellDistribution<TwoDInterpPolicy>(
+            raw_electroionization_data,
+            energy_grid,
+            subshell,
+            subshell_distribution,
+            evaluation_tol );
 
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
@@ -62,6 +73,11 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
         subshell_distribution,
     const double evaluation_tol )
 {
+  // Make sure the subshell is valid
+  testPrecondition( subshell >= 0 );
+  // Make sure the evaluation tol is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
   // Create the scattering function
   Utility::FullyTabularTwoDDistribution::DistributionType
      function_data( energy_grid.size() );
@@ -93,6 +109,17 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
             function_data,
             1e-6,
             evaluation_tol ) );
+}
+
+// Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
+template <typename TwoDInterpPolicy>
+bool ElectroionizationSubshellElectronScatteringDistributionNativeFactory::isCompatibleWithUnitBaseSamplingMode(
+        const bool unit_based_interpolation_mode_on )
+{
+  if( TwoDInterpPolicy::name() == "LinLinLog" && !unit_based_interpolation_mode_on )
+    return false;
+  else
+    return true;
 }
 
 } // end MonteCarlo namespace

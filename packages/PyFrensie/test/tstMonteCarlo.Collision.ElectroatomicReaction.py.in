@@ -37,7 +37,7 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createCoupledElasticReaction( self.data, "LinLinLog", True, 1e-7 )
+        self.reaction = Collision.createCoupledElasticReaction( self.data, "LinLinLog", "Simplified Union", True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCoupledElasticReaction getThresholdEnergy method"

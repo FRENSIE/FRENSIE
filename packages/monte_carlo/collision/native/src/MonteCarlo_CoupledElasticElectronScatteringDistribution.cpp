@@ -18,13 +18,14 @@ namespace MonteCarlo{
 
 // Constructor
 CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDistribution(
-    const std::shared_ptr<const TwoDDist>& coupled_elastic_distribution,
-    const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
-    const std::shared_ptr<const ElasticTraits>& screened_rutherford_traits,
-    const bool correlated_sampling_mode_on )
-  : d_coupled_dist( coupled_elastic_distribution ),
-    d_cutoff_ratios( cutoff_cross_section_ratios ),
-    d_elastic_traits( screened_rutherford_traits )
+    const std::shared_ptr<const TwoDDist> &coupled_elastic_distribution,
+    const std::shared_ptr<const OneDDist> &cutoff_cross_section_ratios,
+    const std::shared_ptr<const ElasticTraits> &screened_rutherford_traits,
+    const CoupledElasticSamplingMethod& sampling_method,
+    const bool correlated_sampling_mode_on)
+    : d_coupled_dist(coupled_elastic_distribution),
+      d_cutoff_ratios(cutoff_cross_section_ratios),
+      d_elastic_traits(screened_rutherford_traits)
 {
   // Make sure the arrays are valid
   testPrecondition( d_coupled_dist.use_count() > 0 );
@@ -34,26 +35,48 @@ CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDi
   if( correlated_sampling_mode_on )
   {
     // Set the correlated exact sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
-         std::cref( *d_coupled_dist ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
+    d_sample_function = [this]( const double& energy, const double& random_number )
+    {
+      return d_coupled_dist->sampleSecondaryConditionalExactWithRandomNumber(
+        energy, random_number );
+    };
   }
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
-         std::cref( *d_coupled_dist ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
+    d_sample_function = [this]( const double& energy, const double& random_number )
+    {
+      return d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
+        energy, random_number );
+    };
   }
 
-  d_sample_method = std::bind<double>(
-         &ThisType::sampleSimplifiedUnion,
-         std::cref( *this ),
-         std::placeholders::_1 );
+  // Set the sampling method
+  this->setSamplingMethod( sampling_method );
+}
+
+//! Set the sampling method ( Simplified Unoin - Default )
+void CoupledElasticElectronScatteringDistribution::setSamplingMethod(
+    const CoupledElasticSamplingMethod& method )
+{
+  if ( method == ONE_D_UNION )
+  {
+    d_sample_method = [this](const double &energy) {
+      return this->sampleOneDUnion(energy);
+    };
+  }
+  else if ( method == TWO_D_UNION )
+  {
+    d_sample_method = [this](const double &energy) {
+      return this->sampleTwoDUnion(energy);
+    };
+  }
+  else if ( method == SIMPLIFIED_UNION )
+  {
+    d_sample_method = [this](const double &energy) {
+      return this->sampleSimplifiedUnion(energy);
+    };
+  }
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine

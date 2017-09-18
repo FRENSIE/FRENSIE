@@ -45,6 +45,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
+                        properties.getCoupledElasticSamplingMode(),
                         properties.isCorrelatedSamplingModeOn(),
                         properties.getElectronEvaluationTolerance() );
   }

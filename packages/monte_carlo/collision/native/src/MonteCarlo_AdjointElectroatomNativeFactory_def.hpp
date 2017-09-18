@@ -42,6 +42,7 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
                         energy_grid,
                         grid_searcher,
                         elastic_reaction,
+                        properties.getAdjointCoupledElasticSamplingMode(),
                         properties.isAdjointCorrelatedSamplingModeOn(),
                         properties.getAdjointElectronEvaluationTolerance() );
 

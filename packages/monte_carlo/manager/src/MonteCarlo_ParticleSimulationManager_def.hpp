@@ -28,6 +28,7 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_DirectionHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
@@ -289,6 +290,10 @@ void ParticleSimulationManager<GeometryHandler,
                                                    ParticleStateType& particle,
                                                    ParticleBank& bank ) const
 {
+  // Make sure the particle position and direction are valid
+  testPrecondition( Utility::validDirection( particle.getDirection() ) );
+  testPrecondition( Utility::isNotNanOrInf( particle.getPosition() ) );
+
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
   double subtrack_start_time;
@@ -325,9 +330,9 @@ void ParticleSimulationManager<GeometryHandler,
       #pragma omp critical( ostream_update )
       {
         std::cerr << " History #: " << particle.getHistoryNumber()
-                      << " Collision #: " << particle.getCollisionNumber()
+                  << " Collision #: " << particle.getCollisionNumber()
                   << " Time: " << particle.getTime()
-                      << std::endl;
+                  << std::endl;
       }
 
       particle.setAsGone();
@@ -347,9 +352,9 @@ void ParticleSimulationManager<GeometryHandler,
         #pragma omp critical( ostream_update )
         {
           std::cerr << " History #: " << particle.getHistoryNumber()
-                        << " Collision #: " << particle.getCollisionNumber()
+                    << " Collision #: " << particle.getCollisionNumber()
                     << " Time: " << particle.getTime()
-                        << std::endl;
+                    << std::endl;
         }
 
         particle.setAsGone();
@@ -366,11 +371,11 @@ void ParticleSimulationManager<GeometryHandler,
       // Get the total cross section for the cell
       if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
-              cell_total_macro_cross_section =
-                CMI::getMacroscopicTotalCrossSection( particle );
+        cell_total_macro_cross_section =
+          CMI::getMacroscopicTotalCrossSection( particle );
       }
       else
-              cell_total_macro_cross_section = 0.0;
+        cell_total_macro_cross_section = 0.0;
 
       // Convert the distance to the surface to optical path
       op_to_surface_hit =
@@ -378,11 +383,11 @@ void ParticleSimulationManager<GeometryHandler,
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
-    
+
       if( op_to_surface_hit < remaining_subtrack_op )
       {
-              // Advance the particle to the cell boundary
-              particle.advance( distance_to_surface_hit );
+        // Advance the particle to the cell boundary
+        particle.advance( distance_to_surface_hit );
 
         // Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
@@ -394,7 +399,6 @@ void ParticleSimulationManager<GeometryHandler,
         // Update the observers: particle leaving cell event
         EMI::updateObserversFromParticleLeavingCellEvent( particle,
                                                           particle.getCell() );
-
 
         // Advance the ray to the cell boundary
         // Note: this is done after so that the particle direction is not
@@ -408,8 +412,6 @@ void ParticleSimulationManager<GeometryHandler,
                                                   surface_hit,
                                                   surface_normal.getRawPtr() );
 
-
-
         if( reflected )
         {
           particle.setDirection( GMI::getInternalRayDirection() );
@@ -422,29 +424,28 @@ void ParticleSimulationManager<GeometryHandler,
         }
 
         // Find the cell on the other side of the surface hit
-              try
-              {
-                cell_entering = GMI::findCellContainingInternalRay();
-              }
-              CATCH_LOST_PARTICLE_AND_BREAK( particle );
+        try
+        {
+          cell_entering = GMI::findCellContainingInternalRay();
+        }
+        CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
-              particle.setCell( cell_entering );
+        particle.setCell( cell_entering );
 
         // Update the observers: particle entering cell event
         EMI::updateObserversFromParticleEnteringCellEvent( particle,
                                                            cell_entering );
 
-              // Check if a termination cell was encountered
-              if( GMI::isTerminationCell( particle.getCell() ) )
-              {
-                particle.setAsGone();
+        // Check if a termination cell was encountered
+        if( GMI::isTerminationCell( particle.getCell() ) )
+        {
+          particle.setAsGone();
           break;
-              }
+        }
 
-              // Update the remaining subtrack mfp
-              remaining_subtrack_op -= op_to_surface_hit;
+        // Update the remaining subtrack mfp
+        remaining_subtrack_op -= op_to_surface_hit;
       }
-
       // A collision occurs in this cell
       else
       {
@@ -476,13 +477,16 @@ void ParticleSimulationManager<GeometryHandler,
 
         // Undergo a collision with the material in the cell
         CMI::collideWithCellMaterial( particle, bank );
- 
-        GMI::changeInternalRayDirection( particle.getDirection() );
 
-        // Cache the current position of the new ray
-        ray_start_point[0] = particle.getXPosition();
-        ray_start_point[1] = particle.getYPosition();
-        ray_start_point[2] = particle.getZPosition();
+        if( !particle.isGone() )
+        {
+          GMI::changeInternalRayDirection( particle.getDirection() );
+
+          // Cache the current position of the new ray
+          ray_start_point[0] = particle.getXPosition();
+          ray_start_point[1] = particle.getYPosition();
+          ray_start_point[2] = particle.getZPosition();
+        }
 
         // Make sure the energy is above the cutoff
         if( particle.getEnergy() <

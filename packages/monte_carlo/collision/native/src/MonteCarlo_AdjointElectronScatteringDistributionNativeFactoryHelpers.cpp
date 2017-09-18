@@ -19,11 +19,15 @@ namespace MonteCarlo{
 std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const std::string two_d_interp_policy_name,
+    const std::string sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     distribution;
+
+  CoupledElasticSamplingMethod method =
+    convertStringToCoupledElasticSamplingMethod( sampling_method );
 
   // Assign the cutoff and total elastic cross section and electron energy grid
   Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
@@ -45,6 +49,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
         cutoff_cross_section,
         total_cross_section,
         data_container,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }
@@ -56,6 +61,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
         cutoff_cross_section,
         total_cross_section,
         data_container,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }
@@ -67,6 +73,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
         cutoff_cross_section,
         total_cross_section,
         data_container,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }

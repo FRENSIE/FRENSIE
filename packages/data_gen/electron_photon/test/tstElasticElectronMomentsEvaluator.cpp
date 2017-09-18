@@ -1233,6 +1233,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         al_data->getCutoffElasticPDF(),
         al_data->getElasticAngularEnergyGrid(),
         al_data->getAtomicNumber(),
+        MonteCarlo::SIMPLIFIED_UNION,
         true,
         tabular_evaluation_tol );
 
