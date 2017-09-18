@@ -39,6 +39,25 @@ std::string convertElasticElectronDistributionTypeToString(
   }
 }
 
+// Convert a CoupledElasticSamplingMethod enum to a string
+std::string convertCoupledElasticSamplingMethodToString(
+                      const CoupledElasticSamplingMethod method )
+{
+  switch( method )
+  {
+  case ONE_D_UNION:
+    return "One D Union";
+  case TWO_D_UNION:
+    return "Two D Union";
+  case SIMPLIFIED_UNION:
+    return "Simplified Union";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: cannot convert the Coupled Elastic "
+                     "electron sampling method to a string!" );
+  }
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

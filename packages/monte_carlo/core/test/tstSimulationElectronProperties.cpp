@@ -37,6 +37,8 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+                       MonteCarlo::SIMPLIFIED_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
   TEST_ASSERT( properties.isElectroionizationModeOn() );
   TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
@@ -223,6 +225,33 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticElectronDistributionM
   mode = MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION;
   properties.setElasticElectronDistributionMode( mode );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+                       mode );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the coupled elastic sampling mode can be set
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCoupledElasticSamplingMode )
+{
+  MonteCarlo::SimulationElectronProperties properties;
+
+  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+                       MonteCarlo::SIMPLIFIED_UNION );
+
+  MonteCarlo::CoupledElasticSamplingMethod mode;
+
+  mode = MonteCarlo::ONE_D_UNION;
+  properties.setCoupledElasticSamplingMode( mode );
+  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+                       mode );
+
+  mode = MonteCarlo::TWO_D_UNION;
+  properties.setCoupledElasticSamplingMode( mode );
+  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+                       mode );
+
+  mode = MonteCarlo::SIMPLIFIED_UNION;
+  properties.setCoupledElasticSamplingMode( mode );
+  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
                        mode );
 }
 

@@ -61,6 +61,26 @@ TEUCHOS_UNIT_TEST( ElasticElectronDistributionType,
   TEST_EQUALITY_CONST( type_string, "Screened Rutherford Distribution" );
 }
 
+//---------------------------------------------------------------------------//
+// Check that a coupled elastic electron sampling method can be converted to a string
+TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
+                   convertCoupledElasticSamplingMethodToString )
+{
+  std::string type_string =
+    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::ONE_D_UNION );
+  
+  TEST_EQUALITY_CONST( type_string, "One D Union" );
+
+  type_string =
+    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::TWO_D_UNION );
+
+  TEST_EQUALITY_CONST( type_string, "Two D Union" );
+
+  type_string =
+    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::SIMPLIFIED_UNION );
+
+  TEST_EQUALITY_CONST( type_string, "Simplified Union" );
+}
 
 //---------------------------------------------------------------------------//
 // Check that an elastic electron distribution type can be sent to a stream
@@ -91,6 +111,27 @@ TEUCHOS_UNIT_TEST( ElasticElectronDistributionType, stream_operator )
   ss << MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION;
 
   TEST_EQUALITY_CONST( ss.str(), "Screened Rutherford Distribution" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an elastic electron distribution type can be sent to a stream
+TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod, stream_operator )
+{
+  std::stringstream ss;
+
+  ss << MonteCarlo::ONE_D_UNION;
+
+  TEST_EQUALITY_CONST( ss.str(), "One D Union" );
+
+  ss.str( "" );
+  ss << MonteCarlo::TWO_D_UNION;
+
+  TEST_EQUALITY_CONST( ss.str(), "Two D Union" );
+
+  ss.str( "" );
+  ss << MonteCarlo::SIMPLIFIED_UNION;
+
+  TEST_EQUALITY_CONST( ss.str(), "Simplified Union" );
 }
 
 //---------------------------------------------------------------------------//

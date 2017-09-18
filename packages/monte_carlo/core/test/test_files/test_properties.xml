@@ -46,6 +46,7 @@
     <Parameter name="Electron Elastic" type="bool" value="false"/>
     <Parameter name="Electron Elastic Interpolation" type="string" value="LinLinLin"/>
     <Parameter name="Electron Elastic Distribution" type="string" value="Hybrid"/>
+    <Parameter name="Coupled Elastic Sampling Method" type="string" value="One D Union"/>
     <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
     <Parameter name="Electron Electroionization" type="bool" value="false"/>
     <Parameter name="Electron Electroionization Interpolation" type="string" value="LinLinLin"/>
@@ -66,6 +67,7 @@
     <Parameter name="Adjoint Electron Elastic" type="bool" value="false"/>
 <!--    <Parameter name="Adjoint Electron Elastic Interpolation" type="string" value="LinLinLin"/>-->
     <Parameter name="Adjoint Elastic Electron Distribution" type="string" value="Hybrid"/>
+    <Parameter name="Adjoint Coupled Elastic Sampling Method" type="string" value="One D Union"/>
     <Parameter name="Adjoint Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
     <Parameter name="Adjoint Electron Electroionization" type="bool" value="false"/>
 <!--    <Parameter name="Adjoint Electron Electroionization Interpolation" type="string" value="LinLinLin"/>-->

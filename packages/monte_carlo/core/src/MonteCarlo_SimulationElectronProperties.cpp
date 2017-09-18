@@ -30,6 +30,7 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_elastic_mode_on( true ),
     d_elastic_interpolation_type( LOGLOGLOG_INTERPOLATION ),
     d_elastic_distribution_mode( DECOUPLED_DISTRIBUTION ),
+    d_coupled_elastic_sampling_method( SIMPLIFIED_UNION ),
     d_elastic_cutoff_angle_cosine( 1.0 ),
     d_bremsstrahlung_mode_on( true ),
     d_bremsstrahlung_interpolation_type( LOGLOGLOG_INTERPOLATION ),
@@ -218,6 +219,20 @@ ElasticElectronDistributionType
 SimulationElectronProperties::getElasticElectronDistributionMode() const
 {
   return d_elastic_distribution_mode;
+}
+
+// Set the coupled elastic sampling mode ( Simplified Union by default )
+void SimulationElectronProperties::setCoupledElasticSamplingMode(
+    CoupledElasticSamplingMethod sampling_method )
+{
+  d_coupled_elastic_sampling_method = sampling_method;
+}
+
+// Return the coupled elastic sampling mode
+CoupledElasticSamplingMethod
+SimulationElectronProperties::getCoupledElasticSamplingMode() const
+{
+  return d_coupled_elastic_sampling_method;
 }
 
 // Set the elastic cutoff angle cosine (mu = 1.0 by default)

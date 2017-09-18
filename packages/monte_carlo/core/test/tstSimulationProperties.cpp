@@ -77,9 +77,12 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-7 );
   TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
   TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
-  TEST_EQUALITY_CONST(
-                     properties.getBremsstrahlungAngularDistributionFunction(),
-                     MonteCarlo::TWOBS_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getBremsstrahlungAngularDistributionFunction(),
+                       MonteCarlo::TWOBS_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+                       MonteCarlo::SIMPLIFIED_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
 }
 

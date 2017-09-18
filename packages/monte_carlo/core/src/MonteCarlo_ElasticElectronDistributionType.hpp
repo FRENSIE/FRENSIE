@@ -15,24 +15,43 @@
 
 namespace MonteCarlo{
 
-//! The bremsstrahlung photon angular distribution type enum.
+//! The elastic electron distribution type enum.
 enum ElasticElectronDistributionType{
   COUPLED_DISTRIBUTION = 1,
   DECOUPLED_DISTRIBUTION = 2,
   HYBRID_DISTRIBUTION = 3,
   CUTOFF_DISTRIBUTION = 4,
-  SCREENED_RUTHERFORD_DISTRIBUTION = 5,
+  SCREENED_RUTHERFORD_DISTRIBUTION = 5
+};
+
+//! The coupled elastic electron sampling method enum.
+enum CoupledElasticSamplingMethod{
+  ONE_D_UNION = 1,
+  TWO_D_UNION = 2,
+  SIMPLIFIED_UNION = 3
 };
 
 //! Convert a ElasticElectronDistributionType to a string
 std::string convertElasticElectronDistributionTypeToString(
                       const ElasticElectronDistributionType reaction );
 
+//! Convert a CoupledElasticSamplingMethod to a string
+std::string convertCoupledElasticSamplingMethodToString(
+                      const CoupledElasticSamplingMethod method );
+
 //! Stream operator for printing ElasticElectronDistributionType enums
 inline std::ostream& operator<<( std::ostream& os,
                 const ElasticElectronDistributionType reaction )
 {
   os << convertElasticElectronDistributionTypeToString( reaction );
+  return os;
+}
+
+//! Stream operator for printing CoupledElasticSamplingMethod enums
+inline std::ostream& operator<<( std::ostream& os,
+                const CoupledElasticSamplingMethod method )
+{
+  os << convertCoupledElasticSamplingMethodToString( method );
   return os;
 }
 
