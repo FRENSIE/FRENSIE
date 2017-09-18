@@ -58,6 +58,24 @@ std::string convertCoupledElasticSamplingMethodToString(
   }
 }
 
+// Convert a string to a CoupledElasticSamplingMethod
+CoupledElasticSamplingMethod convertStringToCoupledElasticSamplingMethod(
+                      const std::string raw_method )
+{
+  if( raw_method == "One D Union" )
+    return ONE_D_UNION;
+  else if( raw_method == "Two D Union" )
+    return TWO_D_UNION;
+  else if( raw_method == "Simplified Union" )
+    return SIMPLIFIED_UNION;
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: cannot convert the string to a "
+                     "Coupled Elastic electron sampling method!" );
+  }
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

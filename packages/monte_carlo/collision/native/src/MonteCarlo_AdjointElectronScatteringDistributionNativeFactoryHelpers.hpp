@@ -26,6 +26,7 @@ namespace MonteCarlo{
 std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const std::string two_d_interp_policy_name,
+    const std::string sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 

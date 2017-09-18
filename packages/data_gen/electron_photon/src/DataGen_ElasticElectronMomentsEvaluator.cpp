@@ -18,6 +18,7 @@
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_VoidElectroatomicReaction.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 
 namespace DataGen{
 
@@ -52,6 +53,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
     d_coupled_distribution,
     data_container,
+    MonteCarlo::SIMPLIFIED_UNION,
     correlated_sampling_mode_on,
     tabular_evaluation_tol );
   }
@@ -60,6 +62,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin>(
     d_coupled_distribution,
     data_container,
+    MonteCarlo::SIMPLIFIED_UNION,
     correlated_sampling_mode_on,
     tabular_evaluation_tol );
   }

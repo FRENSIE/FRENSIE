@@ -15,6 +15,7 @@
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 
 namespace MonteCarlo{
 
@@ -26,6 +27,7 @@ namespace MonteCarlo{
 std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::string two_d_interp_policy_name,
+    const std::string sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 

@@ -47,6 +47,7 @@ public:
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -59,6 +60,7 @@ public:
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -108,6 +110,7 @@ public:
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
@@ -160,6 +163,7 @@ public:
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const unsigned atomic_number,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 

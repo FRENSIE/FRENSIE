@@ -20,6 +20,7 @@ std::shared_ptr<ElectroatomicReaction>
 createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::string two_d_interp_policy_name,
+    const std::string sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -34,6 +35,11 @@ createCoupledElasticReaction(
                               energy_grid,
                               energy_grid.size()/10 ) );
 
+  // Convert the sampling method
+  CoupledElasticSamplingMethod method =
+    convertStringToCoupledElasticSamplingMethod( sampling_method );
+
+
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
 
@@ -44,6 +50,7 @@ createCoupledElasticReaction(
         energy_grid,
         grid_searcher,
         reaction,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }
@@ -54,6 +61,7 @@ createCoupledElasticReaction(
         energy_grid,
         grid_searcher,
         reaction,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }
@@ -64,6 +72,7 @@ createCoupledElasticReaction(
         energy_grid,
         grid_searcher,
         reaction,
+        method,
         correlated_sampling_mode_on,
         evaluation_tol );
   }

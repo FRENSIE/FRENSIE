@@ -36,7 +36,7 @@ class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createCoupledElasticDistribution( self.data, "LinLinLog", True, 1e-15 )
+        self.dist = Collision.createCoupledElasticDistribution( self.data, "LinLinLog", "Simplified Union", True, 1e-15 )
 
     def testevaluate(self):
         "*Test MonteCarlo.Collision.createCoupledElasticDistribution evaluate method"

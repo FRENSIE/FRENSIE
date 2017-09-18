@@ -83,6 +83,27 @@ TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a coupled elastic electron sampling method can be converted to a string
+TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
+                   convertStringToCoupledElasticSamplingMethod )
+{
+  MonteCarlo::CoupledElasticSamplingMethod method =
+    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "One D Union" );
+  
+  TEST_EQUALITY_CONST( method, MonteCarlo::ONE_D_UNION );
+
+  method =
+    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "Two D Union" );
+
+  TEST_EQUALITY_CONST( method, MonteCarlo::TWO_D_UNION );
+
+  method =
+    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "Simplified Union" );
+
+  TEST_EQUALITY_CONST( method, MonteCarlo::SIMPLIFIED_UNION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that an elastic electron distribution type can be sent to a stream
 TEUCHOS_UNIT_TEST( ElasticElectronDistributionType, stream_operator )
 {

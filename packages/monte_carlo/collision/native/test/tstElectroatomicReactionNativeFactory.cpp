@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -40,12 +41,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LogLogLog )
 {
   bool correlated_sampling_mode_on = true;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method =
+    MonteCarlo::SIMPLIFIED_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
                 reaction,
+                sampling_method,
                 correlated_sampling_mode_on,
                 1e-7 );
 
@@ -193,12 +197,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LinLinLog )
 {
   bool correlated_sampling_mode_on = true;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method =
+    MonteCarlo::SIMPLIFIED_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
                 reaction,
+                sampling_method,
                 correlated_sampling_mode_on,
                 1e-7 );
 
@@ -598,12 +605,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction_LinLinLin )
 {
   bool correlated_sampling_mode_on = true;
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method =
+    MonteCarlo::SIMPLIFIED_UNION;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
                 reaction,
+                sampling_method,
                 correlated_sampling_mode_on,
                 1e-7 );
 

@@ -60,6 +60,7 @@ public:
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 

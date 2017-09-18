@@ -37,6 +37,7 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+        const CoupledElasticSamplingMethod& sampling_method,
         const bool correlated_sampling_mode_on,
         const double evaluation_tol )
 {
@@ -68,6 +69,7 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
     cutoff_cross_section,
     total_cross_section,
     raw_adjoint_electroatom_data,
+    sampling_method,
     correlated_sampling_mode_on,
     evaluation_tol );
 

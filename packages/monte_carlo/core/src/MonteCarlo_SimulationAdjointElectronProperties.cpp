@@ -249,6 +249,20 @@ SimulationAdjointElectronProperties::getAdjointElasticElectronDistributionMode()
   return d_adjoint_elastic_distribution_mode;
 }
 
+// Set the coupled elastic sampling mode ( Simplified Union by default )
+void SimulationAdjointElectronProperties::setAdjointCoupledElasticSamplingMode(
+    CoupledElasticSamplingMethod sampling_method )
+{
+  d_coupled_elastic_sampling_method = sampling_method;
+}
+
+// Return the coupled elastic sampling mode
+CoupledElasticSamplingMethod
+SimulationAdjointElectronProperties::getAdjointCoupledElasticSamplingMode() const
+{
+  return d_coupled_elastic_sampling_method;
+}
+
 // Set the number of adjoint electron hash grid bins
 void SimulationAdjointElectronProperties::setNumberOfAdjointElectronHashGridBins(
                                                           const unsigned bins )

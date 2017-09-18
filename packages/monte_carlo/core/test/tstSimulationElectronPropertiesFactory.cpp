@@ -53,7 +53,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory, initializeProperties )
   TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
                        MonteCarlo::LINLINLIN_INTERPOLATION );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
-                       MonteCarlo::HYBRID_DISTRIBUTION );
+                       MonteCarlo::COUPLED_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
                        MonteCarlo::ONE_D_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 0.9 );

@@ -38,6 +38,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -61,6 +62,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     data_container.getCutoffElasticPDF(),
     data_container.getElasticAngularEnergyGrid(),
     data_container.getAtomicNumber(),
+    sampling_method,
     correlated_sampling_mode_on,
     evaluation_tol );
 }
@@ -74,6 +76,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -86,6 +89,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     data_container.getCutoffElasticPDF(),
     data_container.getElasticAngularEnergyGrid(),
     data_container.getAtomicNumber(),
+    sampling_method,
     correlated_sampling_mode_on,
     evaluation_tol );
 }
@@ -175,6 +179,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
     const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -187,6 +192,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     data_container.getAdjointCutoffElasticPDF(),
     data_container.getAdjointElasticAngularEnergyGrid(),
     data_container.getAtomicNumber(),
+    sampling_method,
     correlated_sampling_mode_on,
     evaluation_tol );
 }
@@ -283,6 +289,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const unsigned atomic_number,
+    const CoupledElasticSamplingMethod& sampling_method,
     const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
@@ -344,6 +351,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
                 scattering_function,
                 cross_section_ratios,
                 elastic_traits,
+                sampling_method,
                 correlated_sampling_mode_on ) );
 }
 

@@ -41,6 +41,8 @@ bool unit_based_interpolation_mode_on = true;
 TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                    createCoupledElasticReaction )
 {
+  MonteCarlo::CoupledElasticSamplingMethod sampling_method =
+    MonteCarlo::SIMPLIFIED_UNION;
   double evaluation_tol = 1e-7;
 
   MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog>(
@@ -48,6 +50,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
                 energy_grid,
                 grid_searcher,
                 reaction,
+                sampling_method,
                 correlated_sampling_mode_on,
                 evaluation_tol );
 

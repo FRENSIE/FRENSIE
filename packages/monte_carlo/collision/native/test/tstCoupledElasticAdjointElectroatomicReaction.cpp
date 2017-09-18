@@ -136,6 +136,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Data::AdjointElectronPhotonRelaxationDataContainer data_container =
         Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
+    MonteCarlo::CoupledElasticSamplingMethod sampling_method =
+      MonteCarlo::SIMPLIFIED_UNION;
     bool correlated_sampling_mode_on = true;
     double evaluation_tol = 1e-7;
 
@@ -163,6 +165,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         cutoff_cross_section,
         total_cross_section,
         data_container,
+        sampling_method,
         correlated_sampling_mode_on,
         evaluation_tol );
 

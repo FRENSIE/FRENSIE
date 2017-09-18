@@ -39,6 +39,10 @@ std::string convertElasticElectronDistributionTypeToString(
 std::string convertCoupledElasticSamplingMethodToString(
                       const CoupledElasticSamplingMethod method );
 
+//! Convert a string to a CoupledElasticSamplingMethod
+CoupledElasticSamplingMethod convertStringToCoupledElasticSamplingMethod(
+                      const std::string raw_method );
+
 //! Stream operator for printing ElasticElectronDistributionType enums
 inline std::ostream& operator<<( std::ostream& os,
                 const ElasticElectronDistributionType reaction )
