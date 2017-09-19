@@ -68,7 +68,7 @@ void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
     evaluation_tol );
 
   elastic_reaction.reset(
-    new CoupledElasticElectroatomicReaction<Utility::LinLin>(
+    new CoupledElasticElectroatomicReaction<Utility::LogLog>(
       energy_grid,
       total_cross_section,
       raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex(),
@@ -132,7 +132,7 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
     raw_electroatom_data.getAtomicNumber() );
 
   elastic_reaction.reset(
-    new DecoupledElasticElectroatomicReaction<Utility::LinLin>(
+    new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
                                         energy_grid,
                                         total_cross_section,
                                         sampling_ratios,
@@ -243,7 +243,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the hybrid elastic reaction
   elastic_reaction.reset(
-    new HybridElasticElectroatomicReaction<Utility::LinLin>(
+    new HybridElasticElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
@@ -289,7 +289,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
     evaluation_tol );
 
   elastic_reaction.reset(
-    new CutoffElasticElectroatomicReaction<Utility::LinLin>(
+    new CutoffElasticElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,
@@ -347,7 +347,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 
 
   elastic_reaction.reset(
-    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
+    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,
@@ -395,7 +395,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 
 
   elastic_reaction.reset(
-    new MomentPreservingElasticElectroatomicReaction<Utility::LinLin>(
+    new MomentPreservingElasticElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,
@@ -447,7 +447,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 
   // Create the subshell electroelectric reaction
   electroionization_subshell_reaction.reset(
-      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+      new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
@@ -557,7 +557,7 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 
   // Create the bremsstrahlung reaction
   bremsstrahlung_reaction.reset(
-        new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+        new BremsstrahlungElectroatomicReaction<Utility::LogLog>(
                         energy_grid,
                         bremsstrahlung_cross_section,
                         threshold_energy_index,

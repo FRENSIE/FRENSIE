@@ -27,7 +27,7 @@
 // Testing Typedefs
 //---------------------------------------------------------------------------//
 
-typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>
+typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>
   ElectroionizationReaction;
 
 typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 

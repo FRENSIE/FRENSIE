@@ -99,7 +99,7 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
             energy_grid[n] ) );
 
     function_data[n].second.reset(
-      new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
+      new const Utility::TabularDistribution<Utility::LogLog>( recoil_energy,
                                                                pdf ) );
   }
 

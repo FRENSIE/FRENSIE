@@ -47,7 +47,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
                                                  energy_loss_distribution );
 
   atomic_excitation_reaction.reset(
-    new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+    new AtomicExcitationElectroatomicReaction<Utility::LogLog>(
                                                 energy_grid,
                                                 atomic_excitation_cross_section,
                                                 threshold_energy_index,

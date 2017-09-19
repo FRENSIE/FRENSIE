@@ -287,8 +287,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   testPrecondition( incoming_energy > d_binding_energy );
 
   // Sample knock-on electron energy
-  knock_on_energy = std::min( d_sample_function( incoming_energy ),
-                              incoming_energy - d_binding_energy );
+  knock_on_energy = d_sample_function( incoming_energy );
 
 
   // Calculate the outgoing angle cosine for the knock on electron
@@ -296,7 +295,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
                                          knock_on_energy );
 
   testPostcondition( knock_on_energy > 0.0 );
-  testPostcondition( incoming_energy - d_binding_energy >= knock_on_energy );
+//  testPostcondition( incoming_energy - d_binding_energy >= knock_on_energy );
 }
 
 // Sample an knock on energy and direction from the distribution
@@ -315,7 +314,8 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSe
    * Otherwise, for the max knock on energy ( ie: (E_in - E_b)/2 ), roundoff
    * error can sometimes cause a negative outgoing energy to be calculated.
    */
-  outgoing_energy = (incoming_energy - d_binding_energy) - knock_on_energy;
+  outgoing_energy = std::min(0.0,
+                    (incoming_energy - d_binding_energy) - knock_on_energy );
 
   // Calculate the outgoing angle cosine for the primary electron
   scattering_angle_cosine = outgoingAngle( incoming_energy,

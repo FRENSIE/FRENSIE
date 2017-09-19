@@ -2491,7 +2491,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
    std::vector<double>& cross_section,
    unsigned& threshold_index,
    const double true_threshold_energy,
-   const bool zero_at_threshold  ) const
+   const bool zero_at_threshold ) const
 {
   // Make the threshold region cross section (this step is not necessary if
   // the true threshold energy == the threshold energy present in the cross
