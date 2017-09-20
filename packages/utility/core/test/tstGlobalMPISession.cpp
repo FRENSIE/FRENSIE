@@ -398,6 +398,57 @@ BOOST_AUTO_TEST_CASE( isGloballyFalse )
   BOOST_CHECK( !Utility::GlobalMPISession::isGloballyFalse( local_bool ) );
 }
 
+//---------------------------------------------------------------------------//
+// Check that messages can be gathered on a specific process
+BOOST_AUTO_TEST_CASE( gatherMessages )
+{
+  std::ostringstream oss;
+  oss << Utility::GlobalMPISession::rank() << "/"
+      << Utility::GlobalMPISession::size();
+
+  std::vector<std::string> messages =
+    Utility::GlobalMPISession::gatherMessages( 0, oss.str() );
+
+  if( Utility::GlobalMPISession::rank() == 0 )
+  {
+    BOOST_CHECK_EQUAL( messages.size(), Utility::GlobalMPISession::size() );
+
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
+    {
+      std::ostringstream local_oss;
+      local_oss << i << "/" << Utility::GlobalMPISession::size();
+      
+      BOOST_CHECK_EQUAL( messages[i], local_oss.str() );
+    }
+  }
+  else
+  {
+    BOOST_CHECK( messages.empty() );
+  }
+
+  if( Utility::GlobalMPISession::size() > 1 )
+  {
+    messages = Utility::GlobalMPISession::gatherMessages( 1, oss.str() );
+
+    if( Utility::GlobalMPISession::rank() == 1 )
+    {
+      BOOST_CHECK_EQUAL( messages.size(), Utility::GlobalMPISession::size() );
+
+      for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
+      {
+        std::ostringstream local_oss;
+        local_oss << i << "/" << Utility::GlobalMPISession::size();
+        
+        BOOST_CHECK_EQUAL( messages[i], local_oss.str() );
+      }
+    }
+    else
+    {
+      BOOST_CHECK( messages.empty() );
+    }
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 //---------------------------------------------------------------------------//

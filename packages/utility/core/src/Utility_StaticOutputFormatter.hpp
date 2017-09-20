@@ -38,6 +38,9 @@ public:
   { /* ... */ }
 };
 
+//! Default formatter
+typedef StaticOutputFormatter<DefaultTextFormat,DefaultTextColor,DefaultTextBackgroundColor> Default;
+
 //! Bold formatter
 typedef StaticOutputFormatter<BoldTextFormat,DefaultTextColor,DefaultTextBackgroundColor> Bold;
 

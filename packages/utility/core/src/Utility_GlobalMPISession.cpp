@@ -302,7 +302,9 @@ public:
 #ifdef HAVE_FRENSIE_MPI
     : d_environment( abort_on_exception )
 #endif
-  { /* ... */ }
+  { 
+    this->initializeWorldComm();
+  }
 
   //! Constructor with threading level
   template<typename ThreadSupportLevelTag>
@@ -311,14 +313,18 @@ public:
 #ifdef HAVE_FRENSIE_MPI
     : d_environment( ThreadingSupportLevelTagTraits<ThreadSupportLevelTag>::value, abort_on_exception )
 #endif
-  { /* ... */ }
+  {
+    this->initializeWorldComm();
+  }
 
   //! Constructor with command-line inputs
   GlobalMPISessionImpl( int& argc, char**& argv, bool abort_on_exception )
 #ifdef HAVE_FRENSIE_MPI
     : d_environment( argc, argv, abort_on_exception )
 #endif
-  { /* ... */ }
+  {
+    this->initializeWorldComm();
+  }
 
   //! Constructor with command-line inputs and threading level
   template<typename ThreadSupportLevelTag>
@@ -328,11 +334,14 @@ public:
 #ifdef HAVE_FRENSIE_MPI
     : d_environment( argc, argv, ThreadingSupportLevelTagTraits<ThreadSupportLevelTag>::value, abort_on_exception )
 #endif
-  { /* ... */ }
+  {
+    this->initializeWorldComm();
+  }
 
   //! Destructor
   ~GlobalMPISessionImpl()
-  { 
+  {
+    this->finalizeWorldComm();
     s_ostream_cache.restoreStreamBuffers();
   }
 
@@ -340,12 +349,37 @@ public:
   static OutputStreamCache& getOutputStreamCache()
   { return s_ostream_cache; }
 
+#ifdef HAVE_FRENSIE_MPI
+  //! Get the world communicator
+  static boost::mpi::communicator& getWorldComm()
+  { return *s_world_comm; }
+#endif
+
 private:
+
+  // Initialize the world comm
+  static void initializeWorldComm()
+  {
+#ifdef HAVE_FRENSIE_MPI
+    s_world_comm.reset( new boost::mpi::communicator );
+#endif
+  }
+
+  // Finalize the world comm
+  static void finalizeWorldComm()
+  {
+#ifdef HAVE_FRENSIE_MPI
+    s_world_comm.reset();
+#endif
+  }
 
   // The output stream cache
   static OutputStreamCache s_ostream_cache;
 
 #ifdef HAVE_FRENSIE_MPI
+  // The world communicator
+  static std::unique_ptr<boost::mpi::communicator> s_world_comm;
+  
   // The boost mpi environment
   boost::mpi::environment d_environment;
 #endif
@@ -353,6 +387,11 @@ private:
 
 // Initialize the output stream cache
 OutputStreamCache GlobalMPISession::GlobalMPISessionImpl::s_ostream_cache;
+
+// Initialize the world communicator
+#ifdef HAVE_FRENSIE_MPI
+  std::unique_ptr<boost::mpi::communicator> GlobalMPISession::GlobalMPISessionImpl::s_world_comm;
+#endif // end HAVE_FRENSIE_MPI
 
 // Detault constructor
 GlobalMPISession::GlobalMPISession( bool abort_on_exception )
@@ -451,10 +490,14 @@ void GlobalMPISession::initializeRankAndSize()
 
   if( !rank_size_initialized )
   {
-    boost::mpi::communicator world;
+#ifdef HAVE_FRENSIE_MPI
+    boost::mpi::communicator& world = GlobalMPISessionImpl::getWorldComm();
     s_rank = world.rank();
     s_size = world.size();
-
+#else
+    s_rank = 0;
+    s_size = 1;
+#endif
     rank_size_initialized = true;
   }
 }
@@ -804,8 +847,7 @@ int GlobalMPISession::size()
 void GlobalMPISession::barrier()
 {
 #ifdef HAVE_FRENSIE_MPI
-  boost::mpi::communicator world;
-  world.barrier();
+  GlobalMPISessionImpl::getWorldComm().barrier();
 #endif
 }
 
@@ -823,9 +865,9 @@ int GlobalMPISession::sum( const int local_value )
   }
   else
   {
-    boost::mpi::communicator world;
-
-    return boost::mpi::all_reduce( world, local_value, std::plus<int>() );
+    return boost::mpi::all_reduce( GlobalMPISessionImpl::getWorldComm(),
+                                   local_value,
+                                   std::plus<int>() );
   }
 #else
   return local_value;
@@ -846,9 +888,9 @@ double GlobalMPISession::sum( const double local_value )
   }
   else
   {
-    boost::mpi::communicator world;
-
-    return boost::mpi::all_reduce( world, local_value, std::plus<double>() );
+    return boost::mpi::all_reduce( GlobalMPISessionImpl::getWorldComm(),
+                                   local_value,
+                                   std::plus<double>() );
   }
 #else
   return local_value;
@@ -865,6 +907,37 @@ bool GlobalMPISession::isGloballyTrue( const bool local_boolean )
 bool GlobalMPISession::isGloballyFalse( const bool local_boolean )
 {
   return (GlobalMPISession::sum( local_boolean ? 1 : 0 ) == 0 ? true : false);
+}
+
+// Gather messages on the desired process
+/*! \details If the rank of the process does not equal root, an empty vector
+ * will be returned. Otherwise, the vector will store the messages from
+ * each process at the index that is equal to the process's rank.
+ */
+std::vector<std::string> GlobalMPISession::gatherMessages(
+                                                   const int root,
+                                                   const std::string& message )
+{
+#ifdef HAVE_FRENSIE_MPI
+  if( GlobalMPISession::rank() == root )
+  {
+    std::vector<std::string> gathered_messages;
+
+    boost::mpi::gather( GlobalMPISessionImpl::getWorldComm(),
+                        message,
+                        gathered_messages,
+                        root );
+    return gathered_messages;
+  }
+  else
+  {
+    boost::mpi::gather( GlobalMPISessionImpl::getWorldComm(), message, root );
+
+    return std::vector<std::string>();
+  }
+#else
+  return std::vector<std::string>( 1, message );
+#endif // end HAVE_FRENSIE_MPI
 }
   
 } // end Utility namespace

@@ -1478,7 +1478,9 @@ int main( int argc, char** argv )
   Utility::UnitTestManager& unit_test_manager =
     Utility::UnitTestManager::getInstance();
 
-  unit_test_manager.runUnitTests( argc, argv );
+  int return_value = unit_test_manager.runUnitTests( argc, argv );
+
+  return return_value;
 }
 
 //---------------------------------------------------------------------------//

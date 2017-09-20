@@ -227,6 +227,10 @@ public:
   //! Check if a boolean is false on all processes
   static bool isGloballyFalse( const bool local_boolean );
 
+  //! Gather messages on the desired process
+  static std::vector<std::string> gatherMessages( const int root,
+                                                  const std::string& message );
+
 private:
 
   // Initialize rank and size

@@ -133,6 +133,11 @@ protected:
   //! Print the test details
   virtual void printTestDetails();
 
+  //! Print the initialization status notification
+  virtual void printInitializationStatusNotification(
+                                              const double initialization_time,
+                                              const bool global_success );
+
   //! Print the sorting tests notification
   virtual void printSortingTestsNotification();
 
@@ -175,18 +180,92 @@ protected:
                            const std::set<std::string>& local_failed_tests_set,
                            const bool goto_newline );
 
-  //! Print the unit test stats
-  virtual void printUnitTestStats( const std::string& summary_header );
+  //! Print the unit test stats summary header
+  virtual void printUnitTestStatsSummaryTableHeader();
 
-  //! Print the unit test stats
-  void printGivenUnitTestStats( const std::string& summary_header,
-                                const int number_of_tests,
-                                const int number_of_tests_run,
-                                const int number_of_tests_passed,
-                                const int number_of_checks,
-                                const int number_of_passed_checks,
-                                const int number_of_unexpected_exceptions,
-                                const double total_test_exec_time );
+  //! Print the unit test stats summary table column names
+  virtual void printUnitTestStatsSummaryTableColumnNames(
+                                                const std::string& column_name,
+                                                const bool show_row,
+                                                const bool start,
+                                                const bool goto_newline );
+
+  //! Print the unit test stats summary table total tests row
+  virtual void printUnitTestStatsSummaryTableTotalTestsRow(
+                                                     const int number_of_tests,
+                                                     const bool show_row,
+                                                     const bool start,
+                                                     const bool goto_newline );
+
+  //! Print the unit test stats summary table skipped tests row
+  virtual void printUnitTestStatsSummaryTableSkippedTestsRow(
+                                           const int number_of_tests_skipped,
+                                           const bool show_row,
+                                           const bool start,
+                                           const bool goto_newline );
+
+  //! Print the unit test stats summary table run tests row
+  virtual void printUnitTestStatsSummaryTableRunTestsRow(
+                                               const int number_of_tests_run,
+                                               const bool show_row,
+                                               const bool start,
+                                               const bool goto_newline );
+
+  //! Print the unit test stats summary table passed tests row
+  virtual void printUnitTestStatsSummaryTablePassedTestsRow(
+                                            const int number_of_tests_passed,
+                                            const bool show_row,
+                                            const bool start,
+                                            const bool goto_newline );
+
+  //! Print the unit test stats summary table failed tests row
+  virtual void printUnitTestStatsSummaryTableFailedTestsRow(
+                                            const int number_of_tests_failed,
+                                            const bool show_row,
+                                            const bool start,
+                                            const bool goto_newline );
+
+  //! Print the unit test stats summary table total checks row
+  virtual void printUnitTestStatsSummaryTableTotalChecksRow(
+                                                  const int number_of_checks,
+                                                  const bool show_row,
+                                                  const bool start,
+                                                  const bool goto_newline );
+
+  //! Print the unit test stats summary table passed checks row
+  virtual void printUnitTestStatsSummaryTablePassedChecksRow(
+                                           const int number_of_passed_checks,
+                                           const bool show_row,
+                                           const bool start,
+                                           const bool goto_newline );
+
+  //! Print the unit test stats summary table failed checks row
+  virtual void printUnitTestStatsSummaryTableFailedChecksRow(
+                                           const int number_of_failed_checks,
+                                           const bool show_row,
+                                           const bool start,
+                                           const bool goto_newline );
+
+  //! Print the unit test stats summary table unexpected exceptions row
+  virtual void printUnitTestStatsSummaryTableUnexpectedExceptionsRow(
+                                   const int number_of_unexpected_exceptions,
+                                   const bool show_row,
+                                   const bool start,
+                                   const bool goto_newline );
+
+  //! Print the unit test stats summary table total test time row
+  virtual void printUnitTestStatsSummaryTableTotalTestTimeRow(
+                                           const double total_test_exec_time,
+                                           const bool show_row,
+                                           const bool start,
+                                           const bool goto_newline );
+
+  //! Print the unit test stats summary table end result row
+  virtual void printUnitTestStatsSummaryTableEndResultRow(
+                                                     const bool local_success,
+                                                     const bool show_row,
+                                                     const bool start,
+                                                     const bool goto_newline );
 
   //! Print the program execution time header
   virtual void printProgramExecutionTimeHeader(
@@ -194,7 +273,6 @@ protected:
 
   //! Print the test result header
   virtual void printTestResult( const std::string& header,
-                                const bool local_success,
                                 const bool global_success );
 
   //! Check if the test details should be reported
@@ -221,6 +299,12 @@ private:
                          std::set<std::string>& local_failed_tests_set,
                          const std::string& padding );
 
+  //! Print the operation time
+  void printOperationTime( std::ostream& os,
+                           const double time_in_sec,
+                           const bool wrapped,
+                           const bool goto_newline );
+
   // Summarize the initialization results
   void summarizeInitializationResults(
                                     std::ostringstream& log,
@@ -235,12 +319,17 @@ private:
 
   // Summarize the test results
   void summarizeTestStats( const double program_execution_time,
-                           const bool local_success,
-                           const bool global_success );
+                           const bool local_success );
 
-  //! Summarize the results
-  int summarizeResults( const bool local_success,
-                        const bool global_success );
+  // Print the unit test stats summary table row
+  void printUnitTestStatsSummaryTableRow( const OutputFormatter& row_name,
+                                          const int row_padding,
+                                          const OutputFormatter& cell_data,
+                                          const bool start,
+                                          const bool goto_newline );
+
+  // Summarize the results
+  int summarizeResults( const bool global_success );
 
   // The Initializer class is a friend
   friend class UnitTestManager::Initializer;
@@ -250,6 +339,12 @@ private:
 
   // The starting right shift for test details
   static constexpr int s_details_right_shift = 2;
+
+  // The starting summary table cell length
+  static constexpr int s_summary_table_start_cell_length = 26;
+
+  // The summary table cell length
+  static constexpr int s_summary_table_cell_length = 13;
 
   // We will use the PIMPL idiom
   class Data;
