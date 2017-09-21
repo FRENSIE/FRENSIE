@@ -47,7 +47,7 @@ T InterpolationHelper<ParentInterpolationType>::interpolate(
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
   
   return ParentInterpolationType::recoverProcessedDepVar(
-               processed_dep_var_0 + 
+               processed_dep_var_0 +
                processed_slope*(processed_indep_var - processed_indep_var_0) );
 }
 

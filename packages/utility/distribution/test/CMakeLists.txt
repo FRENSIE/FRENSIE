@@ -56,6 +56,13 @@ TARGET_LINK_LIBRARIES(tstTabularDistribution utility_dist)
 ADD_TEST(TabularDistribution_test tstTabularDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.xml")
 SET_PROPERTY(TEST TabularDistribution_test PROPERTY LABELS utility_dist)
 
+ADD_EXECUTABLE(tstTabularCDFDistribution
+  tstTabularCDFDistribution.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTabularCDFDistribution utility_dist)
+ADD_TEST(TabularCDFDistribution_test tstTabularCDFDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_cdf_distributions.xml")
+SET_PROPERTY(TEST TabularCDFDistribution_test PROPERTY LABELS utility_dist)
+
 ADD_EXECUTABLE(tstEvaporationDistribution
   tstEvaporationDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

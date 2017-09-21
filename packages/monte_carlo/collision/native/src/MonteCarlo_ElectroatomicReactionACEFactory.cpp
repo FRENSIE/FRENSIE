@@ -94,7 +94,7 @@ void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
   }
 
   elastic_reaction.reset(
-    new DecoupledElasticElectroatomicReaction<Utility::LinLin>(
+    new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 total_elastic_cross_section,
                 sampling_ratios,
@@ -137,12 +137,24 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
                               elastic_cross_section,
                               threshold_energy_index );
 
-  elastic_reaction.reset(
-    new CutoffElasticElectroatomicReaction<Utility::LinLin>(
-                          energy_grid,
-                          elastic_cross_section,
-                          threshold_energy_index,
-                          distribution ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    elastic_reaction.reset(
+      new CutoffElasticElectroatomicReaction<Utility::LogLog>(
+                            energy_grid,
+                            elastic_cross_section,
+                            threshold_energy_index,
+                            distribution ) );
+  }
+  else
+  {
+    elastic_reaction.reset(
+      new CutoffElasticElectroatomicReaction<Utility::LinLin>(
+                            energy_grid,
+                            elastic_cross_section,
+                            threshold_energy_index,
+                            distribution ) );
+  }
 }
 
 // Create a screened Rutherford elastic scattering electroatomic reaction
@@ -204,12 +216,12 @@ void ElectroatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
                               threshold_energy_index );
 
   elastic_reaction.reset(
-    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
-                          energy_grid,
-                          sr_elastic_cross_section,
-                          threshold_energy_index,
-                          grid_searcher,
-                          distribution ) );
+    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LogLog>(
+                            energy_grid,
+                            sr_elastic_cross_section,
+                            threshold_energy_index,
+                            grid_searcher,
+                            distribution ) );
 }
 
 // Create an atomic excitation electroatomic reaction
@@ -246,12 +258,25 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
                                                  raw_electroatom_data,
                                                  energy_loss_distribution );
 
-  atomic_excitation_reaction.reset(
-    new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-                                                energy_grid,
-                                                atomic_excitation_cross_section,
-                                                threshold_energy_index,
-                                                energy_loss_distribution ) );
+
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    atomic_excitation_reaction.reset(
+      new AtomicExcitationElectroatomicReaction<Utility::LogLog>(
+                    energy_grid,
+                    atomic_excitation_cross_section,
+                    threshold_energy_index,
+                    energy_loss_distribution ) );
+  }
+  else
+  {
+    atomic_excitation_reaction.reset(
+      new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+                    energy_grid,
+                    atomic_excitation_cross_section,
+                    threshold_energy_index,
+                    energy_loss_distribution ) );
+  }
 }
 
 // Create the total electroionization electroatomic reaction
@@ -280,11 +305,22 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
                            total_electroionization_cross_section,
                            threshold_energy_index );
 
-  total_electroionization_reaction.reset(
-    new ElectroionizationElectroatomicReaction<Utility::LinLin>(
-                    energy_grid,
-                    total_electroionization_cross_section,
-                    threshold_energy_index ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    total_electroionization_reaction.reset(
+      new ElectroionizationElectroatomicReaction<Utility::LogLog>(
+                      energy_grid,
+                      total_electroionization_cross_section,
+                      threshold_energy_index ) );
+  }
+  else
+  {
+    total_electroionization_reaction.reset(
+      new ElectroionizationElectroatomicReaction<Utility::LinLin>(
+                      energy_grid,
+                      total_electroionization_cross_section,
+                      threshold_energy_index ) );
+  }
 }
 
 // Create the subshell electroionization electroatomic reaction
@@ -387,13 +423,24 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
 
 
   // Create the subshell electroelectric reaction
-  electroionization_subshell_reaction.reset(
+  if( raw_electroatom_data.isEPRVersion14() )
+  {  electroionization_subshell_reaction.reset(
+      new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
+              energy_grid,
+              subshell_cross_section,
+              threshold_energy_index,
+              subshell_order[shell_index],
+              electroionization_subshell_distribution ) );
+  }
+  else
+  {  electroionization_subshell_reaction.reset(
     new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             subshell_cross_section,
             threshold_energy_index,
             subshell_order[shell_index],
             electroionization_subshell_distribution ) );
+  }
 }
 
 // Create the subshell electroionization electroatomic reactions
@@ -575,12 +622,24 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   }
 
   // Create the bremsstrahlung reaction
-  bremsstrahlung_reaction.reset(
-             new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-                          energy_grid,
-                          bremsstrahlung_cross_section,
-                          threshold_energy_index,
-                          bremsstrahlung_distribution ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    bremsstrahlung_reaction.reset(
+      new BremsstrahlungElectroatomicReaction<Utility::LogLog>(
+                 energy_grid,
+                 bremsstrahlung_cross_section,
+                 threshold_energy_index,
+                 bremsstrahlung_distribution ) );
+  }
+  else
+  {
+    bremsstrahlung_reaction.reset(
+      new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+                 energy_grid,
+                 bremsstrahlung_cross_section,
+                 threshold_energy_index,
+                 bremsstrahlung_distribution ) );
+  }
 }
 
 // Create a void absorption electroatomic reaction
