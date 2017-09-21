@@ -424,7 +424,8 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
 
   // Create the subshell electroelectric reaction
   if( raw_electroatom_data.isEPRVersion14() )
-  {  electroionization_subshell_reaction.reset(
+  {
+    electroionization_subshell_reaction.reset(
       new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
               energy_grid,
               subshell_cross_section,
@@ -433,8 +434,9 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
               electroionization_subshell_distribution ) );
   }
   else
-  {  electroionization_subshell_reaction.reset(
-    new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+  {
+    electroionization_subshell_reaction.reset(
+      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             subshell_cross_section,
             threshold_energy_index,
@@ -546,15 +548,27 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
         eion_block,
         electroionization_subshell_distribution );
 
-
     // Create the subshell electroelectric reaction
-    electroionization_subshell_reaction.reset(
-      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+    if( raw_electroatom_data.isEPRVersion14() )
+    {
+      electroionization_subshell_reaction.reset(
+        new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
+                energy_grid,
+                subshell_cross_section,
+                threshold_energy_index,
+                subshell_order[shell_index],
+                electroionization_subshell_distribution ) );
+    }
+    else
+    {
+      electroionization_subshell_reaction.reset(
+        new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
               subshell_order[shell_index],
               electroionization_subshell_distribution ) );
+    }
 
     electroionization_subshell_reactions.push_back(
                       electroionization_subshell_reaction );

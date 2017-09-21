@@ -12,7 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
-#include "Utility_HistogramDistribution.hpp"
+#include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -157,21 +157,21 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
   Utility::FullyTabularTwoDDistribution::DistributionType
      function_data( number_of_tables );
 
-  for( unsigned n = 0; n < number_of_tables; ++n )
-  {
-    function_data[n].first = table_energy_grid[n];
-
-    function_data[n].second.reset(
-      new Utility::HistogramDistribution(
-        raw_electroionization_data( table_location + table_offset[n], table_length[n] ),
-        raw_electroionization_data( table_location + table_offset[n] + table_length[n] + 1,
-                                    table_length[n] - 1 ),
-        true ) );
-  }
-
   // Check if the file version is eprdata14 or eprdata12
   if ( is_eprdata14 )
   {
+    for( unsigned n = 0; n < number_of_tables; ++n )
+    {
+      function_data[n].first = table_energy_grid[n];
+
+      function_data[n].second.reset(
+        new Utility::TabularCDFDistribution<Utility::LogLog>(
+          raw_electroionization_data( table_location + table_offset[n], table_length[n] ),
+          raw_electroionization_data( table_location + table_offset[n] + table_length[n],
+                                      table_length[n] ),
+          true ) );
+    }
+
     // Create the scattering function with LogLogLog interp (eprdata14)
     subshell_distribution.reset(
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
@@ -181,6 +181,17 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
   }
   else
   {
+    for( unsigned n = 0; n < number_of_tables; ++n )
+    {
+      function_data[n].first = table_energy_grid[n];
+
+      function_data[n].second.reset(
+        new Utility::TabularCDFDistribution<Utility::LinLin>(
+          raw_electroionization_data( table_location + table_offset[n], table_length[n] ),
+          raw_electroionization_data( table_location + table_offset[n] + table_length[n],
+                                      table_length[n] ),
+          true ) );
+    }
     // Create the scattering function with LinLinLin interp (eprdata12)
     subshell_distribution.reset(
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(

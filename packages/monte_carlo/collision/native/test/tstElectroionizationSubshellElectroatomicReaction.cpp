@@ -170,44 +170,43 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
 
   double diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection( 8.829E-02, 1e-8 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 9.7163E-02 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.143341410953940e1, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 8.145469e-1 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 2.14334141095394e1, 1e-12 );
-
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1.75297e2 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.6054362007397e-5, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 9.982461471e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 1.6054362007397e-5, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 888.104518382663, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection(
       1.0E+05,
       max_ionization_subshell_adjoint_energy );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 888.104518382663, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 - 1e-10 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
   diff_cross_section =
     ace_first_subshell_reaction->getDifferentialCrossSection(
       1.0E+05,
       max_ionization_subshell_adjoint_energy+1.0e-10 );
-  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//

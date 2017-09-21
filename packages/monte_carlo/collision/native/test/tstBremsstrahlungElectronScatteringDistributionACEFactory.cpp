@@ -51,8 +51,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   dipole_distribution->sample( incoming_energy,
                                photon_energy,
                                photon_angle_cosine );
-  TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 
   // sample using the eprdata14 file
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -64,8 +64,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.56297056718472426e-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 5.92724905907677790e-02 , 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.1550482065667859e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 5.9272490590767779e-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -91,8 +91,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.51612969835718E-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 
   // sample using the eprdata14 file
@@ -106,8 +106,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.56297056718472426e-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 5.92724905907677790e-02 , 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_energy, 1.1550482065667859e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon_angle_cosine, 5.92724905907677790e-02, 1e-12 );
   TEST_EQUALITY_CONST( trials, 12 );
 }
 

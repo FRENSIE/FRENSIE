@@ -40,20 +40,38 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
 
   // sample epr12_distribution
   epr12_distribution->sample( incoming_energy,
-                        outgoing_energy,
-                        scattering_angle_cosine );
+                              outgoing_energy,
+                              scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3- 9.32298E-06, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+
+  incoming_energy = 1.05;
+  epr12_distribution->sample( incoming_energy,
+                              outgoing_energy,
+                              scattering_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.04998928662, 1e-12 );
+  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" << outgoing_energy << std::endl;
 
   // sample epr14_distribution
+  incoming_energy = 1e-3;
   epr14_distribution->sample( incoming_energy,
-                        outgoing_energy,
-                        scattering_angle_cosine );
+                              outgoing_energy,
+                              scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3- 9.32298E-06, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
 
+  incoming_energy = 1.05;
+  epr14_distribution->sample( incoming_energy,
+                              outgoing_energy,
+                              scattering_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0499892862612037, 1e-12 );
+  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" << outgoing_energy << std::endl;
 }
 
 //---------------------------------------------------------------------------//
@@ -67,22 +85,40 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
 
   // sample epr12_distribution
   epr12_distribution->sampleAndRecordTrials( incoming_energy,
-                                       outgoing_energy,
-                                       scattering_angle_cosine,
-                                       trials );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3- 9.32298E-06, 1e-12 );
+                                             outgoing_energy,
+                                             scattering_angle_cosine,
+                                             trials );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
   TEST_EQUALITY_CONST( trials, 11 );
 
-  // sample epr14_distribution
-  epr14_distribution->sampleAndRecordTrials( incoming_energy,
-                                       outgoing_energy,
-                                       scattering_angle_cosine,
-                                       trials );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3- 9.32298E-06, 1e-12 );
+  incoming_energy = 1.05;
+  epr12_distribution->sampleAndRecordTrials( incoming_energy,
+                                             outgoing_energy,
+                                             scattering_angle_cosine,
+                                             trials );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.04998928662, 1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
   TEST_EQUALITY_CONST( trials, 12 );
 
+  // sample epr14_distribution
+  incoming_energy = 1e-3;
+  epr14_distribution->sampleAndRecordTrials( incoming_energy,
+                                             outgoing_energy,
+                                             scattering_angle_cosine,
+                                             trials );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
+  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  TEST_EQUALITY_CONST( trials, 13 );
+
+  incoming_energy = 1.05;
+  epr14_distribution->sampleAndRecordTrials( incoming_energy,
+                                             outgoing_energy,
+                                             scattering_angle_cosine,
+                                             trials );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0499892862612037, 1e-12 );
+  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  TEST_EQUALITY_CONST( trials, 14 );
 }
 
 //---------------------------------------------------------------------------//

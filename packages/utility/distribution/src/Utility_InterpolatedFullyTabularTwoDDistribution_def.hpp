@@ -513,13 +513,22 @@ inline ReturnType UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPo
           }
         }
       }
+
+      ReturnType lower_eval =
+                  ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample);
+      ReturnType upper_eval =
+                  ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample);
+
+      if( lower_eval == upper_eval )
+        return lower_eval;
+
       // Return the interpolated evaluation
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
                   lower_bin_boundary->first,
                   upper_bin_boundary->first,
                   primary_indep_var_value,
-                  ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
-                  ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
+                  lower_eval,
+                  upper_eval );
     }
   }
 }

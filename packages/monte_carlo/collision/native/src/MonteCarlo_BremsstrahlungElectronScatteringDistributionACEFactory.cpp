@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
-#include "Utility_HistogramDistribution.hpp"
+#include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -100,20 +100,20 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
   // Get the scattering data
   Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
 
-  for( unsigned n = 0; n < N; ++n )
-  {
-    function_data[n].first = electron_energy_grid[n];
-
-    function_data[n].second.reset(
-      new Utility::HistogramDistribution(
-          breme_block( offset[n], table_length[n] ),
-          breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-          true ) );
-  }
-
   // Check if the file version is eprdata14 or eprdata12
   if ( raw_electroatom_data.isEPRVersion14() )
   {
+    for( unsigned n = 0; n < N; ++n )
+    {
+      function_data[n].first = electron_energy_grid[n];
+
+      function_data[n].second.reset(
+        new Utility::TabularCDFDistribution<Utility::LogLog>(
+            breme_block( offset[n], table_length[n] ),
+            breme_block( offset[n] + table_length[n], table_length[n] ),
+            true ) );
+    }
+
     // Create the scattering function with LogLogLog interp (eprdata14)
     scattering_function.reset(
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
@@ -123,6 +123,17 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
   }
   else
   {
+    for( unsigned n = 0; n < N; ++n )
+    {
+      function_data[n].first = electron_energy_grid[n];
+
+      function_data[n].second.reset(
+        new Utility::TabularCDFDistribution<Utility::LinLin>(
+            breme_block( offset[n], table_length[n] ),
+            breme_block( offset[n] + table_length[n], table_length[n] ),
+            true ) );
+    }
+
     // Create the scattering function with LinLinLin interp (eprdata12)
     scattering_function.reset(
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(

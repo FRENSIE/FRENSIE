@@ -38,8 +38,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    createCutoffElasticDistribution_epr12 )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
+  std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // sample mu = 0.9874366113907
+  fake_stream[1] = 0.5; // sample mu = 9.9999621617094148e-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -54,6 +55,16 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+  // Sample
+  incoming_energy = 12.45;
+  epr12_cutoff_distribution->sample( incoming_energy,
+                                     outgoing_energy,
+                                     scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999621617094148e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 12.45, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -62,8 +73,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    createCutoffElasticDistribution_epr14 )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample mu = 0.9874366113907
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // sample mu = 9.8786332385681019e-01
+  fake_stream[1] = 0.5; // sample mu = 9.9999529365431461e-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -71,13 +83,22 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   double scattering_angle_cosine, outgoing_energy;
 
   // sample
-  epr12_cutoff_distribution->sample( incoming_energy,
+  epr14_cutoff_distribution->sample( incoming_energy,
+                                     outgoing_energy,
+                                     scattering_angle_cosine );
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8786332385681019e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+  // Sample
+  incoming_energy = 12.45;
+  epr14_cutoff_distribution->sample( incoming_energy,
                                      outgoing_energy,
                                      scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999529365431461e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 12.45, 1e-12 );
 }
 
 

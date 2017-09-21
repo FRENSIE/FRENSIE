@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
-#include "Utility_HistogramDistribution.hpp"
+#include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -81,20 +81,20 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   Teuchos::ArrayView<const double> elas_block =
     raw_electroatom_data.extractELASBlock();
 
-  for( unsigned n = 0; n < size; ++n )
-  {
-    function_data[n].first = angular_energy_grid[n];
-
-    function_data[n].second.reset(
-      new const Utility::HistogramDistribution(
-         elas_block( offset[n], table_length[n] ),
-         elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-         true ) );
-  }
-
   // Check if the file version is eprdata14 or eprdata12
   if ( raw_electroatom_data.isEPRVersion14() )
   {
+    for( unsigned n = 0; n < size; ++n )
+    {
+      function_data[n].first = angular_energy_grid[n];
+
+      function_data[n].second.reset(
+        new const Utility::TabularCDFDistribution<Utility::LogLog>(
+          elas_block( offset[n], table_length[n] ),
+          elas_block( offset[n] + table_length[n], table_length[n] ),
+          true ) );
+    }
+
     // Set the scattering function with LogLogLog interp (eprdata14)
     scattering_function.reset(
       new Utility::ElasticTwoDDistribution<Utility::LogLogLog>(
@@ -102,6 +102,17 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   }
   else
   {
+    for( unsigned n = 0; n < size; ++n )
+    {
+      function_data[n].first = angular_energy_grid[n];
+
+      function_data[n].second.reset(
+        new const Utility::TabularCDFDistribution<Utility::LinLin>(
+          elas_block( offset[n], table_length[n] ),
+          elas_block( offset[n] + table_length[n], table_length[n] ),
+          true ) );
+    }
+
     // Set the scattering function with LinLinLin interp (eprdata12)
     scattering_function.reset(
       new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
