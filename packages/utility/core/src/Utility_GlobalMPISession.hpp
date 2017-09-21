@@ -228,8 +228,16 @@ public:
   static bool isGloballyFalse( const bool local_boolean );
 
   //! Gather messages on the desired process
-  static std::vector<std::string> gatherMessages( const int root,
-                                                  const std::string& message );
+  static std::vector<std::string> gatherMessages( const int root, const std::string& local_message );
+
+  //! Gather bools on the desired process
+  static std::vector<bool> gatherData( const int root, const bool local_data );
+
+  //! Gather ints on the desired process
+  static std::vector<int> gatherData( const int root, const int local_data );
+
+  //! Gather doubles on the desired process
+  static std::vector<double> gatherData( const int root, const double local_data );
 
 private:
 

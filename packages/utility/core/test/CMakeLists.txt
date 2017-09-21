@@ -138,10 +138,20 @@ TARGET_LINK_LIBRARIES(tstStaticOutputFormatter utility_core ${BOOST_TEST_LIBRARY
 ADD_TEST(StaticOutputFormatter_test tstStaticOutputFormatter --report_level=detailed)
 SET_PROPERTY(TEST StaticOutputFormatter_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstStaticOutputFormatterFactory tstStaticOutputFormatterFactory.cpp)
+TARGET_LINK_LIBRARIES(tstStaticOutputFormatterFactory utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(StaticOutputFormatterFactory_test tstStaticOutputFormatterFactory --report_level=detailed)
+SET_PROPERTY(TEST StaticOutputFormatterFactory_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstDynamicOutputFormatter tstDynamicOutputFormatter.cpp)
 TARGET_LINK_LIBRARIES(tstDynamicOutputFormatter utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(DynamicOutputFormatter_test tstDynamicOutputFormatter --report_level=detailed)
 SET_PROPERTY(TEST DynamicOutputFormatter_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstDynamicOutputFormatterFactory tstDynamicOutputFormatterFactory.cpp)
+TARGET_LINK_LIBRARIES(tstDynamicOutputFormatterFactory utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(DynamicOutputFormatterFactory_test tstDynamicOutputFormatterFactory --report_level=detailed)
+SET_PROPERTY(TEST DynamicOutputFormatterFactory_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstLoggingMacros tstLoggingMacros.cpp)
 TARGET_LINK_LIBRARIES(tstLoggingMacros utility_core ${BOOST_TEST_LIBRARY})

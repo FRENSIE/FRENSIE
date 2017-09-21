@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Boost Includes
 #define BOOST_TEST_MAIN
@@ -15,6 +16,8 @@
 
 // FRENSIE Includes
 #include "Utility_UnitTestDataTable.hpp"
+#include "Utility_StaticOutputFormatterFactory.hpp"
+#include "Utility_DynamicOutputFormatterFactory.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -171,6 +174,102 @@ BOOST_AUTO_TEST_CASE( getConcreteElement )
   BOOST_CHECK_EQUAL( table.getConcreteElement<std::string>( "string", "Input" ), "input" );
   BOOST_CHECK_EQUAL( table.getConcreteElement<std::string>( "string", "Expected Output" ), "output" );
   BOOST_CHECK_EQUAL( table.getConcreteElement<std::string>( "string", "Extra Data" ), "" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data table can be placed in a stream
+BOOST_AUTO_TEST_CASE( ostream_operator_basic )
+{
+  Utility::UnitTestDataTable table( "test table" );
+
+  table.columns() << "Input" << "Expected Output" << "Extra Data";
+
+  table.addRow( "float" ) << 0.0f << 1.0f << 0.1f;
+  table.addRow( "double" ) << 0.0 << 1.0 << 0.1;
+  table.addRow( "int" ) << 0 << 1 << -1;
+  table.addRow( "unsigned" ) << 0u << 1u << 10u;
+  table.addRow( "string" ) << "input" << "output" << "";
+
+  std::ostringstream oss;
+  
+  BOOST_CHECK_NO_THROW( oss << table );
+  
+  std::cout << std::endl << table << std::endl;
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data table can be placed in a stream
+BOOST_AUTO_TEST_CASE( ostream_operator_advanced )
+{
+  Utility::UnitTestDataTable table( "test table" );
+
+  table.columns() << "Input" << "Expected Output" << "Extra Data";
+
+  table.addRow( "float" ) << 0.0f << 1.0f << 0.1f;
+  table.addRow( "double" ) << 0.0 << 1.0 << 0.1;
+  table.addRow( "int" ) << 0 << 1 << -1;
+  table.addRow( "unsigned" ) << 0u << 1u << 10u;
+  table.addRow( "string" ) << "input" << "output" << "";
+
+  // Set the title format
+  std::shared_ptr<Utility::OutputFormatterFactory> title_format(
+        new Utility::StaticOutputFormatterFactory<Utility::BoldTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> );
+
+  table.setTableNameOutputFormat( title_format );
+
+  // Set the column name formats
+  std::shared_ptr<Utility::OutputFormatterFactory> default_column_name_format(
+                new Utility::StaticOutputFormatterFactory<Utility::UnderlinedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> );
+
+  table.setDefaultColumnNameOutputFormat( default_column_name_format );
+
+  std::shared_ptr<Utility::OutputFormatterFactory> extra_data_column_name_format(
+                new Utility::StaticOutputFormatterFactory<Utility::UnderlinedTextFormat,Utility::CyanTextColor,Utility::DefaultTextBackgroundColor> );
+
+  table.setColumnNameOutputFormat( "Extra Data", extra_data_column_name_format );
+
+  // Set the row name formats
+  std::shared_ptr<Utility::OutputFormatterFactory> row_name_format(
+                new Utility::StaticOutputFormatterFactory<Utility::ItalicizedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> );
+
+  table.setRowNameOutputFormat( "float", row_name_format );
+  table.setRowNameOutputFormat( "double", row_name_format );
+  table.setRowNameOutputFormat( "int", row_name_format );
+  table.setRowNameOutputFormat( "unsigned", row_name_format );
+
+  // Set the default row output formats
+  std::shared_ptr<Utility::OutputFormatterFactory> default_even_row_format(
+                new Utility::StaticOutputFormatterFactory<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::BlueTextBackgroundColor> );
+
+  std::shared_ptr<Utility::OutputFormatterFactory> default_odd_row_format(
+                new Utility::StaticOutputFormatterFactory<Utility::DefaultTextFormat,Utility::DefaultTextColor,Utility::WhiteTextBackgroundColor> );
+
+  table.setRowOutputFormat( "float", default_even_row_format );
+  table.setRowOutputPadding( "float", 2 );
+  
+  table.setRowOutputFormat( "double", default_odd_row_format );
+  table.setRowOutputPadding( "double", 2 );
+  
+  table.setRowOutputFormat( "int", default_even_row_format );
+  table.setRowOutputPadding( "int", 2 );
+  
+  table.setRowOutputFormat( "unsigned", default_odd_row_format );
+  table.setRowOutputPadding( "unsigned", 2 );
+  
+  table.setRowOutputFormat( "string", default_even_row_format );
+  table.setRowOutputPadding( "string", 2 );
+
+  // Set the element specific output formats
+  std::shared_ptr<Utility::OutputFormatterFactory> element_format(
+                new Utility::StaticOutputFormatterFactory<Utility::DefaultTextFormat,Utility::MagentaTextColor,Utility::DefaultTextBackgroundColor> );
+
+  table.setElementOutputFormat( "string", "Expected Output", element_format );
+
+  std::ostringstream oss;
+  
+  BOOST_CHECK_NO_THROW( oss << table );
+
+  std::cout << std::endl << table << std::endl;
 }
 
 //---------------------------------------------------------------------------//

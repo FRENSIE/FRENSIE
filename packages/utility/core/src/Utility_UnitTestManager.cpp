@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <list>
 #include <fstream>
+#include <memory>
 #include <functional>
 
 // Boost Includes
@@ -21,7 +22,9 @@
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_GlobalMPISession.hpp"
 #include "Utility_StaticOutputFormatter.hpp"
+#include "Utility_StaticOutputFormatterFactory.hpp"
 #include "Utility_DynamicOutputFormatter.hpp"
+#include "Utility_DynamicOutputFormatterFactory.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "FRENSIE_config.hpp"
 
@@ -44,11 +47,6 @@ public:
   { /* ... */ }
 
 protected:
-
-  //! Flush logs and add to report
-  void flushLogsAndAddToReport( std::ostringstream& log,
-                                const std::string& log_header,
-                                const int proc ) override;
 
   //! Print the help message
   void printHelpMessage() override;
@@ -89,7 +87,8 @@ protected:
   //! Print the operation log
   void printOperationLog( const bool local_success,
                           const std::string& log_header,
-                          std::ostringstream& log ) override;
+                          std::ostringstream& log,
+                          const bool flush_log ) override;
 
   //! Print failed test summary header
   void printFailedTestSummaryHeader( const std::string& header_end ) override;
@@ -101,92 +100,85 @@ protected:
                            const std::set<std::string>& local_failed_tests_set,
                            const bool goto_newline ) override;
 
-  //! Print the unit test stats summary header
-  void printUnitTestStatsSummaryTableHeader() override;
+  //! Initialize a unit test stats summary table
+  void initializeUnitTestStatsSummaryTable(
+            std::unique_ptr<UnitTestDataTable>& summary_table ) const override;
 
-  //! Print the unit test stats summary table column names
-  void printUnitTestStatsSummaryTableColumnNames(
-                                            const std::string& column_name,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline ) override;
+  //! Add column names to the unit test stats summary table
+  void addUnitTestStatsSummaryTableColumnNames(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int proc_id,
+                             const bool add_format ) const override;
 
-  //! Print the unit test stats summary table total tests row
-  void printUnitTestStatsSummaryTableTotalTestsRow(
-                                            const int number_of_tests,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline ) override;
+  //! Add the number of tests row to the unit test stats summary table
+  void addUnitTestStatsSummaryTableTotalTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_tests,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table skipped tests row
-  void printUnitTestStatsSummaryTableSkippedTestsRow(
-                                           const int number_of_tests_skipped,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline ) override;
+  //! Add the number of skipped tests row to the unit test stats summary table
+  void addUnitTestStatsSummaryTableSkippedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_skipped_tests,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table run tests row
-  void printUnitTestStatsSummaryTableRunTestsRow(
-                                            const int number_of_tests_run,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline ) override;
+  //! Add the number of run tests row to the unit test stats summary table
+  void addUnitTestStatsSummaryTableRunTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_run_tests,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table passed tests row
-  void printUnitTestStatsSummaryTablePassedTestsRow(
-                                            const int number_of_tests_passed,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline ) override;
+  //! Add the number of passed tests row to the unit test stats summary table
+  void addUnitTestStatsSummaryTablePassedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_tests,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table failed tests row
-  void printUnitTestStatsSummaryTableFailedTestsRow(
-                                            const int number_of_tests_failed,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline ) override;
+  //! Add the number of failed tests row to the unit test stats summary table
+  void addUnitTestStatsSummaryTableFailedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_tests,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table total checks row
-  void printUnitTestStatsSummaryTableTotalChecksRow(
-                                            const int number_of_checks,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline ) override;
+  //! Add the number of checks row to the unit test stats summary table
+  void addUnitTestStatsSummaryTableTotalChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_checks,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table passed checks row
-  void printUnitTestStatsSummaryTablePassedChecksRow(
-                                           const int number_of_passed_checks,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline ) override;
+  //! Add the number of passed checks row to the unit test stats summary table
+  void addUnitTestStatsSummaryTablePassedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_checks,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table failed checks row
-  void printUnitTestStatsSummaryTableFailedChecksRow(
-                                           const int number_of_failed_checks,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline ) override;
+  //! Add the number of failed checks row to the unit test stats summary table
+  void addUnitTestStatsSummaryTableFailedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_checks,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table unexpected exceptions row
-  void printUnitTestStatsSummaryTableUnexpectedExceptionsRow(
-                                   const int number_of_unexpected_exceptions,
-                                   const bool show_row,
-                                   const bool start,
-                                   const bool goto_newline ) override;
+  //! Add the number of unexpected exceptions row to the unit test stats table
+  void addUnitTestStatsSummaryTableUnexpectedExceptionsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_unexpected_exceptions,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table total test time row
-  void printUnitTestStatsSummaryTableTotalTestTimeRow(
-                                           const double total_test_exec_time,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline ) override;
+  //! Add the total test time row to the unit test stats table
+  void addUnitTestStatsSummaryTableTotalTestTimeRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const double total_test_time,
+                             const bool new_row ) const override;
 
-  //! Print the unit test stats summary table end result row
-  void printUnitTestStatsSummaryTableEndResultRow(
-                                            const bool local_success,
-                                            const bool show_row,
-                                            const bool row_start,
-                                            const bool goto_newline ) override;
+  //! Add the end result row to the unit test stats table
+  void addUnitTestStatsSummaryTableEndResultRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const bool local_success,
+                             const bool new_row ) const override;
+
+  //! Print the unit test stats summary table
+  void printUnitTestStatsSummaryTable(
+                  std::unique_ptr<UnitTestDataTable>& summary_table ) override;
 
   //! Print the program execution time header
   void printProgramExecutionTimeHeader(
@@ -197,38 +189,33 @@ protected:
                         const bool global_success ) override;
 };
 
-/*! Print a unit test stats summary table row (distributed synching)
+/*! AddUnitTestsStatsSummaryTableRow (distributed synching)
  *
  * This macro is a work around for the Utility::DistributedUnitTestManager that
- * allows us to reference the base Utility::UnitTestManager protected printing
+ * allows us to reference the base Utility::UnitTestManager protected add row
  * method (the standard does not allow the passing of protected member function
  * pointers outside of the owner class scope).
  */
-#define printUnitTestStatsSummaryTableRowImpl( cell_data, show_row, start, goto_newline, printRowData, reduce ) \
-  if( Utility::GlobalMPISession::size() == 1 )                          \
-    UnitTestManager::printRowData( cell_data, show_row, start, goto_newline );\
-  else                                                                  \
-  {                                                                   \
-    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )      \
-    {                                                               \
-      if( i == Utility::GlobalMPISession::rank() )                  \
-      {                                                           \
-        if( i == 0 )                                                    \
-          UnitTestManager::printRowData( cell_data, show_row, true, false ); \
-        else                                                            \
-          UnitTestManager::printRowData( cell_data, show_row, false, false ); \
-      }                                                                 \
+#define addUnitTestStatsSummaryTableRowImpl( summary_table_ptr, local_data, new_row, addRowMethod ) \
+  std::vector<typename std::remove_const<decltype(local_data)>::type> data_on_proc = \
+    Utility::GlobalMPISession::gatherData( 0, local_data );             \
                                                                         \
-      Utility::GlobalMPISession::barrier();                             \
+  if( Utility::GlobalMPISession::rank() == 0 )                          \
+  {                                                                   \
+    typename std::remove_const<decltype(local_data)>::type reduced_data(0); \
+                                                                      \
+    for( size_t i = 0; i < data_on_proc.size(); ++i )                 \
+    {                                                   \
+      UnitTestManager::addRowMethod( summary_table_ptr, data_on_proc[i], (i == 0 ? true : false) ); \
+                                                                        \
+      reduced_data += data_on_proc[i];                                  \
     }                                                                   \
                                                                         \
-    auto reduced_data = reduce( cell_data );                            \
+    if( Utility::GlobalMPISession::size() > 1 )                         \
+      UnitTestManager::addRowMethod( summary_table, reduced_data, false ); \
+  }                                                                     \
                                                                         \
-    if( Utility::GlobalMPISession::rank() == 0 )                        \
-      UnitTestManager::printRowData( reduced_data, show_row, false, true ); \
-                                                                        \
-    Utility::GlobalMPISession::barrier();                               \
-  } 
+  Utility::GlobalMPISession::barrier()
 
 /*! The report level
  *
@@ -1122,23 +1109,33 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
 
   init_timer->stop();
 
-  d_data->restoreStdOutput();
+  if( mpi_session.rank() == 0 )
+    d_data->restoreStdOutput();
 
   // Make sure that every node initialized successfully
   bool global_success = mpi_session.isGloballyTrue( local_success );
 
-  // Check if any special cases were requested
+  // Check if the help message was requested
   if( d_data->helpMessageRequested() )
   {
     this->printHelpMessage();
 
     return 0;
   }
-  // Test details requested
+  // Check if any test details were requested
   else if( d_data->groupListRequested() ||
            d_data->testListRequested() ||
            d_data->dataListRequested() )
   {
+    if( d_data->groupListRequested() )
+      d_data->printGroupList();
+
+    if( d_data->testListRequested() )
+      d_data->printTestList();
+
+    if( d_data->dataListRequested() )
+      d_data->printDataList();
+    
     return 0;
   }
 
@@ -1166,58 +1163,6 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
 
   // Summarize the test results
   return this->summarizeResults( global_success );
-}
-
-// Flush logs and add to report
-void UnitTestManager::flushLogsAndAddToReport( std::ostringstream& log,
-                                               const std::string& log_header,
-                                               const int )
-{
-  // This will flush all pending log entries to the global log
-  FRENSIE_FLUSH_ALL_LOGS();
-
-  if( log.str().size() > 0 )
-  {
-    Utility::DynamicOutputFormatter formatter( log.str() );
-    formatter.formatUnitTestKeywords();
-
-    if( log_header.size() > 0 )
-      d_data->getReportSink() << log_header << ":\n";
-    
-    d_data->getReportSink() << formatter << std::endl;
-
-    log.str( "" );
-    log.clear();
-  }
-}
-
-// Flush logs and add to report
-void DistributedUnitTestManager::flushLogsAndAddToReport(
-                                                 std::ostringstream& log,
-                                                 const std::string&,
-                                                 const int proc )
-{
-  // This will flush all pending log entries to the global log
-  if( proc == REPORT_ON_ALL_PROCS )
-  {
-    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
-    {
-      if( i == Utility::GlobalMPISession::rank() )
-      {
-        std::ostringstream log_header_stream;
-        log_header_stream << "Proc " << i << " log";
-        
-        UnitTestManager::flushLogsAndAddToReport( log, log_header_stream.str(), proc );
-      }
-      
-      Utility::GlobalMPISession::barrier();
-    }
-  }
-  else
-  {
-    if( Utility::GlobalMPISession::rank() == proc )
-      UnitTestManager::flushLogsAndAddToReport( log, "", proc );
-  }
 }
 
 // Print the help message
@@ -1324,8 +1269,6 @@ bool UnitTestManager::runUnitTests( std::ostringstream& log )
     }
   }
   
-  this->flushLogsAndAddToReport( log, "", REPORT_ON_ALL_PROCS );
-  
   // If there are any failed tests provide a summary of them now
   this->summarizeFailedTests( global_failed_tests, local_failed_tests_set );
   
@@ -1416,8 +1359,6 @@ bool UnitTestManager::runUnitTest( const UnitTest& unit_test,
   // All output will be redirected to the log
   d_data->redirectStdOutput( log );
 
-  
-
   const bool result =
     unit_test.run( log, d_data->getChecksCounter(), d_data->getPassedChecksCounter(), d_data->getUnexpectedExceptionsCounter() );
   
@@ -1463,11 +1404,13 @@ void UnitTestManager::reportTestResult(
     this->printOperationLocation( unit_test.getFile(),
                                   unit_test.getLineNumber(),
                                   padding );
-    this->printOperationLog( local_success, "", log );
+    this->printOperationLog( local_success, "", log, true );
   }
-
-  log.str( "" );
-  log.clear();
+  else
+  {
+    log.str( "" );
+    log.clear();
+  }
 }
 
 // Print the operation failed notification
@@ -1506,7 +1449,8 @@ void DistributedUnitTestManager::printOperationPassedNotification()
 void UnitTestManager::printOperationTime( std::ostream& os,
                                           const double time_in_sec,
                                           const bool wrapped,
-                                          const bool goto_newline )
+                                          const bool goto_newline,
+                                          const bool display_units )
 {
   os.precision( 6 );
   os << std::fixed;
@@ -1519,7 +1463,8 @@ void UnitTestManager::printOperationTime( std::ostream& os,
   else
     os << "<" << 1e-6;
 
-  os << " sec";
+  if( display_units )
+    os << " sec";
 
   if( wrapped )
     os << ")";
@@ -1546,18 +1491,22 @@ void DistributedUnitTestManager::printOperationTime( const double time_in_sec,
                                                      const bool wrapped,
                                                      const bool goto_newline )
 {
-  for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
+  // Gather the operation time data
+  std::vector<double> operation_times =
+    Utility::GlobalMPISession::gatherData( 0, time_in_sec );
+
+  if( Utility::GlobalMPISession::rank() == 0 )
   {
-    if( Utility::GlobalMPISession::rank() == i )
+    for( size_t i = 0; i < operation_times.size(); ++i )
     {
-      if( i < Utility::GlobalMPISession::size() - 1 )
-        UnitTestManager::printOperationTime( time_in_sec, wrapped, false );
+      if( i < operation_times.size() - 1 )
+        UnitTestManager::printOperationTime( operation_times[i], wrapped, false );
       else
-        UnitTestManager::printOperationTime( time_in_sec, wrapped, goto_newline );
+        UnitTestManager::printOperationTime( operation_times[i], wrapped, goto_newline );
     }
-      
-    Utility::GlobalMPISession::barrier();
   }
+
+  Utility::GlobalMPISession::barrier();
 }
 
 // Print the operation location
@@ -1587,9 +1536,8 @@ void DistributedUnitTestManager::printOperationLocation(
 // Print the operation log
 void UnitTestManager::printOperationLog( const bool local_success,
                                          const std::string& log_header,
-                                         std::ostringstream& log )
+                                         const std::string& log_contents )
 {
-  // Add the operation log to the report
   if( log_header.size() > 0 )
   {
     d_data->getReportSink() << log_header << " ";
@@ -1601,40 +1549,84 @@ void UnitTestManager::printOperationLog( const bool local_success,
 
     d_data->getReportSink() << std::endl;
   }
+
+  if( log_contents.size() > 0 )
+  {
+    Utility::DynamicOutputFormatter formatter( log_contents );
+    formatter.formatUnitTestKeywords();
+    
+    d_data->getReportSink() << formatter << std::endl;
+  }
+}
+
+// Print the operation log
+void UnitTestManager::printOperationLog( const bool local_success,
+                                         const std::string& log_header,
+                                         std::ostringstream& log,
+                                         const bool flush_log )
+{
+  // This will flush all pending log entries to the global log
+  if( flush_log )
+  {
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
   
-  UnitTestManager::flushLogsAndAddToReport( log, "", Utility::GlobalMPISession::rank() );
+  this->printOperationLog( local_success, log_header, log.str() );
+
+  if( flush_log )
+  {
+    log.str( "" );
+    log.clear();
+  }
 }
 
 // Print the operation log
 void DistributedUnitTestManager::printOperationLog( const bool local_success,
                                                     const std::string&,
-                                                    std::ostringstream& log )
+                                                    std::ostringstream& log,
+                                                    const bool flush_log )
 {
   if( Utility::GlobalMPISession::size() == 1 )
-    UnitTestManager::printOperationLog( local_success, "", log );
+    UnitTestManager::printOperationLog( local_success, "", log, flush_log );
   else
   {
-    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
+    // Gather the results
+    std::vector<bool> results =
+      Utility::GlobalMPISession::gatherData( 0, local_success );
+
+    // Flush the logs
+    if( flush_log )
     {
-      if( Utility::GlobalMPISession::rank() == i )
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
+    
+    // Gather the logs
+    std::vector<std::string> logs =
+      Utility::GlobalMPISession::gatherMessages( 0, log.str() );
+
+    if( Utility::GlobalMPISession::rank() == 0 )
+    {
+      for( size_t i = 0; i < results.size(); ++i )
       {
-        if( this->shouldUnitTestDetailsBeReported( local_success ) )
+        if( this->shouldUnitTestDetailsBeReported( results[i] ) )
         {
           std::ostringstream oss;
-          oss << "  Proc " << i;
+          oss << std::string( UnitTestManager::getDetailsRightShift(), ' ' )
+              << "Proc " << i;
 
-          UnitTestManager::printOperationLog( local_success, oss.str(), log );
-        }
-        else
-        {
-          // Clear the log
-          log.str( "" );
-          log.clear();
+          UnitTestManager::printOperationLog( results[i], oss.str(), logs[i] );
         }
       }
-
-      Utility::GlobalMPISession::barrier();
     }
+
+    // Clear the logs
+    if( flush_log )
+    {
+      log.str( "" );
+      log.clear();
+    }
+
+    Utility::GlobalMPISession::barrier();
   }
 }
 
@@ -1723,52 +1715,42 @@ void DistributedUnitTestManager::printFailedTestName(
   }
   else
   {
-    bool report_line_started = false;
-    
-    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
-    {
-      if( Utility::GlobalMPISession::rank() == i )
-      {
-        if( local_failed_tests_set.count( global_failed_test_name ) )
-        {
-          std::ostringstream oss;
-
-          if( !report_line_started )
-            oss << " (";
-          else
-            oss << ", ";
-        
-          oss << i;
-
-          if( !report_line_started )
-          {
-            UnitTestManager::printFailedTestName( global_failed_test_name,
-                                                  oss.str(),
-                                                  padding,
-                                                  local_failed_tests_set,
-                                                  false );
-            report_line_started = true;
-          }
-          else
-          {
-            UnitTestManager::printFailedTestName( "",
-                                                  oss.str(),
-                                                  "",
-                                                  local_failed_tests_set,
-                                                  false );
-          }
-        }
-      }
-            
-      report_line_started =
-        !Utility::GlobalMPISession::isGloballyFalse( report_line_started );
-    }
-
-    Utility::GlobalMPISession::barrier();
+    // Collect the procs that this test failed on
+    std::vector<bool> local_failed_tests =
+      Utility::GlobalMPISession::gatherData( 0, (local_failed_tests_set.count(global_failed_test_name) ? true : false) );
 
     if( Utility::GlobalMPISession::rank() == 0 )
     {
-      UnitTestManager::printFailedTestName( ")", "", "",
+      // Print the failed test name only
+      UnitTestManager::printFailedTestName( global_failed_test_name,
+                                            "",
+                                            padding,
+                                            local_failed_tests_set,
+                                            false );
+
+      // Print the procs that the test failed on
+      std::ostringstream oss;
+      oss << "(";
+      
+      bool proc_list_started = false;
+      
+      for( size_t i = 0; i < local_failed_tests.size(); ++i )
+      {
+        if( local_failed_tests[i] )
+        {
+          if( proc_list_started )
+            oss << ", ";
+          else
+            proc_list_started = true;
+
+          oss << i;
+        }
+      }
+
+      oss << ")";
+
+      // Print the proc list
+      UnitTestManager::printFailedTestName( " ", oss.str(), "",
                                             local_failed_tests_set,
                                             goto_newline );
     }
@@ -1789,7 +1771,7 @@ void UnitTestManager::summarizeInitializationResults(
 
   // Report the initialization details
   if( this->shouldUnitTestDetailsBeReported( global_success ) )
-    this->printOperationLog( local_success, "", log );
+    this->printOperationLog( local_success, "", log, true );
 }
 
 // Print the initialization status notification
@@ -1825,466 +1807,501 @@ void DistributedUnitTestManager::printInitializationStatusNotification(
 void UnitTestManager::summarizeTestStats( const double program_execution_time,
                                           const bool local_success )
 {
-  // Summary table
-  this->printUnitTestStatsSummaryTableHeader();
-  this->printUnitTestStatsSummaryTableColumnNames( "", false, true, false );
-  this->printUnitTestStatsSummaryTableTotalTestsRow( d_data->getUnitTests().size(), true, true, true );
-  this->printUnitTestStatsSummaryTableSkippedTestsRow( d_data->getUnitTests().size() - d_data->getRunTestCounter(), true, true, true );
-  this->printUnitTestStatsSummaryTableRunTestsRow( d_data->getRunTestCounter(), true, true, true );
-  this->printUnitTestStatsSummaryTablePassedTestsRow( d_data->getPassedTestCounter(), true, true, true );
-  this->printUnitTestStatsSummaryTableFailedTestsRow( d_data->getRunTestCounter() - d_data->getPassedTestCounter(), true, true, true );
-  this->printUnitTestStatsSummaryTableUnexpectedExceptionsRow( d_data->getUnexpectedExceptionsCounter(), true, true, true );
-  this->printUnitTestStatsSummaryTableTotalTestTimeRow( d_data->getTotalUnitTestExecutionTime(), true, true, true );
-  this->printUnitTestStatsSummaryTableEndResultRow( local_success, false, true, false );
+  // Construct the summary table
+  std::unique_ptr<UnitTestDataTable> summary_table;
+  
+  this->initializeUnitTestStatsSummaryTable( summary_table );
+  this->addUnitTestStatsSummaryTableColumnNames( summary_table, 0, true );
+  this->addUnitTestStatsSummaryTableTotalTestsRow( summary_table, d_data->getUnitTests().size(), true );
+  this->addUnitTestStatsSummaryTableSkippedTestsRow( summary_table, d_data->getUnitTests().size() - d_data->getRunTestCounter(), true );
+  this->addUnitTestStatsSummaryTableRunTestsRow( summary_table, d_data->getRunTestCounter(), true );
+  this->addUnitTestStatsSummaryTablePassedTestsRow( summary_table, d_data->getPassedTestCounter(), true );
+  this->addUnitTestStatsSummaryTableFailedTestsRow( summary_table, d_data->getRunTestCounter() - d_data->getPassedTestCounter(), true );
+  this->addUnitTestStatsSummaryTableTotalChecksRow( summary_table, d_data->getChecksCounter(), true );
+  this->addUnitTestStatsSummaryTablePassedChecksRow( summary_table, d_data->getPassedChecksCounter(), true );
+  this->addUnitTestStatsSummaryTableFailedChecksRow( summary_table, d_data->getChecksCounter() - d_data->getPassedChecksCounter(), true );
+  this->addUnitTestStatsSummaryTableUnexpectedExceptionsRow( summary_table, d_data->getUnexpectedExceptionsCounter(), true );
+  this->addUnitTestStatsSummaryTableTotalTestTimeRow( summary_table, d_data->getTotalUnitTestExecutionTime(), true );
+  this->addUnitTestStatsSummaryTableEndResultRow( summary_table, local_success, true );
+  
+  this->printUnitTestStatsSummaryTable( summary_table );
 
   // Total program execution time
   this->printProgramExecutionTimeHeader( program_execution_time );
 }
 
-// Print the unit test stats summary header
-void UnitTestManager::printUnitTestStatsSummaryTableHeader()
+// Initialize a unit test stats summary table
+void UnitTestManager::initializeUnitTestStatsSummaryTable(
+                      std::unique_ptr<UnitTestDataTable>& summary_table ) const
 {
-  d_data->getReportSink() << "\n"
-                          << Utility::Bold("Summary Table")
-                          << std::endl;
+  summary_table.reset( new UnitTestDataTable( "Results Summary Table" ) );
+
+  std::shared_ptr<OutputFormatterFactory> title_format(
+       new Utility::StaticOutputFormatterFactory<Utility::BoldTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> );
+
+  summary_table->setTableNameOutputFormat( title_format );
 }
 
-// Print the unit test stats summary header
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableHeader()
+// Initialize a unit test stats summary table
+void DistributedUnitTestManager::initializeUnitTestStatsSummaryTable(
+                      std::unique_ptr<UnitTestDataTable>& summary_table ) const
 {
   if( Utility::GlobalMPISession::rank() == 0 )
-    UnitTestManager::printUnitTestStatsSummaryTableHeader();
+    UnitTestManager::initializeUnitTestStatsSummaryTable( summary_table );
 
   Utility::GlobalMPISession::barrier();
 }
 
-// Print the unit test stats summary table row
-void UnitTestManager::printUnitTestStatsSummaryTableRow(
-                                              const OutputFormatter& row_name,
-                                              const int row_padding,
-                                              const OutputFormatter& cell_data,
-                                              const bool start,
-                                              const bool goto_newline )
+// Add column names to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTableColumnNames(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int proc_id,
+                             const bool add_format ) const
 {
-  if( start )
+  if( summary_table )
   {
-    d_data->getReportSink() << std::string( row_padding, ' ' )
-                            << row_name;
+    std::ostringstream oss;
 
-    // Add the back padding
-    int back_padding_length = s_summary_table_start_cell_length -
-      row_padding - row_name.getRawOutput().size();
+    if( proc_id >= 0 )
+      oss << "Proc " << proc_id;
+    else
+      oss << "All Procs";
+        
+    summary_table->addColumn( oss.str() );
 
-    if( back_padding_length > 0 )
-      d_data->getReportSink() << std::string( back_padding_length, ' ' );
-  }
+    if( add_format )
+    {
+      std::shared_ptr<OutputFormatterFactory> default_column_name_format(
+              new Utility::StaticOutputFormatterFactory<Utility::UnderlinedTextFormat,Utility::DefaultTextColor,Utility::DefaultTextBackgroundColor> );
 
-  d_data->getReportSink() << cell_data;
-
-  // Add cell back padding
-  int back_padding_length =
-    s_summary_table_cell_length - cell_data.getRawOutput().size();
-
-  if( back_padding_length > 0 )
-    d_data->getReportSink() << std::string( back_padding_length, ' ' );
-
-  if( goto_newline )
-    d_data->getReportSink() << std::endl;
-  else
-    d_data->getReportSink() << std::flush;
-}
-
-// Print the unit test stats summary table column names
-void UnitTestManager::printUnitTestStatsSummaryTableColumnNames(
-                                                const std::string& column_name,
-                                                const bool show_row,
-                                                const bool start,
-                                                const bool goto_newline )
-{
-  if( show_row )
-  {
-    this->printUnitTestStatsSummaryTableRow(
-       Utility::Default(std::string( s_summary_table_start_cell_length, ' ' )),
-       0,
-       Utility::Underlined(column_name),
-       start,
-       goto_newline );
+      summary_table->setDefaultColumnNameOutputFormat( default_column_name_format );
+    }
   }
 }
 
-// Print the unit test stats summary table column names
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableColumnNames(
-                                                const std::string&,
-                                                const bool,
-                                                const bool start,
-                                                const bool goto_newline )
+// Add column names to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableColumnNames(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int proc_id,
+                             const bool ) const
 {
-  if( Utility::GlobalMPISession::size() > 1 )
+  if( Utility::GlobalMPISession::rank() == 0 )
   {
-    printUnitTestStatsSummaryTableRowImpl(
-          std::string("Proc ") + Utility::toString(Utility::GlobalMPISession::rank()),
-          true,
-          start,
-          goto_newline,
-          printUnitTestStatsSummaryTableColumnNames,
-          [](const std::string&){ return std::string("All Procs"); } );
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
+    {
+      UnitTestManager::addUnitTestStatsSummaryTableColumnNames(
+                                   summary_table, i, (i == 0 ? true : false) );
+    }
+
+    // Add a column for the total
+    if( Utility::GlobalMPISession::size() > 1 )
+    {
+      UnitTestManager::addUnitTestStatsSummaryTableColumnNames(
+                                                    summary_table, -1, false );
+    }
+  }
+
+  Utility::GlobalMPISession::barrier();
+}
+
+// Add a unit test stats summary table row
+void UnitTestManager::addUnitTestStatsSummaryTableRow(
+        std::unique_ptr<UnitTestDataTable>& summary_table,
+        const std::string& row_name,
+        const Utility::Variant& cell_data,
+        const bool new_row,
+        const int row_padding,
+        const std::shared_ptr<const OutputFormatterFactory>& row_format ) const
+{
+  if( summary_table )
+  {
+    if( new_row )
+    {
+      summary_table->addRow( row_name ) << cell_data;
+
+      summary_table->setRowOutputPadding( row_name, row_padding );
+
+      if( row_format )
+        summary_table->setRowOutputFormat( row_name, row_format );
+    }
+    else
+      summary_table->getRow( row_name ) << cell_data;
   }
 }
 
-// Print the unit test stats summary table total tests row
-void UnitTestManager::printUnitTestStatsSummaryTableTotalTestsRow(
-                                                 const int number_of_tests,
-                                                 const bool,
-                                                 const bool start,
-                                                 const bool goto_newline )
+// Add the number of tests row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTableTotalTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_tests,
+                             const bool new_row ) const
 {
-  this->printUnitTestStatsSummaryTableRow(
-                          Utility::Underlined("total tests:"),
-                          s_details_right_shift,
-                          Utility::Default(Utility::toString(number_of_tests)),
-                          start,
-                          goto_newline );
+  this->addUnitTestStatsSummaryTableRow( summary_table,
+                                         "total tests:",
+                                         Utility::Variant( number_of_tests ),
+                                         new_row,
+                                         s_details_right_shift );
 }
 
-// Print the unit test stats summary table total tests row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableTotalTestsRow(
-                                                 const int number_of_tests,
-                                                 const bool,
-                                                 const bool start,
-                                                 const bool goto_newline )
+// Add the number of tests row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableTotalTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_tests,
+                             const bool new_row ) const
 {
-  printUnitTestStatsSummaryTableRowImpl(
-                                   number_of_tests,
-                                   true,
-                                   start,
-                                   goto_newline,
-                                   printUnitTestStatsSummaryTableTotalTestsRow,
-                                   Utility::GlobalMPISession::sum );
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_tests,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableTotalTestsRow );
 }
 
-// Print the unit test stats summary table skipped tests row
-void UnitTestManager::printUnitTestStatsSummaryTableSkippedTestsRow(
-                                             const int number_of_tests_skipped,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
+// Add the number of skipped tests row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTableSkippedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_skipped_tests,
+                             const bool new_row ) const
 {
-  this->printUnitTestStatsSummaryTableRow(
-              Utility::BoldMagenta("skipped:"),
-              Details::incrementRightShift(s_details_right_shift),
-              Utility::BoldMagenta(Utility::toString(number_of_tests_skipped)),
-              start,
-              goto_newline );
-}
-
-// Print the unit test stats summary table skipped tests row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableSkippedTestsRow(
-                                             const int number_of_tests_skipped,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
-{
-  printUnitTestStatsSummaryTableRowImpl(
-                                 number_of_tests_skipped,
-                                 true,
-                                 start,
-                                 goto_newline,
-                                 printUnitTestStatsSummaryTableSkippedTestsRow,
-                                 Utility::GlobalMPISession::sum );
-}
-
-// Print the unit test stats summary table run tests row
-void UnitTestManager::printUnitTestStatsSummaryTableRunTestsRow(
-                                                 const int number_of_tests_run,
-                                                 const bool,
-                                                 const bool start,
-                                                 const bool goto_newline )
-{
-  this->printUnitTestStatsSummaryTableRow(
-              Utility::Default("run:"),
-              Details::incrementRightShift(s_details_right_shift),
-              Utility::Default(Utility::toString(number_of_tests_run)),
-              start,
-              goto_newline );
-}
-
-// Print the unit test stats summary table run tests row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableRunTestsRow(
-                                                 const int number_of_tests_run,
-                                                 const bool,
-                                                 const bool start,
-                                                 const bool goto_newline )
-{
-  printUnitTestStatsSummaryTableRowImpl(
-                                     number_of_tests_run,
-                                     true,
-                                     start,
-                                     goto_newline,
-                                     printUnitTestStatsSummaryTableRunTestsRow,
-                                     Utility::GlobalMPISession::sum );
-}  
-
-// Print the unit test stats summary table passed tests row
-void UnitTestManager::printUnitTestStatsSummaryTablePassedTestsRow(
-                                              const int number_of_tests_passed,
-                                              const bool,
-                                              const bool start,
-                                              const bool goto_newline )
-{
-  this->printUnitTestStatsSummaryTableRow(
-              Utility::Green("passed:"),
-              Details::incrementRightShift(Details::incrementRightShift(s_details_right_shift)),
-              Utility::Green(Utility::toString(number_of_tests_passed)),
-              start,
-              goto_newline );
-}
-
-// Print the unit test stats summary table passed tests row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTablePassedTestsRow(
-                                              const int number_of_tests_passed,
-                                              const bool,
-                                              const bool start,
-                                              const bool goto_newline )
-{
-  printUnitTestStatsSummaryTableRowImpl(
-                                  number_of_tests_passed,
-                                  true,
-                                  start,
-                                  goto_newline,
-                                  printUnitTestStatsSummaryTablePassedTestsRow,
-                                  Utility::GlobalMPISession::sum );
-}
-
-// Print the unit test stats summary table failed tests row
-void UnitTestManager::printUnitTestStatsSummaryTableFailedTestsRow(
-                                              const int number_of_tests_failed,
-                                              const bool,
-                                              const bool start,
-                                              const bool goto_newline )
-{
-  this->printUnitTestStatsSummaryTableRow(
-              Utility::Red("failed:"),
-              Details::incrementRightShift(Details::incrementRightShift(s_details_right_shift)),
-              Utility::Red(Utility::toString(number_of_tests_failed)),
-              start,
-              goto_newline );
-}
-
-// Print the unit test stats summary table failed tests row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableFailedTestsRow(
-                                              const int number_of_tests_failed,
-                                              const bool,
-                                              const bool start,
-                                              const bool goto_newline )
-{
-  printUnitTestStatsSummaryTableRowImpl(
-                                  number_of_tests_failed,
-                                  true,
-                                  start,
-                                  goto_newline,
-                                  printUnitTestStatsSummaryTableFailedTestsRow,
-                                  Utility::GlobalMPISession::sum );
-}
-
-// Print the unit test stats summary table total checks row
-void UnitTestManager::printUnitTestStatsSummaryTableTotalChecksRow(
-                                                    const int number_of_checks,
-                                                    const bool,
-                                                    const bool start,
-                                                    const bool goto_newline)
-{
-  this->printUnitTestStatsSummaryTableRow(
-                         Utility::Underlined("total checks:"),
-                         s_details_right_shift,
-                         Utility::Default(Utility::toString(number_of_checks)),
-                         start,
-                         goto_newline );
-}
+  std::shared_ptr<OutputFormatterFactory> row_format;
   
-// Print the unit test stats summary table total checks row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableTotalChecksRow(
-                                                    const int number_of_checks,
-                                                    const bool,
-                                                    const bool start,
-                                                    const bool goto_newline)
-{
-  printUnitTestStatsSummaryTableRowImpl(
-                                  number_of_checks,
-                                  true,
-                                  start,
-                                  goto_newline,
-                                  printUnitTestStatsSummaryTableTotalChecksRow,
-                                  Utility::GlobalMPISession::sum );
-}                                                
-
-// Print the unit test stats summary table passed checks row
-void UnitTestManager::printUnitTestStatsSummaryTablePassedChecksRow(
-                                             const int number_of_passed_checks,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
-{
-  this->printUnitTestStatsSummaryTableRow(
-              Utility::Green("passed:"),
-              Details::incrementRightShift(s_details_right_shift),
-              Utility::Green(Utility::toString(number_of_passed_checks)),
-              start,
-              goto_newline );
+  if( new_row )
+  {
+    row_format.reset( new StaticOutputFormatterFactory<BoldTextFormat,MagentaTextColor,DefaultTextBackgroundColor> );
+  }
+  
+  this->addUnitTestStatsSummaryTableRow(
+                           summary_table,
+                           "skipped:",
+                           Utility::Variant( number_of_skipped_tests ),
+                           new_row,
+                           Details::incrementRightShift(s_details_right_shift),
+                           row_format );
 }
 
-// Print the unit test stats summary table passed checks row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTablePassedChecksRow(
-                                             const int number_of_passed_checks,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
+// Add the number of skipped tests row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableSkippedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_skipped_tests,
+                             const bool new_row ) const
 {
-  printUnitTestStatsSummaryTableRowImpl(
-                                 number_of_passed_checks,
-                                 true,
-                                 start,
-                                 goto_newline,
-                                 printUnitTestStatsSummaryTablePassedChecksRow,
-                                 Utility::GlobalMPISession::sum );
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_skipped_tests,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableSkippedTestsRow );
 }
 
-// Print the unit test stats summary table failed checks row
-void UnitTestManager::printUnitTestStatsSummaryTableFailedChecksRow(
-                                             const int number_of_failed_checks,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
+// Add the number of run tests row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTableRunTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_run_tests,
+                             const bool new_row ) const
 {
-  this->printUnitTestStatsSummaryTableRow(
-              Utility::Red("failed:"),
-              Details::incrementRightShift(s_details_right_shift),
-              Utility::Red(Utility::toString(number_of_failed_checks)),
-              start,
-              goto_newline );
+  this->addUnitTestStatsSummaryTableRow(
+                         summary_table,
+                         "run:",
+                         Utility::Variant( number_of_run_tests ),
+                         new_row,
+                         Details::incrementRightShift(s_details_right_shift) );
 }
 
-// Print the unit test stats summary table failed checks row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableFailedChecksRow(
-                                             const int number_of_failed_checks,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
+// Add the number of run tests row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableRunTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_run_tests,
+                             const bool new_row ) const
 {
-  printUnitTestStatsSummaryTableRowImpl(
-                                 number_of_failed_checks,
-                                 true,
-                                 start,
-                                 goto_newline,
-                                 printUnitTestStatsSummaryTableFailedChecksRow,
-                                 Utility::GlobalMPISession::sum );
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_run_tests,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableRunTestsRow );
 }
 
-// Print the unit test stats summary table unexpected exceptions row
-void UnitTestManager::printUnitTestStatsSummaryTableUnexpectedExceptionsRow(
-                                     const int number_of_unexpected_exceptions,
-                                     const bool,
-                                     const bool start,
-                                     const bool goto_newline )
+// Add the number of passed tests row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTablePassedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_tests,
+                             const bool new_row ) const
 {
-  this->printUnitTestStatsSummaryTableRow(
-          Utility::Underlined("unexpected exceptions:"),
-          s_details_right_shift,
-          Utility::Default(Utility::toString(number_of_unexpected_exceptions)),
-          start,
-          goto_newline );
+  std::shared_ptr<OutputFormatterFactory> row_format;
+  
+  if( new_row )
+  {
+    row_format.reset( new StaticOutputFormatterFactory<DefaultTextFormat,GreenTextColor,DefaultTextBackgroundColor> );
+  }
+  
+  this->addUnitTestStatsSummaryTableRow(
+                           summary_table,
+                           "passed:",
+                           Utility::Variant( number_of_passed_tests ),
+                           new_row,
+                           Details::incrementRightShift(Details::incrementRightShift(s_details_right_shift)),
+                           row_format );
 }
 
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableUnexpectedExceptionsRow(
-                                     const int number_of_unexpected_exceptions,
-                                     const bool,
-                                     const bool start,
-                                     const bool goto_newline )
+// Add the number of passed tests row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTablePassedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_tests,
+                             const bool new_row ) const
 {
-  printUnitTestStatsSummaryTableRowImpl(
-       number_of_unexpected_exceptions,
-       true,
-       start,
-       goto_newline,
-       printUnitTestStatsSummaryTableUnexpectedExceptionsRow,
-       Utility::GlobalMPISession::sum );
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_passed_tests,
+                                       new_row,
+                                       addUnitTestStatsSummaryTablePassedTestsRow );
 }
 
-// Print the unit test stats summary table total test time row
-void UnitTestManager::printUnitTestStatsSummaryTableTotalTestTimeRow(
-                                             const double total_test_exec_time,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
+// Add the number of failed tests row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTableFailedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_tests,
+                             const bool new_row ) const
+{
+  std::shared_ptr<OutputFormatterFactory> row_format;
+  
+  if( new_row )
+  {
+    row_format.reset( new StaticOutputFormatterFactory<DefaultTextFormat,RedTextColor,DefaultTextBackgroundColor> );
+  }
+  
+  this->addUnitTestStatsSummaryTableRow(
+                           summary_table,
+                           "failed:",
+                           Utility::Variant( number_of_failed_tests ),
+                           new_row,
+                           Details::incrementRightShift(Details::incrementRightShift(s_details_right_shift)),
+                           row_format );
+}
+
+// Add the number of failed tests row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableFailedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_tests,
+                             const bool new_row ) const
+{
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_failed_tests,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableFailedTestsRow );
+}
+
+// Add the number of checks row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTableTotalChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_checks,
+                             const bool new_row ) const
+{
+  this->addUnitTestStatsSummaryTableRow( summary_table,
+                                         "total checks:",
+                                         Utility::Variant( number_of_checks ),
+                                         new_row,
+                                         s_details_right_shift );
+}
+
+// Add the number of checks row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableTotalChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_checks,
+                             const bool new_row ) const
+{
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_checks,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableTotalChecksRow );
+}
+
+// Add the number of passed checks row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTablePassedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_checks,
+                             const bool new_row ) const
+{
+  std::shared_ptr<OutputFormatterFactory> row_format;
+  
+  if( new_row )
+  {
+    row_format.reset( new StaticOutputFormatterFactory<DefaultTextFormat,GreenTextColor,DefaultTextBackgroundColor> );
+  }
+  
+  this->addUnitTestStatsSummaryTableRow(
+                           summary_table,
+                           "passed: ",
+                           Utility::Variant( number_of_passed_checks ),
+                           new_row,
+                           Details::incrementRightShift(s_details_right_shift),
+                           row_format );
+}
+
+// Add the number of passed checks row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTablePassedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_checks,
+                             const bool new_row ) const
+{
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_passed_checks,
+                                       new_row,
+                                       addUnitTestStatsSummaryTablePassedChecksRow );
+}
+
+// Add the number of failed checks row to the unit test stats summary table
+void UnitTestManager::addUnitTestStatsSummaryTableFailedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_checks,
+                             const bool new_row ) const
+{
+  std::shared_ptr<OutputFormatterFactory> row_format;
+  
+  if( new_row )
+  {
+    row_format.reset( new StaticOutputFormatterFactory<DefaultTextFormat,RedTextColor,DefaultTextBackgroundColor> );
+  }
+  
+  this->addUnitTestStatsSummaryTableRow(
+                           summary_table,
+                           "failed: ",
+                           Utility::Variant( number_of_failed_checks ),
+                           new_row,
+                           Details::incrementRightShift(s_details_right_shift),
+                           row_format );
+}
+
+// Add the number of failed checks row to the unit test stats summary table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableFailedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_checks,
+                             const bool new_row ) const
+{
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_failed_checks,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableFailedChecksRow );
+}
+
+// Add the number of unexpected exceptions row to the unit test stats table
+void UnitTestManager::addUnitTestStatsSummaryTableUnexpectedExceptionsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_unexpected_exceptions,
+                             const bool new_row ) const
+{
+  std::shared_ptr<OutputFormatterFactory> row_format;
+  
+  if( new_row )
+  {
+    row_format.reset( new StaticOutputFormatterFactory<ItalicizedTextFormat,DefaultTextColor,DefaultTextBackgroundColor> );
+  }
+  
+  this->addUnitTestStatsSummaryTableRow(
+                           summary_table,
+                           "unexpected exceptions:",
+                           Utility::Variant( number_of_unexpected_exceptions ),
+                           new_row,
+                           s_details_right_shift,
+                           row_format );
+}
+
+// Add the number of unexpected exceptions row to the unit test stats table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableUnexpectedExceptionsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_unexpected_exceptions,
+                             const bool new_row ) const
+{
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       number_of_unexpected_exceptions,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableUnexpectedExceptionsRow );
+}
+
+// Add the total test time row to the unit test stats table
+void UnitTestManager::addUnitTestStatsSummaryTableTotalTestTimeRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const double total_test_time,
+                             const bool new_row ) const
 {
   std::ostringstream oss;
-  this->printOperationTime( oss, total_test_exec_time, false, false );
+  this->printOperationTime( oss, total_test_time, false, false, false );
   
-  this->printUnitTestStatsSummaryTableRow(
-          Utility::Underlined("total test time:"),
-          s_details_right_shift,
-          Utility::Default(oss.str()),
-          start,
-          goto_newline );
+  this->addUnitTestStatsSummaryTableRow( summary_table,
+                                         "total test time (sec):",
+                                         Utility::Variant( oss.str() ),
+                                         new_row,
+                                         s_details_right_shift );
 }
 
-// Print the unit test stats summary table total test time row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableTotalTestTimeRow(
-                                             const double total_test_exec_time,
-                                             const bool,
-                                             const bool start,
-                                             const bool goto_newline )
+// Add the total test time row to the unit test stats table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableTotalTestTimeRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const double total_test_time,
+                             const bool new_row ) const
 {
-  printUnitTestStatsSummaryTableRowImpl(
-                                total_test_exec_time,
-                                true,
-                                start,
-                                goto_newline,
-                                printUnitTestStatsSummaryTableTotalTestTimeRow,
-                                Utility::GlobalMPISession::sum );
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       total_test_time,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableTotalTestTimeRow );
 }
 
-// Print the unit test stats summary table end result row
-void UnitTestManager::printUnitTestStatsSummaryTableEndResultRow(
-                                                      const bool local_success,
-                                                      const bool show_row,
-                                                      const bool start,
-                                                      const bool goto_newline )
+// Add the end result row to the unit test stats table
+void UnitTestManager::addUnitTestStatsSummaryTableEndResultRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const bool local_success,
+                             const bool new_row ) const
 {
-  if( show_row )
+  std::shared_ptr<OutputFormatterFactory> row_format;
+  
+  if( new_row )
   {
-    this->printUnitTestStatsSummaryTableRow(
-          Utility::Underlined("End Result:"),
-          s_details_right_shift,
-          (local_success ? std::move<Utility::OutputFormatter>(Utility::Green("Test Passed")) : std::move<Utility::OutputFormatter>(Utility::Red("Test Failed"))),
-          start,
-          goto_newline );
+    DynamicOutputFormatterFactory::FormattingFunctionArray formatting_functions;
+    formatting_functions.push_back( std::bind<void>( &DynamicOutputFormatter::formatKeyword<DefaultTextFormat,GreenTextColor,DefaultTextBackgroundColor>,
+                                                       std::placeholders::_1,
+                                                       "passed" ) );
+    formatting_functions.push_back( std::bind<void>( &DynamicOutputFormatter::formatKeyword<DefaultTextFormat,RedTextColor,DefaultTextBackgroundColor>,
+                                                       std::placeholders::_1,
+                                                       "failed" ) );
+    
+    row_format.reset( new DynamicOutputFormatterFactory( formatting_functions ) );
   }
+  
+  this->addUnitTestStatsSummaryTableRow(
+     summary_table,
+     "End Result:",
+     (local_success ? Utility::Variant("passed") : Utility::Variant("failed")),
+     new_row,
+     s_details_right_shift,
+     row_format );
 }
 
-// Print the unit test stats summary table end result row
-void DistributedUnitTestManager::printUnitTestStatsSummaryTableEndResultRow(
-                                                     const bool local_success,
-                                                     const bool,
-                                                     const bool start,
-                                                     const bool goto_newline )
+// Add the end result row to the unit test stats table
+void DistributedUnitTestManager::addUnitTestStatsSummaryTableEndResultRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const bool local_success,
+                             const bool new_row ) const
 {
-  if( Utility::GlobalMPISession::size() > 1 )
-  {
-    printUnitTestStatsSummaryTableRowImpl(
-                                   local_success,
-                                   true,
-                                   start,
-                                   goto_newline,
-                                   printUnitTestStatsSummaryTableEndResultRow,
-                                   Utility::GlobalMPISession::isGloballyTrue );
-  }
+  addUnitTestStatsSummaryTableRowImpl( summary_table,
+                                       local_success,
+                                       new_row,
+                                       addUnitTestStatsSummaryTableEndResultRow );
+}
+
+// Print the unit test stats summary table
+void UnitTestManager::printUnitTestStatsSummaryTable(
+                           std::unique_ptr<UnitTestDataTable>& summary_table )
+{
+  if( summary_table )
+    d_data->getReportSink() << "\n" << *summary_table << std::endl;
+}
+
+// Print the unit test stats summary table
+void DistributedUnitTestManager::printUnitTestStatsSummaryTable(
+                            std::unique_ptr<UnitTestDataTable>& summary_table )
+{
+  if( Utility::GlobalMPISession::rank() == 0 )
+    UnitTestManager::printUnitTestStatsSummaryTable( summary_table );
+
+  Utility::GlobalMPISession::barrier();
 }
 
 // Print the program execution time header
 void UnitTestManager::printProgramExecutionTimeHeader(
                                           const double program_execution_time )
 {
-  d_data->getReportSink() << "\nProgram Execution Time: ";
+  d_data->getReportSink() << "Program Execution Time: ";
 
   UnitTestManager::printOperationTime( program_execution_time, false, true );
 }

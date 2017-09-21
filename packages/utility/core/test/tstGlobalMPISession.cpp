@@ -23,6 +23,11 @@
 #include "FRENSIE_config.hpp"
 
 //---------------------------------------------------------------------------//
+// Template Types
+//---------------------------------------------------------------------------//
+typedef boost::mpl::list<bool,int,double> Types;
+
+//---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
 struct InitFixture
@@ -445,6 +450,59 @@ BOOST_AUTO_TEST_CASE( gatherMessages )
     else
     {
       BOOST_CHECK( messages.empty() );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that bools can be gathered on a specific process
+BOOST_AUTO_TEST_CASE_TEMPLATE( gatherData, T, Types )
+{
+  T local_data;
+
+  if( Utility::GlobalMPISession::rank()%2 == 0 )
+    local_data = T(1);
+  else
+    local_data = T(0);
+
+  std::vector<T> data = Utility::GlobalMPISession::gatherData( 0, local_data );
+
+  if( Utility::GlobalMPISession::rank() == 0 )
+  {
+    BOOST_CHECK_EQUAL( data.size(), Utility::GlobalMPISession::size() );
+
+    for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
+    {
+      if( i%2 == 0 )
+        BOOST_CHECK_EQUAL( data[i], T(1) );
+      else
+        BOOST_CHECK_EQUAL( data[i], T(0) );
+    }
+  }
+  else
+  {
+    BOOST_CHECK( data.empty() );
+  }
+
+  if( Utility::GlobalMPISession::size() > 1 )
+  {
+    data = Utility::GlobalMPISession::gatherData( 1, local_data );
+
+    if( Utility::GlobalMPISession::rank() == 1 )
+    {
+      BOOST_CHECK_EQUAL( data.size(), Utility::GlobalMPISession::size() );
+
+      for( int i = 0; i < Utility::GlobalMPISession::size(); ++i )
+      {
+        if( i%2 == 0 )
+          BOOST_CHECK_EQUAL( data[i], T(1) );
+        else
+          BOOST_CHECK_EQUAL( data[i], T(0) );
+      }
+    }
+    else
+    {
+      BOOST_CHECK( data.empty() );
     }
   }
 }

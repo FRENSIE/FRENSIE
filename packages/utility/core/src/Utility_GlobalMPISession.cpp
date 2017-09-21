@@ -355,6 +355,32 @@ public:
   { return *s_world_comm; }
 #endif
 
+  //! Gather values on the desired process
+  template<typename T>
+  static std::vector<T> gatherValues( const int root, const T& local_value )
+  {
+#ifdef HAVE_FRENSIE_MPI
+    if( GlobalMPISessionImpl::getWorldComm().rank() == root )
+    {
+      std::vector<T> gathered_values;
+
+      boost::mpi::gather( GlobalMPISessionImpl::getWorldComm(),
+                          local_value,
+                          gathered_values,
+                          root );
+      return gathered_values;
+    }
+    else
+    {
+      boost::mpi::gather( GlobalMPISessionImpl::getWorldComm(), local_value, root );
+      
+      return std::vector<T>();
+    }
+#else
+    return std::vector<T>( 1, local_value );
+#endif
+  }
+
 private:
 
   // Initialize the world comm
@@ -915,29 +941,54 @@ bool GlobalMPISession::isGloballyFalse( const bool local_boolean )
  * each process at the index that is equal to the process's rank.
  */
 std::vector<std::string> GlobalMPISession::gatherMessages(
-                                                   const int root,
-                                                   const std::string& message )
+                                             const int root,
+                                             const std::string& local_message )
 {
-#ifdef HAVE_FRENSIE_MPI
-  if( GlobalMPISession::rank() == root )
-  {
-    std::vector<std::string> gathered_messages;
+  return GlobalMPISessionImpl::gatherValues( root, local_message );
+}
 
-    boost::mpi::gather( GlobalMPISessionImpl::getWorldComm(),
-                        message,
-                        gathered_messages,
-                        root );
-    return gathered_messages;
-  }
-  else
-  {
-    boost::mpi::gather( GlobalMPISessionImpl::getWorldComm(), message, root );
+// Gather bools on the desired process
+/*! \details If the rank of the process does not equal root, an empty vector
+ * will be returned. Otherwise, the vector will store the bools from each
+ * process at the index that is equal to the process's rank.
+ */
+std::vector<bool> GlobalMPISession::gatherData( const int root,
+                                                const bool local_data )
+{
+  // Note: std::vector<bool> doesn't seem to work with the boost::mpi package.
+  //       We will convert the bools to ints, gather the ints, and then convert
+  //       back to bools.
+  std::vector<int> converted_data = 
+    GlobalMPISessionImpl::gatherValues( root, (int)local_data );
 
-    return std::vector<std::string>();
-  }
-#else
-  return std::vector<std::string>( 1, message );
-#endif // end HAVE_FRENSIE_MPI
+  std::vector<bool> data( converted_data.size() );
+
+  for( size_t i = 0; i < converted_data.size(); ++i )
+    data[i] = (bool)converted_data[i];
+
+  return data;
+}
+
+// Gather ints on the desired process
+/*! \details If the rank of the process does not equal root, an empty vector
+ * will be returned. Otherwise, the vector will store the bools from each
+ * process at the index that is equal to the process's rank.
+ */
+std::vector<int> GlobalMPISession::gatherData( const int root,
+                                               const int local_data )
+{
+  return GlobalMPISessionImpl::gatherValues( root, local_data );
+}
+
+// Gather doubles on the desired process
+/*! \details If the rank of the process does not equal root, an empty vector
+ * will be returned. Otherwise, the vector will store the bools from each
+ * process at the index that is equal to the process's rank.
+ */
+std::vector<double> GlobalMPISession::gatherData( const int root,
+                                                  const double local_data )
+{
+  return GlobalMPISessionImpl::gatherValues( root, local_data );
 }
   
 } // end Utility namespace

@@ -19,6 +19,7 @@
 
 // FRENSIE Includes
 #include "Utility_UnitTest.hpp"
+#include "Utility_UnitTestDataTable.hpp"
 #include "Utility_GlobalMPISession.hpp"
 #include "Utility_ComparisonTraits.hpp"
 #include "Utility_UnitTestHelpers.hpp"
@@ -122,11 +123,6 @@ protected:
   // Constructor
   UnitTestManager();
 
-  //! Flush logs and add to report
-  virtual void flushLogsAndAddToReport( std::ostringstream& log,
-                                        const std::string& log_header,
-                                        const int proc );
-
   //! Print the help message
   virtual void printHelpMessage();
 
@@ -167,7 +163,13 @@ protected:
   //! Print the operation log
   virtual void printOperationLog( const bool local_success,
                                   const std::string& log_header,
-                                  std::ostringstream& log );
+                                  std::ostringstream& log,
+                                  const bool flush_log );
+
+  //! Print the operation log
+  void printOperationLog( const bool local_success,
+                          const std::string& log_header,
+                          const std::string& log_contents );
 
   //! Print failed test summary header
   virtual void printFailedTestSummaryHeader( const std::string& header_end );
@@ -180,92 +182,85 @@ protected:
                            const std::set<std::string>& local_failed_tests_set,
                            const bool goto_newline );
 
-  //! Print the unit test stats summary header
-  virtual void printUnitTestStatsSummaryTableHeader();
+  //! Initialize a unit test stats summary table
+  virtual void initializeUnitTestStatsSummaryTable(
+                     std::unique_ptr<UnitTestDataTable>& summary_table ) const;
 
-  //! Print the unit test stats summary table column names
-  virtual void printUnitTestStatsSummaryTableColumnNames(
-                                                const std::string& column_name,
-                                                const bool show_row,
-                                                const bool start,
-                                                const bool goto_newline );
+  //! Add column names to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTableColumnNames(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int proc_id,
+                             const bool add_format ) const;
 
-  //! Print the unit test stats summary table total tests row
-  virtual void printUnitTestStatsSummaryTableTotalTestsRow(
-                                                     const int number_of_tests,
-                                                     const bool show_row,
-                                                     const bool start,
-                                                     const bool goto_newline );
+  //! Add the number of tests row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTableTotalTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_tests,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table skipped tests row
-  virtual void printUnitTestStatsSummaryTableSkippedTestsRow(
-                                           const int number_of_tests_skipped,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline );
+  //! Add the number of skipped tests row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTableSkippedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_skipped_tests,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table run tests row
-  virtual void printUnitTestStatsSummaryTableRunTestsRow(
-                                               const int number_of_tests_run,
-                                               const bool show_row,
-                                               const bool start,
-                                               const bool goto_newline );
+  //! Add the number of run tests row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTableRunTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_run_tests,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table passed tests row
-  virtual void printUnitTestStatsSummaryTablePassedTestsRow(
-                                            const int number_of_tests_passed,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline );
+  //! Add the number of passed tests row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTablePassedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_tests,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table failed tests row
-  virtual void printUnitTestStatsSummaryTableFailedTestsRow(
-                                            const int number_of_tests_failed,
-                                            const bool show_row,
-                                            const bool start,
-                                            const bool goto_newline );
+  //! Add the number of failed tests row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTableFailedTestsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_tests,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table total checks row
-  virtual void printUnitTestStatsSummaryTableTotalChecksRow(
-                                                  const int number_of_checks,
-                                                  const bool show_row,
-                                                  const bool start,
-                                                  const bool goto_newline );
+  //! Add the number of checks row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTableTotalChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_checks,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table passed checks row
-  virtual void printUnitTestStatsSummaryTablePassedChecksRow(
-                                           const int number_of_passed_checks,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline );
+  //! Add the number of passed checks row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTablePassedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_passed_checks,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table failed checks row
-  virtual void printUnitTestStatsSummaryTableFailedChecksRow(
-                                           const int number_of_failed_checks,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline );
+  //! Add the number of failed checks row to the unit test stats summary table
+  virtual void addUnitTestStatsSummaryTableFailedChecksRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_failed_checks,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table unexpected exceptions row
-  virtual void printUnitTestStatsSummaryTableUnexpectedExceptionsRow(
-                                   const int number_of_unexpected_exceptions,
-                                   const bool show_row,
-                                   const bool start,
-                                   const bool goto_newline );
+  //! Add the number of unexpected exceptions row to the unit test stats table
+  virtual void addUnitTestStatsSummaryTableUnexpectedExceptionsRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const int number_of_unexpected_exceptions,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table total test time row
-  virtual void printUnitTestStatsSummaryTableTotalTestTimeRow(
-                                           const double total_test_exec_time,
-                                           const bool show_row,
-                                           const bool start,
-                                           const bool goto_newline );
+  //! Add the total test time row to the unit test stats table
+  virtual void addUnitTestStatsSummaryTableTotalTestTimeRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const double total_test_time,
+                             const bool new_row ) const;
 
-  //! Print the unit test stats summary table end result row
-  virtual void printUnitTestStatsSummaryTableEndResultRow(
-                                                     const bool local_success,
-                                                     const bool show_row,
-                                                     const bool start,
-                                                     const bool goto_newline );
+  //! Add the end result row to the unit test stats table
+  virtual void addUnitTestStatsSummaryTableEndResultRow(
+                             std::unique_ptr<UnitTestDataTable>& summary_table,
+                             const bool local_success,
+                             const bool new_row ) const;
+
+  //! Print the unit test stats summary table
+  virtual void printUnitTestStatsSummaryTable(
+                           std::unique_ptr<UnitTestDataTable>& summary_table );
 
   //! Print the program execution time header
   virtual void printProgramExecutionTimeHeader(
@@ -277,6 +272,10 @@ protected:
 
   //! Check if the test details should be reported
   bool shouldUnitTestDetailsBeReported( const bool success ) const;
+
+  //! Get the details right shift
+  static constexpr int getDetailsRightShift()
+  { return s_details_right_shift; }
 
 private:
 
@@ -300,10 +299,11 @@ private:
                          const std::string& padding );
 
   //! Print the operation time
-  void printOperationTime( std::ostream& os,
-                           const double time_in_sec,
-                           const bool wrapped,
-                           const bool goto_newline );
+  static void printOperationTime( std::ostream& os,
+                                  const double time_in_sec,
+                                  const bool wrapped,
+                                  const bool goto_newline,
+                                  const bool display_units = true );
 
   // Summarize the initialization results
   void summarizeInitializationResults(
@@ -321,12 +321,15 @@ private:
   void summarizeTestStats( const double program_execution_time,
                            const bool local_success );
 
-  // Print the unit test stats summary table row
-  void printUnitTestStatsSummaryTableRow( const OutputFormatter& row_name,
-                                          const int row_padding,
-                                          const OutputFormatter& cell_data,
-                                          const bool start,
-                                          const bool goto_newline );
+  // Add a unit test stats summary table row
+  void addUnitTestStatsSummaryTableRow(
+              std::unique_ptr<UnitTestDataTable>& summary_table,
+              const std::string& row_name,
+              const Utility::Variant& cell_data,
+              const bool new_row,
+              const int row_padding = 0,
+              const std::shared_ptr<const OutputFormatterFactory>& row_format =
+              std::shared_ptr<const OutputFormatterFactory>() ) const;
 
   // Summarize the results
   int summarizeResults( const bool global_success );
