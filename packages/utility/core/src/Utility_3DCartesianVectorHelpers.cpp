@@ -6,11 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
 
@@ -20,16 +18,16 @@ bool isUnitVector( const double x_component,
                    const double z_component )
 {
   // Make sure that the coordinates are valid
-  remember( typedef Teuchos::ScalarTraits<double> ST );
-  testPrecondition( !ST::isnaninf( x_component ) );
-  testPrecondition( !ST::isnaninf( y_component ) );
-  testPrecondition( !ST::isnaninf( z_component ) );
+  remember( typedef QuantityTraits<double> QT );
+  testPrecondition( !QT::isnaninf( x_component ) );
+  testPrecondition( !QT::isnaninf( y_component ) );
+  testPrecondition( !QT::isnaninf( z_component ) );
 
   double argument =
     vectorMagnitude( x_component, y_component, z_component ) - 1.0;
-  argument = Teuchos::ScalarTraits<double>::magnitude( argument );
+  argument = fabs( argument );
 
-  return argument < Teuchos::ScalarTraits<double>::prec();
+  return argument < 1e-15;
 }
 
 // Normalize the vector and return the magnitude
@@ -38,10 +36,10 @@ double normalizeVectorAndReturnMagnitude( double& x_component,
                                           double& z_component )
 {
   // Make sure that the coordinates are valid
-  remember( typedef Teuchos::ScalarTraits<double> ST );
-  testPrecondition( !ST::isnaninf( x_component ) );
-  testPrecondition( !ST::isnaninf( y_component ) );
-  testPrecondition( !ST::isnaninf( z_component ) );
+  remember( typedef QuantityTraits<double> QT );
+  testPrecondition( !QT::isnaninf( x_component ) );
+  testPrecondition( !QT::isnaninf( y_component ) );
+  testPrecondition( !QT::isnaninf( z_component ) );
 
   double magnitude = vectorMagnitude( x_component, y_component, z_component );
 
@@ -126,7 +124,7 @@ double calculateCosineOfAngleBetweenUnitVectors(
     unit_vector_a[1]*unit_vector_b[1] + unit_vector_a[2]*unit_vector_b[2];
 
   // Check for round-off error
-  if( Teuchos::ScalarTraits<double>::magnitude( angle_cosine ) > 1.0 )
+  if( fabs( angle_cosine ) > 1.0 )
     angle_cosine = copysign( 1.0, angle_cosine );
 
   // Make sure the angle cosine is valid

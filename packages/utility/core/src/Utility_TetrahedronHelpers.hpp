@@ -9,8 +9,8 @@
 #ifndef UTILITY_TETRAHEDRON_HELPERS_HPP
 #define UTILITY_TETRAHEDRON_HELPERS_HPP
 
-// Trilinos Includes
-#include <Teuchos_SerialDenseMatrix.hpp>
+// Std Lib Includes
+#include <vector>
 
 // Moab Includes
 #include <moab/CartVect.hpp>
@@ -110,34 +110,6 @@ inline void calculateBarycentricTransformMatrix(
 				       matrix );
 }
 
-// Calculate tetrahedron barycentric transform matrix
-inline void calculateBarycentricTransformMatrix( const double vertex_a[3],
-						 const double vertex_b[3],
-						 const double vertex_c[3],
-						 const double reference_vertex[3],
-						 double transform_arrays[9] )
-{
-  // Create temporary matrix
-  Teuchos::SerialDenseMatrix<int,double> tmp_matrix( 3, 3 );
-
-  calculateBarycentricTransformMatrix( vertex_a,
-				       vertex_b,
-				       vertex_c,
-				       reference_vertex,
-				       tmp_matrix );
-
-  // Copy the matrix into the array
-  transform_arrays[0] = tmp_matrix( 0, 0 );
-  transform_arrays[1] = tmp_matrix( 0, 1 );
-  transform_arrays[2] = tmp_matrix( 0, 2 );
-  transform_arrays[3] = tmp_matrix( 1, 0 );
-  transform_arrays[4] = tmp_matrix( 1, 1 );
-  transform_arrays[5] = tmp_matrix( 1, 2 );
-  transform_arrays[6] = tmp_matrix( 2, 0 );
-  transform_arrays[7] = tmp_matrix( 2, 1 );
-  transform_arrays[8] = tmp_matrix( 2, 2 );
-}
-
 
 // Calculate the volume of a tetrahedron
 inline void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
@@ -160,7 +132,7 @@ inline bool isPointInTet( const TestPoint& point,
 			  double barycentric_array[9] )
 {
   // Create temporary matrix
-  Teuchos::SerialDenseMatrix<int,double> tmp_matrix( 3, 3 );
+  moab::Matrix3 tmp_matrix;
   tmp_matrix( 0, 0 ) = barycentric_array[0];
   tmp_matrix( 0, 1 ) = barycentric_array[1];
   tmp_matrix( 0, 2 ) = barycentric_array[2];

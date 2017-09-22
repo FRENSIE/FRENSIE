@@ -9,11 +9,11 @@
 #ifndef UTILITY_GAUSS_LEGENDRE_QUADRATURE_SET_HPP
 #define UTILITY_GAUSS_LEGENDRE_QUADRATURE_SET_HPP
 
+// Std Lib Includes
+#include <vector>
+
 // Boost Includes
 #include <boost/multiprecision/cpp_dec_float.hpp>
-
-// Trilinos Includes
-#include <Teuchos_TwoDArray.hpp>
 
 namespace Utility{
 
@@ -25,7 +25,7 @@ void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
 
 //! Return the coefficients of the legendre expansion of x^n
 void getLegendrePowerExpansionCoefficients(
-                      Teuchos::TwoDArray<long_float>& coefficients,
+                      std::vector<std::vector<long_float> >& coefficients,
                       const int power = 0 );
 } // end Utility namespace
 

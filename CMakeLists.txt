@@ -185,7 +185,7 @@ ENABLE_MOAB_SUPPORT()
 # TRILINOS_PREFIX variable. If the Trilinos source directory is not located
 # in the TRILINOS_PREFIX directory, the TRILINOS_SOURCE variable can also be
 # set.
-ENABLE_TRILINOS_SUPPORT()
+# ENABLE_TRILINOS_SUPPORT()
 
 ##---------------------------------------------------------------------------##
 ## Configure Boost Support

@@ -22,9 +22,9 @@ namespace Utility{
 const double StructuredHexMesh::s_tol = 1e-12;
 
 // Constructor
-StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_planes,
-                                      const Teuchos::Array<double>& y_planes,
-                                      const Teuchos::Array<double>& z_planes)
+StructuredHexMesh::StructuredHexMesh( const std::vector<double>& x_planes,
+                                      const std::vector<double>& y_planes,
+                                      const std::vector<double>& z_planes)
 {
 
   // Test for at least 2 planes
@@ -134,7 +134,7 @@ StructuredHexMesh::HexIndex StructuredHexMesh::whichHexIsPointIn( const double p
 }
 
 // Returns an array of pairs of hex IDs and partial track lengths along a given line segment
-Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh::computeTrackLengths( 
+std::vector<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh::computeTrackLengths( 
                                             const double start_point[3],
                                             const double end_point[3] )const
 {
@@ -155,7 +155,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
   Utility::normalizeVector( direction );
   
   // Initialize contribution array
-  Teuchos::Array<std::pair<HexIndex,double>> contribution_array;
+  std::vector<std::pair<HexIndex,double>> contribution_array;
 
   double current_point[3] { start_point[X_DIMENSION], 
                             start_point[Y_DIMENSION], 
@@ -293,7 +293,7 @@ std::tuple<bool, StructuredHexMesh::Dimension, double>
   bool ray_intersect_mesh = false;
   Dimension intersection_dimension = X_DIMENSION;
   double distance = 0;
-  Teuchos::Array<std::pair<Dimension, double>> bounding_plane_distance_set = 
+  std::vector<std::pair<Dimension, double>> bounding_plane_distance_set = 
     this->findBoundingInteractionPlaneDistances( point, direction);
   
   // Check whether there are any possible bounding planes to intersect with
@@ -326,15 +326,15 @@ std::tuple<bool, StructuredHexMesh::Dimension, double>
 }
 
 // Trace particle path through mesh until it dies or leaves mesh
-Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> 
+std::vector<std::pair<StructuredHexMesh::HexIndex,double>> 
   StructuredHexMesh::traceThroughMesh( double point[3],
                                        const double direction[3],
                                        const double track_length,
                                        PlaneIndex hex_plane_indices[3] )const
 {
-  Teuchos::Array<std::pair<Dimension, PlaneIndex>> interaction_planes =
+  std::vector<std::pair<Dimension, PlaneIndex>> interaction_planes =
     this->findInteractionPlanes( point, direction, hex_plane_indices);
-  Teuchos::Array<std::pair<HexIndex, double>> contribution_array;
+  std::vector<std::pair<HexIndex, double>> contribution_array;
   double iteration_distance = 0;
   unsigned incrementer[3];
   this->setIncrementer( incrementer, direction );
@@ -394,14 +394,14 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>>
 }
 
 // Find the interaction planes that a particle will interact with
-Teuchos::Array<std::pair<StructuredHexMesh::Dimension, StructuredHexMesh::PlaneIndex>> 
+std::vector<std::pair<StructuredHexMesh::Dimension, StructuredHexMesh::PlaneIndex>> 
   StructuredHexMesh::findInteractionPlanes( const double point[3],
                                             const double direction[3],
                                             const PlaneIndex hex_plane_indices[3] ) const
 {
   testPrecondition( this->isPointInMesh( point ) );
   
-  Teuchos::Array<std::pair<Dimension, PlaneIndex>> interaction_planes;
+  std::vector<std::pair<Dimension, PlaneIndex>> interaction_planes;
   for( unsigned i = X_DIMENSION; i <= Z_DIMENSION; ++i)
   {
     if( direction[i] < 0 )
@@ -420,7 +420,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::Dimension, StructuredHexMesh::PlaneI
 std::pair<StructuredHexMesh::Dimension, double> 
   StructuredHexMesh::findIntersectionDistance( const double point[3],
                                                const double direction[3],
-                                               const Teuchos::Array<std::pair<Dimension, PlaneIndex>>& interaction_planes) const
+                                               const std::vector<std::pair<Dimension, PlaneIndex>>& interaction_planes) const
 {
   testPrecondition( this->isPointInMesh(point) );
   testPrecondition( Utility::vectorMagnitude( direction[X_DIMENSION],
@@ -430,7 +430,7 @@ std::pair<StructuredHexMesh::Dimension, double>
                                               direction[Y_DIMENSION],
                                               direction[Z_DIMENSION] ) >= 1 - s_tol);
 
-  Teuchos::Array<std::pair<Dimension, double>> distance_array;
+  std::vector<std::pair<Dimension, double>> distance_array;
   for(unsigned i = 0; i < interaction_planes.size(); ++i)
   {
     if(interaction_planes[i].first == X_DIMENSION)
@@ -470,7 +470,7 @@ double StructuredHexMesh::findDistanceToInteractionPlane( const double interacti
 
 // Find the shortest distance to the respective interaction planes along a particle path
 std::pair<StructuredHexMesh::Dimension, double> 
-  StructuredHexMesh::findShortestDistance( const Teuchos::Array<std::pair<Dimension, double>>& distance_array ) const
+  StructuredHexMesh::findShortestDistance( const std::vector<std::pair<Dimension, double>>& distance_array ) const
 {
   unsigned j = 0;
   double shortest_distance = distance_array[0].second;
@@ -587,7 +587,7 @@ void StructuredHexMesh::setHexPlaneIndices( const Dimension intersection_dimensi
 
 // Set individual hex plane indices for particle.
 StructuredHexMesh::PlaneIndex StructuredHexMesh::setHexPlaneIndex( const double position_component, 
-                                        const Teuchos::Array<double>& plane_set,
+                                        const std::vector<double>& plane_set,
                                         const Dimension plane_dimension  ) const 
 {
   PlaneIndex hex_plane_index;
@@ -606,12 +606,12 @@ StructuredHexMesh::PlaneIndex StructuredHexMesh::setHexPlaneIndex( const double 
 }
 
 // Returns a set of distances to up to 3 planes that bound the mesh which the particle may interact with
-Teuchos::Array<std::pair<StructuredHexMesh::Dimension, double>> 
+std::vector<std::pair<StructuredHexMesh::Dimension, double>> 
   StructuredHexMesh::findBoundingInteractionPlaneDistances( const double point[3],
                                                             const double direction[3] ) const
 {
 
-  Teuchos::Array<std::pair<Dimension, double>> boundary_planes;
+  std::vector<std::pair<Dimension, double>> boundary_planes;
   
   this->checkPlaneSet( d_x_planes,
                        point[X_DIMENSION], 
@@ -633,10 +633,10 @@ Teuchos::Array<std::pair<StructuredHexMesh::Dimension, double>>
 }
 
 // Checks an individual set of planes for interaction plane in that dimension
-void StructuredHexMesh::checkPlaneSet( const Teuchos::Array<double>& plane_set,
+void StructuredHexMesh::checkPlaneSet( const std::vector<double>& plane_set,
                                        const double position_component,
                                        const double direction_component,
-                                       Teuchos::Array<std::pair<Dimension, double>>& boundary_planes,
+                                       std::vector<std::pair<Dimension, double>>& boundary_planes,
                                        const Dimension plane_dimension ) const
 {
   if( position_component < plane_set.front() && direction_component > 0 )
@@ -692,7 +692,7 @@ bool StructuredHexMesh::isPointOnMeshSurface( const double point[3],
 
 // Function for checking each individual plane to see if it is within bounds
 bool StructuredHexMesh::checkWithinBoundingPlane( const double position_component,
-                                                  const Teuchos::Array<double>& plane_set )const
+                                                  const std::vector<double>& plane_set )const
 {
   if( plane_set.front() <= position_component && position_component <= plane_set.back() )
   {
@@ -716,7 +716,7 @@ void StructuredHexMesh::pushPoint( double point[3],
 
 // Return whether or not a particle has exited the mesh
 bool StructuredHexMesh::didParticleLeaveMesh( Dimension intersection_dimension,
-                                              Teuchos::Array<std::pair<Dimension, StructuredHexMesh::PlaneIndex>> interaction_planes ) const
+                                              std::vector<std::pair<Dimension, StructuredHexMesh::PlaneIndex>> interaction_planes ) const
 {
   bool exitMesh = false;
   for(unsigned i = 0; i < interaction_planes.size(); ++i)

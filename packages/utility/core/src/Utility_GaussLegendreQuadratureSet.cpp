@@ -12,8 +12,8 @@
 
 namespace Utility{
 void getLegendrePowerExpansionCoefficients(
-                                  Teuchos::TwoDArray<long_float>& coefficients,
-                                  const int power )
+                           std::vector<std::vector<long_float> >& coefficients,
+                           const int power )
 {
   coefficients[0][0] = long_float(1);
 

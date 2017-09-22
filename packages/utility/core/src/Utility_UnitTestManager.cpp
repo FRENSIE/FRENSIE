@@ -546,7 +546,7 @@ UnitTestManager::Data::Data()
     d_command_line_arguments(),
     d_initializer( NULL ),
     d_report_level( Auto ),
-    d_report_sink( &std::cout, UnitTestManager::Data::CustomReportSinkDeleter( false ) ),
+    d_report_sink(),
     d_report_sink_buffer( NULL ),
     d_stdout_buffer( NULL ),
     d_stderr_buffer( NULL ),
@@ -597,7 +597,7 @@ UnitTestManager::Data::Data()
 UnitTestManager::Data::~Data()
 {
   // Restore the sink buffer if it was extracted
-  if( d_report_sink_buffer )
+  if( d_report_sink_buffer && d_report_sink )
     d_report_sink->rdbuf( d_report_sink_buffer );
 }
 
@@ -668,41 +668,42 @@ void UnitTestManager::Data::parseCommandLineOptions( int argc, char** argv )
   d_report_level =
     Utility::fromString<ReportLevel>( d_command_line_arguments["report_level"].as<std::string>() );
 
-  // Extract the report sink name and create the sink
-  std::string report_sink_name =
-    d_command_line_arguments["report_sink"].as<std::string>();
-
-  boost::algorithm::to_lower(report_sink_name);
-
-  if( report_sink_name == "stdout" )
+  // Extract the report sink name and create the sink - only the root process
+  // will interact with the report sink
+  if( Utility::GlobalMPISession::rank() == 0 )
   {
-    d_report_sink.reset( &std::cout );
-    d_report_sink.get_deleter() = CustomReportSinkDeleter( false );
-  }
-  else if( report_sink_name == "stderr" )
-  {
-    d_report_sink.reset( &std::cerr );
-    d_report_sink.get_deleter() = CustomReportSinkDeleter( false );
-  }
-  else
-  {
-    std::string report_sink_file_name =
+    std::string report_sink_name =
       d_command_line_arguments["report_sink"].as<std::string>();
+
+    boost::algorithm::to_lower(report_sink_name);
     
-    d_report_sink.reset( new std::ofstream( report_sink_file_name ) );
-    d_report_sink.get_deleter() = CustomReportSinkDeleter( true );
-  }
+    if( report_sink_name == "stdout" )
+    {
+      d_report_sink.reset( &std::cout );
+      d_report_sink.get_deleter() = CustomReportSinkDeleter( false );
+    }
+    else if( report_sink_name == "stderr" )
+    {
+      d_report_sink.reset( &std::cerr );
+      d_report_sink.get_deleter() = CustomReportSinkDeleter( false );
+    }
+    else
+    {
+      std::string report_sink_file_name =
+        d_command_line_arguments["report_sink"].as<std::string>();
+    
+      d_report_sink.reset( new std::ofstream( report_sink_file_name ) );
+      d_report_sink.get_deleter() = CustomReportSinkDeleter( true );
+    }
+    
+    // Suppress all output
+    if( d_report_level == Nothing )
+    {
+      if( d_report_sink->rdbuf() )
+        d_report_sink_buffer = d_report_sink->rdbuf();
 
-  // Enable automatic flushing of the report sink
-  (*d_report_sink) << std::unitbuf;
-  
-  // Suppress all output
-  if( d_report_level == Nothing )
-  {
-    if( d_report_sink->rdbuf() )
-      d_report_sink_buffer = d_report_sink->rdbuf();
-
-    d_report_sink->rdbuf( NULL );
+      d_report_sink->rdbuf( NULL );
+    }
   }
 
   // Extract the filters
@@ -764,7 +765,7 @@ void UnitTestManager::Data::printHelpMessage()
   
   cmdline_options.add( d_command_line_options );
   cmdline_options.add( d_custom_command_line_options );
-  
+
   this->getReportSink() << cmdline_options << std::endl;
 }
 
@@ -1071,14 +1072,13 @@ void UnitTestManager::addUnitTest( UnitTest& test )
 }
 
 // Parse command-line options and run registered unit tests
-/*! \details This is all that needs be called from the main function (return
- * the value that is returned from this method).
+/*! \details Call this from the main function when the mpi session needs
+ * to be initialized before and persist after running the unit tests.
  */
-int UnitTestManager::runUnitTests( int& argc, char**& argv )
+int UnitTestManager::runUnitTests( int argc,
+                                   char** argv,
+                                   const GlobalMPISession& mpi_session )
 {
-  Utility::GlobalMPISession mpi_session(
-                  argc, argv, Utility::GlobalMPISession::SerializedThreading );
-
   // Set up the logs - we will use an ostringstream as the log sink so that
   // we can intercept log entries and format them before passing them to
   // the actual test sink
@@ -1109,8 +1109,7 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
 
   init_timer->stop();
 
-  if( mpi_session.rank() == 0 )
-    d_data->restoreStdOutput();
+  d_data->restoreStdOutput();
 
   // Make sure that every node initialized successfully
   bool global_success = mpi_session.isGloballyTrue( local_success );
@@ -1118,7 +1117,8 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
   // Check if the help message was requested
   if( d_data->helpMessageRequested() )
   {
-    this->printHelpMessage();
+    if( mpi_session.rank() == 0 )
+      this->printHelpMessage();
 
     return 0;
   }
@@ -1127,14 +1127,17 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
            d_data->testListRequested() ||
            d_data->dataListRequested() )
   {
-    if( d_data->groupListRequested() )
-      d_data->printGroupList();
-
-    if( d_data->testListRequested() )
-      d_data->printTestList();
-
-    if( d_data->dataListRequested() )
-      d_data->printDataList();
+    if( mpi_session.rank() == 0 )
+    {
+      if( d_data->groupListRequested() )
+        d_data->printGroupList();
+      
+      if( d_data->testListRequested() )
+        d_data->printTestList();
+      
+      if( d_data->dataListRequested() )
+        d_data->printDataList();
+    }
     
     return 0;
   }
@@ -1163,6 +1166,18 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
 
   // Summarize the test results
   return this->summarizeResults( global_success );
+}
+
+// Parse command-line options and run registered unit tests
+/*! \details This is all that needs be called from the main function (return
+ * the value that is returned from this method).
+ */
+int UnitTestManager::runUnitTests( int& argc, char**& argv )
+{
+  Utility::GlobalMPISession mpi_session(
+                  argc, argv, Utility::GlobalMPISession::SerializedThreading );
+
+  this->runUnitTests( argc, argv, mpi_session );
 }
 
 // Print the help message

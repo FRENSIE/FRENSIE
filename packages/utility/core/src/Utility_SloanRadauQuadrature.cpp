@@ -14,6 +14,20 @@
 
 namespace Utility{
 
+// Shape a two-d array
+void SloanRadauQuadrature::shapeTwoDArray(
+                            std::vector<std::vector<long_float> >& two_d_array,
+                            const size_t num_rows,
+                            const size_t num_cols,
+                            const long_float fill_value )
+{
+  two_d_array.clear();
+  two_d_array.resize( num_rows );
+
+  for( size_t i = 0; i < num_rows; ++i )
+    two_d_array[i].resize( num_cols, fill_value );
+}
+
 // Constructor
 SloanRadauQuadrature::SloanRadauQuadrature(
             const std::vector<long_float>& legendre_expansion_moments )
@@ -50,14 +64,17 @@ std::cout << std::endl << "number_of_coefficients = " << number_of_coefficients 
 std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
 */
   // Initialize arrays for data needed to calculate the orthogonal polynomials
-  Teuchos::TwoDArray<long_float> orthogonal_coefficients(
-                                    number_of_coefficients,
-                                    number_of_coefficients,
-                                    long_float(0) );
+  std::vector<std::vector<long_float> > orthogonal_coefficients;
+  this->shapeTwoDArray( orthogonal_coefficients,
+                        number_of_coefficients,
+                        number_of_coefficients,
+                        long_float(0) );
 
-  Teuchos::TwoDArray<long_float> roots( number_of_coefficients+1,
-                                        number_of_roots+1,
-                                        long_float(0) );
+  std::vector<std::vector<long_float> > roots;
+  this->shapeTwoDArray( roots,
+                        number_of_coefficients+1,
+                        number_of_roots+1,
+                        long_float(0) );
 
   std::vector<long_float> normalization_ratios( number_of_coefficients ),
                          normalization_factors_N( number_of_coefficients ),
@@ -330,8 +347,10 @@ void SloanRadauQuadrature::getLongRadauMoments(
   testPrecondition( d_legendre_expansion_moments[0] == 1.0 );
 */
   // Get the coefficients of Guass moments
-  Teuchos::TwoDArray<long_float> coefficients( number_of_moments+1,
-                                               number_of_moments+1 );
+  std::vector<std::vector<long_float> > coefficients;
+  this->shapeTwoDArray( coefficients,
+                        number_of_moments+1,
+                        number_of_moments+1 );
 
   Utility::getLegendrePowerExpansionCoefficients( coefficients,
                                                   number_of_moments );
@@ -360,7 +379,7 @@ void SloanRadauQuadrature::getLongRadauMoments(
  */
 void SloanRadauQuadrature::evaluateOrthogonalNormalizationRatio(
         std::vector<long_float>& normalization_ratios,
-        const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        const std::vector<std::vector<long_float> >& orthogonal_coefficients,
         const std::vector<long_float>& normalization_factors_N,
         const std::vector<long_float>& radau_moments,
         const int i ) const
@@ -369,17 +388,11 @@ void SloanRadauQuadrature::evaluateOrthogonalNormalizationRatio(
   testPrecondition( i > 0 );
   testPrecondition( 2*i - 1 <= radau_moments.size() );
 
-  // There is a bug in the Teuchos::TwoDArray that prevents us from using
-  // the [] operator. We must remove the const from the input reference
-  // to use the [] operator (no data will be modified).
-  Teuchos::TwoDArray<long_float>& orthogonal_coefficients_copy =
-    const_cast<Teuchos::TwoDArray<long_float>&>( orthogonal_coefficients );
-
   long_float normalization_factor_L = long_float(0);
 
   for ( int k = 0; k <= i-1; k++ )
   {
-    normalization_factor_L += orthogonal_coefficients_copy[i-1][k]*
+    normalization_factor_L += orthogonal_coefficients[i-1][k]*
                               radau_moments[k+i];
   }
   normalization_ratios[i] = normalization_factor_L.convert_to<long_float>()
@@ -417,10 +430,10 @@ long_float SloanRadauQuadrature::evaluateMeanCoefficient(
  *! since all coefficients were k > i are zero.
  */
 void SloanRadauQuadrature::evaluateOrthogonalCoefficients(
-        Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
-        const std::vector<long_float>& variances,
-        const std::vector<long_float>& mean_coefficients,
-        const int i) const
+                std::vector<std::vector<long_float> >& orthogonal_coefficients,
+                const std::vector<long_float>& variances,
+                const std::vector<long_float>& mean_coefficients,
+                const int i) const
 {
   // Make sure i is valid
   testPrecondition( i >= 0 );
@@ -465,24 +478,18 @@ void SloanRadauQuadrature::evaluateOrthogonalCoefficients(
  */
 void SloanRadauQuadrature::evaluateOrthogonalNormalizationFactor(
         std::vector<long_float>& normalization_factors_N,
-        const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        const std::vector<std::vector<long_float> >& orthogonal_coefficients,
         const std::vector<long_float>& radau_moments,
         const int i ) const
 {
   // Make sure i is valid
   testPrecondition( 2*i < radau_moments.size() );
 
-  // There is a bug in the Teuchos::TwoDArray that prevents us from using
-  // the [] operator. We must remove the const from the input reference
-  // to use the [] operator (no data will be modified).
-  Teuchos::TwoDArray<long_float>& orthogonal_coefficients_copy =
-    const_cast<Teuchos::TwoDArray<long_float>&>( orthogonal_coefficients );
-
   long_float normalization_factor_N = long_float(0);
 
   for ( int k = 0; k <= i; k++ )
   {
-    normalization_factor_N += orthogonal_coefficients_copy[i][k]*
+    normalization_factor_N += orthogonal_coefficients[i][k]*
                               radau_moments[k+i];
   }
 
@@ -554,7 +561,7 @@ long_float SloanRadauQuadrature::evaluateOrthogonalPolynomial(
  *! Returns true if usable root has been found, else returns false.
  */
 bool SloanRadauQuadrature::evaluateOrthogonalRoots(
-        Teuchos::TwoDArray<long_float>& roots,
+        std::vector<std::vector<long_float> >& roots,
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
         const int i ) const

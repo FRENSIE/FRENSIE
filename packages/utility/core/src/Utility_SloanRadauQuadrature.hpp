@@ -12,8 +12,8 @@
 // Boost Includes
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-// Trilinos Includes
-#include <Teuchos_TwoDArray.hpp>
+// Std Lib Includes
+#include <vector>
 
 namespace Utility{
 
@@ -60,7 +60,7 @@ public:
   // Evaulate the normalization ratio for the orthogonal polynomials, Q and x*Q
   void evaluateOrthogonalNormalizationRatio(
         std::vector<long_float>& normalization_ratios,
-        const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        const std::vector<std::vector<long_float> >& orthogonal_coefficients,
         const std::vector<long_float>& normalization_factors_N,
         const std::vector<long_float>& radau_moments,
         const int i ) const;
@@ -72,7 +72,7 @@ public:
 
   // Evaulate the ith row of coefficients of the orthogonal polynomial Q
   void evaluateOrthogonalCoefficients(
-        Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        std::vector<std::vector<long_float> >& orthogonal_coefficients,
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
         const int i ) const;
@@ -80,7 +80,7 @@ public:
   // Evaulate the normalization factors, N_i for the orthogonal polynomial, Q
   void evaluateOrthogonalNormalizationFactor(
         std::vector<long_float>& normalization_factors_N,
-        const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        const std::vector<std::vector<long_float> >& orthogonal_coefficients,
         const std::vector<long_float>& radau_moments,
         const int i ) const;
 
@@ -98,7 +98,7 @@ public:
 
   // Evaulate the roots of the nth orthogonal polynomial using the roots of the (n-1)th
   bool evaluateOrthogonalRoots(
-        Teuchos::TwoDArray<long_float>& roots,
+        std::vector<std::vector<long_float> >& roots,
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
         const int i ) const;
@@ -113,8 +113,14 @@ public:
 
 private:
 
-// Moments of the Legendre expansion of weighting function f(x)
-std::vector<long_float> d_legendre_expansion_moments;
+  // Shape a two-d array
+  static void shapeTwoDArray( std::vector<std::vector<long_float> >& two_d_array,
+                              const size_t num_rows,
+                              const size_t num_cols,
+                              const long_float fill_value = 0.0 );
+
+  // Moments of the Legendre expansion of weighting function f(x)
+  std::vector<long_float> d_legendre_expansion_moments;
 
 };
 

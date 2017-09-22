@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <cmath>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
 #include "Utility_SpatialCoordinateSystemTraits.hpp"
@@ -146,7 +143,7 @@ inline void SphericalSpatialCoordinateConversionPolicy::convertFromCartesianPosi
     mu_spatial_coord = 0.0;
 
   // Check for round-off error
-  if( Teuchos::ScalarTraits<double>::magnitude( mu_spatial_coord ) > 1.0 )
+  if( fabs( mu_spatial_coord ) > 1.0 )
     mu_spatial_coord = copysign( 1.0, mu_spatial_coord );
 
   // Make sure that the radius is valid

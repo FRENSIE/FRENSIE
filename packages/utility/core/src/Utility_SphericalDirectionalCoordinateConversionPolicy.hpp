@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <cmath>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
@@ -139,7 +136,7 @@ inline void SphericalDirectionalCoordinateConversionPolicy::convertFromCartesian
   mu_directional_coord = z_direction;
 
   // Check for round-off error
-  if( Teuchos::ScalarTraits<double>::magnitude( mu_directional_coord ) > 1.0 )
+  if( fabs( mu_directional_coord ) > 1.0 )
     mu_directional_coord = copysign( 1.0, mu_directional_coord );
 
   // The radial component should always be 1.0 (set this to avoid rounding

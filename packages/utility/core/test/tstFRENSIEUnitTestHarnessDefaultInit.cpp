@@ -13,6 +13,7 @@
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarness.hpp"
+#include "Utility_GlobalMPISession.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_List.hpp"
 #include "Utility_Deque.hpp"
@@ -20,6 +21,7 @@
 #include "Utility_Vector.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_Map.hpp"
+#include "Utility_StaticOutputFormatter.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -1326,7 +1328,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, SegFault_fail )
   int* invalid_pointer = NULL;
 
   FRENSIE_CHECKPOINT();
-
+  
   // This should cause a seg fault, which will then be handled by our
   // custom signal handler
   *invalid_pointer = 1;
@@ -1471,16 +1473,109 @@ void SignalHandler( int signal )
 
 // A custom main function for running the mock unit tests
 int main( int argc, char** argv )                  
-{                                                  
+{
+  Utility::GlobalMPISession mpi_session;
+  
   signal( SIGSEGV, &SignalHandler );
   signal( SIGABRT, &SignalHandler );
   
   Utility::UnitTestManager& unit_test_manager =
     Utility::UnitTestManager::getInstance();
 
-  int return_value = unit_test_manager.runUnitTests( argc, argv );
+  int local_return_value =
+    unit_test_manager.runUnitTests( argc, argv, mpi_session );
 
-  return return_value;
+  int return_value = mpi_session.sum( local_return_value );    
+
+  int number_of_tests =
+    mpi_session.sum( unit_test_manager.getNumberOfTests() );
+  int number_of_run_tests =
+    mpi_session.sum( unit_test_manager.getNumberOfRunTests() );
+  int number_of_passed_tests =
+    mpi_session.sum( unit_test_manager.getNumberOfPassedTests() );
+  
+  int number_of_checks =
+    mpi_session.sum( unit_test_manager.getNumberOfChecks() );
+  int number_of_passed_checks =
+    mpi_session.sum( unit_test_manager.getNumberOfPassedChecks() );
+  
+  int number_of_unexpected_exceptions =
+    mpi_session.sum( unit_test_manager.getNumberOfUnexpectedExceptions() );
+
+  const bool report_details = (mpi_session.rank() == 0 ? true : false);
+
+  if( report_details )
+  {
+    std::cout << "\nIgnore previous results - failures are expected..."
+              << std::endl;
+  }
+
+  bool expected_return_value =
+    Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
+                                   return_value, "return value",
+                                   mpi_session.size(), "expected return value",
+                                   std::cout, 0, report_details );
+  bool expected_number_of_tests =
+    Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
+                             number_of_tests, "number of tests",
+                             83*mpi_session.size(), "expected number of tests",
+                             std::cout, 0, report_details );
+
+  bool expected_number_of_run_tests =
+    Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
+                         number_of_run_tests, "number of run tests",
+                         83*mpi_session.size(), "expected number of run tests",
+                         std::cout, 0, report_details );
+
+  bool expected_number_of_passed_tests =
+    Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
+                      number_of_passed_tests, "number of passed tests",
+                      53*mpi_session.size(), "expected number of passed tests",
+                      std::cout, 0, report_details );
+
+  bool expected_number_of_checks =
+    Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
+                           number_of_checks, "number of checks",
+                           769*mpi_session.size(), "expected number of checks",
+                           std::cout, 0, report_details );
+
+  bool expected_number_of_passed_checks =
+    Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
+                    number_of_passed_checks, "number of passed checks",
+                    530*mpi_session.size(), "expected number of passed checks",
+                    std::cout, 0, report_details );
+
+  bool expected_number_of_unexpected_exceptions =
+    Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
+            number_of_unexpected_exceptions, "number of unexpected exceptions",
+            2*mpi_session.size(), "expected number of unexpected exceptions",
+            std::cout, 0, report_details );
+
+  if( report_details )
+    std::cout << "\nActual End Result: ";
+
+  mpi_session.barrier();
+
+  if( expected_return_value &&
+      expected_number_of_tests &&
+      expected_number_of_run_tests &&
+      expected_number_of_passed_tests &&
+      expected_number_of_checks &&
+      expected_number_of_passed_checks &&
+      expected_number_of_unexpected_exceptions )
+  {
+    if( report_details )
+      std::cout << Utility::Green("TEST PASSED") << std::endl;
+
+    return 0;
+  }
+  else
+  {
+    if( report_details )
+      std::cout << Utility::Red("TEST FAILED") << std::endl;
+
+    return 1;
+  }
 }
 
 //---------------------------------------------------------------------------//

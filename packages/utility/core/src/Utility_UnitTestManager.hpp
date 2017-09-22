@@ -100,6 +100,9 @@ public:
   //! Parse command-line options and run registered unit tests
   int runUnitTests( int& argc, char**& argv );
 
+  //! Parse command-line options and run registered unit tests
+  int runUnitTests( int argc, char** argv, const GlobalMPISession& mpi_session );
+
   //! Return the number of tests
   int getNumberOfTests() const;
 
