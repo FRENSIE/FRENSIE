@@ -377,9 +377,6 @@ public:
   //! Get the data filter
   const std::regex& getDataFilter() const;
 
-  //! Get the number of benchmark samples
-  size_t getNumberOfBenchmarkSamples() const;
-
   //! Return the run test counter
   int& getRunTestCounter();
 
@@ -503,9 +500,6 @@ private:
   // The data filter
   std::regex d_data_filter;
 
-  // The number of benchmark samples
-  int d_number_of_benchmark_samples;
-
   // The run test counter
   int d_run_test_counter;
 
@@ -553,7 +547,6 @@ UnitTestManager::Data::Data()
     d_group_filter(),
     d_test_filter(),
     d_data_filter(),
-    d_number_of_benchmark_samples( 1 ),
     d_run_test_counter( 0 ),
     d_passed_test_counter( 0 ),
     d_checks_counter( 0 ),
@@ -564,13 +557,10 @@ UnitTestManager::Data::Data()
   d_command_line_options.add_options()
     ("help,h", "produce help message")
     ("show_groups,g",
-     boost::program_options::value<bool>()->default_value( false ),
      "show the group names and exit")
     ("show_tests,t",
-     boost::program_options::value<bool>()->default_value( false ),
      "show the test names and exit")
     ("show_data,d",
-     boost::program_options::value<bool>()->default_value( false ),
      "show the test data tables and exit")
     ("report_level,r",
      boost::program_options::value<std::string>()->default_value( Utility::toString( d_report_level ) ),
@@ -586,11 +576,7 @@ UnitTestManager::Data::Data()
      "only test names that match the regex will be executed")
     ("data_filter",
      boost::program_options::value<std::string>()->default_value( ".*" ),
-     "only data table row names that match the regex will be executed")
-    ("benchmark_samples,b",
-     boost::program_options::value<size_t>()->default_value( d_number_of_benchmark_samples ),
-     "set the number of times to run each benchmark (the reported time will "
-     "be the average of all samples)");
+     "only data table row names that match the regex will be executed");
 }
 
 // Destructor
@@ -710,10 +696,6 @@ void UnitTestManager::Data::parseCommandLineOptions( int argc, char** argv )
   d_group_filter = d_command_line_arguments["group_filter"].as<std::string>();
   d_test_filter = d_command_line_arguments["test_filter"].as<std::string>();
   d_data_filter = d_command_line_arguments["data_filter"].as<std::string>();
-
-  // Extract the number of benchmark samples
-  d_number_of_benchmark_samples =
-    d_command_line_arguments["benchmark_samples"].as<size_t>();
 }
 
 // Redirect std::cout and std::cerr to the string stream
@@ -773,12 +755,7 @@ void UnitTestManager::Data::printHelpMessage()
 bool UnitTestManager::Data::groupListRequested() const
 {
   if( d_command_line_arguments.count( "show_groups" ) )
-  {
-    if( d_command_line_arguments["show_groups"].as<bool>() )
-      return true;
-    else
-      return false;
-  }
+    return true;
   else
     return false;
 }
@@ -814,12 +791,7 @@ void UnitTestManager::Data::printGroupList()
 bool UnitTestManager::Data::testListRequested() const
 {
   if( d_command_line_arguments.count( "show_tests" ) )
-  {
-    if( d_command_line_arguments["show_tests"].as<bool>() )
-      return true;
-    else
-      return false;
-  }
+    return true;
   else
     return false;
 }
@@ -856,13 +828,8 @@ void UnitTestManager::Data::printTestList()
 // Check if a data list was requested
 bool UnitTestManager::Data::dataListRequested() const
 {
-    if( d_command_line_arguments.count( "show_data" ) )
-  {
-    if( d_command_line_arguments["show_data"].as<bool>() )
-      return true;
-    else
-      return false;
-  }
+  if( d_command_line_arguments.count( "show_data" ) )
+    return true;
   else
     return false;
 }
@@ -930,12 +897,6 @@ const std::regex& UnitTestManager::Data::getTestFilter() const
 const std::regex& UnitTestManager::Data::getDataFilter() const
 {
   return d_data_filter;
-}
-
-// Get the number of benchmark samples
-size_t UnitTestManager::Data::getNumberOfBenchmarkSamples() const
-{
-  return d_number_of_benchmark_samples;
 }
   
 // Return the run test counter
@@ -1114,42 +1075,32 @@ int UnitTestManager::runUnitTests( int argc,
   // Make sure that every node initialized successfully
   bool global_success = mpi_session.isGloballyTrue( local_success );
 
-  // Check if the help message was requested
-  if( d_data->helpMessageRequested() )
-  {
-    if( mpi_session.rank() == 0 )
-      this->printHelpMessage();
-
-    return 0;
-  }
-  // Check if any test details were requested
-  else if( d_data->groupListRequested() ||
-           d_data->testListRequested() ||
-           d_data->dataListRequested() )
-  {
-    if( mpi_session.rank() == 0 )
-    {
-      if( d_data->groupListRequested() )
-        d_data->printGroupList();
-      
-      if( d_data->testListRequested() )
-        d_data->printTestList();
-      
-      if( d_data->dataListRequested() )
-        d_data->printDataList();
-    }
-    
-    return 0;
-  }
+  // Summarize the initialization results
+  this->summarizeInitializationResults( log,
+                                        init_timer->elapsed().count(),
+                                        local_success,
+                                        global_success );
 
   // Initialization was globally successful - proceed to unit test execution
   if( global_success )
   {
-    this->summarizeInitializationResults( log,
-                                          init_timer->elapsed().count(),
-                                          local_success,
-                                          global_success );
-
+    // Check if the help message was requested
+    if( d_data->helpMessageRequested() )
+    {
+      this->printHelpMessage();
+      
+      return 0;
+    }
+    // Check if any test details were requested
+    else if( d_data->groupListRequested() ||
+             d_data->testListRequested() ||
+             d_data->dataListRequested() )
+    {
+      this->printTestDetails();
+      
+      return 0;
+    }
+    
     std::shared_ptr<Timer> test_timer = mpi_session.createTimer();
     test_timer->start();
     

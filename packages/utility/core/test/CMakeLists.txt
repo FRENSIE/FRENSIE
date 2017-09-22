@@ -318,6 +318,120 @@ TARGET_LINK_LIBRARIES(tstFRENSIEUnitTestHarnessDefaultInit utility_core)
 ADD_TEST(FRENSIEUnitTestHarnessDefaultInit_test tstFRENSIEUnitTestHarnessDefaultInit --report_level=detailed)
 SET_PROPERTY(TEST FRENSIEUnitTestHarnessDefaultInit_test PROPERTY LABELS utility_core)
 
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_TEST(FRENSIEUnitTestHarnessDefaultInit_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessDefaultInit)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessDefaultInit_2_test PROPERTY LABELS utility_core)
+
+  ADD_TEST(FRENSIEUnitTestHarnessDefaultInit_4_test ${MPIEXEC} -n 4 tstFRENSIEUnitTestHarnessDefaultInit)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessDefaultInit_4_test PROPERTY LABELS utility_core)
+ENDIF()
+
+ADD_EXECUTABLE(tstFRENSIEUnitTestHarnessCustomInit tstFRENSIEUnitTestHarnessCustomInit)
+TARGET_LINK_LIBRARIES(tstFRENSIEUnitTestHarnessCustomInit utility_core)
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_test tstFRENSIEUnitTestHarnessCustomInit --number_of_tests=46 --number_of_checks=76)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the -h flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_h_flag_test tstFRENSIEUnitTestHarnessCustomInit -h --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_h_flag_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the --help flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_help_flag_test tstFRENSIEUnitTestHarnessCustomInit --help --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_help_flag_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the -g flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_g_flag_test tstFRENSIEUnitTestHarnessCustomInit -g --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_g_flag_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the --show_groups flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_groups_flag_test tstFRENSIEUnitTestHarnessCustomInit --show_groups --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_show_groups_flag_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the -t flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_t_flag_test tstFRENSIEUnitTestHarnessCustomInit -t --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_t_flag_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the --show_tests flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_tests_flag_test tstFRENSIEUnitTestHarnessCustomInit -show_tests --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_show_tests_flag_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the -d flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_d_flag_test tstFRENSIEUnitTestHarnessCustomInit -d --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_d_flag_test PROPERTY LABELS utility_core)
+
+# Check that no tests are run if the --show_data flag is passed
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_data_flag_test tstFRENSIEUnitTestHarnessCustomInit --show_data --number_of_tests=0 --number_of_checks=0)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_show_data_flag_test PROPERTY LABELS utility_core)
+
+# Check that the test group can be filtered
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_group_filter_test tstFRENSIEUnitTestHarnessCustomInit --group_filter=CHECK --number_of_tests=8 --number_of_checks=16)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_group_filter_test PROPERTY LABELS utility_core)
+
+# Check that the tests can be filtered
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_test_filter_test tstFRENSIEUnitTestHarnessCustomInit --test_filter=EQUAL --number_of_tests=34 --number_of_checks=53)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_test_filter_test PROPERTY LABELS utility_core)
+
+# Check that the data can be filtered
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_data_filter_test tstFRENSIEUnitTestHarnessCustomInit --data_filter=zero_input --number_of_tests=1 --number_of_checks=1)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_data_filter_test PROPERTY LABELS utility_core)
+
+# Check that multiple filters can be applied
+ADD_TEST(FRENSIEUnitTestHarnessCustomInit_multiple_filter_test tstFRENSIEUnitTestHarnessCustomInit --group_filter=REQUIRE --test_filter=SMALL --number_of_tests=1 --number_of_checks=3)
+SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_multiple_filter_test PROPERTY LABELS utility_core)
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --number_of_tests=46 --number_of_checks=76)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_test PROPERTY LABELS utility_core)
+
+  # Check that no tests are run if the -h flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_h_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit -h --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_h_flag_2_test PROPERTY LABELS utility_core)
+
+  # Check that no tests are run if the --help flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_help_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --help --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_help_flag_2_test PROPERTY LABELS utility_core)
+  
+  # Check that no tests are run if the -g flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_g_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit -g --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_g_flag_2_test PROPERTY LABELS utility_core)
+  
+  # Check that no tests are run if the --show_groups flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_groups_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --show_groups --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_show_groups_flag_2_test PROPERTY LABELS utility_core)
+  
+  # Check that no tests are run if the -t flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_t_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit -t --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_t_flag_2_test PROPERTY LABELS utility_core)
+  
+  # Check that no tests are run if the --show_tests flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_tests_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit -show_tests --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_show_tests_flag_2_test PROPERTY LABELS utility_core)
+
+  # Check that no tests are run if the -d flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_d_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit -d --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_d_flag_test PROPERTY LABELS utility_core)
+  
+  # Check that no tests are run if the --show_data flag is passed
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_show_data_flag_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --show_data --number_of_tests=0 --number_of_checks=0)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_show_data_flag_2_test PROPERTY LABELS utility_core)
+  
+  # Check that the test group can be filtered
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_group_filter_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --group_filter=CHECK --number_of_tests=8 --number_of_checks=16)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_group_filter_2_test PROPERTY LABELS utility_core)
+  
+  # Check that the tests can be filtered
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_test_filter_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --test_filter=EQUAL --number_of_tests=34 --number_of_checks=53)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_test_filter_2_test PROPERTY LABELS utility_core)
+  
+  # Check that the data can be filtered
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_data_filter_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --data_filter=zero_input --number_of_tests=1 --number_of_checks=1)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_data_filter_2_test PROPERTY LABELS utility_core)
+  
+  # Check that multiple filters can be applied
+  ADD_TEST(FRENSIEUnitTestHarnessCustomInit_multiple_filter_2_test ${MPIEXEC} -n 2 tstFRENSIEUnitTestHarnessCustomInit --group_filter=REQUIRE --test_filter=SMALL --number_of_tests=1 --number_of_checks=3)
+  SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_multiple_filter_2_test PROPERTY LABELS utility_core)
+ENDIF()
+
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
 

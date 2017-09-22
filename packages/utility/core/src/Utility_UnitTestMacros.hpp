@@ -69,17 +69,12 @@
   void customUnitTestManagerInitialization( size_t& __CHECKPOINT__ ) override
 
 //! Add a custom command line option
-#define ADD_OPTION()                             \
+#define ADD_OPTION( ... )                        \
   FRENSIE_CHECKPOINT();                          \
-  setOption
-
-//! Get a command line option
-#define GET_OPTION( type, name )                      \
-  FRENSIE_CHECKPOINT();                               \
-  this->getOptionValue<type>( name )
+  setOption( __VA_ARGS__ ) 
 
 //! Assign a command line option
-#define ASSIGN_OPTION( value, name )            \
+#define ASSIGN_OPTION_VALUE( value, name )            \
   FRENSIE_CHECKPOINT();                                         \
   value = this->getOptionValue<decltype(value)>( name );
 
