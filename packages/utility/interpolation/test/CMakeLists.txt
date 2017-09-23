@@ -10,6 +10,12 @@ ADD_EXECUTABLE(tstInterpolationPolicy
 TARGET_LINK_LIBRARIES(tstInterpolationPolicy utility_interp)
 ADD_TEST(InterpolationPolicy_test tstInterpolationPolicy)
 
+ADD_EXECUTABLE(tstCosineInterpolationPolicy 
+  tstCosineInterpolationPolicy.cpp 
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCosineInterpolationPolicy utility_interp)
+ADD_TEST(CosineInterpolationPolicy_test tstCosineInterpolationPolicy)
+
 ADD_EXECUTABLE(tstStandardInterpolator
   tstStandardInterpolator.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

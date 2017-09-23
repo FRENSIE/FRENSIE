@@ -307,6 +307,18 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
     return value*(1-tol);
 }
 
+// Convert the cosine variable
+/*! \details This function converts from cosine (mu) to delta cosine (1 - mu) or
+ *  from delta cosine (1 - mu) back to cosine (mu).
+ */
+template<typename ParentInterpolationType>
+template<typename T>
+inline T InterpolationHelper<ParentInterpolationType>::convertCosineVar(
+          const T cosine_var )
+{
+  return QuantityTraits<T>::one() - cosine_var;
+}
+
 // Get the interpolation type
 inline InterpolationType LogLog::getInterpolationType()
 {
@@ -415,7 +427,7 @@ inline typename QuantityTraits<T>::RawType
 LogLog::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogLog::isIndepVarInValidRange( dep_var ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var ) );
 
   return log( getRawQuantity(dep_var) );
 }
@@ -833,7 +845,7 @@ inline typename QuantityTraits<T>::RawType
 LinLin::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LinLin::isIndepVarInValidRange( dep_var ) );
+  testPrecondition( LinLin::isDepVarInValidRange( dep_var ) );
 
   return getRawQuantity(dep_var);
 }

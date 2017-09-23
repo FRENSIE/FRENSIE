@@ -104,6 +104,10 @@ public:
   //! Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
   template<typename T>
   static T calculateFuzzyUpperBound( const T value, const double tol = 1e-3 );
+
+  //! Convert the cosine variable
+  template<typename T>
+  static T convertCosineVar( const T cosine_var );
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log 
@@ -408,6 +412,111 @@ struct LinLin : public InterpolationHelper<LinLin>
 
   //! The name of the policy
   static const std::string name();
+};
+
+// /*! \brief Policy struct for interpolating data tables that require log-log
+//  * cosine interpolation between evaluated points.
+//  * \details The dependent variable is always assumed to be an angle cosine.
+//  * Since the angle cosine goes below zero a direct log interpolation
+//  * cannot be performed on it. Instead a log interpolation will be performed
+//  * on the change in the angle cosine (eg: 1 - mu) instead of the cosine ( mu ).
+//  * The interpolated value will always be cast into the cosine before retuned.
+//  * \ingroup policies
+//  */
+// struct LogLog : public InterpolationHelper<LogCosLog>
+// {
+//   //! Independent variable processing tag
+//   typedef LogIndepVarProcessingTag IndepVarProcessingTag;
+
+//   //! Dependent variable processing tag
+//   typedef LogDepVarProcessingTag DepVarProcessingTag;
+
+//   //! Get the interpolation type
+//   static InterpolationType getInterpolationType();
+
+//   //! Force base class template methods to be visible
+//   using InterpolationHelper<LogLogCosine>::interpolate;
+//   using InterpolationHelper<LogLogCosine>::interpolateAndProcess;
+//   using InterpolationHelper<LogLogCosine>::calculateUnitBaseIndepVar;
+//   using InterpolationHelper<LogLogCosine>::calculateUnitBaseIndepVarProcessed;
+//   using InterpolationHelper<LogLogCosine>::calculateIndepVar;
+//   using InterpolationHelper<LogLogCosine>::calculateProcessedIndepVar;
+
+//   //! Interpolate between two points
+//   template<typename IndepType, typename DepType>
+//   static DepType interpolate( const IndepType indep_var_0,
+//                               const IndepType indep_var_1,
+//                               const IndepType indep_var,
+//                               const DepType dep_var_0,
+//                               const DepType dep_var_1 );
+
+//   //! Interpolate between two points using the indep variable ratio (beta)
+//   template<typename T, typename DepType>
+//   static DepType interpolate( const T beta,
+//                               const DepType dep_var_0,
+//                               const DepType dep_var_1 );
+
+//   //! Interpolate between two points and return the processed value
+//   template<typename IndepType, typename DepType>
+//   static typename QuantityTraits<DepType>::RawType
+//   interpolateAndProcess( const IndepType indep_var_0,
+//                          const IndepType indep_var_1,
+//                          const IndepType indep_var,
+//                          const DepType dep_var_0,
+//                          const DepType dep_var_1 );
+
+//   //! Process the independent value
+//   template<typename T>
+//   static typename QuantityTraits<T>::RawType
+//   processIndepVar( const T cosine_var );
+
+//   //! Process the dependent value
+//   template<typename T>
+//   static typename QuantityTraits<T>::RawType
+//   processDepVar( const T dep_var );
+
+//   //! Recover the processed independent value
+//   template<typename T>
+//   static T recoverProcessedIndepVar( const T processed_indep_var );
+
+//   //! Recover the processed dependent value
+//   template<typename T>
+//   static T recoverProcessedDepVar( const T processed_dep_var );
+
+//   //! Test if the independent value is in a valid range (doesn't check nan/inf)
+//   template<typename T>
+//   static bool isIndepVarInValidRange( const T indep_var );
+
+//   //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+//   template<typename T>
+//   static bool isDepVarInValidRange( const T dep_var );
+
+//   //! The name of the policy
+//   static const std::string name();
+// };
+
+//! Helper class used to invert the interpolation policy
+template<typename ParentInterpolationType>
+struct InverseInterpPolicy
+{
+  //! The inverse interpolation policy
+  typedef ParentInterpolationType InterpPolicy;
+};
+
+//! Helper class used to invert the interpolation policy (Lin-Log)
+template<>
+struct InverseInterpPolicy<LinLog>
+{
+  //! The inverse interpolation policy
+  typedef LogLin InterpPolicy;
+};
+
+//! Helper class used to invert the interpolation policy (Log-Lin)
+template<>
+struct InverseInterpPolicy<LogLin>
+{
+  //! The inverse interpolation policy
+  typedef LinLog InterpPolicy;
 };
 
 } // end Utility namespace

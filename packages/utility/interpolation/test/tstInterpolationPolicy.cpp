@@ -26,6 +26,10 @@ TEUCHOS_UNIT_TEST( LinLin, getInterpolationType )
 {
   TEST_EQUALITY_CONST( Utility::LinLin::getInterpolationType(),
                        Utility::LINLIN_INTERPOLATION );
+
+  typedef Utility::InverseInterpPolicy<Utility::LinLin>::InterpPolicy InverseInterp;
+  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
+                       Utility::LINLIN_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//
@@ -403,6 +407,10 @@ TEUCHOS_UNIT_TEST( LogLin, getInterpolationType )
 {
   TEST_EQUALITY_CONST( Utility::LogLin::getInterpolationType(),
                        Utility::LOGLIN_INTERPOLATION );
+
+  typedef Utility::InverseInterpPolicy<Utility::LogLin>::InterpPolicy InverseInterp;
+  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
+                       Utility::LINLOG_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//
@@ -755,6 +763,10 @@ TEUCHOS_UNIT_TEST( LinLog, getInterpolationType )
 {
   TEST_EQUALITY_CONST( Utility::LinLog::getInterpolationType(),
                        Utility::LINLOG_INTERPOLATION );
+
+  typedef Utility::InverseInterpPolicy<Utility::LinLog>::InterpPolicy InverseInterp;
+  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
+                       Utility::LOGLIN_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//
@@ -1091,6 +1103,10 @@ TEUCHOS_UNIT_TEST( LinLog, interpolateAndProcess_processed )
 TEUCHOS_UNIT_TEST( LogLog, getInterpolationType )
 {
   TEST_EQUALITY_CONST( Utility::LogLog::getInterpolationType(),
+                       Utility::LOGLOG_INTERPOLATION );
+
+  typedef Utility::InverseInterpPolicy<Utility::LogLog>::InterpPolicy InverseInterp;
+  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
                        Utility::LOGLOG_INTERPOLATION );
 }
 

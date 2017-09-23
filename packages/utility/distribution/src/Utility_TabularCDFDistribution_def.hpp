@@ -431,8 +431,8 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
   else
   {
     sample = QuantityTraits<IndepQuantity>::initializeQuantity(
-     InterpolationPolicy::interpolate( InterpolationPolicy::processIndepVar(lower_bin_boundary->second),
-                                       InterpolationPolicy::processIndepVar(scaled_random_number),
+     InterpolationPolicy::interpolate( InterpolationPolicy::processDepVar(lower_bin_boundary->second),
+                                       InterpolationPolicy::processDepVar(scaled_random_number),
                                        InterpolationPolicy::processIndepVar(lower_bin_boundary->first),
                                        LinLin::processIndepVar(lower_bin_boundary->fourth) ) );
   }
