@@ -28,6 +28,18 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
   return distribution;
 }
 
+//! Create a screened Rutherford elastic distribution
+std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> createScreenedRutherfordElasticDistribution(
+    const Data::XSSEPRDataExtractor& raw_electroatom_data )
+{
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+    distribution, raw_electroatom_data.extractAtomicNumber() );
+
+  return distribution;
+}
 
 //----------------------------------------------------------------------------//
 //      ****BREMSSTRAHLUNG DISTRIBUTIONS****

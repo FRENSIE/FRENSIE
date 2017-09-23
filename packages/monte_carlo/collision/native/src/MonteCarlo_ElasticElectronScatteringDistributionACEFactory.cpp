@@ -98,7 +98,8 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
     // Set the scattering function with LogLogLog interp (eprdata14)
     scattering_function.reset(
       new Utility::ElasticTwoDDistribution<Utility::LogLogLog>(
-        function_data ) );
+        function_data,
+        0.999999 ) );
   }
   else
   {

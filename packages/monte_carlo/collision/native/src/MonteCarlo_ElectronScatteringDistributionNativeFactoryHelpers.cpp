@@ -209,6 +209,24 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
   return distribution;
 }
 
+// Create a screened rutherford elastic distribution
+std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> createScreenedRutherfordElasticDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container )
+{
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
+        distribution,
+        data_container.getAtomicNumber() );
+
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+
 //! Create a moment preserving elastic distribution
 std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,

@@ -47,6 +47,10 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> c
     const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
+//! Create a screened rutherford elastic distribution
+std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> createScreenedRutherfordElasticDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container );
+
 //! Create a moment preserving elastic distribution
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
