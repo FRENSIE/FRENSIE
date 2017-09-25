@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
   T left_value = zero( T() );
   T right_value = zero( T() );
 
-  std::string header = Utility::createComparisonHeader<Policy>(
+  std::string header = Utility::createComparisonHeader<Policy,0>(
                                                           left_value, "lhs",
                                                           right_value, "rhs" );
 
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     right_value, "rhs",
                                                     small( T() ) );
 
@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     right_value, "rhs",
                                                     typename Utility::ComparisonTraits<T>::ExtraDataType(),
                                                     "[0].first" );
@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     right_value, "rhs",
                                                     small( T() ),
                                                     "[0].first" );
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
   const T const_left_value = left_value;
   const T const_right_value = right_value;
 
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     const_right_value, "rhs" );
 
   expected_header = Policy::createComparisonDetails( "lhs", true, zero( T() ),
@@ -378,7 +378,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     const_right_value, "rhs",
                                                     small( T() ) );
 
@@ -388,7 +388,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     const_right_value, "rhs",
                                                     typename Utility::ComparisonTraits<T>::ExtraDataType(),
                                                     "[0].first" );
@@ -399,7 +399,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     const_right_value, "rhs",
                                                     small( T() ),
                                                     "[0].first" );
@@ -425,7 +425,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
   T right_value = zero( T() );
 
   // LHS = lvalue reference, RHS = rvalue reference
-  std::string header = Utility::createComparisonHeader<Policy>(
+  std::string header = Utility::createComparisonHeader<Policy,0>(
                                                           left_value, "lhs",
                                                           zero( T() ), "rhs" );
 
@@ -436,7 +436,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     zero( T() ), "rhs",
                                                     small( T() ) );
 
@@ -446,7 +446,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     zero( T() ), "rhs",
                                                     typename Utility::ComparisonTraits<T>::ExtraDataType(),
                                                     "[0].first" );
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     zero( T() ), "rhs",
                                                     small( T() ),
                                                     "[0].first" );
@@ -470,7 +470,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
   BOOST_CHECK_EQUAL( header, expected_header );
 
   // LHS = rvalue reference, RHS = lvalue reference
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     right_value, "rhs" );
 
   expected_header =
@@ -480,7 +480,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     right_value, "rhs",
                                                     small( T() ) );
 
@@ -490,7 +490,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     right_value, "rhs",
                                                     typename Utility::ComparisonTraits<T>::ExtraDataType(),
                                                     "[0].first" );
@@ -501,7 +501,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     right_value, "rhs",
                                                     small( T() ),
                                                     "[0].first" );
@@ -517,7 +517,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
   const T const_right_value = right_value;
 
   // LHS = const lvalue reference, RHS = rvalue reference
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     zero( T() ), "rhs" );
 
   expected_header = Policy::createComparisonDetails( "lhs", true, zero( T() ),
@@ -526,7 +526,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     zero( T() ), "rhs",
                                                     small( T() ) );
 
@@ -536,7 +536,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     zero( T() ), "rhs",
                                                     typename Utility::ComparisonTraits<T>::ExtraDataType(),
                                                     "[0].first" );
@@ -547,7 +547,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( const_left_value, "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     zero( T() ), "rhs",
                                                     small( T() ),
                                                     "[0].first" );
@@ -560,7 +560,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
   BOOST_CHECK_EQUAL( header, expected_header );
 
   // LHS = rvalue reference, RHS = const lvalue reference
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     const_right_value, "rhs" );
 
   expected_header =
@@ -570,7 +570,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     const_right_value, "rhs",
                                                     small( T() ) );
 
@@ -580,7 +580,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     const_right_value, "rhs",
                                                     typename Utility::ComparisonTraits<T>::ExtraDataType(),
                                                     "[0].first" );
@@ -591,7 +591,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     const_right_value, "rhs",
                                                     small( T() ),
                                                     "[0].first" );
@@ -613,7 +613,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
   typedef typename std::tuple_element<0,TypePair>::type Policy;
   typedef typename std::tuple_element<1,TypePair>::type T;
 
-  std::string header = Utility::createComparisonHeader<Policy>(
+  std::string header = Utility::createComparisonHeader<Policy,0>(
                                                           zero( T() ), "lhs",
                                                           zero( T() ), "rhs" );
 
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     zero( T() ), "rhs",
                                                     small( T() ) );
 
@@ -634,7 +634,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     zero( T() ), "rhs",
                                                     typename Utility::ComparisonTraits<T>::ExtraDataType(),
                                                     "[0].first" );
@@ -645,7 +645,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
 
   BOOST_CHECK_EQUAL( header, expected_header );
 
-  header = Utility::createComparisonHeader<Policy>( zero( T() ), "lhs",
+  header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     zero( T() ), "rhs",
                                                     small( T() ),
                                                     "[0].first" );
@@ -670,7 +670,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   T right_value = zero( T() );
   std::ostringstream oss;
 
-  bool compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  bool compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss );
@@ -682,7 +682,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = zero( T() );
   right_value = one( T() );
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss );
@@ -694,7 +694,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one( T() );
   right_value = zero( T() );
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss );
@@ -706,7 +706,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one( T() );
   right_value = one( T() );
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss );
@@ -718,7 +718,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = zero(T());
   right_value = smallOverTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -732,7 +732,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = smallOverTwo(T());
   right_value = zero(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -746,7 +746,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = zero(T());
   right_value = smallByTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -760,7 +760,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = smallByTwo(T());
   right_value = zero(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -774,7 +774,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T());
   right_value = one(T())+smallOverTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -788,7 +788,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T())+smallOverTwo(T());
   right_value = one(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -802,7 +802,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T());
   right_value = one(T())+smallByTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -816,7 +816,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T())+smallByTwo(T());
   right_value = one(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, false,
@@ -831,7 +831,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = zero( T() );
   right_value = zero( T() );
   
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true );
@@ -853,7 +853,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = zero( T() );
   right_value = one( T() );
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", false,
                                                      "", oss, true );
@@ -874,7 +874,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one( T() );
   right_value = zero( T() );
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", true,
                                                      "", oss, true );
@@ -895,7 +895,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one( T() );
   right_value = one( T() );
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", false,
                                                      right_value, "rhs", false,
                                                      "", oss, true );
@@ -916,7 +916,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = zero(T());
   right_value = smallOverTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -939,7 +939,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = smallOverTwo(T());
   right_value = zero(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -962,7 +962,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = zero(T());
   right_value = smallByTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -985,7 +985,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = smallByTwo(T());
   right_value = zero(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -1008,7 +1008,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T());
   right_value = one(T())+smallOverTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -1031,7 +1031,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T())+smallOverTwo(T());
   right_value = one(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -1054,7 +1054,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T());
   right_value = one(T())+smallByTwo(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -1077,7 +1077,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   left_value = one(T())+smallByTwo(T());
   right_value = one(T());
 
-  compare_result = Utility::ComparisonTraits<T>::template compare<Policy>(
+  compare_result = Utility::ComparisonTraits<T>::template compare<Policy,0,0>(
                                                      left_value, "lhs", true,
                                                      right_value, "rhs", true,
                                                      "", oss, true,
@@ -1107,7 +1107,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   T right_value = zero( T() );
   std::ostringstream oss;
 
-  bool compare_result = Utility::compare<Policy>( left_value, "lhs",
+  bool compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                                   right_value, "rhs",
                                                   oss );
 
@@ -1115,7 +1115,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              right_value, "rhs",
                                              oss, small( T() ) );
 
@@ -1127,7 +1127,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   const T const_left_value = left_value;
   const T const_right_value = right_value;
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ) );
 
@@ -1136,7 +1136,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ) );
 
@@ -1149,7 +1149,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   const typename Utility::ComparisonTraits<T>::ExtraDataType extra_data =
     typename Utility::ComparisonTraits<T>::ExtraDataType();
   
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              right_value, "rhs",
                                              oss, extra_data, true );
 
@@ -1167,7 +1167,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              right_value, "rhs",
                                              oss, extra_data, true,
                                              "[0].first" );
@@ -1186,7 +1186,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              right_value, "rhs",
                                              oss, small( T() ), true );
 
@@ -1205,7 +1205,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              right_value, "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1225,7 +1225,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true );
 
@@ -1244,7 +1244,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1264,7 +1264,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true );
 
@@ -1283,7 +1283,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1315,7 +1315,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   T right_value = zero( T() );
   std::ostringstream oss;
 
-  bool compare_result = Utility::compare<Policy>( left_value, "lhs",
+  bool compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                                   zero( T() ), "rhs",
                                                   oss );
 
@@ -1323,7 +1323,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ) );
 
@@ -1335,7 +1335,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   const T const_left_value = left_value;
   const T const_right_value = right_value;
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ) );
 
@@ -1344,7 +1344,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ) );
 
@@ -1354,7 +1354,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
   // No details logging, LHS = rvalue reference, RHS = lvalue reference
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              right_value, "rhs",
                                              oss );
 
@@ -1362,7 +1362,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              right_value, "rhs",
                                              oss, small( T() ) );
 
@@ -1371,7 +1371,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ) );
 
@@ -1380,7 +1380,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ) );
 
@@ -1393,7 +1393,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   const typename Utility::ComparisonTraits<T>::ExtraDataType extra_data =
     typename Utility::ComparisonTraits<T>::ExtraDataType();
   
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, extra_data, true );
 
@@ -1411,7 +1411,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, extra_data, true,
                                              "[0].first" );
@@ -1430,7 +1430,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true );
 
@@ -1449,7 +1449,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1469,7 +1469,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true );
 
@@ -1488,7 +1488,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1508,7 +1508,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true );
 
@@ -1527,7 +1527,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( const_left_value, "lhs",
+  compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1548,7 +1548,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.clear();
 
   // Details logging, LHS = rvalue reference, RHS = lvalue reference
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              right_value, "rhs",
                                              oss, extra_data, true );
 
@@ -1566,7 +1566,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              right_value, "rhs",
                                              oss, extra_data, true,
                                              "[0].first" );
@@ -1585,7 +1585,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              right_value, "rhs",
                                              oss, small( T() ), true );
 
@@ -1604,7 +1604,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              right_value, "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1624,7 +1624,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true );
 
@@ -1643,7 +1643,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1663,7 +1663,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true );
 
@@ -1682,7 +1682,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1710,7 +1710,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   //// No details logging
   std::ostringstream oss;
 
-  bool compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  bool compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                                   zero( T() ), "rhs",
                                                   oss );
 
@@ -1718,7 +1718,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ) );
 
@@ -1727,7 +1727,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ) );
 
@@ -1736,7 +1736,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ) );
 
@@ -1749,7 +1749,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   const typename Utility::ComparisonTraits<T>::ExtraDataType extra_data =
     typename Utility::ComparisonTraits<T>::ExtraDataType();
   
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, extra_data, true );
 
@@ -1767,7 +1767,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, extra_data, true,
                                              "[0].first" );
@@ -1786,7 +1786,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true );
 
@@ -1805,7 +1805,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1825,7 +1825,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true );
 
@@ -1844,7 +1844,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
@@ -1864,7 +1864,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true );
 
@@ -1883,7 +1883,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   oss.str( "" );
   oss.clear();
 
-  compare_result = Utility::compare<Policy>( zero( T() ), "lhs",
+  compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
                                              oss, small( T() ), true,
                                              "[0].first" );
