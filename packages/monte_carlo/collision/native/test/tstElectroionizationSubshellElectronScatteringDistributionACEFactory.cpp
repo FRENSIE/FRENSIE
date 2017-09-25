@@ -202,8 +202,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                 knock_on_angle_cosine );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.6192810212740608e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 3.5894248945649160e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
 
 }
 
@@ -252,12 +252,12 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
         knock_on_angle_cosine );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.6598402273415784e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 8.7581575105435083e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.6452810069913897e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 8.7092959303108897e-01, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.6192810212740608e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 3.5894248945649160e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
 
 }
 
@@ -303,8 +303,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   TEST_EQUALITY_CONST( trials, 2.0 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.6192810212740608e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 3.5894248945649160e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
 
 }
 
@@ -353,12 +353,12 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                          shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.8227274979569801e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.3763055557910753e+00, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.3715157338528261, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.3726599328510786e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 3.5404444208924822e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130300528e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147173835e-02, 1e-12 );
 
 }
 

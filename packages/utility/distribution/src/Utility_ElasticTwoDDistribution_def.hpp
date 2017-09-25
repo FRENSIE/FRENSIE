@@ -410,11 +410,21 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
       }
     }
 
-    // Return the interpolated evaluation
-    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-              beta,
-              ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
-              ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
+    ReturnType lower_eval =
+                  ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample);
+    ReturnType upper_eval =
+                  ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample);
+
+    if( lower_eval == upper_eval )
+      return lower_eval;
+    else
+    {
+      // Return the interpolated evaluation
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                beta,
+                ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
+                ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
+    }
   }
 }
 
