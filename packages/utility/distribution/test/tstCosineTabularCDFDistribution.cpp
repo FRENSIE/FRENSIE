@@ -30,7 +30,6 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
-#include "Utility_ElectronVoltUnit.hpp"
 
 using boost::units::quantity;
 using namespace Utility::Units;
@@ -46,25 +45,21 @@ Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 Teuchos::RCP<Utility::OneDDistribution> distribution;
 Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::dimensionless,si::amount> >
   unit_aware_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<cgs::dimensionless,si::amount> >
   unit_aware_tab_distribution;
 
-double norm_const = 1.0010010010010011;
+double norm_const = 1.0/1.999999;
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name )                 \
-typedef Utility::LinLin LinLin;                               \
-typedef Utility::LogLog LogLog;                               \
-typedef Utility::LinLog LinLog;                               \
-typedef Utility::LogLin LogLin;                               \
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLin )    \
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLog )    \
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLog )    \
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLin )
+#define UNIT_TEST_INSTANTIATION( type, name )                    \
+typedef Utility::LogLogCos LogLogCos;                            \
+typedef Utility::LinLogCos LinLogCos;                            \
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLogCos )    \
+TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLogCos )
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -76,10 +71,10 @@ void initialize( Teuchos::RCP<BaseDistribution>& dist )
   // Use the basic constructor
   Teuchos::Array<typename BaseDistribution::IndepQuantity>
     independent_values( 4 );
-  Utility::setQuantity( independent_values[0], 1e-3 );
-  Utility::setQuantity( independent_values[1], 1e-2 );
-  Utility::setQuantity( independent_values[2], 1e-1 );
-  Utility::setQuantity( independent_values[3], 1.0 );
+  Utility::setQuantity( independent_values[0], -1.0 );
+  Utility::setQuantity( independent_values[1], 0.0 );
+  Utility::setQuantity( independent_values[2], 0.5 );
+  Utility::setQuantity( independent_values[3], 0.999999 );
 
   Teuchos::Array<typename BaseDistribution::DepQuantity> dependent_values( 4 );
   Utility::setQuantity( dependent_values[0], 1.0 );
@@ -100,10 +95,10 @@ void initializeCDF( Teuchos::RCP<BaseDistribution>& dist )
   // Use the basic constructor
   Teuchos::Array<typename BaseDistribution::IndepQuantity>
     independent_values( 4 );
-  Utility::setQuantity( independent_values[0], 1e-3 );
-  Utility::setQuantity( independent_values[1], 1e-2 );
-  Utility::setQuantity( independent_values[2], 1e-1 );
-  Utility::setQuantity( independent_values[3], 1.0 );
+  Utility::setQuantity( independent_values[0], -1.0 );
+  Utility::setQuantity( independent_values[1], 0.0 );
+  Utility::setQuantity( independent_values[2], 0.5 );
+  Utility::setQuantity( independent_values[3], 0.999999 );
 
   Teuchos::Array<double> dependent_values( 4 );
   dependent_values[0] = 0.0;
@@ -125,10 +120,10 @@ void initializeUnitAwareCDF( Teuchos::RCP<BaseDistribution>& dist )
   // Use the basic constructor
   Teuchos::Array<typename BaseDistribution::IndepQuantity>
     independent_values( 4 );
-  Utility::setQuantity( independent_values[0], 1e-3 );
-  Utility::setQuantity( independent_values[1], 1e-2 );
-  Utility::setQuantity( independent_values[2], 1e-1 );
-  Utility::setQuantity( independent_values[3], 1.0 );
+  Utility::setQuantity( independent_values[0], -1.0 );
+  Utility::setQuantity( independent_values[1], 0.0 );
+  Utility::setQuantity( independent_values[2], 0.5 );
+  Utility::setQuantity( independent_values[3], 0.999999 );
 
   Teuchos::Array<double> dependent_values( 4 );
   dependent_values[0] = 0.0;
@@ -174,24 +169,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
   
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.001*cgs::dimensionless() ),
     0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-3*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*cgs::dimensionless() ),
     0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.999999*cgs::dimensionless() ),
     0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.001*cgs::dimensionless() ),
     0.0*si::mole );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.001*cgs::dimensionless() ),
     0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-3*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*cgs::dimensionless() ),
     0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.999999*cgs::dimensionless() ),
     0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.001*cgs::dimensionless() ),
     0.0*si::mole );
 }
 
@@ -228,17 +223,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
   
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1e-3*MeV ), 0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF(1.0*MeV ), 0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.0*MeV ), 0.0/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.001*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF(1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.001*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1e-3*MeV ), 0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF(1.0*MeV ), 0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.0*MeV ), 0.0/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.001*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF(1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.001*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution, evaluatePDF );
@@ -251,21 +246,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( tab_distribution );
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ), 0.0, 1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ), 9e-3*norm_const, 1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ), 9.9e-2*norm_const, 1e-10 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -1.001 ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( -1.0 ), 0.0, 1e-10 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.0 ), norm_const, 1e-10 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.5 ), 1.5*norm_const, 1e-10 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ), 1.0, 1e-10 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 1.001 ), 1.0 );
 
   initializeCDF<InterpolationPolicy>( tab_distribution );
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ), 0.0, 1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ), 1e-3, 1e-10 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ), 1e-2, 1e-10 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -1.001 ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( -1.0 ), 0.0, 1e-10 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.0 ), 1e-3, 1e-10 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 0.5 ), 1e-2, 1e-10 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ), 1.0, 1e-10 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 1.001 ), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, evaluateCDF );
@@ -278,40 +273,40 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( -1.001*cgs::dimensionless() ),
                        0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-3*MeV ),
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( -1.0*cgs::dimensionless() ),
                           0.0,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-2*MeV ),
-                          9e-3*norm_const,
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.0*cgs::dimensionless() ),
+                          norm_const,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-1*MeV ),
-                          9.9e-2*norm_const,
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.5*cgs::dimensionless() ),
+                          1.5*norm_const,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1.0*MeV ),
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.999999*cgs::dimensionless() ),
                           1.0,
                           1e-10 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 2.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 1.001*cgs::dimensionless() ),
                        1.0 );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( -1.001*cgs::dimensionless() ),
                        0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-3*MeV ),
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( -1.0*cgs::dimensionless() ),
                           0.0,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-2*MeV ),
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.0*cgs::dimensionless() ),
                           1e-3,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1e-1*MeV ),
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.5*cgs::dimensionless() ),
                           1e-2,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 1.0*MeV ),
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateCDF( 0.999999*cgs::dimensionless() ),
                           1.0,
                           1e-10 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 2.0*MeV ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 1.001*cgs::dimensionless() ),
                        1.0 );
 }
 
@@ -332,17 +327,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = distribution->sample();
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=, 0.999999 );
 
   initializeCDF<InterpolationPolicy>( distribution );
 
@@ -355,23 +350,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 1e-2, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = distribution->sample();
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=, 0.999999 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, sample );
@@ -390,18 +385,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<MegaElectronVolt> sample = unit_aware_distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  quantity<cgs::dimensionless> sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_distribution->sample();
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1.0*MeV );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.999999*cgs::dimensionless() );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
@@ -414,23 +409,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-2*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-12 );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_distribution->sample();
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1.0*MeV );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.999999*cgs::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution, sample );
@@ -452,19 +447,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   unsigned trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=, 0.999999 );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
   initializeCDF<InterpolationPolicy>( distribution );
@@ -478,27 +473,27 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 1e-2, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
   TEST_EQUALITY_CONST( 5.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
   TEST_EQUALITY_CONST( 6.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
   TEST_EQUALITY_CONST( 7.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=,0.999999 );
   TEST_EQUALITY_CONST( 8.0/trials, 1.0 );
 }
 
@@ -520,21 +515,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 
   unsigned trials = 0;
 
-  quantity<MegaElectronVolt> sample =
+  quantity<cgs::dimensionless> sample =
   unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1.0*MeV );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
@@ -550,27 +545,27 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
   trials = 0;
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-2*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1.0*MeV );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.999999*cgs::dimensionless() );
   TEST_EQUALITY_CONST( 5.0/trials, 1.0 );
 }
 
@@ -593,19 +588,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   unsigned bin_index;
 
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( bin_index, 0u );
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 2u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=,0.999999 );
 
   initializeCDF<InterpolationPolicy>( tab_distribution );
 
@@ -618,27 +613,27 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( bin_index, 0u );
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 1e-2, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 1u );
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 2u );
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 2u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=,0.999999 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, sampleAndRecordBinIndex );
@@ -659,21 +654,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 
   unsigned bin_index;
 
-  quantity<MegaElectronVolt> sample =
+  quantity<cgs::dimensionless> sample =
   unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 2u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1.0*MeV );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.999999*cgs::dimensionless() );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_tab_distribution );
 
@@ -686,27 +681,27 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( bin_index, 0u );
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-2*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 1u );
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 2u );
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
   TEST_EQUALITY_CONST( bin_index, 2u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
   sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1.0*MeV );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.999999*cgs::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution,
@@ -721,24 +716,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   initialize<InterpolationPolicy>( tab_distribution );
 
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
 
   initializeCDF<InterpolationPolicy>( tab_distribution );
 
   sample = tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = tab_distribution->sampleWithRandomNumber( 1e-3 );
-  TEST_FLOATING_EQUALITY( sample, 1e-2, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
 
   sample = tab_distribution->sampleWithRandomNumber( 1e-2 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
 
   sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, sampleWithRandomNumber );
@@ -751,26 +746,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  quantity<MegaElectronVolt> sample =
+  quantity<cgs::dimensionless> sample =
   unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_tab_distribution );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1e-3 );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-2*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-12 );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution,
@@ -790,18 +785,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  double sample = tab_distribution->sampleInSubrange( 0.5 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  sample = tab_distribution->sampleInSubrange( 0.5 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1e-1 );
+  sample = tab_distribution->sampleInSubrange( 0.5 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=, 0.5 );
 
   initializeCDF<InterpolationPolicy>( tab_distribution );
 
@@ -812,21 +807,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  sample = tab_distribution->sampleInSubrange( 0.5 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-2, 1e-12 );
+  sample = tab_distribution->sampleInSubrange( 0.5 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
 
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  sample = tab_distribution->sampleInSubrange( 0.5 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
-  sample = tab_distribution->sampleInSubrange( 1e-1 );
-  TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1e-1 );
+  sample = tab_distribution->sampleInSubrange( 0.5 );
+  TEST_COMPARE( sample, >=, -1.0 );
+  TEST_COMPARE( sample, <=, 0.5 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, sampleInSubrange );
@@ -845,19 +840,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<MegaElectronVolt> sample =
-  unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV  );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  quantity<cgs::dimensionless> sample =
+  unit_aware_tab_distribution->sampleInSubrange( 0.5*cgs::dimensionless()  );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
-  sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV );
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1e-1*MeV );
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*cgs::dimensionless() );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.5*cgs::dimensionless() );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_tab_distribution );
 
@@ -868,21 +863,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV  );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*cgs::dimensionless()  );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-2*MeV, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-12 );
 
-  sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
 
-  sample = unit_aware_tab_distribution->sampleInSubrange( 1e-1*MeV );
-  TEST_COMPARE( sample, >=, 1e-3*MeV );
-  TEST_COMPARE( sample, <=, 1e-1*MeV );
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*cgs::dimensionless() );
+  TEST_COMPARE( sample, >=, -1.0*cgs::dimensionless() );
+  TEST_COMPARE( sample, <=, 0.5*cgs::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution, sampleInSubrange );
@@ -896,22 +891,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
   initialize<InterpolationPolicy>( tab_distribution );
 
   double sample =
-  tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.5 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.5 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
 
   initializeCDF<InterpolationPolicy>( tab_distribution );
 
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1 );
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.5 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1e-1, 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-2, 1e-12 );
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1e-1, 0.5 );
+  TEST_FLOATING_EQUALITY( sample, 0.0, 1e-12 );
 
-  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.5 );
+  TEST_FLOATING_EQUALITY( sample, 0.5, 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution,
@@ -925,28 +920,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
-  quantity<MegaElectronVolt> sample =
+  quantity<cgs::dimensionless> sample =
   unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
-              0.0, 1e-1*MeV );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+              0.0, 0.5*cgs::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
-              1.0, 1e-1*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+              1.0, 0.5*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_tab_distribution );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
-              0.0, 1e-1*MeV );
-  TEST_EQUALITY_CONST( sample, 1e-3*MeV );
+              0.0, 0.5*cgs::dimensionless() );
+  TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
-              1e-1, 1e-1*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-2*MeV, 1e-12 );
+              1e-1, 0.5*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-12 );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange(
-              1.0, 1e-1*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1e-1*MeV, 1e-12 );
+              1.0, 0.5*cgs::dimensionless() );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*cgs::dimensionless(), 1e-12 );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution,
@@ -961,11 +956,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(),0.999999 );
 
   initializeCDF<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(),0.999999 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, getUpperBoundOfIndepVar );
@@ -980,12 +975,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
-    1.0*MeV );
+    0.999999*cgs::dimensionless() );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
-    1.0*MeV );
+    0.999999*cgs::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution,
@@ -1000,11 +995,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 1e-3 );
+  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), -1.0 );
 
   initializeCDF<InterpolationPolicy>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 1e-3 );
+  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), -1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, getLowerBoundOfIndepVar );
@@ -1019,12 +1014,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
-    1e-3*MeV );
+    -1.0*cgs::dimensionless() );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
-    1e-3*MeV );
+    -1.0*cgs::dimensionless() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution,
@@ -1144,79 +1139,63 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LogLogCos>::value )
   {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
   else
   {
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LinLogCos>::value )
   {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
   else
-  {  
+  {
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
 
   initializeCDF<InterpolationPolicy>( distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LogLogCos>::value )
   {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
   else
   {
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LinLogCos>::value )
   {
+    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
   else
-  {  
+  {
+    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, isCompatibleWithInterpType );
@@ -1229,79 +1208,63 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LogLogCos>::value )
   {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
   else
   {
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LinLogCos>::value )
   {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
   else
-  {  
+  {
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LogLogCos>::value )
   {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {  
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
   else
   {
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLog>() );
     TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  if( boost::is_same<InterpolationPolicy,Utility::LinLogCos>::value )
   {
+    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
   else
-  {  
+  {
+    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLogCos>() );
     TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogCosLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution,
@@ -1356,7 +1319,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
-  typedef Utility::UnitAwareTabularCDFDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> Distribution;
+  typedef Utility::UnitAwareTabularCDFDistribution<InterpolationPolicy,cgs::dimensionless,si::amount> Distribution;
 
   Teuchos::RCP<Distribution> true_distribution =
   Teuchos::rcp_dynamic_cast<Distribution>( unit_aware_distribution );
@@ -1368,7 +1331,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 
   std::ostringstream xml_file_name;
   xml_file_name << "unit_aware_tabular_" << InterpolationPolicy::name()
-                << "cdf_dist_test_list.xml";
+                << "_cdf_dist_test_list.xml";
 
   Teuchos::writeParameterListToXmlFile( parameter_list,
   xml_file_name.str() );
@@ -1393,50 +1356,48 @@ UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution, toParameterList );
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( TabularCDFDistribution, fromParameterList )
 {
-  Utility::TabularCDFDistribution<Utility::LinLin> distribution_1 =
-  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LinLin> >( "Tabular CDF Distribution A" );
+  Utility::TabularCDFDistribution<Utility::LogLogCos> distribution_1 =
+  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LogLogCos> >( "Tabular CDF Distribution A" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
-                      Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.999999 );
 
   distribution_1 =
-  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LinLin> >( "Tabular CDF Distribution B" );
+  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LogLogCos> >( "Tabular CDF Distribution B" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.9 );
 
-  Utility::TabularCDFDistribution<Utility::LogLog> distribution_2 =
-  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LogLog> >( "Tabular CDF Distribution C" );
+  Utility::TabularCDFDistribution<Utility::LinLogCos> distribution_2 =
+  test_dists_list->get<Utility::TabularCDFDistribution<Utility::LinLogCos> >( "Tabular CDF Distribution C" );
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0.001 );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 10.0 );
+  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 0.999999 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UnitAwareTabularCDFDistribution, fromParameterList )
 {
-  Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,MegaElectronVolt,si::amount>
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount>
   distribution_1 =
-  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,MegaElectronVolt,si::amount> >( "Unit-Aware Tabular CDF Distribution A" );
+  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution A" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001*MeV );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
-    Utility::PhysicalConstants::pi*MeV );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0*cgs::dimensionless() );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.999999*cgs::dimensionless() );
 
   distribution_1 =
-  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,MegaElectronVolt,si::amount> >( "Unit-Aware Tabular CDF Distribution B" );
+  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution B" );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.001*MeV );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1.0*MeV );
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), -1.0*cgs::dimensionless() );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 0.9*cgs::dimensionless() );
 
-  Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,MegaElectronVolt,si::amount>
+  Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,cgs::dimensionless,si::amount>
   distribution_2 =
-  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,MegaElectronVolt,si::amount> >( "Unit-Aware Tabular CDF Distribution C" );
+  test_dists_list->get<Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,cgs::dimensionless,si::amount> >( "Unit-Aware Tabular CDF Distribution C" );
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0.001*MeV );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 10.0*MeV );
+  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), -1.0*cgs::dimensionless() );
+  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 0.999999*cgs::dimensionless() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1455,18 +1416,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareTabularCDFDistribution,
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
-  initializeCDF<Utility::LinLin>( distribution );
+  initializeCDF<Utility::LogLogCos>( distribution );
 
   // Copy from unitless distribution to distribution type A
-  Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,IndepUnitA,DepUnitA>
-  unit_aware_dist_a_copy = Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::TabularCDFDistribution<Utility::LinLin> >( distribution ) );
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitA,DepUnitA>
+  unit_aware_dist_a_copy = Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::TabularCDFDistribution<Utility::LogLogCos> >( distribution ) );
 
   // Copy from distribution type A to distribution type B
-  Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,IndepUnitB,DepUnitB>
+  Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,IndepUnitB,DepUnitB>
   unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
   IndepQuantityA indep_quantity_a =
-  Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 1e-2 );
+  Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
   double cdf_quantity_a =
   Utility::QuantityTraits<double>::initializeQuantity( 1e-3 );
   DepQuantityA dep_quantity_a =
@@ -1493,7 +1454,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareTabularCDFDistribution,
       cdf_quantity_b,
       1e-15 );
 
-  Utility::setQuantity( indep_quantity_a, 1e-1 );
+  Utility::setQuantity( indep_quantity_a, 0.5 );
   Utility::setQuantity( cdf_quantity_a, 1e-2 );
   Utility::setQuantity( dep_quantity_a, 0.0 );
 
@@ -1519,154 +1480,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareTabularCDFDistribution,
       1e-6 );
 }
 
-typedef si::energy si_energy;
-typedef cgs::energy cgs_energy;
 typedef si::amount si_amount;
-typedef si::length si_length;
-typedef cgs::length cgs_length;
-typedef si::mass si_mass;
-typedef cgs::mass cgs_mass;
 typedef si::dimensionless si_dimensionless;
 typedef cgs::dimensionless cgs_dimensionless;
 
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
                                       explicit_conversion,
-                                      si_energy,
+                                      si_dimensionless,
                                       si_amount,
-                                      cgs_energy,
+                                      cgs_dimensionless,
                                       si_amount );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     cgs_energy,
-     si_amount,
-     si_energy,
-     si_amount );
+                                      explicit_conversion,
+                                      cgs_dimensionless,
+                                      si_amount,
+                                      si_dimensionless,
+                                      si_amount );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     si_energy,
-     si_length,
-     cgs_energy,
-     cgs_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     cgs_energy,
-     cgs_length,
-     si_energy,
-     si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     si_energy,
-     si_mass,
-     cgs_energy,
-     cgs_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     cgs_energy,
-     cgs_mass,
-     si_energy,
-     si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     si_energy,
-     si_dimensionless,
-     cgs_energy,
-     cgs_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     cgs_energy,
-     cgs_dimensionless,
-     si_energy,
-     si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     si_energy,
-     void,
-     cgs_energy,
-     void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     cgs_energy,
-     void,
-     si_energy,
-     void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     ElectronVolt,
-     si_amount,
-     si_energy,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     ElectronVolt,
-     si_amount,
-     cgs_energy,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     ElectronVolt,
-     si_amount,
-     KiloElectronVolt,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     ElectronVolt,
-     si_amount,
-     MegaElectronVolt,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     KiloElectronVolt,
-     si_amount,
-     si_energy,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     KiloElectronVolt,
-     si_amount,
-     cgs_energy,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     KiloElectronVolt,
-     si_amount,
-     ElectronVolt,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     KiloElectronVolt,
-     si_amount,
-     MegaElectronVolt,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     MegaElectronVolt,
-     si_amount,
-     si_energy,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     MegaElectronVolt,
-     si_amount,
-     cgs_energy,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     MegaElectronVolt,
-     si_amount,
-     ElectronVolt,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     MegaElectronVolt,
-     si_amount,
-     KiloElectronVolt,
-     si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareTabularCDFDistribution,
-     explicit_conversion,
-     void,
-     MegaElectronVolt,
-     void,
-     KiloElectronVolt );
+                                      explicit_conversion,
+                                      void,
+                                      cgs_dimensionless,
+                                      void,
+                                      si_dimensionless );
 
 //---------------------------------------------------------------------------//
 // Custom setup
@@ -1684,18 +1519,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LinLin> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LinLog> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LogLin> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LogLog> );
-  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LinLin,MegaElectronVolt,si::amount> UnitAwareTabularCDFLinLinDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLinLinDist );
-  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LogLog,MegaElectronVolt,si::amount> UnitAwareTabularCDFLogLogDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLogLogDist );
-  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LinLog,MegaElectronVolt,si::amount> UnitAwareTabularCDFLinLogDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLinLogDist );
-  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LogLin,MegaElectronVolt,si::amount> UnitAwareTabularCDFLogLinDist;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLogLinDist );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LogLogCos> );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::TabularCDFDistribution<Utility::LinLogCos> );
+  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LogLogCos,cgs::dimensionless,si::amount> UnitAwareTabularCDFLogLogCosDist;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLogLogCosDist );
+  typedef Utility::UnitAwareTabularCDFDistribution<Utility::LinLogCos,cgs::dimensionless,si::amount> UnitAwareTabularCDFLinLogCosDist;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareTabularCDFLinLogCosDist );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 

@@ -24,9 +24,13 @@ namespace Utility{
 
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLog,void,void> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLin,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
+
+// Explicit cosine instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLogCos,void,void> );
 
 // Default constructor
 template<typename InterpolationPolicy,
@@ -431,10 +435,10 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
   else
   {
     sample = QuantityTraits<IndepQuantity>::initializeQuantity(
-     InterpolationPolicy::interpolate( InterpolationPolicy::processDepVar(lower_bin_boundary->second),
-                                       InterpolationPolicy::processDepVar(scaled_random_number),
-                                       InterpolationPolicy::processIndepVar(lower_bin_boundary->first),
-                                       LinLin::processIndepVar(lower_bin_boundary->fourth) ) );
+     InverseInterp::interpolate( InterpolationPolicy::processDepVar(lower_bin_boundary->second),
+                                 InterpolationPolicy::processDepVar(scaled_random_number),
+                                 InterpolationPolicy::processIndepVar(lower_bin_boundary->first),
+                                 getRawQuantity(lower_bin_boundary->fourth) ) );
   }
   ++lower_bin_boundary;
 
@@ -653,6 +657,45 @@ bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
          d_interpret_dependent_values_as_cdf == other.d_interpret_dependent_values_as_cdf;
 }
 
+// Calculate the processed slope
+/*! \details Special consideration is taken when calculating the slope between
+ * the first and second CDF bin because the first CDF is always zero. Therefore,
+ * even when log interpolation of the CDF is request, lin interpolation is used
+ * between the first and second CDF bins.
+ */
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::SlopeQuantity
+UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::calculateProcessedSlope(
+                                  const IndepQuantity indep_var_0,
+                                  const IndepQuantity indep_var_1,
+                                  const UnnormCDFQuantity cdf_var_0,
+                                  const UnnormCDFQuantity cdf_var_1 ) const
+{
+  // Process the variables
+  double processed_cdf_1, processed_cdf_0, processed_indep_1, processed_indep_0;
+  if( cdf_var_0 == QuantityTraits<UnnormCDFQuantity>::zero() )
+  {
+    processed_indep_1 = getRawQuantity( indep_var_1 );
+    processed_indep_0 = getRawQuantity( indep_var_0 );
+    processed_cdf_1 = getRawQuantity( cdf_var_1 );
+    processed_cdf_0 = getRawQuantity( cdf_var_0 );
+  }
+  else
+  {
+    processed_indep_1 = InterpolationPolicy::processIndepVar( indep_var_1 );
+    processed_indep_0 = InterpolationPolicy::processIndepVar( indep_var_0 );
+    processed_cdf_1 = InterpolationPolicy::processDepVar( cdf_var_1 );
+    processed_cdf_0 = InterpolationPolicy::processDepVar( cdf_var_0 );
+  }
+
+  // Return the calculated slope
+  return QuantityTraits<SlopeQuantity>::initializeQuantity(
+            ( processed_indep_1 - processed_indep_0 )/
+            ( processed_cdf_1 - processed_cdf_0 ) );
+}
+
 // Initialize the distribution
 template<typename InterpolationPolicy,
          typename IndependentUnit,
@@ -710,6 +753,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
 
+  // Set the first distribution point
   d_distribution[0].first = IndepQuantity( independent_values[0] );
   setQuantity( d_distribution[0].second, cdf_values[0] );
 
@@ -718,14 +762,15 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   {
     d_distribution[i].first = IndepQuantity( independent_values[i] );
     setQuantity( d_distribution[i].second, cdf_values[i] );
-
-    double slope =
-      getRawQuantity( independent_values[i] - independent_values[i-1] )/
-      ( cdf_values[i] - cdf_values[i-1] );
-
-    setQuantity( d_distribution[i-1].fourth, slope );
-    setQuantity( d_distribution[i].fourth, 0.0 );
+    d_distribution[i-1].fourth =
+                 calculateProcessedSlope( d_distribution[i-1].first,
+                                          d_distribution[i].first,
+                                          d_distribution[i-1].second,
+                                          d_distribution[i].second );
   }
+
+  // Set the last slope to zero
+  setQuantity( d_distribution[independent_values.size()-1].fourth, 0.0 );
 
   // Set normalization constant
   d_norm_constant = 1.0/d_distribution.back().second;
@@ -763,17 +808,18 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_distribution,
                                                                false );
 
-
   // Calculate the CDF slopes
   for( unsigned i = 1; i < independent_values.size(); ++i )
   {
-    double slope =
-      getRawQuantity( d_distribution[i].first - d_distribution[i-1].first )/
-      getRawQuantity( d_distribution[i].second - d_distribution[i-1].second );
-
-    setQuantity( d_distribution[i-1].fourth, slope );
-    setQuantity( d_distribution[i].fourth, 0.0 );
+    d_distribution[i-1].fourth =
+                          calculateProcessedSlope( d_distribution[i-1].first,
+                                                   d_distribution[i].first,
+                                                   d_distribution[i-1].second,
+                                                   d_distribution[i].second );
   }
+
+  // Set the last slope to zero
+  setQuantity( d_distribution[independent_values.size()-1].fourth, 0.0 );
 }
 
 // Reconstruct original distribution

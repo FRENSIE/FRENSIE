@@ -16,6 +16,7 @@
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_UnitTraits.hpp"
@@ -34,32 +35,35 @@ class UnitAwareTabularCDFDistribution : public UnitAwareTabularOneDDistribution<
 
 private:
 
+  //! The inverse interpolation policy
+  typedef typename Utility::InverseInterpPolicy<InterpolationPolicy>::InterpPolicy InverseInterp;
+
   // The unnormalized cdf quantity
   typedef typename QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
-  
-    // The slope unit traits
-    typedef UnitTraits<typename UnitTraits<DependentUnit>::InverseUnit> SlopeUnitTraits;
-  
-    // The slope quantity
-    typedef typename SlopeUnitTraits::template GetQuantityType<double>::type SlopeQuantity;
-  
-    // The distribution normalization quantity type
-    typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
-  
-    // Typedef for QuantityTraits<double>
-    typedef QuantityTraits<double> QT;
-  
-    // Typedef for QuantityTraits<IndepQuantity>
-    typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
-  
-    // Typedef for QuantityTraits<InverseIndepQuantity>
-    typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
-  
-    // Typedef for QuantityTraits<DepQuantity>
-    typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
-  
-    // Typedef for QuantityTraits<DistNormQuantity>
-    typedef QuantityTraits<DistNormQuantity> DNQT;
+
+  // The slope unit traits
+  typedef UnitTraits<typename UnitTraits<DependentUnit>::InverseUnit> SlopeUnitTraits;
+
+  // The slope quantity
+  typedef typename SlopeUnitTraits::template GetQuantityType<double>::type SlopeQuantity;
+
+  // The distribution normalization quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+
+  // Typedef for QuantityTraits<DistNormQuantity>
+  typedef QuantityTraits<DistNormQuantity> DNQT;
 
 public:
 
@@ -189,6 +193,13 @@ protected:
                                           const LogDepVarProcessingTag ) const;
 
 private:
+
+  // Calculate the processed slope
+  SlopeQuantity calculateProcessedSlope(
+                                    const IndepQuantity indep_var_0,
+                                    const IndepQuantity indep_var_1,
+                                    const UnnormCDFQuantity cdf_var_0,
+                                    const UnnormCDFQuantity cdf_var_1 ) const;
 
   // Initialize the distribution
   void initializeDistributionFromRawData(

@@ -1303,8 +1303,7 @@ TEUCHOS_UNIT_TEST( LogCosLog, calculateProcessedIndepVar )
   double y_min = Utility::LogCosLog::processIndepVar(1e-3);
   double L = 3.0, eta = 0.5;
 
-  double y = Utility::LogCosLog::calculateProcessedIndepVar(
-                                                               eta, y_min, L );
+  double y = Utility::LogCosLog::calculateProcessedIndepVar( eta, y_min, L );
 
   TEST_FLOATING_EQUALITY(
                  y,
