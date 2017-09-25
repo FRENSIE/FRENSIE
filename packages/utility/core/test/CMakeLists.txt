@@ -1,6 +1,8 @@
+##---------------------------------------------------------------------------##
 # Before the FRENSIE unit test framework can be used we must test all of the
 # dependecies using another test framework. These first tests will all use
 # the Boost unit test framework.
+##---------------------------------------------------------------------------##
 ADD_EXECUTABLE(tstAssertion tstAssertion.cpp)
 TARGET_LINK_LIBRARIES(tstAssertion utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(Assertion_test tstAssertion --report_level=detailed)
@@ -432,12 +434,11 @@ IF(${FRENSIE_ENABLE_MPI})
   SET_PROPERTY(TEST FRENSIEUnitTestHarnessCustomInit_multiple_filter_2_test PROPERTY LABELS utility_core)
 ENDIF()
 
+##---------------------------------------------------------------------------##
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
-
-ADD_EXECUTABLE(tstPropertyTree
-  tstPropertyTree.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+##---------------------------------------------------------------------------##
+ADD_EXECUTABLE(tstPropertyTree tstPropertyTree.cpp)
 TARGET_LINK_LIBRARIES(tstPropertyTree utility_core)
 ADD_TEST(PropertyTree_test tstPropertyTree)
 SET_PROPERTY(TEST PropertyTree_test PROPERTY LABELS utility_core)

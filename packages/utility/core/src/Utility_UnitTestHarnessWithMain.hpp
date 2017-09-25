@@ -14,7 +14,7 @@
 #include <csignal>
 
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "Utility_UnitTestHarness.hpp"
 
 //! A custom signal handler for seg faults
 void SegFaultSignalHandler( int signal )      

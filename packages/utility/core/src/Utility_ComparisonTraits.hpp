@@ -224,6 +224,20 @@ inline bool ComparisonTraits<T,Enabled>::compare(
                                       extra_data );
 };
 
+/*! \brief The specialization of the Utility::ComparisonTraits for char*
+ * \ingroup comparison_traits
+ */
+template<>
+struct ComparisonTraits<char*> : public ComparisonTraits<std::string>
+{ /* ... */ };
+
+/*! \brief The specialization of the Utility::ComparisonTraits for char[]
+ * \ingroup comparison_traits
+ */
+template<size_t N>
+struct ComparisonTraits<char[N]> : public ComparisonTraits<std::string>
+{ /* ... */ };
+
 /*! \brief The specialization of the Utility::ComparisonTraits for const and/or
  * volatile types.
  * \ingroup comparison_traits
@@ -1444,42 +1458,46 @@ struct ComparisonTraits<std::initializer_list<T> > : public Details::ComparisonT
 { /* ... */ };
 
 // Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename T>
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename T1,
+         typename T2>
 inline std::string createComparisonHeader(
-                 const T& left_value,
+                 const T1& left_value,
                  const std::string& left_name,
-                 const T& right_value,
+                 const T2& right_value,
                  const std::string& right_name,
-                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
                  const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  true,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  true,
-                                                                  name_suffix,
-                                                                  extra_data );
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template createComparisonHeader<ComparisonPolicy,RightShift>(
+                                                                left_value,
+                                                                left_name,
+                                                                true,
+                                                                right_value,
+                                                                right_name,
+                                                                true,
+                                                                name_suffix,
+                                                                extra_data );
 }
 
 // Compare two values and print the results (to the desired stream)
 template<typename ComparisonPolicy,
          size_t HeaderRightShift,
          size_t DetailsRightShift,
-         typename T>
+         typename T1,
+         typename T2>
 inline bool compare(
-                 const T& left_value,
+                 const T1& left_value,
                  const std::string& left_name,
-                 const T& right_value,
+                 const T2& right_value,
                  const std::string& right_name,
                  std::ostream& log,
-                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
                  const bool log_comparison_details,
                  const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
                                                       left_value,
                                                       left_name,
                                                       true,
@@ -1493,73 +1511,29 @@ inline bool compare(
 }
 
 // Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename T>
-inline std::string createComparisonHeader(
-                 T& left_value,
-                 const std::string& left_name,
-                 T& right_value,
-                 const std::string& right_name,
-                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
-                 const std::string& name_suffix )
-{
-  return ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  true,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  true,
-                                                                  name_suffix,
-                                                                  extra_data );
-}
-
-// Compare two values and print the results (to the desired stream)
 template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T>
-inline bool compare(
-                 T& left_value,
+         size_t RightShift,
+         typename T1,
+         typename T2>
+inline std::string createComparisonHeader(
+                 T1&& left_value,
                  const std::string& left_name,
-                 T& right_value,
+                 const T2& right_value,
                  const std::string& right_name,
-                 std::ostream& log,
-                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
-                 const bool log_comparison_details,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
                  const std::string& name_suffix )
 {
-  return ComparisonTraits<T>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                        left_value,
-                                                        left_name,
-                                                        true,
-                                                        right_value,
-                                                        right_name,
-                                                        true,
-                                                        name_suffix,
-                                                        log,
-                                                        log_comparison_details,
-                                                        extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
-inline std::string createComparisonHeader(
-                T1&& left_value,
-                const std::string& left_name,
-                const T2& right_value,
-                const std::string& right_name,
-                const typename ComparisonTraits<T2>::ExtraDataType& extra_data,
-                const std::string& name_suffix )
-{
-  return ComparisonTraits<T2>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  false,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  true,
-                                                                  name_suffix,
-                                                                  extra_data );
+  typedef typename std::conditional<std::is_lvalue_reference<T1>::value,std::true_type,std::false_type>::type LeftDisplayBoolean;
+  
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template createComparisonHeader<ComparisonPolicy,RightShift>(
+                                                     left_value,
+                                                     left_name,
+                                                     LeftDisplayBoolean::value,
+                                                     right_value,
+                                                     right_name,
+                                                     true,
+                                                     name_suffix,
+                                                     extra_data );
 }
 
 // Compare two values and print the results (to the desired stream)
@@ -1569,30 +1543,151 @@ template<typename ComparisonPolicy,
          typename T1,
          typename T2>
 inline bool compare(
-                T1&& left_value,
-                const std::string& left_name,
-                const T2& right_value,
-                const std::string& right_name,
-                std::ostream& log,
-                const typename ComparisonTraits<T2>::ExtraDataType& extra_data,
-                const bool log_comparison_details,
-                const std::string& name_suffix )
+                 T1&& left_value,
+                 const std::string& left_name,
+                 const T2& right_value,
+                 const std::string& right_name,
+                 std::ostream& log,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
+                 const bool log_comparison_details,
+                 const std::string& name_suffix )
 {
-  return ComparisonTraits<T2>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                       left_value,
-                                                       left_name,
-                                                       false,
-                                                       right_value,
-                                                       right_name,
-                                                       true,
-                                                       name_suffix,
-                                                       log,
-                                                       log_comparison_details,
-                                                       extra_data );
+  typedef typename std::conditional<std::is_lvalue_reference<T1>::value,std::true_type,std::false_type>::type LeftDisplayBoolean;
+  
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
+                                                     left_value,
+                                                     left_name,
+                                                     LeftDisplayBoolean::value,
+                                                     right_value,
+                                                     right_name,
+                                                     true,
+                                                     name_suffix,
+                                                     log,
+                                                     log_comparison_details,
+                                                     extra_data );
 }
 
 // Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename T1,
+         typename T2>
+inline std::string createComparisonHeader(
+                 const T1& left_value,
+                 const std::string& left_name,
+                 T2&& right_value,
+                 const std::string& right_name,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
+                 const std::string& name_suffix )
+{
+  typedef typename std::conditional<std::is_lvalue_reference<T2>::value,std::true_type,std::false_type>::type RightDisplayBoolean;
+  
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template createComparisonHeader<ComparisonPolicy,RightShift>(
+                                                    left_value,
+                                                    left_name,
+                                                    true,
+                                                    right_value,
+                                                    right_name,
+                                                    RightDisplayBoolean::value,
+                                                    name_suffix,
+                                                    extra_data );
+}
+
+// Compare two values and print the results (to the desired stream)
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
+inline bool compare(
+                 const T1& left_value,
+                 const std::string& left_name,
+                 T2&& right_value,
+                 const std::string& right_name,
+                 std::ostream& log,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
+                 const bool log_comparison_details,
+                 const std::string& name_suffix )
+{
+  typedef typename std::conditional<std::is_lvalue_reference<T2>::value,std::true_type,std::false_type>::type RightDisplayBoolean;
+  
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
+                                                    left_value,
+                                                    left_name,
+                                                    true,
+                                                    right_value,
+                                                    right_name,
+                                                    RightDisplayBoolean::value,
+                                                    name_suffix,
+                                                    log,
+                                                    log_comparison_details,
+                                                    extra_data );
+}
+
+// Create a comparison header
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename T1,
+         typename T2>
+inline std::string createComparisonHeader(
+                 T1&& left_value,
+                 const std::string& left_name,
+                 T2&& right_value,
+                 const std::string& right_name,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
+                 const std::string& name_suffix )
+{
+  typedef typename std::conditional<std::is_lvalue_reference<T1>::value,std::true_type,std::false_type>::type LeftDisplayBoolean;
+  typedef typename std::conditional<std::is_lvalue_reference<T2>::value,std::true_type,std::false_type>::type RightDisplayBoolean;
+  
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template createComparisonHeader<ComparisonPolicy,RightShift>(
+                                                    left_value,
+                                                    left_name,
+                                                    LeftDisplayBoolean::value,
+                                                    right_value,
+                                                    right_name,
+                                                    RightDisplayBoolean::value,
+                                                    name_suffix,
+                                                    extra_data );
+}
+
+// Compare two values and print the results (to the desired stream)
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
+inline bool compare(
+                 T1&& left_value,
+                 const std::string& left_name,
+                 T2&& right_value,
+                 const std::string& right_name,
+                 std::ostream& log,
+                 const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data,
+                 const bool log_comparison_details,
+                 const std::string& name_suffix )
+{
+  typedef typename std::conditional<std::is_lvalue_reference<T1>::value,std::true_type,std::false_type>::type LeftDisplayBoolean;
+  typedef typename std::conditional<std::is_lvalue_reference<T2>::value,std::true_type,std::false_type>::type RightDisplayBoolean;
+  
+  return ComparisonTraits<typename std::common_type<T1,T2>::type>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
+                                                    left_value,
+                                                    left_name,
+                                                    LeftDisplayBoolean::value,
+                                                    right_value,
+                                                    right_name,
+                                                    RightDisplayBoolean::value,
+                                                    name_suffix,
+                                                    log,
+                                                    log_comparison_details,
+                                                    extra_data );
+}
+
+// Create a comparison header
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename Container,
+         typename T>
 std::string createComparisonHeader(
          std::initializer_list<T> left_value,
          const std::string& left_name,
@@ -1602,14 +1697,14 @@ std::string createComparisonHeader(
          const std::string& name_suffix )
 {
   return ComparisonTraits<Container>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  false,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  true,
-                                                                  name_suffix,
-                                                                  extra_data );
+                                                                left_value,
+                                                                left_name,
+                                                                false,
+                                                                right_value,
+                                                                right_name,
+                                                                true,
+                                                                name_suffix,
+                                                                extra_data );
 }
 
 // Compare two values and print the results (to the desired stream)
@@ -1642,157 +1737,10 @@ bool compare(
 }
 
 // Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
-inline std::string createComparisonHeader(
-                T1&& left_value,
-                const std::string& left_name,
-                T2& right_value,
-                const std::string& right_name,
-                const typename ComparisonTraits<T2>::ExtraDataType& extra_data,
-                const std::string& name_suffix )
-{
-  return ComparisonTraits<T2>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  false,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  true,
-                                                                  name_suffix,
-                                                                  extra_data );
-}
-
-// Compare two values and print the results (to the desired stream)
 template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T1,
-         typename T2>
-inline bool compare(
-                T1&& left_value,
-                const std::string& left_name,
-                T2& right_value,
-                const std::string& right_name,
-                std::ostream& log,
-                const typename ComparisonTraits<T2>::ExtraDataType& extra_data,
-                const bool log_comparison_details,
-                const std::string& name_suffix )
-{
-  return ComparisonTraits<T2>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                       left_value,
-                                                       left_name,
-                                                       false,
-                                                       right_value,
-                                                       right_name,
-                                                       true,
-                                                       name_suffix,
-                                                       log,
-                                                       log_comparison_details,
-                                                       extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
-std::string createComparisonHeader(
-         std::initializer_list<T> left_value,
-         const std::string& left_name,
-         Container& right_value,
-         const std::string& right_name,
-         const typename ComparisonTraits<Container>::ExtraDataType& extra_data,
-         const std::string& name_suffix )
-{
-  return ComparisonTraits<Container>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  false,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  true,
-                                                                  name_suffix,
-                                                                  extra_data );
-}
-
-// Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
+         size_t RightShift,
          typename Container,
          typename T>
-bool compare(
-         std::initializer_list<T> left_value,
-         const std::string& left_name,
-         Container& right_value,
-         const std::string& right_name,
-         std::ostream& log,
-         const typename ComparisonTraits<Container>::ExtraDataType& extra_data,
-         const bool log_comparison_details,
-         const std::string& name_suffix )
-{
-  return ComparisonTraits<Container>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                       left_value,
-                                                       left_name,
-                                                       false,
-                                                       right_value,
-                                                       right_name,
-                                                       true,
-                                                       name_suffix,
-                                                       log,
-                                                       log_comparison_details,
-                                                       extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
-inline std::string createComparisonHeader(
-                const T1& left_value,
-                const std::string& left_name,
-                T2&& right_value,
-                const std::string& right_name,
-                const typename ComparisonTraits<T1>::ExtraDataType& extra_data,
-                const std::string& name_suffix )
-{
-  return ComparisonTraits<T1>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  true,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  false,
-                                                                  name_suffix,
-                                                                  extra_data );
-}
-
-// Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T1,
-         typename T2>
-inline bool compare(
-                const T1& left_value,
-                const std::string& left_name,
-                T2&& right_value,
-                const std::string& right_name,
-                std::ostream& log,
-                const typename ComparisonTraits<T1>::ExtraDataType& extra_data,
-                const bool log_comparison_details,
-                const std::string& name_suffix )
-{
-  return ComparisonTraits<T1>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                      left_value,
-                                                      left_name,
-                                                      true,
-                                                      right_value,
-                                                      right_name,
-                                                      false,
-                                                      name_suffix,
-                                                      log,
-                                                      log_comparison_details,
-                                                      extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
 std::string createComparisonHeader(
          const Container& left_value,
          const std::string& left_name,
@@ -1802,14 +1750,14 @@ std::string createComparisonHeader(
          const std::string& name_suffix )
 {
   return ComparisonTraits<Container>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  true,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  false,
-                                                                  name_suffix,
-                                                                  extra_data );
+                                                                left_value,
+                                                                left_name,
+                                                                true,
+                                                                right_value,
+                                                                right_name,
+                                                                false,
+                                                                name_suffix,
+                                                                extra_data );
 }
   
 // Compare two values and print the results (to the desired stream)
@@ -1839,155 +1787,6 @@ bool compare(
                                                        log,
                                                        log_comparison_details,
                                                        extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
-inline std::string createComparisonHeader(
-               T1& left_value,
-               const std::string& left_name,
-               T2&& right_value,
-               const std::string& right_name,
-               const typename ComparisonTraits<T1>::ExtraDataType& extra_data,
-               const std::string& name_suffix )
-{
-  return ComparisonTraits<T1>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  true,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  false,
-                                                                  name_suffix,
-                                                                  extra_data );
-}
-  
-// Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T1,
-         typename T2>
-inline bool compare(
-               T1& left_value,
-               const std::string& left_name,
-               T2&& right_value,
-               const std::string& right_name,
-               std::ostream& log,
-               const typename ComparisonTraits<T1>::ExtraDataType& extra_data,
-               const bool log_comparison_details,
-               const std::string& name_suffix )
-{
-  return ComparisonTraits<T1>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                      left_value,
-                                                      left_name,
-                                                      true,
-                                                      right_value,
-                                                      right_name,
-                                                      false,
-                                                      name_suffix,
-                                                      log,
-                                                      log_comparison_details,
-                                                      extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename Container, typename T>
-std::string createComparisonHeader(
-         Container& left_value,
-         const std::string& left_name,
-         std::initializer_list<T> right_value,
-         const std::string& right_name,
-         const typename ComparisonTraits<Container>::ExtraDataType& extra_data,
-         const std::string& name_suffix )
-{
-  return ComparisonTraits<Container>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  true,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  false,
-                                                                  name_suffix,
-                                                                  extra_data );
-}
-  
-// Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename Container,
-         typename T>
-bool compare(
-         Container& left_value,
-         const std::string& left_name,
-         std::initializer_list<T> right_value,
-         const std::string& right_name,
-         std::ostream& log,
-         const typename ComparisonTraits<Container>::ExtraDataType& extra_data,
-         const bool log_comparison_details,
-         const std::string& name_suffix )
-{
-  return ComparisonTraits<Container>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                       left_value,
-                                                       left_name,
-                                                       true,
-                                                       right_value,
-                                                       right_name,
-                                                       false,
-                                                       name_suffix,
-                                                       log,
-                                                       log_comparison_details,
-                                                       extra_data );
-}
-
-// Create a comparison header
-template<typename ComparisonPolicy, size_t RightShift, typename T>
-inline std::string createComparisonHeader(
-                 T&& left_value,
-                 const std::string& left_name,
-                 T&& right_value,
-                 const std::string& right_name,
-                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
-                 const std::string& name_suffix )
-{
-  return ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy,RightShift>(
-                                                                  left_value,
-                                                                  left_name,
-                                                                  false,
-                                                                  right_value,
-                                                                  right_name,
-                                                                  false,
-                                                                  name_suffix,
-                                                                  extra_data );
-}
-
-// Compare two values and print the results (to the desired stream)
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T>
-inline bool compare(
-                 T&& left_value,
-                 const std::string& left_name,
-                 T&& right_value,
-                 const std::string& right_name,
-                 std::ostream& log,
-                 const typename ComparisonTraits<T>::ExtraDataType& extra_data,
-                 const bool log_comparison_details,
-                 const std::string& name_suffix )
-{
-  return ComparisonTraits<T>::template compare<ComparisonPolicy,HeaderRightShift,DetailsRightShift>(
-                                                        left_value,
-                                                        left_name,
-                                                        false,
-                                                        right_value,
-                                                        right_name,
-                                                        false,
-                                                        name_suffix,
-                                                        log,
-                                                        log_comparison_details,
-                                                        extra_data );
 }
 
 } // end Utility namespace

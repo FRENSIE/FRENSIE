@@ -118,238 +118,19 @@ struct ComparisonTraits
  * ComparisonTraits::createComparisonHeader method.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T>
-std::string createComparisonHeader(
-                const T& left_value,
-                const std::string& left_name,
-                const T& right_value,
-                const std::string& right_name,
-                const typename ComparisonTraits<T>::ExtraDataType& extra_data =
-                typename ComparisonTraits<T>::ExtraDataType(),
-                const std::string& name_suffix = "" );
-
-/*! Compare two values and print the results (to the desired stream)
- *
- * This function provides a shortcut to the ComparisonTraits::compare method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T>
-bool compare( const T& left_value,
-              const std::string& left_name,
-              const T& right_value,
-              const std::string& right_name,
-              std::ostream& log,
-              const typename ComparisonTraits<T>::ExtraDataType& extra_data =
-              typename ComparisonTraits<T>::ExtraDataType(),
-              const bool log_comparison_details = false,
-              const std::string& name_suffix = "" );
-
-/*! Create a comparison header
- *
- * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy, size_t RightShift, typename T>
-std::string createComparisonHeader(
-                T& left_value,
-                const std::string& left_name,
-                T& right_value,
-                const std::string& right_name,
-                const typename ComparisonTraits<T>::ExtraDataType& extra_data =
-                typename ComparisonTraits<T>::ExtraDataType(),
-                const std::string& name_suffix = "" );
-
-/*! Compare two values and print the results (to the desired stream)
- *
- * This function provides a shortcut to the ComparisonTraits::compare method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T>
-bool compare( T& left_value,
-              const std::string& left_name,
-              T& right_value,
-              const std::string& right_name,
-              std::ostream& log,
-              const typename ComparisonTraits<T>::ExtraDataType& extra_data =
-              typename ComparisonTraits<T>::ExtraDataType(),
-              const bool log_comparison_details = false,
-              const std::string& name_suffix = "" );
-
-/*! Create a comparison header
- *
- * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
-std::string createComparisonHeader(
-               T1&& left_value,
-               const std::string& left_name,
-               const T2& right_value,
-               const std::string& right_name,
-               const typename ComparisonTraits<T2>::ExtraDataType& extra_data =
-               typename ComparisonTraits<T2>::ExtraDataType(),
-               const std::string& name_suffix = "" );
-
-/*! Compare two values and print the results (to the desired stream)
- *
- * This function provides a shortcut to the ComparisonTraits::compare method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T1,
-         typename T2>
-bool compare( T1&& left_value,
-              const std::string& left_name,
-              const T2& right_value,
-              const std::string& right_name,
-              std::ostream& log,
-              const typename ComparisonTraits<T2>::ExtraDataType& extra_data =
-              typename ComparisonTraits<T2>::ExtraDataType(),
-              const bool log_comparison_details = false,
-              const std::string& name_suffix = "" );
-
-/*! Create a comparison header
- *
- * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
- * \ingroup comparison_traits
- */
 template<typename ComparisonPolicy,
          size_t RightShift,
-         typename Container,
-         typename T = typename Container::value_type>
-std::string createComparisonHeader(
-        std::initializer_list<T> left_value,
-        const std::string& left_name,
-        const Container& right_value,
-        const std::string& right_name,
-        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
-        typename ComparisonTraits<Container>::ExtraDataType(),
-        const std::string& name_suffix = "" );
-
-/*! Compare two values and print the results (to the desired stream)
- *
- * This function provides a shortcut to the ComparisonTraits::compare method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename Container,
-         typename T = typename Container::value_type>
-bool compare(
-        std::initializer_list<T> left_value,
-        const std::string& left_name,
-        const Container& right_value,
-        const std::string& right_name,
-        std::ostream& log,
-        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
-        typename ComparisonTraits<Container>::ExtraDataType(),
-        const bool log_comparison_details = false,
-        const std::string& name_suffix = "" );
-
-/*! Create a comparison header
- *
- * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
-std::string createComparisonHeader(
-               T1&& left_value,
-               const std::string& left_name,
-               T2& right_value,
-               const std::string& right_name,
-               const typename ComparisonTraits<T2>::ExtraDataType& extra_data =
-               typename ComparisonTraits<T2>::ExtraDataType(),
-               const std::string& name_suffix = "" );
-
-/*! Compare two values and print the results (to the desired stream)
- *
- * This function provides a shortcut to the ComparisonTraits::compare method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
          typename T1,
          typename T2>
-bool compare( T1&& left_value,
-              const std::string& left_name,
-              T2& right_value,
-              const std::string& right_name,
-              std::ostream& log,
-              const typename ComparisonTraits<T2>::ExtraDataType& extra_data =
-              typename ComparisonTraits<T2>::ExtraDataType(),
-              const bool log_comparison_details = false,
-              const std::string& name_suffix = "" );
-
-/*! Create a comparison header
- *
- * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t RightShift,
-         typename Container,
-         typename T = typename Container::value_type>
 std::string createComparisonHeader(
-        std::initializer_list<T> left_value,
-        const std::string& left_name,
-        Container& right_value,
-        const std::string& right_name,
-        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
-        typename ComparisonTraits<Container>::ExtraDataType(),
-        const std::string& name_suffix = "" );
+                const T1& left_value,
+                const std::string& left_name,
+                const T2& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+                typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
+                const std::string& name_suffix = "" );
 
-/*! Compare two values and print the results (to the desired stream)
- *
- * This function provides a shortcut to the ComparisonTraits::compare method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename Container,
-         typename T = typename Container::value_type>
-bool compare(
-        std::initializer_list<T> left_value,
-        const std::string& left_name,
-        Container& right_value,
-        const std::string& right_name,
-        std::ostream& log,
-        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
-        typename ComparisonTraits<Container>::ExtraDataType(),
-        const bool log_comparison_details = false,
-        const std::string& name_suffix = "" );
-
-/*! Create a comparison header
- *
- * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
-std::string createComparisonHeader(
-               const T1& left_value,
-               const std::string& left_name,
-               T2&& right_value,
-               const std::string& right_name,
-               const typename ComparisonTraits<T1>::ExtraDataType& extra_data =
-               typename ComparisonTraits<T1>::ExtraDataType(),
-               const std::string& name_suffix = "" );
-  
 /*! Compare two values and print the results (to the desired stream)
  *
  * This function provides a shortcut to the ComparisonTraits::compare method.
@@ -362,70 +143,132 @@ template<typename ComparisonPolicy,
          typename T2>
 bool compare( const T1& left_value,
               const std::string& left_name,
-              T2&& right_value,
+              const T2& right_value,
               const std::string& right_name,
               std::ostream& log,
-              const typename ComparisonTraits<T1>::ExtraDataType& extra_data =
-              typename ComparisonTraits<T1>::ExtraDataType(),
+              const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+              typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
               const bool log_comparison_details = false,
               const std::string& name_suffix = "" );
 
 /*! Create a comparison header
  *
  * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
+ * ComparisonTraits::createComparisonHeader method. The T1&& type is not
+ * necessarily an rvalue reference. The standard allows this type to be
+ * deduced as either an rvalue reference or an lvalue reference depending
+ * on the type that is passed. When the type deduced is an lvalue reference
+ * the left name will be logged.
  * \ingroup comparison_traits
  */
 template<typename ComparisonPolicy,
          size_t RightShift,
-         typename Container,
-         typename T = typename Container::value_type>
+         typename T1,
+         typename T2>
 std::string createComparisonHeader(
-        const Container& left_value,
-        const std::string& left_name,
-        std::initializer_list<T> right_value,
-        const std::string& right_name,
-        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
-        typename ComparisonTraits<Container>::ExtraDataType(),
-        const std::string& name_suffix = "" );
-  
+                T1&& left_value,
+                const std::string& left_name,
+                const T2& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+                typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
+                const std::string& name_suffix = "" );
+
 /*! Compare two values and print the results (to the desired stream)
  *
  * This function provides a shortcut to the ComparisonTraits::compare method.
+ * The T1&& type is not necessarily an rvalue reference. The standard allows 
+ * this type to be deduced as either an rvalue reference or an lvalue 
+ * reference depending on the type that is passed. When the type deduced is an
+ * lvalue reference the left name will be logged.
  * \ingroup comparison_traits
  */
 template<typename ComparisonPolicy,
          size_t HeaderRightShift,
          size_t DetailsRightShift,
-         typename Container,
-         typename T = typename Container::value_type>
-bool compare(
-        const Container& left_value,
-        const std::string& left_name,
-        std::initializer_list<T> right_value,
-        const std::string& right_name,
-        std::ostream& log,
-        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
-        typename ComparisonTraits<Container>::ExtraDataType(),
-        const bool log_comparison_details = false,
-        const std::string& name_suffix = "" );
+         typename T1,
+         typename T2>
+bool compare( T1&& left_value,
+              const std::string& left_name,
+              const T2& right_value,
+              const std::string& right_name,
+              std::ostream& log,
+              const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+              typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
+              const bool log_comparison_details = false,
+              const std::string& name_suffix = "" );
 
 /*! Create a comparison header
  *
  * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
+ * ComparisonTraits::createComparisonHeader method. The T2&& type is not
+ * necessarily an rvalue reference. The standard allows this type to be
+ * deduced as either an rvalue reference or an lvalue reference depending
+ * on the type that is passed. When the type deduced is an lvalue reference
+ * the right name will be logged.
  * \ingroup comparison_traits
  */
-template<typename ComparisonPolicy, size_t RightShift, typename T1, typename T2>
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename T1,
+         typename T2>
 std::string createComparisonHeader(
-               T1& left_value,
-               const std::string& left_name,
-               T2&& right_value,
-               const std::string& right_name,
-               const typename ComparisonTraits<T1>::ExtraDataType& extra_data =
-               typename ComparisonTraits<T1>::ExtraDataType(),
-               const std::string& name_suffix = "" );
-  
+                const T1& left_value,
+                const std::string& left_name,
+                T2&& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+                typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
+                const std::string& name_suffix = "" );
+
+/*! Compare two values and print the results (to the desired stream)
+ *
+ * This function provides a shortcut to the ComparisonTraits::compare method.
+ * The T2&& type is not necessarily an rvalue reference. The standard allows 
+ * this type to be deduced as either an rvalue reference or an lvalue reference
+ * depending on the type that is passed. When the type deduced is an lvalue 
+ * reference the right name will be logged.
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename T1,
+         typename T2>
+bool compare( const T1& left_value,
+              const std::string& left_name,
+              T2&& right_value,
+              const std::string& right_name,
+              std::ostream& log,
+              const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+              typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
+              const bool log_comparison_details = false,
+              const std::string& name_suffix = "" );
+
+/*! Create a comparison header
+ *
+ * This function provides a shortcut to the 
+ * ComparisonTraits::createComparisonHeader method. The T1&& and T2&& types
+ * are not necessarily an rvalue references. The standard allows each of them 
+ * to be deduced as either an rvalue reference or an lvalue reference depending
+ * on the types that are passed. When the type deduced for T1&& is an lvalue
+ * reference the left name will be logged. When the type deduced for T2&& is an
+ * lvalue reference the right name will be logged. 
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename T1,
+         typename T2>
+std::string createComparisonHeader(
+                T1&& left_value,
+                const std::string& left_name,
+                T2&& right_value,
+                const std::string& right_name,
+                const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+                typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
+                const std::string& name_suffix = "" );
+
 /*! Compare two values and print the results (to the desired stream)
  *
  * This function provides a shortcut to the ComparisonTraits::compare method.
@@ -436,13 +279,13 @@ template<typename ComparisonPolicy,
          size_t DetailsRightShift,
          typename T1,
          typename T2>
-bool compare( T1& left_value,
+bool compare( T1&& left_value,
               const std::string& left_name,
               T2&& right_value,
               const std::string& right_name,
               std::ostream& log,
-              const typename ComparisonTraits<T1>::ExtraDataType& extra_data =
-              typename ComparisonTraits<T1>::ExtraDataType(),
+              const typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType& extra_data =
+              typename ComparisonTraits<typename std::common_type<T1,T2>::type>::ExtraDataType(),
               const bool log_comparison_details = false,
               const std::string& name_suffix = "" );
 
@@ -457,7 +300,47 @@ template<typename ComparisonPolicy,
          typename Container,
          typename T = typename Container::value_type>
 std::string createComparisonHeader(
-        Container& left_value,
+        std::initializer_list<T> left_value,
+        const std::string& left_name,
+        const Container& right_value,
+        const std::string& right_name,
+        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
+        typename ComparisonTraits<Container>::ExtraDataType(),
+        const std::string& name_suffix = "" );
+
+/*! Compare two values and print the results (to the desired stream)
+ *
+ * This function provides a shortcut to the ComparisonTraits::compare method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy,
+         size_t HeaderRightShift,
+         size_t DetailsRightShift,
+         typename Container,
+         typename T = typename Container::value_type>
+bool compare(
+        std::initializer_list<T> left_value,
+        const std::string& left_name,
+        const Container& right_value,
+        const std::string& right_name,
+        std::ostream& log,
+        const typename ComparisonTraits<Container>::ExtraDataType& extra_data =
+        typename ComparisonTraits<Container>::ExtraDataType(),
+        const bool log_comparison_details = false,
+        const std::string& name_suffix = "" );
+
+/*! Create a comparison header
+ *
+ * This function provides a shortcut to the 
+ * ComparisonTraits::createComparisonHeader method.
+ * \ingroup comparison_traits
+ */
+template<typename ComparisonPolicy,
+         size_t RightShift,
+         typename Container,
+         typename T = typename Container::value_type>
+std::string createComparisonHeader(
+        const Container& left_value,
         const std::string& left_name,
         std::initializer_list<T> right_value,
         const std::string& right_name,
@@ -476,7 +359,7 @@ template<typename ComparisonPolicy,
          typename Container,
          typename T = typename Container::value_type>
 bool compare(
-        Container& left_value,
+        const Container& left_value,
         const std::string& left_name,
         std::initializer_list<T> right_value,
         const std::string& right_name,
@@ -485,41 +368,6 @@ bool compare(
         typename ComparisonTraits<Container>::ExtraDataType(),
         const bool log_comparison_details = false,
         const std::string& name_suffix = "" );
-
-/*! Create a comparison header
- *
- * This function provides a shortcut to the 
- * ComparisonTraits::createComparisonHeader method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy, size_t RightShift, typename T>
-std::string createComparisonHeader(
-         T&& left_value,
-         const std::string& left_name,
-         T&& right_value,
-         const std::string& right_name,
-         const typename ComparisonTraits<T>::ExtraDataType& extra_data =
-         typename ComparisonTraits<T>::ExtraDataType(),
-         const std::string& name_suffix = "" );
-
-/*! Compare two values and print the results (to the desired stream)
- *
- * This function provides a shortcut to the ComparisonTraits::compare method.
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t HeaderRightShift,
-         size_t DetailsRightShift,
-         typename T>
-bool compare( T&& left_value,
-              const std::string& left_name,
-              T&& right_value,
-              const std::string& right_name,
-              std::ostream& log,
-              const typename ComparisonTraits<T>::ExtraDataType& extra_data =
-              typename ComparisonTraits<T>::ExtraDataType(),
-              const bool log_comparison_details = false,
-              const std::string& name_suffix = "" );
 
 /*! Check the comparison result and add "passed" or "failed!" to the log
  * \ingroup comparison_traits
