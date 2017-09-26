@@ -58,7 +58,7 @@ recursive( const BaseScalarType x )
 {
   // Recursive exponentiation hase been implemented by the rpow method for
   // the special case of positive integer powers
-  return QuantityTraits<BaseScalarType>::rpow<N>( x );
+  return QuantityTraits<BaseScalarType>::template rpow<N,1>( x );
 }
 
 // Recursive modular exponentiation algorithm

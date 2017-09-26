@@ -427,15 +427,10 @@ void FromStringTraits<LogRecordType>::fromStream( std::istream& is,
                                                   LogRecordType& obj,
                                                   const std::string& delim )
 {
-  std::string obj_rep;
-
   std::string delim_copy = delim;
   
-  if( delim.size() == 0 )
-    delim_copy = Details::white_space_delims;
-
-  while( obj_rep.size() == 0 )
-    Utility::fromStream( is, obj_rep, delim_copy );
+  std::string obj_rep =
+    BaseType::extractEnumValueNameFromStream( is, delim_copy );
 
   // Handle the pedantic details special case
   if( std::string( FRENSIE_LOG_PEDANTIC_DETAILS_MSG_BASIC ).find( obj_rep ) == 0 )

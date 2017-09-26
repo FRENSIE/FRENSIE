@@ -453,44 +453,32 @@ TARGET_LINK_LIBRARIES(tstSearchAlgorithms utility_core)
 ADD_TEST(SearchAlgorithms_test tstSearchAlgorithms)
 SET_PROPERTY(TEST SearchAlgorithms_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstExponentiationAlgorithms
-  tstExponentiationAlgorithms.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstExponentiationAlgorithms tstExponentiationAlgorithms.cpp)
 TARGET_LINK_LIBRARIES(tstExponentiationAlgorithms utility_core)
 ADD_TEST(ExponentiationAlgorithms_test tstExponentiationAlgorithms)
 SET_PROPERTY(TEST ExponentiationAlgorithms_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSetOperationFunctor
-  tstSetOperationFunctor.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSetOperationFunctor tstSetOperationFunctor.cpp)
 TARGET_LINK_LIBRARIES(tstSetOperationFunctor utility_core)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 SET_PROPERTY(TEST SetOperationFunctor_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSpatialCoordinateSystemType
-  tstSpatialCoordinateSystemType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSpatialCoordinateSystemType tstSpatialCoordinateSystemType.cpp)
 TARGET_LINK_LIBRARIES(tstSpatialCoordinateSystemType utility_core)
 ADD_TEST(SpatialCoordinateSystemType_test tstSpatialCoordinateSystemType)
 SET_PROPERTY(TEST SpatialCoordinateSystemType_test PROPERTY LABELS utility_core )
 
-ADD_EXECUTABLE(tstDirectionalCoordinateSystemType
-  tstDirectionalCoordinateSystemType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstDirectionalCoordinateSystemType tstDirectionalCoordinateSystemType.cpp)
 TARGET_LINK_LIBRARIES(tstDirectionalCoordinateSystemType utility_core)
 ADD_TEST(DirectionalCoordinateSystemType_test tstDirectionalCoordinateSystemType)
 SET_PROPERTY(TEST DirectionalCoordinateSystemType_test PROPERTY LABELS utility_core )
 
-ADD_EXECUTABLE(tstSpatialDimensionType
-  tstSpatialDimensionType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSpatialDimensionType tstSpatialDimensionType.cpp)
 TARGET_LINK_LIBRARIES(tstSpatialDimensionType utility_core)
 ADD_TEST(SpatialDimensionType_test tstSpatialDimensionType)
 SET_PROPERTY(TEST SpatialDimensionType_test PROPERTY LABELS utility_core )
 
-ADD_EXECUTABLE(tstDirectionalDimensionType
-  tstDirectionalDimensionType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstDirectionalDimensionType tstDirectionalDimensionType.cpp)
 TARGET_LINK_LIBRARIES(tstDirectionalDimensionType utility_core)
 ADD_TEST(DirectionalDimensionType_test tstDirectionalDimensionType)
 SET_PROPERTY(TEST DirectionalDimensionType_test PROPERTY LABELS utility_core )

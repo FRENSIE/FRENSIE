@@ -13,80 +13,95 @@
 
 namespace Utility{
 
-// Test if the directional dimension name is valid
-bool isValidDirectionalDimensionName( const std::string& dimension_name )
+// Convert the string to a Utility::DirectionalDimensionType
+auto FromStringTraits<DirectionalDimensionType>::fromString(
+                                     const std::string& obj_rep ) -> ReturnType
 {
-  if( dimension_name == "U Directional Dimension" ||
-      dimension_name == "U Dimension" )
-    return true;
-  else if( dimension_name == "V Directional Dimension" ||
-           dimension_name == "V Dimension" )
-    return true;
-  else if( dimension_name == "W Directional Dimension" ||
-           dimension_name == "W Dimension" )
-    return true;
-  else if( dimension_name == "R Directional Dimension" )
-    return true;
-  else if( dimension_name == "Azimuthal Angle Directional Dimension" )
-    return true;
-  else if( dimension_name == "Polar Angle Cosine Directional Dimension" )
-    return true;
-  else
-    return false;
-}
-
-// Convert the directional dimension name to a directional dimension type enum
-DirectionalDimensionType convertDirectionalDimensionNameToEnum(
-                                            const std::string& dimension_name )
-{
-  if( dimension_name == "U Directional Dimension" ||
-      dimension_name == "U Dimension" )
+  if( obj_rep == "U" )
     return U_DIRECTIONAL_DIMENSION;
-  else if( dimension_name == "V Directional Dimension" ||
-           dimension_name == "V Dimension" )
+  else if( obj_rep == "V" )
     return V_DIRECTIONAL_DIMENSION;
-  else if( dimension_name == "W Directional Dimension" ||
-           dimension_name == "W Dimension" )
+  else if( obj_rep == "W" )
     return W_DIRECTIONAL_DIMENSION;
-  else if( dimension_name == "R Directional Dimension" )
+  else if( obj_rep == "|R|" )
     return R_DIRECTIONAL_DIMENSION;
-  else if( dimension_name == "Azimuthal Angle Directional Dimension" )
+  else if( obj_rep == "Theta" )
     return AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION;
-  else if( dimension_name == "Polar Angle Cosine Directional Dimension" )
+  else if( obj_rep == "Mu" )
     return POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION;
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "directional dimension name " << dimension_name <<
+                     "directional dimension name " << obj_rep <<
                      " cannot be converted to an enum!" );
   }
 }
 
-// Convert the dimension type enum to a string
-std::string convertDirectionalDimensionTypeEnumToString(
-                                     const DirectionalDimensionType dimension )
+// Extract the object from a stream
+void FromStringTraits<DirectionalDimensionType>::fromStream(
+                                                 std::istream& is,
+                                                 DirectionalDimensionType& obj,
+                                                 const std::string& delim )
+{
+  BaseType::fromStreamImpl( is, obj, delim, &FromStringTraits<DirectionalDimensionType>::fromString );
+}
+
+// Stream operator for printing directional dimension type enums
+std::ostream& operator<<( std::ostream& os,
+                          const DirectionalDimensionType dimension )
 {
   switch( dimension )
   {
-  case U_DIRECTIONAL_DIMENSION:
-    return "U Directional Dimension";
-  case V_DIRECTIONAL_DIMENSION:
-    return "V Directional Dimension";
-  case W_DIRECTIONAL_DIMENSION:
-    return "W Directional Dimension";
-  case R_DIRECTIONAL_DIMENSION:
-    return "R Directional Dimension";
-  case AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION:
-    return "Azimuthal Angle Directional Dimension";
-  case POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION:
-    return "Polar Angle Cosine Directional Dimension";
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "an unknown DirectionalDimensionType was encountered ("
-                     << (unsigned)dimension << ")!" );
+    case U_DIRECTIONAL_DIMENSION:
+    {
+      os << "U";
+      break;
+    }
+    case V_DIRECTIONAL_DIMENSION:
+    {
+      os << "V";
+      break;
+    }
+    case W_DIRECTIONAL_DIMENSION:
+    {
+      os << "W";
+      break;
+    }
+    case R_DIRECTIONAL_DIMENSION:
+    {
+      os << "|R|";
+      break;
+    }
+    case AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION:
+    {
+      os << "Theta";
+      break;
+    }
+    case POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION:
+    {
+      os << "Mu";
+      break;
+    }
+    default:
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "an unknown DirectionalDimensionType was encountered ("
+                       << (unsigned)dimension << ")!" );
+    }
   }
+
+  return os;
 }
-  
+
+// Stream operator for extracting directional dimension type enums
+std::istream& operator>>( std::istream& is,
+                          DirectionalDimensionType& dimension )
+{
+  Utility::fromStream( is, dimension );
+
+  return is;
+}
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

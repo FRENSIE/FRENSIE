@@ -11,65 +11,82 @@
 #include <sstream>
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_SpatialCoordinateSystemType.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the spatial coordinate system enums can be converted to strings
-TEUCHOS_UNIT_TEST( SpatialCoordinateSystemType,
-                   convertSpatialCoordinateystemTypeEnumToString )
+FRENSIE_UNIT_TEST( SpatialCoordinateSystemType, toString )
 {
-  std::string coord_system_name =
-    Utility::convertSpatialCoordinateSystemTypeEnumToString(
-                                Utility::CARTESIAN_SPATIAL_COORDINATE_SYSTEM );
+  std::string coord_system_name = 
+    Utility::toString( Utility::CARTESIAN_SPATIAL_COORDINATE_SYSTEM );
 
-  TEST_EQUALITY_CONST( coord_system_name,
+  FRENSIE_CHECK_EQUAL( coord_system_name,
                        "Cartesian Spatial Coordinate System" );
 
   coord_system_name =
-    Utility::convertSpatialCoordinateSystemTypeEnumToString(
-                              Utility::CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM );
+    Utility::toString( Utility::CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM );
 
-  TEST_EQUALITY_CONST( coord_system_name,
+  FRENSIE_CHECK_EQUAL( coord_system_name,
                        "Cylindrical Spatial Coordinate System" );
 
   coord_system_name =
-    Utility::convertSpatialCoordinateSystemTypeEnumToString(
-                                Utility::SPHERICAL_SPATIAL_COORDINATE_SYSTEM );
+    Utility::toString( Utility::SPHERICAL_SPATIAL_COORDINATE_SYSTEM );
 
-  TEST_EQUALITY_CONST( coord_system_name,
+  FRENSIE_CHECK_EQUAL( coord_system_name,
                        "Spherical Spatial Coordinate System" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the spatial coordinate system enums can be placed in a stream
-TEUCHOS_UNIT_TEST( SpatialCoordinateSystemType,
-                   stream_operator )
+FRENSIE_UNIT_TEST( SpatialCoordinateSystemType, toStream )
+{
+  std::ostringstream oss;
+  
+  Utility::toStream( oss, Utility::CARTESIAN_SPATIAL_COORDINATE_SYSTEM );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Cartesian Spatial Coordinate System" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Cylindrical Spatial Coordinate System" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::SPHERICAL_SPATIAL_COORDINATE_SYSTEM );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Spherical Spatial Coordinate System" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the spatial coordinate system enums can be placed in a stream
+FRENSIE_UNIT_TEST( SpatialCoordinateSystemType, ostream_operator )
 {
   std::ostringstream oss;
   oss << Utility::CARTESIAN_SPATIAL_COORDINATE_SYSTEM;
 
-  TEST_EQUALITY_CONST( oss.str(), "Cartesian Spatial Coordinate System" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Cartesian Spatial Coordinate System" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM;
 
-  TEST_EQUALITY_CONST( oss.str(), "Cylindrical Spatial Coordinate System" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Cylindrical Spatial Coordinate System" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::SPHERICAL_SPATIAL_COORDINATE_SYSTEM;
 
-  TEST_EQUALITY_CONST( oss.str(), "Spherical Spatial Coordinate System" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Spherical Spatial Coordinate System" );
 }
 
 //---------------------------------------------------------------------------//

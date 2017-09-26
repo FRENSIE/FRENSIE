@@ -13,22 +13,32 @@
 
 namespace Utility{
 
-// Convert the directional coordinate system type enum to a string
-std::string convertDirectionalCoordinateSystemTypeEnumToString(
-                           const DirectionalCoordinateSystemType coord_system )
+// Stream operator for printing dirctional coordinate system type enums
+std::ostream& operator<<( std::ostream& os,
+                          const DirectionalCoordinateSystemType coord_system )
 {
   switch( coord_system )
   {
-  case CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM:
-    return "Cartesian Directional Coordinate System";
-  case SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM:
-    return "Spherical Directional Coordinate System";
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "directional coordinate system type "
-                     << (unsigned)coord_system <<
-                     " cannot be converted to a string!" );
+    case CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM:
+    {
+      os << "Cartesian Directional Coordinate System";
+      break;
+    }
+    case SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM:
+    {
+      os << "Spherical Directional Coordinate System";
+      break;
+    }
+    default:
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "directional coordinate system type "
+                       << (unsigned)coord_system <<
+                       " cannot be converted to a string!" );
+    }
   }
+
+  return os;
 }
 
 } // end Utility namespace

@@ -13,6 +13,9 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+
 namespace Utility{
 
 //! The directional coordinate system type enum
@@ -22,20 +25,11 @@ enum DirectionalCoordinateSystemType
   SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM
 };
 
-//! Convert the directional coordinate system type enum to a string
-std::string convertDirectionalCoordinateSystemTypeEnumToString(
+//! Stream operator for printing dirctional coordinate system type enums
+std::ostream& operator<<( std::ostream& os,
                           const DirectionalCoordinateSystemType coord_system );
 
-//! Stream operator for printing dirctional coordinate system type enums
-inline std::ostream& operator<<(
-                           std::ostream& os,
-                           const DirectionalCoordinateSystemType coord_system )
-{
-  os << convertDirectionalCoordinateSystemTypeEnumToString( coord_system );
-  return os;
-}
-
-}
+} // end Utility namespace
 
 #endif // end UTILITY_DIRCTIONAL_COORDINATE_SYSTEM_TYPE_HPP
 

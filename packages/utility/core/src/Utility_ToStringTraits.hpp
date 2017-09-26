@@ -70,30 +70,27 @@ template<size_t N>
 struct ToStringTraits<char[N]> : public ToStringTraits<const char*>
 { /* ... */ };
 
-/*! Partial specialization of ToStringTraits for const char[]
- * \ingroup to_string_traits
- */
-template<size_t N>
-struct ToStringTraits<const char[N]> : public ToStringTraits<const char*>
-{ /* ... */ };
-
-/*! Specialization of ToStringTraits for Utility::LogRecordType
+/*! Specialization of ToStringTraits for enum types
  *
- * This specialization is not specified with the LogRecordType enum because
- * of the potential for other ToStringTraits specializations to indirectly 
- * depend on the enum. Declaring this specialization here prevents any 
- * circular dependecies.
+ * The enum type must have an overload for the ostream << operator defined.
  * \ingroup to_string_traits
  */
-template<>
-struct ToStringTraits<LogRecordType>
+template<typename T>
+struct ToStringTraits<T,typename std::enable_if<std::is_enum<T>::value>::type>
 {
   //! Return the string
-  static std::string toString( const LogRecordType obj );
+  static std::string toString( const T enum_obj )
+  {
+    std::ostringstream oss;
 
-  //! Place the LogRecordType in a stream
-  static inline void toStream( std::ostream& os, const LogRecordType obj )
-  { os << Utility::toString( obj ); }
+    ToStringTraits<T>::toStream( oss, enum_obj );
+
+    return oss.str();
+  }
+
+  //! Place the enum value in a stream
+  static inline void toStream( std::ostream& os, const T enum_obj )
+  { os << enum_obj; }
 };
   
 /*! Specialization of ToStringTraits for bool

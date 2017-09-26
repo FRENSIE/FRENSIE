@@ -11,187 +11,279 @@
 #include <sstream>
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DirectionalDimensionType.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check if a directional dimension name is valid
-TEUCHOS_UNIT_TEST( DirectionalDimensionType, isValidDirectionalDimensionName )
-{
-  std::string dimension_name = "U Directional Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "U Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "V Directional Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "V Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "W Directional Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "W Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "R Directional Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "Azimuthal Angle Directional Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "Polar Angle Cosine Directional Dimension";
-
-  TEST_ASSERT( Utility::isValidDirectionalDimensionName( dimension_name ) );
-
-  dimension_name = "Dummy Dimension";
-
-  TEST_ASSERT( !Utility::isValidDirectionalDimensionName( dimension_name ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if a directional dimension name can be converted to a directional
-// dimension type enum
-TEUCHOS_UNIT_TEST( DirectionalDimensionType,
-                   convertDirectionalDimensionNameToEnum )
-{
-  Utility::DirectionalDimensionType dimension =
-    Utility::convertDirectionalDimensionNameToEnum( "U Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::U_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "U Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::U_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "V Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::V_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "V Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::V_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "W Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::W_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "W Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::W_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "R Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::R_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "Azimuthal Angle Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
-
-  dimension = Utility::convertDirectionalDimensionNameToEnum( "Polar Angle Cosine Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
-
-  TEST_THROW( Utility::convertDirectionalDimensionNameToEnum( "Dummy Dimension" ),
-              std::runtime_error );       
-}
-
-//---------------------------------------------------------------------------//
-// Check if a directional dimension type enum can be converted to a name
-TEUCHOS_UNIT_TEST( DirectionalDimensionType,
-                   convertDirectionalDimensionTypeEnumToString )
+// Check if a directional dimension type enum can be converted to a string
+FRENSIE_UNIT_TEST( DirectionalDimensionType, toString )
 {
   std::string dimension_name =
-    Utility::convertDirectionalDimensionTypeEnumToString( Utility::U_DIRECTIONAL_DIMENSION );
+    Utility::toString( Utility::U_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension_name, "U Directional Dimension" );
-
-  dimension_name =
-    Utility::convertDirectionalDimensionTypeEnumToString( Utility::V_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "V Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( dimension_name, "U" );
 
   dimension_name =
-    Utility::convertDirectionalDimensionTypeEnumToString( Utility::W_DIRECTIONAL_DIMENSION );
+    Utility::toString( Utility::V_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension_name, "W Directional Dimension" );
-
-  dimension_name =
-    Utility::convertDirectionalDimensionTypeEnumToString( Utility::R_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "R Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( dimension_name, "V" );
 
   dimension_name =
-    Utility::convertDirectionalDimensionTypeEnumToString( Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
+    Utility::toString( Utility::W_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension_name, "Azimuthal Angle Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( dimension_name, "W" );
 
   dimension_name =
-    Utility::convertDirectionalDimensionTypeEnumToString( Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
+    Utility::toString( Utility::R_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension_name, "Polar Angle Cosine Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( dimension_name, "|R|" );
+
+  dimension_name =
+    Utility::toString( Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Theta" );
+
+  dimension_name =
+    Utility::toString( Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Mu" );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the directional dimension type enum can be placed in a stream
-TEUCHOS_UNIT_TEST( DirectionalDimensionType, stream_operator )
+FRENSIE_UNIT_TEST( DirectionalDimensionType, toStream )
+{
+  std::ostringstream oss;
+
+  Utility::toStream( oss, Utility::U_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "U" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::V_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "V" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::W_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "W" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::R_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "|R|" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Theta" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Mu" );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the directional dimension type enum can be placed in a stream
+FRENSIE_UNIT_TEST( DirectionalDimensionType, ostream_operator )
 {
   std::ostringstream oss;
 
   oss << Utility::U_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "U Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "U" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::V_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "V Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "V" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::W_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "W Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "W" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::R_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "R Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "|R|" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Azimuthal Angle Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Theta" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Polar Angle Cosine Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Mu" );
+}
+
+//---------------------------------------------------------------------------//
+// Check if a directional dimension name can be converted to a directional
+// dimension type enum
+FRENSIE_UNIT_TEST( DirectionalDimensionType, fromString )
+{
+  Utility::DirectionalDimensionType dimension =
+    Utility::fromString<Utility::DirectionalDimensionType>( "U" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::U_DIRECTIONAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::DirectionalDimensionType>( "V" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::V_DIRECTIONAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::DirectionalDimensionType>( "W" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::W_DIRECTIONAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::DirectionalDimensionType>( "|R|" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::R_DIRECTIONAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::DirectionalDimensionType>( "Theta" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::DirectionalDimensionType>( "Mu" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_THROW( Utility::fromString<Utility::DirectionalDimensionType>( "Dummy Dimension" ),
+                       std::runtime_error );       
+}
+
+//---------------------------------------------------------------------------//
+// Check if a directional dimension enum can be extracted from a stream
+FRENSIE_UNIT_TEST( DirectionalDimensionType, fromStream )
+{
+  std::istringstream iss( "U" );
+
+  Utility::DirectionalDimensionType dimension;
+  
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::U_DIRECTIONAL_DIMENSION );
+
+  iss.str( "V" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::V_DIRECTIONAL_DIMENSION );
+
+  iss.str( "W" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::W_DIRECTIONAL_DIMENSION );
+
+  iss.str( "|R|" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::R_DIRECTIONAL_DIMENSION );
+
+  iss.str( "Theta" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
+
+  iss.str( "Mu" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
+
+  iss.str( "Dummy Dimension" );
+  iss.clear();
+  
+  FRENSIE_CHECK_THROW( Utility::fromStream( iss, dimension ),
+                       std::runtime_error );       
+}
+
+//---------------------------------------------------------------------------//
+// Check if a directional dimension enum can be extracted from a stream
+FRENSIE_UNIT_TEST( DirectionalDimensionType, istream_operator )
+{
+  std::istringstream iss( "U" );
+
+  Utility::DirectionalDimensionType dimension;
+  
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::U_DIRECTIONAL_DIMENSION );
+
+  iss.str( "V" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::V_DIRECTIONAL_DIMENSION );
+
+  iss.str( "W" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::W_DIRECTIONAL_DIMENSION );
+
+  iss.str( "|R|" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::R_DIRECTIONAL_DIMENSION );
+
+  iss.str( "Theta" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
+
+  iss.str( "Mu" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
+
+  iss.str( "Dummy Dimension" );
+  iss.clear();
+  
+  FRENSIE_CHECK_THROW( iss >> dimension,
+                       std::runtime_error );       
 }
 
 //---------------------------------------------------------------------------//

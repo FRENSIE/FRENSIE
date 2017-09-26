@@ -16,7 +16,6 @@
 #include <boost/test/unit_test.hpp>
 
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_LogRecordType.hpp"
 
 //---------------------------------------------------------------------------//

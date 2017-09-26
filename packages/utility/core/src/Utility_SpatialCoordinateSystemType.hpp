@@ -13,6 +13,9 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+
 namespace Utility{
 
 //! The spatial coordinate system type enum
@@ -23,18 +26,9 @@ enum SpatialCoordinateSystemType
   SPHERICAL_SPATIAL_COORDINATE_SYSTEM,
 };
 
-//! Convert the spatial coordinate system type enum to a string
-std::string convertSpatialCoordinateSystemTypeEnumToString(
-                              const SpatialCoordinateSystemType coord_system );
-
 //! Stream operator for printing spatial coordinate system type enums
-inline std::ostream& operator<<(
-                               std::ostream& os,
-                               const SpatialCoordinateSystemType coord_system )
-{
-  os << convertSpatialCoordinateSystemTypeEnumToString( coord_system );
-  return os;
-}
+std::ostream& operator<<( std::ostream& os,
+                          const SpatialCoordinateSystemType coord_system );
   
 } // end Utility namespace
 

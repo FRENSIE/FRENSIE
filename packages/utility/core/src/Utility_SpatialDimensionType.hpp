@@ -13,6 +13,10 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_FromStringTraits.hpp"
+
 namespace Utility{
 
 //! The spatial dimension type enum
@@ -26,24 +30,27 @@ enum SpatialDimensionType
   POLAR_ANGLE_COSINE_SPATIAL_DIMENSION
 };
 
-//! Test if the spatial dimension name is valid
-bool isValidSpatialDimensionName( const std::string& dimension_name );
+/*! Specialization of FromStringTraits for Utility::SpatialDimensionType
+ * \ingroup from_string_traits
+ */
+template<>
+struct FromStringTraits<SpatialDimensionType> : public Details::FromStringTraitsEnumHelper<SpatialDimensionType>
+{
+  //! Convert the string to a Utility::SpatialDimensionType
+  static ReturnType fromString( const std::string& obj_rep );
 
-//! Convert the spatial dimension name to a spatial dimension type enum
-SpatialDimensionType convertSpatialDimensionNameToEnum(
-                                           const std::string& dimension_name );
-
-//! Convert the dimension type enum to a string
-std::string convertSpatialDimensionTypeEnumToString(
-                                        const SpatialDimensionType dimension );
+  //! Extract the object from a stream
+  static void fromStream( std::istream& is,
+                          SpatialDimensionType& obj,
+                          const std::string& delim = std::string() );
+};
 
 //! Stream operator for printing spatial dimension type enums
-inline std::ostream& operator<<( std::ostream& os,
-                                 const SpatialDimensionType dimension )
-{
-  os << convertSpatialDimensionTypeEnumToString( dimension );
-  return os;
-}
+std::ostream& operator<<( std::ostream& os,
+                          const SpatialDimensionType dimension );
+
+//! Stream operator for extracting spatial dimension type enums
+std::istream& operator>>( std::istream& is, SpatialDimensionType& dimension );
   
 } // end Utility namespace
 

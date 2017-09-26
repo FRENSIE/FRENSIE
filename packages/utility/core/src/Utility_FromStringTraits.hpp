@@ -86,6 +86,57 @@ private:
                                            const std::string& delims );
 };
 
+namespace Details{
+
+/*! The FromStringTraits enum helper
+ * \ingroup from_string_traits
+ */
+template<typename T>
+struct FromStringTraitsEnumHelper
+{
+  //! The type that a string will be converted to
+  typedef T ReturnType;
+
+protected:
+
+  //! This type (base type)
+  typedef FromStringTraitsEnumHelper<T> BaseType;
+
+  //! Extract enum value name from stream
+  static inline std::string extractEnumValueNameFromStream(
+                                                     std::istream& is,
+                                                     std::string& delim )
+  {
+    std::string enum_value_name;
+
+    if( delim.size() == 0 )
+      delim = Details::white_space_delims;
+
+    // Handle concurrent deliminators
+    while( enum_value_name.size() == 0 )
+      Utility::fromStream( is, enum_value_name, delim );
+
+    return enum_value_name;
+  }
+
+  //! Default implementation of fromStream
+  template<typename FromStringFunction>
+  static inline void fromStreamImpl( std::istream& is,
+                                     T& obj,
+                                     const std::string& delim,
+                                     FromStringFunction fromStringFunc )
+  {
+    std::string delim_copy = delim;
+
+    std::string obj_rep =
+      BaseType::extractEnumValueNameFromStream( is, delim_copy );
+
+    obj = fromStringFunc( obj_rep );
+  }
+};
+  
+} // end Details namespace
+
 /*! Specialization of FromStringTraits for Utility::LogRecordType
  *
  * This specialization is not specified with the LogRecordType enum because
@@ -95,11 +146,8 @@ private:
  * \ingroup from_string_traits
  */
 template<>
-struct FromStringTraits<LogRecordType>
+struct FromStringTraits<LogRecordType> : public Details::FromStringTraitsEnumHelper<LogRecordType>
 {
-  //! The type that a string will be converted to
-  typedef LogRecordType ReturnType;
-
   //! Convert the string to a Utility::LogRecordType
   static ReturnType fromString( const std::string& obj_rep );
 

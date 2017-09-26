@@ -11,197 +11,276 @@
 #include <sstream>
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_SpatialDimensionType.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check if a spatial dimension name is valid
-TEUCHOS_UNIT_TEST( SpatialDimensionType, isValidSpatialDimensionName )
+// Check that the spatial dimension type can be converted to a string
+FRENSIE_UNIT_TEST( SpatialDimensionType, toString )
 {
-  std::string dimension_name = "X Spatial Dimension";
+  std::string dimension_name = 
+    Utility::toString( Utility::X_SPATIAL_DIMENSION );
 
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
+  FRENSIE_CHECK_EQUAL( dimension_name, "X" );
 
-  dimension_name = "X Dimension";
+  dimension_name = Utility::toString( Utility::Y_SPATIAL_DIMENSION );
 
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
+  FRENSIE_CHECK_EQUAL( dimension_name, "Y" );
 
-  dimension_name = "Y Spatial Dimension";
+  dimension_name = Utility::toString( Utility::Z_SPATIAL_DIMENSION );
 
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
+  FRENSIE_CHECK_EQUAL( dimension_name, "Z" );
 
-  dimension_name = "Y Dimension";
+  dimension_name = Utility::toString( Utility::R_SPATIAL_DIMENSION );
 
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
+  FRENSIE_CHECK_EQUAL( dimension_name, "R" );
 
-  dimension_name = "Z Spatial Dimension";
+  dimension_name =
+    Utility::toString( Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
 
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
+  FRENSIE_CHECK_EQUAL( dimension_name, "Theta" );
 
-  dimension_name = "Z Dimension";
+  dimension_name =
+    Utility::toString( Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
 
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
-
-  dimension_name = "R Spatial Dimension";
-
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
-
-  dimension_name = "R Dimension";
-
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
-
-  dimension_name = "Azimuthal Angle Spatial Dimension";
-
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
-
-  dimension_name = "Polar Angle Cosine Spatial Dimension";
-
-  TEST_ASSERT( Utility::isValidSpatialDimensionName( dimension_name ) );
-
-  dimension_name = "Dummy Dimension";
-
-  TEST_ASSERT( !Utility::isValidSpatialDimensionName( dimension_name ) );
+  FRENSIE_CHECK_EQUAL( dimension_name, "Mu" );
 }
 
 //---------------------------------------------------------------------------//
-// Check if a spatial dimension name can be converted to a spatial dimension
-// type enum
-TEUCHOS_UNIT_TEST( SpatialDimensionType, convertSpatialDimensionNameToEnum )
+// Check that the spatial dimension type can be placed in a stream
+FRENSIE_UNIT_TEST( SpatialDimensionType, toStream )
 {
-  Utility::SpatialDimensionType dimension =
-    Utility::convertSpatialDimensionNameToEnum( "X Spatial Dimension" );
+  std::ostringstream oss;
 
-  TEST_EQUALITY_CONST( dimension, Utility::X_SPATIAL_DIMENSION );
+  Utility::toStream( oss, Utility::X_SPATIAL_DIMENSION );
 
-  dimension = Utility::convertSpatialDimensionNameToEnum( "X Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "X" );
 
-  TEST_EQUALITY_CONST( dimension, Utility::X_SPATIAL_DIMENSION );
+  oss.str( "" );
+  oss.clear();
 
-  dimension =
-    Utility::convertSpatialDimensionNameToEnum( "Y Spatial Dimension" );
+  Utility::toStream( oss, Utility::Y_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, Utility::Y_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Y" );
 
-  dimension = Utility::convertSpatialDimensionNameToEnum( "Y Dimension" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( dimension, Utility::Y_SPATIAL_DIMENSION );
+  Utility::toStream( oss, Utility::Z_SPATIAL_DIMENSION );
 
-  dimension =
-    Utility::convertSpatialDimensionNameToEnum( "Z Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Z" );
 
-  TEST_EQUALITY_CONST( dimension, Utility::Z_SPATIAL_DIMENSION );
+  oss.str( "" );
+  oss.clear();
 
-  dimension = Utility::convertSpatialDimensionNameToEnum( "Z Dimension" );
+  Utility::toStream( oss, Utility::R_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, Utility::Z_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( oss.str(), "R" );
 
-  dimension =
-    Utility::convertSpatialDimensionNameToEnum( "R Spatial Dimension" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( dimension, Utility::R_SPATIAL_DIMENSION );
+  Utility::toStream( oss, Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
 
-  dimension = Utility::convertSpatialDimensionNameToEnum( "R Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Theta" );
 
-  TEST_EQUALITY_CONST( dimension, Utility::R_SPATIAL_DIMENSION );
+  oss.str( "" );
+  oss.clear();
 
-  dimension = Utility::convertSpatialDimensionNameToEnum( "Azimuthal Angle Spatial Dimension" );
+  Utility::toStream( oss, Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
-
-  dimension = Utility::convertSpatialDimensionNameToEnum( "Polar Angle Cosine Spatial Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
-
-  TEST_THROW( Utility::convertSpatialDimensionNameToEnum( "Dummy Dimension" ),
-              std::runtime_error );              
+  FRENSIE_CHECK_EQUAL( oss.str(), "Mu" );
 }
 
 //---------------------------------------------------------------------------//
-// Check if the spatial dimension type enum can be converted to a name
-TEUCHOS_UNIT_TEST( SpatialDimensionType,
-                   convertSpatialDimensionTypeEnumToString )
-{
-  std::string dimension_name =
-    Utility::convertSpatialDimensionTypeEnumToString( Utility::X_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "X Spatial Dimension" );
-
-  dimension_name =
-    Utility::convertSpatialDimensionTypeEnumToString( Utility::Y_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Y Spatial Dimension" );
-
-  dimension_name =
-    Utility::convertSpatialDimensionTypeEnumToString( Utility::Z_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Z Spatial Dimension" );
-
-  dimension_name =
-    Utility::convertSpatialDimensionTypeEnumToString( Utility::R_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "R Spatial Dimension" );
-
-  dimension_name =
-    Utility::convertSpatialDimensionTypeEnumToString( Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Azimuthal Angle Spatial Dimension" );
-
-  dimension_name =
-    Utility::convertSpatialDimensionTypeEnumToString( Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Polar Angle Cosine Spatial Dimension" );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the spatial dimension type enum can be placed in a stream
-TEUCHOS_UNIT_TEST( SpatialDimensionType, stream_operator )
+// Check that the spatial dimension type can be placed in a stream
+FRENSIE_UNIT_TEST( SpatialDimensionType, ostream_operator )
 {
   std::ostringstream oss;
 
   oss << Utility::X_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "X Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "X" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::Y_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Y Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Y" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::Z_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Z Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Z" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::R_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "R Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "R" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Azimuthal Angle Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Theta" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Polar Angle Cosine Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Mu" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a spatial dimension name can be converted to a spatial dimension
+// type enum
+FRENSIE_UNIT_TEST( SpatialDimensionType, fromString )
+{
+  Utility::SpatialDimensionType dimension =
+    Utility::fromString<Utility::SpatialDimensionType>( "X" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::X_SPATIAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::SpatialDimensionType>( "Y" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::Y_SPATIAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::SpatialDimensionType>( "Z" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::Z_SPATIAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::SpatialDimensionType>( "R" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::R_SPATIAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::SpatialDimensionType>( "Theta" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
+
+  dimension = Utility::fromString<Utility::SpatialDimensionType>( "Mu" );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
+
+  FRENSIE_CHECK_THROW( Utility::fromString<Utility::SpatialDimensionType>( "Dummy Dimension" ),
+                       std::runtime_error );              
+}
+
+//---------------------------------------------------------------------------//
+// Check if a spatial dimension type can be extracted from a stream
+FRENSIE_UNIT_TEST( SpatialDimensionType, fromStream )
+{
+  std::istringstream iss( "X" );
+  
+  Utility::SpatialDimensionType dimension;
+  
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::X_SPATIAL_DIMENSION );
+
+  iss.str( "Y" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::Y_SPATIAL_DIMENSION );
+
+  iss.str( "Z" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::Z_SPATIAL_DIMENSION );
+
+  iss.str( "R" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::R_SPATIAL_DIMENSION );
+
+  iss.str( "Theta" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
+
+  iss.str( "Mu" );
+  iss.clear();
+
+  Utility::fromStream( iss, dimension );
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
+
+  iss.str( "Dummy Dimension" );
+  iss.clear();
+  
+  FRENSIE_CHECK_THROW( Utility::fromStream( iss, dimension ),
+                       std::runtime_error );              
+}
+
+//---------------------------------------------------------------------------//
+// Check if a spatial dimension type can be extracted from a stream
+FRENSIE_UNIT_TEST( SpatialDimensionType, istream_operator )
+{
+  std::istringstream iss( "X" );
+  
+  Utility::SpatialDimensionType dimension;
+  
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::X_SPATIAL_DIMENSION );
+
+  iss.str( "Y" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::Y_SPATIAL_DIMENSION );
+
+  iss.str( "Z" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::Z_SPATIAL_DIMENSION );
+
+  iss.str( "R" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::R_SPATIAL_DIMENSION );
+
+  iss.str( "Theta" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
+
+  iss.str( "Mu" );
+  iss.clear();
+
+  iss >> dimension;
+
+  FRENSIE_CHECK_EQUAL( dimension, Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
+
+  iss.str( "Dummy Dimension" );
+  iss.clear();
+  
+  FRENSIE_CHECK_THROW( Utility::fromStream( iss, dimension ),
+                       std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//

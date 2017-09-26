@@ -13,6 +13,10 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_FromStringTraits.hpp"
+
 namespace Utility{
 
 //! The directional dimension type enum
@@ -26,24 +30,28 @@ enum DirectionalDimensionType
   POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION
 };
 
-//! Test if the directional dimension name is valid
-bool isValidDirectionalDimensionName( const std::string& dimension_name );
+/*! Specialization of FromStringTraits for Utility::DirectionalDimensionType
+ * \ingroup from_string_traits
+ */
+template<>
+struct FromStringTraits<DirectionalDimensionType> : public Details::FromStringTraitsEnumHelper<DirectionalDimensionType>
+{
+  //! Convert the string to a Utility::SpatialDimensionType
+  static ReturnType fromString( const std::string& obj_rep );
 
-//! Convert the directional dimension name to a directional dimension type enum
-DirectionalDimensionType convertDirectionalDimensionNameToEnum(
-                                           const std::string& dimension_name );
-
-//! Convert the dimension type enum to a string
-std::string convertDirectionalDimensionTypeEnumToString(
-                                    const DirectionalDimensionType dimension );
+  //! Extract the object from a stream
+  static void fromStream( std::istream& is,
+                          DirectionalDimensionType& obj,
+                          const std::string& delim = std::string() );
+};
 
 //! Stream operator for printing directional dimension type enums
-inline std::ostream& operator<<( std::ostream& os,
-                                 const DirectionalDimensionType dimension )
-{
-  os << convertDirectionalDimensionTypeEnumToString( dimension );
-  return os;
-}
+std::ostream& operator<<( std::ostream& os,
+                          const DirectionalDimensionType dimension );
+
+//! Stream operator for extracting directional dimension type enums
+std::istream& operator>>( std::istream& is,
+                          DirectionalDimensionType& dimension );
   
 } // end Utility namespace
 
