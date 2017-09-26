@@ -22,7 +22,7 @@ namespace Sort{
 /*! Test if the specified member of an array of tuples is sorted in ascending
  * order
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 bool isSortedAscending( Iterator start,
 			Iterator end,
 			const bool verbose = false  );
@@ -36,7 +36,7 @@ bool isSortedAscending( Iterator start,
 /*! Test if the specified member of an array of tuples is sorted in descending
  * order
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 bool isSortedDescending( Iterator start,
                          Iterator end,
                          const bool verbose = false  );

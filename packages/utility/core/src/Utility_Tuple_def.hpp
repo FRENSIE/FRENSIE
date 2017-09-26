@@ -173,12 +173,41 @@ inline void FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::valu
                               "Could not extract a tuple from the stream!" );
 }
 
+// Get the type name
+template<typename... Types>
+inline std::string TypeNameTraits<std::tuple<Types...> >::name()
+{
+  return std::string("std::tuple<")+Utility::typeName<Types...>()+">";
+}
+
+// Get the type name
+template<typename... Types>
+inline std::string TypeNameTraits<std::tuple<Types...> >::name(
+                                                  const std::tuple<Types...>& )
+{
+  return TypeNameTraits<std::tuple<Types...> >::name();
+}
+
+// Get the type name
+template<typename T1, typename T2>
+inline std::string TypeNameTraits<std::pair<T1,T2> >::name()
+{
+  return std::string("std::pair<")+Utility::typeName<T1,T2>()+">";
+}
+
+// Get the type name
+template<typename T1, typename T2>
+inline std::string TypeNameTraits<std::pair<T1,T2> >::name(
+                                                      const std::pair<T1,T2>& )
+{
+  return TypeNameTraits<std::pair<T1,T2> >::name();
+}
+
 namespace Details{
 
 /*! The zero tuple element initializer
  * \ingroup tuple
  */
-//! The helper class that is used to compare tuple members
 template<size_t I, typename TupleType, typename Enabled = void>
 struct ZeroTupleElementInitializer
 {

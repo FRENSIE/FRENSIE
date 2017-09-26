@@ -50,7 +50,7 @@ namespace Search{
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member,
+template<size_t member,
 	 typename Iterator>
 inline Iterator binaryLowerBound(
     Iterator start,
@@ -105,7 +105,7 @@ inline Iterator binaryLowerBound( Iterator start,
 				  Iterator end,
 				  const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryLowerBound<FIRST>( start, end, value );
+  return binaryLowerBound<0>( start, end, value );
 }
 
 // Binary search on a container and return the lower bound container index
@@ -136,7 +136,7 @@ inline Iterator binaryLowerBound( Iterator start,
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
@@ -162,14 +162,14 @@ binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryLowerBoundIndex<FIRST>( start, end, value );
+  return binaryLowerBoundIndex<0>( start, end, value );
 }
 
 // Binary search on a container and return the upper bound iterator
 /*! \details This function allows one to search a container of data and find
- * the lower bin boundary where the value of interest falls in. The
+ * the upper bin boundary where the value of interest falls in. The
  * container is accessed with iterators and an iterator to the element
- * representing the lower bin boundary is returned. To get the correct upper
+ * representing the upper bin boundary is returned. To get the correct upper
  * bound an extra test must be done to ensure that the correct bin has been
  * found.
  * \tparam member The tuple (either Utility::Pair, Utility::Trip or
@@ -182,7 +182,7 @@ binaryLowerBoundIndex( Iterator start,
  * \param[in] end An iterator pointing to the last element of the container of
  * interest.
  * \param[in] value The value whose location in the container must be found.
- * \return An iterator to the element of the container representing the lower
+ * \return An iterator to the element of the container representing the upper
  * bin boundary of the bin where the value of interest falls.
  * \pre
  * <ul>
@@ -194,7 +194,7 @@ binaryLowerBoundIndex( Iterator start,
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 inline Iterator binaryUpperBound( Iterator start,
 				  Iterator end,
 				  const typename TupleElement<member,typename std::iterator_traits<Iterator>::value_type>::type value )
@@ -254,14 +254,14 @@ inline Iterator binaryUpperBound( Iterator start,
 				  Iterator end,
 				  const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryUpperBound<FIRST>( start, end, value );
+  return binaryUpperBound<0>( start, end, value );
 }
 
 // Binary search on a container and return the upper bound index
 /*! \details This function allows one to search a container of data and find
- * the lower bin boundary where the value of interest falls in. The
+ * the upper bin boundary where the value of interest falls in. The
  * container is accessed with iterators and an iterator to the element
- * representing the lower bin boundary is returned. To get the correct upper
+ * representing the upper bin boundary is returned. To get the correct upper
  * bound an extra test must be done to ensure that the correct bin has been
  * found.
  * \tparam member The tuple (either Utility::Pair, Utility::Trip or
@@ -274,7 +274,7 @@ inline Iterator binaryUpperBound( Iterator start,
  * \param[in] end An iterator pointing to the last element of the container of
  * interest.
  * \param[in] value The value whose location in the container must be found.
- * \return An iterator to the element of the container representing the lower
+ * \return An iterator to the element of the container representing the upper
  * bin boundary of the bin where the value of interest falls.
  * \pre
  * <ul>
@@ -286,7 +286,7 @@ inline Iterator binaryUpperBound( Iterator start,
  * \post The returned iterator must be valid (not equal to the initial end
  * iterator).
  */
-template<TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type
 binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
@@ -312,7 +312,7 @@ binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename std::iterator_traits<Iterator>::value_type value )
 {
-  return binaryUpperBoundIndex<FIRST>( start, end, value );
+  return binaryUpperBoundIndex<0>( start, end, value );
 }
 
 } // end Search namespace

@@ -25,13 +25,12 @@ namespace Utility{
 template<typename T, typename Enabled = void>
 struct TypeNameTraits
 {
+  //! Check if the type has a specialization
+  typedef std::false_type IsSpecialized;
+  
   //! Get the type name
   static inline std::string name()
-  { return TypeNameTraits<T>::name( T() ); }
-
-  //! Get the type name
-  static inline std::string name( const T& obj )
-  { return typeid(obj).name(); }
+  { return typeid(typename std::remove_cv<T>::type()).name(); }
 };
 
 /*! Return the type name
@@ -45,21 +44,21 @@ std::string typeName();
  */
 template<typename... Types>
 typename std::enable_if<(sizeof...(Types)>1),std::string>::type typeName();
-
-/*! Return the type name
- * \ingroup type_name_traits
- */
-template<typename T>
-std::string typeName( const T& obj );
-
-/*! Return the type names
- * \ingroup type_name_traits
- */
-template<typename... Types>
-typename std::enable_if<(sizeof...(Types)>1),std::string>::type
-typeName( const Types&... obj );
-  
+ 
 } // end Utility namespace
+
+/*! Helper macro for quickly defining the type name traits for a type
+ * \ingroup type_name_traits
+ */
+#define TYPE_NAME_TRAITS_QUICK_DECL( Type )             \
+  template<>                                            \
+  struct TypeNameTraits<Type>                           \
+  {                                                     \
+    typedef std::true_type IsSpecialized;               \
+                                                        \
+    static inline std::string name()                    \
+    { return #Type; }                                   \
+  }      
 
 #endif // end UTILITY_TYPE_NAME_TRAITS_DECL_HPP
 

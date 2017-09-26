@@ -123,6 +123,11 @@ TARGET_LINK_LIBRARIES(tstFromStringTraits utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(FromStringTraits_test tstFromStringTraits --report_level=detailed)
 SET_PROPERTY(TEST FromStringTraits_test PROPERTY LABELS utility_core)
 
+ADD_EXECUTABLE(tstTypeNameTraits tstTypeNameTraits.cpp)
+TARGET_LINK_LIBRARIES(tstTypeNameTraits utility_core ${BOOST_TEST_LIBRARY})
+ADD_TEST(TypeNameTraits_test tstTypeNameTraits --report_level=detailed)
+SET_PROPERTY(TEST TypeNameTraits_test PROPERTY LABELS utility_core)
+
 ADD_EXECUTABLE(tstLogRecordType tstLogRecordType.cpp)
 TARGET_LINK_LIBRARIES(tstLogRecordType utility_core ${BOOST_TEST_LIBRARY})
 ADD_TEST(LogRecordType_test tstLogRecordType --report_level=detailed)
@@ -438,39 +443,12 @@ ENDIF()
 # All FRENSIE unit test framework dependencies have been tested. All tests
 # beyond this point can use the FRENSIE unit tests framework.
 ##---------------------------------------------------------------------------##
-ADD_EXECUTABLE(tstPropertyTree tstPropertyTree.cpp)
-TARGET_LINK_LIBRARIES(tstPropertyTree utility_core)
-ADD_TEST(PropertyTree_test tstPropertyTree)
-SET_PROPERTY(TEST PropertyTree_test PROPERTY LABELS utility_core)
-
-ADD_EXECUTABLE(tstSerialCommHelpers
-  tstSerialCommHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSerialCommHelpers utility_core)
-ADD_TEST(SerialCommHelpers_test tstSerialCommHelpers)
-SET_PROPERTY(TEST SerialCommHelpers_test PROPERTY LABELS utility_core)
-
-IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstMpiCommHelpers
-    tstMpiCommHelpers.cpp
-    ${FRENSIE_STD_UNIT_TEST_MAIN})
-  TARGET_LINK_LIBRARIES(tstMpiCommHelpers utility_core)
-  ADD_TEST(MpiCommHelpers_2_test ${MPIEXEC} -n 2 tstMpiCommHelpers)
-  ADD_TEST(MpiCommHelpers_4_test ${MPIEXEC} -n 4 tstMpiCommHelpers)
-  SET_PROPERTY(TEST MpiCommHelpers_2_test PROPERTY LABELS utility_core mpi no_threads)
-  SET_PROPERTY(TEST MpiCommHelpers_4_test PROPERTY LABELS utility_core mpi no_threads)
-ENDIF()
-
-ADD_EXECUTABLE(tstSortAlgorithms
-  tstSortAlgorithms.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSortAlgorithms tstSortAlgorithms.cpp)
 TARGET_LINK_LIBRARIES(tstSortAlgorithms utility_core)
 ADD_TEST(SortAlgorithms_test tstSortAlgorithms)
 SET_PROPERTY(TEST SortAlgorithms_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSearchAlgorithms
-  tstSearchAlgorithms.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSearchAlgorithms tstSearchAlgorithms.cpp)
 TARGET_LINK_LIBRARIES(tstSearchAlgorithms utility_core)
 ADD_TEST(SearchAlgorithms_test tstSearchAlgorithms)
 SET_PROPERTY(TEST SearchAlgorithms_test PROPERTY LABELS utility_core)
@@ -735,6 +713,29 @@ ADD_EXECUTABLE(tstMeasurement
 TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
 ADD_TEST(Measurement_test tstMeasurement)
 SET_PROPERTY(TEST Measurement_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstPropertyTree tstPropertyTree.cpp)
+TARGET_LINK_LIBRARIES(tstPropertyTree utility_core)
+ADD_TEST(PropertyTree_test tstPropertyTree)
+SET_PROPERTY(TEST PropertyTree_test PROPERTY LABELS utility_core)
+
+ADD_EXECUTABLE(tstSerialCommHelpers
+  tstSerialCommHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSerialCommHelpers utility_core)
+ADD_TEST(SerialCommHelpers_test tstSerialCommHelpers)
+SET_PROPERTY(TEST SerialCommHelpers_test PROPERTY LABELS utility_core)
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstMpiCommHelpers
+    tstMpiCommHelpers.cpp
+    ${FRENSIE_STD_UNIT_TEST_MAIN})
+  TARGET_LINK_LIBRARIES(tstMpiCommHelpers utility_core)
+  ADD_TEST(MpiCommHelpers_2_test ${MPIEXEC} -n 2 tstMpiCommHelpers)
+  ADD_TEST(MpiCommHelpers_4_test ${MPIEXEC} -n 4 tstMpiCommHelpers)
+  SET_PROPERTY(TEST MpiCommHelpers_2_test PROPERTY LABELS utility_core mpi no_threads)
+  SET_PROPERTY(TEST MpiCommHelpers_4_test PROPERTY LABELS utility_core mpi no_threads)
+ENDIF()
 
 ADD_EXECUTABLE(tstStructuredHexMesh
   tstStructuredHexMesh.cpp

@@ -21,6 +21,7 @@
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
 #include "Utility_TypeTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 /*! \defgroup tuple Tuple.
  *
@@ -38,7 +39,7 @@ namespace Utility{
  * referred to as members)
  * \ingroup tuple
  */
-enum TupleMember{
+enum TupleMember : size_t {
   FIRST = 0,
   SECOND,
   THIRD,
@@ -241,6 +242,36 @@ struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::t
   static void fromStream( std::istream& is,
                           T& obj,
                           const std::string& = std::string() );
+};
+
+TYPE_NAME_TRAITS_QUICK_DECL( std::tuple<> );
+
+/*! \brief The partial specialization of Utility::TypeNameTraits for
+ * std::tuple types.
+ * \ingroup type_name_traits
+ */
+template<typename... Types>
+struct TypeNameTraits<std::tuple<Types...> >
+{
+  //! Get the type name
+  static std::string name();
+
+  //! Get the type name
+  static std::string name( const std::tuple<Types...>& obj );
+};
+
+/*! \brief The partial specialization of Utility::TypeNameTraits for
+ * std::pair types.
+ * \ingroup type_name_traits
+ */
+template<typename T1, typename T2>
+struct TypeNameTraits<std::pair<T1,T2> >
+{
+  //! Get the type name
+  static std::string name();
+
+  //! Get the type name
+  static std::string name( const std::pair<T1,T2>& obj );
 };
 
 /*! \brief The partial specialization of the Utility::ComparisonTraits for

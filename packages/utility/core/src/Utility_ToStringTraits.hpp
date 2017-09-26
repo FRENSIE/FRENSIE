@@ -296,7 +296,7 @@ struct ToStringTraitsIteratorHelper
   
 } // end Details namespace
 
-/*! Partial specialization of ToStringTraits for std::complex types
+/*! Partial specialization of ToStringTraits for std::initializer_list types
  * \ingroup to_string_traits
  */
 template<typename T>
