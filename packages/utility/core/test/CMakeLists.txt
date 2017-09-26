@@ -483,37 +483,27 @@ TARGET_LINK_LIBRARIES(tstDirectionalDimensionType utility_core)
 ADD_TEST(DirectionalDimensionType_test tstDirectionalDimensionType)
 SET_PROPERTY(TEST DirectionalDimensionType_test PROPERTY LABELS utility_core )
 
-ADD_EXECUTABLE(tstSpatialCoordinateSystemTraits
-  tstSpatialCoordinateSystemTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSpatialCoordinateSystemTraits tstSpatialCoordinateSystemTraits.cpp)
 TARGET_LINK_LIBRARIES(tstSpatialCoordinateSystemTraits utility_core)
 ADD_TEST(SpatialCoordinateSystemTraits_test tstSpatialCoordinateSystemTraits)
 SET_PROPERTY(TEST SpatialCoordinateSystemTraits_test PROPERTY LABELS utility_core )
 
-ADD_EXECUTABLE(tstDirectionalCoordinateSystemTraits
-  tstDirectionalCoordinateSystemTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstDirectionalCoordinateSystemTraits tstDirectionalCoordinateSystemTraits.cpp)
 TARGET_LINK_LIBRARIES(tstDirectionalCoordinateSystemTraits utility_core)
 ADD_TEST(DirectionalCoordinateSystemTraits_test tstDirectionalCoordinateSystemTraits)
 SET_PROPERTY(TEST DirectionalCoordinateSystemTraits_test PROPERTY LABELS utility_core )
 
-ADD_EXECUTABLE(tst3DCartesianVectorHelpers
-  tst3DCartesianVectorHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tst3DCartesianVectorHelpers tst3DCartesianVectorHelpers.cpp)
 TARGET_LINK_LIBRARIES(tst3DCartesianVectorHelpers utility_core)
 ADD_TEST(3DCartesianVectorHelpers_test tst3DCartesianVectorHelpers)
 SET_PROPERTY(TEST 3DCartesianVectorHelpers_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstCartesianSpatialCoordinateConversionPolicy
-  tstCartesianSpatialCoordinateConversionPolicy.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCartesianSpatialCoordinateConversionPolicy tstCartesianSpatialCoordinateConversionPolicy.cpp)
 TARGET_LINK_LIBRARIES(tstCartesianSpatialCoordinateConversionPolicy utility_core)
 ADD_TEST(CartesianSpatialCoordinateConversionPolicy_test tstCartesianSpatialCoordinateConversionPolicy)
 SET_PROPERTY(TEST CartesianSpatialCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstCartesianDirectionalCoordinateConversionPolicy
-  tstCartesianDirectionalCoordinateConversionPolicy.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCartesianDirectionalCoordinateConversionPolicy tstCartesianDirectionalCoordinateConversionPolicy.cpp)
 TARGET_LINK_LIBRARIES(tstCartesianDirectionalCoordinateConversionPolicy utility_core)
 ADD_TEST(CartesianDirectionalCoordinateConversionPolicy_test tstCartesianDirectionalCoordinateConversionPolicy)
 SET_PROPERTY(TEST CartesianDirectionalCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
@@ -731,3 +721,9 @@ ADD_EXECUTABLE(tstStructuredHexMesh
 TARGET_LINK_LIBRARIES(tstStructuredHexMesh utility_core)
 ADD_TEST(StructuredHexMesh_test tstStructuredHexMesh)
 SET_PROPERTY(TEST StructuredHexMesh_test PROPERTY LABELS utility_core)
+
+##---------------------------------------------------------------------------##
+## Run make utility_core_tests to build all of the unit tests above
+##---------------------------------------------------------------------------##
+ADD_CUSTOM_TARGET(utility_core_tests
+  DEPENDS tstDirectionalDimensionType tstSpatialDimensionType)
