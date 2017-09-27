@@ -25,9 +25,9 @@ Measurement<T>::Measurement( const Measurement<T>::ValueType& value,
     d_uncertainty( uncertainty )
 {
   // Make sure the value is valid
-  testPrecondition( !ST::isnaninf( value ) );
+  testPrecondition( !QT::isnaninf( value ) );
   // Make sure the uncertainty is valid
-  testPrecondition( !ST::isnaninf( uncertainty ) );
+  testPrecondition( !QT::isnaninf( uncertainty ) );
   testPrecondition( uncertainty >= 0.0 );
 }
 
@@ -38,19 +38,20 @@ Measurement<T>::Measurement( const Measurement<T>& other_measurement )
     d_uncertainty( other_measurement.d_uncertainty )
 {
   // Make sure the other measurement is valid
-  testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
-  testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_value ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_uncertainty ) );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
 }
 
-// Print method
+// Method for placing the object in an output stream
 template<typename T>
-inline void Measurement<T>::print( std::ostream& os ) const
+inline void Measurement<T>::toStream( std::ostream& os ) const
 {
-  boost::io::ios_precision_saver preision_saver(os);
-  boost::io::ios_flags_saver flags_saver(os);
+  Utiilty::toStream( os, d_value );
 
-  os << d_value << "(+/-" << d_uncertainty << ")";
+  os << "(+/-";
+
+  Utility::toStream( os, d_uncertainty );
 }
 
 // Return the value of the measurement
@@ -109,7 +110,7 @@ inline Measurement<T>& Measurement<T>::operator+=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
-  testPrecondition( !ST::isnaninf( value ) );
+  testPrecondition( !QT::isnaninf( value ) );
 
   d_value += value;
 
@@ -122,8 +123,8 @@ inline Measurement<T>& Measurement<T>::operator+=(
 				      const Measurement<T>& other_measurement )
 {
   // Make sure the other measurement is valid
-  testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
-  testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_value ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_uncertainty ) );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
 
   d_value += other_measurement.d_value;
@@ -142,7 +143,7 @@ inline Measurement<T>& Measurement<T>::operator-=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
-  testPrecondition( !ST::isnaninf( value ) );
+  testPrecondition( !QT::isnaninf( value ) );
 
   d_value -= value;
 
@@ -155,8 +156,8 @@ inline Measurement<T>& Measurement<T>::operator-=(
 				      const Measurement<T>& other_measurement )
 {
   // Make sure the other measurement is valid
-  testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
-  testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_value ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_uncertainty ) );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
 
   d_value -= other_measurement.d_value;
@@ -175,7 +176,7 @@ inline Measurement<T>& Measurement<T>::operator*=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
-  testPrecondition( !ST::isnaninf( value ) );
+  testPrecondition( !QT::isnaninf( value ) );
 
   d_value *= value;
 
@@ -190,8 +191,8 @@ inline Measurement<T>& Measurement<T>::operator*=(
 				      const Measurement<T>& other_measurement )
 {
   // Make sure the other measurement is valid
-  testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
-  testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_value ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_uncertainty ) );
 
   // Propagate the uncertainty of the measurements
   d_uncertainty = std::sqrt( d_uncertainty*d_uncertainty*
@@ -210,7 +211,7 @@ inline Measurement<T>& Measurement<T>::operator/=(
 				       const Measurement<T>::ValueType& value )
 {
   // Make sure the value is valid
-  testPrecondition( !ST::isnaninf( value ) );
+  testPrecondition( !QT::isnaninf( value ) );
   testPrecondition( value != 0.0 );
 
   d_value /= value;
@@ -226,8 +227,8 @@ inline Measurement<T>& Measurement<T>::operator/=(
 				      const Measurement<T>& other_measurement )
 {
   // Make sure the other measurement is valid
-  testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
-  testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_value ) );
+  testPrecondition( !QT::isnaninf( other_measurement.d_uncertainty ) );
   testPrecondition( other_measurement.d_value != 0.0 );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
 

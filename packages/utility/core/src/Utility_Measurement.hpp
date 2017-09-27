@@ -15,11 +15,9 @@
 #include <boost/units/operators.hpp>
 #include <boost/typeof/typeof.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
-#include "Utility_PrintableObject.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_OStreamableObject.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -31,13 +29,13 @@ namespace Utility{
  * uncertainty of a value (like one would with a measured quantity).
  */
 template<typename T>
-class Measurement : public PrintableObject
+class Measurement : public OStreamableObject
 {
 
 private:
 
-  // The scalar traits typedef
-  typedef Teuchos::ScalarTraits<T> ST;
+  // The quantity traits typedef
+  typedef QuantityTraits<T> QT;
 
 public:
 
@@ -48,8 +46,8 @@ public:
   typedef T ValueType;
 
   //! Constructor
-  Measurement( const ValueType& value = ValueType(),
-	       const ValueType& uncertainty = ValueType() );
+  Measurement( const ValueType& value = QT::zero(),
+	       const ValueType& uncertainty = QT::zero() );
 
   //! Copy constructor
   Measurement( const ThisType& other_measurement );
@@ -58,8 +56,8 @@ public:
   ~Measurement()
   { /* ... */ }
 
-  //! Print method
-  void print( std::ostream& os ) const;
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const override;
 
   //! Return the value of the measurement
   const ValueType& getValue() const;
@@ -263,28 +261,48 @@ inline Measurement<T> operator/( const Measurement<T>& lhs,
 
 //! Overload of sqrt for a measurement
 template<typename T>
-inline Measurement<T> sqrt( const Measurement<T>& x )
+inline Measurement<decltype(Utility::sqrt(T()))> sqrt( const Measurement<T>& x )
 {
   // Make sure the measurement is valid
   testPrecondition( x.getValue() >= 0.0 );
 
-  const T new_value = std::sqrt( x.getValue() );
+  const auto new_value = Utilty::sqrt( x.getValue() );
 
-  const T propagated_uncertainty = 0.5*(new_value/x.getValue())*
-    x.getUncertainty();
+  const auto propagated_uncertainty = 0.5*new_value*
+    (x.getUncertainty()/x.getValue());    
 
   // Make sure reasonable values have been calculated
-  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
-  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPostcondition( !QuantityTraits<decltype(new_value)>::isnaninf( new_value ) );
+  testPostcondition( !QuantityTraits<decltype(new_value)>::isnaninf(
 						    propagated_uncertainty ) );
 
-  return Measurement<T>( new_value, propagated_uncertainty );
+  return Measurement<decltype(new_value)>( new_value, propagated_uncertainty );
 }
+
+//! Overload of rpow for a measurement
+template<boost::units::integer_type N,
+	 boost::units::integer_type D,
+	 typename Quantity>
+inline typename Measurement<decltype(Utility::rpow<N,D>(Quantity()))>
+rpow( const Measurement<Quantity>& x )
+{
+  const auto new_value = Utility::rpow<N,D>( x.getValue() );
+
+  const auto propagated_uncertainty =
+    Utility::abs((N/D)*new_value*(x.getUncertainty()/x.getValue()));
+
+  return Measurement<decltype(new_value)>( new_value, propagated_uncertainty );
+}
+
+} // end Utility namespace
+
+namespace std{
 
 //! Overload of pow for a measurement
 template<typename T, typename ExponentType>
-inline Measurement<T> pow( const Measurement<T>& x,
-			   const ExponentType exponent )
+inline typename std::enable_if<std::is_arithmetic<T>::value,Utility::Measurement<T> >::type
+pow( const Utility::Measurement<T>& x,
+     const ExponentType exponent )
 {
   const T new_value = std::pow( x.getValue(), exponent );
 
@@ -292,109 +310,15 @@ inline Measurement<T> pow( const Measurement<T>& x,
     x.getUncertainty();
 
   // Make sure reasonable values have been calculated
-  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
-  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPostcondition( !Utility::QuantityTraits<T>::isnaninf( new_value ) );
+  testPostcondition( !Utility::QuantityTraits<T>::isnaninf(
 						    propagated_uncertainty ) );
   testPostcondition( propagated_uncertainty >= 0.0 );
 
-  return Measurement<T>( new_value, propagated_uncertainty );
+  return Utility::Measurement<T>( new_value, propagated_uncertainty );
 }
 
-} // end Utility namespace
-
-
-namespace boost{
-
-namespace units{
-
-//! Specialization of the boost::units::power_typeof_helper
-template<typename Y, long N, long D>
-struct power_typeof_helper<Utility::Measurement<Y>,static_rational<N,D> >
-{
-  typedef Utility::Measurement<typename power_typeof_helper<Y,static_rational<N,D> >::type> type;
-
-  static type value( const Utility::Measurement<Y>& x)
-  {
-    const static_rational<N,D> rational;
-
-    const Y rational_power = Y(rational.numerator())/Y(rational.denominator());
-
-    return Utility::pow( x, rational_power );
-  }
-};
-
-//! Specialization of the boost::units::root_typeof_helper
-template<typename Y, long N, long D>
-struct root_typeof_helper<Utility::Measurement<Y>,static_rational<N,D> >
-{
-  typedef Utility::Measurement<typename root_typeof_helper<Y,static_rational<N,D> >::type> type;
-
-  static type value( const Utility::Measurement<Y>& x )
-  {
-    const static_rational<N,D> rational;
-
-    // Compute D/N instead of N/D since we're interested in the root
-    const Y rational_power = Y(rational.denominator())/Y(rational.numerator());
-
-    return Utility::pow( x, rational_power );
-  }
-};
-
-} // end units namespace
-
-} // end boost namespace
-
-namespace Teuchos{
-
-//! Partial specialization of Teuchos::ScalarTraits for the Measurement class
-template<typename T>
-struct ScalarTraits<Utility::Measurement<T> >
-{
-  typedef Utility::Measurement<T> Measurement;
-  typedef T magnitudeType;
-  typedef typename Teuchos::ScalarTraits<T>::halfPrecision halfPrecision;
-  typedef typename Teuchos::ScalarTraits<T>::doublePrecision doublePrecision;
-
-  static const bool isComplex = Teuchos::ScalarTraits<T>::isComplex;
-  static const bool isOrdinal = Teuchos::ScalarTraits<T>::isOrdinal;
-  static const bool isComparable = Teuchos::ScalarTraits<T>::isComparable;
-  static const bool hasMachineParameters = Teuchos::ScalarTraits<T>::hasMachineParameters;
-
-  static inline magnitudeType eps() { return ScalarTraits<magnitudeType>::eps(); }
-  static inline magnitudeType sfmin() { return ScalarTraits<magnitudeType>::sfmin(); }
-  static inline magnitudeType base() { return ScalarTraits<magnitudeType>::base(); }
-  static inline magnitudeType prec() { return ScalarTraits<magnitudeType>::prec(); }
-  static inline magnitudeType t() { return ScalarTraits<magnitudeType>::t(); }
-  static inline magnitudeType rnd() { return ScalarTraits<magnitudeType>::rnd(); }
-  static inline magnitudeType emin() { return ScalarTraits<magnitudeType>::emin(); }
-  static inline magnitudeType rmin() { return ScalarTraits<magnitudeType>::rmin(); }
-  static inline magnitudeType emax() { return ScalarTraits<magnitudeType>::emax(); }
-  static inline magnitudeType rmax() { return ScalarTraits<magnitudeType>::rmax(); }
-  static inline magnitudeType magnitude(Measurement a) { return ScalarTraits<magnitudeType>::magnitude( a.getValue() ); }
-  static inline Measurement zero() { return Measurement( ScalarTraits<magnitudeType>::zero(), 0.0 ); }
-  static inline Measurement one() { return Measurement( ScalarTraits<magnitudeType>::zero(), 1.0 ); }
-  static inline Measurement conjugate(Measurement a){ return Measurement( ScalarTraits<magnitudeType>::conjugate(a.getValue()), ScalarTraits<magnitudeType>::conjugate(a.getUncertainty()) ); }
-  static inline Measurement real(Measurement a){ return Measurement( ScalarTraits<magnitudeType>::real(a.getValue()), ScalarTraits<magnitudeType>::real(a.getUncertainty()) ); }
-  static inline Measurement imag(Measurement a){ return Measurement( ScalarTraits<magnitudeType>::imag(a.getValue()), ScalarTraits<magnitudeType>::imag(a.getUncertainty()) ); }
-  static inline Measurement nan() { return Measurement( ScalarTraits<magnitudeType>::nan(), ScalarTraits<magnitudeType>::nan() ); }
-  static inline bool isnaninf(Measurement a){ return ScalarTraits<magnitudeType>::isnaninf(a.getValue()) || ScalarTraits<magnitudeType>::isnaninf(a.getUncertainty()); }
-  static inline void seedrandom(unsigned int s) { ScalarTraits<magnitudeType>::seedrandom(s); }
-  static inline Measurement random() { return Measurement( ScalarTraits<magnitudeType>::random(), 0.0 ); }
-  static inline std::string name() { return std::string("Measurement<")+std::string(ScalarTraits<magnitudeType>::name())+std::string(">"); }
-  static inline Measurement squareroot(Measurement a) { return Utility::sqrt(a); }
-  static inline Measurement pow(Measurement a, Measurement b) { return Utility::pow( a, b.getValue() ); }
-
-};
-
-} // end Teuchos namespace
-
-// Register the Measurement class with boost typeof for auto-like type
-// deduction when used with the boost::units library
-#if BOOST_UNITS_HAS_BOOST_TYPEOF
-
-BOOST_TYPEOF_REGISTER_TEMPLATE(Utility::Measurement, 1)
-
-#endif // end BOOST_UNITS_HAS_BOOST_TYPEOF
+} // end std namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes

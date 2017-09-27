@@ -10,17 +10,12 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_TwoDArray.hpp>
+#include <memory>
 
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_LegendrePolynomial.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -32,8 +27,8 @@ std::vector<Utility::long_float> legendre_moments( 5 ),
   normalization_factors_N( 3 ), normalization_ratios( 3 ),
   variances( 3 ), mean_coefficients( 3 );
 
-Teuchos::TwoDArray<Utility::long_float> orthogonal_coefficients( 3, 3 );
-Teuchos::TwoDArray<Utility::long_float> roots( 3, 2 );
+std::vector<std::vector<Utility::long_float> > orthogonal_coefficients( 3, std::vector<Utility::long_float>( 3 ) );
+std::vector<std::vector<Utility::long_float> > roots( 3, std::vector<Utility::long_float>( 2 ) );
 
 // P_8 expansion test variables
 std::vector<Utility::long_float> legendre_moments_8( 9 ),
@@ -41,25 +36,22 @@ std::vector<Utility::long_float> legendre_moments_8( 9 ),
   normalization_factors_N_8( 5 ), normalization_ratios_8( 5 ),
   variances_8( 5 ), mean_coefficients_8( 5 );
 
-Teuchos::TwoDArray<Utility::long_float> roots_8( 5, 4 );
+std::vector<std::vector<Utility::long_float> > roots_8( 5, std::vector<Utility::long_float>( 4 ) );
 
 // Moments from nodes and weights
 std::vector<Utility::long_float> test_roots( 8 );
 std::vector<Utility::long_float> test_legendre( 17 );
 Utility::long_float test_weight;
 
-
-Teuchos::RCP<Utility::SloanRadauQuadrature> quadrature,
+std::shared_ptr<Utility::SloanRadauQuadrature> quadrature,
                                             quadrature_8,
                                             test_quadrature;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-
 // Check that the Radau moments can be returned
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           getRadauMoments )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauMoments )
 {
   int number_of_moments = 4;
   std::vector<Utility::long_float> legendre_moment( number_of_moments+1 );
@@ -75,16 +67,16 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   quadrature2.getRadauMoments( radau_moment );
 
-  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
                           .05,
                           1e-14);
-  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
                           1.0/60.0,
                           1e-14);
-  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
                           14.0/15.0 - 91.0/100.0,
                           1e-14);
-  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
                           91.0/100.0 - 157.0/175.0, 1e-14);
 
   number_of_moments = 8;
@@ -92,28 +84,28 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   quadrature_8->getRadauMoments( radau_moment );
 
-  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
                           radau_moments_8[0].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
                           radau_moments_8[1].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
                           radau_moments_8[2].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
                           radau_moments_8[3].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),
                           radau_moments_8[4].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),
                           radau_moments_8[5].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),
                           radau_moments_8[6].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),
                           radau_moments_8[7].convert_to<double>(),
                           1e-14 );
 
@@ -121,36 +113,35 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
 //---------------------------------------------------------------------------//
 // Check that the Long Radau moments can be returned
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           getLongRadauMoments )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, getLongRadauMoments )
 {
   int number_of_radau_moments = 8;
   std::vector<Utility::long_float> radau_moment( number_of_radau_moments );
 
   quadrature_8->getLongRadauMoments( radau_moment );
 
-  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
                           radau_moments_8[0].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
                           radau_moments_8[1].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
                           radau_moments_8[2].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
                           radau_moments_8[3].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),
                           radau_moments_8[4].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),
                           radau_moments_8[5].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),
                           radau_moments_8[6].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),
                           radau_moments_8[7].convert_to<double>(),
                           1e-14 );
 
@@ -158,8 +149,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
 //---------------------------------------------------------------------------//
 // Check that the mean coefficients for orthogonal polynomial recursion relation can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           evaluateOrthogonalNormalizationRatio )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, evaluateOrthogonalNormalizationRatio )
 {
   int i = 1;
   std::vector<Utility::long_float> ratios( 3 );
@@ -170,7 +160,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                                     radau_moments,
                                                     i );
 
-  TEST_FLOATING_EQUALITY( ratios[i].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( ratios[i].convert_to<double>(),
                           normalization_ratios[i].convert_to<double>(),
                           1e-12);
 
@@ -181,7 +171,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                                     radau_moments,
                                                     i );
 
-  TEST_FLOATING_EQUALITY( ratios[i].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( ratios[i].convert_to<double>(),
                           normalization_ratios[i].convert_to<double>(),
                           1e-12);
 
@@ -189,15 +179,14 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
 //---------------------------------------------------------------------------//
 // Check that the mean coefficients for orthogonal polynomial recursion relation can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           evaluateMeanCoefficient )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, evaluateMeanCoefficient )
 {
   int i = 1;
   Utility::long_float result1 =
     quadrature->evaluateMeanCoefficient( normalization_ratios,
                                          i );
 
-  TEST_FLOATING_EQUALITY( result1.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( result1.convert_to<double>(),
                           mean_coefficients[i].convert_to<double>(),
                           1e-12);
 
@@ -206,7 +195,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     quadrature->evaluateMeanCoefficient( normalization_ratios,
                                          i );
 
-  TEST_FLOATING_EQUALITY( result2.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( result2.convert_to<double>(),
                           mean_coefficients[i].convert_to<double>(),
                           1e-12);
 
@@ -214,10 +203,9 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
 //---------------------------------------------------------------------------//
 // Check that the coefficients of the orthogonal polynomial can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           evaluateOrthogonalCoefficients )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, evaluateOrthogonalCoefficients )
 {
-  Teuchos::TwoDArray<Utility::long_float> coefficients( 3, 3 );
+  std::vector<std::vector<Utility::long_float> > coefficients( 3, std::vector<Utility::long_float>( 3 ) );
 
   coefficients[0][0] = Utility::long_float(1);
 
@@ -228,11 +216,11 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                               mean_coefficients,
                                               i );
 
-  TEST_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(),
                           orthogonal_coefficients[i][0].convert_to<double>(),
                           1e-12);
 
-  TEST_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(),
                           orthogonal_coefficients[i][1].convert_to<double>(),
                           1e-12);
 
@@ -243,15 +231,15 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                               mean_coefficients,
                                               i );
 
-  TEST_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(),
                           orthogonal_coefficients[i][0].convert_to<double>(),
                           1e-12);
 
-  TEST_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(),
                           orthogonal_coefficients[i][1].convert_to<double>(),
                           1e-12);
 
-  TEST_FLOATING_EQUALITY( coefficients[i][2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( coefficients[i][2].convert_to<double>(),
                           orthogonal_coefficients[i][2].convert_to<double>(),
                           1e-12);
 
@@ -259,8 +247,8 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
 //---------------------------------------------------------------------------//
 // Check that the normalization factors of the orthogonal polynomial can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           evaluateOrthogonalNormalizationFactor )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature,
+                   evaluateOrthogonalNormalizationFactor )
 {
   std::vector<Utility::long_float> N( 3 );
   int i = 0;
@@ -270,7 +258,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                                      radau_moments,
                                                      i );
 
-  TEST_FLOATING_EQUALITY( N[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( N[0].convert_to<double>(),
                           normalization_factors_N[i].convert_to<double>(),
                           1e-12);
 
@@ -280,15 +268,14 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                                      radau_moments,
                                                      i );
 
-  TEST_FLOATING_EQUALITY( N[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( N[1].convert_to<double>(),
                           normalization_factors_N[i].convert_to<double>(),
                           1e-12);
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Variance of the orthogonal polynomial can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           evaluateVariance )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, evaluateVariance )
 {
 
   int i = 1;
@@ -297,15 +284,14 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     quadrature->evaluateVariance( normalization_factors_N,
                                   i );
 
-  TEST_FLOATING_EQUALITY( result.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( result.convert_to<double>(),
                           variances[i].convert_to<double>(),
                           1e-12);
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Orthogonal Polynomial can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           evaluateOrthogonalPolynomial )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, evaluateOrthogonalPolynomial )
 {
   Utility::long_float result1 =
     quadrature->evaluateOrthogonalPolynomial( variances,
@@ -313,7 +299,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                               -Utility::long_float(1),
                                               2 );
 
-  TEST_FLOATING_EQUALITY( result1.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( result1.convert_to<double>(),
                           1.30003428811616E+00,
                           1e-12);
 
@@ -323,7 +309,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                               Utility::long_float(1),
                                               2 );
 
-  TEST_FLOATING_EQUALITY( result2.convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( result2.convert_to<double>(),
                           3.32904776851917E-02,
                           1e-12);
 
@@ -331,7 +317,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 /*
 //---------------------------------------------------------------------------//
 // Check that the roots of the Orthogonal Polynomial can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
+FRENSIE_UNIT_TEST( SloanRadauQuadrature,
 		           evaluateOrthogonalRoots )
 {
   Teuchos::TwoDArray<Utility::long_float> test_roots( 3, 2 );
@@ -346,10 +332,10 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                          i );
 
   TEST_EQUALITY_CONST( root_found, 1 );
-  TEST_FLOATING_EQUALITY( test_roots[2][0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( test_roots[2][0].convert_to<double>(),
                           roots[2][0].convert_to<double>(),
                           1e-12);
-  TEST_FLOATING_EQUALITY( test_roots[2][1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( test_roots[2][1].convert_to<double>(),
                           roots[2][1].convert_to<double>(),
                           1e-12);
 
@@ -357,8 +343,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 */
 //---------------------------------------------------------------------------//
 // Check that the roots of the Orthogonal Polynomial can be evaluated
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           getRadauNodesAndWeights )
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauNodesAndWeights )
 {
   double tol = 1e-15;
   std::vector<Utility::long_float> nodes, weights;
@@ -379,37 +364,37 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_4[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_4[0].convert_to<double>(),
                           legendre_moments[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_4[1].convert_to<double>(),
                           legendre_moments[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_4[2].convert_to<double>(),
                           legendre_moments[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_4[3].convert_to<double>(),
                           legendre_moments[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[4].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_4[4].convert_to<double>(),
                           legendre_moments[4].convert_to<double>(),
                           tol);
 
 /*
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[0].convert_to<double>(),
                           weights_4[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[1].convert_to<double>(),
                           weights_4[1].convert_to<double>(),
                            tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[2].convert_to<double>(),
                           weights_4[2].convert_to<double>(),
                            tol);
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
                           roots[2][0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
                           roots[2][1].convert_to<double>(),
                           tol);
   TEST_EQUALITY_CONST( nodes[2].convert_to<double>(), 1.0 );
@@ -431,60 +416,60 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_8[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[0].convert_to<double>(),
                           legendre_moments_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[1].convert_to<double>(),
                           legendre_moments_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[2].convert_to<double>(),
                           legendre_moments_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[3].convert_to<double>(),
                           legendre_moments_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[4].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[4].convert_to<double>(),
                           legendre_moments_8[4].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[5].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[5].convert_to<double>(),
                           legendre_moments_8[5].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[6].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[6].convert_to<double>(),
                           legendre_moments_8[6].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[7].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[7].convert_to<double>(),
                           legendre_moments_8[7].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[8].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_8[8].convert_to<double>(),
                           legendre_moments_8[8].convert_to<double>(),
                           tol);
 /*
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[0].convert_to<double>(),
                           weights_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[1].convert_to<double>(),
                           weights_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[2].convert_to<double>(),
                           weights_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[3].convert_to<double>(),
                           weights_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[4].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[4].convert_to<double>(),
                           weights_8[4].convert_to<double>(),
                           tol);
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
                           roots_8[4][0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
                           roots_8[4][1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
                           roots_8[4][2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
                           roots_8[4][3].convert_to<double>(),
                           tol);
   TEST_EQUALITY_CONST( nodes[4].convert_to<double>(), 1.0 );
@@ -507,31 +492,31 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_double[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[0].convert_to<double>(),
                           legendre_moments_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[1].convert_to<double>(),
                           legendre_moments_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[2].convert_to<double>(),
                           legendre_moments_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[3].convert_to<double>(),
                           legendre_moments_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[4].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[4].convert_to<double>(),
                           legendre_moments_8[4].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[5].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[5].convert_to<double>(),
                           legendre_moments_8[5].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[6].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[6].convert_to<double>(),
                           legendre_moments_8[6].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[7].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[7].convert_to<double>(),
                           legendre_moments_8[7].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[8].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_double[8].convert_to<double>(),
                           legendre_moments_8[8].convert_to<double>(),
                           tol);
 
@@ -554,31 +539,31 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_ld[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[0].convert_to<double>(),
                           legendre_moments_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[1].convert_to<double>(),
                           legendre_moments_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[2].convert_to<double>(),
                           legendre_moments_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[3].convert_to<double>(),
                           legendre_moments_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[4].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[4].convert_to<double>(),
                           legendre_moments_8[4].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[5].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[5].convert_to<double>(),
                           legendre_moments_8[5].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[6].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[6].convert_to<double>(),
                           legendre_moments_8[6].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[7].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[7].convert_to<double>(),
                           legendre_moments_8[7].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[8].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres_ld[8].convert_to<double>(),
                           legendre_moments_8[8].convert_to<double>(),
                           tol);
 
@@ -603,31 +588,30 @@ std::cout << std::setprecision(20) << "nodes[i]   =\t" << nodes[i] << std::endl;
 std::cout << std::setprecision(20) << "weights[i] =\t" << weights[i] << std::endl;
   }
 
-  TEST_FLOATING_EQUALITY( legendres[0].convert_to<double>(), test_legendre[0].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[1].convert_to<double>(), test_legendre[1].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[2].convert_to<double>(), test_legendre[2].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[3].convert_to<double>(), test_legendre[3].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[4].convert_to<double>(), test_legendre[4].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[5].convert_to<double>(), test_legendre[5].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[6].convert_to<double>(), test_legendre[6].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[7].convert_to<double>(), test_legendre[7].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[8].convert_to<double>(), test_legendre[8].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[9].convert_to<double>(), test_legendre[9].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[10].convert_to<double>(), test_legendre[10].convert_to<double>(), tol);
-  TEST_FLOATING_EQUALITY( legendres[11].convert_to<double>(), test_legendre[11].convert_to<double>(), 1e-10);
-  TEST_FLOATING_EQUALITY( legendres[12].convert_to<double>(), test_legendre[12].convert_to<double>(), 1e-10);
-  TEST_FLOATING_EQUALITY( legendres[13].convert_to<double>(), test_legendre[13].convert_to<double>(), 1e-10);
-  TEST_FLOATING_EQUALITY( legendres[14].convert_to<double>(), test_legendre[14].convert_to<double>(), 1e-10);
-  TEST_FLOATING_EQUALITY( legendres[15].convert_to<double>(), test_legendre[15].convert_to<double>(), 1e-10);
-  TEST_FLOATING_EQUALITY( legendres[16].convert_to<double>(), test_legendre[16].convert_to<double>(), 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[0].convert_to<double>(), test_legendre[0].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[1].convert_to<double>(), test_legendre[1].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[2].convert_to<double>(), test_legendre[2].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[3].convert_to<double>(), test_legendre[3].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[4].convert_to<double>(), test_legendre[4].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[5].convert_to<double>(), test_legendre[5].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[6].convert_to<double>(), test_legendre[6].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[7].convert_to<double>(), test_legendre[7].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[8].convert_to<double>(), test_legendre[8].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[9].convert_to<double>(), test_legendre[9].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[10].convert_to<double>(), test_legendre[10].convert_to<double>(), tol);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[11].convert_to<double>(), test_legendre[11].convert_to<double>(), 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[12].convert_to<double>(), test_legendre[12].convert_to<double>(), 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[13].convert_to<double>(), test_legendre[13].convert_to<double>(), 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[14].convert_to<double>(), test_legendre[14].convert_to<double>(), 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[15].convert_to<double>(), test_legendre[15].convert_to<double>(), 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( legendres[16].convert_to<double>(), test_legendre[16].convert_to<double>(), 1e-10);
 
 
 }
 
 //---------------------------------------------------------------------------//
 // Varify function matches original algorithm
-TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
-		           AlgorithmMatch)
+FRENSIE_UNIT_TEST( SloanRadauQuadrature, AlgorithmMatch)
 {
   double tol = 1e-15;
   std::vector<Utility::long_float> nodes, weights, node, weight;
@@ -636,7 +620,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   weight.resize(number_of_angles_wanted);
 
   std::vector<Utility::long_float> l_moments(3);
-  Teuchos::RCP<Utility::SloanRadauQuadrature> test;
+  std::shared_ptr<Utility::SloanRadauQuadrature> test;
 
   l_moments[0] =    Utility::long_float(1);
   l_moments[1] =    Utility::long_float(0);
@@ -653,18 +637,18 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   weight[0] = Utility::long_float(3)/Utility::long_float(4);
   weight[1] = Utility::long_float(1)/Utility::long_float(4);
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[0].convert_to<double>(),
                           weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[1].convert_to<double>(),
                           weight[1].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
                           node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
                           node[1].convert_to<double>(),
                           tol);
 
@@ -697,30 +681,30 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   weight[0] = 2.204622111767684E-01L;
   weight[3] = 6.250000000000000E-02L;
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[0].convert_to<double>(),
                           weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[1].convert_to<double>(),
                           weight[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[2].convert_to<double>(),
                           weight[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[3].convert_to<double>(),
                           weight[3].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
                           node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
                           node[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
                           node[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
                           node[3].convert_to<double>(),
                           tol);
 
@@ -751,30 +735,30 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   weight[0] = 2.222576041068843E-01L;
   weight[3] = 6.186868686868687E-02L;
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[0].convert_to<double>(),
                           weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[1].convert_to<double>(),
                           weight[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[2].convert_to<double>(),
                           weight[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[3].convert_to<double>(),
                           weight[3].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
                           node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
                           node[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
                           node[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
                           node[3].convert_to<double>(),
                           tol);
 /*
@@ -803,18 +787,18 @@ std::cout << std::setprecision(20)<< " nodes[1] =\t " <<nodes[1] <<std::endl;
   weight[0] = 1.536960881469447E-07L;
   weight[1] = 9.999998463039118E-01L;
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[0].convert_to<double>(),
                           weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( weights[1].convert_to<double>(),
                           weight[1].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
                           node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
                           node[1].convert_to<double>(),
                           tol);
 */
@@ -823,9 +807,9 @@ std::cout << std::setprecision(20)<< " nodes[1] =\t " <<nodes[1] <<std::endl;
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   legendre_moments[0] =    Utility::long_float(259700);
   legendre_moments[1] =    Utility::long_float(2596999988559773)/10000000000;
@@ -987,7 +971,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     new Utility::SloanRadauQuadrature( test_legendre ) );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstSloanRadauquadrature->cpp

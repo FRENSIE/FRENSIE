@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <math.h>
+#include <cstring>
 
 // FRENSIE Includes
 #include "Utility_TetrahedronHelpers.hpp"
@@ -39,6 +40,24 @@ double calculateTetrahedronVolume( const double vertex_a[3],
   testPostcondition( volume > 0.0 );
 
   return volume;
+}
+
+// Calculate tetrahedron barycentric transform matrix
+void calculateBarycentricTransformMatrix( const double vertex_a[3],
+                                          const double vertex_b[3],
+                                          const double vertex_c[3],
+                                          const double reference_vertex[3],
+                                          double transform_arrays[9] )
+{
+  moab::Matrix3 tmp_matrix;
+  
+  calculateBarycentricTransformMatrix( vertex_a,
+                                       vertex_b,
+                                       vertex_c,
+                                       reference_vertex,
+                                       tmp_matrix );
+
+  std::memcpy( transform_arrays, tmp_matrix.array(), 9*sizeof(double) );
 }
 
 // Calculate tetrahedron barycentric transform matrix

@@ -29,7 +29,7 @@ std::string test_file_name;
 FRENSIE_UNIT_TEST( FortranFileHelpers, fileExistsUsingFortran )
 {
   FRENSIE_CHECK( fileExistsUsingFortran( test_file_name.c_str(), test_file_name.size() ) );
-  std::cout << test_file_name << std::endl;
+  
   std::string file_name = "dummy_file.txt" ;
 
   FRENSIE_CHECK( !fileExistsUsingFortran( file_name.c_str(), file_name.size() ) );

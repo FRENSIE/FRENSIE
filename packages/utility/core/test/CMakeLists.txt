@@ -600,58 +600,42 @@ TARGET_LINK_LIBRARIES(tstFortranFileHelpers utility_core)
 ADD_TEST(FortranFileHelpers_test tstFortranFileHelpers --test_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt)
 SET_PROPERTY(TEST FortranFileHelpers_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstKinematicHelpers
-  tstKinematicHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstKinematicHelpers tstKinematicHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
 ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
 SET_PROPERTY(TEST KinematicHelpers_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstLegendrePolynomial
-  tstLegendrePolynomial.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstLegendrePolynomial tstLegendrePolynomial.cpp)
 TARGET_LINK_LIBRARIES(tstLegendrePolynomial utility_core)
 ADD_TEST(LegendrePolynomial_test tstLegendrePolynomial)
 SET_PROPERTY(TEST LegendrePolynomial_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstGaussLegendreQuadratureSet
-  tstGaussLegendreQuadratureSet.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstGaussLegendreQuadratureSet tstGaussLegendreQuadratureSet.cpp)
 TARGET_LINK_LIBRARIES(tstGaussLegendreQuadratureSet utility_core)
 ADD_TEST(GaussLegendreQuadratureSet_test tstGaussLegendreQuadratureSet)
 SET_PROPERTY(TEST GaussLegendreQuadratureSet_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSloanRadauQuadrature
-  tstSloanRadauQuadrature.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSloanRadauQuadrature tstSloanRadauQuadrature.cpp)
 TARGET_LINK_LIBRARIES(tstSloanRadauQuadrature utility_core)
 ADD_TEST(SloanRadauQuadrature_test tstSloanRadauQuadrature)
 SET_PROPERTY(TEST SloanRadauQuadrature_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstTetrahedronHelpers
-  tstTetrahedronHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstTetrahedronHelpers tstTetrahedronHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstTetrahedronHelpers utility_core)
 ADD_TEST(TetrahedronHelpers_test tstTetrahedronHelpers)
 SET_PROPERTY(TEST TetrahedronHelpers_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSampleMoment
-  tstSampleMoment.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSampleMoment tstSampleMoment.cpp)
 TARGET_LINK_LIBRARIES(tstSampleMoment utility_core)
 ADD_TEST(SampleMoment_test tstSampleMoment)
 SET_PROPERTY(TEST SampleMoment_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstSampleMomentCollection
-  tstSampleMomentCollection.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSampleMomentCollection tstSampleMomentCollection.cpp)
 TARGET_LINK_LIBRARIES(tstSampleMomentCollection utility_core)
 ADD_TEST(SampleMomentCollection_test tstSampleMomentCollection)
 SET_PROPERTY(TEST SampleMomentCollection_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstMeasurement
-  tstMeasurement.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstMeasurement tstMeasurement.cpp)
 TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
 ADD_TEST(Measurement_test tstMeasurement)
 SET_PROPERTY(TEST Measurement_test PROPERTY LABELS utility_core)

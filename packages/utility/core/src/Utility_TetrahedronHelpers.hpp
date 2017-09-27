@@ -112,11 +112,12 @@ inline void calculateBarycentricTransformMatrix(
 
 
 // Calculate the volume of a tetrahedron
-inline void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
-					         const moab::CartVect& vertex_b,
-					         const moab::CartVect& vertex_c,
-					         const moab::CartVect& reference_vertex,
-				             double transform_arrays[9] )
+inline void calculateBarycentricTransformMatrix(
+                                        const moab::CartVect& vertex_a,
+                                        const moab::CartVect& vertex_b,
+                                        const moab::CartVect& vertex_c,
+                                        const moab::CartVect& reference_vertex,
+                                        double transform_arrays[9] )
 {
   return calculateBarycentricTransformMatrix( vertex_a.array(),
 				              vertex_b.array(),
