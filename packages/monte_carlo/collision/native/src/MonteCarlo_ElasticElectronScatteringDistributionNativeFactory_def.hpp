@@ -16,18 +16,6 @@
 
 namespace MonteCarlo{
 
-template< class TwoDInterpPolicy >
-struct TwoDInterpIsLogLogLog
-{
-    static const bool value = false;
-};
-
-template<>
-struct TwoDInterpIsLogLogLog< Utility::LogLogLog >
-{
-    static const bool value = true;
-};
-
 //----------------------------------------------------------------------------//
 //      ****FORWARD DATA PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
