@@ -19,7 +19,7 @@
 //! A custom signal handler for seg faults
 void SegFaultSignalHandler( int signal )      
 {                                             
-  throw std::logic_error( "Seg Fault Detected!" ); 
+  throw std::runtime_error( "Seg Fault Detected!" ); 
 }                                                  
 
 //! The default main function for running FRENSIE unit tests

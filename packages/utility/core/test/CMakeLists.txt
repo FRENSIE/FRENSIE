@@ -590,18 +590,14 @@ SET_PROPERTY(TEST DataProcessor_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstFortranStringHelpers
   tstFortranStringHelpers.cpp
-  string_conversion.F90
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+  string_conversion.F90)
 TARGET_LINK_LIBRARIES(tstFortranStringHelpers utility_core)
 ADD_TEST(FortranStringHelpers_test tstFortranStringHelpers)
 SET_PROPERTY(TEST FortranStringHelpers_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstFortranFileHelpers
-  tstFortranFileHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstFortranFileHelpers tstFortranFileHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstFortranFileHelpers utility_core)
-ADD_TEST(FortranFileHelpers_test tstFortranFileHelpers
---test_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt")
+ADD_TEST(FortranFileHelpers_test tstFortranFileHelpers --test_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt")
 SET_PROPERTY(TEST FortranFileHelpers_test PROPERTY LABELS utility_core)
 
 ADD_EXECUTABLE(tstKinematicHelpers

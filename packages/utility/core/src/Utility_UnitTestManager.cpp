@@ -540,7 +540,9 @@ UnitTestManager::Data::Data()
     d_command_line_arguments(),
     d_initializer( NULL ),
     d_report_level( Auto ),
-    d_report_sink(),
+    // This must be initialized so that a report sink exists in the event of
+    // an initialization error
+    d_report_sink( &std::cerr, CustomReportSinkDeleter( false ) ), 
     d_report_sink_buffer( NULL ),
     d_stdout_buffer( NULL ),
     d_stderr_buffer( NULL ),

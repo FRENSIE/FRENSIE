@@ -10,74 +10,72 @@
 #include <iostream>
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Utils.hpp>
+// Boost Includes
+#include <boost/algorithm/string.hpp>
 
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_FortranFileHelperWrappers.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-
 std::string test_file_name;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 //Checks that the file exists.
-TEUCHOS_UNIT_TEST( FortranFileHelpers, fileExistsUsingFortran )
+FRENSIE_UNIT_TEST( FortranFileHelpers, fileExistsUsingFortran )
 {
-  TEST_ASSERT( fileExistsUsingFortran( test_file_name.c_str(), test_file_name.size() ) );
+  FRENSIE_CHECK( fileExistsUsingFortran( test_file_name.c_str(), test_file_name.size() ) );
 
   std::string file_name = "dummy_file.txt" ;
 
-  TEST_ASSERT( !fileExistsUsingFortran( file_name.c_str(), file_name.size() ) );
+  FRENSIE_CHECK( !fileExistsUsingFortran( file_name.c_str(), file_name.size() ) );
 
 }
 
 //---------------------------------------------------------------------------//
 //Checks that the file is readable.
-TEUCHOS_UNIT_TEST( FortranFileHelpers, fileIsReadableUsingFortran )
+FRENSIE_UNIT_TEST( FortranFileHelpers, fileIsReadableUsingFortran )
 {
-  TEST_ASSERT( fileIsReadableUsingFortran( test_file_name.c_str(), test_file_name.size() ) );
+  FRENSIE_CHECK( fileIsReadableUsingFortran( test_file_name.c_str(), test_file_name.size() ) );
 
   std::string file_name = "dummy_file.txt" ;
 
-  TEST_ASSERT( !fileIsReadableUsingFortran( file_name.c_str(), file_name.size() ) );
+  FRENSIE_CHECK( !fileIsReadableUsingFortran( file_name.c_str(), file_name.size() ) );
 
 }
 
 //---------------------------------------------------------------------------//
 //Opens file and then checks if file is open.
-TEUCHOS_UNIT_TEST( FortranFileHelpers, fileIsOpenUsingFortran )
+FRENSIE_UNIT_TEST( FortranFileHelpers, fileIsOpenUsingFortran )
 {
 
   int file_id = 1;
 
   openFileUsingFortran(test_file_name.c_str(), test_file_name.size(), file_id);
 
-  TEST_ASSERT( fileIsOpenUsingFortran( file_id ) );
+  FRENSIE_CHECK( fileIsOpenUsingFortran( file_id ) );
 
 }
 
 //---------------------------------------------------------------------------//
 //This file should be open from the previous test.
 //Closes the file and checks that it is closed.
-TEUCHOS_UNIT_TEST( FortranFileHelpers, closeFileUsingFortran )
+FRENSIE_UNIT_TEST( FortranFileHelpers, closeFileUsingFortran )
 {
   int file_id = 1;
 
   closeFileUsingFortran( file_id );
 
-  TEST_ASSERT( !fileIsOpenUsingFortran( file_id ) );
+  FRENSIE_CHECK( !fileIsOpenUsingFortran( file_id ) );
 }
 
 //---------------------------------------------------------------------------//
 //This test reads a line in.
-TEUCHOS_UNIT_TEST( FortranFileHelpers, readLineUsingFortran )
+FRENSIE_UNIT_TEST( FortranFileHelpers, readLineUsingFortran )
 {
   int file_id = 1;
 
@@ -87,16 +85,16 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, readLineUsingFortran )
 
   readLineUsingFortran( file_id, &line[0], line.size() );
 
-  line = Teuchos::Utils::trimWhiteSpace( line );
+  boost::algorithm::trim( line );
 
-  TEST_ASSERT( line.compare( "This is a test file. Line 1" ) == 0 );
+  FRENSIE_CHECK( line.compare( "This is a test file. Line 1" ) == 0 );
 
   closeFileUsingFortran( file_id );
 }
 
 //---------------------------------------------------------------------------//
 //This test moves to a specified line.
-TEUCHOS_UNIT_TEST( FortranFileHelpers, moveToLineUsingFortran )
+FRENSIE_UNIT_TEST( FortranFileHelpers, moveToLineUsingFortran )
 {
   int file_id = 1;
 
@@ -108,16 +106,16 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, moveToLineUsingFortran )
 
   readLineUsingFortran( file_id, &line[0], line.size() );
 
-  line = Teuchos::Utils::trimWhiteSpace( line );
+  boost::algorithm::trim( line );
 
-  TEST_ASSERT( line.compare( "This is a test file. Line 3" ) == 0 );
+  FRENSIE_CHECK( line.compare( "This is a test file. Line 3" ) == 0 );
 
   closeFileUsingFortran( file_id );
 }
 
 //---------------------------------------------------------------------------//
 //This test moves to a specified line and tests the rewind function.
-TEUCHOS_UNIT_TEST( FortranFileHelpers, rewindFileUsingFortran )
+FRENSIE_UNIT_TEST( FortranFileHelpers, rewindFileUsingFortran )
 {
   int file_id = 1;
 
@@ -131,9 +129,9 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, rewindFileUsingFortran )
 
   readLineUsingFortran( file_id, &line[0], line.size() );
 
-  line = Teuchos::Utils::trimWhiteSpace( line );
+  boost::algorithm::trim( line );
 
-  TEST_ASSERT( line.compare( "This is a test file. Line 1" ) == 0 );
+  FRENSIE_CHECK( line.compare( "This is a test file. Line 1" ) == 0 );
 
   closeFileUsingFortran( file_id );
 }
@@ -141,16 +139,16 @@ TEUCHOS_UNIT_TEST( FortranFileHelpers, rewindFileUsingFortran )
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_file",
-                   &test_file_name,
-                   "Test file for checking FORTRAN file helpers." );
+  ADD_OPTION( "test_file",
+              boost::program_options::value<std::string>(&test_file_name)->default_value( "" ),
+              "Test file for checking FORTRAN file helpers." );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstFortranFileHelpers.cpp
