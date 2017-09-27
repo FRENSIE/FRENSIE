@@ -9,99 +9,90 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_Tuple.hpp>
-
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_SphericalDirectionalCoordinateConversionPolicy.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Array.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the spherical directional coordinates can be converted to
 // Cartesian directional coordinates
-TEUCHOS_UNIT_TEST( SphericalDirectionalCoordinateConversionPolicy,
+FRENSIE_UNIT_TEST( SphericalDirectionalCoordinateConversionPolicy,
                    convertFromCartesianDirection )
 {
   // Z-axis
-  Teuchos::Tuple<double,3> cartesian_direction =
-    Teuchos::tuple( 0.0, 0.0, 1.0 );
+  std::array<double,3> cartesian_direction = {0.0, 0.0, 1.0};
 
-  Teuchos::Tuple<double,3> spherical_direction;
+  std::array<double,3> spherical_direction;
   
-  Teuchos::Tuple<double,3> ref_spherical_direction =
-    Teuchos::tuple( 1.0, 0.0, 1.0 );
+  std::array<double,3> ref_spherical_direction = {1.0, 0.0, 1.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
-                                             cartesian_direction.getRawPtr(),
-                                             spherical_direction.getRawPtr() );
+                                             cartesian_direction.data(),
+                                             spherical_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( spherical_direction, ref_spherical_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( spherical_direction, ref_spherical_direction, 1e-15 );
 
   // Neg. z-axis
-  cartesian_direction = Teuchos::tuple( 0.0, 0.0, -1.0 );
-  ref_spherical_direction = Teuchos::tuple( 1.0, 0.0, -1.0 );
+  cartesian_direction = {0.0, 0.0, -1.0};
+  ref_spherical_direction = {1.0, 0.0, -1.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
-                                             cartesian_direction.getRawPtr(),
-                                             spherical_direction.getRawPtr() );
+                                             cartesian_direction.data(),
+                                             spherical_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( spherical_direction, ref_spherical_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( spherical_direction, ref_spherical_direction, 1e-15 );
 
   // Y-axis
-  cartesian_direction = Teuchos::tuple( 0.0, 1.0, 0.0 );
-  ref_spherical_direction =
-    Teuchos::tuple( 1.0, Utility::PhysicalConstants::pi/2, 0.0 );
+  cartesian_direction = {0.0, 1.0, 0.0};
+  ref_spherical_direction = {1.0, Utility::PhysicalConstants::pi/2, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
-                                             cartesian_direction.getRawPtr(),
-                                             spherical_direction.getRawPtr() );
+                                             cartesian_direction.data(),
+                                             spherical_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( spherical_direction, ref_spherical_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( spherical_direction, ref_spherical_direction, 1e-15 );
 
   // Neg. y-axis
-  cartesian_direction = Teuchos::tuple( 0.0, -1.0, 0.0 );
-  ref_spherical_direction =
-    Teuchos::tuple( 1.0, 3*Utility::PhysicalConstants::pi/2, 0.0 );
+  cartesian_direction = {0.0, -1.0, 0.0};
+  ref_spherical_direction = {1.0, 3*Utility::PhysicalConstants::pi/2, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
-                                             cartesian_direction.getRawPtr(),
-                                             spherical_direction.getRawPtr() );
+                                             cartesian_direction.data(),
+                                             spherical_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( spherical_direction, ref_spherical_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( spherical_direction, ref_spherical_direction, 1e-15 );
 
   // X-axis
-  cartesian_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
-  ref_spherical_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
+  cartesian_direction = {1.0, 0.0, 0.0};
+  ref_spherical_direction = {1.0, 0.0, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
-                                             cartesian_direction.getRawPtr(),
-                                             spherical_direction.getRawPtr() );
+                                             cartesian_direction.data(),
+                                             spherical_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( spherical_direction, ref_spherical_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( spherical_direction, ref_spherical_direction, 1e-15 );
 
   // Neg. x-axis
-  cartesian_direction = Teuchos::tuple( -1.0, 0.0, 0.0 );
-  ref_spherical_direction =
-    Teuchos::tuple( 1.0, Utility::PhysicalConstants::pi, 0.0 );
+  cartesian_direction = {-1.0, 0.0, 0.0};
+  ref_spherical_direction = {1.0, Utility::PhysicalConstants::pi, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
-                                             cartesian_direction.getRawPtr(),
-                                             spherical_direction.getRawPtr() );
+                                             cartesian_direction.data(),
+                                             spherical_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( spherical_direction, ref_spherical_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( spherical_direction, ref_spherical_direction, 1e-15 );
 
   // Off axis
-  cartesian_direction =
-    Teuchos::tuple( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+  cartesian_direction = {1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0)};
   ref_spherical_direction =
-    Teuchos::tuple( 1.0,
-                    Utility::PhysicalConstants::pi/4,
-                    1.0/sqrt(3.0) );
+    {1.0, Utility::PhysicalConstants::pi/4, 1.0/sqrt(3.0)};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertFromCartesianDirection(
                                                       cartesian_direction[0],
@@ -111,96 +102,91 @@ TEUCHOS_UNIT_TEST( SphericalDirectionalCoordinateConversionPolicy,
                                                       spherical_direction[1],
                                                       spherical_direction[2] );
 
-  TEST_COMPARE_FLOATING_ARRAYS( spherical_direction, ref_spherical_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( spherical_direction, ref_spherical_direction, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the spherical directional coordinates can be converted to
 // Cartesian directional coordinates
-TEUCHOS_UNIT_TEST( SphericalDirectionalCoordinateConversionPolicy,
+FRENSIE_UNIT_TEST( SphericalDirectionalCoordinateConversionPolicy,
                    convertToCartesianDirection )
 {
   // Z-axis
-  Teuchos::Tuple<double,3> spherical_direction =
-    Teuchos::tuple( 1.0, 0.0, 1.0 );
+  std::array<double,3> spherical_direction = {1.0, 0.0, 1.0};
 
-  Teuchos::Tuple<double,3> cartesian_direction;
+  std::array<double,3> cartesian_direction;
   
-  Teuchos::Tuple<double,3> ref_cartesian_direction =
-    Teuchos::tuple( 0.0, 0.0, 1.0 );
+  std::array<double,3> ref_cartesian_direction = {0.0, 0.0, 1.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
-                                             spherical_direction.getRawPtr(),
-                                             cartesian_direction.getRawPtr() );
+                                             spherical_direction.data(),
+                                             cartesian_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( cartesian_direction, ref_cartesian_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cartesian_direction, ref_cartesian_direction, 1e-15 );
 
   // Neg. Z-axis
-  spherical_direction = Teuchos::tuple( 1.0, 0.0, -1.0 );
-  ref_cartesian_direction = Teuchos::tuple( 0.0, 0.0, -1.0 );
+  spherical_direction = {1.0, 0.0, -1.0};
+  ref_cartesian_direction = {0.0, 0.0, -1.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
-                                             spherical_direction.getRawPtr(),
-                                             cartesian_direction.getRawPtr() );
+                                             spherical_direction.data(),
+                                             cartesian_direction.data() );
 
-  TEST_COMPARE_FLOATING_ARRAYS( cartesian_direction, ref_cartesian_direction, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cartesian_direction, ref_cartesian_direction, 1e-15 );
 
   // Y-axis
-  spherical_direction =
-    Teuchos::tuple( 1.0, Utility::PhysicalConstants::pi/2, 0.0 );
-  ref_cartesian_direction = Teuchos::tuple( 0.0, 1.0, 0.0 );
+  spherical_direction = {1.0, Utility::PhysicalConstants::pi/2, 0.0};
+  ref_cartesian_direction = {0.0, 1.0, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
-                                             spherical_direction.getRawPtr(),
-                                             cartesian_direction.getRawPtr() );
+                                             spherical_direction.data(),
+                                             cartesian_direction.data() );
+  Utility::clearVectorOfRoundingErrors( cartesian_direction.data(), 1e-15 );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_direction(), ref_cartesian_direction(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cartesian_direction, ref_cartesian_direction, 1e-15 );
 
   // Neg. y-axis
-  spherical_direction =
-    Teuchos::tuple( 1.0, 3*Utility::PhysicalConstants::pi/2, 0.0 );
-  ref_cartesian_direction = Teuchos::tuple( 0.0, -1.0, 0.0 );
+  spherical_direction = {1.0, 3*Utility::PhysicalConstants::pi/2, 0.0};
+  ref_cartesian_direction = {0.0, -1.0, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
-                                             spherical_direction.getRawPtr(),
-                                             cartesian_direction.getRawPtr() );
+                                             spherical_direction.data(),
+                                             cartesian_direction.data() );
+  Utility::clearVectorOfRoundingErrors( cartesian_direction.data(), 1e-15 );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_direction(), ref_cartesian_direction(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cartesian_direction, ref_cartesian_direction, 1e-15 );
 
   // X-axis
-  spherical_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
-  ref_cartesian_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
+  spherical_direction = {1.0, 0.0, 0.0};
+  ref_cartesian_direction = {1.0, 0.0, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
-                                             spherical_direction.getRawPtr(),
-                                             cartesian_direction.getRawPtr() );
+                                             spherical_direction.data(),
+                                             cartesian_direction.data() );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_direction(), ref_cartesian_direction(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cartesian_direction, ref_cartesian_direction, 1e-15 );
 
   // Y-axis
-  spherical_direction =
-    Teuchos::tuple( 1.0, Utility::PhysicalConstants::pi, 0.0 );
-  ref_cartesian_direction = Teuchos::tuple( -1.0, 0.0, 0.0 );
+  spherical_direction = {1.0, Utility::PhysicalConstants::pi, 0.0};
+  ref_cartesian_direction = {-1.0, 0.0, 0.0};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
-                                             spherical_direction.getRawPtr(),
-                                             cartesian_direction.getRawPtr() );
+                                             spherical_direction.data(),
+                                             cartesian_direction.data() );
+  Utility::clearVectorOfRoundingErrors( cartesian_direction.data(), 1e-15 );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_direction(), ref_cartesian_direction(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cartesian_direction, ref_cartesian_direction, 1e-15 );
 
   // Off axis
   spherical_direction =
-    Teuchos::tuple( 1.0,
-                    Utility::PhysicalConstants::pi/4,
-                    1.0/sqrt(3.0) );
-  ref_cartesian_direction =
-    Teuchos::tuple( 1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0) );
+    {1.0, Utility::PhysicalConstants::pi/4, 1.0/sqrt(3.0)};
+  ref_cartesian_direction = {1.0/sqrt(3.0), 1.0/sqrt(3.0), 1.0/sqrt(3.0)};
 
   Utility::SphericalDirectionalCoordinateConversionPolicy::convertToCartesianDirection(
-                                             spherical_direction.getRawPtr(),
-                                             cartesian_direction.getRawPtr() );
+                                             spherical_direction.data(),
+                                             cartesian_direction.data() );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( cartesian_direction(), ref_cartesian_direction(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cartesian_direction, ref_cartesian_direction, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
