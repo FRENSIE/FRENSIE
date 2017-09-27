@@ -81,3 +81,9 @@ ADD_EXECUTABLE(tstLogLogLogTwoDInterpolationPolicy
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstLogLogLogTwoDInterpolationPolicy utility_interp)
 ADD_TEST(LogLogLogTwoDInterpolationPolicy_test tstLogLogLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLogCosLogTwoDInterpolationPolicy
+  tstLogLogCosLogTwoDInterpolationPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLogCosLogTwoDInterpolationPolicy utility_interp)
+ADD_TEST(LogLogCosLogTwoDInterpolationPolicy_test tstLogLogCosLogTwoDInterpolationPolicy)

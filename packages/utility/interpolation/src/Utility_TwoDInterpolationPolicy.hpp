@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_TupleMemberTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -57,6 +58,22 @@ struct UnitBaseHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
 {
   //! The YX interpolation policy
   typedef LogLog YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (LogCos-Lin)
+template<>
+struct UnitBaseHelper<LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogCosLin YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (Log-Lin)
+template<>
+struct UnitBaseHelper<LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogCosLog YXInterpPolicy;
 };
 
 } // end local namespace
@@ -547,6 +564,54 @@ struct LogLinLog : public TwoDInterpolationPolicyImpl<LogLin,LogLog>
 struct LogLogLog : public TwoDInterpolationPolicyImpl<LogLog,LogLog>
 {
   typedef LogLog ZYInterpPolicy;
+  typedef LogLog ZXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-LogCos and Z-X policy interpolation policy is Lin-Lin).
+ */
+struct LinLogCosLin : public TwoDInterpolationPolicyImpl<LinLogCos,LinLin>
+{
+  typedef LinLogCos ZYInterpPolicy;
+  typedef LinLin ZXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-LogCos and Z-X policy interpolation policy is Lin-Log).
+ */
+struct LinLogCosLog : public TwoDInterpolationPolicyImpl<LinLogCos,LinLog>
+{
+  typedef LinLogCos ZYInterpPolicy;
+  typedef LinLog ZXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-LogCos and Z-X policy interpolation policy is Log-Lin).
+ */
+struct LogLogCosLin : public TwoDInterpolationPolicyImpl<LogLogCos,LogLin>
+{
+  typedef LogLogCos ZYInterpPolicy;
+  typedef LogLin ZXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-LogCos and Z-X policy interpolation policy is Log-Log).
+ */
+struct LogLogCosLog : public TwoDInterpolationPolicyImpl<LogLogCos,LogLog>
+{
+  typedef LogLogCos ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
 
   //! The name of the policy

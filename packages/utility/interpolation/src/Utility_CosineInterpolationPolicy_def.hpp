@@ -189,32 +189,7 @@ inline InterpolationType LogLogCos::getInterpolationType()
   return LOGLOGCOS_INTERPOLATION;
 }
 
-// // Calculate the unit base grid length (L)
-// /*! \details For LinLogCos and LogLogCos interpolation types the grid length
-//  * that is calculated is not a traditional length. It is the negative of the
-//  * distance between the processed upper independent value and the processed
-//  * lower independent value. This is why any units associated with the independent
-//  * grid limits are stripped away. Due to conversion of the independent
-//  * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
-//  * LinLogCos, the negative of the grid length is used to ensure a positive value.
-//  */
-// template<>
-// template<typename IndepType>
-// inline typename QuantityTraits<IndepType>::RawType
-// InterpolationHelper<LogLogCos>::calculateUnitBaseGridLength(
-//                                        const IndepType grid_lower_indep_value,
-//                                        const IndepType grid_upper_indep_value )
-// {
-//   // Make sure the grid is valid
-//   testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
-//   testPrecondition( LogLogCos::isIndepVarInValidRange( grid_lower_indep_value ) );
-
-//   return ThisType::calculateUnitBaseGridLengthProcessed(
-//           LogLogCos::processIndepVar( grid_lower_indep_value ),
-//           LogLogCos::processIndepVar( grid_upper_indep_value ) );
-// }
-
-// Calculate the unit base grid length from a processed grid (L)
+// Calculate the unit base grid length (L)
 /*! \details For LinLogCos and LogLogCos interpolation types the grid length
  * that is calculated is not a traditional length. It is the negative of the
  * distance between the processed upper independent value and the processed
@@ -224,22 +199,19 @@ inline InterpolationType LogLogCos::getInterpolationType()
  * LinLogCos, the negative of the grid length is used to ensure a positive value.
  */
 template<>
-template<typename T>
-inline T InterpolationHelper<LogLogCos>::calculateUnitBaseGridLengthProcessed(
-                                     const T processed_grid_lower_indep_value,
-                                     const T processed_grid_upper_indep_value )
+template<typename IndepType>
+inline typename QuantityTraits<IndepType>::RawType
+InterpolationHelper<LogLogCos>::calculateUnitBaseGridLength(
+                                       const IndepType grid_lower_indep_value,
+                                       const IndepType grid_upper_indep_value )
 {
   // Make sure the grid is valid
-  testPrecondition( processed_grid_lower_indep_value >=
-                    processed_grid_upper_indep_value );
+  testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
+  testPrecondition( LinLogCos::isIndepVarInValidRange( grid_lower_indep_value ) );
 
-  const T processed_grid_length =
-    processed_grid_lower_indep_value - processed_grid_upper_indep_value;
-
-  // Make sure the grid length is valid
-  testPrecondition( processed_grid_length >= 0.0 );
-
-  return processed_grid_length;
+  return ThisType::calculateUnitBaseGridLengthProcessed(
+          LinLogCos::processIndepVar( grid_upper_indep_value ),
+          LinLogCos::processIndepVar( grid_lower_indep_value ) );
 }
 
 // Calculate the unit base independent variable (eta)
@@ -322,31 +294,6 @@ InterpolationHelper<LogLogCos>::calculateIndepVar(
   testPostcondition( grid_indep_var >= indep_var_min );
 
   return grid_indep_var;
-}
-
-// Calculate the processed independent variable (from eta)
-/*! \details Due to conversion of the independent values from a cosine (mu)
- * to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, the negative of eta
- * is used to ensure a positive value. A tolerance is not required with this
- * method because no variable processing is done.
- */
-template<>
-template<typename T>
-inline T InterpolationHelper<LogLogCos>::calculateProcessedIndepVar(
-                                               const T eta,
-                                               const T processed_indep_var_min,
-                                               const T indep_grid_length )
-{
-  // Make sure the eta value is valid
-  testPrecondition( eta >= 0.0 );
-  testPrecondition( eta <= 1.0 );
-  // Make sure the grid min indep var is valid
-  testPrecondition( !QuantityTraits<T>::isnaninf( processed_indep_var_min ) );
-  // Make sure the grid length is valid
-  testPrecondition( !QuantityTraits<T>::isnaninf( indep_grid_length ) );
-  testPrecondition( indep_grid_length >= 0.0 );
-  
-  return processed_indep_var_min - indep_grid_length*eta;
 }
 
 // Interpolate between two points
@@ -469,35 +416,6 @@ LogLogCos::interpolateAndProcess( const CosineType raw_indep_var_0,
 
   return log( getRawQuantity(dep_var_0) ) + log ( dep_var_1/dep_var_0 )*
          log( indep_var_0/indep_var )/log( indep_var_0/indep_var_1 );
-}
-
-// Interpolate between two processed points and return the processed value
-/*! \details Due to conversion of the independent values from a cosine (mu)
- * to a delta cosine ( 1 - mu ), the absolute value of the difference between
- * the processed_indep_var and processed_indep_var_0 is used for
- * LinLogCos and LogLogCos.
- */
-template<>
-template<typename T>
-T InterpolationHelper<LogLogCos>::interpolateAndProcess(
-                                                 const T processed_indep_var_0,
-                                                 const T processed_indep_var,
-                                                 const T processed_dep_var_0,
-                                                 const T processed_slope )
-{
-  // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
-  // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_indep_var ) );
-  testPrecondition( processed_indep_var_0 >= processed_indep_var );
-  // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_dep_var_0 ) );
-  // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
-  return processed_dep_var_0 +
-    processed_slope*(processed_indep_var_0 - processed_indep_var);
 }
 
 // Process the independent value
@@ -725,32 +643,7 @@ inline InterpolationType LinLogCos::getInterpolationType()
   return LINLOGCOS_INTERPOLATION;
 }
 
-// // Calculate the unit base grid length (L)
-// /*! \details For LinLogCos and LogLogCos interpolation types the grid length
-//  * that is calculated is not a traditional length. It is the negative of the
-//  * distance between the processed upper independent value and the processed
-//  *lower independent value. This is why any units associated with the independent
-//  * grid limits are stripped away. Due to conversion of the independent
-//  * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
-//  * LinLogCos, the negative of the grid length is used to ensure a positive value.
-//  */
-// template<>
-// template<typename IndepType>
-// inline typename QuantityTraits<IndepType>::RawType
-// InterpolationHelper<LinLogCos>::calculateUnitBaseGridLength(
-//                                        const IndepType grid_lower_indep_value,
-//                                        const IndepType grid_upper_indep_value )
-// {
-//   // Make sure the grid is valid
-//   testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
-//   testPrecondition( LinLogCos::isIndepVarInValidRange( grid_lower_indep_value ) );
-
-//   return ThisType::calculateUnitBaseGridLengthProcessed(
-//           LinLogCos::processIndepVar( grid_upper_indep_value ),
-//           LinLogCos::processIndepVar( grid_lower_indep_value ) );
-// }
-
-// Calculate the unit base grid length from a processed grid (L)
+// Calculate the unit base grid length (L)
 /*! \details For LinLogCos and LogLogCos interpolation types the grid length
  * that is calculated is not a traditional length. It is the negative of the
  * distance between the processed upper independent value and the processed
@@ -760,22 +653,19 @@ inline InterpolationType LinLogCos::getInterpolationType()
  * LinLogCos, the negative of the grid length is used to ensure a positive value.
  */
 template<>
-template<typename T>
-inline T InterpolationHelper<LinLogCos>::calculateUnitBaseGridLengthProcessed(
-                                     const T processed_grid_lower_indep_value,
-                                     const T processed_grid_upper_indep_value )
+template<typename IndepType>
+inline typename QuantityTraits<IndepType>::RawType
+InterpolationHelper<LinLogCos>::calculateUnitBaseGridLength(
+                                       const IndepType grid_lower_indep_value,
+                                       const IndepType grid_upper_indep_value )
 {
   // Make sure the grid is valid
-  testPrecondition( processed_grid_lower_indep_value >=
-                    processed_grid_upper_indep_value );
+  testPrecondition( grid_lower_indep_value <= grid_upper_indep_value );
+  testPrecondition( LinLogCos::isIndepVarInValidRange( grid_lower_indep_value ) );
 
-  const T processed_grid_length =
-    processed_grid_lower_indep_value - processed_grid_upper_indep_value;
-
-  // Make sure the grid length is valid
-  testPrecondition( processed_grid_length >= 0.0 );
-
-  return processed_grid_length;
+  return ThisType::calculateUnitBaseGridLengthProcessed(
+          LinLogCos::processIndepVar( grid_upper_indep_value ),
+          LinLogCos::processIndepVar( grid_lower_indep_value ) );
 }
 
 // Calculate the unit base independent variable (eta)
@@ -858,31 +748,6 @@ InterpolationHelper<LinLogCos>::calculateIndepVar(
   testPostcondition( grid_indep_var >= indep_var_min );
 
   return grid_indep_var;
-}
-
-// Calculate the processed independent variable (from eta)
-/*! \details Due to conversion of the independent values from a cosine (mu)
- * to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, the negative of eta
- * is used to ensure a positive value. A tolerance is not required with this
- * method because no variable processing is done.
- */
-template<>
-template<typename T>
-inline T InterpolationHelper<LinLogCos>::calculateProcessedIndepVar(
-                                               const T eta,
-                                               const T processed_indep_var_min,
-                                               const T indep_grid_length )
-{
-  // Make sure the eta value is valid
-  testPrecondition( eta >= 0.0 );
-  testPrecondition( eta <= 1.0 );
-  // Make sure the grid min indep var is valid
-  testPrecondition( !QuantityTraits<T>::isnaninf( processed_indep_var_min ) );
-  // Make sure the grid length is valid
-  testPrecondition( !QuantityTraits<T>::isnaninf( indep_grid_length ) );
-  testPrecondition( indep_grid_length >= 0.0 );
-  
-  return processed_indep_var_min - indep_grid_length*eta;
 }
 
 // Interpolate between two points

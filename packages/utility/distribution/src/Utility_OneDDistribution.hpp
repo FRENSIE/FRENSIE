@@ -22,6 +22,7 @@
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -135,6 +136,10 @@ protected:
   virtual bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;
 
+  //! Test if the independent variable is compatible with LogCos processing
+  virtual bool isIndepVarCompatibleWithProcessingType(
+                                      const LogCosIndepVarProcessingTag ) const;
+
   //! Test if the dependent variable is compatible with Lin processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LinDepVarProcessingTag ) const;
@@ -142,6 +147,10 @@ protected:
   //! Test if the dependent variable is compatible with Log processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
+
+  //! Test if the dependent variable is compatible with LogCos processing
+  virtual bool isDepVarCompatibleWithProcessingType(
+                                        const LogCosDepVarProcessingTag ) const;
 };
 
 // Test if the distribution is tabular
@@ -213,6 +222,18 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVar
     LogLog::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
 }
 
+// Test if the independent variable is compatible with LogCos processing
+/*! \details It may be necessary to override this default behavior
+ * (e.g. Utility::TabularDistribution).
+ */
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+                                    const LogCosIndepVarProcessingTag ) const
+{
+  return LogLogCos::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+         LogLogCos::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+}
+
 // Test if the dependent variable is compatible with Lin processing
 /*! \details It may be necessary to override this default behavior
  * (e.g. Utility::TabularDistribution).
@@ -233,6 +254,18 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDepVarCo
                                            const LogDepVarProcessingTag ) const
 {
   return !this->canDepVarBeZeroInIndepBounds();
+}
+
+// Test if the dependent variable is compatible with LogCos processing
+/*! \details It is assumed that the dependent variable will never be a cosine.
+ * It may be necessary to override this default behavior
+ * (e.g. Utility::TabularDistribution).
+ */
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+                                        const LogCosDepVarProcessingTag ) const
+{
+  return false;
 }
 
 // Test if the distribution has the same bounds

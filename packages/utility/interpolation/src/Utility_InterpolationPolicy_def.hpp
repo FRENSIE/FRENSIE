@@ -107,7 +107,10 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseGridLength(
  * that is calculated is not a traditional length. It is the distance between
  * the processed upper independent value and the processed lower
  * independent value. This is why any units associated with the independent
- * grid limits are stripped away.
+ * grid limits are stripped away. Due to conversion of the independent
+ * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
+ * LinLogCos, it is assumed the processed grids are inverted to ensure they
+ * are in ascending order.
  */
 template<typename ParentInterpolationType>
 template<typename T>
@@ -254,7 +257,9 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 
 // Calculate the processed independent variable (from eta)
 /*! \details A tolerance is not required with this method because no variable 
- * processing is done.
+ * processing is done. Due to conversion of the independent values from a cosine
+ * (mu) to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, it is assumed
+ * the processed grids are inverted to ensure they are in ascending order.
  */
 template<typename ParentInterpolationType>
 template<typename T>

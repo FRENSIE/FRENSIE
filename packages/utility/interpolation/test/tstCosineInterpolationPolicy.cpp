@@ -180,17 +180,17 @@ TEUCHOS_UNIT_TEST( LogLogCos, calculateIndepVar )
 TEUCHOS_UNIT_TEST( LogLogCos, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
-    Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( log(2.0), log(1.0) );
+    Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( log(1.0), log(2.0) );
   
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2.0 ), 1e-15 );
 
   grid_length =
-    Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( log(1.5), log(0.5) );
+    Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( log(0.5), log(1.5) );
 
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 3.0 ), 1e-15 );
 
   grid_length =
-    Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( log(2.0), log(1e-15) );
+    Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( log(1e-15), log(2.0) );
 
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2e15 ), 1e-4 );
 }
@@ -199,26 +199,26 @@ TEUCHOS_UNIT_TEST( LogLogCos, calculateUnitBaseGridLengthProcessed )
 // Check that the unit base independent can be calculated
 TEUCHOS_UNIT_TEST( LogLogCos, calculateUnitBaseIndepVarProcessed )
 {
-  double y_min = Utility::LogLogCos::processIndepVar(-1.0);
+  double processed_y_min = Utility::LogLogCos::processIndepVar(0.999999);
   double y = Utility::LogLogCos::processIndepVar(0.5);
-  double L = 35.0;
+  double L = log(2e6);
 
   double eta =
-        Utility::LogLogCos::calculateUnitBaseIndepVarProcessed( y_min, y, L );
+        Utility::LogLogCos::calculateUnitBaseIndepVarProcessed( y, processed_y_min, L );
 
-  TEST_FLOATING_EQUALITY( eta, log(4)/35.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( eta, log(5e5)/L, 1e-10 );
 
   y = Utility::LogLogCos::processIndepVar(-1.0);
 
-  eta = Utility::LogLogCos::calculateUnitBaseIndepVarProcessed( y_min, y, L );
+  eta = Utility::LogLogCos::calculateUnitBaseIndepVarProcessed( y, processed_y_min, L );
+
+  TEST_FLOATING_EQUALITY( eta, 1.0, 1e-10 );
+
+  y = Utility::LogLogCos::processIndepVar(0.999999);
+
+  eta = Utility::LogLogCos::calculateUnitBaseIndepVarProcessed( y, processed_y_min, L );
 
   TEST_FLOATING_EQUALITY( eta, 0.0, 1e-12 );
-
-  y = Utility::LogLogCos::processIndepVar(1.0/3.0);
-
-  eta = Utility::LogLogCos::calculateUnitBaseIndepVarProcessed( y_min, y, L );
-
-  TEST_FLOATING_EQUALITY( eta, log(3)/35.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -226,25 +226,25 @@ TEUCHOS_UNIT_TEST( LogLogCos, calculateUnitBaseIndepVarProcessed )
 // unit base independent variable
 TEUCHOS_UNIT_TEST( LogLogCos, calculateProcessedIndepVar )
 {
-  double y_min = Utility::LogLogCos::processIndepVar(-1.0);
-  double L = 35.0, eta = log(4)/35.0;
+  double processed_y_min = Utility::LogLogCos::processIndepVar(0.999999);
+  double L = log(2e6), eta = log(5e5)/L;
 
-  double y = Utility::LogLogCos::calculateProcessedIndepVar( eta, y_min, L );
+  double y = Utility::LogLogCos::calculateProcessedIndepVar( eta, processed_y_min, L );
 
-  TEST_FLOATING_EQUALITY( y, Utility::LogLogCos::processIndepVar(0.5), 1e-12 );
+  TEST_FLOATING_EQUALITY( y, Utility::LogLogCos::processIndepVar(0.5), 1e-10 );
+
+  eta = 1.0;
+
+  y = Utility::LogLogCos::calculateProcessedIndepVar( eta, processed_y_min, L );
+
+  TEST_FLOATING_EQUALITY( y, Utility::LogLogCos::processIndepVar(-1.0), 1e-10 );
 
   eta = 0.0;
 
-  y = Utility::LogLogCos::calculateProcessedIndepVar( eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, Utility::LogLogCos::processIndepVar(-1.0), 1e-12 );
-
-  eta = log(3)/35.0;
-
-  y = Utility::LogLogCos::calculateProcessedIndepVar( eta, y_min, L );
+  y = Utility::LogLogCos::calculateProcessedIndepVar( eta, processed_y_min, L );
 
   TEST_FLOATING_EQUALITY( y,
-                          Utility::LogLogCos::processIndepVar(1.0/3.0),
+                          Utility::LogLogCos::processIndepVar(0.999999),
                           1e-12 );
 }
 
@@ -346,19 +346,19 @@ TEUCHOS_UNIT_TEST( LogLogCos, interpolateAndProcess_raw )
 // done
 TEUCHOS_UNIT_TEST( LogLogCos, interpolateAndProcess_processed )
 {
-  double processed_x0 =
-    Utility::LogLogDataProcessing::processIndependentVar( 1.0 + 0.5 );
   double processed_x1 =
+    Utility::LogLogDataProcessing::processIndependentVar( 1.0 + 0.5 );
+  double processed_x0 =
     Utility::LogLogDataProcessing::processIndependentVar( 1.0 - 0.5 );
   double processed_x =
     Utility::LogLogDataProcessing::processIndependentVar( 1.0 - 0.0 );
-  double processed_y0 =
-    Utility::LogLogDataProcessing::processDependentVar( 10.0 );
   double processed_y1 =
+    Utility::LogLogDataProcessing::processDependentVar( 10.0 );
+  double processed_y0 =
     Utility::LogLogDataProcessing::processDependentVar( 1000.0 );
 
   double processed_slope =
-    (processed_y0 - processed_y1)/(processed_x1 - processed_x0);
+    (processed_y1 - processed_y0)/(processed_x1 - processed_x0);
 
   double log_y = Utility::LogLogCos::interpolateAndProcess( processed_x0,
                                                             processed_x,
@@ -910,17 +910,17 @@ TEUCHOS_UNIT_TEST( LinLogCos, calculateIndepVar )
 TEUCHOS_UNIT_TEST( LinLogCos, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
-    Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( log(2.0), log(1.0) );
+    Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( log(1.0), log(2.0) );
   
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2.0 ), 1e-15 );
 
   grid_length =
-    Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( log(1.5), log(0.5) );
+    Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( log(0.5), log(1.5) );
 
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 3.0 ), 1e-15 );
 
   grid_length =
-    Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( log(2.0), log(1e-15) );
+    Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( log(1e-15), log(2.0) );
 
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2e15 ), 1e-4 );
 }
@@ -929,26 +929,26 @@ TEUCHOS_UNIT_TEST( LinLogCos, calculateUnitBaseGridLengthProcessed )
 // Check that the unit base independent can be calculated
 TEUCHOS_UNIT_TEST( LinLogCos, calculateUnitBaseIndepVarProcessed )
 {
-  double y_min = Utility::LinLogCos::processIndepVar(-1.0);
+  double processed_y_min = Utility::LinLogCos::processIndepVar(0.999999);
   double y = Utility::LinLogCos::processIndepVar(0.5);
-  double L = 35.0;
+  double L = log(2e6);
 
   double eta =
-        Utility::LinLogCos::calculateUnitBaseIndepVarProcessed( y_min, y, L );
+        Utility::LinLogCos::calculateUnitBaseIndepVarProcessed( y, processed_y_min, L );
 
-  TEST_FLOATING_EQUALITY( eta, log(4)/35.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( eta, log(5e5)/L, 1e-10 );
 
   y = Utility::LinLogCos::processIndepVar(-1.0);
 
-  eta = Utility::LinLogCos::calculateUnitBaseIndepVarProcessed( y_min, y, L );
+  eta = Utility::LinLogCos::calculateUnitBaseIndepVarProcessed( y, processed_y_min, L );
+
+  TEST_FLOATING_EQUALITY( eta, 1.0, 1e-10 );
+
+  y = Utility::LinLogCos::processIndepVar(0.999999);
+
+  eta = Utility::LinLogCos::calculateUnitBaseIndepVarProcessed( y, processed_y_min, L );
 
   TEST_FLOATING_EQUALITY( eta, 0.0, 1e-12 );
-
-  y = Utility::LinLogCos::processIndepVar(1.0/3.0);
-
-  eta = Utility::LinLogCos::calculateUnitBaseIndepVarProcessed( y_min, y, L );
-
-  TEST_FLOATING_EQUALITY( eta, log(3)/35.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -956,25 +956,25 @@ TEUCHOS_UNIT_TEST( LinLogCos, calculateUnitBaseIndepVarProcessed )
 // unit base independent variable
 TEUCHOS_UNIT_TEST( LinLogCos, calculateProcessedIndepVar )
 {
-  double y_min = Utility::LogLogCos::processIndepVar(-1.0);
-  double L = 35.0, eta = log(4)/35.0;
+  double processed_y_min = Utility::LinLogCos::processIndepVar(0.999999);
+  double L = log(2e6), eta = log(5e5)/L;
 
-  double y = Utility::LogLogCos::calculateProcessedIndepVar( eta, y_min, L );
+  double y = Utility::LinLogCos::calculateProcessedIndepVar( eta, processed_y_min, L );
 
-  TEST_FLOATING_EQUALITY( y, Utility::LogLogCos::processIndepVar(0.5), 1e-12 );
+  TEST_FLOATING_EQUALITY( y, Utility::LinLogCos::processIndepVar(0.5), 1e-10 );
+
+  eta = 1.0;
+
+  y = Utility::LinLogCos::calculateProcessedIndepVar( eta, processed_y_min, L );
+
+  TEST_FLOATING_EQUALITY( y, Utility::LinLogCos::processIndepVar(-1.0), 1e-10 );
 
   eta = 0.0;
 
-  y = Utility::LogLogCos::calculateProcessedIndepVar( eta, y_min, L );
-
-  TEST_FLOATING_EQUALITY( y, Utility::LogLogCos::processIndepVar(-1.0), 1e-12 );
-
-  eta = log(3)/35.0;
-
-  y = Utility::LogLogCos::calculateProcessedIndepVar( eta, y_min, L );
+  y = Utility::LinLogCos::calculateProcessedIndepVar( eta, processed_y_min, L );
 
   TEST_FLOATING_EQUALITY( y,
-                          Utility::LogLogCos::processIndepVar(1.0/3.0),
+                          Utility::LinLogCos::processIndepVar(0.999999),
                           1e-12 );
 }
 
@@ -1074,7 +1074,7 @@ TEUCHOS_UNIT_TEST( LinLogCos, interpolateAndProcess_raw )
 }
 
 //---------------------------------------------------------------------------//
-// Check that Linear-Log interpolation between two processed points can be
+// Check that Linear-LogCos interpolation between two processed points can be
 // done
 TEUCHOS_UNIT_TEST( LinLogCos, interpolateAndProcess_processed )
 {
