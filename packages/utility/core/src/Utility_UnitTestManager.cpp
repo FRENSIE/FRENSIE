@@ -1130,7 +1130,7 @@ int UnitTestManager::runUnitTests( int& argc, char**& argv )
   Utility::GlobalMPISession mpi_session(
                   argc, argv, Utility::GlobalMPISession::SerializedThreading );
 
-  this->runUnitTests( argc, argv, mpi_session );
+  return this->runUnitTests( argc, argv, mpi_session );
 }
 
 // Print the help message
