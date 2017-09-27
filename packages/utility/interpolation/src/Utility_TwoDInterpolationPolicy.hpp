@@ -481,6 +481,7 @@ struct LinLinLin : public TwoDInterpolationPolicyImpl<LinLin,LinLin>
 {
   typedef LinLin ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
+  typedef LinLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -493,6 +494,7 @@ struct LinLogLin : public TwoDInterpolationPolicyImpl<LinLog,LinLin>
 {
   typedef LinLog ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
+  typedef LogLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -505,6 +507,7 @@ struct LinLinLog : public TwoDInterpolationPolicyImpl<LinLin,LinLog>
 {
   typedef LinLin ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
+  typedef LinLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -517,6 +520,7 @@ struct LinLogLog : public TwoDInterpolationPolicyImpl<LinLog,LinLog>
 {
   typedef LinLog ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
+  typedef LogLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -529,6 +533,7 @@ struct LogLinLin : public TwoDInterpolationPolicyImpl<LogLin,LogLin>
 {
   typedef LogLin ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
+  typedef LinLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -541,6 +546,7 @@ struct LogLogLin : public TwoDInterpolationPolicyImpl<LogLog,LogLin>
 {
   typedef LogLog ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
+  typedef LogLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -553,6 +559,7 @@ struct LogLinLog : public TwoDInterpolationPolicyImpl<LogLin,LogLog>
 {
   typedef LogLin ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
+  typedef LinLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -565,6 +572,7 @@ struct LogLogLog : public TwoDInterpolationPolicyImpl<LogLog,LogLog>
 {
   typedef LogLog ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
+  typedef LogLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -577,6 +585,7 @@ struct LinLogCosLin : public TwoDInterpolationPolicyImpl<LinLogCos,LinLin>
 {
   typedef LinLogCos ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
+  typedef LogCosLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -589,6 +598,7 @@ struct LinLogCosLog : public TwoDInterpolationPolicyImpl<LinLogCos,LinLog>
 {
   typedef LinLogCos ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
+  typedef LogCosLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -601,6 +611,7 @@ struct LogLogCosLin : public TwoDInterpolationPolicyImpl<LogLogCos,LogLin>
 {
   typedef LogLogCos ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
+  typedef LogCosLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -613,6 +624,7 @@ struct LogLogCosLog : public TwoDInterpolationPolicyImpl<LogLogCos,LogLog>
 {
   typedef LogLogCos ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
+  typedef LogCosLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();

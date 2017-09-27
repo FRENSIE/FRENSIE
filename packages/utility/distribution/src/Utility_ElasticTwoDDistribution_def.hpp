@@ -18,6 +18,58 @@
 
 namespace Utility{
 
+// Constructor
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticTwoDDistribution(
+      const DistributionType& distribution,
+      const SecondaryIndepQuantity upper_bound_conditional_indep_var,
+      const double fuzzy_boundary_tol,
+      const double evaluate_relative_error_tol,
+      const double evaluate_error_tol )
+  : ParentType( distribution,
+                fuzzy_boundary_tol,
+                evaluate_relative_error_tol,
+                evaluate_error_tol ),
+    d_relative_error_tol( evaluate_relative_error_tol ),
+    d_error_tol( evaluate_error_tol ),
+    d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
+    d_max_upper_bound_conditional_indep_var( SIQT::one() ),
+    d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
+{
+  testPrecondition( this->isSecondIndepVarCompatibleWithCosineProcessingType() );
+}
+
+// Constructor
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+template<template<typename T, typename... Args> class ArrayA,
+          template<typename T, typename... Args> class ArrayB>
+UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticTwoDDistribution(
+      const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+      const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
+      const SecondaryIndepQuantity upper_bound_conditional_indep_var,
+      const double fuzzy_boundary_tol,
+      const double evaluate_relative_error_tol,
+      const double evaluate_error_tol )
+  : ParentType( primary_indep_grid,
+                secondary_distributions,
+                fuzzy_boundary_tol,
+                evaluate_relative_error_tol,
+                evaluate_error_tol ),
+    d_relative_error_tol( evaluate_relative_error_tol ),
+    d_error_tol( evaluate_error_tol ),
+    d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
+    d_max_upper_bound_conditional_indep_var( SIQT::one() ),
+    d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
+{
+  testPrecondition( this->isSecondIndepVarCompatibleWithCosineProcessingType() );
+}
+
 ////---------------------------------------------------------------------------//
 //// EVALUATING METHODS
 ////---------------------------------------------------------------------------//
@@ -262,7 +314,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
       return min_eval_0;
     else
     {
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+      return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
                 lower_bin_boundary->first,
                 upper_bin_boundary->first,
                 incoming_energy,
@@ -272,7 +324,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
   }
   else if ( angle_cosine == d_upper_bound_conditional_indep_var )
   {
-    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+    return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
                 lower_bin_boundary->first,
                 upper_bin_boundary->first,
                 incoming_energy,
@@ -345,11 +397,10 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
 
       // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
       SecondaryIndepQuantity est_angle_cosine =
-       CosineProcessor::processCosineVar(
-         TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+       TwoDInterpPolicy::YXInterpPolicy::interpolate(
             beta,
-            CosineProcessor::processCosineVar( lower_bin_sample ),
-            CosineProcessor::processCosineVar( upper_bin_sample ) ) );
+            lower_bin_sample,
+            upper_bin_sample );
 
       if ( angle_cosine == est_angle_cosine )
         break;
@@ -577,11 +628,10 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndep
 
       // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
       SecondaryIndepQuantity est_angle_cosine =
-       CosineProcessor::processCosineVar(
-         TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+       TwoDInterpPolicy::YXInterpPolicy::interpolate(
             beta,
-            CosineProcessor::processCosineVar( lower_bin_sample ),
-            CosineProcessor::processCosineVar( upper_bin_sample ) ) );
+            lower_bin_sample,
+            upper_bin_sample );
 
       if ( angle_cosine == est_angle_cosine )
         break;
@@ -1142,13 +1192,12 @@ inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependent
         return sampled_value_0;
       else
       {
-        return CosineProcessor::processCosineVar(
-                 TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+        return TwoDInterpPolicy::YXInterpPolicy::interpolate(
                    lower_bin_boundary->first,
                    upper_bin_boundary->first,
                    incoming_energy,
-                   CosineProcessor::processCosineVar( sampled_value_0 ),
-                   CosineProcessor::processCosineVar( sampled_value_1 ) ) );
+                   sampled_value_0,
+                   sampled_value_1 );
       }
     }
   }
@@ -1200,6 +1249,20 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,Se
   }
   else
     return d_upper_bound_conditional_indep_var;
+}
+
+// Test if the second independent variable is compatible with Cosine processing
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+bool UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::isSecondIndepVarCompatibleWithCosineProcessingType() const
+{
+  if( boost::is_same<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
+      boost::is_same<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value )
+    return true;
+  else
+    return false;
 }
 
 } // end Utility namespace

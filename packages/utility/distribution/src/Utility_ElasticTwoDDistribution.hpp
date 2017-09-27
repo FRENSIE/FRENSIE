@@ -17,39 +17,6 @@
 
 namespace Utility{
 
-namespace {
-
-//! Helper class used to process cosine variables
-template<typename SecondIndepVarProcessingTag>
-struct CosineProcessorHelper
-{ /* ... */ };
-
-//! Helper class used to construct a Lin cdf interpolation policy
-template<>
-struct CosineProcessorHelper<LinIndepVarProcessingTag>
-{
-  typedef CosineProcessorHelper<LinIndepVarProcessingTag> CosineProcessor;
-
-  //! Process the cosine or delta cosine value
-  template<typename T>
-  static T processCosineVar( T cosine_value )
-  { return cosine_value; }
-};
-
-//! Helper class used to construct a Log cdf interpolation policy
-template<>
-struct CosineProcessorHelper<LogIndepVarProcessingTag>
-{
-  typedef CosineProcessorHelper<LogIndepVarProcessingTag> CosineProcessor;
-
-  //! Process the cosine or delta cosine value
-  template<typename T>
-  static T processCosineVar( T cosine_value )
-  { return QuantityTraits<T>::one() - cosine_value; }
-};
-
-} // end local namespace
-
 /*! The unit-aware inteprolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
@@ -92,10 +59,8 @@ private:
   //! The secondary independent quantity type
   typedef typename TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
 
-  typedef typename CosineProcessorHelper<SecondIndepVarProcessingTag>::CosineProcessor CosineProcessor;
-
   // The CDF interpolation policy
-  typedef typename CDFInterpolationHelper<FirstIndepVarProcessingTag,SecondIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
+  typedef typename ParentType::CDFInterpPolicy CDFInterpPolicy;
   
 public:
   
@@ -120,17 +85,17 @@ public:
         const SecondaryIndepQuantity upper_bound_conditional_indep_var = SIQT::one(),
         const double fuzzy_boundary_tol = 1e-7,
         const double evaluate_relative_error_tol = 1e-7,
-        const double evaluate_error_tol = 1e-12 )
-    : ParentType( distribution,
-                  fuzzy_boundary_tol,
-                  evaluate_relative_error_tol,
-                  evaluate_error_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol ),
-      d_error_tol( evaluate_error_tol ),
-      d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
-      d_max_upper_bound_conditional_indep_var( SIQT::one() ),
-      d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
-  {/* ... */ }
+        const double evaluate_error_tol = 1e-12 );
+    // : ParentType( distribution,
+    //               fuzzy_boundary_tol,
+    //               evaluate_relative_error_tol,
+    //               evaluate_error_tol ),
+    //   d_relative_error_tol( evaluate_relative_error_tol ),
+    //   d_error_tol( evaluate_error_tol ),
+    //   d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
+    //   d_max_upper_bound_conditional_indep_var( SIQT::one() ),
+    //   d_lower_bound_conditional_indep_var( -1.0*SIQT::one() );
+  // {/* ... */ }
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -141,18 +106,18 @@ public:
         const SecondaryIndepQuantity upper_bound_conditional_indep_var = SIQT::one(),
         const double fuzzy_boundary_tol = 1e-7,
         const double evaluate_relative_error_tol = 1e-7,
-        const double evaluate_error_tol = 1e-12 )
-    : ParentType( primary_indep_grid,
-                  secondary_distributions,
-                  fuzzy_boundary_tol,
-                  evaluate_relative_error_tol,
-                  evaluate_error_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol ),
-      d_error_tol( evaluate_error_tol ),
-      d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
-      d_max_upper_bound_conditional_indep_var( SIQT::one() ),
-      d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
-  {/* ... */ }
+        const double evaluate_error_tol = 1e-12 );
+    // : ParentType( primary_indep_grid,
+    //               secondary_distributions,
+    //               fuzzy_boundary_tol,
+    //               evaluate_relative_error_tol,
+    //               evaluate_error_tol ),
+    //   d_relative_error_tol( evaluate_relative_error_tol ),
+    //   d_error_tol( evaluate_error_tol ),
+    //   d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
+    //   d_max_upper_bound_conditional_indep_var( SIQT::one() ),
+    //   d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
+  // {/* ... */ }
 
   //! Destructor
   ~UnitAwareElasticTwoDDistribution()
@@ -325,6 +290,9 @@ private:
   SecondaryIndepQuantity sampleImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SampleFunctor sample_functor ) const;
+
+  //! Test if the second independent variable is compatible with Cosine processing
+  bool isSecondIndepVarCompatibleWithCosineProcessingType() const;
 
   // The max upper bound of the conditional distribution ( 1.0 )
   SecondaryIndepQuantity d_max_upper_bound_conditional_indep_var;
