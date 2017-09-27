@@ -381,7 +381,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
         elastic_distribution,
         *data_container,
         properties->getElasticCutoffAngleCosine(),

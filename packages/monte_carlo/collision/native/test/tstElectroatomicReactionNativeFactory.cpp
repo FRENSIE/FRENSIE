@@ -38,13 +38,13 @@ double eval_tol;
 //---------------------------------------------------------------------------//
 // Check that an coupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createCoupledElasticReaction_LogLogLog )
+                   createCoupledElasticReaction_LogLogCosLog )
 {
   bool correlated_sampling_mode_on = true;
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::SIMPLIFIED_UNION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogCosLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -78,11 +78,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an decoupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createDecoupledElasticReaction_LogLogLog )
+                   createDecoupledElasticReaction_LogLogCosLog )
 {
   bool correlated_sampling_mode_on = true;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogLog>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -115,11 +115,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createCutoffElasticReaction_LogLogLog )
+                   createCutoffElasticReaction_LogLogCosLog )
 {
   bool correlated_sampling_mode_on = true;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogLog>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogCosLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,

@@ -93,7 +93,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
     if( elastic_interp == LOGLOGLOG_INTERPOLATION )
     {
-      ThisType::createElasticElectroatomCore<Utility::LogLogLog>(
+      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog>(
                                                 raw_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
