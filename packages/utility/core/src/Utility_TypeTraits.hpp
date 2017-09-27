@@ -166,6 +166,34 @@ template<typename T>
 struct IsTuple<const volatile T> : public IsTuple<T>
 { /* ... */ };
 
+/*! Partial specialization of IsPair for std::pair
+ * \ingroup type_traits
+ */
+template<typename T1, typename T2>
+struct IsPair<std::pair<T1,T2> > : public std::true_type
+{ /* ... */ };
+
+/*! Partial specialization of IsPair for const types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsPair<const T> : public IsPair<T>
+{ /* ... */ };
+
+/*! Partial specialization of IsPair for volatile types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsPair<volatile T> : public IsPair<T>
+{ /* ... */ };
+
+/*! Partial specialization of IsPair for const volatile types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsPair<const volatile T> : public IsPair<T>
+{ /* ... */ };  
+
 } // end Utility namespace
 
 #endif // end UTILITY_TYPE_TRAITS_HPP

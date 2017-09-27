@@ -16,23 +16,6 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
-// Local TypeNameTraits specializations
-//---------------------------------------------------------------------------//
-namespace Utility{
-
-template<size_t N>
-struct TypeNameTraits<std::integral_constant<size_t,N> >
-{
-  typedef std::true_type IsSpecialized;
-  static inline std::string name()
-  { return Utility::toString(N); }
-  static inline std::string name( const std::integral_constant<size_t,N>& )
-  { return name(); }
-};
-  
-} // end Utility namespace
-
-//---------------------------------------------------------------------------//
 // Template Typedefs
 //---------------------------------------------------------------------------//
 typedef std::tuple<std::tuple<std::integral_constant<size_t,0>,unsigned>,

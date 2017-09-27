@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "Utility_TypeNameTraitsDecl.hpp"
 #include "Utility_TypeTraits.hpp"
+#include "Utility_ToStringTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 
 namespace Utility{
@@ -37,6 +38,21 @@ TYPE_NAME_TRAITS_QUICK_DECL( unsigned long long int );
 TYPE_NAME_TRAITS_QUICK_DECL( std::complex<float> );
 TYPE_NAME_TRAITS_QUICK_DECL( std::complex<double> );
 TYPE_NAME_TRAITS_QUICK_DECL( std::string );
+
+/*! \brief Partial specialization of Utility::TypeNameTraits for 
+ * std::integral_constant types
+ * \ingroup type_name_traits
+ */
+template<typename T, T v>
+struct TypeNameTraits<std::integral_constant<T,v> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return Utility::toString( v ); }
+};
 
 /*! \brief Partial specialization of Utility::TypeNameTraits for 
  * boost::units::quanitty types

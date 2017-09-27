@@ -29,7 +29,7 @@ struct TemplateUnitTestInstantiationHelper
   {
     typedef typename Utility::TupleElement<I,TupleTypeWrapper>::type IType;
     
-    typedef typename std::conditional<Utility::IsTuple<IType>::value,TemplateUnitTest<std::integral_constant<bool,expand_inner_tuples>,IType>,TemplateUnitTest<IType> >::type TemplateUnitTestType;
+    typedef typename std::conditional<Utility::IsTuple<IType>::value && !Utility::IsPair<IType>::value,TemplateUnitTest<std::integral_constant<bool,expand_inner_tuples>,IType>,TemplateUnitTest<IType> >::type TemplateUnitTestType;
     
     test_list[I].reset( new TemplateUnitTestType );
 

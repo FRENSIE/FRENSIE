@@ -583,9 +583,7 @@ TARGET_LINK_LIBRARIES(tstGeneralCylindricalSpatialCoordinateConversionPolicy uti
 ADD_TEST(GeneralCylindricalSpatialCoordinateConversionPolicy_test tstGeneralCylindricalSpatialCoordinateConversionPolicy)
 SET_PROPERTY(TEST GeneralCylindricalSpatialCoordinateConversionPolicy_test PROPERTY LABELS utility_core)
 
-ADD_EXECUTABLE(tstDataProcessor
-  tstDataProcessor.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstDataProcessor tstDataProcessor.cpp)
 TARGET_LINK_LIBRARIES(tstDataProcessor utility_core)
 ADD_TEST(DataProcessor_test tstDataProcessor)
 SET_PROPERTY(TEST DataProcessor_test PROPERTY LABELS utility_core)

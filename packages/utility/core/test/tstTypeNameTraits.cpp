@@ -154,6 +154,33 @@ BOOST_AUTO_TEST_CASE( name_string )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the type name for integral constants can be returned
+BOOST_AUTO_TEST_CASE( name_integral_constants )
+{
+  BOOST_CHECK_EQUAL( Utility::TypeNameTraits<std::true_type>::name(), "true" );
+  BOOST_CHECK_EQUAL( Utility::typeName<std::true_type>(), "true" );
+
+  BOOST_CHECK_EQUAL( Utility::TypeNameTraits<std::false_type>::name(), "false" );
+  BOOST_CHECK_EQUAL( Utility::typeName<std::false_type>(), "false" );
+
+  BOOST_CHECK_EQUAL( (Utility::TypeNameTraits<std::integral_constant<size_t,0> >::name()), "0" );
+  BOOST_CHECK_EQUAL( (Utility::TypeNameTraits<std::integral_constant<size_t,1> >::name()), "1" );
+  BOOST_CHECK_EQUAL( (Utility::TypeNameTraits<std::integral_constant<size_t,2> >::name()), "2" );
+
+  BOOST_CHECK_EQUAL( (Utility::typeName<std::integral_constant<size_t,0> >()), "0" );
+  BOOST_CHECK_EQUAL( (Utility::typeName<std::integral_constant<size_t,1> >()), "1" );
+  BOOST_CHECK_EQUAL( (Utility::typeName<std::integral_constant<size_t,2> >()), "2" );
+
+  BOOST_CHECK_EQUAL( (Utility::TypeNameTraits<std::integral_constant<int,-1> >::name()), "-1" );
+  BOOST_CHECK_EQUAL( (Utility::TypeNameTraits<std::integral_constant<int,0> >::name()), "0" );
+  BOOST_CHECK_EQUAL( (Utility::TypeNameTraits<std::integral_constant<int,1> >::name()), "1" );
+
+  BOOST_CHECK_EQUAL( (Utility::typeName<std::integral_constant<int,-1> >()), "-1" );
+  BOOST_CHECK_EQUAL( (Utility::typeName<std::integral_constant<int,0> >()), "0" );
+  BOOST_CHECK_EQUAL( (Utility::typeName<std::integral_constant<int,1> >()), "1" );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the type name for boost::units::quantity types can be returned
 BOOST_AUTO_TEST_CASE_TEMPLATE( name_quantity, UnitRawTypePair, QuantityTypes )
 {

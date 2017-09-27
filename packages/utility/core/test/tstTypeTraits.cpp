@@ -451,5 +451,244 @@ BOOST_AUTO_TEST_CASE( IsTuple )
 }
 
 //---------------------------------------------------------------------------//
+// Check if a type is hashable
+BOOST_AUTO_TEST_CASE( IsPair )
+{
+  // Non-tuple types
+  BOOST_CHECK( !Utility::IsPair<char>::value );
+  BOOST_CHECK( !Utility::IsPair<char*>::value );
+  BOOST_CHECK( !Utility::IsPair<const char>::value );
+  BOOST_CHECK( !Utility::IsPair<const char*>::value );
+  BOOST_CHECK( !Utility::IsPair<signed char>::value );
+  BOOST_CHECK( !Utility::IsPair<signed char*>::value );
+  BOOST_CHECK( !Utility::IsPair<const signed char>::value );
+  BOOST_CHECK( !Utility::IsPair<const signed char*>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned char>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned char*>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned char>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned char*>::value );
+  BOOST_CHECK( !Utility::IsPair<short>::value );
+  BOOST_CHECK( !Utility::IsPair<short*>::value );
+  BOOST_CHECK( !Utility::IsPair<const short>::value );
+  BOOST_CHECK( !Utility::IsPair<const short*>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned short>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned short*>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned short>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned short*>::value );
+  BOOST_CHECK( !Utility::IsPair<int>::value );
+  BOOST_CHECK( !Utility::IsPair<int*>::value );
+  BOOST_CHECK( !Utility::IsPair<const int>::value );
+  BOOST_CHECK( !Utility::IsPair<const int*>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned int>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned int*>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned int>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned int*>::value );
+  BOOST_CHECK( !Utility::IsPair<long>::value );
+  BOOST_CHECK( !Utility::IsPair<long*>::value );
+  BOOST_CHECK( !Utility::IsPair<const long>::value );
+  BOOST_CHECK( !Utility::IsPair<const long*>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned long>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned long*>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned long>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned long*>::value );
+  BOOST_CHECK( !Utility::IsPair<long long>::value );
+  BOOST_CHECK( !Utility::IsPair<long long*>::value );
+  BOOST_CHECK( !Utility::IsPair<const long long>::value );
+  BOOST_CHECK( !Utility::IsPair<const long long*>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned long long>::value );
+  BOOST_CHECK( !Utility::IsPair<unsigned long long*>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned long long>::value );
+  BOOST_CHECK( !Utility::IsPair<const unsigned long long*>::value );
+  BOOST_CHECK( !Utility::IsPair<float>::value );
+  BOOST_CHECK( !Utility::IsPair<float*>::value );
+  BOOST_CHECK( !Utility::IsPair<const float>::value );
+  BOOST_CHECK( !Utility::IsPair<const float*>::value );
+  BOOST_CHECK( !Utility::IsPair<double>::value );
+  BOOST_CHECK( !Utility::IsPair<double*>::value );
+  BOOST_CHECK( !Utility::IsPair<const double>::value );
+  BOOST_CHECK( !Utility::IsPair<const double*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::string>::value );
+  BOOST_CHECK( !Utility::IsPair<std::string*>::value );
+  BOOST_CHECK( !Utility::IsPair<const std::string>::value );
+  BOOST_CHECK( !Utility::IsPair<const std::string*>::value );
+
+  // std::pair types
+  BOOST_CHECK( (Utility::IsPair<std::pair<int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::pair<int,int>*>::value) );
+  BOOST_CHECK( (Utility::IsPair<const std::pair<int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<const std::pair<int,int>*>::value) );
+  BOOST_CHECK( (Utility::IsPair<std::pair<int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::pair<int,double>*>::value) );
+  BOOST_CHECK( (Utility::IsPair<const std::pair<int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<const std::pair<int,double>*>::value) );
+  BOOST_CHECK( (Utility::IsPair<std::pair<double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::pair<double,double>*>::value) );
+  BOOST_CHECK( (Utility::IsPair<const std::pair<double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<const std::pair<double,double>*>::value) );
+
+  // Empty std::tuple type
+  BOOST_CHECK( !Utility::IsPair<std::tuple<> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<>*>::value );
+
+  // Single element std::tuple types
+  BOOST_CHECK( !Utility::IsPair<std::tuple<char> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<char>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<char*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<char*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<char&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<char&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const char> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const char>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const char*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const char*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const char&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const char&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<short> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<short>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<short*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<short*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<short&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<short&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const short> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const short>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const short*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const short*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const short&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const short&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<int> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<int>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<int*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<int*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<int&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<int&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const int> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const int>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const int*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const int*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const int&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const int&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long long> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long long>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long long*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long long*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long long&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<long long&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long long> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long long>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long long*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long long*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long long&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const long long&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<float> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<float>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<float*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<float*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<float&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<float&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const float> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const float>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const float*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const float*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const float&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const float&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<double> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<double>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<double*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<double*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<double&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<double&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const double> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const double>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const double*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const double*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const double&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const double&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<std::string> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<std::string>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<std::string*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<std::string*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<std::string&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<std::string&>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const std::string> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const std::string>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const std::string*> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const std::string*>*>::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const std::string&> >::value );
+  BOOST_CHECK( !Utility::IsPair<std::tuple<const std::string&>*>::value );
+
+  // Two element std::tuple types
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double>*>::value) );
+
+  // Three element std::tuple types
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double>*>::value) );
+
+  // Four element std::tuple types
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,int,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,int,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,double,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,double,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,int,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,int,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,int,double,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,int,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,int,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,double,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,double,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,double,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,double,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,int,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,int,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<int,double,double,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,int,double,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,int,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,int,double>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double,int> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double,int>*>::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double,double> >::value) );
+  BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double,double>*>::value) );
+}
+
+//---------------------------------------------------------------------------//
 // end tstTypeTraits.cpp
 //---------------------------------------------------------------------------//
