@@ -663,9 +663,7 @@ IF(${FRENSIE_ENABLE_MPI})
   SET_PROPERTY(TEST MpiCommHelpers_4_test PROPERTY LABELS utility_core mpi no_threads)
 ENDIF()
 
-ADD_EXECUTABLE(tstStructuredHexMesh
-  tstStructuredHexMesh.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstStructuredHexMesh tstStructuredHexMesh.cpp)
 TARGET_LINK_LIBRARIES(tstStructuredHexMesh utility_core)
 ADD_TEST(StructuredHexMesh_test tstStructuredHexMesh)
 SET_PROPERTY(TEST StructuredHexMesh_test PROPERTY LABELS utility_core)

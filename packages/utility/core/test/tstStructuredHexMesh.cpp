@@ -15,13 +15,10 @@
 // boost includes
 #include <boost/unordered_map.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-
 // Frensie Includes
 #include "Utility_StructuredHexMesh.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -31,10 +28,10 @@ std::shared_ptr<Utility::StructuredHexMesh> hex_mesh;
 //---------------------------------------------------------------------------//
 // test constructing the mesh.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, construct_mesh)
+FRENSIE_UNIT_TEST( StructuredHexMesh, construct_mesh)
 {
 
-  Teuchos::Array<double> x_planes, y_planes, z_planes;
+  std::vector<double> x_planes, y_planes, z_planes;
   
   x_planes.push_back(0);
   x_planes.push_back(0.5);
@@ -46,29 +43,29 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, construct_mesh)
   z_planes.push_back(0.5);
   z_planes.push_back(1);
   
-  TEST_NOTHROW( hex_mesh.reset( new Utility::StructuredHexMesh( x_planes,
+  FRENSIE_CHECK_NO_THROW( hex_mesh.reset( new Utility::StructuredHexMesh( x_planes,
                                                                 y_planes,
                                                                 z_planes ) ) );
 
-  TEST_EQUALITY( x_planes.size(), hex_mesh->getNumberOfXPlanes() );
+  FRENSIE_CHECK_EQUAL( x_planes.size(), hex_mesh->getNumberOfXPlanes() );
   for(unsigned i = 0; i < x_planes.size(); ++i)
   {
-    TEST_FLOATING_EQUALITY( hex_mesh->getXPlaneLocation(i), x_planes[i], 1e-12 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( hex_mesh->getXPlaneLocation(i), x_planes[i], 1e-12 );
   }
 
-  TEST_EQUALITY( y_planes.size(), hex_mesh->getNumberOfYPlanes() );
+  FRENSIE_CHECK_EQUAL( y_planes.size(), hex_mesh->getNumberOfYPlanes() );
   for(unsigned i = 0; i < y_planes.size(); ++i)
   {
-    TEST_FLOATING_EQUALITY( hex_mesh->getYPlaneLocation(i), y_planes[i], 1e-12 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( hex_mesh->getYPlaneLocation(i), y_planes[i], 1e-12 );
   }
 
-  TEST_EQUALITY( z_planes.size(), hex_mesh->getNumberOfZPlanes() );
+  FRENSIE_CHECK_EQUAL( z_planes.size(), hex_mesh->getNumberOfZPlanes() );
   for(unsigned i = 0; i < z_planes.size(); ++i)
   {
-    TEST_FLOATING_EQUALITY( hex_mesh->getZPlaneLocation(i), z_planes[i], 1e-12 );
+    FRENSIE_CHECK_FLOATING_EQUALITY( hex_mesh->getZPlaneLocation(i), z_planes[i], 1e-12 );
   }
   
-  TEST_EQUALITY( (z_planes.size()-1) * (y_planes.size()-1) * (x_planes.size()-1),
+  FRENSIE_CHECK_EQUAL( (z_planes.size()-1) * (y_planes.size()-1) * (x_planes.size()-1),
                  std::distance( hex_mesh->getStartHexIDIterator(), hex_mesh->getEndHexIDIterator() ) );
 
 }
@@ -76,21 +73,21 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, construct_mesh)
 //---------------------------------------------------------------------------//
 // Test the calculateVolumes method
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, calculateVolumes)
+FRENSIE_UNIT_TEST( StructuredHexMesh, calculateVolumes)
 {
 
   boost::unordered_map<unsigned long, double> volume_map =
     hex_mesh->calculateVolumes();
     
-  TEST_FLOATING_EQUALITY( volume_map[0], 0.125, 1e-12);
-  TEST_FLOATING_EQUALITY( volume_map[1], 0.125, 1e-12);
-  TEST_FLOATING_EQUALITY( volume_map[2], 0.125, 1e-12);
-  TEST_FLOATING_EQUALITY( volume_map[3], 0.125, 1e-12);
-  TEST_FLOATING_EQUALITY( volume_map[4], 0.125, 1e-12);
-  TEST_FLOATING_EQUALITY( volume_map[5], 0.125, 1e-12);
-  TEST_FLOATING_EQUALITY( volume_map[6], 0.125, 1e-12);
-  TEST_FLOATING_EQUALITY( volume_map[7], 0.125, 1e-12);
-  TEST_EQUALITY(volume_map.size(), 8);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[0], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[1], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[2], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[3], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[4], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[5], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[6], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[7], 0.125, 1e-12);
+  FRENSIE_CHECK_EQUAL(volume_map.size(), 8);
   
 }
 
@@ -98,7 +95,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, calculateVolumes)
 //---------------------------------------------------------------------------//
 // test whether or not the point in mesh method works
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, isPointInMesh)
+FRENSIE_UNIT_TEST( StructuredHexMesh, isPointInMesh)
 {
 
   //points inside mesh and not in boundary region
@@ -107,10 +104,10 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, isPointInMesh)
   double point3[3] {0.75, 0.75, 0.75};
   double point4[3] {0.25, 0.9, 0.23};
   
-  TEST_ASSERT( hex_mesh->isPointInMesh(point1) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point2) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point3) );
-  TEST_ASSERT( hex_mesh->isPointInMesh(point4) );
+  FRENSIE_CHECK( hex_mesh->isPointInMesh(point1) );
+  FRENSIE_CHECK( hex_mesh->isPointInMesh(point2) );
+  FRENSIE_CHECK( hex_mesh->isPointInMesh(point3) );
+  FRENSIE_CHECK( hex_mesh->isPointInMesh(point4) );
   
   //points not inside mesh but inside boundary region (should return false)
   //points on upper dimension boundaries
@@ -122,12 +119,12 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, isPointInMesh)
   double point9[3] {0.5, -1e-13, 0.5};
   double point10[3] {0.5, 0.5, -1e-13};
 
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point5) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point6) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point7) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point8) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point9) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point10) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point5) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point6) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point7) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point8) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point9) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point10) );
 
   //points outside of mesh
   //points on upper dimension boundaries
@@ -139,18 +136,18 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, isPointInMesh)
   double point15[3] {0.5, -1e-5, 0.5};
   double point16[3] {0.5, 0.5, -1e-5};
 
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point11) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point12) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point13) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point14) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point15) );
-  TEST_ASSERT( !hex_mesh->isPointInMesh(point16) );  
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point11) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point12) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point13) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point14) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point15) );
+  FRENSIE_CHECK( !hex_mesh->isPointInMesh(point16) );  
 }
 
 //---------------------------------------------------------------------------//
 // test whether or not the whichHexIsPointIn method works
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, whichHexIsPointIn)
+FRENSIE_UNIT_TEST( StructuredHexMesh, whichHexIsPointIn)
 {
 
   //test points in the middle of the mesh elements. Points should be in order for index returned
@@ -163,29 +160,29 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, whichHexIsPointIn)
   double point7[3] {0.25, 0.75, 0.75};
   double point8[3] {0.75, 0.75, 0.75};
   
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point1), 0);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point2), 1);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point3), 2);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point4), 3);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point5), 4);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point6), 5);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point7), 6);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point8), 7);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point1), 0);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point2), 1);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point3), 2);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point4), 3);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point5), 4);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point6), 5);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point7), 6);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point8), 7);
   
   /* test points on mesh boundaries.*/
   double point9[3] {0, 0, 0};
   double point10[3] {0.5, 0.5, 0.5};
   double point11[3] {1.0, 1.0, 1.0};
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point9), 0);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point10), 7);
-  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point11), 7);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point9), 0);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point10), 7);
+  FRENSIE_CHECK_EQUAL( hex_mesh->whichHexIsPointIn(point11), 7);
 }
 
 //---------------------------------------------------------------------------//
 // test simple cases of rays not interacting with mesh and computeTrackLengths
 // returning empty arrays
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
+FRENSIE_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
 {
 
  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -210,11 +207,11 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
  direction[1] = ray[1] / ray_length;
  direction[2] = ray[2] / ray_length;
  
- Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+ std::vector<std::pair<unsigned long,double>> contribution1 =
   hex_mesh->computeTrackLengths( start_point,
                                  end_point );
 
-  TEST_ASSERT(contribution1.size() == 0);
+  FRENSIE_CHECK(contribution1.size() == 0);
   
   /*reverse order of last example making particle travel towards mesh but never enter
     it due to short length */
@@ -236,11 +233,11 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
  direction[1] = ray[1] / ray_length;
  direction[2] = ray[2] / ray_length;
  
- Teuchos::Array<std::pair<unsigned long,double>> contribution2 =
+ std::vector<std::pair<unsigned long,double>> contribution2 =
   hex_mesh->computeTrackLengths( start_point,
                                  end_point );
 
-  TEST_ASSERT(contribution2.size() == 0);
+  FRENSIE_CHECK(contribution2.size() == 0);
   
   //particle crosses planes but still never actually crosses mesh
  start_point[0] = 2;
@@ -261,11 +258,11 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
  direction[1] = ray[1] / ray_length;
  direction[2] = ray[2] / ray_length;
  
- Teuchos::Array<std::pair<unsigned long,double>> contribution3 =
+ std::vector<std::pair<unsigned long,double>> contribution3 =
   hex_mesh->computeTrackLengths( start_point,
                                  end_point );
 
-  TEST_ASSERT(contribution3.size() == 0);
+  FRENSIE_CHECK(contribution3.size() == 0);
   
   //particle ends in boundary region. Should give zero since pushing it up to the
   //  actual boundary would be longer than the particle track length
@@ -287,11 +284,11 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution4 =
+  std::vector<std::pair<unsigned long,double>> contribution4 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_ASSERT(contribution4.size() == 0);
+  FRENSIE_CHECK(contribution4.size() == 0);
  
 }
 
@@ -299,7 +296,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
 // testing cases of rays interacting with mesh and returning appropriate results
 // First test is particle track is entirely within one cell
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_one_cell)
+FRENSIE_UNIT_TEST( StructuredHexMesh, computeTrackLengths_one_cell)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;  
@@ -324,20 +321,20 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_one_cell)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
 
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_ASSERT(contribution1.size() == 1);
-  TEST_ASSERT(contribution1[0].first == 0);
-  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.339116499156263, 1e-10);  
+  FRENSIE_CHECK(contribution1.size() == 1);
+  FRENSIE_CHECK(contribution1[0].first == 0);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[0].second, 0.339116499156263, 1e-10);  
 
 }
 
 //---------------------------------------------------------------------------//
 // second test: particle starts in mesh and crosses into another mesh element and dies in that mesh element
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_multiple_elements)
+FRENSIE_UNIT_TEST( StructuredHexMesh, computeTrackLengths_multiple_elements)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;  
@@ -360,15 +357,15 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_multiple_elements)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_ASSERT(contribution1.size() == 2);
-  TEST_ASSERT(contribution1[0].first == 0);
-  TEST_ASSERT(contribution1[1].first == 1);
-  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.419523539268061, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.104880884817015, 1e-10);
+  FRENSIE_CHECK(contribution1.size() == 2);
+  FRENSIE_CHECK(contribution1[0].first == 0);
+  FRENSIE_CHECK(contribution1[1].first == 1);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[0].second, 0.419523539268061, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[1].second, 0.104880884817015, 1e-10);
     
   //one extra check with different plane dimension crossing to make sure any of the planes work
   start_point[0] = 0.7;
@@ -389,15 +386,15 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_multiple_elements)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution2 =
+  std::vector<std::pair<unsigned long,double>> contribution2 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_ASSERT(contribution2.size() == 2);
-  TEST_ASSERT(contribution2[0].first == 7);
-  TEST_ASSERT(contribution2[1].first == 3);
-  TEST_FLOATING_EQUALITY(contribution2[0].second, 0.303009696269043, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution2[1].second, 0.252508080224203, 1e-10);
+  FRENSIE_CHECK(contribution2.size() == 2);
+  FRENSIE_CHECK(contribution2[0].first == 7);
+  FRENSIE_CHECK(contribution2[1].first == 3);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution2[0].second, 0.303009696269043, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution2[1].second, 0.252508080224203, 1e-10);
   
   //test multiple plane crossings
   start_point[0] = 0.7;
@@ -418,27 +415,27 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_multiple_elements)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution3 =
+  std::vector<std::pair<unsigned long,double>> contribution3 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_ASSERT(contribution3.size() == 3);
-  TEST_EQUALITY(contribution3[0].first, 7);
-  TEST_EQUALITY(contribution3[1].first, 5);
-  TEST_EQUALITY(contribution3[2].first, 4);
-  TEST_FLOATING_EQUALITY(contribution3[0].second, 0.131267855928251, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution3[1].second, 0.177597687432339, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution3[2].second, 0.216205880352413, 1e-10);
+  FRENSIE_CHECK(contribution3.size() == 3);
+  FRENSIE_CHECK_EQUAL(contribution3[0].first, 7);
+  FRENSIE_CHECK_EQUAL(contribution3[1].first, 5);
+  FRENSIE_CHECK_EQUAL(contribution3[2].first, 4);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution3[0].second, 0.131267855928251, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution3[1].second, 0.177597687432339, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution3[2].second, 0.216205880352413, 1e-10);
   
   double sum_of_segments = contribution3[0].second + contribution3[1].second + contribution3[2].second;
   
-  TEST_FLOATING_EQUALITY(sum_of_segments, ray_length, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(sum_of_segments, ray_length, 1e-10);
 }
 
 //---------------------------------------------------------------------------//
 // third test: Particle starts in mesh and exits mesh
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_starts_mesh_exits_mesh)
+FRENSIE_UNIT_TEST(StructuredHexMesh, computeTrackLengths_starts_mesh_exits_mesh)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -462,13 +459,13 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_starts_mesh_exits_mesh)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_ASSERT(contribution1.size() == 1);
-  TEST_ASSERT(contribution1[0].first == 0);
-  TEST_ASSERT(contribution1[0].second == 0.25);
+  FRENSIE_CHECK(contribution1.size() == 1);
+  FRENSIE_CHECK(contribution1[0].first == 0);
+  FRENSIE_CHECK(contribution1[0].second == 0.25);
 
   //particle starts in another cell and crosses multiple planes before exiting  
   start_point[0] = 0.268;
@@ -489,17 +486,17 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_starts_mesh_exits_mesh)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution2 =
+  std::vector<std::pair<unsigned long,double>> contribution2 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
   
-  TEST_EQUALITY( contribution2.size(), 3);
-  TEST_EQUALITY( contribution2[0].first, 4);
-  TEST_EQUALITY( contribution2[1].first, 0);
-  TEST_EQUALITY( contribution2[2].first, 1);
-  TEST_FLOATING_EQUALITY( contribution2[0].second, 0.493120998659465, 1e-10);
-  TEST_FLOATING_EQUALITY( contribution2[1].second, 0.064314616453253, 1e-10);
-  TEST_FLOATING_EQUALITY( contribution2[2].second, 0.519951969636160, 1e-10);
+  FRENSIE_CHECK_EQUAL( contribution2.size(), 3);
+  FRENSIE_CHECK_EQUAL( contribution2[0].first, 4);
+  FRENSIE_CHECK_EQUAL( contribution2[1].first, 0);
+  FRENSIE_CHECK_EQUAL( contribution2[2].first, 1);
+  FRENSIE_CHECK_FLOATING_EQUALITY( contribution2[0].second, 0.493120998659465, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( contribution2[1].second, 0.064314616453253, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY( contribution2[2].second, 0.519951969636160, 1e-10);
 
 }
 
@@ -507,7 +504,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_starts_mesh_exits_mesh)
 // testing cases of where the particle starts outside of the mesh and enters the mesh
 // simple cases of particle entering mesh
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
+FRENSIE_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -531,13 +528,13 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution1.size(), 1);
-  TEST_EQUALITY(contribution1[0].first, 0);
-  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.25, 1e-12);
+  FRENSIE_CHECK_EQUAL(contribution1.size(), 1);
+  FRENSIE_CHECK_EQUAL(contribution1[0].first, 0);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[0].second, 0.25, 1e-12);
 
   //particle starts outside mesh,crosses multiple planes inside mesh, and dies inside mesh
   start_point[0] = -0.25;
@@ -558,20 +555,20 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution2 =
+  std::vector<std::pair<unsigned long,double>> contribution2 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution2.size(), 4);
-  TEST_EQUALITY(contribution2[0].first, 0);
-  TEST_EQUALITY(contribution2[1].first, 2);
-  TEST_EQUALITY(contribution2[2].first, 3);
-  TEST_EQUALITY(contribution2[3].first, 7);
+  FRENSIE_CHECK_EQUAL(contribution2.size(), 4);
+  FRENSIE_CHECK_EQUAL(contribution2[0].first, 0);
+  FRENSIE_CHECK_EQUAL(contribution2[1].first, 2);
+  FRENSIE_CHECK_EQUAL(contribution2[2].first, 3);
+  FRENSIE_CHECK_EQUAL(contribution2[3].first, 7);
   
-  TEST_FLOATING_EQUALITY(contribution2[0].second, 0.350784676235707, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution2[1].second, 0.210470805741424, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution2[2].second, 0.280627740988566, 1e-10);
-  TEST_FLOATING_EQUALITY(contribution2[3].second, 0.089800877116341, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution2[0].second, 0.350784676235707, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution2[1].second, 0.210470805741424, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution2[2].second, 0.280627740988566, 1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution2[3].second, 0.089800877116341, 1e-10);
 
   
 
@@ -594,13 +591,13 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution3 =
+  std::vector<std::pair<unsigned long,double>> contribution3 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution3.size(), 1);
-  TEST_EQUALITY(contribution3[0].first, 2);
-  TEST_FLOATING_EQUALITY(contribution3[0].second, 0.030167187001735, 1e-12);
+  FRENSIE_CHECK_EQUAL(contribution3.size(), 1);
+  FRENSIE_CHECK_EQUAL(contribution3[0].first, 2);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution3[0].second, 0.030167187001735, 1e-12);
   
   //particle starts outside mesh, enters mesh, and then exits mesh
   start_point[0] = 1.2;
@@ -621,15 +618,15 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution4 =
+  std::vector<std::pair<unsigned long,double>> contribution4 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
   
-  TEST_EQUALITY(contribution4.size(), 2);
-  TEST_EQUALITY(contribution4[0].first, 7);
-  TEST_EQUALITY(contribution4[1].first, 5);
-  TEST_FLOATING_EQUALITY(contribution4[0].second, 0.198729768889349, 1e-12);
-  TEST_FLOATING_EQUALITY(contribution4[1].second, 0.535041685471324, 1e-12);
+  FRENSIE_CHECK_EQUAL(contribution4.size(), 2);
+  FRENSIE_CHECK_EQUAL(contribution4[0].first, 7);
+  FRENSIE_CHECK_EQUAL(contribution4[1].first, 5);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution4[0].second, 0.198729768889349, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution4[1].second, 0.535041685471324, 1e-12);
 
 }
 
@@ -640,7 +637,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and travels away from mesh on negative side
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_negative_away_from_mesh)
+FRENSIE_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_negative_away_from_mesh)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -663,17 +660,17 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_negative_away_fro
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution1.size(), 0);
+  FRENSIE_CHECK_EQUAL(contribution1.size(), 0);
 }
 
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and travels away from mesh on positive side
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_positive_away_from_mesh)
+FRENSIE_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_positive_away_from_mesh)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
   start_point[0] = 1+1e-13;
@@ -694,17 +691,17 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_positive_away_fro
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution1.size(), 0);
+  FRENSIE_CHECK_EQUAL(contribution1.size(), 0);
 }
 
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and dies in boundary region
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
+FRENSIE_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
   start_point[0] = 1+1e-13;
@@ -725,11 +722,11 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution1.size(), 0);
+  FRENSIE_CHECK_EQUAL(contribution1.size(), 0);
 
   //particle starts in boundary region and dies in boundary region going towards boundary region
   start_point[0] = 1+1e-13;
@@ -750,11 +747,11 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution2 =
+  std::vector<std::pair<unsigned long,double>> contribution2 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution2.size(), 0);
+  FRENSIE_CHECK_EQUAL(contribution2.size(), 0);
   
   //same as last but on other side for y dimension
   start_point[0] = 0.25;
@@ -775,11 +772,11 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution3 =
+  std::vector<std::pair<unsigned long,double>> contribution3 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution3.size(), 0);
+  FRENSIE_CHECK_EQUAL(contribution3.size(), 0);
   
   //test particle starting in boundary region and stopping at hex face
   start_point[0] = 0.25;
@@ -800,18 +797,18 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution4 =
+  std::vector<std::pair<unsigned long,double>> contribution4 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution4.size(), 1);
-  TEST_FLOATING_EQUALITY(contribution4[0].second, 0.0, 1e-12);
+  FRENSIE_CHECK_EQUAL(contribution4.size(), 1);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution4[0].second, 0.0, 1e-12);
 }
 
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and dies inside mesh
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_enters_mesh)
+FRENSIE_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_enters_mesh)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
 
@@ -833,16 +830,16 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_enters_mesh)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution1.size(), 3);
-  TEST_EQUALITY(contribution1[0].first, 1);
-  TEST_EQUALITY(contribution1[1].first, 3);
-  TEST_EQUALITY(contribution1[2].first, 2);
-  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.353553390592743, 1e-12);
-  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.353553390593451, 1e-12);
+  FRENSIE_CHECK_EQUAL(contribution1.size(), 3);
+  FRENSIE_CHECK_EQUAL(contribution1[0].first, 1);
+  FRENSIE_CHECK_EQUAL(contribution1[1].first, 3);
+  FRENSIE_CHECK_EQUAL(contribution1[2].first, 2);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[0].second, 0.353553390592743, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[1].second, 0.353553390593451, 1e-12);
 }
 
 //---------------------------------------------------------------------------//
@@ -851,7 +848,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_enters_mesh)
 // under specific conditions where multiple intersection points are inside mesh
 // but a dimension after the first one in order of x,y,z is the true intersection point
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_correct_dimension)
+FRENSIE_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_correct_dimension)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -874,17 +871,20 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_correct_dimensio
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
+  std::vector<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
 
-  TEST_EQUALITY(contribution1.size(), 2);
-  TEST_EQUALITY(contribution1[0].first, 0);
-  TEST_EQUALITY(contribution1[1].first, 1);
-  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.307225901089085,1e-10);
-  TEST_FLOATING_EQUALITY(contribution1[1].second,  0.122890361123820 ,1e-10);
-  TEST_FLOATING_EQUALITY(ray_length - 1.720465048851618e-09, contribution1[0].second
+  FRENSIE_CHECK_EQUAL(contribution1.size(), 2);
+  FRENSIE_CHECK_EQUAL(contribution1[0].first, 0);
+  FRENSIE_CHECK_EQUAL(contribution1[1].first, 1);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[0].second, 0.307225901089085,1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(contribution1[1].second,  0.122890361123820 ,1e-10);
+  FRENSIE_CHECK_FLOATING_EQUALITY(ray_length - 1.720465048851618e-09, contribution1[0].second
     + contribution1[1].second, 1e-10);
 
 }
 
+//---------------------------------------------------------------------------//
+// end tstStructuredHexMesh.cpp
+//---------------------------------------------------------------------------//
