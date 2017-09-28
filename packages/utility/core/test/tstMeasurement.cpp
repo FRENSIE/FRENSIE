@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <sstream>
 
 // Boost Includes
 #include <boost/units/io.hpp>
@@ -21,538 +22,830 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+typedef std::tuple<float,double> TestTypes;
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a measurement can be constructed
-FRENSIE_UNIT_TEST( Measurement, constructor )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, constructor, TestTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
   // The default constructor
-  Utility::Measurement<double> measurement;
+  Utility::Measurement<T> measurement;
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0) );
 
   // Default uncertainty constructor
-  measurement = Utility::Measurement<double>( 1.0 );
+  measurement = Utility::Measurement<T>( T(1) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 1.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(1) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0) );
 
   // Full constructor
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
+  measurement = Utility::Measurement<T>( T(1), T(1)/T(10) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 1.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(1) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(1)/T(10) );
 
   // Copy constructor
-  Utility::Measurement<double> measurement_2( measurement );
+  Utility::Measurement<T> measurement_2( measurement );
 
-  FRENSIE_CHECK_EQUAL( measurement_2.getValue(), 1.0 );
-  FRENSIE_CHECK_EQUAL( measurement_2.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( measurement_2.getValue(), T(1) );
+  FRENSIE_CHECK_EQUAL( measurement_2.getUncertainty(), T(1)/T(10) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the relative uncertainty can be calculated
-FRENSIE_UNIT_TEST( Measurement, getRelativeUncertainty )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, getRelativeUncertainty, TestTypes )
 {
-  Utility::Measurement<double> measurement;
+  FETCH_TEMPLATE_PARAM( 0, T );
 
-  FRENSIE_CHECK_EQUAL( measurement.getRelativeUncertainty(), 0.0 );
+  T tol;
 
-  measurement = Utility::Measurement<double>( 1.0 );
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+  
+  Utility::Measurement<T> measurement;
 
-  FRENSIE_CHECK_EQUAL( measurement.getRelativeUncertainty(), 0.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getRelativeUncertainty(), T(0) );
 
-  measurement = Utility::Measurement<double>( 0.1, 0.01 );
+  measurement = Utility::Measurement<T>( T(1) );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getRelativeUncertainty(), 0.1, 1e-15 );
+  FRENSIE_CHECK_EQUAL( measurement.getRelativeUncertainty(), T(0) );
 
-  measurement = Utility::Measurement<double>( 0.0, 0.01 );
+  measurement = Utility::Measurement<T>( T(0.1), T(0.01) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getRelativeUncertainty(), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getRelativeUncertainty(), T(0.1), tol );
 
-  measurement = Utility::Measurement<double>( -1.0, 0.01 );
+  measurement = Utility::Measurement<T>( T(0), T(0.01) );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getRelativeUncertainty(), 0.01, 1e-15 );
+  FRENSIE_CHECK_EQUAL( measurement.getRelativeUncertainty(), T(0) );
+
+  measurement = Utility::Measurement<T>( -T(1), T(0.01) );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getRelativeUncertainty(), T(0.01), tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the measurement can be calculated
-FRENSIE_UNIT_TEST( Measurement, getLowerBound )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, getLowerBound, TestTypes )
 {
-  Utility::Measurement<double> measurement( 1.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(1), T(0.1) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getLowerBound(), 0.9 );
+  FRENSIE_CHECK_EQUAL( measurement.getLowerBound(), T(0.9) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the measurement can be calculated
-FRENSIE_UNIT_TEST( Measurement, getUpperBound )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, getUpperBound, TestTypes )
 {
-  Utility::Measurement<double> measurement( 1.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(1), T(0.1) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getUpperBound(), 1.1 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a measurement can be converted to double
-FRENSIE_UNIT_TEST( Measurement, implicit_conversion )
-{
-  double value = Utility::Measurement<double>( 2.0, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( value, 2.0 );
-
-  float reduced_precision_value = Utility::Measurement<float>( 2.0f, 0.1f );
-
-  FRENSIE_CHECK_EQUAL( reduced_precision_value, 2.0f );
+  FRENSIE_CHECK_EQUAL( measurement.getUpperBound(), T(1.1) );
 }
 
 //---------------------------------------------------------------------------//
 // Check measurement addition
-FRENSIE_UNIT_TEST( Measurement, addition )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, addition, TestTypes )
 {
-  Utility::Measurement<double> measurement( 1.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(1), T(0.1) );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
 
   // Addition of measurement and scalar
-  Utility::Measurement<double> new_measurement = measurement + 1.0;
+  Utility::Measurement<T> new_measurement = measurement + T(1);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
-  new_measurement = measurement + -1.0;
+  new_measurement = measurement + -T(1);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
   // Addition of scalar and measurement
-  new_measurement = 2.0 + measurement;
+  new_measurement = T(2.0) + measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 3.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(3.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
-  new_measurement = -2.0 + measurement;
+  new_measurement = -T(2.0) + measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -1.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -T(1) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
   // Addition of two measurements
-  new_measurement = measurement + Utility::Measurement<double>( 1.0, 0.0 );
+  new_measurement = measurement + Utility::Measurement<T>( T(1), T(0) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
-  new_measurement = measurement + Utility::Measurement<double>( -1.0, 0.0 );
+  new_measurement = measurement + Utility::Measurement<T>( -T(1), T(0) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
   // In-place addition of measurement and scalar
-  measurement += 1.0;
+  measurement += T(1);
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.1) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement += -1.0;
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement += -T(1);
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.1) );
 
   // In-place addition of measurement and another measurement
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement += Utility::Measurement<double>( 2.0, 0.3 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement += Utility::Measurement<T>( T(2.0), T(0.3) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 3.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(3.0) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1+0.3*0.3 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1)+T(0.3*0.3) ),
+                                   tol );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement += Utility::Measurement<double>( -2.0, 0.3 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement += Utility::Measurement<T>( T(-2.0), T(0.3) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -1.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), -T(1) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1+0.3*0.3 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1)+T(0.3*0.3) ),
+                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check measurement subtraction
-FRENSIE_UNIT_TEST( Measurement, subtraction )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, subtraction, TestTypes )
 {
-  Utility::Measurement<double> measurement( 1.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(1), T(0.1) );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
 
   // Subtraction of measurement to scaler
-  Utility::Measurement<double> new_measurement = measurement - 1.0;
+  Utility::Measurement<T> new_measurement = measurement - T(1);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
-  new_measurement = measurement - -1.0;
+  new_measurement = measurement - -T(1);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
   // Subtraction of scalar and measurement
-  new_measurement = 1.0 - measurement;
+  new_measurement = T(1) - measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
-  new_measurement = -1.0 - measurement;
+  new_measurement = -T(1) - measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
   // Subtraction of two measurements
-  new_measurement = measurement - Utility::Measurement<double>( 1.0, 0.0 );
+  new_measurement = measurement - Utility::Measurement<T>( T(1), T(0) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
-  new_measurement = measurement - Utility::Measurement<double>( -1.0, 0.0 );
+  new_measurement = measurement - Utility::Measurement<T>( -T(1), T(0) );
 
   FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.1) );
 
   // In-place subtraction of measurement and scalar
-  measurement -= 1.0;
+  measurement -= T(1);
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 0.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.1) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement -= -1.0;
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement -= -T(1);
 
   FRENSIE_CHECK_EQUAL( measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.1 );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.1) );
 
   // In-place subtraction of measurement and another measurement
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement -= Utility::Measurement<double>( 2.0, 0.3 );
+  measurement = Utility::Measurement<T>( T(1), 0.1 );
+  measurement -= Utility::Measurement<T>( 2.0, 0.3 );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -1.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), -T(1) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1 + 0.3*0.3 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1) + T(0.3*0.3) ),
+                                   tol );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement -= Utility::Measurement<double>( -2.0, 0.3 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement -= Utility::Measurement<T>( -T(2.0), T(0.3) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 3.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(3.0) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1 + 0.3*0.3 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1) + T(0.3*0.3) ),
+                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check measurement multiplication
-FRENSIE_UNIT_TEST( Measurement, multiplication )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, multiplication, TestTypes )
 {
-  Utility::Measurement<double> measurement( 1.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(1), T(0.1) );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
 
   // Multiplication of measurement and scalar
-  Utility::Measurement<double> new_measurement = measurement*2.0;
+  Utility::Measurement<T> new_measurement = measurement*T(2.0);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
-  new_measurement = measurement*-2.0;
+  new_measurement = measurement*T(-2.0);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
   // Multiplication of scalar and measurement
-  new_measurement = 2.0*measurement;
+  new_measurement = T(2.0)*measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
-  new_measurement = -2.0*measurement;
+  new_measurement = T(-2.0)*measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
   // Multiplication of two measurements
-  new_measurement = measurement*Utility::Measurement<double>( 2.0, 0.0 );
+  new_measurement = measurement*Utility::Measurement<T>( T(2.0), T(0) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
-  new_measurement = measurement*Utility::Measurement<double>( -2.0, 0.0 );
+  new_measurement = measurement*Utility::Measurement<T>( T(-2.0), T(0) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
-  new_measurement = measurement*Utility::Measurement<double>( 2.0, 0.2 );
+  new_measurement = measurement*Utility::Measurement<T>( T(2.0), T(0.2) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  sqrt( 0.1*0.1*2.0*2.0 + 0.2*0.2 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1*2.0*2.0) + T(0.2*0.2) ),
+                                   tol );
+  
+  new_measurement = measurement*Utility::Measurement<T>( T(-2.0), T(0.2) );
 
-  new_measurement = measurement*Utility::Measurement<double>( -2.0, 0.2 );
-
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -2.0 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-2.0) );
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  sqrt( 0.1*0.1*2.0*2.0 + 0.2*0.2 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1*2.0*2.0) + T(0.2*0.2) ),
+                                   tol );
 
   // In-place multiplication of measurement and scalar
-  measurement *= 2.0;
+  measurement *= T(2.0);
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.2) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement *= -2.0;
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement *= T(-2.0);
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -2.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(-2.0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.2) );
 
   // In-place multiplication of measurement and another measurement
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement *= Utility::Measurement<double>( 2.0, 0.0 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement *= Utility::Measurement<T>( T(2.0), T(0) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.2) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement *= Utility::Measurement<double>( -2.0, 0.0 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement *= Utility::Measurement<T>( T(-2.0), T(0) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -2.0 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(-2.0) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.2) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement *= Utility::Measurement<double>( 2.0, 0.2 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement *= Utility::Measurement<T>( T(2.0), T(0.2) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 2.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(2.0) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1*2.0*2.0 + 0.2*0.2 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1*2.0*2.0) + T(0.2*0.2) ),
+                                   tol );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement *= Utility::Measurement<double>( -2.0, 0.2 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement *= Utility::Measurement<T>( T(-2.0), T(0.2) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -2.0 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(-2.0) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1*2.0*2.0 + 0.2*0.2 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1*2.0*2.0) + T(0.2*0.2) ),
+                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check measurement division
-FRENSIE_UNIT_TEST( Measurement, division )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, division, TestTypes )
 {
-  Utility::Measurement<double> measurement( 1.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(1), T(0.1) );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
 
   // Division of measurement and scalar
-  Utility::Measurement<double> new_measurement = measurement/2.0;
+  Utility::Measurement<T> new_measurement = measurement/T(2.0);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.5 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0.5) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.05) );
 
-  new_measurement = measurement/-2.0;
+  new_measurement = measurement/T(-2.0);
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -0.5 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-0.5) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.05) );
 
   // Division of scalar and measurement
-  new_measurement = 2.0/measurement;
+  new_measurement = T(2.0)/measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
-  new_measurement = -2.0/measurement;
+  new_measurement = -T(2.0)/measurement;
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -2.0 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.2 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-2.0) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.2) );
 
   // Division of two measurements
-  new_measurement = measurement/Utility::Measurement<double>( 2.0, 0.0 );
+  new_measurement = measurement/Utility::Measurement<T>( T(2), T(0) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.5 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0.5) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.05) );
 
-  new_measurement = measurement/Utility::Measurement<double>( -2.0, 0.0 );
+  new_measurement = measurement/Utility::Measurement<T>( -T(2), T(0) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -0.5 );
-  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-0.5) );
+  FRENSIE_CHECK_EQUAL( new_measurement.getUncertainty(), T(0.05) );
 
-  new_measurement = measurement/Utility::Measurement<double>( 2.0, 0.2 );
+  new_measurement = measurement/Utility::Measurement<T>( T(2), T(0.2) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), 0.5 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(0.5) );
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  sqrt( 0.1*0.1/4.0 + 0.2*0.2/16.0 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1/4.0) + T(0.2*0.2/16.0) ),
+                                   tol );
 
-  new_measurement = measurement/Utility::Measurement<double>( -2.0, 0.2 );
+  new_measurement = measurement/Utility::Measurement<T>( -T(2), T(0.2) );
 
-  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), -0.5 );
+  FRENSIE_CHECK_EQUAL( new_measurement.getValue(), T(-0.5) );
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  sqrt( 0.1*0.1/4.0 + 0.2*0.2/16.0 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1/4.0) + T(0.2*0.2/16.0) ),
+                                   tol );
 
   // In-place division of measurement and scalar
-  measurement /= 2.0;
+  measurement /= T(2);
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 0.5 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(0.5) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.05) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement /= -2.0;
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement /= -T(2);
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -0.5 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(-0.5) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.05) );
 
   // In-place division of measurement and another measurement
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement /= Utility::Measurement<double>( 2.0, 0.0 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement /= Utility::Measurement<T>( T(2), T(0) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 0.5 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(0.5) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.05) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement /= Utility::Measurement<double>( -2.0, 0.0 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement /= Utility::Measurement<T>( -T(2), T(0) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -0.5 );
-  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), 0.05 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(-0.5) );
+  FRENSIE_CHECK_EQUAL( measurement.getUncertainty(), T(0.05) );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement /= Utility::Measurement<double>( 2.0, 0.2 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement /= Utility::Measurement<T>( T(2), T(0.2) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), 0.5 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(0.5) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1/4.0 + 0.2*0.2/16.0 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1/4.0) + T(0.2*0.2/16.0) ),
+                                   tol );
 
-  measurement = Utility::Measurement<double>( 1.0, 0.1 );
-  measurement /= Utility::Measurement<double>( -2.0, 0.2 );
+  measurement = Utility::Measurement<T>( T(1), T(0.1) );
+  measurement /= Utility::Measurement<T>( -T(2), T(0.2) );
 
-  FRENSIE_CHECK_EQUAL( measurement.getValue(), -0.5 );
+  FRENSIE_CHECK_EQUAL( measurement.getValue(), T(-0.5) );
   FRENSIE_CHECK_FLOATING_EQUALITY( measurement.getUncertainty(),
-			  sqrt( 0.1*0.1/4.0 + 0.2*0.2/16.0 ),
-			  1e-15 );
+                                   sqrt( T(0.1*0.1/4.0) + T(0.2*0.2/16.0) ),
+                                   tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a measurement can be converted to a string
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, toString, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::Measurement<T> measurement( T(2), T(0.1) );
+
+  std::string measurement_string = Utility::toString( measurement );
+
+  FRENSIE_CHECK_EQUAL( measurement_string,
+                       Utility::toString( measurement.getValue() ) + " +/- " +
+                       Utility::toString( measurement.getUncertainty() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a measurement can be placed in a stream
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, toStream, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::Measurement<T> measurement( T(2), T(0.1) );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, measurement );
+
+  FRENSIE_CHECK_EQUAL( oss.str(),
+                       Utility::toString( measurement.getValue() ) + " +/- " +
+                       Utility::toString( measurement.getUncertainty() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a measurement can be placed in a stream
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, ostream_operator, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::Measurement<T> measurement( T(2), T(0.1) );
+
+  std::ostringstream oss;
+
+  oss << measurement;
+
+  FRENSIE_CHECK_EQUAL( oss.str(),
+                       Utility::toString( measurement.getValue() ) + " +/- " +
+                       Utility::toString( measurement.getUncertainty() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check measurement sqrt
-FRENSIE_UNIT_TEST( Measurement, sqrt )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, sqrt_std, TestTypes )
 {
-  Utility::Measurement<double> measurement( 2.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(2), T(0.1) );
 
-  Utility::Measurement<double> new_measurement = sqrt( measurement );
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  // Std namespace sqrt
+  Utility::Measurement<T> new_measurement = std::sqrt( measurement );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
-			  sqrt( 2.0 ),
-			  1e-15 );
+                                   sqrt( T(2) ),
+                                   tol );
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  0.1/(2*sqrt(2.0)),
-			  1e-15 );
+                                   T(0.1)/(2*sqrt(T(2))),
+                                   tol );
+
+  // Default sqrt (should be the same as the std namespace sqrt)
+  new_measurement = sqrt( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   sqrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.1)/(2*sqrt(T(2))),
+                                   tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check measurement sqrt
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, sqrt, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(2), T(0.1) );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  Utility::Measurement<T> new_measurement = Utility::sqrt( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   sqrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.1)/(2*sqrt(T(2))),
+                                   tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check quantity measurement sqrt
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, sqrt_quantity, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  namespace si = boost::units::si;
+  using boost::units::quantity;
+
+  quantity<si::area,Utility::Measurement<T> > area_measurement(
+		   Utility::Measurement<T>( T(2), 0.1 )*si::square_meter );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  quantity<si::length,Utility::Measurement<T> > length_measurement =
+    Utility::sqrt( area_measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( length_measurement.value().getValue(),
+                                   sqrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( length_measurement.value().getUncertainty(),
+                                   T(0.1)/(2*sqrt(T(2))),
+                                   tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check measurement cbrt
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, cbrt_std, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(2), 0.1 );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  // Std namespace cbrt
+  Utility::Measurement<T> new_measurement = std::cbrt( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   cbrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.1)/(3*pow(T(2), T(2.0/3))),
+                                   tol );
+
+  // Default sqrt (should be the same as the std namespace sqrt)
+  new_measurement = cbrt( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   cbrt( T(2) ),
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   0.1/(3*pow(T(2), 2.0/3)),
+                                   tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check measurement cbrt
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, cbrt, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(2), 0.1 );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  Utility::Measurement<T> new_measurement = Utility::cbrt( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   cbrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.1)/(3*pow(T(2), T(2.0/3))),
+                                   tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check quantity measurement cbrt
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, cbrt_quantity, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  namespace si = boost::units::si;
+  using boost::units::quantity;
+
+  quantity<si::volume,Utility::Measurement<T> > volume_measurement(
+		   Utility::Measurement<T>( T(2), 0.1 )*si::cubic_meter );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  quantity<si::length,Utility::Measurement<T> > length_measurement =
+    Utility::cbrt( volume_measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( length_measurement.value().getValue(),
+                                   cbrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( length_measurement.value().getUncertainty(),
+                                   T(0.1)/(3*pow(T(2), T(2.0/3))),
+                                   tol );
 }
 
 //---------------------------------------------------------------------------//
 // Check measurement pow
-FRENSIE_UNIT_TEST( Measurement, pow )
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, pow_std, TestTypes )
 {
-  Utility::Measurement<double> measurement( 2.0, 0.1 );
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(2), 0.1 );
 
-  Utility::Measurement<double> new_measurement = pow( measurement, 1.5 );
+  T tol;
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
-			  pow( 2.0, 1.5 ),
-			  1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  1.5*0.1*pow( 2.0, 0.5 ),
-			  1e-15 );
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
 
-  new_measurement = pow( measurement, 0.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
-			  sqrt( 2.0 ),
-			  1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  0.1/(2*sqrt(2.0)),
-			  1e-15 );
-
-  new_measurement = pow( measurement, -0.5 );
+  // Std namespace pow
+  Utility::Measurement<T> new_measurement = std::pow( measurement, 1.5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
-			  pow( 2.0, -0.5 ),
-			  1e-15 );
+                                   pow( T(2), T(1.5) ),
+                                   tol );
   FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
-			  0.5*0.1*pow( 2.0, -1.5 ),
-			  1e-15 );
+                                   T(1.5*0.1)*pow( T(2), T(0.5) ),
+                                   tol );
+
+  // Default pow (should be the same as the std namespace pow)
+  new_measurement = pow( measurement, T(0.5) );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   sqrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.1)/(2*sqrt(T(2))),
+                                   tol );
+
+  new_measurement = pow( measurement, T(-0.5) );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   pow( T(2), T(-0.5) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.5*0.1)*pow( T(2), T(-1.5) ),
+                                   tol );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the root of a quantity can be calculated
-FRENSIE_UNIT_TEST( Measurement, quantity_sqrt )
+// Check measurement rpow
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, rpow, TestTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
+  Utility::Measurement<T> measurement( T(2), 0.1 );
+
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  Utility::Measurement<T> new_measurement =
+    Utility::rpow<3,2>( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   pow( T(2), T(1.5) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(1.5*0.1)*pow( T(2), T(0.5) ),
+                                   tol );
+
+  new_measurement = Utility::rpow<1,2>( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   sqrt( T(2) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.1)/(2*sqrt(T(2))),
+                                   tol );
+
+  new_measurement = Utility::rpow<-1,2>( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   pow( T(2), T(-0.5) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.5*0.1)*pow( T(2), T(-1.5) ),
+                                   tol );
+
+  new_measurement = Utility::rpow<1,-2>( measurement );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getValue(),
+                                   pow( T(2), T(-0.5) ),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement.getUncertainty(),
+                                   T(0.5*0.1)*pow( T(2), T(-1.5) ),
+                                   tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check quantity measurement rpow
+FRENSIE_UNIT_TEST_TEMPLATE( Measurement, rpow_quantity, TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+  
   namespace si = boost::units::si;
   using boost::units::quantity;
 
-  quantity<si::area,Utility::Measurement<double> > area_measurement(
-			  Utility::Measurement<double>( 2.0, 0.1 )*si::square_meter );
+  quantity<si::volume,Utility::Measurement<T> > volume_measurement(
+		   Utility::Measurement<T>( T(2), 0.1 )*si::cubic_meter );
 
-  quantity<si::length,Utility::Measurement<double> > length_measurement =
-    sqrt( area_measurement );
+  T tol;
+
+  if( std::is_same<T,float>::value )
+    tol = T(1e-6);
+  else
+    tol = T(1e-15);
+
+  quantity<si::length,Utility::Measurement<T> > length_measurement =
+    Utility::rpow<1,3>( volume_measurement );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( length_measurement.value().getValue(),
-			  sqrt( 2.0 ),
-			  1e-15 );
+                                   cbrt( T(2) ),
+                                   tol );
   FRENSIE_CHECK_FLOATING_EQUALITY( length_measurement.value().getUncertainty(),
-			  0.1/(2*sqrt(2.0)),
-			  1e-15 );
-}
+                                   T(0.1)/(3*pow(T(2), T(2.0/3))),
+                                   tol );
 
-//---------------------------------------------------------------------------//
-// Check that a quantity raised to a rational power can be calculated
-FRENSIE_UNIT_TEST( Measurement, quantity_pow )
-{
-  namespace si = boost::units::si;
-  using boost::units::quantity;
-  using boost::units::static_rational;
-  using boost::units::pow;
+  // Reverse the operation
+  volume_measurement = Utility::rpow<3,1>( length_measurement );
 
-  typedef boost::units::power_typeof_helper<quantity<si::length,Utility::Measurement<double> >,static_rational<3,2> >::type QuantityTypeA;
-
-  typedef boost::units::power_typeof_helper<quantity<si::length,Utility::Measurement<double> >,static_rational<1,2> >::type QuantityTypeB;
-
-  typedef boost::units::power_typeof_helper<quantity<si::length,Utility::Measurement<double> >,static_rational<-1,2> >::type QuantityTypeC;
-
-  quantity<si::length,Utility::Measurement<double> > measurement(
-			  Utility::Measurement<double>( 2.0, 0.1 )*si::meter );
-
-  QuantityTypeA new_measurement_a =
-    pow<static_rational<3,2> >( measurement );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement_a.value().getValue(),
-			  std::pow( 2.0, 1.5 ),
-			  1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement_a.value().getUncertainty(),
-			  1.5*0.1*std::pow( 2.0, 0.5 ),
-			  1e-15 );
-
-  QuantityTypeB new_measurement_b =
-    pow<static_rational<1,2> >( measurement );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement_b.value().getValue(),
-  			  sqrt( 2.0 ),
-  			  1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement_b.value().getUncertainty(),
-  			  0.1/(2*sqrt(2.0)),
-  			  1e-15 );
-
-  QuantityTypeC new_measurement_c =
-    pow<static_rational<-1,2> >( measurement );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement_c.value().getValue(),
-  			  std::pow( 2.0, -0.5 ),
-  			  1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( new_measurement_c.value().getUncertainty(),
-  			  0.5*0.1*std::pow( 2.0, -1.5 ),
-  			  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_measurement.value().getValue(),
+                                   T(2),
+                                   tol );
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_measurement.value().getUncertainty(),
+                                   0.1,
+                                   tol );
 }
 
 //---------------------------------------------------------------------------//

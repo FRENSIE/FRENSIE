@@ -18,18 +18,26 @@
 // FRENSIE Includes
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_OStreamableObject.hpp"
+#include "Utility_TypeTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 /*! The measurement class
  *
+ * The default template is not defined.
+ */
+template<typename T, typename Enabled = void>
+class Measurement;
+
+/*! The measurement class (for all floating-point types)
+ *
  * This class wraps is meant to be used as any typical scalar type
  * (e.g. double). It is designed to keep track of and propagate the
  * uncertainty of a value (like one would with a measured quantity).
  */
 template<typename T>
-class Measurement : public OStreamableObject
+class Measurement<T,typename std::enable_if<std::is_floating_point<T>::value>::type> : public OStreamableObject
 {
 
 private:
@@ -46,8 +54,8 @@ public:
   typedef T ValueType;
 
   //! Constructor
-  Measurement( const ValueType& value = QT::zero(),
-	       const ValueType& uncertainty = QT::zero() );
+  explicit Measurement( const ValueType& value = QT::zero(),
+                        const ValueType& uncertainty = QT::zero() );
 
   //! Copy constructor
   Measurement( const ThisType& other_measurement );
@@ -66,16 +74,13 @@ public:
   const ValueType& getUncertainty() const;
 
   //! Return the relative uncertainty of the measurement
-  const ValueType getRelativeUncertainty() const;
+  ValueType getRelativeUncertainty() const;
 
   //! Return the lower bound of the measurement
-  const ValueType getLowerBound() const;
+  ValueType getLowerBound() const;
 
   //! Return the upper bound of the measurement
-  const ValueType getUpperBound() const;
-
-  //! Implicit conversion to value type
-  operator ValueType() const;
+  ValueType getUpperBound() const;
 
   //! In-place addition operator
   ThisType& operator+=( const ValueType& value );
@@ -259,66 +264,42 @@ inline Measurement<T> operator/( const Measurement<T>& lhs,
   testNestedConditionsEnd(1);
 }
 
-//! Overload of sqrt for a measurement
+/*! Partial specialization of Utility::QuantityTraits for Utility::Measurement
+ * \ingroup quantity_traits
+ */
 template<typename T>
-inline Measurement<decltype(Utility::sqrt(T()))> sqrt( const Measurement<T>& x )
-{
-  // Make sure the measurement is valid
-  testPrecondition( x.getValue() >= 0.0 );
+struct QuantityTraits<Measurement<T>,typename std::enable_if<std::is_floating_point<T>::value>::type>;
 
-  const auto new_value = Utilty::sqrt( x.getValue() );
-
-  const auto propagated_uncertainty = 0.5*new_value*
-    (x.getUncertainty()/x.getValue());    
-
-  // Make sure reasonable values have been calculated
-  testPostcondition( !QuantityTraits<decltype(new_value)>::isnaninf( new_value ) );
-  testPostcondition( !QuantityTraits<decltype(new_value)>::isnaninf(
-						    propagated_uncertainty ) );
-
-  return Measurement<decltype(new_value)>( new_value, propagated_uncertainty );
-}
-
-//! Overload of rpow for a measurement
-template<boost::units::integer_type N,
-	 boost::units::integer_type D,
-	 typename Quantity>
-inline typename Measurement<decltype(Utility::rpow<N,D>(Quantity()))>
-rpow( const Measurement<Quantity>& x )
-{
-  const auto new_value = Utility::rpow<N,D>( x.getValue() );
-
-  const auto propagated_uncertainty =
-    Utility::abs((N/D)*new_value*(x.getUncertainty()/x.getValue()));
-
-  return Measurement<decltype(new_value)>( new_value, propagated_uncertainty );
-}
+/*! \brief Partial specialization of Utility::QuantityTraits for 
+ * boost::units::quantity<Unit,Utility::Measurement> types
+ * \ingroup quantity_traits
+ */
+template<typename Unit, typename T>
+struct QuantityTraits<boost::units::quantity<Unit,Measurement<T> >,typename std::enable_if<std::is_floating_point<T>::value>::type>;
 
 } // end Utility namespace
 
 namespace std{
 
+//! Overload of sqrt for a measurement
+template<typename T>
+Utility::Measurement<T> sqrt( const Utility::Measurement<T>& x );
+
+//! Overload of cbrt for a measurement
+template<typename T>
+Utility::Measurement<T> cbrt( const Utility::Measurement<T>& x );
+
 //! Overload of pow for a measurement
 template<typename T, typename ExponentType>
-inline typename std::enable_if<std::is_arithmetic<T>::value,Utility::Measurement<T> >::type
-pow( const Utility::Measurement<T>& x,
-     const ExponentType exponent )
-{
-  const T new_value = std::pow( x.getValue(), exponent );
-
-  const T propagated_uncertainty = fabs(exponent*(new_value/x.getValue()))*
-    x.getUncertainty();
-
-  // Make sure reasonable values have been calculated
-  testPostcondition( !Utility::QuantityTraits<T>::isnaninf( new_value ) );
-  testPostcondition( !Utility::QuantityTraits<T>::isnaninf(
-						    propagated_uncertainty ) );
-  testPostcondition( propagated_uncertainty >= 0.0 );
-
-  return Utility::Measurement<T>( new_value, propagated_uncertainty );
-}
+Utility::Measurement<T> pow( const Utility::Measurement<T>& x,
+                             const ExponentType exponent );
 
 } // end std namespace
+
+// Allow the above overloads to be accessed in the global namespace
+using std::sqrt;
+using std::cbrt;
+using std::pow;
 
 //---------------------------------------------------------------------------//
 // Template Includes
