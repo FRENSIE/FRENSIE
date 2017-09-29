@@ -13,8 +13,8 @@
 #include <exception>
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_TestForException.hpp>
+// FRENSIE Includes
+#include "Utility_ExceptionTestMacros.hpp"
 
 /*! \defgroup assertion_exceptions_macros FRENSIE Assertion Exceptions and Macros
  * Two types of assertions are often needed: assertions used to check for
@@ -79,9 +79,9 @@ public:
  * \ingroup assertion_exceptions_macros
  */
 #define ASSERT_ALWAYS(c) \
-  TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
-                              Utility::CriticalAssertion,		\
-                              "FRENSIE critical assertion failed" << std::endl )
+  TEST_FOR_EXCEPTION( !(c),		\
+                      Utility::CriticalAssertion,                       \
+                      "FRENSIE critical assertion failed" << std::endl )
 
 /*! Assert that a critical (user input) condition is always met.
  *
@@ -89,9 +89,9 @@ public:
  * \ingroup assertion_exceptions_macros
  */
 #define ASSERT_ALWAYS_MSG( c, msg ) \
-  TEUCHOS_TEST_FOR_EXCEPTION( !(c), \
-			      Utility::CriticalAssertion, \
-			      msg << std::endl )
+  TEST_FOR_EXCEPTION( !(c), \
+                      Utility::CriticalAssertion,       \
+                      msg << std::endl )
 
 #if NDEBUG
 
@@ -107,9 +107,9 @@ public:
  * \ingroup assertion_exceptions_macros
  */
 #define ASSERT(c) \
-  TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
-			      Utility::Assertion,			\
-			      "FRENSIE assertion failed" << std::endl )
+  TEST_FOR_EXCEPTION( !(c),		\
+                      Utility::Assertion,                               \
+                      "FRENSIE assertion failed" << std::endl )
 
 #endif // end NDEBUG
 
