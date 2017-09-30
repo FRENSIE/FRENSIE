@@ -43,7 +43,7 @@ public:
 
   // Return the file where the unit test object is located
   std::string getFile() const override
-  { return THIS_FILE; )
+  { return THIS_FILE; }
 
   // Return the line number where the unit test object run impl. was defined
   size_t getLineNumber() const override

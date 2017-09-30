@@ -15,9 +15,6 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/units/quantity.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "Utility_InverseSquareAngstromUnit.hpp"
 #include "Utility_InverseSquareCentimeterUnit.hpp"

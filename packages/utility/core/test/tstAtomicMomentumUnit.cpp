@@ -17,9 +17,6 @@
 #include <boost/units/systems/si.hpp>
 #include <boost/units/systems/cgs.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "Utility_AtomicMomentumUnit.hpp"
 

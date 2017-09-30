@@ -19,7 +19,6 @@
 
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Template Test Types
@@ -1114,12 +1113,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
                                       "rhs", false, Utility::get<0>(right_value),
-                                      ".0" ) + ": " +
+                                      "" ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
                                       "rhs", false, Utility::get<1>(right_value),
-                                      ".1" ) + ": " +
+                                      "" ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1170,12 +1169,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
                                       "rhs", false, Utility::get<0>(right_value),
-                                      ".0", T1(1e-6) ) + ": " +
+                                      "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
                                       "rhs", false, Utility::get<1>(right_value),
-                                      ".1", T2(1e-6) ) + ": " +
+                                      "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1220,14 +1219,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
                                                      "" ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
+      Policy::createComparisonDetails("Utility::get<0>(lhs)", true, Utility::get<0>(left_value),
                                       "rhs", false, Utility::get<0>(right_value),
-                                      ".0" ) + ": " +
+                                      "" ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
+      Policy::createComparisonDetails("Utility::get<1>(lhs)", true, Utility::get<1>(left_value),
                                       "rhs", false, Utility::get<1>(right_value),
-                                      ".1" ) + ": " +
+                                      "" ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1277,14 +1276,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
                                                      "", 1e-6 ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
+      Policy::createComparisonDetails("Utility::get<0>(lhs)", true, Utility::get<0>(left_value),
                                       "rhs", false, Utility::get<0>(right_value),
-                                      ".0", T1(1e-6) ) + ": " +
+                                      "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
+      Policy::createComparisonDetails("Utility::get<1>(lhs)", true, Utility::get<1>(left_value),
                                       "rhs", false, Utility::get<1>(right_value),
-                                      ".1", T2(1e-6) ) + ": " +
+                                      "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1332,13 +1331,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
-                                      "rhs", true, Utility::get<0>(right_value),
-                                      ".0" ) + ": " +
+                                      "Utility::get<0>(rhs)", true, Utility::get<0>(right_value),
+                                      "" ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
-                                      "rhs", true, Utility::get<1>(right_value),
-                                      ".1" ) + ": " +
+                                      "Utility::get<1>(rhs)", true, Utility::get<1>(right_value),
+                                      "" ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1389,13 +1388,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<0>(left_value),
-                                      "rhs", true, Utility::get<0>(right_value),
-                                      ".0", T1(1e-6) ) + ": " +
+                                      "Utility::get<0>(rhs)", true, Utility::get<0>(right_value),
+                                      "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails("lhs", false, Utility::get<1>(left_value),
-                                      "rhs", true, Utility::get<1>(right_value),
-                                      ".1", T2(1e-6) ) + ": " +
+                                      "Utility::get<1>(rhs)", true, Utility::get<1>(right_value),
+                                      "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1442,14 +1441,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
                                                      "" ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
-                                      "rhs", true, Utility::get<0>(right_value),
-                                      ".0" ) + ": " +
+      Policy::createComparisonDetails("Utility::get<0>(lhs)", true, Utility::get<0>(left_value),
+                                      "Utility::get<0>(rhs)", true, Utility::get<0>(right_value),
+                                      "" ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
-                                      "rhs", true, Utility::get<1>(right_value),
-                                      ".1" ) + ": " +
+      Policy::createComparisonDetails("Utility::get<1>(lhs)", true, Utility::get<1>(left_value),
+                                      "Utility::get<1>(rhs)", true, Utility::get<1>(right_value),
+                                      "" ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1498,14 +1497,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypeList, PolicyTestTypes2 )
                                                      "", 1e-6 ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<0>(left_value),
-                                      "rhs", true, Utility::get<0>(right_value),
-                                      ".0", T1(1e-6) ) + ": " +
+      Policy::createComparisonDetails("Utility::get<0>(lhs)", true, Utility::get<0>(left_value),
+                                      "Utility::get<0>(rhs)", true, Utility::get<0>(right_value),
+                                      "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails("lhs", true, Utility::get<1>(left_value),
-                                      "rhs", true, Utility::get<1>(right_value),
-                                      ".1", T2(1e-6) ) + ": " +
+      Policy::createComparisonDetails("Utility::get<1>(lhs)", true, Utility::get<1>(left_value),
+                                      "Utility::get<1>(rhs)", true, Utility::get<1>(right_value),
+                                      "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1609,14 +1608,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
                                                  1e-6, "" ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
-                                       "rhs", true, Utility::get<0>(right_value),
-                                       ".0", T1(1e-6) ) + ": " +
+      Policy::createComparisonDetails( "Utility::get<0>(lhs)", true, Utility::get<0>(left_value),
+                                       "Utility::get<0>(rhs)", true, Utility::get<0>(right_value),
+                                       "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(left_value),
-                                       "rhs", true, Utility::get<1>(right_value),
-                                       ".1", T2(1e-6) ) + ": " +
+      Policy::createComparisonDetails( "Utility::get<1>(lhs)", true, Utility::get<1>(left_value),
+                                       "Utility::get<1>(rhs)", true, Utility::get<1>(right_value),
+                                       "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1661,14 +1660,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
                                                  1e-6, "" ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(const_left_value),
-                                       "rhs", true, Utility::get<0>(const_right_value),
-                                       ".0", T1(1e-6) ) + ": " +
+      Policy::createComparisonDetails( "Utility::get<0>(lhs)", true, Utility::get<0>(const_left_value),
+                                       "Utility::get<0>(rhs)", true, Utility::get<0>(const_right_value),
+                                       "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(const_left_value),
-                                       "rhs", true, Utility::get<1>(const_right_value),
-                                       ".1", T2(1e-6) ) + ": " +
+      Policy::createComparisonDetails( "Utility::get<1>(lhs)", true, Utility::get<1>(const_left_value),
+                                       "Utility::get<1>(rhs)", true, Utility::get<1>(const_right_value),
+                                       "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1712,13 +1711,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails( "lhs", false, T1(0),
-                                       "rhs", true, Utility::get<0>(right_value),
-                                       ".0", T1(1e-6) ) + ": " +
+                                       "Utility::get<0>(rhs)", true, Utility::get<0>(right_value),
+                                       "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails( "lhs", false, T2(1),
-                                       "rhs", true, Utility::get<1>(right_value),
-                                       ".1", T2(1e-6) ) + ": " +
+                                       "Utility::get<1>(rhs)", true, Utility::get<1>(right_value),
+                                       "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1762,13 +1761,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails( "lhs", false, T1(0),
-                                       "rhs", true, Utility::get<0>(const_right_value),
-                                       ".0", T1(1e-6) ) + ": " +
+                                       "Utility::get<0>(rhs)", true, Utility::get<0>(const_right_value),
+                                       "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
       Policy::createComparisonDetails( "lhs", false, T2(1),
-                                       "rhs", true, Utility::get<1>(const_right_value),
-                                       ".1", T2(1e-6) ) + ": " +
+                                       "Utility::get<1>(rhs)", true, Utility::get<1>(const_right_value),
+                                       "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1811,14 +1810,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
                                                  1e-6, "" ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(left_value),
+      Policy::createComparisonDetails( "Utility::get<0>(lhs)", true, Utility::get<0>(left_value),
                                        "rhs", false, T1(0),
-                                       ".0", T1(1e-6) ) + ": " +
+                                       "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(left_value),
+      Policy::createComparisonDetails( "Utility::get<1>(lhs)", true, Utility::get<1>(left_value),
                                        "rhs", false, T2(1),
-                                       ".1", T2(1e-6) ) + ": " +
+                                       "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else
@@ -1861,14 +1860,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_helper, TypeList, PolicyTestTypes2 )
                                                  1e-6, "" ) +
       (expected_compare_result ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<0>(const_left_value),
+      Policy::createComparisonDetails( "Utility::get<0>(lhs)", true, Utility::get<0>(const_left_value),
                                        "rhs", false, T1(0),
-                                       ".0", T1(1e-6) ) + ": " +
+                                       "", T1(1e-6) ) + ": " +
       (expected_compare_result_0 ? "passed\n" : "failed!\n" ) +
       std::string( Utility::Details::incrementRightShift(0), ' ' ) +
-      Policy::createComparisonDetails( "lhs", true, Utility::get<1>(const_left_value),
+      Policy::createComparisonDetails( "Utility::get<1>(lhs)", true, Utility::get<1>(const_left_value),
                                        "rhs", false, T2(1),
-                                       ".1", T2(1e-6) ) + ": " +
+                                       "", T2(1e-6) ) + ": " +
       (expected_compare_result_1 ? "passed\n" : "failed!\n" );
   }
   else

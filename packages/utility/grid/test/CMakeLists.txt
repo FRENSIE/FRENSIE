@@ -7,9 +7,9 @@ ADD_TEST(GridGenerator_test tstGridGenerator)
 ADD_EXECUTABLE(tstTwoDGridGenerator
   tstTwoDGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDGridGenerator utility_core)
+TARGET_LINK_LIBRARIES(tstTwoDGridGenerator utility_interp)
 ADD_TEST(TwoDGridGenerator_test tstTwoDGridGenerator)
-SET_PROPERTY(TEST TwoDGridGenerator_test PROPERTY LABELS utility_core)
+SET_PROPERTY(TEST TwoDGridGenerator_test PROPERTY LABELS utility_interp)
 
 ADD_EXECUTABLE(tstStandardHashBasedGridSearcher 
   tstStandardHashBasedGridSearcher.cpp)
