@@ -315,6 +315,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
 //---------------------------------------------------------------------------//
 // Check that an electron can collide with the material in a cell
+//! \details This unit test is dependent on the version of boost being used.
 TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                    collideWithCellMaterial_analogue )
 {
@@ -329,7 +330,10 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
   // Set up the random number stream
   std::vector<double> fake_electron_stream( 3 );
   fake_electron_stream[0] = 0.5; // select the pb atom
-  fake_electron_stream[1] = 0.61; // select the elastic reaction (should be 0.36 for boost 1.58)
+  if( BOOST_VERSION < 106000 )
+    fake_electron_stream[1] = 0.36; // select the elastic reaction (for boost below version 1.60)
+  else
+    fake_electron_stream[1] = 0.61; // select the elastic reaction (for boost above version 1.60)
   fake_electron_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_electron_stream );
