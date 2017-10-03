@@ -15,6 +15,20 @@ ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_MPI
 
 #ifdef HAVE_${PROJECT_NAME}_MPI
 #include <boost/mpi.hpp>
+
+// Prevent compiler warnings from unused variables when MPI is not used
+#define MPI_ENABLED_PARAMETER( mpi_enabled_var ) mpi_enabled_var
+// Prevent compiler warnings from unused variables when MPI is used
+#define MPI_DISABLED_PARAMETER( mpi_disabled_var )
+// This line will only be used if MPI is enabled
+#define MPI_ENABLED_LINE( ... ) __VA_ARGS__
+// This Line will only be used if MPI is disabled
+#define MPI_DISABLED_LINE( ... ) 
+#else
+#define MPI_ENABLED_PARAMETER( mpi_enabled_var )
+#define MPI_DISABLED_PARAMETER( mpi_disabled_var ) mpi_disabled_var
+#define MPI_ENABLED_LINE( ... )
+#define MPI_DISABLED_LINE( ... ) __VA_ARGS__
 #endif
 
 ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_OPENMP
