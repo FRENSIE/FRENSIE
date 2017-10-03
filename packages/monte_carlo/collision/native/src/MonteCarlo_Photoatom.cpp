@@ -320,7 +320,7 @@ void Photoatom::collideSurvivalBias( PhotonState& photon,
 		     energy_grid_bin,
 		     photon,
 		     bank );
-                                     
+
       photon.setAsGone();
     }
   }

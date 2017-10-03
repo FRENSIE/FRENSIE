@@ -26,11 +26,11 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
 
   // Use simple analytical photon angular distribution
-  d_angular_distribution_func = std::bind<double>(
-           &ThisType::SampleDipoleAngle,
-           std::cref( *this ),
-           std::placeholders::_1,
-           std::placeholders::_2 );
+  d_angular_distribution_func = [this]( const double& incoming_energy,
+                                        const double& photon_energy )
+  {
+        return this->SampleDipoleAngle( incoming_energy, photon_energy );
+  };
 
   this->setSamplingRoutine( correlated_sampling_mode_on,
                             unit_based_interpolation_mode_on );
@@ -50,11 +50,11 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
 
   // Use detailed photon angular distribution
-  d_angular_distribution_func = std::bind<double>(
-            &ThisType::Sample2BSAngle,
-            std::cref( *this ),
-            std::placeholders::_1,
-            std::placeholders::_2 );
+  d_angular_distribution_func = [this]( const double& incoming_energy,
+                                        const double& photon_energy )
+  {
+        return this->Sample2BSAngle( incoming_energy, photon_energy );
+  };
 
   this->setSamplingRoutine( correlated_sampling_mode_on,
                             unit_based_interpolation_mode_on );
@@ -75,29 +75,30 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_function = std::bind<double>(
-           &TwoDDist::correlatedSampleSecondaryConditionalInBoundaries,
-           std::cref( *d_bremsstrahlung_scattering_distribution ),
-           std::placeholders::_1,
-           1e-7,
-           std::placeholders::_1 );
+      d_sample_function = [this]( const double& energy )
+      {
+        return d_bremsstrahlung_scattering_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+                    energy, 1e-7, energy );
+      };
     }
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_function = std::bind<double>(
-           &TwoDDist::sampleSecondaryConditional,
-           std::cref( *d_bremsstrahlung_scattering_distribution ),
-           std::placeholders::_1 );
+      d_sample_function = [this]( const double& energy )
+      {
+        return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditional(
+                    energy );
+      };
     }
   }
   else
   {
     // Set the correlated exact sample routine
-    d_sample_function = std::bind<double>(
-           &TwoDDist::sampleSecondaryConditionalExact,
-           std::cref( *d_bremsstrahlung_scattering_distribution ),
-           std::placeholders::_1 );
+    d_sample_function = [this]( const double& energy )
+    {
+      return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalExact(
+                    energy );
+    };
   }
 }
 
@@ -113,50 +114,50 @@ void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
   if( unit_based_interpolation_mode_on )
   {
     // Set the correlated unit based evaluation routines
-    d_evaluate_function = std::bind<double>(
-       &TwoDDist::correlatedEvaluateInBoundaries,
-       std::cref( *d_bremsstrahlung_scattering_distribution ),
-       std::placeholders::_1,
-       std::placeholders::_2,
-       1e-7,
-       std::placeholders::_1 );
+    d_evaluate_function = [this]( const double& incoming_energy,
+                                  const double& photon_energy )
+    {
+      return d_bremsstrahlung_scattering_distribution->correlatedEvaluateInBoundaries(
+                    incoming_energy, photon_energy, 1e-7, incoming_energy );
+    };
 
-    d_evaluate_pdf_function = std::bind<double>(
-       &TwoDDist::correlatedEvaluateSecondaryConditionalPDFInBoundaries,
-       std::cref( *d_bremsstrahlung_scattering_distribution ),
-       std::placeholders::_1,
-       std::placeholders::_2,
-       1e-7,
-       std::placeholders::_1 );
+    d_evaluate_pdf_function = [this]( const double& incoming_energy,
+                                      const double& photon_energy )
+    {
+      return d_bremsstrahlung_scattering_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries(
+                    incoming_energy, photon_energy, 1e-7, incoming_energy );
+    };
 
-    d_evaluate_cdf_function = std::bind<double>(
-       &TwoDDist::correlatedEvaluateSecondaryConditionalCDFInBoundaries,
-       std::cref( *d_bremsstrahlung_scattering_distribution ),
-       std::placeholders::_1,
-       std::placeholders::_2,
-       1e-7,
-       std::placeholders::_1 );
+    d_evaluate_cdf_function = [this]( const double& incoming_energy,
+                                      const double& photon_energy )
+    {
+      return d_bremsstrahlung_scattering_distribution->correlatedEvaluateSecondaryConditionalCDFInBoundaries(
+                    incoming_energy, photon_energy, 1e-7, incoming_energy );
+    };
   }
   else
   {
     // Set the correlated exact evaluation routines
-    d_evaluate_function = std::bind<double>(
-       &TwoDDist::evaluateExact,
-       std::cref( *d_bremsstrahlung_scattering_distribution ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+    d_evaluate_function = [this]( const double& incoming_energy,
+                                  const double& photon_energy )
+    {
+      return d_bremsstrahlung_scattering_distribution->evaluateExact(
+                    incoming_energy, photon_energy );
+    };
 
-    d_evaluate_pdf_function = std::bind<double>(
-       &TwoDDist::evaluateSecondaryConditionalPDFExact,
-       std::cref( *d_bremsstrahlung_scattering_distribution ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+    d_evaluate_pdf_function = [this]( const double& incoming_energy,
+                                      const double& photon_energy )
+    {
+      return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDFExact(
+                    incoming_energy, photon_energy );
+    };
 
-    d_evaluate_cdf_function = std::bind<double>(
-       &TwoDDist::evaluateSecondaryConditionalCDFExact,
-       std::cref( *d_bremsstrahlung_scattering_distribution ),
-       std::placeholders::_1,
-       std::placeholders::_2 );
+    d_evaluate_cdf_function = [this]( const double& incoming_energy,
+                                      const double& photon_energy )
+    {
+      return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDFExact(
+                    incoming_energy, photon_energy );
+    };
   }
 }
 
@@ -224,7 +225,7 @@ void BremsstrahlungElectronScatteringDistribution::sample(
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,
                                                      photon_energy );
 
-  testPostcondition( incoming_energy >= photon_energy );
+  testPostcondition( incoming_energy > photon_energy );
   testPostcondition( photon_energy > 0.0 );
   testPostcondition( photon_angle_cosine <= 1.0 );
   testPostcondition( photon_angle_cosine >= -1.0 );
@@ -252,16 +253,6 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   double photon_energy, photon_angle_cosine;
   this->sample( electron.getEnergy(), photon_energy, photon_angle_cosine );
 
-  // Set the new electron energy (if zero then set as gone)
-  double outgoing_energy = electron.getEnergy() - photon_energy;
-  if( outgoing_energy > 0.0 )
-    electron.setEnergy( outgoing_energy );
-  else
-    electron.setAsGone();
-
-  // Increment the electron generation number
-  electron.incrementGenerationNumber();
-
   // Create new photon
   Teuchos::RCP<PhotonState> bremsstrahlung_photon(
                            new PhotonState( electron, true, true ) );
@@ -275,6 +266,16 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
+
+  // Set the new electron energy (if zero then set as gone)
+  double outgoing_energy = electron.getEnergy() - photon_energy;
+  if( outgoing_energy > 0.0 )
+    electron.setEnergy( outgoing_energy );
+  else
+    electron.setAsGone();
+
+  // Increment the electron generation number
+  electron.incrementGenerationNumber();
 
   testPostcondition( photon_energy > 0.0 );
   testPostcondition( photon_angle_cosine <= 1.0 );

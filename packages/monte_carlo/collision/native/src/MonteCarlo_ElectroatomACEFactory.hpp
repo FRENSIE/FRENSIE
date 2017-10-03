@@ -15,7 +15,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
 #include "MonteCarlo_ElectroatomCore.hpp"
-#include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"

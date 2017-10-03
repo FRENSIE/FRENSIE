@@ -37,7 +37,7 @@ std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
 //---------------------------------------------------------------------------//
 // Check that an elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
-		           createCutoffElasticReaction )
+                   createCutoffElasticReaction )
 {
   MonteCarlo::ElectroatomicReactionACEFactory::createCutoffElasticReaction(
                 *xss_data_extractor,
@@ -47,7 +47,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
 
   // Test that the stored cross section is correct
@@ -74,7 +74,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 //---------------------------------------------------------------------------//
 // Check that an atomic excitation reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
-		   createAtomicExcitationReaction )
+                   createAtomicExcitationReaction )
 {
   MonteCarlo::ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
                 *xss_data_extractor,
@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+                       MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
 
   // Test that the stored cross section is correct
@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 //---------------------------------------------------------------------------//
 // Check that the electroionization subshell reactions can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
-		   createSubshellElectroelectricReactions )
+                   createSubshellElectroionizationReactions )
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
 
@@ -122,8 +122,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test the first shell's reaction properties
   TEST_EQUALITY_CONST(
-		   reactions.front()->getReactionType(),
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+            reactions.front()->getReactionType(),
+            MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(), 8.97540e-2 );
 
   // Test the first shell's stored cross section is correct
@@ -149,8 +149,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Check the last shell's reaction properties
   TEST_EQUALITY_CONST(
-		  reactions.back()->getReactionType(),
-		  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  reactions.back()->getReactionType(),
+                  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.back()->getThresholdEnergy(), 1.00000e-5 );
 
   cross_section =
@@ -190,7 +190,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+                       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
 
   // Test that the stored cross section is correct
@@ -233,7 +233,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+                       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
 
   // Test that the stored cross section is correct
@@ -270,7 +270,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
+                       MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
 
   // Test that the stored cross section is correct

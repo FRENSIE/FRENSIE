@@ -188,7 +188,7 @@ double ElectronMaterial::getMacroscopicReactionCrossSection(
 
 // Collide with a electron
 void ElectronMaterial::collideAnalogue( ElectronState& electron,
-                      ParticleBank& bank ) const
+                                        ParticleBank& bank ) const
 {
   unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
 

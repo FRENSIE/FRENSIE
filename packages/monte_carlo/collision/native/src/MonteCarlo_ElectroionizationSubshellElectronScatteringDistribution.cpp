@@ -35,6 +35,8 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
   // Make sure the arraies are valid
   testPrecondition( d_electroionization_shell_distribution.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
+  testPrecondition( d_electroionization_shell_distribution->getLowerBoundOfPrimaryIndepVar()
+                    == binding_energy );
 
   this->setSamplingRoutine( correlated_sampling_mode_on,
                             unit_based_interpolation_mode_on );
@@ -50,12 +52,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
                                     const bool correlated_sampling_mode_on,
                                     const bool unit_based_interpolation_mode_on )
 {
-  auto func = [this]( const double& energy )
-  {
-    return std::min( energy - d_binding_energy,
-                     d_electroionization_shell_distribution->sampleSecondaryConditionalExact( energy ) );
-  };
-
   if( unit_based_interpolation_mode_on )
   {
     if( correlated_sampling_mode_on )
@@ -287,9 +283,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   testPrecondition( incoming_energy > d_binding_energy );
 
   // Sample knock-on electron energy
-  knock_on_energy = std::min( d_sample_function( incoming_energy ),
-                              incoming_energy - d_binding_energy );
-
+  knock_on_energy = d_sample_function( incoming_energy );
 
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
@@ -321,9 +315,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSe
   scattering_angle_cosine = outgoingAngle( incoming_energy,
                                            outgoing_energy );
 
-  testPostcondition( incoming_energy - d_binding_energy >= knock_on_energy );
+  testPostcondition( knock_on_energy <= incoming_energy - d_binding_energy );
+  testPostcondition( outgoing_energy < incoming_energy - d_binding_energy );
   testPostcondition( knock_on_energy > 0.0 );
-  testPostcondition( outgoing_energy >= 0.0 );
   testPostcondition( knock_on_angle_cosine <= 1.0 );
   testPostcondition( knock_on_angle_cosine >= 0.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
@@ -388,9 +382,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   electron.incrementGenerationNumber();
 
   // Check if the electron energy goes to zero
-  if( outgoing_energy == 0.0 )
-    electron.setAsGone();
-  else
+  if( outgoing_energy > 0.0 )
   {
     // Set the outgoing electron energy
     electron.setEnergy( outgoing_energy );
@@ -399,7 +391,8 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
     electron.rotateDirection( scattering_angle_cosine,
                               this->sampleAzimuthalAngle() );
   }
-
+  else
+    electron.setAsGone();
 }
 
 // Calculate the outgoing angle cosine

@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
+#include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
@@ -35,7 +36,8 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::Electroatom> ace_electroatom, native_electroatom;
+std::shared_ptr<MonteCarlo::Electroatom> ace_electroatom, native_electroatom,
+                                         epr14_electroatom;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -270,7 +272,7 @@ TEUCHOS_UNIT_TEST( Electroatom, getTotalCrossSection_ace )
                           8.914234996439E+03 + 6.226820000000E+08,
                           1e-12 );
   cross_section =
-    ace_electroatom->getTotalCrossSection( 9.000000000000E-05 );
+    ace_electroatom->getTotalCrossSection( 9E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           7.249970966838E+03 + 1.160420000000E+09,
@@ -299,6 +301,38 @@ TEUCHOS_UNIT_TEST( Electroatom, getTotalCrossSection_native )
 
   TEST_FLOATING_EQUALITY( cross_section,
                           7.247161196055280E+03 + 1.160420000000E+09,
+                          1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the total cross section can be returned
+TEUCHOS_UNIT_TEST( Electroatom, getTotalCrossSection_epr14 )
+{
+  double cross_section =
+    epr14_electroatom->getTotalCrossSection( 5.2371421547030929e-02 );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          4.4981474879191741e+07,
+                          1e-12 );
+
+  cross_section =
+    epr14_electroatom->getTotalCrossSection( 2e-03 );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          3.9416460301500607e+08,
+                          1e-12 );
+  cross_section =
+    epr14_electroatom->getTotalCrossSection( 4e-04 );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          9.1706481556832719e+08,
+                          1e-12 );
+  cross_section =
+    epr14_electroatom->getTotalCrossSection( 9e-05 );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1.5083218251907730e+09,
                           1e-12 );
 
 }
@@ -781,7 +815,8 @@ TEUCHOS_UNIT_TEST( Electroatom, core_constructor )
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
+std::string test_ace_file_name, test_ace_table_name, test_native_file_name,
+            test_epr14_file_name, test_epr14_table_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
@@ -794,6 +829,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
   clp().setOption( "test_native_file",
                    &test_native_file_name,
                    "Test Native file name" );
+  clp().setOption( "test_epr14_file",
+                   &test_epr14_file_name,
+                   "Test EPR14 file name" );
+  clp().setOption( "test_epr14_table",
+                   &test_epr14_table_name,
+                   "Test EPR14 table name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
@@ -802,8 +843,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create a file handler and data extractor
     Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
                  new Data::ACEFileHandler( test_ace_file_name,
-                               test_ace_table_name,
-                               1u ) );
+                                           test_ace_table_name,
+                                           1u ) );
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor(
                       ace_file_handler->getTableNXSArray(),
@@ -813,6 +854,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the atomic excitation, bremsstrahlung cross sections
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
+
+    // Create the hash-based grid searcher
+    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+                         energy_grid,
+                         energy_grid[0],
+                         energy_grid[energy_grid.size()-1],
+                         100 ) );
 
     Teuchos::ArrayView<const double> raw_ae_cross_section =
       xss_data_extractor->extractExcitationCrossSection();
@@ -915,6 +964,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                     xss_data_extractor->extractAtomicNumber(),
                     atomic_weight,
                     energy_grid,
+                    grid_searcher,
                     scattering_reactions,
                     absorption_reactions,
                     relaxation_model,
@@ -1045,11 +1095,51 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                     data_container.getAtomicNumber(),
                     207.1999470456033,
                     energy_grid,
+                    grid_searcher,
                     scattering_reactions,
                     absorption_reactions,
                     relaxation_model,
                     false,
                     Utility::LinLin() ) );
+  }
+
+  {
+    // Create a file handler and data extractor
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+                 new Data::ACEFileHandler( test_epr14_file_name,
+                                           test_epr14_table_name,
+                                           1u ) );
+    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+                            new Data::XSSEPRDataExtractor(
+                      ace_file_handler->getTableNXSArray(),
+                      ace_file_handler->getTableJXSArray(),
+                      ace_file_handler->getTableXSSArray() ) );
+
+    // Create a void atomic relaxation model
+    Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
+                   new MonteCarlo::VoidAtomicRelaxationModel );
+
+    // Extract the atomic weight
+    double atomic_weight = ace_file_handler->getTableAtomicWeightRatio()*
+      Utility::PhysicalConstants::neutron_rest_mass_amu;
+
+    // Create the simulation properties
+    MonteCarlo::SimulationElectronProperties properties;
+
+    Teuchos::RCP<MonteCarlo::ElectroatomCore> core;
+
+    MonteCarlo::ElectroatomACEFactory::createElectroatomCore(
+                                                  *xss_data_extractor,
+                                                  relaxation_model,
+                                                  properties,
+                                                  core );
+
+  // Create the electroatom
+  epr14_electroatom.reset(
+    new MonteCarlo::Electroatom( ace_file_handler->getTableName(),
+                         xss_data_extractor->extractAtomicNumber(),
+                         atomic_weight,
+                         *core ) );
   }
 
   // Initialize the random number generator

@@ -43,6 +43,10 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 
   // Make sure the distribution data is valid
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+
+  // Make sure the threshold energy isn't less than the binding energy
+  testPrecondition( incoming_energy_grid[threshold_energy_index] >=
+                    d_electroionization_subshell_distribution->getBindingEnergy() );
 }
 
 
@@ -72,6 +76,10 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 
   // Make sure the distribution data is valid
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+
+  // Make sure the threshold energy isn't less than the binding energy
+  testPrecondition( incoming_energy_grid[threshold_energy_index] >=
+                    d_electroionization_subshell_distribution->getBindingEnergy() );
 }
 
 // Return the differential cross section
@@ -111,6 +119,21 @@ void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross
      ParticleBank& bank,
      Data::SubshellType& shell_of_interaction ) const
 {
+  if( electron.getEnergy() <
+      d_electroionization_subshell_distribution->getBindingEnergy() )
+  {
+    std::cout << std::setprecision(16) << std::scientific << "this->getThresholdEnergy() = \t" << this->getThresholdEnergy() << std::endl;
+    
+    std::cout << std::setprecision(16) << std::scientific << "this->getCrossSection( electron.getEnergy() ) = \t" << this->getCrossSection( electron.getEnergy() ) << std::endl;
+    
+    std::cout << std::setprecision(16) << std::scientific << "electron.getEnergy() = \t" << electron.getEnergy() << std::endl;
+    std::cout << std::setprecision(16) << std::scientific << "d_electroionization_subshell_distribution->getBindingEnergy() = \t" << d_electroionization_subshell_distribution->getBindingEnergy() << std::endl;
+  }
+
+  // Make sure the electron energy isn't less than the binding energy
+  testPrecondition( electron.getEnergy() >=
+                    d_electroionization_subshell_distribution->getBindingEnergy() );
+
   d_electroionization_subshell_distribution->scatterElectron(
                                                electron,
                                                bank,

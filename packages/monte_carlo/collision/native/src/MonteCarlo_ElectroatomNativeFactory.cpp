@@ -42,11 +42,10 @@ void ElectroatomNativeFactory::createElectroatom(
   Teuchos::RCP<ElectroatomCore> core;
 
   // Create the electroatom core
-  ElectroatomNativeFactory::createElectroatomCore(
-            raw_electroatom_data,
-            atomic_relaxation_model,
-            properties,
-            core );
+  ElectroatomNativeFactory::createElectroatomCore( raw_electroatom_data,
+                                                   atomic_relaxation_model,
+                                                   properties,
+                                                   core );
 
   // Create the electroatom
   electroatom.reset( new Electroatom( electroatom_name,
@@ -251,6 +250,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
   // Create the electroatom core
   electroatom_core.reset( new ElectroatomCore( energy_grid,
+                                               grid_searcher,
                                                scattering_reactions,
                                                absorption_reactions,
                                                atomic_relaxation_model,

@@ -56,6 +56,7 @@ public:
       const unsigned atomic_number,
       const double atomic_weight,
       const Teuchos::ArrayRCP<double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const ReactionMap& standard_scattering_reactions,
       const ReactionMap& standard_absorption_reactions,
       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -64,9 +65,9 @@ public:
 
   //! Constructor (from a core)
   Electroatom( const std::string& name,
-         const unsigned atomic_number,
-         const double atomic_weight,
-         const ElectroatomCore& core );
+               const unsigned atomic_number,
+               const double atomic_weight,
+               const ElectroatomCore& core );
 
   //! Destructor
   virtual ~Electroatom()
@@ -118,15 +119,27 @@ public:
   //! Return the core
   const ElectroatomCore& getCore() const;
 
-private:
-
-  // Sample an absorption reaction
-  void sampleAbsorptionReaction( const double scaled_random_number,
-                                 ElectronState& electron,
-                                 ParticleBank& bank ) const;
+protected:
 
   // Sample a scattering reaction
   void sampleScatteringReaction( const double scaled_random_number,
+                                 const unsigned energy_grid_bin,
+                                 ElectronState& electron,
+                                 ParticleBank& bank ) const;
+
+private:
+
+  // Return the total cross section with a bin index
+  double getScatteringCrossSection( const double energy,
+                                    const unsigned energy_grid_bin ) const;
+
+  // Return the absorption cross section w/ bin index
+  double getAbsorptionCrossSection( const double energy,
+                                    const unsigned energy_grid_bin ) const;
+
+  // Sample an absorption reaction
+  void sampleAbsorptionReaction( const double scaled_random_number, 
+                                 const unsigned energy_grid_bin,
                                  ElectronState& electron,
                                  ParticleBank& bank ) const;
 
@@ -175,6 +188,48 @@ inline double Electroatom::getTemperature() const
 inline const ElectroatomCore& Electroatom::getCore() const
 {
   return d_core;
+}
+
+// Return the scattering cross section with a bin index
+inline double Electroatom::getScatteringCrossSection(
+                                        const double energy,
+                                        const unsigned energy_grid_bin ) const
+{
+  double cross_section = 0.0;
+
+  ConstReactionMap::const_iterator electroatomic_reaction =
+    d_core.getScatteringReactions().begin();
+
+  while( electroatomic_reaction != d_core.getScatteringReactions().end() )
+  {
+    cross_section +=
+      electroatomic_reaction->second->getCrossSection( energy, energy_grid_bin );
+
+    ++electroatomic_reaction;
+  }
+
+  return cross_section;
+}
+
+// Return the absorption cross section with a bin index
+inline double Electroatom::getAbsorptionCrossSection(
+                                        const double energy,
+                                        const unsigned energy_grid_bin ) const
+{
+  double cross_section = 0.0;
+
+  ConstReactionMap::const_iterator electroatomic_reaction =
+    d_core.getAbsorptionReactions().begin();
+
+  while( electroatomic_reaction != d_core.getAbsorptionReactions().end() )
+  {
+    cross_section +=
+      electroatomic_reaction->second->getCrossSection( energy, energy_grid_bin );
+
+    ++electroatomic_reaction;
+  }
+
+  return cross_section;
 }
 
 } // end MonteCarlo namespace
