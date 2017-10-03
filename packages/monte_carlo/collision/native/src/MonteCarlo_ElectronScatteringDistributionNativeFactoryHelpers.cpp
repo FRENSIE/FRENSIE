@@ -40,7 +40,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog>(
         distribution,
         data_container,
         method,
@@ -121,7 +121,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogCosLog>(
         distribution,
         energy_grid,
         cutoff_cross_section,
@@ -179,7 +179,7 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
         distribution,
         data_container,
         cutoff_angle_cosine,
@@ -209,6 +209,24 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
   return distribution;
 }
 
+// Create a screened rutherford elastic distribution
+std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> createScreenedRutherfordElasticDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& data_container )
+{
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
+        distribution,
+        data_container.getAtomicNumber() );
+
+
+  // Make sure the distribution was created correctly
+  testPostcondition( distribution.use_count() > 0 );
+
+  return distribution;
+}
+
 //! Create a moment preserving elastic distribution
 std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
@@ -231,7 +249,7 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogCosLog>(
         distribution,
         data_container,
         cutoff_angle_cosine,

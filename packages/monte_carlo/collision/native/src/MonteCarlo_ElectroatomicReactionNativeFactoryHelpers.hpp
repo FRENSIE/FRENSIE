@@ -57,11 +57,7 @@ createCutoffElasticReaction(
 //! Create a screened Rutherford elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
 createScreenedRutherfordElasticReaction(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const double evaluation_tol );
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data );
 
 //! Create the moment preserving elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>

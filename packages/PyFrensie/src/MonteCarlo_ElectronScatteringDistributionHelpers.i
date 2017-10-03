@@ -45,10 +45,6 @@ MonteCarlo::DISTRIBUTION::evaluatePDF;
 MonteCarlo::DISTRIBUTION::sample;
 
 %feature("autodoc",
-"sample(DISTRIBUTION self) -> double" )
-MonteCarlo::DISTRIBUTION::sample;
-
-%feature("autodoc",
 "sampleAndRecordTrials(DISTRIBUTION self, const double incoming_energy, unsigned int & trials ) -> double, double, unsigned int
 
 Sample from the DISTRIBUTION and record the number of trials

@@ -32,6 +32,8 @@ namespace Utility{
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLin,void,void> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
 
 // Default constructor
 template<typename InterpolationPolicy,

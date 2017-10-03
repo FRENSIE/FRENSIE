@@ -177,14 +177,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
                    createScreenedRutherfordElasticReaction )
 {
-  bool correlated_sampling_mode_on = true;
-
   reaction = MonteCarlo::createScreenedRutherfordElasticReaction(
-                *data_container,
-                0.9,
-                "LinLinLog",
-                correlated_sampling_mode_on,
-                eval_tol );
+                *data_container );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -361,7 +355,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -403,7 +397,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -617,7 +611,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -660,7 +654,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   TEST_FLOATING_EQUALITY( cross_section, 1.40505e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

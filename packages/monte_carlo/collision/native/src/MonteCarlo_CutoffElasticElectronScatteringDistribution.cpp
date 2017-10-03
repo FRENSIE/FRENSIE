@@ -32,9 +32,9 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
 {
   // Make sure the array is valid
   testPrecondition( d_full_cutoff_distribution.use_count() > 0 );
-  // Make sure the bool is valid
-  testPrecondition( correlated_sampling_mode_on == 0 ||
-                    correlated_sampling_mode_on == 1 );
+  // Make sure the cutoff angle cosine is valid
+  testPrecondition( d_cutoff_angle_cosine > -1.0 );
+  testPrecondition( d_cutoff_angle_cosine <= 1.0 );
 
   if( correlated_sampling_mode_on )
   {

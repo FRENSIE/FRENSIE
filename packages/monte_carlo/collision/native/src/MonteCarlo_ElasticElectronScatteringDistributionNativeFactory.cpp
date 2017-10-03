@@ -31,14 +31,11 @@ namespace MonteCarlo{
 void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
     std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-    const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
     const unsigned atomic_number )
 {
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                cutoff_elastic_distribution,
                 atomic_number ) );
 }
 

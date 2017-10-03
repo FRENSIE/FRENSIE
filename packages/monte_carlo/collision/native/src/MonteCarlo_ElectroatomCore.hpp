@@ -22,6 +22,7 @@
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
@@ -65,21 +66,23 @@ public:
   //! Basic constructor
   template<typename InterpPolicy>
   ElectroatomCore(
-      const Teuchos::ArrayRCP<double>& energy_grid,
-      const ReactionMap& standard_scattering_reactions,
-      const ReactionMap& standard_absorption_reactions,
-      const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
-      const bool processed_atomic_cross_sections,
-      const InterpPolicy policy );
+    const Teuchos::ArrayRCP<double>& energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const ReactionMap& standard_scattering_reactions,
+    const ReactionMap& standard_absorption_reactions,
+    const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
+    const bool processed_atomic_cross_sections,
+    const InterpPolicy policy );
 
   //! Advanced constructor
   ElectroatomCore(
-      const std::shared_ptr<const ElectroatomicReaction>& total_reaction,
-      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
-      const ConstReactionMap& scattering_reactions,
-      const ConstReactionMap& absorption_reactions,
-      const ConstReactionMap& miscellaneous_reactions,
-      const Teuchos::RCP<const AtomicRelaxationModel> relaxation_model );
+    const std::shared_ptr<const ElectroatomicReaction>& total_reaction,
+    const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
+    const ConstReactionMap& scattering_reactions,
+    const ConstReactionMap& absorption_reactions,
+    const ConstReactionMap& miscellaneous_reactions,
+    const Teuchos::RCP<const AtomicRelaxationModel> relaxation_model,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Copy constructor
   ElectroatomCore( const ElectroatomCore& instance );
@@ -108,6 +111,12 @@ public:
 
   //! Return the atomic relaxation model
   const AtomicRelaxationModel& getAtomicRelaxationModel() const;
+
+  //! Return the hash-based grid searcher
+  const Utility::HashBasedGridSearcher& getGridSearcher() const;
+
+  //! Test if all of the reactions share a common energy grid
+  bool hasSharedEnergyGrid() const;
 
 private:
 
@@ -162,6 +171,9 @@ private:
 
   // The atomic relaxation model
   Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
+
+  // The hash-based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 // Return the total reaction
@@ -203,6 +215,12 @@ inline const AtomicRelaxationModel&
 ElectroatomCore::getAtomicRelaxationModel() const
 {
   return *d_relaxation_model;
+}
+
+// Return the hash-based grid searcher
+inline const Utility::HashBasedGridSearcher& ElectroatomCore::getGridSearcher() const
+{
+  return *d_grid_searcher;
 }
 
 } // end MonteCarlo namespace

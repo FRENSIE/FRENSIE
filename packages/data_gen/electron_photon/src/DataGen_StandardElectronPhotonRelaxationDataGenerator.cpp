@@ -271,6 +271,10 @@ double StandardElectronPhotonRelaxationDataGenerator::getTabularEvaluationTolera
 }
 
 // Set the electron TwoDInterpPolicy (LogLogLog by default)
+/*! \details When the Y interpolation of the electron 2D interpolation policy
+ * is Log (e.g. Lin-Log-Lin, Log-Log-Log, etc) the elastic 2D interpolation uses the LogCos
+ * equivelent (e.g. Lin-LogCos-Lin, Log-LogCos-Log, etc).
+ */
 void StandardElectronPhotonRelaxationDataGenerator::setElectronTwoDInterpPolicy(
     MonteCarlo::TwoDInterpolationType two_d_interp )
 {
@@ -414,7 +418,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticDat
       // Get the angular grid and pdf at the max energy
       if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
       {
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog>(
           angles,
           pdf,
           elastic_angle,
@@ -1460,7 +1464,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 
     if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog>(
         elastic_angle[this->getMaxElectronEnergy()],
         elastic_pdf[this->getMaxElectronEnergy()] ,
         elastic_angle,
@@ -2009,7 +2013,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2129,7 +2133,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             cross_section_reduction ) );
 
     // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
         cutoff_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
@@ -2881,7 +2885,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
     if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -2913,14 +2917,9 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
             d_tabular_evaluation_tol );
     }
 
-    std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-        sr_endl_distribution;
-
-  // Create a screened Rutherford elastic distribution
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
-        sr_endl_distribution,
-        cutoff_endl_distribution,
-        data_container.getAtomicNumber() );
+    // Create the elastic traits
+    std::shared_ptr<Utility::ElasticElectronTraits> elastic_traits(
+      new Utility::ElasticElectronTraits( data_container.getAtomicNumber() ) );
 
     std::vector<double> raw_elastic_cross_section =
         d_endl_data_container->getCutoffElasticCrossSection();
@@ -2931,8 +2930,17 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
       // Get the energy
       double energy = raw_energy_grid[n];
 
-      // Get the integrated PDF value at the cutoff angle cosine
-      double integrated_pdf = sr_endl_distribution->evaluateIntegrated( energy );
+      // Get the cutoff pdf
+      double cutoff_pdf = cutoff_endl_distribution->evaluate(
+                            energy, Utility::ElasticElectronTraits::mu_peak );
+
+      // Get Moliere's Screening Constant
+      double eta = elastic_traits->evaluateMoliereScreeningConstant( energy );
+
+      // Calculate the integrated PDF value at the cutoff angle cosine
+      double integrated_pdf =
+        cutoff_pdf*Utility::ElasticElectronTraits::delta_mu_peak*
+            ( Utility::ElasticElectronTraits::delta_mu_peak + eta )/( eta );
 
       // Evaluate the total coupled cross section at the incoming energy
       raw_elastic_cross_section[n] *= ( 1.0 +  integrated_pdf );

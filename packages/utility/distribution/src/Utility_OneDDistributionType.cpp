@@ -34,6 +34,7 @@ std::string convertOneDDistributionTypeToString(
   case POWER_2_DISTRIBUTION: return "Power 2 Distribution";
   case POWER_N_DISTRIBUTION: return "Power N Distribution";
   case TABULAR_DISTRIBUTION: return "Tabular Distribution";
+  case TABULAR_CDF_DISTRIBUTION: return "Tabular CDF Distribution";
   case UNIFORM_DISTRIBUTION: return "Uniform Distribution";
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
   case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";

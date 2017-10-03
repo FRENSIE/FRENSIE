@@ -25,6 +25,7 @@
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> b_xss_data_extractor;
 Teuchos::RCP<Data::XSSEPRDataExtractor> pb_xss_data_extractor;
+Teuchos::RCP<Data::XSSEPRDataExtractor> pb_erp14_xss_data_extractor;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -34,6 +35,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractAtomicNumber )
 {
   TEST_EQUALITY_CONST( b_xss_data_extractor->extractAtomicNumber(), 5 );
   TEST_EQUALITY_CONST( pb_xss_data_extractor->extractAtomicNumber(), 82 );
+  TEST_EQUALITY_CONST( pb_erp14_xss_data_extractor->extractAtomicNumber(), 82 );
 }
 
 //---------------------------------------------------------------------------//
@@ -43,6 +45,7 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, hasOldFluorescenceData )
 {
   TEST_ASSERT( !b_xss_data_extractor->hasOldFluorescenceData() );
   TEST_ASSERT( pb_xss_data_extractor->hasOldFluorescenceData() );
+  TEST_ASSERT( pb_erp14_xss_data_extractor->hasOldFluorescenceData() );
 }
 
 //---------------------------------------------------------------------------//
@@ -52,6 +55,16 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, hasFluorescenceData )
 {
   TEST_ASSERT( !b_xss_data_extractor->hasFluorescenceData() );
   TEST_ASSERT( pb_xss_data_extractor->hasFluorescenceData() );
+  TEST_ASSERT( pb_erp14_xss_data_extractor->hasFluorescenceData() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the XSSEPRDataExtractor can check if the file is version eprdata14
+TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, isEPRVersion14 )
+{
+  TEST_ASSERT( !b_xss_data_extractor->isEPRVersion14() );
+  TEST_ASSERT( !pb_xss_data_extractor->isEPRVersion14() );
+  TEST_ASSERT( pb_erp14_xss_data_extractor->isEPRVersion14() );
 }
 
 //---------------------------------------------------------------------------//
@@ -66,6 +79,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractESZGBlock )
   TEST_EQUALITY_CONST( eszg_block.back(), -1.342622032664E+00 );
 
   eszg_block = pb_xss_data_extractor->extractESZGBlock();
+
+  TEST_EQUALITY_CONST( eszg_block.size(), 15880 );
+  TEST_EQUALITY_CONST( eszg_block.front(), -1.381551055796E+01 );
+  TEST_EQUALITY_CONST( eszg_block.back(), 3.718032834377E+00 );
+
+  eszg_block = pb_erp14_xss_data_extractor->extractESZGBlock();
 
   TEST_EQUALITY_CONST( eszg_block.size(), 15880 );
   TEST_EQUALITY_CONST( eszg_block.front(), -1.381551055796E+01 );
@@ -88,6 +107,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPhotonEnergyGrid )
   TEST_EQUALITY_CONST( photon_energy_grid.size(), 3176 );
   TEST_EQUALITY_CONST( photon_energy_grid.front(), -1.381551055796E+01 );
   TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.151292546497E+01 );
+
+  photon_energy_grid = pb_erp14_xss_data_extractor->extractPhotonEnergyGrid();
+
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 3176 );
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), -1.381551055796E+01 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.151292546497E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -102,6 +127,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractIncoherentCrossSection )
   TEST_EQUALITY_CONST( incoherent_cs.back(), -9.370438704073E+00 );
 
   incoherent_cs = pb_xss_data_extractor->extractIncoherentCrossSection();
+
+  TEST_EQUALITY_CONST( incoherent_cs.size(), 3176 );
+  TEST_EQUALITY_CONST( incoherent_cs.front(), -1.338724079720E+01 );
+  TEST_EQUALITY_CONST( incoherent_cs.back(), -6.573285045032E+00 );
+
+  incoherent_cs = pb_erp14_xss_data_extractor->extractIncoherentCrossSection();
 
   TEST_EQUALITY_CONST( incoherent_cs.size(), 3176 );
   TEST_EQUALITY_CONST( incoherent_cs.front(), -1.338724079720E+01 );
@@ -124,6 +155,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractCoherentCrossSection )
   TEST_EQUALITY_CONST( coherent_cs.size(), 3176 );
   TEST_EQUALITY_CONST( coherent_cs.front(), -5.071403810640E+00 );
   TEST_EQUALITY_CONST( coherent_cs.back(), -2.309498238246E+01 );
+
+  coherent_cs = pb_erp14_xss_data_extractor->extractCoherentCrossSection();
+
+  TEST_EQUALITY_CONST( coherent_cs.size(), 3176 );
+  TEST_EQUALITY_CONST( coherent_cs.front(), -5.071403810640E+00 );
+  TEST_EQUALITY_CONST( coherent_cs.back(), -2.309498238246E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -138,6 +175,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPhotoelectricCrossSection )
   TEST_EQUALITY_CONST( photoelectric_cs.back(), -2.403097442973E+01 );
 
   photoelectric_cs = pb_xss_data_extractor->extractPhotoelectricCrossSection();
+
+  TEST_EQUALITY_CONST( photoelectric_cs.size(), 3176 );
+  TEST_EQUALITY_CONST( photoelectric_cs.front(), 0.0 );
+  TEST_EQUALITY_CONST( photoelectric_cs.back(), -1.115947249407E+01 );
+
+  photoelectric_cs = pb_erp14_xss_data_extractor->extractPhotoelectricCrossSection();
 
   TEST_EQUALITY_CONST( photoelectric_cs.size(), 3176 );
   TEST_EQUALITY_CONST( photoelectric_cs.front(), 0.0 );
@@ -161,6 +204,13 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractPairProductionCrossSection )
   TEST_EQUALITY_CONST( pair_production_cs.size(), 3176 );
   TEST_EQUALITY_CONST( pair_production_cs.front(), 0.0 );
   TEST_EQUALITY_CONST( pair_production_cs.back(), 3.718032834377E+00 );
+
+  pair_production_cs =
+    pb_erp14_xss_data_extractor->extractPairProductionCrossSection();
+
+  TEST_EQUALITY_CONST( pair_production_cs.size(), 3176 );
+  TEST_EQUALITY_CONST( pair_production_cs.front(), 0.0 );
+  TEST_EQUALITY_CONST( pair_production_cs.back(), 3.718032834377E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -175,6 +225,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJINCEBlock )
   TEST_EQUALITY_CONST( jince_block.back(), 5.000000000000E+00 );
 
   jince_block = pb_xss_data_extractor->extractJINCEBlock();
+
+  TEST_EQUALITY_CONST( jince_block.size(), 282 );
+  TEST_EQUALITY_CONST( jince_block.front(), 0.0 );
+  TEST_EQUALITY_CONST( jince_block.back(), 8.200000000000E+01 );
+
+  jince_block = pb_erp14_xss_data_extractor->extractJINCEBlock();
 
   TEST_EQUALITY_CONST( jince_block.size(), 282 );
   TEST_EQUALITY_CONST( jince_block.front(), 0.0 );
@@ -197,6 +253,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJCOHEBlock )
   TEST_EQUALITY_CONST( jcohe_block.size(), 411 );
   TEST_EQUALITY_CONST( jcohe_block.front(), 0.0 );
   TEST_EQUALITY_CONST( jcohe_block.back(), 1.158600000000E-20 );
+
+  jcohe_block = pb_erp14_xss_data_extractor->extractJCOHEBlock();
+
+  TEST_EQUALITY_CONST( jcohe_block.size(), 411 );
+  TEST_EQUALITY_CONST( jcohe_block.front(), 0.0 );
+  TEST_EQUALITY_CONST( jcohe_block.back(), 1.158600000000E-20 );
 }
 
 //---------------------------------------------------------------------------//
@@ -209,6 +271,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractJFLOBlock )
   TEST_EQUALITY_CONST( jflo_block.size(), 0 );
 
   jflo_block = pb_xss_data_extractor->extractJFLOBlock();
+
+  TEST_EQUALITY_CONST( jflo_block.size(), 24 );
+  TEST_EQUALITY_CONST( jflo_block.front(), 1.471266666670E-02 );
+  TEST_EQUALITY_CONST( jflo_block.back(), 8.762024531250E-02 );
+
+  jflo_block = pb_erp14_xss_data_extractor->extractJFLOBlock();
 
   TEST_EQUALITY_CONST( jflo_block.size(), 24 );
   TEST_EQUALITY_CONST( jflo_block.front(), 1.471266666670E-02 );
@@ -231,6 +299,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLHNMBlock )
   TEST_EQUALITY_CONST( lhnm_block.size(), 3176 );
   TEST_EQUALITY_CONST( lhnm_block.front(), 9.916958825662E-07 );
   TEST_EQUALITY_CONST( lhnm_block.back(), 9.999864243970E+04 );
+
+  lhnm_block = pb_erp14_xss_data_extractor->extractLHNMBlock();
+
+  TEST_EQUALITY_CONST( lhnm_block.size(), 3176 );
+  TEST_EQUALITY_CONST( lhnm_block.front(), 9.916958825662E-07 );
+  TEST_EQUALITY_CONST( lhnm_block.back(), 9.999864243970E+04 );
 }
 
 //---------------------------------------------------------------------------//
@@ -245,6 +319,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLNEPSBlock )
   TEST_EQUALITY_CONST( lneps_block.back(), 1.0 );
 
   lneps_block = pb_xss_data_extractor->extractLNEPSBlock();
+
+  TEST_EQUALITY_CONST( lneps_block.size(), 23 );
+  TEST_EQUALITY_CONST( lneps_block.front(), 2.0 );
+  TEST_EQUALITY_CONST( lneps_block.back(), 2.0 );
+
+  lneps_block = pb_erp14_xss_data_extractor->extractLNEPSBlock();
 
   TEST_EQUALITY_CONST( lneps_block.size(), 23 );
   TEST_EQUALITY_CONST( lneps_block.front(), 2.0 );
@@ -267,6 +347,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLBEPSBlock )
   TEST_EQUALITY_CONST( lbeps_block.size(), 23 );
   TEST_EQUALITY_CONST( lbeps_block.front(), 8.800500000000E-02);
   TEST_EQUALITY_CONST( lbeps_block.back(), 0.0 );
+
+  lbeps_block = pb_erp14_xss_data_extractor->extractLBEPSBlock();
+
+  TEST_EQUALITY_CONST( lbeps_block.size(), 23 );
+  TEST_EQUALITY_CONST( lbeps_block.front(), 8.800500000000E-02);
+  TEST_EQUALITY_CONST( lbeps_block.back(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -285,6 +371,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLPIPSBlock )
   TEST_EQUALITY_CONST( lpips_block.size(), 23 );
   TEST_EQUALITY_CONST( lpips_block.front(), 2.439024390244E-02 );
   TEST_EQUALITY_CONST( lpips_block.back(), 2.439024390244E-02 );
+
+  lpips_block = pb_erp14_xss_data_extractor->extractLPIPSBlock();
+
+  TEST_EQUALITY_CONST( lpips_block.size(), 23 );
+  TEST_EQUALITY_CONST( lpips_block.front(), 2.439024390244E-02 );
+  TEST_EQUALITY_CONST( lpips_block.back(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -299,6 +391,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractLSWDBlock )
   TEST_EQUALITY_CONST( lswd_block.back(), 191.0 );
 
   lswd_block = pb_xss_data_extractor->extractLSWDBlock();
+
+  TEST_EQUALITY_CONST( lswd_block.size(), 23 );
+  TEST_EQUALITY_CONST( lswd_block.front(), 1.0 );
+  TEST_EQUALITY_CONST( lswd_block.back(), 2091.0 );
+
+  lswd_block = pb_erp14_xss_data_extractor->extractLSWDBlock();
 
   TEST_EQUALITY_CONST( lswd_block.size(), 23 );
   TEST_EQUALITY_CONST( lswd_block.front(), 1.0 );
@@ -321,6 +419,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSWDBlock )
   TEST_EQUALITY_CONST( swd_block.size(), 2185 );
   TEST_EQUALITY_CONST( swd_block.front(), 2.000000000000E+00 );
   TEST_EQUALITY_CONST( swd_block.back(), 1.000000000000E+00 );
+
+  swd_block = pb_erp14_xss_data_extractor->extractSWDBlock();
+
+  TEST_EQUALITY_CONST( swd_block.size(), 2185 );
+  TEST_EQUALITY_CONST( swd_block.front(), 2.000000000000E+00 );
+  TEST_EQUALITY_CONST( swd_block.back(), 1.000000000000E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -335,6 +439,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSUBSHBlock )
   TEST_EQUALITY_CONST( subsh_block.back(), 0.0 );
 
   subsh_block = pb_xss_data_extractor->extractSUBSHBlock();
+
+  TEST_EQUALITY_CONST( subsh_block.size(), 120 );
+  TEST_EQUALITY_CONST( subsh_block.front(), 1.0 );
+  TEST_EQUALITY_CONST( subsh_block.back(), 0.0 );
+
+  subsh_block = pb_erp14_xss_data_extractor->extractSUBSHBlock();
 
   TEST_EQUALITY_CONST( subsh_block.size(), 120 );
   TEST_EQUALITY_CONST( subsh_block.front(), 1.0 );
@@ -358,6 +468,13 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellENDFDesignators )
   TEST_EQUALITY_CONST( subshell_endf_designators.size(), 24 );
   TEST_EQUALITY_CONST( subshell_endf_designators.front(), 1.0 );
   TEST_EQUALITY_CONST( subshell_endf_designators.back(), 28.0 );
+
+  subshell_endf_designators =
+    pb_erp14_xss_data_extractor->extractSubshellENDFDesignators();
+
+  TEST_EQUALITY_CONST( subshell_endf_designators.size(), 24 );
+  TEST_EQUALITY_CONST( subshell_endf_designators.front(), 1.0 );
+  TEST_EQUALITY_CONST( subshell_endf_designators.back(), 28.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -377,6 +494,13 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellOccupancies )
   TEST_EQUALITY_CONST( subshell_occupancies.size(), 24 );
   TEST_EQUALITY_CONST( subshell_occupancies.front(), 2.0 );
   TEST_EQUALITY_CONST( subshell_occupancies.back(), 1.33 );
+
+  subshell_occupancies =
+    pb_erp14_xss_data_extractor->extractSubshellOccupancies();
+
+  TEST_EQUALITY_CONST( subshell_occupancies.size(), 24 );
+  TEST_EQUALITY_CONST( subshell_occupancies.front(), 2.0 );
+  TEST_EQUALITY_CONST( subshell_occupancies.back(), 1.33 );
 }
 
 //---------------------------------------------------------------------------//
@@ -391,6 +515,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellBindingEnergies )
   TEST_EQUALITY_CONST( subshell_be.back(), 6.660000000000E-06 );
 
   subshell_be = pb_xss_data_extractor->extractSubshellBindingEnergies();
+
+  TEST_EQUALITY_CONST( subshell_be.size(), 24 );
+  TEST_EQUALITY_CONST( subshell_be.front(), 8.829000000000E-02 );
+  TEST_EQUALITY_CONST( subshell_be.back(), 5.290000000000E-06 );
+
+  subshell_be = pb_erp14_xss_data_extractor->extractSubshellBindingEnergies();
 
   TEST_EQUALITY_CONST( subshell_be.size(), 24 );
   TEST_EQUALITY_CONST( subshell_be.front(), 8.829000000000E-02 );
@@ -414,6 +544,13 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellComptonInteractionCDF )
   TEST_EQUALITY_CONST( subshell_compton_cdf.size(), 24 );
   TEST_EQUALITY_CONST( subshell_compton_cdf.front(), 2.439024390244E-02 );
   TEST_EQUALITY_CONST( subshell_compton_cdf.back(), 1.0 );
+
+  subshell_compton_cdf =
+    pb_erp14_xss_data_extractor->extractSubshellComptonInteractionCDF();
+
+  TEST_EQUALITY_CONST( subshell_compton_cdf.size(), 24 );
+  TEST_EQUALITY_CONST( subshell_compton_cdf.front(), 2.439024390244E-02 );
+  TEST_EQUALITY_CONST( subshell_compton_cdf.back(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -429,6 +566,13 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSubshellVacancyTransitionPaths )
 
   subshell_transitions =
     pb_xss_data_extractor->extractSubshellVacancyTransitionPaths();
+
+  TEST_EQUALITY_CONST( subshell_transitions.size(), 24 );
+  TEST_EQUALITY_CONST( subshell_transitions.front(), 1.890000000000E+02 );
+  TEST_EQUALITY_CONST( subshell_transitions.back(), 0.0 );
+
+  subshell_transitions =
+    pb_erp14_xss_data_extractor->extractSubshellVacancyTransitionPaths();
 
   TEST_EQUALITY_CONST( subshell_transitions.size(), 24 );
   TEST_EQUALITY_CONST( subshell_transitions.front(), 1.890000000000E+02 );
@@ -451,6 +595,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractSPHELBlock )
   TEST_EQUALITY_CONST( sphel_block.size(), 76224 );
   TEST_EQUALITY_CONST( sphel_block.front(), 0.0 );
   TEST_EQUALITY_CONST( sphel_block.back(), -2.364731020721E+01 );
+
+  sphel_block = pb_erp14_xss_data_extractor->extractSPHELBlock();
+
+  TEST_EQUALITY_CONST( sphel_block.size(), 76224 );
+  TEST_EQUALITY_CONST( sphel_block.front(), 0.0 );
+  TEST_EQUALITY_CONST( sphel_block.back(), -2.364731020721E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -467,6 +617,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractRELOBlock )
   TEST_EQUALITY_CONST( relo_block.size(), 24 );
   TEST_EQUALITY_CONST( relo_block.front(), 0.0 );
   TEST_EQUALITY_CONST( relo_block.back(), 7.764000000000E+03 );
+
+  relo_block = pb_erp14_xss_data_extractor->extractRELOBlock();
+
+  TEST_EQUALITY_CONST( relo_block.size(), 24 );
+  TEST_EQUALITY_CONST( relo_block.front(), 0.0 );
+  TEST_EQUALITY_CONST( relo_block.back(), 7.764000000000E+03 );
 }
 
 //---------------------------------------------------------------------------//
@@ -479,6 +635,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractXPROBBlock )
   TEST_EQUALITY_CONST( xprob_block.size(), 0 );
 
   xprob_block = pb_xss_data_extractor->extractXPROBBlock();
+
+  TEST_EQUALITY_CONST( xprob_block.size(), 7764 );
+  TEST_EQUALITY_CONST( xprob_block.front(), 3.0 );
+  TEST_EQUALITY_CONST( xprob_block.back(), 1.0 );
+
+  xprob_block = pb_erp14_xss_data_extractor->extractXPROBBlock();
 
   TEST_EQUALITY_CONST( xprob_block.size(), 7764 );
   TEST_EQUALITY_CONST( xprob_block.front(), 3.0 );
@@ -501,6 +663,32 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractESZEBlock )
   TEST_EQUALITY_CONST( esze_block.size(), 14310 );
   TEST_EQUALITY_CONST( esze_block.front(), 1.000000000000E-05 );
   TEST_EQUALITY_CONST( esze_block.back(), 1.822340000000E+05 );
+
+  esze_block = pb_erp14_xss_data_extractor->extractESZEBlock();
+
+  TEST_EQUALITY_CONST( esze_block.size(), 14310 );
+  TEST_EQUALITY_CONST( esze_block.front(), 1.000000000000E-05 );
+  TEST_EQUALITY_CONST( esze_block.back(), 1.822340000000E+05 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the ESZE2 block can be extracted
+TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractESZE2Block )
+{
+  Teuchos::ArrayView<const double> esze2_block =
+    b_xss_data_extractor->extractESZE2Block();
+
+  TEST_EQUALITY_CONST( esze2_block.size(), 0 );
+
+  esze2_block = pb_xss_data_extractor->extractESZE2Block();
+
+  TEST_EQUALITY_CONST( esze2_block.size(), 0 );
+
+  esze2_block = pb_erp14_xss_data_extractor->extractESZE2Block();
+
+  TEST_EQUALITY_CONST( esze2_block.size(), 954 );
+  TEST_EQUALITY_CONST( esze2_block.front(), 2.48924e+09 );
+  TEST_EQUALITY_CONST( esze2_block.back(), 2.11161e+06 );
 }
 
 //---------------------------------------------------------------------------//
@@ -515,6 +703,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElectronEnergyGrid )
   TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.000000000000E+05 );
 
   electron_energy_grid = pb_xss_data_extractor->extractElectronEnergyGrid();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 477 );
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.000000000000E-05 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.000000000000E+05 );
+
+  electron_energy_grid = pb_erp14_xss_data_extractor->extractElectronEnergyGrid();
 
   TEST_EQUALITY_CONST( electron_energy_grid.size(), 477 );
   TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.000000000000E-05 );
@@ -538,20 +732,73 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElectronTotalCrossSection )
   TEST_EQUALITY_CONST( electron_total_cs.size(), 477 );
   TEST_EQUALITY_CONST( electron_total_cs.front(), 2.629060119800E+09 );
   TEST_EQUALITY_CONST( electron_total_cs.back(), 2.845403136205E+06 );
+
+  electron_total_cs =
+    pb_erp14_xss_data_extractor->extractElectronTotalCrossSection();
+
+  TEST_EQUALITY_CONST( electron_total_cs.size(), 477 );
+  TEST_EQUALITY_CONST( electron_total_cs.front(), 2.629060119800E+09 );
+  TEST_EQUALITY_CONST( electron_total_cs.back(), 2.845403136205E+06 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron elastic cross section can be extracted
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticCrossSection )
+// Check that the electron elastic transport cross section can be extracted
+TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticTransportCrossSection )
 {
   Teuchos::ArrayView<const double> elastic_cs =
-    b_xss_data_extractor->extractElasticCrossSection();
+    b_xss_data_extractor->extractElasticTransportCrossSection();
+
+  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+
+  elastic_cs = pb_xss_data_extractor->extractElasticTransportCrossSection();
+
+  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+
+  elastic_cs = pb_erp14_xss_data_extractor->extractElasticTransportCrossSection();
+
+  TEST_EQUALITY_CONST( elastic_cs.size(), 477 );
+  TEST_EQUALITY_CONST( elastic_cs.front(), 2.489240000000E+09 );
+  TEST_EQUALITY_CONST( elastic_cs.back(), 2.87092e-06 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron elastic total cross section can be extracted
+TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticTotalCrossSection )
+{
+  Teuchos::ArrayView<const double> elastic_cs =
+    b_xss_data_extractor->extractElasticTotalCrossSection();
+
+  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+
+  elastic_cs = pb_xss_data_extractor->extractElasticTotalCrossSection();
+
+  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+
+  elastic_cs = pb_erp14_xss_data_extractor->extractElasticTotalCrossSection();
+
+  TEST_EQUALITY_CONST( elastic_cs.size(), 477 );
+  TEST_EQUALITY_CONST( elastic_cs.front(), 2.489240000000E+09 );
+  TEST_EQUALITY_CONST( elastic_cs.back(), 2.11161e+06 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron elastic cutoff cross section can be extracted
+TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticCutoffCrossSection )
+{
+  Teuchos::ArrayView<const double> elastic_cs =
+    b_xss_data_extractor->extractElasticCutoffCrossSection();
 
   TEST_EQUALITY_CONST( elastic_cs.size(), 349 );
   TEST_EQUALITY_CONST( elastic_cs.front(), 3.504710000000E+09 );
   TEST_EQUALITY_CONST( elastic_cs.back(), 3.279820000000E-04 );
 
-  elastic_cs = pb_xss_data_extractor->extractElasticCrossSection();
+  elastic_cs = pb_xss_data_extractor->extractElasticCutoffCrossSection();
+
+  TEST_EQUALITY_CONST( elastic_cs.size(), 477 );
+  TEST_EQUALITY_CONST( elastic_cs.front(), 2.489240000000E+09 );
+  TEST_EQUALITY_CONST( elastic_cs.back(), 8.830510000000E-02 );
+
+  elastic_cs = pb_erp14_xss_data_extractor->extractElasticCutoffCrossSection();
 
   TEST_EQUALITY_CONST( elastic_cs.size(), 477 );
   TEST_EQUALITY_CONST( elastic_cs.front(), 2.489240000000E+09 );
@@ -574,6 +821,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBremsstrahlungCrossSection )
   TEST_EQUALITY_CONST( bremss_cs.size(), 477 );
   TEST_EQUALITY_CONST( bremss_cs.front(), 4.869800000000E+03 );
   TEST_EQUALITY_CONST( bremss_cs.back(), 1.954170000000E+03 );
+
+  bremss_cs = pb_erp14_xss_data_extractor->extractBremsstrahlungCrossSection();
+
+  TEST_EQUALITY_CONST( bremss_cs.size(), 477 );
+  TEST_EQUALITY_CONST( bremss_cs.front(), 4.869800000000E+03 );
+  TEST_EQUALITY_CONST( bremss_cs.back(), 1.954170000000E+03 );
 }
 
 //---------------------------------------------------------------------------//
@@ -588,6 +841,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractExcitationCrossSection )
   TEST_EQUALITY_CONST( excitation_cs.back(), 2.339010000000E+05 );
 
   excitation_cs = pb_xss_data_extractor->extractExcitationCrossSection();
+
+  TEST_EQUALITY_CONST( excitation_cs.size(), 477 );
+  TEST_EQUALITY_CONST( excitation_cs.front(), 8.757550000000E+06 );
+  TEST_EQUALITY_CONST( excitation_cs.back(), 1.578610000000E+06 );
+
+  excitation_cs = pb_erp14_xss_data_extractor->extractExcitationCrossSection();
 
   TEST_EQUALITY_CONST( excitation_cs.size(), 477 );
   TEST_EQUALITY_CONST( excitation_cs.front(), 8.757550000000E+06 );
@@ -607,6 +866,13 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElectroionizationCrossSection )
 
   electroionization_cs =
     pb_xss_data_extractor->extractElectroionizationCrossSection();
+
+  TEST_EQUALITY_CONST( electroionization_cs.size(), 477 );
+  TEST_EQUALITY_CONST( electroionization_cs.front(), 1.310577000000E+08 );
+  TEST_EQUALITY_CONST( electroionization_cs.back(), 1.264838877900E+06 );
+
+  electroionization_cs =
+    pb_erp14_xss_data_extractor->extractElectroionizationCrossSection();
 
   TEST_EQUALITY_CONST( electroionization_cs.size(), 477 );
   TEST_EQUALITY_CONST( electroionization_cs.front(), 1.310577000000E+08 );
@@ -633,6 +899,14 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor,
   TEST_EQUALITY_CONST( electroionization_subshell_cs.front(), 0.0 );
   TEST_EQUALITY_CONST( electroionization_subshell_cs.back(),
 		       1.822340000000E+05 );
+
+  electroionization_subshell_cs =
+    pb_erp14_xss_data_extractor->extractElectroionizationSubshellCrossSections();
+
+  TEST_EQUALITY_CONST( electroionization_subshell_cs.size(), 11448 );
+  TEST_EQUALITY_CONST( electroionization_subshell_cs.front(), 0.0 );
+  TEST_EQUALITY_CONST( electroionization_subshell_cs.back(),
+		       1.822340000000E+05 );
 }
 
 //---------------------------------------------------------------------------//
@@ -647,6 +921,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractEXCITBlock )
   TEST_EQUALITY_CONST( excit_block.back(), 1.401060000000E-05 );
 
   excit_block = pb_xss_data_extractor->extractEXCITBlock();
+
+  TEST_EQUALITY_CONST( excit_block.size(), 572 );
+  TEST_EQUALITY_CONST( excit_block.front(), 1.000000000000E-05 );
+  TEST_EQUALITY_CONST( excit_block.back(), 1.095330000000E-05 );
+
+  excit_block = pb_erp14_xss_data_extractor->extractEXCITBlock();
 
   TEST_EQUALITY_CONST( excit_block.size(), 572 );
   TEST_EQUALITY_CONST( excit_block.front(), 1.000000000000E-05 );
@@ -669,6 +949,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractELASIBlock )
   TEST_EQUALITY_CONST( elasi_block.size(), 42 );
   TEST_EQUALITY_CONST( elasi_block.front(), 1.000000000000E-05 );
   TEST_EQUALITY_CONST( elasi_block.back(), 1.392000000000E+03 );
+
+  elasi_block = pb_erp14_xss_data_extractor->extractELASIBlock();
+
+  TEST_EQUALITY_CONST( elasi_block.size(), 42 );
+  TEST_EQUALITY_CONST( elasi_block.front(), 1.000000000000E-05 );
+  TEST_EQUALITY_CONST( elasi_block.back(), 1.384e+03 );
 }
 
 //---------------------------------------------------------------------------//
@@ -685,6 +971,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractELASBlock )
   elas_block = pb_xss_data_extractor->extractELASBlock();
 
   TEST_EQUALITY_CONST( elas_block.size(), 1562 );
+  TEST_EQUALITY_CONST( elas_block.front(), -1.000000000000E+00 );
+  TEST_EQUALITY_CONST( elas_block.back(), 1.000000000000E+00 );
+
+  elas_block = pb_erp14_xss_data_extractor->extractELASBlock();
+
+  TEST_EQUALITY_CONST( elas_block.size(), 1564 );
   TEST_EQUALITY_CONST( elas_block.front(), -1.000000000000E+00 );
   TEST_EQUALITY_CONST( elas_block.back(), 1.000000000000E+00 );
 }
@@ -705,6 +997,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractEIONBlock )
   TEST_EQUALITY_CONST( eion_block.size(), 14169 );
   TEST_EQUALITY_CONST( eion_block.front(), 5.000000000000E+00 );
   TEST_EQUALITY_CONST( eion_block.back(), 1.000000000000E+00 );
+
+  eion_block = pb_erp14_xss_data_extractor->extractEIONBlock();
+
+  TEST_EQUALITY_CONST( eion_block.size(), 14169 );
+  TEST_EQUALITY_CONST( eion_block.front(), 5.000000000000E+00 );
+  TEST_EQUALITY_CONST( eion_block.back(), 1.000000000000E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -717,6 +1015,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBREMIBlock )
   TEST_EQUALITY_CONST( bremi_block.size(), 30 );
   TEST_EQUALITY_CONST( bremi_block.front(), 1.000000000000E-05 );
   TEST_EQUALITY_CONST( bremi_block.back(), 8.520000000000E+02 );
+
+  bremi_block = pb_xss_data_extractor->extractBREMIBlock();
+
+  TEST_EQUALITY_CONST( bremi_block.size(), 27 );
+  TEST_EQUALITY_CONST( bremi_block.front(), 1.000000000000E-05 );
+  TEST_EQUALITY_CONST( bremi_block.back(), 6.500000000000E+02 );
 
   bremi_block = pb_xss_data_extractor->extractBREMIBlock();
 
@@ -741,6 +1045,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBREMEBlock )
   TEST_EQUALITY_CONST( breme_block.size(), 852 );
   TEST_EQUALITY_CONST( breme_block.front(), 1.000000000000E-07 );
   TEST_EQUALITY_CONST( breme_block.back(), 1.000000000000E+00 );
+
+  breme_block = pb_erp14_xss_data_extractor->extractBREMEBlock();
+
+  TEST_EQUALITY_CONST( breme_block.size(), 852 );
+  TEST_EQUALITY_CONST( breme_block.front(), 1.000000000000E-07 );
+  TEST_EQUALITY_CONST( breme_block.back(), 1.000000000000E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -759,6 +1069,12 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractBREMLBlock )
   TEST_EQUALITY_CONST( breml_block.size(), 150 );
   TEST_EQUALITY_CONST( breml_block.front(), 1.000000000000E-05 );
   TEST_EQUALITY_CONST( breml_block.back(), 9.726750000000E+04 );
+
+  breml_block = pb_erp14_xss_data_extractor->extractBREMLBlock();
+
+  TEST_EQUALITY_CONST( breml_block.size(), 150 );
+  TEST_EQUALITY_CONST( breml_block.front(), 1.000000000000E-05 );
+  TEST_EQUALITY_CONST( breml_block.back(), 2.7325e+03 );
 }
 
 //---------------------------------------------------------------------------//
@@ -768,21 +1084,30 @@ int main( int argc, char** argv )
 {
   std::string pb_ace_file_name, pb_ace_table_name;
   std::string b_ace_file_name, b_ace_table_name;
+  std::string pb_ace14_file_name, pb_ace14_table_name;
 
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "pb_ace_file",
 		 &pb_ace_file_name,
-		 "Test Pb ACE file name" );
+		 "Test Pb ACE EPR12 file name" );
   clp.setOption( "pb_ace_table",
 		 &pb_ace_table_name,
-		 "Test Pb ACE table name in ACE file" );
+		 "Test Pb ACE table name in ACE EPR12 file" );
+
   clp.setOption( "b_ace_file",
                  &b_ace_file_name,
-		 "Test B ACE file name" );
+		 "Test B ACE EPR12 file name" );
   clp.setOption( "b_ace_table",
 		 &b_ace_table_name,
-		 "Test B ACE table name in ACE file" );
+		 "Test B ACE table name in ACE EPR12 file" );
+
+  clp.setOption( "pb_ace14_file",
+		 &pb_ace14_file_name,
+		 "Test Pb ACE EPR14 file name" );
+  clp.setOption( "pb_ace14_table",
+		 &pb_ace14_table_name,
+		 "Test Pb ACE table name in ACE EPR14 file" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -811,6 +1136,15 @@ int main( int argc, char** argv )
 						    1u ) );
 
   b_xss_data_extractor.reset(
+      new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+				     ace_file_handler->getTableJXSArray(),
+				     ace_file_handler->getTableXSSArray() ) );
+
+  ace_file_handler.reset( new Data::ACEFileHandler( pb_ace14_file_name,
+                                                    pb_ace14_table_name,
+						    1u ) );
+
+  pb_erp14_xss_data_extractor.reset(
       new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
 				     ace_file_handler->getTableJXSArray(),
 				     ace_file_handler->getTableXSSArray() ) );

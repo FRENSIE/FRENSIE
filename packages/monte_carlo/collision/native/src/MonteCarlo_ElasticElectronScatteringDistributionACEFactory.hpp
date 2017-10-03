@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
@@ -26,6 +27,12 @@ public:
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
     const Data::XSSEPRDataExtractor& raw_electroatom_data );
+
+  //! Create a screened Rutherford elastic distribution
+  static void createScreenedRutherfordElasticDistribution(
+    std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+        screened_rutherford_elastic_distribution,
+    const unsigned atomic_number );
 
 protected:
 

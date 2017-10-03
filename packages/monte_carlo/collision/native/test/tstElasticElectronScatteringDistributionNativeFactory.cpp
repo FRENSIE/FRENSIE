@@ -389,7 +389,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF_LogLogLog )
+                   getAngularGridAndPDF_LogLogCosLog )
 {
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
@@ -397,7 +397,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -415,7 +415,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test inbetween energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -434,7 +434,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test highest energy bin
   energy = 1.0e5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
@@ -454,12 +454,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the cutoff distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createCutoffElasticDistribution_LogLogLog )
+                   createCutoffElasticDistribution_LogLogCosLog )
 {
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
@@ -704,19 +704,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createScreenedRutherfordElasticDistribution )
 {
-  double cutoff_angle_cosine = 1.0;
-  double evaluation_tol = 1e-7;
-
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-        native_cutoff_elastic_distribution,
-        *data_container,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
         native_sr_elastic_distribution,
-        native_cutoff_elastic_distribution,
         data_container->getAtomicNumber() );
 
   // Set fake random number stream
@@ -764,19 +753,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    createScreenedRutherfordElasticDistribution_adjoint )
 {
-  double cutoff_angle_cosine = 1.0;
-  double evaluation_tol = 1e-7;
-
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
-        native_cutoff_elastic_distribution,
-        *adjoint_data_container,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
         native_sr_elastic_distribution,
-        native_cutoff_elastic_distribution,
         data_container->getAtomicNumber() );
 
   // Set fake random number stream
@@ -1010,12 +988,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the coupled distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   createCoupledElasticDistribution_LogLogLog )
+                   createCoupledElasticDistribution_LogLogCosLog )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::SIMPLIFIED_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog>(
         native_coupled_elastic_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -1144,12 +1122,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the coupled distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-  createCoupledElasticDistribution_LogLogLog_OneDUnion )
+  createCoupledElasticDistribution_LogLogCosLog_OneDUnion )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::ONE_D_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog>(
   native_coupled_elastic_distribution,
   cutoff_cross_section,
   total_cross_section,
@@ -1278,12 +1256,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the coupled distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-    createCoupledElasticDistribution_LogLogLog_TwoDUnion )
+    createCoupledElasticDistribution_LogLogCosLog_TwoDUnion )
 {
   MonteCarlo::CoupledElasticSamplingMethod sampling_method = MonteCarlo::TWO_D_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog>(
   native_coupled_elastic_distribution,
   cutoff_cross_section,
   total_cross_section,

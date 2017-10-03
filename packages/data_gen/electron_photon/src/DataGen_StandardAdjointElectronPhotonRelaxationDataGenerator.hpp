@@ -41,7 +41,7 @@ public:
   typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>
     ElectroionizationReaction;
 
-  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> 
+  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog> 
     BremsstrahlungReaction;
 
   typedef DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction, Utility::LinLinLin>

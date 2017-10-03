@@ -11,7 +11,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
-#include "Utility_HistogramDistribution.hpp"
+#include "Utility_TabularCDFDistribution.hpp"
+#include "Utility_ElasticTwoDDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -35,7 +36,23 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
                 true ) );
 }
 
+// Create a screened Rutherford elastic distribution
+void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+    std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+        screened_rutherford_elastic_distribution,
+    const unsigned atomic_number )
+{
+  // Create the screened Rutherford distribution
+  screened_rutherford_elastic_distribution.reset(
+        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
+                atomic_number ) );
+}
+
 // Create the scattering function
+/*! \details If the eprdata12 library is used the TwoDInterpPolicy will be set
+ *  to LinLinLin to match MCNP6.1. If the eprdata14 library is used the
+ *  TwoDInterpPolicy will be set to LogLogCosLog to match MCNP6.2.
+ */
 void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
@@ -64,21 +81,44 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   Teuchos::ArrayView<const double> elas_block =
     raw_electroatom_data.extractELASBlock();
 
-  for( unsigned n = 0; n < size; ++n )
+  // Check if the file version is eprdata14 or eprdata12
+  if ( raw_electroatom_data.isEPRVersion14() )
   {
-    function_data[n].first = angular_energy_grid[n];
+    for( unsigned n = 0; n < size; ++n )
+    {
+      function_data[n].first = angular_energy_grid[n];
 
-    function_data[n].second.reset(
-      new const Utility::HistogramDistribution(
-         elas_block( offset[n], table_length[n] ),
-         elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-         true ) );
+      function_data[n].second.reset(
+        new const Utility::TabularCDFDistribution<Utility::LogLogCos>(
+          elas_block( offset[n], table_length[n] ),
+          elas_block( offset[n] + table_length[n], table_length[n] ),
+          true ) );
+    }
+
+    // Set the scattering function with LogLogCosLog interp (eprdata14)
+    scattering_function.reset(
+      new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>(
+        function_data,
+        0.999999 ) );
   }
+  else
+  {
+    for( unsigned n = 0; n < size; ++n )
+    {
+      function_data[n].first = angular_energy_grid[n];
 
-  // Set the scattering function
-  scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+      function_data[n].second.reset(
+        new const Utility::TabularCDFDistribution<Utility::LinLin>(
+          elas_block( offset[n], table_length[n] ),
+          elas_block( offset[n] + table_length[n], table_length[n] ),
+          true ) );
+    }
+
+    // Set the scattering function with LinLinLin interp (eprdata12)
+    scattering_function.reset(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
         function_data ) );
+  }
 
 }
 

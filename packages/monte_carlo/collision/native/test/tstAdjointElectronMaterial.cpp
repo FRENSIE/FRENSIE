@@ -180,6 +180,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, getMacroscopicReactionCrossSection )
 
 //---------------------------------------------------------------------------//
 // Check that a adjoint electron can collide with the material
+//! \details This unit test is dependent on the version of boost being used.
 TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
 {
   // Test that the Doppler data is present
@@ -193,7 +194,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the H atom
-  fake_stream[1] = 9.065e-01; // select the elastic reaction (should be 0.6 for boost 1.58)
+  if( BOOST_VERSION < 106000 )
+    fake_stream[1] = 0.6; // select pair production (for boost below version 1.60)
+  else
+    fake_stream[1] = 9.065e-01; // select pair production (for boost above version 1.60)
   fake_stream[2] = 0.0; // sample cutoff distribution
   fake_stream[3] = 0.0; // sample mu = -1.0
 
@@ -209,6 +213,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
 
 //---------------------------------------------------------------------------//
 // Check that a adjoint electron can collide with the material and survival bias
+//! \details This unit test is dependent on the version of boost being used.
 TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
 {
   MonteCarlo::ParticleBank bank;
@@ -221,7 +226,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the H atom
-  fake_stream[1] = 9.065e-01; // select the elastic reaction (should be 0.6 for boost 1.58)
+  if( BOOST_VERSION < 106000 )
+    fake_stream[1] = 0.6; // select pair production (for boost below version 1.60)
+  else
+    fake_stream[1] = 9.065e-01; // select pair production (for boost above version 1.60)
   fake_stream[2] = 1.0-1e-15; // sample cutoff distribution
   fake_stream[3] = 1.0-1e-15; // sample mu = 0.999999
 

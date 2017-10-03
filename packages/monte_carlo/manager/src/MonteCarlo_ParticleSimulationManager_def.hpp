@@ -451,7 +451,7 @@ void ParticleSimulationManager<GeometryHandler,
       {
         // Advance the particle to the collision site
         double distance_to_collision =
-          remaining_subtrack_op/cell_total_macro_cross_section;
+            remaining_subtrack_op/cell_total_macro_cross_section;
 
         particle.advance( distance_to_collision );
 

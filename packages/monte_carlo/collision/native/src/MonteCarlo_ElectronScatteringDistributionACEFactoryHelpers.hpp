@@ -26,6 +26,10 @@ namespace MonteCarlo{
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::XSSEPRDataExtractor& raw_electroatom_data );
 
+//! Create a screened Rutherford elastic distribution
+std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> createScreenedRutherfordElasticDistribution(
+    const Data::XSSEPRDataExtractor& raw_electroatom_data );
+
 //----------------------------------------------------------------------------//
 //      ****BREMSSTRAHLUNG DISTRIBUTIONS****
 //----------------------------------------------------------------------------//

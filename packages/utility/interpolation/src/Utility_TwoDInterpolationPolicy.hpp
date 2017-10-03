@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_TupleMemberTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -57,6 +58,22 @@ struct UnitBaseHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
 {
   //! The YX interpolation policy
   typedef LogLog YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (LogCos-Lin)
+template<>
+struct UnitBaseHelper<LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogCosLin YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (Log-Lin)
+template<>
+struct UnitBaseHelper<LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogCosLog YXInterpPolicy;
 };
 
 } // end local namespace
@@ -464,6 +481,7 @@ struct LinLinLin : public TwoDInterpolationPolicyImpl<LinLin,LinLin>
 {
   typedef LinLin ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
+  typedef LinLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -476,6 +494,7 @@ struct LinLogLin : public TwoDInterpolationPolicyImpl<LinLog,LinLin>
 {
   typedef LinLog ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
+  typedef LogLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -488,6 +507,7 @@ struct LinLinLog : public TwoDInterpolationPolicyImpl<LinLin,LinLog>
 {
   typedef LinLin ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
+  typedef LinLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -500,6 +520,7 @@ struct LinLogLog : public TwoDInterpolationPolicyImpl<LinLog,LinLog>
 {
   typedef LinLog ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
+  typedef LogLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -512,6 +533,7 @@ struct LogLinLin : public TwoDInterpolationPolicyImpl<LogLin,LogLin>
 {
   typedef LogLin ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
+  typedef LinLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -524,6 +546,7 @@ struct LogLogLin : public TwoDInterpolationPolicyImpl<LogLog,LogLin>
 {
   typedef LogLog ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
+  typedef LogLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -536,6 +559,7 @@ struct LogLinLog : public TwoDInterpolationPolicyImpl<LogLin,LogLog>
 {
   typedef LogLin ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
+  typedef LinLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -548,6 +572,59 @@ struct LogLogLog : public TwoDInterpolationPolicyImpl<LogLog,LogLog>
 {
   typedef LogLog ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
+  typedef LogLog YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-LogCos and Z-X policy interpolation policy is Lin-Lin).
+ */
+struct LinLogCosLin : public TwoDInterpolationPolicyImpl<LinLogCos,LinLin>
+{
+  typedef LinLogCos ZYInterpPolicy;
+  typedef LinLin ZXInterpPolicy;
+  typedef LogCosLin YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-LogCos and Z-X policy interpolation policy is Lin-Log).
+ */
+struct LinLogCosLog : public TwoDInterpolationPolicyImpl<LinLogCos,LinLog>
+{
+  typedef LinLogCos ZYInterpPolicy;
+  typedef LinLog ZXInterpPolicy;
+  typedef LogCosLog YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-LogCos and Z-X policy interpolation policy is Log-Lin).
+ */
+struct LogLogCosLin : public TwoDInterpolationPolicyImpl<LogLogCos,LogLin>
+{
+  typedef LogLogCos ZYInterpPolicy;
+  typedef LogLin ZXInterpPolicy;
+  typedef LogCosLin YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-LogCos and Z-X policy interpolation policy is Log-Log).
+ */
+struct LogLogCosLog : public TwoDInterpolationPolicyImpl<LogLogCos,LogLog>
+{
+  typedef LogLogCos ZYInterpPolicy;
+  typedef LogLog ZXInterpPolicy;
+  typedef LogCosLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();

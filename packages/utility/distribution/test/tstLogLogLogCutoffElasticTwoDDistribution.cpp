@@ -312,7 +312,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
                                                          distribution_data ) );
   }
 
@@ -331,7 +331,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 3.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
                                                          distribution_data ) );
   }
 
@@ -362,7 +362,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -395,13 +395,13 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
   TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, 0.999999 ), 1.0, 1e-14 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, -1.0 ),
                           3.84558575793691015399e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 0.0 ),
                           1.92279287896845474393,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 0.999999 ),
                           3.84558575793690993194e+00,
                           1e-14 );
 
@@ -5068,7 +5068,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the two-dimensional distribution
   {
-    Utility::ElasticTwoDDistribution<Utility::LogLogLog>::DistributionType
+    Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
@@ -5088,7 +5088,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     distribution_data[1].first = 2.0;
     distribution_data[1].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
 
-    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogLog>( distribution_data, 0.999999, 1e-3, 1e-7 ) );
+    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>( distribution_data, 0.999999, 1e-3, 1e-7 ) );
     distribution = tab_distribution;
   }
 
@@ -5116,7 +5116,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     primary_bins[1] = 2.0*MeV;
     secondary_dists[1].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values ) );
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogLog,MegaElectronVolt,cgs::dimensionless,Barn>(
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogCosLog,MegaElectronVolt,cgs::dimensionless,Barn>(
         primary_bins, secondary_dists, 0.999999*cgs::dimensionless(), 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;

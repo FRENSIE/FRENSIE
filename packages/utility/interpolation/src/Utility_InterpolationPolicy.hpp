@@ -104,6 +104,10 @@ public:
   //! Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
   template<typename T>
   static T calculateFuzzyUpperBound( const T value, const double tol = 1e-3 );
+
+  //! Convert the cosine variable
+  template<typename T>
+  static T convertCosineVar( const T cosine_var );
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log 
@@ -408,6 +412,30 @@ struct LinLin : public InterpolationHelper<LinLin>
 
   //! The name of the policy
   static const std::string name();
+};
+
+//! Helper class used to invert the interpolation policy
+template<typename ParentInterpolationType>
+struct InverseInterpPolicy
+{
+  //! The inverse interpolation policy
+  typedef ParentInterpolationType InterpPolicy;
+};
+
+//! Helper class used to invert the interpolation policy (Lin-Log)
+template<>
+struct InverseInterpPolicy<LinLog>
+{
+  //! The inverse interpolation policy
+  typedef LogLin InterpPolicy;
+};
+
+//! Helper class used to invert the interpolation policy (Log-Lin)
+template<>
+struct InverseInterpPolicy<LogLin>
+{
+  //! The inverse interpolation policy
+  typedef LinLog InterpPolicy;
 };
 
 } // end Utility namespace

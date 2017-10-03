@@ -52,7 +52,23 @@ struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
   //! The cdf interpolation policy
   typedef LinLogLog CDFInterpPolicy;
 };
-  
+
+//! Helper class used to construct a LinLogCosLin cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogCosLog cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLog CDFInterpPolicy;
+};
+
 } // end local namespace
 
 /*! The unit-aware inteprolated fully tabular two-dimensional distribution

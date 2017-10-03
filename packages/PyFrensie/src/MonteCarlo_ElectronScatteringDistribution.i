@@ -11,6 +11,7 @@
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
@@ -45,6 +46,7 @@
 %shared_ptr(MonteCarlo::CoupledElasticElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::HybridElasticElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::CutoffElasticElectronScatteringDistribution)
+%shared_ptr(MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::MomentPreservingElasticElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::BremsstrahlungElectronScatteringDistribution)
 %shared_ptr(MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution)
@@ -104,12 +106,14 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 %include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+%include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 %include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 
 // Electron scattering distribution interface setup
 %electron_distribution_interface_setup( CoupledElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( HybridElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( CutoffElasticElectronScatteringDistribution )
+%electron_distribution_interface_setup( ScreenedRutherfordElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( MomentPreservingElasticElectronScatteringDistribution )
 
 //---------------------------------------------------------------------------//
@@ -154,6 +158,10 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 %apply double& OUTPUT { double& knock_on_angle_cosine };
 
 %include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
+
+%feature("autodoc",
+"samplePrimaryAndSecondary(ElectroionizationSubshellElectronScatteringDistribution self, const double incoming_energy) -> double, double, double, double")
+MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributio::samplePrimaryAndSecondary;
 
 // Basic electron scattering distribution interface setup
 %electron_distribution_interface_setup( ElectroionizationSubshellElectronScatteringDistribution )

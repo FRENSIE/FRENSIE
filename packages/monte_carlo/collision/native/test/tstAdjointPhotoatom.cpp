@@ -590,11 +590,15 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideSurvivalBias )
 
 //---------------------------------------------------------------------------//
 // Check that a line energy collision can be modeled
+//! \details This unit test is dependent on the version of boost being used.
 TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 {
   // Sample the pair production reaction
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.05; // select pair production (should be 0.95 for boost 1.58)
+  if( BOOST_VERSION < 106000 )
+    fake_stream[0] = 0.95; // select pair production (for boost below version 1.60)
+  else
+    fake_stream[0] = 0.05; // select pair production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -620,7 +624,10 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
   bank.pop();
 
   // Sample the triplet production reaction
-  fake_stream[0] = 0.04; // select triplet production (should be 0.96 for boost 1.58)
+  if( BOOST_VERSION < 106000 )
+    fake_stream[0] = 0.96; // select triplet production (for boost below version 1.60)
+  else
+    fake_stream[0] = 0.04; // select triplet production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;

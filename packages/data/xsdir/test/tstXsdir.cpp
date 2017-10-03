@@ -41,7 +41,7 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
 
   xsdir.exportInfo( cross_sections );
 
-  TEST_EQUALITY_CONST( cross_sections.numParams(), 29 );
+  TEST_EQUALITY_CONST( cross_sections.numParams(), 31 );
   TEST_ASSERT( cross_sections.isSublist( "H-1_900.0K_v8" ) );
   TEST_ASSERT( cross_sections.isSublist( "H-1_600.0K_v8" ) );
   TEST_ASSERT( cross_sections.isSublist( "H-1_293.6K_v8" ) );
@@ -70,6 +70,8 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_ASSERT( cross_sections.isSublist( "be_400.0K_v2" ) );
   TEST_ASSERT( cross_sections.isSublist( "H" ) );
   TEST_ASSERT( cross_sections.isSublist( "He" ) );
+  TEST_ASSERT( cross_sections.isSublist( "H_v14" ) );
+  TEST_ASSERT( cross_sections.isSublist( "He_v14" ) );
   TEST_ASSERT( cross_sections.isSublist( "Miscellaneous" ) );
 
   Teuchos::ParameterList& misc_list =
@@ -192,6 +194,14 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_EQUALITY_CONST( other_list.numParams(), 10 );
 
   other_list = cross_sections.sublist( "He" );
+
+  TEST_EQUALITY_CONST( other_list.numParams(), 10 );
+
+  other_list = cross_sections.sublist( "H_v14" );
+
+  TEST_EQUALITY_CONST( other_list.numParams(), 10 );
+
+  other_list = cross_sections.sublist( "He_v14" );
 
   TEST_EQUALITY_CONST( other_list.numParams(), 10 );
 }

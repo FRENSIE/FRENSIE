@@ -45,9 +45,9 @@ T InterpolationHelper<ParentInterpolationType>::interpolate(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
+
   return ParentInterpolationType::recoverProcessedDepVar(
-               processed_dep_var_0 + 
+               processed_dep_var_0 +
                processed_slope*(processed_indep_var - processed_indep_var_0) );
 }
 
@@ -107,7 +107,10 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseGridLength(
  * that is calculated is not a traditional length. It is the distance between
  * the processed upper independent value and the processed lower
  * independent value. This is why any units associated with the independent
- * grid limits are stripped away.
+ * grid limits are stripped away. Due to conversion of the independent
+ * values from a cosine (mu) to a delta cosine ( 1 - mu ) for LogLogCos and
+ * LinLogCos, it is assumed the processed grids are inverted to ensure they
+ * are in ascending order.
  */
 template<typename ParentInterpolationType>
 template<typename T>
@@ -254,7 +257,9 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 
 // Calculate the processed independent variable (from eta)
 /*! \details A tolerance is not required with this method because no variable 
- * processing is done.
+ * processing is done. Due to conversion of the independent values from a cosine
+ * (mu) to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, it is assumed
+ * the processed grids are inverted to ensure they are in ascending order.
  */
 template<typename ParentInterpolationType>
 template<typename T>
@@ -305,6 +310,18 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
     return value*(1+tol);
   else
     return value*(1-tol);
+}
+
+// Convert the cosine variable
+/*! \details This function converts from cosine (mu) to delta cosine (1 - mu) or
+ *  from delta cosine (1 - mu) back to cosine (mu).
+ */
+template<typename ParentInterpolationType>
+template<typename T>
+inline T InterpolationHelper<ParentInterpolationType>::convertCosineVar(
+          const T cosine_var )
+{
+  return QuantityTraits<T>::one() - cosine_var;
 }
 
 // Get the interpolation type
@@ -415,7 +432,7 @@ inline typename QuantityTraits<T>::RawType
 LogLog::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LogLog::isIndepVarInValidRange( dep_var ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var ) );
 
   return log( getRawQuantity(dep_var) );
 }
@@ -833,7 +850,7 @@ inline typename QuantityTraits<T>::RawType
 LinLin::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LinLin::isIndepVarInValidRange( dep_var ) );
+  testPrecondition( LinLin::isDepVarInValidRange( dep_var ) );
 
   return getRawQuantity(dep_var);
 }

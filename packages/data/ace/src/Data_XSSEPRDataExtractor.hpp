@@ -31,7 +31,7 @@ namespace Data{
  *  <li> NXS[2] = number of photon energies in common grid (Ng)</li>
  *  <li> NXS[3] = length of obsolete fluorescence data divided by 4 (Nf)</li>
  *  <li> NXS[4] = number of shells for Compton Doppler broadening (Nd)</li>
- *  <li> NXS[5] = new format flag to identify new table format (always=1)</li>
+ *  <li> NXS[5] = new format flag to identify new table format (1 for epr12 and 3 for epr14)</li>
  *  <li> NXS[6] = number of subshells for photoelectric and electron
  *                impact ionization (Ns)</li>
  *  <li> NXS[7] = number of electron energies in common grid (Ne)</li>
@@ -89,6 +89,8 @@ namespace Data{
  *                 tables (BREME)</li>
  *  <li> JXS[25] = location of bremsstrahlung electron average energy-loss
  *                 table (BREML)</li>
+ *  <li> JXS[26] = location of electron elastic transport and total
+ *                 cross sections - Only in epr14 (ESZE2)</li>
  */
 
 /*! The XSS electron-photon-relaxation data extractor class
@@ -107,6 +109,9 @@ public:
   //! Destructor
   ~XSSEPRDataExtractor()
   { /* ... */ }
+
+  //! Check if the file version is eprdata14
+  bool isEPRVersion14() const;
 
   //! Check if old fluorescence data is present
   bool hasOldFluorescenceData() const;
@@ -192,14 +197,23 @@ public:
   //! Extract the ESZE block
   Teuchos::ArrayView<const double> extractESZEBlock() const;
 
+  //! Extract the ESZE2 block - only in epr14
+  Teuchos::ArrayView<const double> extractESZE2Block() const;
+
   //! Extract the incoming electron energy grid
   Teuchos::ArrayView<const double> extractElectronEnergyGrid() const;
 
   //! Extract the electron total cross section
   Teuchos::ArrayView<const double> extractElectronTotalCrossSection() const;
 
-  //! Extract the electron elastic cross section
-  Teuchos::ArrayView<const double> extractElasticCrossSection() const;
+  //! Extract the electron elastic total cross section
+  Teuchos::ArrayView<const double> extractElasticTotalCrossSection() const;
+
+  //! Extract the electron elastic cutoff cross section ( mu = -1 to 0.999999 )
+  Teuchos::ArrayView<const double> extractElasticCutoffCrossSection() const;
+
+  //! Extract the electron elastic transport cross section
+  Teuchos::ArrayView<const double> extractElasticTransportCrossSection() const;
 
   //! Extract the bremsstrahlung cross section
   Teuchos::ArrayView<const double> extractBremsstrahlungCrossSection() const;
@@ -256,6 +270,9 @@ private:
 
   // The ESZE block (cached for quick access to cross sections in this block)
   Teuchos::ArrayView<const double> d_esze_block;
+
+  // The ESZE2 block (cached for quick access to cross sections in this block)
+  Teuchos::ArrayView<const double> d_esze2_block;
 };
 
 } // end Data namespace

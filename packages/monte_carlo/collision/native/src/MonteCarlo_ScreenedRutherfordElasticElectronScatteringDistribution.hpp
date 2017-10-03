@@ -37,7 +37,6 @@ public:
 
   //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number );
 
   //! Destructor
@@ -91,16 +90,6 @@ public:
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
-  //! Evaluate the integrated distribution
-  double evaluateIntegrated( const double incoming_energy ) const;
-
-  //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy ) const;
-
-  //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double cutoff_pdf,
-                                const double eta ) const;
-
 protected:
 
    //! Sample an outgoing direction from the distribution
@@ -112,9 +101,6 @@ private:
 
   // Elastic electron traits
   std::shared_ptr<ElasticTraits> d_elastic_traits;
-
-  // Cutoff elastic scattering distribution
-  ElasticDistribution d_elastic_cutoff_distribution;
 };
 
 } // end MonteCarlo namespace

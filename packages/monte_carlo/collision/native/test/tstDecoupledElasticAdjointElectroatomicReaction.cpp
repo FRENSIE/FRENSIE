@@ -230,7 +230,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         sr_elastic_distribution;
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
         sr_elastic_distribution,
-        cutoff_elastic_distribution,
         data_container.getAtomicNumber() );
 
     // Create the reaction

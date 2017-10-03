@@ -38,13 +38,13 @@ double eval_tol;
 //---------------------------------------------------------------------------//
 // Check that an coupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createCoupledElasticReaction_LogLogLog )
+                   createCoupledElasticReaction_LogLogCosLog )
 {
   bool correlated_sampling_mode_on = true;
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::SIMPLIFIED_UNION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogCosLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -78,11 +78,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an decoupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createDecoupledElasticReaction_LogLogLog )
+                   createDecoupledElasticReaction_LogLogCosLog )
 {
   bool correlated_sampling_mode_on = true;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogLog>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -115,11 +115,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createCutoffElasticReaction_LogLogLog )
+                   createCutoffElasticReaction_LogLogCosLog )
 {
   bool correlated_sampling_mode_on = true;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogLog>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogCosLog>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -149,45 +149,6 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   // Clear the reaction
   reaction.reset();
 }
-
-//---------------------------------------------------------------------------//
-// Check that a screened Rutherford elastic reaction can be created
-TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createScreenedRutherfordElasticReaction_LogLogLog )
-{
-  bool correlated_sampling_mode_on = true;
-
-  MonteCarlo::ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LogLogLog>(
-                *data_container,
-                energy_grid,
-                grid_searcher,
-                reaction,
-                0.9,
-                correlated_sampling_mode_on,
-                1e-7 );
-
-  // Test reaction properties
-  TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 6.654785 );
-
-  // Test that the stored cross section is correct
-  double energy = 1e1;
-  double cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 3.722e5, 1e-12 );
-
-  energy = 1e2;
-  cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0561378e6, 1e-12 );
-
-  energy = 1e5;
-  cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 2.1116099116949e6, 1e-12 );
-
-  // Clear the reaction
-  reaction.reset();
-}
-
 
 //---------------------------------------------------------------------------//
 // LinLinLog Tests.
@@ -348,18 +309,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that a screened Rutherford elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createScreenedRutherfordElasticReaction_LinLinLog )
+                   createScreenedRutherfordElasticReaction )
 {
-  bool correlated_sampling_mode_on = true;
-
-  MonteCarlo::ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLog>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
                 *data_container,
                 energy_grid,
                 grid_searcher,
-                reaction,
-                0.9,
-                correlated_sampling_mode_on,
-                1e-7 );
+                reaction );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -546,7 +502,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -590,7 +546,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -810,7 +766,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.405050e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -854,7 +810,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 1.40505e3, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1.0e5 );
-  TEST_EQUALITY_CONST( cross_section, 1.95417e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.95417e3, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

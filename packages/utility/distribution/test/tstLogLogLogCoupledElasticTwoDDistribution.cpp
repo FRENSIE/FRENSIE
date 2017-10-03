@@ -314,7 +314,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
                                                          distribution_data ) );
   }
 
@@ -333,7 +333,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 3.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
                                                          distribution_data ) );
   }
 
@@ -5979,7 +5979,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the two-dimensional distribution
   {
-    Utility::ElasticTwoDDistribution<Utility::LogLogLog>::DistributionType
+    Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
@@ -5999,7 +5999,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     distribution_data[1].first = 2.0;
     distribution_data[1].second.reset( new Utility::CoupledElasticDistribution<Utility::LinLin>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogLog>( distribution_data, 1.0, 1e-3, 1e-7 ) );
+    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>( distribution_data, 1.0, 1e-3, 1e-7 ) );
     distribution = tab_distribution;
   }
 
@@ -6027,7 +6027,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     primary_bins[1] = 2.0*MeV;
     secondary_dists[1].reset( new Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogLog,MegaElectronVolt,cgs::dimensionless,Barn>(
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogCosLog,MegaElectronVolt,cgs::dimensionless,Barn>(
         primary_bins, secondary_dists, 1.0*cgs::dimensionless(), 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;

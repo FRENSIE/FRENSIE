@@ -291,7 +291,7 @@ void PhotoatomCore::createTotalReaction(
       total_cross_section.push_back( raw_cross_section );
     }
     else
-{
+    {
       // Ignore this data point
       ++total_threshold_energy_index;
     }

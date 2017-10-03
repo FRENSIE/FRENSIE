@@ -53,9 +53,19 @@ void AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossF
   // Extract the energy loss for atomic excitation
   Teuchos::Array<double> energy_loss(excit_block(size,size));
 
-  energy_loss_function.reset(
-    new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
-		                                       energy_loss ) );
+  // Check if the file version is eprdata14 or eprdata12
+  if ( raw_electroatom_data.isEPRVersion14() )
+  {
+    energy_loss_function.reset(
+      new Utility::TabularDistribution<Utility::LogLog>( excitation_energy_grid,
+                                                         energy_loss ) );
+  }
+  else
+  {
+    energy_loss_function.reset(
+      new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
+                                                         energy_loss ) );
+  }
 }
 
 } // end MonteCarlo namespace

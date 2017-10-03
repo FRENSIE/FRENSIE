@@ -113,13 +113,13 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 11110995.37814653106, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 689.2154402763227381, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.7244825069878232e+02, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 662.92869138138178187, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.4697917348662668e+02, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5969818328396216955, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5701193026053988, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 9.71630E-02 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.38239950812861E+00, 1e-12 );
@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   sample )
+                   samplePrimaryAndSecondary )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 3 );

@@ -292,7 +292,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   sample_ace )
+                   samplePrimaryAndSecondary_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );

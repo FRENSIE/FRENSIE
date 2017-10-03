@@ -320,6 +320,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
 
+    // Create the hash-based grid searcher
+    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+                                             energy_grid,
+                                             energy_grid[0],
+                                             energy_grid[energy_grid.size()-1],
+                                             100 ) );
+
     Teuchos::ArrayView<const double> raw_ae_cross_section =
       xss_data_extractor->extractExcitationCrossSection();
 
@@ -414,12 +422,13 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create a test electroatom core
     ace_electroatom_core.reset(
-                          new MonteCarlo::ElectroatomCore( energy_grid,
-                                                         scattering_reactions,
-                                                         absorption_reactions,
-                                                         relaxation_model,
-                                                         false,
-                                                         Utility::LinLin() ) );
+      new MonteCarlo::ElectroatomCore( energy_grid,
+                                       grid_searcher,
+                                       scattering_reactions,
+                                       absorption_reactions,
+                                       relaxation_model,
+                                       false,
+                                       Utility::LinLin() ) );
   }
 
   // Create the Native electroatom core
@@ -540,12 +549,13 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create a test electroatom core
     native_electroatom_core.reset(
-                          new MonteCarlo::ElectroatomCore( energy_grid,
-                                                         scattering_reactions,
-                                                         absorption_reactions,
-                                                         relaxation_model,
-                                                         false,
-                                                         Utility::LinLin() ) );
+      new MonteCarlo::ElectroatomCore( energy_grid,
+                                       grid_searcher,
+                                       scattering_reactions,
+                                       absorption_reactions,
+                                       relaxation_model,
+                                       false,
+                                       Utility::LinLin() ) );
   }
 }
 

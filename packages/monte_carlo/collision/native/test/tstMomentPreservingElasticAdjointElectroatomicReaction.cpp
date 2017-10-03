@@ -170,7 +170,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
         discrete_elastic_distribution;
 
-  NativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogLog>(
+  NativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogCosLog>(
         discrete_elastic_distribution,
         data_container,
         cutoff_angle_cosine,

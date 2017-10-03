@@ -30,7 +30,7 @@ createCoupledElasticReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -104,7 +104,7 @@ createDecoupledElasticReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -171,7 +171,7 @@ createHybridElasticReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -241,7 +241,7 @@ createCutoffElasticReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -299,11 +299,7 @@ createCutoffElasticReaction(
 //! Create a screened Rutherford elastic scattering electroatomic reaction
 std::shared_ptr<ElectroatomicReaction>
 createScreenedRutherfordElasticReaction(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const double evaluation_tol )
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data )
 {
   // Extract the common energy grid
   Teuchos::ArrayRCP<double> energy_grid;
@@ -311,54 +307,18 @@ createScreenedRutherfordElasticReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-
-  if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
-  {
- ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLog>(
+  ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
-        reaction,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-  }
-  else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
-  {
- ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LogLogLog>(
-        raw_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        reaction,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-  }
-  else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
-  {
- ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction<Utility::LinLinLin>(
-        raw_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        reaction,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on,
-        evaluation_tol );
-  }
-  else
-  {
-    THROW_EXCEPTION( std::runtime_error,
-                     "Error: the TwoDInterpPolicy " <<
-                     two_d_interp_policy_name <<
-                     " is invalid or currently not supported!" );
-  }
+        reaction );
 
   // Make sure the reaction was created correctly
   testPostcondition( reaction.use_count() > 0 );
@@ -381,7 +341,7 @@ createMomentPreservingElasticReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -451,7 +411,7 @@ createAtomicExcitationReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -488,7 +448,7 @@ createSubshellElectroionizationReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -561,7 +521,7 @@ createSubshellElectroionizationReactions(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
@@ -633,7 +593,7 @@ createBremsstrahlungReaction(
                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );

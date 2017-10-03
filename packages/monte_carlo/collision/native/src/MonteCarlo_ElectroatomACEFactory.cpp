@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -44,13 +45,25 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create a hash based energy grid seacher
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-                              energy_grid,
-                  properties.getNumberOfElectronHashGridBins() ) );
+                      energy_grid,
+                      properties.getNumberOfElectronHashGridBins() ) );
 
   // Create the elastic scattering reaction
-  if ( properties.isElasticModeOn() )
+  if ( properties.isElasticModeOn() ) // Create the decoupled elastic scattering reaction
   {
-    // Create the cutoff elastic scattering reaction
+    // Check the ACE file version
+    if( raw_electroatom_data.isEPRVersion14() )
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
+
+      ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer );
+    }
+    else // Create the cutoff elastic scattering reaction
     {
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
@@ -101,7 +114,7 @@ void ElectroatomACEFactory::createElectroatomCore(
         grid_searcher,
         reaction_pointers );
 
-    for( unsigned i = 0; i < reaction_pointers.size(); ++i )
+    for( unsigned i = 0u; i < reaction_pointers.size(); ++i )
     {
       scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];
@@ -109,12 +122,26 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 
   // Create the electroatom core
-  electroatom_core.reset( new ElectroatomCore( energy_grid,
-                                               scattering_reactions,
-                                               absorption_reactions,
-                                               atomic_relaxation_model,
-                                               false,
-                                               Utility::LinLin() ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    electroatom_core.reset( new ElectroatomCore( energy_grid,
+                                                 grid_searcher,
+                                                 scattering_reactions,
+                                                 absorption_reactions,
+                                                 atomic_relaxation_model,
+                                                 false,
+                                                 Utility::LogLog() ) );
+  }
+  else
+  {
+    electroatom_core.reset( new ElectroatomCore( energy_grid,
+                                                 grid_searcher,
+                                                 scattering_reactions,
+                                                 absorption_reactions,
+                                                 atomic_relaxation_model,
+                                                 false,
+                                                 Utility::LinLin() ) );
+  }
 }
 
 // Create a electroatom (using the provided atomic relaxation model)

@@ -23,6 +23,10 @@ InterpolationType convertENDFInterpolationTypeToInterpolationType(
   case 4u: return LOGLIN_INTERPOLATION;
   case 5u: return LOGLOG_INTERPOLATION;
   case 6u: return GAMOW_INTERPOLATION;
+  case 7u: return LOGLOGCOS_INTERPOLATION;
+  case 8u: return LOGCOSLOG_INTERPOLATION;
+  case 9u: return LINLOGCOS_INTERPOLATION;
+  case 10u: return LOGCOSLIN_INTERPOLATION;
   default:
     THROW_EXCEPTION( std::runtime_error,
                      "Error: ENDF interpolation type " << endf_interp_type <<
@@ -47,6 +51,14 @@ std::string convertInterpolationTypeToString( const InterpolationType type )
     return "Log-Log";
   case GAMOW_INTERPOLATION:
     return "Gamow";
+  case LOGLOGCOS_INTERPOLATION:
+    return "Log-LogCos";
+  case LOGCOSLOG_INTERPOLATION:
+    return "LogCos-Log";
+  case LINLOGCOS_INTERPOLATION:
+    return "Lin-LogCos";
+  case LOGCOSLIN_INTERPOLATION:
+    return "LogCos-Lin";
   default:
     THROW_EXCEPTION( std::logic_error,
                      "Error: InterpolationType " << (unsigned)type <<
