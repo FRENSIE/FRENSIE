@@ -98,12 +98,12 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
   cross_section =
     mp_elastic_reaction->getCrossSection( 1.0E-03 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.6696690569928249e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6728373491654180e+06, 1e-12 );
 
   cross_section =
     mp_elastic_reaction->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.0498802209908908e+00, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0498802209908908, 1e-12 );
 }
 
 

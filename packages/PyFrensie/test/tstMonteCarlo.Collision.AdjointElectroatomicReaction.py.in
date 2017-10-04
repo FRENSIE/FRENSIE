@@ -51,8 +51,8 @@ class AdjointCoupledElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*2.74896e+08 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.8049048154381788e+06,
-                                delta=1e-12*2.8049048154381788e+06 )
+                                2.8222590384670133e+06,
+                                delta=1e-12*2.8222590384670133e+06 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 1.3022122514987041e+04,
@@ -79,8 +79,8 @@ class AdjointDecoupledElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*2.74896e+08 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.8049048154381788e+06,
-                                delta=1e-12*2.8049048154381788e+06 )
+                                2.8222590384670133e+06,
+                                delta=1e-12*2.8222590384670133e+06 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 1.3022122514987041e+04,
@@ -107,7 +107,7 @@ class AdjointHybridElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*2.7336893667900169e+08 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.9992952490794754e+06,
+                                2.4966702099179528e+06,
                                 delta=1e-12*3.2786275807901180e+08 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
@@ -135,8 +135,8 @@ class AdjointCutoffElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*2.74896e+08 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.8049048154381788e+06,
-                                delta=1e-12*2.8049048154381788e+06 )
+                                2.8222590384670133e+06,
+                                delta=1e-12*2.8222590384670133e+06 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 3.0472762372903748e+02,
@@ -187,8 +187,8 @@ class AdjointMomentPreservingElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*1.2217606103336416e+07 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.6696690569928249e+06,
-                                delta=1e-12*1.6696690569928249e+06 )
+                                1.6728373491654180e+06,
+                                delta=1e-12*1.6728373491654180e+06 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 2.0498802209908908,
@@ -215,8 +215,8 @@ class AdjointAtomicExcitationReactionTestCase(unittest.TestCase):
                                 delta=1e-12*6.1222996978575356e+07 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.0537482649407225e+07,
-                                delta=1e-12*1.0537482649407225e+07 )
+                                1.0611513335611556e+07,
+                                delta=1e-12*1.0611513335611556e+07 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 8.1829299853764838e+04,
@@ -241,16 +241,16 @@ class AdjointSubshellElectroionizationReactionsTestCase(unittest.TestCase):
         # Test first subshell
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.6878251924030220e+10,
-                                delta=1e-12*4.6878251924030220e+10 )
+                                4.6575878222818077e+10,
+                                delta=1e-12*4.6575878222818077e+10 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.6628669703671712e+07,
-                                delta=1e-12*1.6628669703671712e+07 )
+                                1.6529456750610253e+07,
+                                delta=1e-12*1.6529456750610253e+07 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                6.2903317255053284e+04,
-                                delta=1e-9*6.2903317255053284e+04 )
+                                6.2196745667489216e+04,
+                                delta=1e-9*6.2196745667489216e+04 )
 
 
 #-----------------------------------------------------------------------------#
@@ -270,16 +270,16 @@ class AdjointBremsstrahlungReactionTestCase(unittest.TestCase):
         "*Test MonteCarlo.Collision.createBremsstrahlungReaction getCrossSection method"
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.6179443997604473e+01,
-                                delta=1e-12*4.6179443997604473e+01 )
+                                4.6179711080200960e+01,
+                                delta=1e-12*4.6179711080200960e+01 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.6612628318967477e+01,
-                                delta=1e-12*1.6612628318967477e+01 )
+                                1.6646322139064758e+01,
+                                delta=1e-12*1.6646322139064758e+01 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                7.7113235533702451e-01,
-                                delta=1e-9*7.7113235533702451e-01 )
+                                7.7113286525737745e-01,
+                                delta=1e-9*7.7113286525737745e-01 )
 
 #-----------------------------------------------------------------------------#
 # Custom main
