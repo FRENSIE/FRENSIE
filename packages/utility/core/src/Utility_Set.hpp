@@ -15,6 +15,10 @@
 #include <set>
 #include <unordered_set>
 
+// Boost Includes
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/unordered_set.hpp>
+
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"

@@ -14,6 +14,10 @@
 #include <list>
 #include <forward_list>
 
+// Boost Includes
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/forward_list.hpp>
+
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"

@@ -21,7 +21,9 @@ namespace Utility{
   
 namespace Details{
 
-//! The tuple output stream helper class 
+/*! The tuple output stream helper class 
+ * \ingroup tuple
+ */
 template<size_t I, typename TupleType, typename Enable = void>
 struct TupleStreamHelper
 {
@@ -61,8 +63,9 @@ struct TupleStreamHelper
   }
 };
 
-/*! \brief The tuple output stream helper class 
- * (specialization for I == Utility::TupleSize-1, which is for the last element)
+/*! \brief The tuple output stream helper class (specialization for 
+ * I == Utility::TupleSize-1, which is for the last element)
+ * \ingroup tuple
  */
 template<size_t I, typename TupleType>
 struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==Utility::TupleSize<TupleType>::value-1>::type>
@@ -104,6 +107,7 @@ struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==Utility::Tuple
 
 /*! \brief The tuple output stream helper class
  * (specialization for I == Utility::TupleSize, which is past the last element)
+ * \ingroup tuple
  */
 template<size_t I, typename TupleType>
 struct TupleStreamHelper<I, TupleType, typename std::enable_if<I==Utility::TupleSize<TupleType>::value>::type>
@@ -140,38 +144,72 @@ inline void ToStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>
   os << '}';
 }
 
+namespace Details{
 
-// Convert the string to an object of type T
+/*! Remove references from tuple element types (default is undefined)
+ * \ingroup tuple
+ */
 template<typename T>
-inline auto FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::fromString(
-                                     const std::string& obj_rep ) -> ReturnType
+struct RemoveTupleElementReferences;
+
+/*! Partial specialization of RemoveTupleElementReferences for std::tuple types
+ * \ingroup tuple
+ */
+template<typename... Types>
+struct RemoveTupleElementReferences<std::tuple<Types...> >
 {
-  std::istringstream iss( obj_rep );
+  typedef std::tuple<typename std::remove_reference<Types>::type...> type;
+};
 
-  ReturnType obj;
+/*! Partial specialization of RemoveTupleElementReferences for std::pair types
+ * \ingroup tuple
+ */
+template<typename T1, typename T2>
+struct RemoveTupleElementReferences<std::pair<T1,T2> >
+{
+  typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> type;
+};
+  
+} // end Details namespace
 
-  FromStringTraits<ReturnType>::fromStream( iss, obj );
-
-  return obj;
-}
-
-// Extract the object from a stream
+/*! Partial specialization of FromStringTraits for std::tuple
+ * \ingroup tuple
+ * \ingroup from_string_traits
+ */
 template<typename T>
-inline void FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>::fromStream(
-                                                     std::istream& is,
-                                                     T& obj,
-                                                     const std::string& )
-{ 
-  try{
-    // Initialize the input stream
-    Utility::initializeInputStream( is, '{' );
+struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
+{
+  //! The type that a string will be converted to
+  typedef typename Details::RemoveTupleElementReferences<T>::type ReturnType;
+  
+  //! Convert the string to an object of type T
+  static inline ReturnType fromString( const std::string& obj_rep )
+  {
+    std::istringstream iss( obj_rep );
+
+    ReturnType obj;
     
-    Details::TupleStreamHelper<0,T>::fromStream( is, obj );
+    FromStringTraits<ReturnType>::fromStream( iss, obj );
+    
+    return obj;
   }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              Utility::StringConversionException,
-                              "Could not extract a tuple from the stream!" );
-}
+
+  //! Extract the object from a stream
+  static inline void fromStream( std::istream& is,
+                                 T& obj,
+                                 const std::string& = std::string() )
+  {
+    try{
+      // Initialize the input stream
+      Utility::initializeInputStream( is, '{' );
+      
+      Details::TupleStreamHelper<0,T>::fromStream( is, obj );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::StringConversionException,
+                                "Could not extract a tuple from the stream!" );
+  }
+};
 
 // Get the type name
 template<typename... Types>
@@ -252,7 +290,10 @@ struct ZeroHelper<TupleType,typename std::enable_if<Utility::IsTuple<TupleType>:
   }
 };
 
-//! The helper class for converting extra data to the desired type
+/*! The helper class for converting extra data to the desired type
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
 template<typename T, typename Enabled = void>
 struct ExtraDataConversionHelper
 {
@@ -261,7 +302,10 @@ struct ExtraDataConversionHelper
   { return static_cast<T>( extra_data ); }
 };
 
-//! The ExtraDataConversionHelper specialization for std::string
+/*! The ExtraDataConversionHelper specialization for std::string
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
 template<>
 struct ExtraDataConversionHelper<std::string>
 {
@@ -270,7 +314,11 @@ struct ExtraDataConversionHelper<std::string>
   { return Utility::toString( extra_data ); }
 };
 
-//! The ExtraDataConversionHelper partial specialization for non-arithmetic types
+/*! \brief The ExtraDataConversionHelper partial specialization for 
+ * non-arithmetic types
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
 template<typename T>
 struct ExtraDataConversionHelper<T,typename std::enable_if<!std::is_arithmetic<T>::value>::type>
 {
@@ -279,7 +327,10 @@ struct ExtraDataConversionHelper<T,typename std::enable_if<!std::is_arithmetic<T
   { return T(); }
 };
 
-//! The helper class that is used to compare tuple members
+/*! The helper class that is used to compare tuple members
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
 template<size_t I, typename TupleType, typename Enabled = void>
 struct TupleMemberCompareHelper
 {
@@ -344,7 +395,10 @@ struct TupleMemberCompareHelper
   }
 };
 
-// The helper class that is used to compare tuple members
+/*! The helper class that is used to compare tuple members
+ * \ingroup tuple
+ * \ingroup comparison_traits
+ */
 template<size_t I, typename TupleType>
 struct TupleMemberCompareHelper<I,TupleType,typename std::enable_if<I==TupleSize<TupleType>::value>::type>
 {
@@ -625,9 +679,55 @@ inline bool ComparisonTraits<std::pair<T1,T2> >::compare(
                                       name_suffix, log, log_comparison_details,
                                       extra_data );
 }
+
+namespace Details{
+
+/*! The tuple serialization helper
+ * \ingroup tuple
+ */
+template<size_t I, typename TupleType, typename Enabled = void>
+struct TupleSerializationHelper
+{
+  template<typename Archive>
+  static inline void serialize( Archive& archive, TupleType& tuple, const unsigned version )
+  {
+    archive & Utility::get<I>( tuple );
+
+    TupleSerializationHelper<I+1,TupleType>::template serialize( archive, tuple, version );
+  }
+};
+
+/*! \brief Partial specialization of TupleSerializationHelper for 
+ * I >= Utility::TupleSize, which is for the last element
+ * \ingroup tuple
+ */
+template<size_t I, typename TupleType>
+struct TupleSerializationHelper<I,TupleType,typename std::enable_if<(I>=Utility::TupleSize<TupleType>::value)>::type>
+{
+  template<typename Archive>
+  static inline void serialize( Archive&, TupleType&, const unsigned )
+  { /* ... */ }
+};
+  
+} // end Details namespace
   
 } // end Utility namespace
 
+namespace boost{
+
+namespace serialization{
+
+// Serialize a tuple
+template<typename Archive, typename... Types>
+void serialize( Archive& archive, std::tuple<Types...>& tuple, const unsigned version )
+{
+  Utility::Details::TupleSerializationHelper<0,std::tuple<Types...> >::template serialize( archive, tuple, version );
+}
+
+} // end serialization namespace
+
+} // end boost namespace
+  
 #endif // end UTILITY_TUPLE_DEF_HPP
 
 //---------------------------------------------------------------------------//

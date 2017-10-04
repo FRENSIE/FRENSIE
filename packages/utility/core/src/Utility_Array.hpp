@@ -13,6 +13,9 @@
 #include <iostream>
 #include <array>
 
+// Boost Includes
+#include <boost/serialization/array.hpp>
+
 // FRENSIE Includes
 #include "Utility_ArrayView.hpp"
 #include "Utility_ToStringTraits.hpp"

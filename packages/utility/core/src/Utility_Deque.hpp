@@ -13,6 +13,9 @@
 #include <iostream>
 #include <deque>
 
+// Boost Includes
+#include <boost/serialization/deque.hpp>
+
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"

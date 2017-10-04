@@ -197,52 +197,12 @@ struct ToStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::typ
   static void toStream( std::ostream& os, const T& tuple );
 };
 
-namespace Details{
-
-/*! Remove references from tuple element types (default is undefined)
- * \ingroup tuple
- */
-template<typename T>
-struct RemoveTupleElementReferences;
-
-/*! Partial specialization of RemoveTupleElementReferences for std::tuple types
- * \ingroup tuple
- */
-template<typename... Types>
-struct RemoveTupleElementReferences<std::tuple<Types...> >
-{
-  typedef std::tuple<typename std::remove_reference<Types>::type...> type;
-};
-
-/*! Partial specialization of RemoveTupleElementReferences for std::pair types
- * \ingroup tuple
- */
-template<typename T1, typename T2>
-struct RemoveTupleElementReferences<std::pair<T1,T2> >
-{
-  typedef std::pair<typename std::remove_reference<T1>::type, typename std::remove_reference<T2>::type> type;
-};
-  
-} // end Details namespace
-
 /*! Partial specialization of FromStringTraits for std::tuple
  * \ingroup tuple
  * \ingroup from_string_traits
  */
 template<typename T>
-struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>
-{
-  //! The type that a string will be converted to
-  typedef typename Details::RemoveTupleElementReferences<T>::type ReturnType;
-  
-  //! Convert the string to an object of type T
-  static ReturnType fromString( const std::string& obj_rep );
-
-  //! Extract the object from a stream
-  static void fromStream( std::istream& is,
-                          T& obj,
-                          const std::string& = std::string() );
-};
+struct FromStringTraits<T,typename std::enable_if<Utility::IsTuple<T>::value>::type>;
 
 TYPE_NAME_TRAITS_QUICK_DECL( std::tuple<> );
 
@@ -427,6 +387,22 @@ struct ComparisonTraits<std::pair<T1,T2> >
 };
   
 } // end Utility namespace
+
+namespace boost{
+
+namespace serialization{
+
+/*! Serialize a tuple
+ *
+ * A boost archive must be passed as the archive object
+ * \ingroup tuple
+ */
+template<typename Archive, typename... Types>
+void serialize( Archive& archive, std::tuple<Types...>& tuple, const unsigned version );
+  
+} // end serialization namespace
+
+} // end boost namespace
 
 namespace std{
 

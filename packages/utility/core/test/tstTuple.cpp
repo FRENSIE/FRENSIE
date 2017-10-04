@@ -16,6 +16,8 @@
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/push_front.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
@@ -134,6 +136,37 @@ BOOST_AUTO_TEST_CASE( TupleSize )
 
   BOOST_CHECK_EQUAL( std::tuple_size<std::tuple<> >::value, 0 );
   BOOST_CHECK_EQUAL( std::tuple_size<std::tuple<> >::value, 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the tuple can be serialized
+BOOST_AUTO_TEST_CASE( serialize )
+{
+  std::tuple<> empty_tuple;
+
+  std::string archived_tuple;
+
+  // Archive the tuple
+  {
+    std::ostringstream oss;
+
+    boost::archive::binary_oarchive tuple_oarchive(oss);
+
+    BOOST_CHECK_NO_THROW( tuple_oarchive << empty_tuple );
+
+    archived_tuple = oss.str();
+    
+    BOOST_CHECK( archived_tuple.size() > 0 );
+  }
+
+  // Restore the tuple
+  {
+    std::istringstream iss(archived_tuple);
+    
+    boost::archive::binary_iarchive tuple_iarchive(iss);
+
+    BOOST_CHECK_NO_THROW( tuple_iarchive >> empty_tuple );
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -477,6 +510,42 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( set, T, TestTypes1 )
   typename Utility::TupleElement<0,decltype(std_tuple_1)>::type std_value_0( 2 );
 
   Utility::set<0>( std_tuple_1, std_value_0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the tuple can be serialized
+BOOST_AUTO_TEST_CASE_TEMPLATE( serialize, T, TestTypes1 )
+{
+  std::tuple<T> tuple( 1 );
+  
+  std::string archived_tuple;
+
+  // Archive the tuple
+  {
+    std::ostringstream oss;
+
+    boost::archive::binary_oarchive tuple_oarchive(oss);
+
+    BOOST_CHECK_NO_THROW( tuple_oarchive << tuple );
+
+    archived_tuple = oss.str();
+    
+    BOOST_CHECK( archived_tuple.size() > 0 );
+  }
+
+  std::tuple<T> restored_tuple;
+
+  // Restore the tuple
+  {
+    std::istringstream iss(archived_tuple);
+    
+    boost::archive::binary_iarchive tuple_iarchive(iss);
+
+    BOOST_CHECK_NO_THROW( tuple_iarchive >> restored_tuple );
+  }
+
+  BOOST_CHECK_EQUAL( Utility::get<0>( tuple ),
+                     Utility::get<0>( restored_tuple ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1019,6 +1088,47 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( set, TypePair, TestTypes2 )
   Utility::set<1>( std_tuple_2, std_value_1 );
 
   BOOST_CHECK_EQUAL( Utility::get<1>( std_tuple_2 ), std_value_1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the tuple can be serialized
+BOOST_AUTO_TEST_CASE_TEMPLATE( serialize, TypePair, TestTypes2 )
+{
+  typedef typename std::tuple_element<0,TypePair>::type T1;
+  typedef typename std::tuple_element<1,TypePair>::type T2;
+
+  std::tuple<T1,T2> tuple( 1, 1 );
+  
+  std::string archived_tuple;
+
+  // Archive the tuple
+  {
+    std::ostringstream oss;
+
+    boost::archive::binary_oarchive tuple_oarchive(oss);
+
+    BOOST_CHECK_NO_THROW( tuple_oarchive << tuple );
+
+    archived_tuple = oss.str();
+    
+    BOOST_CHECK( archived_tuple.size() > 0 );
+  }
+
+  std::tuple<T1,T2> restored_tuple;
+
+  // Restore the tuple
+  {
+    std::istringstream iss(archived_tuple);
+    
+    boost::archive::binary_iarchive tuple_iarchive(iss);
+
+    BOOST_CHECK_NO_THROW( tuple_iarchive >> restored_tuple );
+  }
+
+  BOOST_CHECK_EQUAL( Utility::get<0>( tuple ),
+                     Utility::get<0>( restored_tuple ) );
+  BOOST_CHECK_EQUAL( Utility::get<1>( tuple ),
+                     Utility::get<1>( restored_tuple ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2148,6 +2258,50 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( set, TypeTrip, TestTypes3 )
   BOOST_CHECK_EQUAL( Utility::get<2>( std_tuple_3 ), std_value_2 );
 }
 
+//---------------------------------------------------------------------------//
+// Check that the tuple can be serialized
+BOOST_AUTO_TEST_CASE_TEMPLATE( serialize, TypeTrip, TestTypes3 )
+{
+  typedef typename std::tuple_element<0,TypeTrip>::type T1;
+  typedef typename std::tuple_element<1,TypeTrip>::type T2;
+  typedef typename std::tuple_element<2,TypeTrip>::type T3;
+
+  std::tuple<T1,T2,T3> tuple( 1, 1, 1 );
+  
+  std::string archived_tuple;
+
+  // Archive the tuple
+  {
+    std::ostringstream oss;
+
+    boost::archive::binary_oarchive tuple_oarchive(oss);
+
+    BOOST_CHECK_NO_THROW( tuple_oarchive << tuple );
+
+    archived_tuple = oss.str();
+    
+    BOOST_CHECK( archived_tuple.size() > 0 );
+  }
+
+  std::tuple<T1,T2,T3> restored_tuple;
+
+  // Restore the tuple
+  {
+    std::istringstream iss(archived_tuple);
+    
+    boost::archive::binary_iarchive tuple_iarchive(iss);
+
+    BOOST_CHECK_NO_THROW( tuple_iarchive >> restored_tuple );
+  }
+
+  BOOST_CHECK_EQUAL( Utility::get<0>( tuple ),
+                     Utility::get<0>( restored_tuple ) );
+  BOOST_CHECK_EQUAL( Utility::get<1>( tuple ),
+                     Utility::get<1>( restored_tuple ) );
+  BOOST_CHECK_EQUAL( Utility::get<2>( tuple ),
+                     Utility::get<2>( restored_tuple ) );
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 //---------------------------------------------------------------------------//
@@ -2393,6 +2547,53 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( set, TypeQuad, TestTypes4 )
   Utility::set<3>( std_tuple_4, 3 );
 
   BOOST_CHECK_EQUAL( Utility::get<3>( std_tuple_4 ), 3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the tuple can be serialized
+BOOST_AUTO_TEST_CASE_TEMPLATE( serialize, TypeQuad, TestTypes4 )
+{
+  typedef typename std::tuple_element<0,TypeQuad>::type T1;
+  typedef typename std::tuple_element<1,TypeQuad>::type T2;
+  typedef typename std::tuple_element<2,TypeQuad>::type T3;
+  typedef typename std::tuple_element<3,TypeQuad>::type T4;
+
+  std::tuple<T1,T2,T3,T4> tuple( 1, 1, 1, 1 );
+  
+  std::string archived_tuple;
+
+  // Archive the tuple
+  {
+    std::ostringstream oss;
+
+    boost::archive::binary_oarchive tuple_oarchive(oss);
+
+    BOOST_CHECK_NO_THROW( tuple_oarchive << tuple );
+
+    archived_tuple = oss.str();
+    
+    BOOST_CHECK( archived_tuple.size() > 0 );
+  }
+
+  std::tuple<T1,T2,T3,T4> restored_tuple;
+
+  // Restore the tuple
+  {
+    std::istringstream iss(archived_tuple);
+    
+    boost::archive::binary_iarchive tuple_iarchive(iss);
+
+    BOOST_CHECK_NO_THROW( tuple_iarchive >> restored_tuple );
+  }
+
+  BOOST_CHECK_EQUAL( Utility::get<0>( tuple ),
+                     Utility::get<0>( restored_tuple ) );
+  BOOST_CHECK_EQUAL( Utility::get<1>( tuple ),
+                     Utility::get<1>( restored_tuple ) );
+  BOOST_CHECK_EQUAL( Utility::get<2>( tuple ),
+                     Utility::get<2>( restored_tuple ) );
+  BOOST_CHECK_EQUAL( Utility::get<3>( tuple ),
+                     Utility::get<3>( restored_tuple ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

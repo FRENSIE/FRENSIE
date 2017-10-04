@@ -15,6 +15,10 @@
 #include <map>
 #include <unordered_map>
 
+// Boost Includes
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/unordered_map.hpp>
+
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_ToStringTraits.hpp"
