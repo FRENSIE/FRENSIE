@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
 
 // Std Lib Includes
-#include <string> 
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>

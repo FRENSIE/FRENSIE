@@ -42,6 +42,9 @@ class ElectroatomCore
 
 public:
 
+  //! Typedef for the particle state type
+  typedef ElectronState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef boost::unordered_map<ElectroatomicReactionType,
                    std::shared_ptr<ElectroatomicReaction> >

@@ -42,6 +42,9 @@ class PhotoatomCore
 
 public:
 
+  //! Typedef for the particle state type
+  typedef PhotonState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef boost::unordered_map<PhotoatomicReactionType,
 			       Teuchos::RCP<PhotoatomicReaction> >
