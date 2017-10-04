@@ -67,8 +67,10 @@ public:
   virtual ~Photoatom()
   { /* ... */ }
 
-  //! Return if the atom has an atomic relaxation model
-  bool hasAtomicRelaxationModel() const;
+  //! Relax the atom
+  void relaxAtom( const Data::SubshellType vacancy_shell,
+                  const PhotonState& photon,
+                  ParticleBank& bank ) const;
 
   //! Return the cross section for a specific photoatomic reaction
   double getReactionCrossSection(
@@ -89,6 +91,17 @@ inline double Photoatom::getReactionCrossSection(
 			       const PhotonuclearReactionType reaction ) const
 {
   return 0.0;
+}
+
+// Relax the atom
+inline void Photoatom::relaxAtom( const Data::SubshellType vacancy_shell,
+                                  const PhotonState& photon,
+                                  ParticleBank& bank ) const
+{
+  // Relax the atom
+  d_core.getAtomicRelaxationModel().relaxAtom( vacancy_shell,
+                                               photon,
+                                               bank );
 }
 
 } // end MonteCarlo namespace

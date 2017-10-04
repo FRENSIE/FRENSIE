@@ -45,6 +45,9 @@ class AdjointElectroatomCore
 
 public:
 
+  //! Typedef for the particle state type
+  typedef AdjointElectronState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef boost::unordered_map<AdjointElectroatomicReactionType,
                                std::shared_ptr<AdjointElectroatomicReaction> >

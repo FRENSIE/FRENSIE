@@ -95,6 +95,15 @@ double Atom<AtomCore>::getAtomicTotalCrossSection( const double energy ) const
   unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( energy );
 
+  return this->getAtomicTotalCrossSection( energy, energy_grid_bin );
+}
+
+// Return the total cross section from atomic interactions
+template<typename AtomCore>
+double Atom<AtomCore>::getAtomicTotalCrossSection(
+                                const double energy,
+                                const unsigned energy_grid_bin ) const
+{
   double cross_section =
     this->getAtomicScatteringCrossSection( energy, energy_grid_bin );
 
@@ -129,19 +138,18 @@ double Atom<AtomCore>::getSurvivalProbability( const double energy ) const
   double survival_prob;
 
   // Find the energy bin index
-  if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
+  if( d_core.getGridSearcher().isValueWithinGridBounds( energy ) )
   {
     unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( energy );
 
     double total_cross_section =
-      d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );
+      this->getTotalCrossSection( energy, energy_grid_bin );
 
     if( total_cross_section > 0.0 )
     {
       survival_prob = 1.0 -
-        d_core.getTotalAbsorptionReaction().getCrossSection( energy,
-                                                             energy_grid_bin )/
+        this->getAbsorptionCrossSection( energy, energy_grid_bin )/
         total_cross_section;
     }
     else
@@ -168,19 +176,18 @@ double Atom<AtomCore>::getAtomicSurvivalProbability( const double energy ) const
 
   double survival_prob;
 
-  if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
+  if( d_core.getGridSearcher().isValueWithinGridBounds( energy ) )
   {
     unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( energy );
 
     double total_cross_section =
-      d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );
+      this->getAtomicTotalCrossSection( energy, energy_grid_bin );
 
     if( total_cross_section > 0.0 )
     {
       survival_prob = 1.0 -
-        d_core.getTotalAbsorptionReaction().getCrossSection( energy,
-                                                             energy_grid_bin )/
+        this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin )/
         total_cross_section;
     }
     else
@@ -227,44 +234,44 @@ double Atom<AtomCore>::getNuclearSurvivalProbability( const double energy ) cons
 // Collide with a particle
 template<typename AtomCore>
 void Atom<AtomCore>::collideAnalogue( ParticleStateType& particle,
-                            ParticleBank& bank ) const
+                                      ParticleBank& bank ) const
 {
-  if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( particle.getEnergy() ))
+  // Make sure the particle energy is valid
+  testPrecondition( d_core.getGridSearcher().isValueWithinGridBounds( particle.getEnergy() ) )
+
+  unsigned energy_grid_bin =
+    d_core.getGridSearcher().findLowerBinIndex( particle.getEnergy() );
+
+  double scattering_cross_section =
+    this->getAtomicScatteringCrossSection( particle.getEnergy(),
+                                            energy_grid_bin );
+
+  double absorption_cross_section =
+    this->getAtomicAbsorptionCrossSection( particle.getEnergy(),
+                                            energy_grid_bin );
+
+  double scaled_random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>()*
+    (scattering_cross_section+absorption_cross_section);
+
+  // Check if absorption occurs
+  if( scaled_random_number < absorption_cross_section )
   {
-    unsigned energy_grid_bin =
-      d_core.getGridSearcher().findLowerBinIndex( particle.getEnergy() );
+    this->sampleAbsorptionReaction( scaled_random_number,
+                                    energy_grid_bin,
+                                    particle,
+                                    bank );
 
-    double scattering_cross_section =
-      this->getAtomicScatteringCrossSection( particle.getEnergy(),
-                                             energy_grid_bin );
-
-    double absorption_cross_section =
-      this->getAtomicAbsorptionCrossSection( particle.getEnergy(),
-                                             energy_grid_bin );
-
-    double scaled_random_number =
-      Utility::RandomNumberGenerator::getRandomNumber<double>()*
-      (scattering_cross_section+absorption_cross_section);
-
-    // Check if absorption occurs
-    if( scaled_random_number < absorption_cross_section )
-    {
-      this->sampleAbsorptionReaction( scaled_random_number,
-                                      energy_grid_bin,
-                                      particle,
-                                      bank );
-
-      // Set the particle as gone regardless of the reaction that occurred
-      particle.setAsGone();
-    }
-    else
-    {
-      this->sampleScatteringReaction(
-                                scaled_random_number - absorption_cross_section,
-                                energy_grid_bin,
-                                particle,
-                                bank );
-    }
+    // Set the particle as gone regardless of the reaction that occurred
+    particle.setAsGone();
+  }
+  else
+  {
+    this->sampleScatteringReaction(
+                              scaled_random_number - absorption_cross_section,
+                              energy_grid_bin,
+                              particle,
+                              bank );
   }
 }
 
@@ -273,69 +280,69 @@ template<typename AtomCore>
 void Atom<AtomCore>::collideSurvivalBias( ParticleStateType& particle,
                                           ParticleBank& bank ) const
 {
-  if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( particle.getEnergy() ))
-  {
-    unsigned energy_grid_bin =
-      d_core.getGridSearcher().findLowerBinIndex( particle.getEnergy() );
+  // Make sure the particle energy is valid
+  testPrecondition( d_core.getGridSearcher().isValueWithinGridBounds( particle.getEnergy() ) )
 
-    double scattering_cross_section =
-      this->getAtomicScatteringCrossSection( particle.getEnergy(),
+  unsigned energy_grid_bin =
+    d_core.getGridSearcher().findLowerBinIndex( particle.getEnergy() );
+
+  double scattering_cross_section =
+    this->getAtomicScatteringCrossSection( particle.getEnergy(),
+                                           energy_grid_bin );
+
+  if( d_core.getAbsorptionReactions().size() > 0 )
+  {
+    double absorption_cross_section =
+      this->getAtomicAbsorptionCrossSection( particle.getEnergy(),
                                              energy_grid_bin );
 
-    if( d_core.getAbsorptionReactions().size() > 0 )
+    double survival_prob = scattering_cross_section/
+      (scattering_cross_section+absorption_cross_section);
+
+    // Multiply the particle's weight by the survival probabilty
+    if( survival_prob > 0.0 )
     {
-      double absorption_cross_section =
-        this->getAtomicAbsorptionCrossSection( particle.getEnergy(),
-                                               energy_grid_bin );
+      // Create a copy of the particle for sampling the absorption reaction
+      ParticleStateType particle_copy( particle, false, false );
 
-      double survival_prob = scattering_cross_section/
-        (scattering_cross_section+absorption_cross_section);
+      particle.multiplyWeight( survival_prob );
 
-      // Multiply the particle's weight by the survival probabilty
-      if( survival_prob > 0.0 )
-      {
-        // Create a copy of the particle for sampling the absorption reaction
-        ParticleStateType particle_copy( particle, false, false );
-
-        particle.multiplyWeight( survival_prob );
-
-        this->sampleScatteringReaction(
-              Utility::RandomNumberGenerator::getRandomNumber<double>()*
-              scattering_cross_section,
-              energy_grid_bin,
-              particle,
-              bank );
-
-        particle_copy.multiplyWeight( 1.0 - survival_prob );
-
-        this->sampleAbsorptionReaction(
-              Utility::RandomNumberGenerator::getRandomNumber<double>()*
-              absorption_cross_section,
-              energy_grid_bin,
-              particle_copy,
-              bank );
-      }
-      else
-      {
-        this->sampleAbsorptionReaction(
-              Utility::RandomNumberGenerator::getRandomNumber<double>()*
-              absorption_cross_section,
-              energy_grid_bin,
-              particle,
-              bank );
-
-        particle.setAsGone();
-      }
-    }
-    else
-    {
       this->sampleScatteringReaction(
             Utility::RandomNumberGenerator::getRandomNumber<double>()*
             scattering_cross_section,
             energy_grid_bin,
             particle,
             bank );
+
+      particle_copy.multiplyWeight( 1.0 - survival_prob );
+
+      this->sampleAbsorptionReaction(
+            Utility::RandomNumberGenerator::getRandomNumber<double>()*
+            absorption_cross_section,
+            energy_grid_bin,
+            particle_copy,
+            bank );
     }
+    else
+    {
+      this->sampleAbsorptionReaction(
+            Utility::RandomNumberGenerator::getRandomNumber<double>()*
+            absorption_cross_section,
+            energy_grid_bin,
+            particle,
+            bank );
+
+      particle.setAsGone();
+    }
+  }
+  else
+  {
+    this->sampleScatteringReaction(
+          Utility::RandomNumberGenerator::getRandomNumber<double>()*
+          scattering_cross_section,
+          energy_grid_bin,
+          particle,
+          bank );
   }
 }
 
@@ -371,13 +378,8 @@ void Atom<AtomCore>::sampleAbsorptionReaction( const double scaled_random_number
 
   atomic_reaction->second->react( particle, bank, subshell_vacancy );
 
-  if( this->hasAtomicRelaxationModel() )
-  {
-    // Relax the atom
-    d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
-                                                 particle,
-                                                 bank );
-  }
+  // Relax the atom
+  this->relaxAtom( subshell_vacancy, particle, bank );
 }
 
 // Sample a scattering reaction
@@ -412,13 +414,8 @@ void Atom<AtomCore>::sampleScatteringReaction( const double scaled_random_number
 
   atomic_reaction->second->react( particle, bank, subshell_vacancy );
 
-  if( this->hasAtomicRelaxationModel() )
-  {
-    // Relax the atom
-    d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
-                                                 particle,
-                                                 bank );
-  }
+  // Relax the atom
+  this->relaxAtom( subshell_vacancy, particle, bank );
 }
 
 } // end MonteCarlo namespace

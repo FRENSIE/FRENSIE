@@ -21,12 +21,6 @@ Photoatom::getAbsorptionReactionTypes()
   return PhotoatomCore::absorption_reaction_types;
 }
 
-// Return if the atom has an atomic relaxation model
-bool Photoatom::hasAtomicRelaxationModel() const
-{
-  return true;
-}
-
 // Return the cross section for a specific photoatomic reaction
 double Photoatom::getReactionCrossSection(
 			        const double energy,

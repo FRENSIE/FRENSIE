@@ -46,6 +46,9 @@ class AdjointPhotoatomCore
 
 public:
 
+  //! Typedef for the particle state type
+  typedef AdjointPhotonState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef boost::unordered_map<AdjointPhotoatomicReactionType,
                                std::shared_ptr<AdjointPhotoatomicReaction> >

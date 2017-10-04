@@ -65,8 +65,10 @@ public:
   virtual ~Electroatom()
   { /* ... */ }
 
-  //! Return if the atom has an atomic relaxation model
-  bool hasAtomicRelaxationModel() const;
+  //! Relax the atom
+  void relaxAtom( const Data::SubshellType vacancy_shell,
+                  const ElectronState& electron,
+                  ParticleBank& bank ) const;
 
   //! Return the cross section for a specific electroatomic reaction
   double getReactionCrossSection(
@@ -74,6 +76,17 @@ public:
                     const ElectroatomicReactionType reaction ) const;
 
 };
+
+// Relax the atom
+inline void Electroatom::relaxAtom( const Data::SubshellType vacancy_shell,
+                                    const ElectronState& electron,
+                                    ParticleBank& bank ) const
+{
+  // Relax the atom
+  d_core.getAtomicRelaxationModel().relaxAtom( vacancy_shell,
+                                               electron,
+                                               bank );
+}
 
 } // end MonteCarlo namespace
 

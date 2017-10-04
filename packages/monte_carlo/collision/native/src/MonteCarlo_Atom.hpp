@@ -126,8 +126,10 @@ public:
   //! Return the core
   const AtomCore& getCore() const;
 
-  //! Return if the atom has an atomic relaxation model
-  virtual bool hasAtomicRelaxationModel() const = 0;
+  //! Relax the atom
+  virtual void relaxAtom( const Data::SubshellType vacancy_shell,
+                          const ParticleStateType& particle,
+                          ParticleBank& bank ) const;
 
 protected:
 
@@ -135,6 +137,26 @@ protected:
   AtomCore d_core;
 
 private:
+
+  //! Return the total cross section at the desired energy
+  double getTotalCrossSection( const double energy,
+                               const unsigned energy_grid_bin ) const;
+
+  //! Return the total cross section from atomic interactions
+  double getAtomicTotalCrossSection( const double energy,
+                                     const unsigned energy_grid_bin ) const;
+
+  //! Return the total cross section from nuclear interactions
+  virtual double getNuclearTotalCrossSection( const double energy,
+                                              const unsigned energy_grid_bin ) const;
+
+  //! Return the total absorption cross section at the desired energy
+  double getAbsorptionCrossSection( const double energy,
+                                    const unsigned energy_grid_bin ) const;
+
+  //! Return the total absorption cross section from nuclear interactions
+  virtual double getNuclearAbsorptionCrossSection( const double energy,
+                                                   const unsigned energy_grid_bin ) const;
 
   // Return the total cross section from atomic interactions with a bin index
   double getAtomicScatteringCrossSection( const double energy,
@@ -209,12 +231,37 @@ inline double Atom<AtomCore>::getTotalCrossSection( const double energy ) const
          this->getNuclearTotalCrossSection( energy );
 }
 
+// Return the total cross section at the desired energy
+template<typename AtomCore>
+inline double Atom<AtomCore>::getTotalCrossSection(
+                                        const double energy,
+                                        const unsigned energy_grid_bin ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
+
+  return this->getAtomicTotalCrossSection( energy, energy_grid_bin ) +
+         this->getNuclearTotalCrossSection( energy, energy_grid_bin );
+}
+
 // Return the total cross section from nuclear interactions
 /*! \details By default, photonuclear reactions are not considered.
  */
 template<typename AtomCore>
 inline double
-Atom<AtomCore>::getNuclearTotalCrossSection(const double energy ) const
+Atom<AtomCore>::getNuclearTotalCrossSection( const double energy ) const
+{
+  return 0.0;
+}
+
+// Return the total cross section from nuclear interactions
+/*! \details By default, photonuclear reactions are not considered.
+ */
+template<typename AtomCore>
+inline double
+Atom<AtomCore>::getNuclearTotalCrossSection(
+                                        const double energy,
+                                        const unsigned energy_grid_bin ) const
 {
   return 0.0;
 }
@@ -232,12 +279,38 @@ Atom<AtomCore>::getAbsorptionCrossSection( const double energy ) const
          this->getNuclearAbsorptionCrossSection( energy );
 }
 
+// Return the total absorption cross section at the desired energy
+template<typename AtomCore>
+inline double
+Atom<AtomCore>::getAbsorptionCrossSection( const double energy,
+                                           const unsigned energy_grid_bin ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  return this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin ) +
+         this->getNuclearAbsorptionCrossSection( energy, energy_grid_bin );
+}
+
 // Return the total absorption cross section from nuclear interactions
 /*! \details By default, nuclear reactions are not considered.
  */
 template<typename AtomCore>
 inline double
 Atom<AtomCore>::getNuclearAbsorptionCrossSection( const double energy ) const
+{
+  return 0.0;
+}
+
+// Return the total absorption cross section from nuclear interactions
+/*! \details By default, nuclear reactions are not considered.
+ */
+template<typename AtomCore>
+inline double
+Atom<AtomCore>::getNuclearAbsorptionCrossSection(
+                                        const double energy,
+                                        const unsigned energy_grid_bin ) const
 {
   return 0.0;
 }
@@ -292,6 +365,17 @@ inline double Atom<AtomCore>::getAtomicAbsorptionCrossSection(
 
   return cross_section;
 }
+
+// Relax the atom
+/*! \details By default no atomic relaxation is performed. This is because there
+ * currently is no adjoint atomic relaxation implementation. This function
+ * should be overridden for forward electrons and photons
+ */
+template<typename AtomCore>
+inline void Atom<AtomCore>::relaxAtom( const Data::SubshellType vacancy_shell,
+                                       const ParticleStateType& particle,
+                                       ParticleBank& bank ) const
+{ /* ... */ }
 
 } // end MonteCarlo namespace
 

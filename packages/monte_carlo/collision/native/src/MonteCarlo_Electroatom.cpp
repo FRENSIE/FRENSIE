@@ -21,12 +21,6 @@ Electroatom::getScatteringReactionTypes()
   return ElectroatomCore::scattering_reaction_types;
 }
 
-// Return if the atom has an atomic relaxation model
-bool Electroatom::hasAtomicRelaxationModel() const
-{
-  return true;
-}
-
 // Return the cross section for a specific electroatomic reaction
 double Electroatom::getReactionCrossSection(
                     const double energy,
