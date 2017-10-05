@@ -620,7 +620,9 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectronD
 
 // Populate the adjoint electron-photon-relaxation data container
 void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const bool populate_photons,
+    const bool populate_electrons ) const
 {
   // Set the table data
   (*d_os_log) << std::endl << Utility::Bold( "Setting the table data" )
@@ -636,17 +638,37 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
   this->setAdjointRelaxationData( data_container );
   (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
-  // Set the photon data
-  (*d_os_log) << Utility::Bold( "Setting the adjoint photon data: " )
-              << std::endl;
-  this->setAdjointPhotonData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  if ( populate_photons )
+  {
+    // Set the photon data
+    (*d_os_log) << Utility::Bold( "Setting the adjoint photon data: " )
+                << std::endl;
+    this->setAdjointPhotonData( data_container );
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  }
+  else
+  {
+    // No photon data
+    (*d_os_log) << Utility::BoldMagenta( "Warning" )
+                << Utility::Bold( " No adjoint photon data will be set!" )
+                << std::endl;
+  }
 
-  // Set the electron data
-  (*d_os_log) << Utility::Bold( "Setting the adjoint electron data: " )
-              << std::endl;
-  this->setAdjointElectronData( data_container );
-  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  if ( populate_electrons )
+  {
+    // Set the electron data
+    (*d_os_log) << Utility::Bold( "Setting the adjoint electron data: " )
+                << std::endl;
+    this->setAdjointElectronData( data_container );
+    (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
+  }
+  else
+  {
+    // No electron data
+    (*d_os_log) << Utility::BoldMagenta( "Warning" )
+                << Utility::Bold(" No adjoint electron data will be set!" )
+                << std::endl;
+  }
 }
 
 // Set the table data

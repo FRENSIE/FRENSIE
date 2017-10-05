@@ -42,6 +42,7 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor aepr_generator_clp;
 
   // General table options
+  std::string data_generated = "all";
   std::string forward_file_name;
   std::string cross_section_directory, cross_section_alias;
   std::string subdirectory_name = "native";
@@ -95,6 +96,12 @@ int main( int argc, char** argv )
   // Set the general table option names
   aepr_generator_clp.setDocString( "Adjoint Electron-Photon-Relaxation Native "
                                    "Data File Generator\n" );
+  aepr_generator_clp.setOption( "data_generated",
+                                &data_generated,
+                                "The adjoint data that will be generated "
+                                "( all, photon, electron ). "
+                                "Note: The Relaxation and table data will "
+                                "always be generated." );
   aepr_generator_clp.setOption( "forward_file",
                                 &forward_file_name,
                                 "The forward file that will be used to "
@@ -768,6 +775,28 @@ int main( int argc, char** argv )
     return 1;
   }
 
+  // 36.) The adjoint data that will be generated ( all, photon, electron ).
+  // Note: The Relaxation and table data will always be generated.
+  bool generate_photon_data = true;
+  bool generate_electron_data = true;
+  if( data_generated == "photon" )
+    generate_electron_data = false;
+  else if( data_generated == "electron" )
+    generate_photon_data = false;
+  else if( data_generated != "all" )
+  {
+    std::cerr << Utility::BoldRed( "Error: " )
+              << "the data selected for generation ("
+              << data_generated
+              << ") was not valid!"
+              << std::endl;
+    
+    aepr_generator_clp.printHelpMessage( argv[0], *out );
+
+    return 1;
+  }
+
+
   // Get the file info
   std::string data_file_path, cross_sections_xml_file;
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info;
@@ -807,7 +836,7 @@ int main( int argc, char** argv )
     {
       std::cerr << Utility::BoldRed( "Error: " )
                 << "the cross section alias provided does not correspond to a "
-                << "Native photon data file!"
+                << "Native electron/photon/relaxation data file!"
                 << std::endl;
 
       return 1;
@@ -817,13 +846,16 @@ int main( int argc, char** argv )
   // Create the data generator and populate the new data table
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer data_container;
   int atomic_number;
-  
+
   {
-  // Export the temp data to an XML file
-  std::string temp_forward_file_name = "epr_native_temp.xml";
+    std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer> forward_data_container;
 
     // Recalculate the elastic electron data with the desired parameters
+    if( generate_electron_data )
     {
+      // Export the temp data to an XML file
+      std::string temp_forward_file_name = "epr_native_temp.xml";
+
       Data::ElectronPhotonRelaxationVolatileDataContainer temp_data_container(
             data_file_path,
             Utility::ArchivableObject::XML_ARCHIVE );
@@ -843,11 +875,19 @@ int main( int argc, char** argv )
 
       temp_data_container.exportData( temp_forward_file_name,
                                       Utility::ArchivableObject::XML_ARCHIVE );
-    }
 
-    std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>
-      forward_data_container( new Data::ElectronPhotonRelaxationDataContainer(
-                                                     temp_forward_file_name ) );
+      forward_data_container.reset(
+        new Data::ElectronPhotonRelaxationDataContainer( temp_forward_file_name ) );
+
+      const char *cstr = temp_forward_file_name.c_str();
+
+      std::remove( cstr );
+    }
+    else
+    {
+      forward_data_container.reset(
+        new Data::ElectronPhotonRelaxationDataContainer( data_file_path ) );
+    }
 
     atomic_number = forward_data_container->getAtomicNumber();
 
@@ -902,7 +942,9 @@ int main( int argc, char** argv )
 
     // Populate the new data container
     try{
-      generator.populateEPRDataContainer( data_container );
+      generator.populateEPRDataContainer( data_container,
+                                          generate_photon_data,
+                                          generate_electron_data );
     }
     EXCEPTION_CATCH_AND_EXIT( std::exception,
                               "Error: The adjoint EPR data could not be "
@@ -911,10 +953,6 @@ int main( int argc, char** argv )
     // Add the notes to the data container
     if( table_notes.size() > 0 )
       data_container.setNotes( table_notes );
-
-    const char *cstr = temp_forward_file_name.c_str();
-
-    std::remove( cstr );
   }
 
   // Export the generated data to an XML file

@@ -69,8 +69,9 @@ public:
 
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer(
-                    Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
-                    data_container ) const = 0;
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const bool populate_photons,
+    const bool populate_electrons ) const = 0;
 
 protected:
 

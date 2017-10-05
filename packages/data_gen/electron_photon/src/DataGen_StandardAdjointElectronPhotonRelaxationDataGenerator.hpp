@@ -275,7 +275,9 @@ public:
 
   //! Populate the adjoint electron-photon-relaxation data container
   void populateEPRDataContainer(
-    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+    Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const bool populate_photons = true,
+    const bool populate_electrons = true ) const;
 
 protected:
 

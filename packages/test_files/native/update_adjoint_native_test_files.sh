@@ -6,7 +6,7 @@
 # Get the date for the table notes
 today=`date`
 notes="This table was generated on $today. It is for testing only!"
-    
+
 # Update adjoint Hydrogen data
 printf "Updating the adjoint H native test data...\n"
 rm test_aepr_1_native.xml
