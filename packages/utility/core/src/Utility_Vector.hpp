@@ -21,6 +21,7 @@
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 /*! \defgroup vector Vector
@@ -46,6 +47,18 @@ struct ToStringTraits<std::vector<T> > : public Details::ToStringTraitsIteratorH
 template<typename T>
 struct FromStringTraits<std::vector<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >
 { /* ... */ };
+
+/*! Partial specialization of Utility::TypeNameTraits for std::vector types
+ * \ingroup vector
+ * \ingroup type_name_traits
+ */
+template<typename T>
+struct TypeNameTraits<std::vector<T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  { return std::string("std::vector<") + Utility::typeName<T>()+">"; }
+};
 
 /*! Partial specialization of ComparisonTraits for std::vector
  * \ingroup vector

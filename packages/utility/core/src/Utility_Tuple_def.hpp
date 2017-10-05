@@ -219,14 +219,6 @@ inline std::string TypeNameTraits<std::tuple<Types...> >::name()
 }
 
 // Get the type name
-template<typename... Types>
-inline std::string TypeNameTraits<std::tuple<Types...> >::name(
-                                                  const std::tuple<Types...>& )
-{
-  return TypeNameTraits<std::tuple<Types...> >::name();
-}
-
-// Get the type name
 template<typename T1, typename T2>
 inline std::string TypeNameTraits<std::pair<T1,T2> >::name()
 {

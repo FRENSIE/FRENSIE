@@ -215,9 +215,6 @@ struct TypeNameTraits<std::tuple<Types...> >
 {
   //! Get the type name
   static std::string name();
-
-  //! Get the type name
-  static std::string name( const std::tuple<Types...>& obj );
 };
 
 /*! \brief The partial specialization of Utility::TypeNameTraits for

@@ -53,7 +53,7 @@ public:
 
   //! Send a message to another process (non-blocking)
   template<typename T>
-  std::shared_ptr<CommunicatorRequest> isend( int dest, int tag, const T* values, int number_of_values );
+  std::shared_ptr<CommunicatorRequest> isend( int dest, int tag, const T* values, int number_of_values ) const;
 
   //! Receive a message from another process (non-blocking)
   template<typename T>
@@ -162,7 +162,7 @@ public:
   template<typename T, typename ReduceOperation>
   void scan( const T* input_values,
              int number_of_input_values,
-             T* output_value,
+             T* output_values,
              ReduceOperation op ) const;
 
   //! Wait for all processes within the comm to reach the barrier
@@ -173,6 +173,9 @@ public:
 
   //! Check if this communicator uses mpi
   bool isMPIUsed() const override;
+
+  //! Check if this communicator is this communicator is identical to another
+  bool isIdentical( const Communicator& comm ) const override;
   
   /*! \brief Split the communicator into multiple, disjoint communicators each
    * of which is based on a particular color
@@ -183,6 +186,21 @@ public:
    * of which is based on a particular color.
    */
   std::shared_ptr<const Communicator> split( int color, int key ) const override;
+
+  /*! \brief Create a communicator that is the union of this communicator and
+   * another communicator
+   */
+  std::shared_ptr<const Communicator> combine( const Communicator& comm ) const override;
+
+  /*! \brief Create a communicator that is the intersection of this 
+   * communicator and another communicator
+   */
+  std::shared_ptr<const Communicator> intersect( const Communicator& comm ) const override;
+
+  /*! \brief Create a communicator that is the difference of this
+   * communicator and another communicator
+   */
+  std::shared_ptr<const Communicator> subtract( const Communicator& comm ) const override;
 
   //! Create a timer
   std::shared_ptr<Timer> createTimer() const override;
@@ -201,9 +219,6 @@ private:
 #ifdef HAVE_FRENSIE_MPI
   // boost::communicator constructor
   MPICommunicator( const boost::mpi::communicator& comm );
-
-  // Create a new communicator
-  static std::shared_ptr<const Communicator> createNewComm( const boost::mpi::communicator& comm );
 
   // The boost mpi communicator
   boost::mpi::communicator d_comm;

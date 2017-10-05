@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "Utility_View.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -89,6 +90,12 @@ public:
 
   //! Implicitly convert to a const array view
   operator ArrayView<const typename std::remove_const<T>::type>() const;
+
+  //! Return a direct pointer to the memory array used internally
+  typename View<T*>::pointer data();
+
+  //! Return a direct pointer to the memory array used internally
+  typename View<T*>::const_pointer data() const;
 };
 
 /*! The slice class 
@@ -241,6 +248,18 @@ inline ArrayView<T2> av_reinterpret_cast( const ArrayView<T1>& array_view )
 template<typename T>
 struct ToStringTraits<Utility::ArrayView<T> > : public ToStringTraits<Utility::View<T*> >
 { /* ... */ };
+
+/*! Partial specialization of Utility::TypeNameTraits for Utility::ArrayView
+ * \ingroup view
+ * \ingroup type_name_traits
+ */
+template<typename T>
+struct TypeNameTraits<Utility::ArrayView<T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  { return std::string("Utility::ArrayView<") + Utility::typeName<T>()+">"; }
+};
 
 /*! Partial specialization of ComparisonTraits for Utility::ArrayView
  * \ingroup view

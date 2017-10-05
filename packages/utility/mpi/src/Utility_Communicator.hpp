@@ -19,7 +19,9 @@
 
 namespace Utility{
 
-//! The communicator base class
+/*! The communicator base class
+ * \ingroup mpi
+ */
 class Communicator : public OStreamableObject
 {
 
@@ -35,6 +37,9 @@ public:
 
   //! Create a default communicator
   static std::shared_ptr<const Communicator> getDefault();
+
+  //! Create a null communicator
+  static std::shared_ptr<const Communicator> getNull();
 
   //! Determine the rank of the executing process
   virtual int rank() const = 0;
@@ -60,6 +65,9 @@ public:
   //! Determine if this communicator is valid for communication
   operator bool() const;
 
+  //! Check if this communicator is this communicator is identical to another
+  virtual bool isIdentical( const Communicator& comm ) const = 0;
+
   /*! \brief Split the communicator into multiple, disjoint communicators each
    * of which is based on a particular color
    */
@@ -70,11 +78,56 @@ public:
    */
   virtual std::shared_ptr<const Communicator> split( int color, int key ) const = 0;
 
+  /*! \brief Create a communicator that is the union of this communicator and
+   * another communicator
+   */
+  virtual std::shared_ptr<const Communicator> combine( const Communicator& comm ) const = 0;
+
+  /*! \brief Create a communicator that is the intersection of this 
+   * communicator and another communicator
+   */
+  virtual std::shared_ptr<const Communicator> intersect( const Communicator& comm ) const = 0;
+
+  /*! \brief Create a communicator that is the difference of this
+   * communicator and another communicator
+   */
+  virtual std::shared_ptr<const Communicator> subtract( const Communicator& comm ) const = 0;
+
   //! Create a timer
   virtual std::shared_ptr<Timer> createTimer() const = 0;
 };
 
-//! The communicator status class
+/*! Determine if two communicators are identical
+ * \ingroup mpi
+ */
+bool operator==( const Communicator& comm_a, const Communicator& comm_b );
+
+/*! Determine if two communicators are different
+ * \ingroup mpi
+ */
+bool operator!=( const Communicator& comm_a, const Communicator& comm_b );
+
+/*! Create a communicator from the union of two communicators
+ * \ingroup mpi
+ */
+std::shared_ptr<const Communicator> operator|( const Communicator& comm_a,
+                                               const Communicator& comm_b );
+
+/*! Create a communicator from the intersection of two communicators
+ * \ingroup mpi
+ */
+std::shared_ptr<const Communicator> operator&( const Communicator& comm_a,
+                                               const Communicator& comm_b );
+
+/*! Create a communicator from the difference of two communicators
+ * \ingroup mpi
+ */
+std::shared_ptr<const Communicator> operator-( const Communicator& comm_a,
+                                               const Communicator& comm_b );
+
+/*! The communicator status class
+ * \ingroup mpi
+ */
 class CommunicatorStatus
 {
 
@@ -94,21 +147,13 @@ public:
   //! Retrieve the message tag
   virtual int tag() const = 0;
 
-  //! Retrieve the error code
-  virtual int error() const = 0;
-
   //! Check if the communication was cancelled successfully
   virtual bool cancelled() const = 0;
-
-  //! Check if the message was communicated successfully
-  virtual bool success() const = 0;
-
-  //! Check if the message was communicated successfully
-  operator bool() const
-  { return this->success(); }
 };
 
-//! The communicator request class
+/*! The communicator request class
+ * \ingroup mpi
+ */
 class CommunicatorRequest
 {
 

@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "Utility_ArrayView.hpp"
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 /*! \defgroup array Array.
  *
@@ -35,6 +36,21 @@ namespace Utility{
 template<typename T, size_t N>
 struct ToStringTraits<std::array<T,N> > : public Details::ToStringTraitsIteratorHelper<std::array<T,N> >
 { /* ... */ };
+
+/*! Partial specialization of Utility::TypeNameTraits for std::array types
+ * \ingroup array
+ * \ingroup type_name_traits
+ */
+template<typename T, size_t N>
+struct TypeNameTraits<std::array<T,N> >
+{
+  //! Get the type name
+  static inline std::string name()
+  {
+    return std::string("std::array<") + Utility::typeName<T>()+","+
+      Utility::toString(N)+">";
+  }
+};  
 
 /*! Partial specialization of ComparisonTraits for std::array
  * \ingroup array

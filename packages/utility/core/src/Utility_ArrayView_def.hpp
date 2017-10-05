@@ -134,6 +134,20 @@ ArrayView<T>::operator ArrayView<const typename std::remove_const<T>::type>() co
 {
   return this->toConst();
 }
+
+// Return a direct pointer to the memory array used internally
+template<typename T>
+auto ArrayView<T>::data() -> typename View<T*>::pointer
+{
+  return this->begin();
+}
+
+// Return a direct pointer to the memory array used internally
+template<typename T>
+auto ArrayView<T>::data() const -> typename View<T*>::const_pointer
+{
+  return this->begin();
+}
   
 } // end Utility namespace
 

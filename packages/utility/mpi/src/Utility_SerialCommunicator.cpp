@@ -23,13 +23,13 @@ SerialCommunicator::~SerialCommunicator()
 // Determine the rank of the executing process
 int SerialCommunicator::rank() const
 {
-  return 0;
+  return s_rank;
 }
 
 // Determine the number of processes in a communicator
 int SerialCommunicator::size() const
 {
-  return 1;
+  return s_size;
 }
 
 // The any source value
@@ -59,6 +59,18 @@ bool SerialCommunicator::isMPIUsed() const
 {
   return false;
 }
+
+// Check if this communicator is this communicator is identical to another
+/*! \details All serial communicators are identical
+ */
+bool SerialCommunicator::isIdentical( const Communicator& comm ) const
+{
+  // Attempt to cast the comm to a serial comm
+  const SerialCommunicator* const serial_comm =
+    static_cast<const SerialCommunicator* const>( &comm );
+
+  return serial_comm != NULL;
+}
   
 // Split the communicator into multiple, disjoint communicators each
 // of which is based on a particular color
@@ -72,6 +84,36 @@ std::shared_ptr<const Communicator> SerialCommunicator::split( int color ) const
 std::shared_ptr<const Communicator> SerialCommunicator::split( int color, int key ) const
 {
   return std::shared_ptr<const Communicator>( new SerialCommunicator );
+}
+
+// Create a communicator that is the union of this communicator and
+// another communicator
+std::shared_ptr<const Communicator> SerialCommunicator::combine(
+                                               const Communicator& comm ) const
+{
+  if( this->isIdentical( comm ) )
+    return std::shared_ptr<const Communicator>( new SerialCommunicator );
+  else
+    return Communicator::getNull();
+}
+
+// Create a communicator that is the intersection of this 
+// communicator and another communicator
+std::shared_ptr<const Communicator> SerialCommunicator::intersect(
+                                               const Communicator& comm ) const
+{
+  if( this->isIdentical( comm ) )
+    return std::shared_ptr<const Communicator>( new SerialCommunicator );
+  else
+    return Communicator::getNull();
+}
+
+// Create a communicator that is the difference of this
+// communicator and another communicator
+std::shared_ptr<const Communicator> SerialCommunicator::subtract(
+                                               const Communicator& comm ) const
+{
+  return Communicator::getNull();
 }
 
 // Create a timer

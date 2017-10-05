@@ -24,6 +24,7 @@
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 /*! \defgroup map Map
  *
@@ -65,6 +66,36 @@ struct FromStringTraits<std::map<Key,T> > : public Details::FromStringTraitsSTLC
 template<typename Key, typename T>
 struct FromStringTraits<std::unordered_map<Key,T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_map<Key,T>, std::pair<Key,T>, std::unordered_map<Key,T>, std::pair<Key,T> >
 { /* ... */ };
+
+/*! Partial specialization of Utility::TypeNameTraits for std::map types
+ * \ingroup map
+ * \ingroup type_name_traits
+ */
+template<typename Key, typename T>
+struct TypeNameTraits<std::map<Key,T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  {
+    return std::string("std::map<") + Utility::typeName<Key>() + "," +
+      Utility::typeName<T>()+">";
+  }
+};
+
+/*! Partial specialization of Utility::TypeNameTraits for std::unordered_map types
+ * \ingroup unordered_map
+ * \ingroup type_name_traits
+ */
+template<typename Key, typename T>
+struct TypeNameTraits<std::unordered_map<Key,T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  {
+    return std::string("std::unordered_map<") + Utility::typeName<Key>() + ","+
+      Utility::typeName<T>()+">";
+  }
+};
 
 /*! Partial specialization of ComparisonTraits for std::map
  * \ingroup map

@@ -327,6 +327,23 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( to_const, T, TestTypes )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a direct pointer to the memory array used internally can be
+// acquired
+BOOST_AUTO_TEST_CASE_TEMPLATE( data, T, TestTypes )
+{
+  std::vector<T> container( 10 );
+
+  Utility::ArrayView<T> view( container );
+
+  BOOST_CHECK_EQUAL( view.data(), container.data() );
+
+  const std::vector<T>& const_container = container;
+  const Utility::ArrayView<T>& const_view = view;
+
+  BOOST_CHECK_EQUAL( const_view.data(), const_container.data() );
+}
+
+//---------------------------------------------------------------------------//
 // Check if an array view can be constructed using the arrayView helper
 // function
 BOOST_AUTO_TEST_CASE_TEMPLATE( array_view_construction_helper, T, TestTypes )

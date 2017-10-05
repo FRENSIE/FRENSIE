@@ -23,6 +23,7 @@
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 /*! \defgroup set Set
  *
@@ -64,6 +65,30 @@ struct FromStringTraits<std::set<T> > : public Details::FromStringTraitsSTLCompl
 template<typename T>
 struct FromStringTraits<std::unordered_set<T> > : public Details::FromStringTraitsSTLCompliantContainerInsertHelper<std::unordered_set<T> >
 { /* ... */ };
+
+/*! Partial specialization of Utility::TypeNameTraits for std::set types
+ * \ingroup set
+ * \ingroup type_name_traits
+ */
+template<typename T>
+struct TypeNameTraits<std::set<T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  { return std::string("std::set<") + Utility::typeName<T>()+">"; }
+};
+
+/*! Partial specialization of Utility::TypeNameTraits for std::unordered_set types
+ * \ingroup unordered_set
+ * \ingroup type_name_traits
+ */
+template<typename T>
+struct TypeNameTraits<std::unordered_set<T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  { return std::string("std::unordered_set<") + Utility::typeName<T>()+">"; }
+};
 
 /*! Partial specialization of ComparisonTraits for std::set
  * \ingroup set

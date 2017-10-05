@@ -14,6 +14,11 @@ namespace Utility{
 #ifdef HAVE_FRENSIE_MPI
 
 /*! The mpi communicator status class
+ *
+ * The status class does not expose the raw MPI error code because the error 
+ * code is not used to indicate errors. All of the wrapped mpi methods that 
+ * return a MPICommunicatorStatus will throw a std::exception to indicate that 
+ * an  error has occurred.
  * \ingroup mpi
  */
 class MPICommunicatorStatus : public CommunicatorStatus
@@ -38,17 +43,9 @@ public:
   int tag() const override
   { return d_status.tag(); }
 
-  //! Retrieve the error code
-  int error() const override
-  { return d_status.error(); }
-
   //! Check if the communication was cancelled successfully
   bool cancelled() const override
   { return d_status.cancelled(); }
-
-  //! Check if the message was communicated successfully
-  bool success() const override
-  { return this->error() == MPI_SUCCESS && !this->cancelled(); }
 
   //! Determine the number of elements that were contained in a message
   template<typename T>
@@ -83,13 +80,13 @@ public:
   ~MPICommunicatorRequest()
   { /* ... */ }
 
-  //! Wait until the communicator associated with this request has completed
+  /*! Wait until the communicator associated with this request has completed
+   * \details This will throw a std::exception if the wait fails.
+   */
   std::shared_ptr<const CommunicatorStatus> wait() override
   {
-    std::shared_ptr<const CommunicatorStatus>
-      status( new MPICommunicatorStatus( d_request.wait() ) );
-    
-    return status;
+    return std::shared_ptr<const CommunicatorStatus>(
+                               new MPICommunicatorStatus( d_request.wait() ) );
   }
 
   //! Cancel a pending communication
@@ -252,10 +249,10 @@ std::shared_ptr<const CommunicatorStatus> MPICommunicator::recv(
 // Send a message to another process (non-blocking)
 template<typename T>
 std::shared_ptr<CommunicatorRequest> MPICommunicator::isend(
-                              int MPI_ENABLED_PARAMETER(dest),
-                              int MPI_ENABLED_PARAMETER(tag),
-                              const T* MPI_ENABLED_PARAMETER(values),
-                              int MPI_ENABLED_PARAMETER(number_of_values) )
+                            int MPI_ENABLED_PARAMETER(dest),
+                            int MPI_ENABLED_PARAMETER(tag),
+                            const T* MPI_ENABLED_PARAMETER(values),
+                            int MPI_ENABLED_PARAMETER(number_of_values) ) const
 {
   MPI_ENABLED_LINE( return std::shared_ptr<CommunicatorRequest>( new MPICommunicatorRequest( d_comm.isend( dest, tag, values, number_of_values ) ) ) );
   MPI_DISABLED_LINE( return std::shared_ptr<CommunicatorRequest>() );

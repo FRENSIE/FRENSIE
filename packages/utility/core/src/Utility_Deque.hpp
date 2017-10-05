@@ -20,6 +20,7 @@
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 /*! \defgroup deque Deque
@@ -45,6 +46,18 @@ struct ToStringTraits<std::deque<T> > : public Details::ToStringTraitsIteratorHe
 template<typename T>
 struct FromStringTraits<std::deque<T> > : public Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::deque<T> >
 { /* ... */ };
+
+/*! Partial specialization of Utility::TypeNameTraits for std::deque types
+ * \ingroup vector
+ * \ingroup type_name_traits
+ */
+template<typename T>
+struct TypeNameTraits<std::deque<T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  { return std::string("std::deque<") + Utility::typeName<T>()+">"; }
+};
 
 /*! Partial specialization of ComparisonTraits for std::deque
  * \ingroup deque

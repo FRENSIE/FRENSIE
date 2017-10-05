@@ -46,7 +46,7 @@ public:
   typedef typename std::iterator_traits<Iterator>::pointer pointer;
 
   //! The const pointer type of the view
-  typedef typename std::add_const<pointer>::type const_pointer;
+  typedef typename std::add_const<value_type>::type* const_pointer;
 
   //! The iterator type of the view
   typedef Iterator iterator;

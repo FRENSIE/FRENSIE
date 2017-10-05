@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_MPICommunicator.hpp"
+#include "Utility_SerialCommunicator.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -423,7 +424,17 @@ wait( const Communicator& comm,
       const std::shared_ptr<CommunicatorRequest>& request )
 {
   if( comm.size() > 1 && request.get() )
-    return request->wait();
+  {
+    std::shared_ptr<const CommunicatorStatus> status;
+    try{
+      status = request->wait();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                                CommunicationError,
+                                comm << " was not able to wait for the for "
+                                "the request to complete successfully!" );
+    return status;
+  }
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
@@ -545,8 +556,8 @@ void allGather( const Communicator& comm,
       dynamic_cast<const MPICommunicator const*>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
-                      InvalidCommunicator,
-                      "An unknown communicator type was encountered!" );
+                        InvalidCommunicator,
+                        "An unknown communicator type was encountered!" );
 
     try{
       mpi_comm->allGather( input_values, number_of_input_values, output_values );
@@ -560,7 +571,7 @@ void allGather( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    std::memcpy( input_values, output_values, sizeof(T)*number_of_input_values );
+    SerialCommunicator::allGather( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -599,7 +610,8 @@ void allReduce( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    std::memcpy( input_values, output_values, sizeof(T)*number_of_input_values );
+
+    SerialCommunicator::allReduce( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -632,7 +644,7 @@ void allReduce( const Communicator& comm,
                 int number_of_values,
                 ReduceOperation op )
 {
-  if( comm.size() != 1 )
+  if( comm.size() > 1 )
   {
     const MPICommunicator const* mpi_comm =
       dynamic_cast<const MPICommunicator const*>( &comm );
@@ -648,6 +660,10 @@ void allReduce( const Communicator& comm,
                                 CommunicationError,
                                 comm << " did not conduct allReduce "
                                 "operation successfully!" );
+  }
+  else
+  {
+    __TEST_FOR_NULL_COMM__( comm );
   }
 }
 
@@ -742,7 +758,8 @@ void allToAll( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    std::memcpy( input_values, output_values, sizeof(T)*number_of_input_values );
+
+    SerialCommuniator::allToAll( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -792,15 +809,7 @@ void broadcast( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "broadcast operation is "
-                                  << comm.rank() << "! The requested root "
-                                  "process " << root_process <<
-                                  " will be ignored!" );
-    }
+    SerialCommunicator::broadcast( values, number_of_values, root_process );
   }
 }
 
@@ -901,17 +910,7 @@ void gather( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "gather operation is " << comm.rank() << "! "
-                                  "The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-    
-    std::memcpy( input_values, output_values, sizeof(T)*number_of_input_values );
+    SerialCommunicator::gather( input_values, number_of_input_values, output_values, root_process );
   }
 }
 
@@ -936,53 +935,6 @@ inline void gatherv( const Communicator& comm,
 {
   Utility::gatherv( comm, input_values.data(), input_values.size(), output_values, sizes, offsets, root_process );
 }
-
-namespace Details{
-
-/*! Conduct a serial gatherv operation
- * \ingroup mpi
- */
-template<typename T>
-void serialGatherv( const T* input_values,
-                    int number_of_input_values,
-                    T* output_values,
-                    int requested_number_of_input_values_to_send,
-                    int input_values_offset )
-{
-  if( input_values_offset < number_of_input_values )
-  {
-    int number_to_send = requested_number_of_input_values_to_send;
-      
-    if( number_to_send + input_values_offset > number_of_input_values )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "There are only "
-                                  << number_of_input_values << " input "
-                                  "values but elements in the range ["
-                                  << input_values_offset << ","
-                                  << number_to_send + input_values_offset <<
-                                  ") have been requested! Only elements "
-                                  "in the range ["
-                                  << input_values_offset << ","
-                                  << number_of_input_values <<
-                                  ") will be sent." );
-
-      number_to_send = number_of_input_values - input_values_offset;
-    }
-
-    std::memcpy( input_values+input_values_offset, output_values, sizeof(T)*number_to_send );
-  }
-  else
-  {
-    FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                "The requested offset of "
-                                << input_values_offset <<
-                                " is beyone the input array bounds! No "
-                                "elements will be sent." );
-  }
-}
-  
-} // end Details namespace
 
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on every process of the communicator will be sent
@@ -1026,29 +978,12 @@ inline void gatherv( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "gatherv operation is " << comm.rank() << "!"
-                                  " The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-
-    if( !sizes.empty() )
-    {
-      int offset = 0;
-
-      if( !offsets.empty() )
-        offset = offses.front();
-
-      Details::serialGatherv( input_values,
-                              number_of_input_values,
-                              output_values,
-                              sizes.front(),
-                              offset );
-    }
+    SerialCommunicator::gatherv( input_values,
+                                 number_of_input_values,
+                                 output_values,
+                                 sizes,
+                                 offsets,
+                                 root_process );
   }
 }
 
@@ -1112,24 +1047,11 @@ void gatherv( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "gatherv operation is " << comm.rank() << "!"
-                                  " The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-
-    if( !sizes.empty() )
-    {
-      Details::serialGatherv( input_values,
-                              number_of_input_values,
-                              output_values,
-                              sizes.front(),
-                              0 );
-    }
+    SerialCommunicator::gatherv( input_values,
+                                 number_of_input_values,
+                                 output_values,
+                                 sizes,
+                                 root_process );
   }
 }
 
@@ -1216,20 +1138,7 @@ void scatter( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "scatter operation is " << comm.rank() << "!"
-                                  " The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-
-    if( number_of_values_per_proc > 0 )
-    {
-      std::memcpy( input_values, output_values, sizeof(T)*number_of_values_per_proc );
-    }
+    SerialCommunicator::scatter( input_values, output_values, number_of_values_per_proc, root_process );
   }
 }
 
@@ -1252,22 +1161,6 @@ inline void scatterv( const Communicator& comm,
 {
   Utility::scatterv( comm, input_values.data(), sizes, offsets, output_values, number_of_output_values, root_process );
 }
-
-namespace Details{
-
-/*! Conduct a serial scatter operation
- * \ingroup mpi
- */
-template<typename T>
-inline void serialScatterv( const T* input_values,
-                            int requested_number_of_input_values_to_send,
-                            int input_values_offset 
-                            T* output_values )
-{
-  std::memcpy( input_values+input_values_offset, output_values, sizeof(T)*requested_number_of_input_values_to_send );
-}                   
-  
-} // end Details namespace
 
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
@@ -1308,29 +1201,7 @@ void scatterv( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "scatterv operation is " << comm.rank() <<
-                                  "! The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-
-    if( !sizes.empty() )
-    {
-      int offset = 0;
-
-      if( !offsets.empty() )
-        offset = offsets.front();
-      
-      Details::serialScatterv( input_values,
-                               number_of_input_values,
-                               output_values,
-                               sizes.front(),
-                               offset );
-    }
+    SerialCommunicator::scatterv( input_values, sizes, offsets, output_values, number_of_output_values, root_process );
   }
 }
 
@@ -1389,24 +1260,7 @@ void scatterv( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "scatterv operation is " << comm.rank() <<
-                                  "! The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-
-    if( !sizes.empty() )
-    {      
-      Details::serialScatterv( input_values,
-                               number_of_input_values,
-                               output_values,
-                               sizes.front(),
-                               0 );
-    }
+    SerialCommunicator::scatterv( input_values, sizes, offsets, output_values, number_of_output_values, root_process );
   }
 }
 
@@ -1462,17 +1316,7 @@ void reduce( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "MPI",
-                                  "The only process available for the "
-                                  "reduce operation is " << comm.rank() << "! "
-                                  "The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-
-    std::memcpy( input_values, output_values, sizeof(T)*number_of_input_values );
+    SerialCommunicator::reduce( input_values, number_of_input_values, output_values, op, root_process );
   }
 }
 
@@ -1525,7 +1369,7 @@ void scan( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
 
-    std::memcpy( input_values, output_values, sizeof(T)*number_of_input_values );
+    SerialCommunicator::scan( input_values, number_of_input_values, output_values, op );
   }
 }
   

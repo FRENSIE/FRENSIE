@@ -94,6 +94,30 @@ public:
   }
 };
 
+/*! Partial specialization of Utility::TypeNameTraits for std::list types
+ * \ingroup list
+ * \ingroup type_name_traits
+ */
+template<typename T>
+struct TypeNameTraits<std::list<T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  { return std::string("std::list<") + Utility::typeName<T>()+">"; }
+};
+
+/*! Partial specialization of Utility::TypeNameTraits for std::forward_list types
+ * \ingroup forward_list
+ * \ingroup type_name_traits
+ */
+template<typename T>
+struct TypeNameTraits<std::forward_list<T> >
+{
+  //! Get the type name
+  static inline std::string name()
+  { return std::string("std::forward_list<") + Utility::typeName<T>()+">"; }
+};
+
 /*! Partial specialization of ComparisonTraits for std::list
  * \ingroup list
  * \ingroup comparison_traits
