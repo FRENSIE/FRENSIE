@@ -1045,14 +1045,14 @@ TARGET_LINK_LIBRARIES(tstAdjointElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(AdjointElectroatomFactory_test tstAdjointElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST AdjointElectroatomFactory_test PROPERTY LABELS electron adjoint)
 
-##      electron materials tests
+## electron materials tests
 ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
 ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS electron)
 
-##      electron materials tests
+## electron materials tests
 ADD_EXECUTABLE(tstAdjointElectronMaterial tstAdjointElectronMaterial.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointElectronMaterial monte_carlo_collision_native)
@@ -1065,6 +1065,13 @@ ADD_EXECUTABLE(tstElectronCollisionHandler
 TARGET_LINK_LIBRARIES(tstElectronCollisionHandler monte_carlo_collision_native)
 ADD_TEST(ElectronCollisionHandler_test tstElectronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectronCollisionHandler_test PROPERTY LABELS electron)
+
+ADD_EXECUTABLE(tstAdjointElectronCollisionHandler
+  tstAdjointElectronCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectronCollisionHandler monte_carlo_collision_native)
+ADD_TEST(AdjointElectronCollisionHandler_test tstAdjointElectronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST AdjointElectronCollisionHandler_test PROPERTY LABELS electron adjoint native)
 
 ##----------------------------------------------------------------------------##
 ##      collision handler class tests                                         ##

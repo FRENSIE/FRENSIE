@@ -87,3 +87,9 @@ ADD_EXECUTABLE(tstLogLogCosLogTwoDInterpolationPolicy
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstLogLogCosLogTwoDInterpolationPolicy utility_interp)
 ADD_TEST(LogLogCosLogTwoDInterpolationPolicy_test tstLogLogCosLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstStochasticTwoDSamplingPolicy
+  tstStochasticTwoDSamplingPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStochasticTwoDSamplingPolicy utility_interp)
+ADD_TEST(StochasticTwoDSamplingPolicy_test tstStochasticTwoDSamplingPolicy)

@@ -162,6 +162,18 @@ private:
       atomic_relaxation_model_factory,
       const SimulationProperties& properties );
 
+  //! Create the adjointelectron materials
+  void createAdjointElectronMaterials(
+      std::shared_ptr<CollisionHandler>& collision_handler,
+      const Teuchos::ParameterList& cross_sections_table_info,
+      const std::string& cross_sections_xml_directory,
+      const MatIdFractionMap& material_id_fraction_map,
+      const MatIdComponentMap& material_id_component_map,
+      const AliasSet& adjoint_electroatom_aliases,
+      const CellIdMatIdMap& cell_id_mat_id_map,
+      const CellIdDensityMap& cell_id_density_map,
+      const SimulationProperties& properties );
+
   //! Create the material name data maps
   template<typename ScatteringCenterType, typename MaterialType>
   static void createMaterialNameDataMaps(

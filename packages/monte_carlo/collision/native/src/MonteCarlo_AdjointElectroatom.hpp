@@ -60,7 +60,7 @@ public:
   //! Return the adjoint weight factor at the desired energy
   double getAdjointWeightFactor( const double energy ) const;
 
-  // //! Return the cross section for a specific adjoint electroatomic reaction
+ //! Return the cross section for a specific adjoint electroatomic reaction
   double getReactionCrossSection(
                     const double energy,
                     const AdjointElectroatomicReactionType reaction ) const;
