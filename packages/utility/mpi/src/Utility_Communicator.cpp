@@ -11,6 +11,7 @@
 #include "Utility_SerialCommunicator.hpp"
 #include "Utility_MPICommunicator.hpp"
 #include "Utility_GlobalMPISession.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 
 namespace Utility{
 
@@ -30,6 +31,10 @@ public:
 
     return s_null_comm;
   }
+
+  //! Destructor
+  ~NullCommunicator()
+  { /* ... */ }
 
   //! Determine the rank of the executing process
   int rank() const
@@ -75,27 +80,9 @@ public:
   std::shared_ptr<const Communicator> split( int color, int key ) const override
   { return s_null_comm; }
 
-  /*! \brief Create a communicator that is the union of this communicator and
-   * another communicator
-   */
-  std::shared_ptr<const Communicator> combine( const Communicator& comm ) const override
-  { return s_null_comm; }
-
-  /*! \brief Create a communicator that is the intersection of this 
-   * communicator and another communicator
-   */
-  std::shared_ptr<const Communicator> intersect( const Communicator& comm ) const = override
-  { return s_null_comm; }
-
-  /*! \brief Create a communicator that is the difference of this
-   * communicator and another communicator
-   */
-   std::shared_ptr<const Communicator> subtract( const Communicator& comm ) const override
-  { return s_null_comm; }
-
   //! Create a timer
   std::shared_ptr<Timer> createTimer() const override
-  { return std::shared_ptr<Timer>(); }
+  { return GlobalOpenMPSession::createTimer(); }
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override
@@ -107,13 +94,12 @@ private:
   NullCommunicator()
   { /* ... */ }
 
-  //! Destructor
-  ~NullCommunicator()
-  { /* ... */ }
-
   // The null communicator
-  std::shared_ptr<const NullCommunicator> s_null_comm;
+  static std::shared_ptr<const NullCommunicator> s_null_comm;
 };
+
+// Initialize static member data
+std::shared_ptr<const NullCommunicator> NullCommunicator::s_null_comm;
 
 // Create a default communicator
 std::shared_ptr<const Communicator> Communicator::getDefault()
@@ -127,7 +113,7 @@ std::shared_ptr<const Communicator> Communicator::getDefault()
     }
   }
 
-  return std::shared_ptr<const Communicator>( new SerialCommunicator );
+  return SerialCommunicator::get();
 }
 
 // Create a null communicator
@@ -149,27 +135,6 @@ bool operator==( const Communicator& comm_a, const Communicator& comm_b )
  */
 bool operator!=( const Communicator& comm_a, const Communicator& comm_b )
 { return !comm_a.isIdentical( comm_b ); }
-
-/*! Create a communicator from the union of two communicators
- * \ingroup mpi
- */
-std::shared_ptr<const Communicator> operator|( const Communicator& comm_a,
-                                               const Communicator& comm_b )
-{ return comm_a.combine( comm_b ); }  
-
-/*! Create a communicator from the intersection of two communicators
- * \ingroup mpi
- */
-std::shared_ptr<const Communicator> operator&( const Communicator& comm_a,
-                                               const Communicator& comm_b )
-{ return comm_a.intersect( comm_b ); } 
-
-/*! Create a communicator from the difference of two communicators
- * \ingroup mpi
- */
-std::shared_ptr<const Communicator> operator-( const Communicator& comm_a,
-                                               const Communicator& comm_b )
-{ return comm_a.subtract( comm_b ); }
 
 } // end Utility namespace
 

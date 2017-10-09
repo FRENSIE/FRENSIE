@@ -139,89 +139,6 @@ MPICommunicator::split( int MPI_ENABLED_PARAMETER(color),
 #endif // end HAVE_FRENSIE_MPI
 }
 
-// Create a communicator that is the union of this communicator and
-// another communicator
-std::shared_ptr<const Communicator> MPICommunicator::combine(
-                                               const Communicator& comm ) const
-{
-  // Attempt to cast the comm to a mpi comm
-  const MPICommunicator* const mpi_comm =
-    static_cast<const MPICommunicator* const>( &comm );
-
-  if( mpi_comm )
-  {
-#ifdef HAVE_FRENSIE_MPI
-    boost::mpi::intercommunicator
-      inter_comm( d_comm, 0, mpi_comm->d_comm, 0 );
-    
-    boost::mpi::communicator union_comm = inter_comm.merge( false );
-    
-    return std::shared_ptr<const Communicator>( new MPICommunicator( union_comm ) );
-#else // HAVE_FRENSIE_MPI
-    return Communicator::getNull();
-#endif // end HAVE_FRENSIE_MPI
-  }
-  else
-    return Communicator::getNull();
-}
-
-// Create a communicator that is the intersection of this 
-// communicator and another communicator
-std::shared_ptr<const Communicator> MPICommunicator::intersect(
-                                               const Communicator& comm ) const
-{
-  // Attempt to cast the comm to a mpi comm
-  const MPICommunicator* const mpi_comm =
-    static_cast<const MPICommunicator* const>( &comm );
-
-  if( mpi_comm )
-  {
-#ifdef HAVE_FRENSIE_MPI
-    boost::mpi::intercommunicator
-      inter_comm( d_comm, 0, mpi_comm->d_comm, 0 );
-
-    boost::mpi::communicator union_comm = inter_comm.merge( false );
-
-    std::vector<int> local_ranks_in_union_comm;
-
-    inter_comm.local_group().translate_ranks( 
-    
-    boost::mpi::communicator
-      intersection_comm( union_comm, inter_comm.local_group() & inter_comm.remote_group() );
-
-    return std::shared_ptr<const Communicator>( new MPICommunicator( intersection_comm ) );
-#else // HAVE_FRENSIE_MPI
-    return Communicator::getNull();
-#endif // end HAVE_FRENSIE_MPI
-  }
-  else
-    return Communicator::getNull();
-}
-
-// Create a communicator that is the difference of this
-// communicator and another communicator
-std::shared_ptr<const Communicator> MPICommunicator::subtract(
-                                               const Communicator& comm ) const
-{
-  // Attempt to cast the comm to a mpi comm
-  const MPICommunicator* const mpi_comm =
-    static_cast<const MPICommunicator* const>( &comm );
-
-  if( mpi_comm )
-  {
-#ifdef HAVE_FRENSIE_MPI
-    boost::mpi::communicator
-      difference_comm( d_comm.group() - mpi_comm->d_comm.group() );
-
-    return std::shared_ptr<const Communicator>( new MPICommunicator( difference_comm ) );
-#else // HAVE_FRENSIE_MPI
-    return Communicator::getNull();
-#endif // end HAVE_FRENSIE_MPI
-  }
-  else
-    return Communicator::getNull();
-}
-
 // Create a timer
 std::shared_ptr<Timer> MPICommunicator::createTimer() const
 {
@@ -231,8 +148,13 @@ std::shared_ptr<Timer> MPICommunicator::createTimer() const
 // Method for placing the object in an output stream
 void MPICommunicator::toStream( std::ostream& os ) const
 {
-  os << "MPI Communicator (rank=" << this->rank() << ", "
-       << "size=" << this->size() << ")";
+  if( this->size() == Utility::GlobalMPISession::size() )
+    os << "MPI World Communicator ";
+  else
+    os << "MPI Communicator ";
+  
+  os << "(rank=" << this->rank() << ", "
+     << "size=" << this->size() << ")";
 }
 
 } // end Utility namespace

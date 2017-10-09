@@ -9,14 +9,21 @@
 #ifndef UTILITY_TYPE_TRAITS_DECL_HPP
 #define UTILITY_TYPE_TRAITS_DECL_HPP
 
-// FRENSIE Includes
-#include "Utility_UndefinedTraits.hpp"
+// Std Lib Includes
+#include <type_traits>
 
 /*! \defgroup type_traits Type Traits
  * \ingroup traits
  */
 
 namespace Utility{
+
+/*! Get the typed null pointer associated with a type
+ * \ingroup type_traits
+ */
+template<typename T>
+struct NullPointer : public std::integral_constant<T*,(T*)NULL>
+{ /* ... */ };
 
 /*! Check if the type is a pointer-to-const type
  * \ingroup type_traits

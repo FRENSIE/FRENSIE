@@ -22,11 +22,11 @@ class SerialCommunicator : public Communicator
 
 public:
 
-  //! Default constructor
-  SerialCommunicator();
+  //! Get the serial communicator
+  static std::shared_ptr<const SerialCommunicator> get();
 
   //! Destructor
-  virtual ~SerialCommunicator();
+  ~SerialCommunicator();
 
   //! Determine the rank of the executing process
   int rank() const override;
@@ -154,21 +154,6 @@ public:
    */
   std::shared_ptr<const Communicator> split( int color, int key ) const override;
 
-  /*! \brief Create a communicator that is the union of this communicator and
-   * another communicator
-   */
-  std::shared_ptr<const Communicator> combine( const Communicator& comm ) const override;
-
-  /*! \brief Create a communicator that is the intersection of this 
-   * communicator and another communicator
-   */
-  std::shared_ptr<const Communicator> intersect( const Communicator& comm ) const override;
-
-  /*! \brief Create a communicator that is the difference of this
-   * communicator and another communicator
-   */
-  std::shared_ptr<const Communicator> subtract( const Communicator& comm ) const override;
-
   //! Create a timer
   std::shared_ptr<Timer> createTimer() const override;
 
@@ -176,6 +161,9 @@ public:
   void toStream( std::ostream& os ) const override;
 
 private:
+
+  // Default constructor
+  SerialCommunicator();
 
   // The gatherv implementation
   template<typename T>
@@ -198,6 +186,9 @@ private:
 
   // The size of all serial communicators
   static const int s_size = 1;
+
+  // The serial communicator
+  static std::shared_ptr<const SerialCommunicator> s_serial_comm;
 };
   
 } // end Utility namespace

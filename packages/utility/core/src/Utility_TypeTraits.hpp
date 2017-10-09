@@ -10,7 +10,6 @@
 #define UTILITY_TYPE_TRAITS_HPP
 
 // Std Lib Includes
-#include <type_traits>
 #include <string>
 #include <memory>
 #include <vector>
@@ -25,6 +24,20 @@
 #include "Utility_TypeTraitsDecl.hpp"
 
 namespace Utility{
+
+/*! Partial specialization of NullPointer for const types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct NullPointer<const T> : public std::integral_constant<T* const, (T* const)NULL>
+{ /* ... */ };
+
+/*! Partial specialization of NullPointer for const pointer-to-const types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct NullPointer<const T* const> : public std::integral_constant<const T* const, (const T* const)NULL>
+{ /* ... */ };
 
 /*! Partial specialization of IsPointerToConst for pointer-to-const types
  * \ingroup type_traits

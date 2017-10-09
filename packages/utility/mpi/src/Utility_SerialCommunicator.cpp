@@ -12,6 +12,18 @@
 
 namespace Utility{
 
+// Initialize static member data
+std::shared_ptr<const SerialCommunicator> SerialCommunicator::s_serial_comm;
+
+// Get the serial communicator
+std::shared_ptr<const SerialCommunicator> SerialCommunicator::get()
+{
+  if( !s_serial_comm )
+    s_serial_comm.reset( new SerialCommunicator );
+
+  return s_serial_comm;
+}
+
 // Default constructor
 SerialCommunicator::SerialCommunicator()
 { /* ... */ }
@@ -61,59 +73,26 @@ bool SerialCommunicator::isMPIUsed() const
 }
 
 // Check if this communicator is this communicator is identical to another
-/*! \details All serial communicators are identical
+/*! \details Since the serial communicator is a singleton a simple memory
+ * comparison will be done.
  */
 bool SerialCommunicator::isIdentical( const Communicator& comm ) const
 {
-  // Attempt to cast the comm to a serial comm
-  const SerialCommunicator* const serial_comm =
-    static_cast<const SerialCommunicator* const>( &comm );
-
-  return serial_comm != NULL;
+  return this == &comm;
 }
   
 // Split the communicator into multiple, disjoint communicators each
 // of which is based on a particular color
 std::shared_ptr<const Communicator> SerialCommunicator::split( int color ) const
 {
-  return std::shared_ptr<const Communicator>( new SerialCommunicator );
+  return s_serial_comm;
 }
 
 // Split the communicator into multiple, disjoint communicators each
 // of which is based on a particular color.
 std::shared_ptr<const Communicator> SerialCommunicator::split( int color, int key ) const
 {
-  return std::shared_ptr<const Communicator>( new SerialCommunicator );
-}
-
-// Create a communicator that is the union of this communicator and
-// another communicator
-std::shared_ptr<const Communicator> SerialCommunicator::combine(
-                                               const Communicator& comm ) const
-{
-  if( this->isIdentical( comm ) )
-    return std::shared_ptr<const Communicator>( new SerialCommunicator );
-  else
-    return Communicator::getNull();
-}
-
-// Create a communicator that is the intersection of this 
-// communicator and another communicator
-std::shared_ptr<const Communicator> SerialCommunicator::intersect(
-                                               const Communicator& comm ) const
-{
-  if( this->isIdentical( comm ) )
-    return std::shared_ptr<const Communicator>( new SerialCommunicator );
-  else
-    return Communicator::getNull();
-}
-
-// Create a communicator that is the difference of this
-// communicator and another communicator
-std::shared_ptr<const Communicator> SerialCommunicator::subtract(
-                                               const Communicator& comm ) const
-{
-  return Communicator::getNull();
+  return s_serial_comm;
 }
 
 // Create a timer

@@ -16,6 +16,11 @@
 namespace Utility{
 
 /*! The mpi communicator class
+ *
+ * This type of communicator cannot be constructed directly. Use the
+ * Utility::Communicator::getDefault() method. If MPI has been 
+ * configured for use and has been initialized successfully, the MPI world
+ * communicator will be returned.
  * \ingroup mpi
  */
 class MPICommunicator : public Communicator
@@ -187,21 +192,6 @@ public:
    */
   std::shared_ptr<const Communicator> split( int color, int key ) const override;
 
-  /*! \brief Create a communicator that is the union of this communicator and
-   * another communicator
-   */
-  std::shared_ptr<const Communicator> combine( const Communicator& comm ) const override;
-
-  /*! \brief Create a communicator that is the intersection of this 
-   * communicator and another communicator
-   */
-  std::shared_ptr<const Communicator> intersect( const Communicator& comm ) const override;
-
-  /*! \brief Create a communicator that is the difference of this
-   * communicator and another communicator
-   */
-  std::shared_ptr<const Communicator> subtract( const Communicator& comm ) const override;
-
   //! Create a timer
   std::shared_ptr<Timer> createTimer() const override;
 
@@ -232,6 +222,8 @@ template<typename T>
 struct maximum
 { 
   typedef T InputType;
+
+  const T& operator()( const T&, const T& ) const;
 };
 
 /*! The minimum operator
@@ -241,6 +233,8 @@ template<typename T>
 struct minimum
 {
   typedef T InputType;
+
+  const T& operator()( const T&, const T& ) const;
 };
 
 /*! The bitwise and operator
@@ -250,6 +244,8 @@ template<typename T>
 struct bitwiseAnd
 {
   typedef T InputType;
+
+  T operator()( const T&, const T& ) const;
 };
 
 /*! The bitwise or operator
@@ -259,6 +255,8 @@ template<typename T>
 struct bitwiseOr
 {
   typedef T InputType;
+
+  T operator()( const T&, const T& ) const;
 };
 
 /*! The bitwise exclusive or operator
@@ -268,6 +266,8 @@ template<typename T>
 struct bitwiseXor
 {
   typedef T InputType;
+
+  T operator()( const T&, const T& ) const;
 };
 
 /*! The logical exclusive or operator
@@ -277,6 +277,8 @@ template<typename T>
 struct logicalXor
 {
   typedef T InputType;
+
+  T operator()( const T&, const T& ) const;
 };
   
 } // end Utility namespace

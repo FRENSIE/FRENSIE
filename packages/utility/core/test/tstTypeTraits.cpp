@@ -29,6 +29,17 @@ typedef boost::mpl::list<bool, char, signed char, unsigned char, short, unsigned
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check if a types associated null pointer can be retrieved
+BOOST_AUTO_TEST_CASE_TEMPLATE( NullPointer, T, TestTypes )
+{
+  BOOST_CHECK_EQUAL( Utility::NullPointer<T>::value, (T*)NULL );
+  BOOST_CHECK_EQUAL( Utility::NullPointer<const T>::value, (T*)NULL );
+
+  BOOST_CHECK_EQUAL( Utility::NullPointer<T*>::value, (T**)NULL );
+  BOOST_CHECK_EQUAL( Utility::NullPointer<const T*>::value, (T**)NULL );
+}
+
+//---------------------------------------------------------------------------//
 // Check if a type is a pointer-to-const
 BOOST_AUTO_TEST_CASE_TEMPLATE( IsPointerToConst, T, TestTypes )
 {

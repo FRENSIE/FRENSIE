@@ -78,21 +78,6 @@ public:
    */
   virtual std::shared_ptr<const Communicator> split( int color, int key ) const = 0;
 
-  /*! \brief Create a communicator that is the union of this communicator and
-   * another communicator
-   */
-  virtual std::shared_ptr<const Communicator> combine( const Communicator& comm ) const = 0;
-
-  /*! \brief Create a communicator that is the intersection of this 
-   * communicator and another communicator
-   */
-  virtual std::shared_ptr<const Communicator> intersect( const Communicator& comm ) const = 0;
-
-  /*! \brief Create a communicator that is the difference of this
-   * communicator and another communicator
-   */
-  virtual std::shared_ptr<const Communicator> subtract( const Communicator& comm ) const = 0;
-
   //! Create a timer
   virtual std::shared_ptr<Timer> createTimer() const = 0;
 };
@@ -106,24 +91,6 @@ bool operator==( const Communicator& comm_a, const Communicator& comm_b );
  * \ingroup mpi
  */
 bool operator!=( const Communicator& comm_a, const Communicator& comm_b );
-
-/*! Create a communicator from the union of two communicators
- * \ingroup mpi
- */
-std::shared_ptr<const Communicator> operator|( const Communicator& comm_a,
-                                               const Communicator& comm_b );
-
-/*! Create a communicator from the intersection of two communicators
- * \ingroup mpi
- */
-std::shared_ptr<const Communicator> operator&( const Communicator& comm_a,
-                                               const Communicator& comm_b );
-
-/*! Create a communicator from the difference of two communicators
- * \ingroup mpi
- */
-std::shared_ptr<const Communicator> operator-( const Communicator& comm_a,
-                                               const Communicator& comm_b );
 
 /*! The communicator status class
  * \ingroup mpi

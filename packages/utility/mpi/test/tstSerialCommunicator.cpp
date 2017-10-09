@@ -198,8 +198,8 @@ inline void clearAssociativeContainer( AssociativeContainer& container )
 // Check that a serial comm is valid
 FRENSIE_UNIT_TEST( SerialCommunicator, isValid )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   FRENSIE_CHECK( comm->isValid() );
 }
@@ -208,8 +208,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, isValid )
 // Check that a serial comm does not use MPI
 FRENSIE_UNIT_TEST( SerialCommunicator, isMPIUsed )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   FRENSIE_CHECK( !comm->isMPIUsed() );
 }
@@ -218,8 +218,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, isMPIUsed )
 // Check that the rank is always 0
 FRENSIE_UNIT_TEST( SerialCommunicator, rank )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   FRENSIE_CHECK_EQUAL( comm->rank(), 0 );
 }
@@ -228,8 +228,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, rank )
 // Check that the size is always 1
 FRENSIE_UNIT_TEST( SerialCommunicator, size )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   FRENSIE_CHECK_EQUAL( comm->size(), 1 );
 }
@@ -238,8 +238,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, size )
 // Check that a barrier can be created
 FRENSIE_UNIT_TEST( SerialCommunicator, barrier )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   FRENSIE_CHECK_NO_THROW( comm->barrier() );
 }
@@ -248,14 +248,16 @@ FRENSIE_UNIT_TEST( SerialCommunicator, barrier )
 // Check that a serial communicator can be split
 FRENSIE_UNIT_TEST( SerialCommunicator, split )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   // The color should be ignored
   std::shared_ptr<const Utility::Communicator> new_comm = comm->split( 0 );
 
   FRENSIE_REQUIRE( new_comm.get() != NULL );
   FRENSIE_REQUIRE( new_comm->isValid() );
+  FRENSIE_REQUIRE( *new_comm != *Utility::Communicator::getNull() );
+  FRENSIE_CHECK( *new_comm == *comm );
   FRENSIE_CHECK_EQUAL( new_comm->rank(), 0 );
   FRENSIE_CHECK_EQUAL( new_comm->size(), 1 );
 
@@ -264,6 +266,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, split )
 
   FRENSIE_REQUIRE( new_comm.get() != NULL );
   FRENSIE_REQUIRE( new_comm->isValid() );
+  FRENSIE_REQUIRE( *new_comm != *Utility::Communicator::getNull() );
+  FRENSIE_CHECK( *new_comm == *comm );
   FRENSIE_CHECK_EQUAL( new_comm->rank(), 0 );
   FRENSIE_CHECK_EQUAL( new_comm->size(), 1 );
 }
@@ -272,8 +276,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, split )
 // Check that a timer can be created
 FRENSIE_UNIT_TEST( SerialCommunicator, createTimer )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   std::shared_ptr<Utility::Timer> timer = comm->createTimer();
 
@@ -284,8 +288,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, createTimer )
 // Check that a serial communicator can be converted to a string
 FRENSIE_UNIT_TEST( SerialCommunicator, toString )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
 
   std::string comm_string = Utility::toString( *comm );
 
@@ -296,8 +300,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, toString )
 // Check that a serial communicator can be placed in a stream
 FRENSIE_UNIT_TEST( SerialCommunicator, toStream )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
   
   std::ostringstream oss;
 
@@ -310,8 +314,8 @@ FRENSIE_UNIT_TEST( SerialCommunicator, toStream )
 // Check that a serial communicator can be placed in a stream
 FRENSIE_UNIT_TEST( SerialCommunicator, ostream_operator )
 {
-  std::shared_ptr<const Utility::Communicator>
-    comm( new Utility::SerialCommunicator );
+  std::shared_ptr<const Utility::Communicator> comm = 
+    Utility::SerialCommunicator::get();
   
   std::ostringstream oss;
 
@@ -326,7 +330,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, allGather_basic, BasicTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
   
-  Utility::SerialCommunicator comm;
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -350,7 +355,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, allGather_basic, BasicTypes )
 // Check that an all gather operation can be conducted
 FRENSIE_UNIT_TEST( SerialCommunicator, allGather_string )
 {
-  Utility::SerialCommunicator comm;
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   std::vector<std::string> data_to_send( 10 );
   
@@ -379,9 +385,10 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
 
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
+  
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
 
@@ -404,9 +411,10 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
 
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
+  
   Container container_to_send;
   fillAssociativeContainer( container_to_send );
 
@@ -418,16 +426,17 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that an all gather operation can be conducted
+// Check that an all reduce operation can be conducted
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SerialCommunicator,
                                    allReduce,
                                    BasicTypeOpPairs )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
   FETCH_TEMPLATE_PARAM( 0, ReduceOp );
-  
-  Utility::SerialCommunicator comm;
 
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
+  
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
   
@@ -451,8 +460,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SerialCommunicator,
 FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, allToAll_basic, BasicTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -476,7 +486,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, allToAll_basic, BasicTypes )
 // Check that an all-to-all operation can be conducted
 FRENSIE_UNIT_TEST( SerialCommunicator, allToAll_string )
 {
-  Utility::SerialCommunicator comm;
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   std::vector<std::string> data_to_send( 10 );
   
@@ -505,8 +516,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -530,8 +542,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   Container container_to_send;
   fillAssociativeContainer( container_to_send );
@@ -548,8 +561,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
 FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, broadcast_basic, BasicTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -568,7 +582,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, broadcast_basic, BasicTypes )
 // Check that an broadcast operation can be conducted
 FRENSIE_UNIT_TEST( SerialCommunicator, broadcast_string )
 {
-  Utility::SerialCommunicator comm;
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   std::vector<std::string> data_to_send( 10 );
   
@@ -592,8 +607,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -617,8 +633,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   Container container_to_send;
   fillAssociativeContainer( container_to_send );
@@ -635,8 +652,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
 FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, gather_basic, BasicTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -660,7 +678,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, gather_basic, BasicTypes )
 // Check that a gather operation can be conducted
 FRENSIE_UNIT_TEST( SerialCommunicator, gather_string )
 {
-  Utility::SerialCommunicator comm;
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   std::vector<std::string> data_to_send( 10 );
   
@@ -689,8 +708,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -714,8 +734,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   Container container_to_send;
   fillAssociativeContainer( container_to_send );
@@ -732,8 +753,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
 FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, gatherv_basic, BasicTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   std::vector<T> data_to_send( 10 );
   for( size_t i = 0; i < data_to_send.size(); ++i )
@@ -786,8 +808,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, gatherv_basic, BasicTypes )
 FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, scatter_basic, BasicTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -811,7 +834,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, scatter_basic, BasicTypes )
 // Check that a scatter operation can be conducted
 FRENSIE_UNIT_TEST( SerialCommunicator, scatter_string )
 {
-  Utility::SerialCommunicator comm;
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   std::vector<std::string> data_to_send( 10 );
   
@@ -840,8 +864,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -865,9 +890,10 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
   FETCH_TEMPLATE_PARAM( 0, Container );
 
   typedef typename Container::value_type T;
-  
-  Utility::SerialCommunicator comm;
 
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
+  
   Container container_to_send;
   fillAssociativeContainer( container_to_send );
 
@@ -883,8 +909,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator,
 FRENSIE_UNIT_TEST_TEMPLATE( SerialCommunicator, scatterv_basic, BasicTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   std::vector<T> data_to_send( 10 );
   for( size_t i = 0; i < data_to_send.size(); ++i )
@@ -940,8 +967,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SerialCommunicator,
 {
   FETCH_TEMPLATE_PARAM( 0, T );
   FETCH_TEMPLATE_PARAM( 0, ReduceOp );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
@@ -969,8 +997,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SerialCommunicator,
 {
   FETCH_TEMPLATE_PARAM( 0, T );
   FETCH_TEMPLATE_PARAM( 0, ReduceOp );
-  
-  Utility::SerialCommunicator comm;
+
+  const Utility::SerialCommunicator& comm =
+    *Utility::SerialCommunicator::get();
 
   T value;
   Utility::get<0>( value ) = (std::is_same<T,char>::value || std::is_same<T,unsigned char>::value ? 49 : 1);
