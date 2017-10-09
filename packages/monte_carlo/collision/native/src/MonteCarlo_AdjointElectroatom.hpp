@@ -54,6 +54,11 @@ public:
   virtual ~AdjointElectroatom()
   { /* ... */ }
 
+  //! Relax the atom
+  void relaxAtom( const Data::SubshellType vacancy_shell,
+                  const AdjointElectronState& electron,
+                  ParticleBank& bank ) const;
+
   //! Return the total forward cross section at the desired energy
   double getTotalForwardCrossSection( const double energy ) const;
 
@@ -65,6 +70,13 @@ public:
                     const double energy,
                     const AdjointElectroatomicReactionType reaction ) const;
 };
+
+// Relax the atom
+//! \details There currently is no adjoint atomic relaxation implementation.
+inline void AdjointElectroatom::relaxAtom( const Data::SubshellType vacancy_shell,
+                                           const AdjointElectronState& electron,
+                                           ParticleBank& bank ) const
+{ /* ... */ }
 
 } // end MonteCarlo namespace
 

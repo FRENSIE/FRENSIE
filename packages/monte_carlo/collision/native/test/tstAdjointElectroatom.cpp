@@ -274,6 +274,23 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, collideSurvivalBias )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atom can be relaxed
+TEUCHOS_UNIT_TEST( AdjointElectroatom, relaxAtom )
+{
+  Teuchos::RCP<MonteCarlo::AdjointElectronState> electron(
+                                  new MonteCarlo::AdjointElectronState( 0 ) );
+  electron->setEnergy( exp( -1.214969212306E+01 ) );
+  electron->setDirection( 0.0, 0.0, 1.0 );
+  electron->setWeight( 1.0 );
+
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
+  MonteCarlo::ParticleBank bank;
+
+  electroatom->relaxAtom( vacancy, *electron, bank );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a electroatom can be constructed from a core
 TEUCHOS_UNIT_TEST( AdjointElectroatom, core_constructor )
 {

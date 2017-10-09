@@ -65,6 +65,11 @@ public:
   virtual ~AdjointPhotoatom()
   { /* ... */ }
 
+  //! Relax the atom
+  void relaxAtom( const Data::SubshellType vacancy_shell,
+                  const AdjointPhotonState& photon,
+                  ParticleBank& bank ) const;
+
   //! Check if the energy corresponds to a line energy reaction
   virtual bool doesEnergyHaveLineEnergyReaction( const double energy ) const;
 
@@ -128,6 +133,13 @@ inline double AdjointPhotoatom::getNuclearTotalForwardCrossSection(
 {
   return 0.0;
 }
+
+// Relax the atom
+//! \details There currently is no adjoint atomic relaxation implementation.
+inline void AdjointPhotoatom::relaxAtom( const Data::SubshellType vacancy_shell,
+                                         const AdjointPhotonState& photon,
+                                         ParticleBank& bank ) const
+{ /* ... */ }
 
 } // end MonteCarlo namespace
 
