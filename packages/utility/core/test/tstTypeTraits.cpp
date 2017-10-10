@@ -33,10 +33,16 @@ typedef boost::mpl::list<bool, char, signed char, unsigned char, short, unsigned
 BOOST_AUTO_TEST_CASE_TEMPLATE( NullPointer, T, TestTypes )
 {
   BOOST_CHECK_EQUAL( Utility::NullPointer<T>::value, (T*)NULL );
+  BOOST_CHECK_EQUAL( Utility::nullPointer<T>(), (T*)NULL );
+  
   BOOST_CHECK_EQUAL( Utility::NullPointer<const T>::value, (T*)NULL );
+  BOOST_CHECK_EQUAL( Utility::nullPointer<const T>(), (T*)NULL );
 
   BOOST_CHECK_EQUAL( Utility::NullPointer<T*>::value, (T**)NULL );
+  BOOST_CHECK_EQUAL( Utility::nullPointer<T*>(), (T**)NULL );
+  
   BOOST_CHECK_EQUAL( Utility::NullPointer<const T*>::value, (T**)NULL );
+  BOOST_CHECK_EQUAL( Utility::nullPointer<const T*>(), (T**)NULL );
 }
 
 //---------------------------------------------------------------------------//

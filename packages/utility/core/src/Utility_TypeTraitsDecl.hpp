@@ -23,7 +23,16 @@ namespace Utility{
  */
 template<typename T>
 struct NullPointer : public std::integral_constant<T*,(T*)NULL>
-{ /* ... */ };
+{ 
+  //! The pointer type
+  typedef T* PointerType;
+};
+
+/*! Helper function to get a typed null pointer
+ * \ingroup type_traits
+ */
+template<typename T>
+constexpr typename NullPointer<T>::PointerType nullPointer();
 
 /*! Check if the type is a pointer-to-const type
  * \ingroup type_traits

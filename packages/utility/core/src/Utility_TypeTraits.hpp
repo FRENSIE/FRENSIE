@@ -30,14 +30,15 @@ namespace Utility{
  */
 template<typename T>
 struct NullPointer<const T> : public std::integral_constant<T* const, (T* const)NULL>
-{ /* ... */ };
+{ 
+  //! The pointer type
+  typedef T* const PointerType;
+};
 
-/*! Partial specialization of NullPointer for const pointer-to-const types
- * \ingroup type_traits
- */
+// Helper function to get a typed null pointer
 template<typename T>
-struct NullPointer<const T* const> : public std::integral_constant<const T* const, (const T* const)NULL>
-{ /* ... */ };
+constexpr typename NullPointer<T>::PointerType nullPointer()
+{ return NullPointer<T>::value; }
 
 /*! Partial specialization of IsPointerToConst for pointer-to-const types
  * \ingroup type_traits

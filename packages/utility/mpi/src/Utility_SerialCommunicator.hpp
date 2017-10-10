@@ -135,13 +135,13 @@ public:
   //! Wait for all processes within the comm to reach the barrier
   void barrier() const override;
 
-  //! Check if this communicator is valid for communicator
+  //! Check if this communicator can be used for communication
   bool isValid() const override;
 
   //! Check if this communicator uses mpi
   bool isMPIUsed() const override;
 
-  //! Check if this communicator is this communicator is identical to another
+  //! Check if this communicator is identical to another
   bool isIdentical( const Communicator& comm ) const override;
   
   /*! \brief Split the communicator into multiple, disjoint communicators each

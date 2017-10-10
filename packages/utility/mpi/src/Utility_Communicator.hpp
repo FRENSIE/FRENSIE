@@ -56,7 +56,7 @@ public:
   //! Wait for all processes within the comm to reach the barrier
   virtual void barrier() const = 0;
 
-  //! Check if this communicator is valid for communication
+  //! Check if this communicator can be used for communication
   virtual bool isValid() const = 0;
 
   //! Check if this communicator uses mpi
@@ -65,7 +65,7 @@ public:
   //! Determine if this communicator is valid for communication
   operator bool() const;
 
-  //! Check if this communicator is this communicator is identical to another
+  //! Check if this communicator is identical to another
   virtual bool isIdentical( const Communicator& comm ) const = 0;
 
   /*! \brief Split the communicator into multiple, disjoint communicators each
