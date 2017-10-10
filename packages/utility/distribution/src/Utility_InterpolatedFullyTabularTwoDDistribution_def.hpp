@@ -1558,64 +1558,13 @@ inline auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,P
   }
   else
   {
-    // Check for a primary value at the primary grid upper limit
-    if( primary_indep_var_value == upper_bin_boundary->first )
-      return sample_functor( *upper_bin_boundary->second );
-    else if( primary_indep_var_value == lower_bin_boundary->first )
-      return sample_functor( *lower_bin_boundary->second );
-    else
-    {
-      // Check to see if the min equals the max
-      if( min_secondary_indep_var == max_secondary_indep_var )
-        return min_secondary_indep_var;
-
-      typename QuantityTraits<SecondaryIndepQuantity>::RawType
-      intermediate_grid_length =
-        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                            min_secondary_indep_var, max_secondary_indep_var );
-
-      // Calculate the unit base variable on the intermediate grid corresponding to the
-      // raw samples on the lower and upper boundaries
-      typename QuantityTraits<SecondaryIndepQuantity>::RawType eta, eta_0, eta_1;
-
-      {
-        // Calculate the unit base variable on the lower grid corresponding to the
-        // lower raw sample
-        typename QuantityTraits<SecondaryIndepQuantity>::RawType grid_length_0 =
-          TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      lower_bin_boundary->second->getUpperBoundOfIndepVar());
-
-        eta_0 = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
-                        sample_functor( *lower_bin_boundary->second ),
-                        lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        grid_length_0 );
-
-        // Calculate the unit base variable on the upper grid corresponding to the
-        // upper raw sample
-        typename QuantityTraits<SecondaryIndepQuantity>::RawType grid_length_1 =
-          TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                      upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      upper_bin_boundary->second->getUpperBoundOfIndepVar());
-
-        eta_1 = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
-                        sample_functor( *upper_bin_boundary->second ),
-                        upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        grid_length_1 );
-
-        // Interpolate between the lower and upper unit based variables
-        eta = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                                                   lower_bin_boundary->first,
-                                                   upper_bin_boundary->first,
-                                                   primary_indep_var_value,
-                                                   eta_0,
-                                                   eta_1 );
-      }
-
-      // Scale the sample so that it preserves the intermediate limits.
-      return TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
-                    eta, min_secondary_indep_var, intermediate_grid_length );
-    }
+    return Correlated::sample<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+                          sample_functor,
+                          lower_bin_boundary,
+                          upper_bin_boundary,
+                          primary_indep_var_value,
+                          min_secondary_indep_var,
+                          max_secondary_indep_var );
   }
 }
 
@@ -1654,20 +1603,11 @@ inline auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,P
   }
   else
   {
-    // Check for a primary value at the primary grid upper limit
-    if( primary_indep_var_value == upper_bin_boundary->first )
-      return sample_functor( *upper_bin_boundary->second );
-    else if( primary_indep_var_value == lower_bin_boundary->first )
-      return sample_functor( *lower_bin_boundary->second );
-    else
-    {
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                           lower_bin_boundary->first,
-                           upper_bin_boundary->first,
-                           primary_indep_var_value,
-                           sample_functor( *lower_bin_boundary->second ),
-                           sample_functor( *upper_bin_boundary->second ) );
-    }
+    return Exact::sample<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+                          sample_functor,
+                          lower_bin_boundary,
+                          upper_bin_boundary,
+                          primary_indep_var_value );
   }
 }
 

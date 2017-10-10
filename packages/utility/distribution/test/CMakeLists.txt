@@ -239,3 +239,23 @@ TARGET_LINK_LIBRARIES(tstCoupledElasticDistribution utility_dist)
 ADD_TEST(CoupledElasticDistribution_test tstCoupledElasticDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_coupled_elastic_distributions.xml")
 SET_PROPERTY(TEST CoupledElasticDistribution_test PROPERTY LABELS utility_dist)
 
+ADD_EXECUTABLE(tstStochasticTwoDSamplingPolicy
+  tstStochasticTwoDSamplingPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStochasticTwoDSamplingPolicy utility_dist)
+ADD_TEST(StochasticTwoDSamplingPolicy_test tstStochasticTwoDSamplingPolicy)
+SET_PROPERTY(TEST StochasticTwoDSamplingPolicy_test PROPERTY LABELS utility_dist)
+
+ADD_EXECUTABLE(tstExactTwoDSamplingPolicy
+  tstExactTwoDSamplingPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstExactTwoDSamplingPolicy utility_dist)
+ADD_TEST(ExactTwoDSamplingPolicy_test tstExactTwoDSamplingPolicy)
+SET_PROPERTY(TEST ExactTwoDSamplingPolicy_test PROPERTY LABELS utility_dist)
+
+ADD_EXECUTABLE(tstCorrelatedTwoDSamplingPolicy
+  tstCorrelatedTwoDSamplingPolicy.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCorrelatedTwoDSamplingPolicy utility_dist)
+ADD_TEST(CorrelatedTwoDSamplingPolicy_test tstCorrelatedTwoDSamplingPolicy)
+SET_PROPERTY(TEST CorrelatedTwoDSamplingPolicy_test PROPERTY LABELS utility_dist)

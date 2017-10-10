@@ -13,6 +13,7 @@
 #include "Utility_PartiallyTabularTwoDDistribution.hpp"
 #include "Utility_FullyTabularTwoDDistribution.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_TwoDSamplingPolicy.hpp"
 
 namespace Utility{
 

@@ -253,52 +253,45 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  typename DistributionType::const_iterator sampled_bin_boundary =
-    this->sampleBinBoundary( primary_indep_var_value,
-                             lower_bin_boundary,
-                             upper_bin_boundary );
-
-  // Calculate the index of the primary bin boundary that will be used to
-  // create the secondary conditional sample
-  primary_bin_index = this->calculateBinIndex( sampled_bin_boundary );
-
-  // Create the raw sample
-  raw_sample = sample_functor( *sampled_bin_boundary->second );
-
-  // Calculate the intermediate grid limits
-  SecondaryIndepQuantity y_x_min = this->getLowerBoundOfConditionalIndepVar(
-                                                     primary_indep_var_value );
-
-  SecondaryIndepQuantity y_x_max = this->getUpperBoundOfConditionalIndepVar(
-                                                     primary_indep_var_value );
-
-  typename QuantityTraits<SecondaryIndepQuantity>::RawType
-    intermediate_grid_length =
-    TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                                                            y_x_min, y_x_max );
-  
-  // Calculate the unit base variable on the bin boundary corresponding to the
-  // raw sample
-  typename QuantityTraits<SecondaryIndepQuantity>::RawType eta;
-
+  SecondaryIndepQuantity sample;
+  if( lower_bin_boundary != upper_bin_boundary )
   {
-    typename QuantityTraits<SecondaryIndepQuantity>::RawType grid_length =
-      TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
-                      sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      sampled_bin_boundary->second->getUpperBoundOfIndepVar());
-    
-    eta = TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseIndepVar(
-                       raw_sample,
-                       sampled_bin_boundary->second->getLowerBoundOfIndepVar(),
-                       grid_length );
+    typename DistributionType::const_iterator sampled_bin_boundary;
+    sample =
+      Utility::Stochastic::sampleDetailed<TwoDInterpPolicy, PrimaryIndepQuantity, SecondaryIndepQuantity>(
+          sample_functor,
+          raw_sample,
+          sampled_bin_boundary,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          primary_indep_var_value );
+
+    // Calculate the index of the primary bin boundary that will be used to
+    // create the secondary conditional sample
+    primary_bin_index = this->calculateBinIndex( sampled_bin_boundary );
   }
-  
-  // Scale the sample so that it preserves the intermediate limits.
-  // Note: This is a stochastic procedure. The intermediate distribution that
-  //       has been sampled is not the true distribution. The expected value
-  //       of a sample will be a sample from the true distribution though.
-  return TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
-                                      eta, y_x_min, intermediate_grid_length );
+  else
+  {
+    if( this->arePrimaryLimitsExtended() )
+    {
+      raw_sample = sample_functor( *lower_bin_boundary->second );
+      sample = raw_sample;
+
+      // Calculate the index of the primary bin boundary that will be used to
+      // create the secondary conditional sample
+      primary_bin_index = this->calculateBinIndex( lower_bin_boundary );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "Error: Sampling beyond the primary grid boundaries "
+                       "cannot be done unless the grid has been extended ("
+                       << primary_indep_var_value << " not in ["
+                       << this->getLowerBoundOfPrimaryIndepVar() << ","
+                       << this->getUpperBoundOfPrimaryIndepVar() << "])!" );
+    }
+  }
+  return sample;
 }
 
 // Sample from the distribution using the desired sampling functor
