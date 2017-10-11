@@ -17,7 +17,7 @@ namespace Utility{
 
 #ifdef HAVE_FRENSIE_MPI
 
-/*! The mpi communicator status class
+/*! The mpi communicator status implementation class
  *
  * The status class does not expose the raw MPI error code because the error 
  * code is not used to indicate errors. All of the wrapped mpi methods that 
@@ -25,19 +25,25 @@ namespace Utility{
  * an  error has occurred.
  * \ingroup mpi
  */
-class MPICommunicatorStatus : public CommunicatorStatus
+template<typename T>
+class MPICommunicatorStatusImpl : public Communicator::Status::Impl
 {
 
 public:
 
   //! boost::mpi::status constructor
-  MPICommunicatorStatus( const boost::mpi::status& status )
-    : d_status( status )
+  MPICommunicatorStatusImpl( const boost::mpi::status& status )
+    : Communicator::Status::Impl(),
+      d_status( status )
   { /* ... */ }
 
   //! Destructor
-  ~MPICommunicatorStatus()
+  ~MPICommunicatorStatusImpl()
   { /* ... */ }
+
+  //! Check if the communication was cancelled successfully
+  bool cancelled() const override
+  { return d_status.cancelled(); }
 
   //! Retrieve the source of the message
   int source() const override
@@ -47,13 +53,8 @@ public:
   int tag() const override
   { return d_status.tag(); }
 
-  //! Check if the communication was cancelled successfully
-  bool cancelled() const override
-  { return d_status.cancelled(); }
-
   //! Determine the number of elements that were contained in a message
-  template<typename T>
-  int count() const
+  int count() const override
   {
     if( boost::optional<int> wrapped_count = d_status.count<T>() )
       return *wrapped_count;
@@ -67,31 +68,30 @@ private:
   boost::mpi::status d_status;
 };
 
-/*! The mpi communicator request class
+/*! The mpi communicator request implementation class
  * \ingroup mpi
  */
-class MPICommunicatorRequest : public CommunicatorRequest
+template<typename T>
+class MPICommunicatorRequestImpl : public Communicator::Request::Impl
 {
 
 public:
 
   //! boost::mpi::request constructor
-  MPICommunicatorRequest( const boost::mpi::request& request )
-    : d_request( request )
+  MPICommunicatorRequestImpl( const boost::mpi::request& request )
+    : Communicator::Request::Impl(),
+      d_request( request )
   { /* ... */ }
 
   //! Destructor
-  ~MPICommunicatorRequest()
+  ~MPICommunicatorRequestImpl()
   { /* ... */ }
 
   /*! Wait until the communicator associated with this request has completed
    * \details This will throw a std::exception if the wait fails.
    */
-  std::shared_ptr<const CommunicatorStatus> wait() override
-  {
-    return std::shared_ptr<const CommunicatorStatus>(
-                               new MPICommunicatorStatus( d_request.wait() ) );
-  }
+  MPICommunicatorStatusImpl<T>* wait() override
+  { return new MPICommunicatorStatusImpl<T>( d_request.wait() ); }
 
   //! Cancel a pending communication
   void cancel() override
@@ -253,24 +253,6 @@ inline T logicalXor<T>::operator()( const T& lhs, const T& rhs ) const
 #endif // end HAVE_FRENSIE_MPI
 }
 
-// Count the number of elements that were contained in a message
-template<typename T>
-int MPICommunicator::count(
-                const CommunicatorStatus& MPI_ENABLED_PARAMETER(status) ) const
-{
-#ifdef HAVE_FRENSIE_MPI
-  const MPICommunicatorStatus* const mpi_status =
-    dynamic_cast<const MPICommunicatorStatus* const>( &status );
-
-  if( mpi_status )
-    return mpi_status->count<T>();
-  else
-    return 0;
-#else // HAVE_FRENSIE_MPI
-  return 0;
-#endif // end HAVE_FRENSIE_MPI
-}
-
 // Send a message to another process (blocking)
 template<typename T>
 void MPICommunicator::send( int MPI_ENABLED_PARAMETER(dest),
@@ -282,60 +264,85 @@ void MPICommunicator::send( int MPI_ENABLED_PARAMETER(dest),
 }
 // Receive a message from another process (blocking)
 template<typename T>
-std::shared_ptr<const CommunicatorStatus> MPICommunicator::recv(
-                        int MPI_ENABLED_PARAMETER(source),
-                        int MPI_ENABLED_PARAMETER(tag),
-                        T* MPI_ENABLED_PARAMETER(values),
-                        int MPI_ENABLED_PARAMETER(number_of_values) ) const
+Communicator::Status MPICommunicator::recv(
+                            int MPI_ENABLED_PARAMETER(source),
+                            int MPI_ENABLED_PARAMETER(tag),
+                            T* MPI_ENABLED_PARAMETER(values),
+                            int MPI_ENABLED_PARAMETER(number_of_values) ) const
 {
-  MPI_ENABLED_LINE( return std::shared_ptr<const CommunicatorStatus>( new MPICommunicatorStatus( d_comm.recv( source, tag, values, number_of_values ) ) ) );
-  MPI_DISABLED_LINE( return std::shared_ptr<const CommunicatorStatus>() );
+#ifdef HAVE_FRENSIE_MPI
+  std::shared_ptr<const Communicator::Status::Impl> status_impl( new MPICommunicatorStatusImpl<T>( d_comm.recv( source, tag, values, number_of_values ) ) );
+
+  return Communicator::createStatus( status_impl );
+#else // HAVE_FRENSIE_MPI
+  return Communicator::Status();
+#endif // end HAVE_FRENSIE_MPI
 }
 
 // Send a message to another process (non-blocking)
 template<typename T>
-std::shared_ptr<CommunicatorRequest> MPICommunicator::isend(
+Communicator::Request MPICommunicator::isend(
                             int MPI_ENABLED_PARAMETER(dest),
                             int MPI_ENABLED_PARAMETER(tag),
                             const T* MPI_ENABLED_PARAMETER(values),
                             int MPI_ENABLED_PARAMETER(number_of_values) ) const
 {
-  MPI_ENABLED_LINE( return std::shared_ptr<CommunicatorRequest>( new MPICommunicatorRequest( d_comm.isend( dest, tag, values, number_of_values ) ) ) );
-  MPI_DISABLED_LINE( return std::shared_ptr<CommunicatorRequest>() );
+#ifdef HAVE_FRENSIE_MPI
+  std::shared_ptr<Communicator::Request::Impl> request_impl( new MPICommunicatorRequestImpl<T>( d_comm.isend( dest, tag, values, number_of_values ) ) );
+
+  return Communicator::createRequest( request_impl );
+#else // HAVE_FRENSIE_MPI
+  return Communicator::Request();
+#endif // end HAVE_FRENSIE_MPI
 }
 
 // Receive a message from another process (non-blocking)
 template<typename T>
-std::shared_ptr<CommunicatorRequest> MPICommunicator::irecv(
-                        int MPI_ENABLED_PARAMETER(source),
-                        int MPI_ENABLED_PARAMETER(tag),
-                        T* MPI_ENABLED_PARAMETER(values),
-                        int MPI_ENABLED_PARAMETER(number_of_values) ) const
+Communicator::Request MPICommunicator::irecv(
+                            int MPI_ENABLED_PARAMETER(source),
+                            int MPI_ENABLED_PARAMETER(tag),
+                            T* MPI_ENABLED_PARAMETER(values),
+                            int MPI_ENABLED_PARAMETER(number_of_values) ) const
 {
-  MPI_ENABLED_LINE( return std::shared_ptr<CommunicatorRequest>( new MPICommunicatorRequest( d_comm.irecv( source, tag, values, number_of_values ) ) ) );
-  MPI_DISABLED_LINE( return std::shared_ptr<CommunicatorRequest>() );
+#ifdef HAVE_FRENSIE_MPI
+  std::shared_ptr<Communicator::Request::Impl> request_impl( new MPICommunicatorRequestImpl<T>( d_comm.irecv( source, tag, values, number_of_values ) ) );
+
+  return Communicator::createRequest( request_impl );
+#else // HAVE_FRENSIE_MPI
+  return Communicator::Request();
+#endif // end HAVE_FRENSIE_MPI
 }
 
 // Wait until a message is available to be received
-inline std::shared_ptr<const CommunicatorStatus>
+template<typename T>
+inline Communicator::Status
 MPICommunicator::probe( int MPI_ENABLED_PARAMETER(source),
                         int MPI_ENABLED_PARAMETER(tag) ) const
 {
-  MPI_ENABLED_LINE( return std::shared_ptr<const CommunicatorStatus>( new MPICommunicatorStatus( d_comm.probe( source, tag ) ) ) );
-  MPI_DISABLED_LINE( return std::shared_ptr<const CommunicatorStatus>() );
+#ifdef HAVE_FRENSIE_MPI
+  std::shared_ptr<const Communicator::Status::Impl> status_impl( new MPICommunicatorStatusImpl<T>( d_comm.probe( source, tag ) ) );
+
+  return Communicator::createStatus( status_impl );
+#else // HAVE_FRENSIE_MPI
+  return Communicator::Status();
+#endif // end HAVE_FRENSIE_MPI
 }
 
 // Determine if a message is available to be received
-inline std::shared_ptr<const CommunicatorStatus>
-MPICommunicator::iprobe( int source, int tag ) const
+template<typename T>
+inline Communicator::Status MPICommunicator::iprobe( int source, int tag ) const
 {
 #ifdef HAVE_FRENSIE_MPI
   if( boost::optional<boost::mpi::status> wrapped_status = d_comm.iprobe( source, tag ) )
-    return std::shared_ptr<const CommunicatorStatus>( new MPICommunicatorStatus( *wrapped_status ) );
+  {
+    std::shared_ptr<const Communicator::Status::Impl> status_impl( new MPICommunicatorStatusImpl<T>( *wrapped_status ) );
+
+    return Communicator::createStatus( status_impl );
+  }
   else
-    return std::shared_ptr<const CommunicatorStatus>();
+    return Communicator::Status();
 #else // HAVE_FRENSIE_MPI
-  return std::shared_ptr<const CommunicatorStatus>();
+  return Communicator::Status();
 #endif // end HAVE_FRENSIE_MPI
 }
   
@@ -483,7 +490,7 @@ void MPICommunicator::scan( const T* MPI_ENABLED_PARAMETER(input_values),
 {
   MPI_ENABLED_LINE( boost::mpi::scan( d_comm, input_values, number_of_input_values, output_values, Details::ReduceOpConversionHelper<ReduceOperation>::convertToBoostReduceOp(op) ) );
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_MPI_COMMUNICATOR_DEF_HPP

@@ -1,22 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_CommunicatorHelpers.hpp
+//! \file   Utility_Communicator_def.hpp
 //! \author Alex Robinson
-//! \brief  The communicator helper method definitions
+//! \brief  The communicator class template definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_COMMUNICATOR_HELPERS_DEF_HPP
-#define UTILITY_COMMUNICATOR_HELPERS_DEF_HPP
+#ifndef UTILITY_COMMUNICATOR_DEF_HPP
+#define UTILITY_COMMUNICATOR_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_MPICommunicator.hpp"
-#include "Utility_SerialCommunicator.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
-#include "FRENSIE_config.hpp"
 
 #define __TEST_FOR_NULL_COMM__( comm )          \
   TEST_FOR_EXCEPTION( comm.size() == 0,         \
@@ -25,26 +22,113 @@
 
 namespace Utility{
 
-// Determine the number of elements that were contained in a message
-/*! \ingroup mpi
+namespace Details{
+
+/*! The serial communicator array copy helper
+ * \ingroup mpi
+ */
+template<typename T, typename Enabled = void>
+struct SerialCommunicatorArrayCopyHelper
+{
+  //! Copy from input array to output array using a element-by-element deep copy
+  static inline void copyFromInputArrayToOutputArray(
+                                                    const T* input_values,
+                                                    int number_of_input_values,
+                                                    T* output_values )
+  {
+    for( int i = 0; i < number_of_input_values; ++i )
+      output_values[i] = input_values[i];
+  }
+};
+
+/*! \brief Specialization of SerialCommunicatorArrayCopyHelper for arithmetic 
+ * types
+ * \ingroup mpi
  */
 template<typename T>
-inline int count( const Communicator& comm, const CommunicatorStatus& status )
+struct SerialCommunicatorArrayCopyHelper<T,typename std::enable_if<std::is_arithmetic<T>::value>::type>
 {
-  if( comm.size() > 1 )
+  //! Copy from input array to output array using memcpy
+  static inline void copyFromInputArrayToOutputArray(
+                                                    const T* input_values,
+                                                    int number_of_input_values,
+                                                    T* output_values )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    std::memcpy( output_values,
+                 input_values,
+                 sizeof(T)*number_of_input_values );
+  }
+};
 
-    TEST_FOR_EXCEPTION( mpi_comm == NULL,
-                        InvalidCommunicator,
-                        "An unknown communicator type was encountered!" );
+// The gatherv implementation
+template<typename T>
+void serialGathervImpl( const Communicator& comm,
+                        const T* input_values,
+                        int number_of_input_values,
+                        int requested_number_of_input_values_to_send,
+                        int input_values_offset,
+                        T* output_values )
+{
+  if( input_values_offset < number_of_input_values )
+  {
+    int number_to_send = requested_number_of_input_values_to_send;
+      
+    if( number_to_send + input_values_offset > number_of_input_values )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "There are only "
+                                  << number_of_input_values << " input "
+                                  "values but elements in the range ["
+                                  << input_values_offset << ","
+                                  << number_to_send + input_values_offset <<
+                                  ") have been requested! Only elements "
+                                  "in the range ["
+                                  << input_values_offset << ","
+                                  << number_of_input_values <<
+                                  ") will be sent." );
 
-    return mpi_comm->count<T>( status );
+      number_to_send = number_of_input_values - input_values_offset;
+    }
+
+    SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values+input_values_offset, number_to_send, output_values );
   }
   else
-    return 0;
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "Serial Comm",
+                                "The requested offset of "
+                                << input_values_offset <<
+                                " is beyone the input array bounds! No "
+                                "elements will be sent." );
+  }
 }
+
+// The scatterv implementation
+template<typename T>
+void serialScattervImpl( const Communicator& comm,
+                         const T* input_values,
+                         int requested_number_of_input_values_to_send,
+                         int input_values_offset,
+                         T* output_values,
+                         int output_values_size )
+{
+  int number_to_send = requested_number_of_input_values_to_send;
+    
+  if( requested_number_of_input_values_to_send > output_values_size )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                requested_number_of_input_values_to_send <<
+                                " have been requested but the output array "
+                                "only has a size of " << output_values_size <<
+                                "! Only " << output_values_size <<
+                                " values will be sent." );
+    
+    number_to_send = output_values_size;
+  }
+
+  SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values+input_values_offset, number_to_send, output_values );
+}
+  
+} // end Details namespace
   
 // Send data to another process
 /*! \details The value on the calling process of the communicator will be 
@@ -79,8 +163,8 @@ void send( const Communicator& comm,
                       "Blocking send operations can only be done with "
                       "communicators of size 2 or greater!" );
 
-  const MPICommunicator const* mpi_comm =
-    dynamic_cast<const MPICommunicator const*>( &comm );
+  const MPICommunicator* const mpi_comm =
+    dynamic_cast<const MPICommunicator* const>( &comm );
 
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
@@ -105,11 +189,10 @@ void send( const Communicator& comm,
  * \ingroup mpi
  */
 template<typename T>
-inline std::shared_ptr<const CommunicatorStatus>
-receive( const Communicator& comm,
-         int source_process,
-         int tag,
-         T& value )
+inline Communicator::Status receive( const Communicator& comm,
+                                     int source_process,
+                                     int tag,
+                                     T& value )
 { return Utility::receive( comm, source_process, tag, &value, 1 ); }
 
 // Receive an array of data from another process
@@ -120,27 +203,29 @@ receive( const Communicator& comm,
  * \ingroup mpi
  */
 template<typename T>
-std::shared_ptr<const CommunicatorStatus>
-receive( const Communicator& comm,
-         int source_process,
-         int tag,
-         T* values,
-         int number_of_values )
+Communicator::Status receive( const Communicator& comm,
+                              int source_process,
+                              int tag,
+                              T* values,
+                              int number_of_values )
 {
   TEST_FOR_EXCEPTION( comm.size() <= 1,
                       InvalidCommunicator,
                       "Blocking receive operations can only be done with "
                       "communicators of size 2 or greater!" );
 
-  const MPICommunicator const* mpi_comm =
-    dynamic_cast<const MPICommunicator const*>( &comm );
+  const MPICommunicator* const mpi_comm =
+    dynamic_cast<const MPICommunicator* const>( &comm );
+
+  Communicator::Status status;
 
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
                       "An unknown communicator type was encountered!" );
 
   try{
-    mpi_comm->send( source_process, tag, values, number_of_values );
+    status =
+      mpi_comm->recv( source_process, tag, values, number_of_values );
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,
                               CommunicationError,
@@ -148,6 +233,8 @@ receive( const Communicator& comm,
                               "operation from source process "
                               << source_process << " with tag " << tag <<
                               " successfully!" );
+
+  return status;
 }
 
 // Send a data to another process without blocking
@@ -158,11 +245,11 @@ receive( const Communicator& comm,
  * communicators of size two or greater.
  * \ingroup mpi
  */
-inline std::shared_ptr<CommunicatorRequest>
-isend( const Communicator& comm,
-       int destination_process,
-       int tag,
-       const T& value )
+template<typename T>
+inline Communicator::Request isend( const Communicator& comm,
+                                    int destination_process,
+                                    int tag,
+                                    const T& value )
 {
   return Utility::isend( comm, destination_process, tag, &value, 1 );
 }
@@ -175,26 +262,26 @@ isend( const Communicator& comm,
  * communicators of size two or greater.
  * \ingroup mpi
  */
-std::shared_ptr<CommunicatorRequest>
-isend( const Communicator& comm,
-       int destination_process,
-       int tag,
-       const T* values,
-       int number_of_values )
+template<typename T>
+Communicator::Request isend( const Communicator& comm,
+                             int destination_process,
+                             int tag,
+                             const T* values,
+                             int number_of_values )
 {
   TEST_FOR_EXCEPTION( comm.size() <= 1,
                       InvalidCommunicator,
                       "Non-blocking send operations can only be done with "
                       "communicators of size 2 or greater!" );
 
-  const MPICommunicator const* mpi_comm =
-    dynamic_cast<const MPICommunicator const*>( &comm );
+  const MPICommunicator* const mpi_comm =
+    dynamic_cast<const MPICommunicator* const>( &comm );
 
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
                       "An unknown communicator type was encountered!" );
 
-  std::shared_ptr<CommunicatorRequest> request;
+  Communicator::Request request;
   
   try{
     request =
@@ -219,13 +306,12 @@ isend( const Communicator& comm,
  * \ingroup mpi
  */
 template<typename T>
-inline std::shared_ptr<CommunicatorRequest>
-ireceive( const Communicator& comm,
-          int source_process,
-          int tag,
-          T& value )
+inline Communicator::Request ireceive( const Communicator& comm,
+                                       int source_process,
+                                       int tag,
+                                       T& value )
 {
-  return Utility::ireceive( comm, source_process, tag, &value, number_of_values );
+  return Utility::ireceive( comm, source_process, tag, &value, 1 );
 }
 
 // Prepare to receive an array of data from another process
@@ -237,29 +323,28 @@ ireceive( const Communicator& comm,
  * \ingroup mpi
  */
 template<typename T>
-std::shared_ptr<CommunicatorRequest>
-ireceive( const Communicator& comm,
-          int source_process,
-          int tag,
-          T* values,
-          int number_of_values )
+Communicator::Request ireceive( const Communicator& comm,
+                                int source_process,
+                                int tag,
+                                T* values,
+                                int number_of_values )
 {
   TEST_FOR_EXCEPTION( comm.size() <= 1,
                       InvalidCommunicator,
                       "Non-blocking receive operations can only be done with "
                       "communicators of size 2 or greater!" );
 
-  const MPICommunicator const* mpi_comm =
-    dynamic_cast<const MPICommunicator const*>( &comm );
+  const MPICommunicator* const mpi_comm =
+    dynamic_cast<const MPICommunicator* const>( &comm );
 
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
                       "An unknown communicator type was encountered!" );
 
-  std::shared_ptr<CommunicatorRequest> request;
+  Communicator::Request request;
 
   try{
-    mpi_comm->irecv( source_process, tag, values, number_of_values );
+    request = mpi_comm->irecv( source_process, tag, values, number_of_values );
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,
                               CommunicationError,
@@ -267,6 +352,7 @@ ireceive( const Communicator& comm,
                               "operation from source process "
                               << source_process << " with tag " << tag <<
                               " successfully!" );
+  return request;
 }
 
 // Wait until a message is available to be received
@@ -278,25 +364,27 @@ ireceive( const Communicator& comm,
  * done with communicators of size two or greater.
  * \ingroup mpi
  */
-inline std::shared_ptr<const CommunicatorStatus>
-probe( const Communicator& comm, int source_process, int tag )
+template<typename T>
+Communicator::Status probe( const Communicator& comm,
+                            int source_process,
+                            int tag )
 {
   TEST_FOR_EXCEPTION( comm.size() <= 1,
                       InvalidCommunicator,
                       "Blocking probe operations can only be done with "
                       "communicators of size 2 or greater!" );
 
-  const MPICommunicator const* mpi_comm =
-    dynamic_cast<const MPICommunicator const*>( &comm );
+  const MPICommunicator* const mpi_comm =
+    dynamic_cast<const MPICommunicator* const>( &comm );
 
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
                       "An unknown communicator type was encountered!" );
 
-  std::shared_ptr<const CommunicatorStatus> status;
+  Communicator::Status status;
   
   try{
-    status = mpi_comm->probe( source_process, tag );
+    status = mpi_comm->probe<T>( source_process, tag );
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,
                               CommunicationError,
@@ -319,10 +407,10 @@ probe( const Communicator& comm, int source_process, int tag )
  * with communicators of size two or greater.
  * \ingroup mpi
  */
-inline std::shared_ptr<const CommunicatorStatus>
-probe( const Communicator& comm, int tag )
+template<typename T>
+inline Communicator::Status probe( const Communicator& comm, int tag )
 {
-  return Utility::probe( comm, comm.anySourceValue(), tag );
+  return Utility::probe<T>( comm, comm.anySourceValue(), tag );
 }
 
 // Wait until a message is available to be received from any source with any tag
@@ -334,10 +422,10 @@ probe( const Communicator& comm, int tag )
  * communicators of size two or greater.
  * \ingroup mpi
  */
-inline std::shared_ptr<const CommunicatorStatus>
-probe( const Communicator& comm )
+template<typename T>
+inline Communicator::Status probe( const Communicator& comm )
 {
-  return Utility::probe( comm, comm.anySourceValue(), comm.anyTagValue() );
+  return Utility::probe<T>( comm, comm.anySourceValue(), comm.anyTagValue() );
 }
 
 // Determine if a message is available to be received
@@ -349,25 +437,27 @@ probe( const Communicator& comm )
  * operation can only be  done with communicators of size two or greater.
  * \ingroup mpi
  */
-std::shared_ptr<const CommunicatorStatus>
-iprobe( const Communicator& comm, int source_process, int tag )
+template<typename T>
+Communicator::Status iprobe( const Communicator& comm,
+                             int source_process,
+                             int tag )
 {
   TEST_FOR_EXCEPTION( comm.size() <= 1,
                       InvalidCommunicator,
                       "Non-blocking probe operations can only be done with "
                       "communicators of size 2 or greater!" );
 
-  const MPICommunicator const* mpi_comm =
-    dynamic_cast<const MPICommunicator const*>( &comm );
+  const MPICommunicator* const mpi_comm =
+    dynamic_cast<const MPICommunicator* const>( &comm );
 
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
                       "An unknown communicator type was encountered!" );
 
-  std::shared_ptr<const CommunicatorStatus> status;
+  Communicator::Status status;
   
   try{
-    status = mpi_comm->iprobe( source_process, tag );
+    status = mpi_comm->iprobe<T>( source_process, tag );
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,
                               CommunicationError,
@@ -391,10 +481,10 @@ iprobe( const Communicator& comm, int source_process, int tag )
  * or greater.
  * \ingroup mpi
  */
-inline std::shared_ptr<const CommunicatorStatus>
-iprobe( const Communicator& comm, int tag )
+template<typename T>
+inline Communicator::Status iprobe( const Communicator& comm, int tag )
 {
-  return Utility::iprobe( comm, comm.anySourceValue(), tag );
+  return Utility::iprobe<T>( comm, comm.anySourceValue(), tag );
 }
 
 // Determine if a message is available to be received from any source with any tag
@@ -407,72 +497,37 @@ iprobe( const Communicator& comm, int tag )
  * or greater.
  * \ingroup mpi
  */
-inline std::shared_ptr<const CommunicatorStatus>
-iprobe( const Communicator& comm )
+template<typename T>
+inline Communicator::Status iprobe( const Communicator& comm )
 {
-  return Utility::iprobe( comm, comm.anySourceValue(), comm.anyTagValue() );
-}
-
-// Wait for the request to finish
-/*! \details The calling process of the communicator will wait until
- * the request has completed. The returned status can be used to determine
- * the details of the completed request.
- * \ingroup mpi
- */
-std::shared_ptr<const CommunicatorStatus>
-wait( const Communicator& comm,
-      const std::shared_ptr<CommunicatorRequest>& request )
-{
-  if( comm.size() > 1 && request.get() )
-  {
-    std::shared_ptr<const CommunicatorStatus> status;
-    try{
-      status = request->wait();
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::exception,
-                                CommunicationError,
-                                comm << " was not able to wait for the for "
-                                "the request to complete successfully!" );
-    return status;
-  }
-  else
-  {
-    __TEST_FOR_NULL_COMM__( comm );
-    return std::shared_ptr<const CommunicatorStatus>();
-  }
-}
-
-// Wait for the request to finish
-/*! \details The calling process of the communicator will wait until
- * the request has completed. The returned status can be used to determine
- * the details of the completed request.
- * \ingroup mpi
- */
-inline void wait( const Communicator& comm,
-                  const std::shared_ptr<CommunicatorRequest>& request,
-                  std::shared_ptr<const CommunicatorRequest>& status )
-{
-  status = Utility::wait( comm, request );
+  return Utility::iprobe<T>( comm, comm.anySourceValue(), comm.anyTagValue() );
 }
 
 // Wait for the requests to finish
-/*! \details The calling process of the communicator will wait until
- * all of the requests have completed. The returned statuses can be used to 
- * determine the details of each completed request.
+/*! \details The calling process will wait until all of the requests have 
+ * completed. The returned statuses can be used to determine the details of 
+ * each completed request.
  * \ingroup mpi
  */
 template<template<typename T,typename...> class STLCompliantInputSequenceContainer,
          template<typename T,typename...> class STLCompliantOutputSequenceContainer,
          typename T>
-void wait( const Communicator& comm,
-           const STLCompliantInputSequenceContainer<std::shared_ptr<CommunicatorRequest> >& requests,
-           STLCompliantOutputSequenceContainer<std::shared_ptr<const CommunicatorStatus> >& statuses )
+void wait( STLCompliantInputSequenceContainer<Communicator::Request>& requests,
+           STLCompliantOutputSequenceContainer<Communicator::Status>& statuses )
 {
   // Resize the statuses array
   statuses.resize( requests.size() );
 
   for( size_t i = 0; i < requests.size(); ++i )
-    Utility::wait( comm, requests[i], statuses[i] );
+  {
+    try{
+      statuses[i] = requests[i].wait();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                                CommunicationError,
+                                "A request was not able to wait for the for "
+                                "the operation to complete!" );
+  }
 }
 
 // Gather the values stored at every process into vectors of values 
@@ -552,8 +607,8 @@ void allGather( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -570,8 +625,8 @@ void allGather( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    
-    SerialCommunicator::allGather( input_values, number_of_input_values, output_values );
+
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -592,8 +647,8 @@ void allReduce( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -611,7 +666,7 @@ void allReduce( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
 
-    SerialCommunicator::allReduce( input_values, number_of_input_values, output_values );
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -646,15 +701,15 @@ void allReduce( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
 
     try{
-      mpi_comm->allReduce( input_values, number_of_input_values, output_values, op );
+      mpi_comm->allReduce( input_output_values, number_of_values, op );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -720,7 +775,7 @@ inline void allToAll( const Communicator& comm,
   else
     output_values.resize( number_of_input_values );
 
-  Utility::allToAll( comm, input_values.data(), number_of_input_values, output_values.data();
+  Utility::allToAll( comm, input_values.data(), number_of_input_values, output_values.data() );
 }
 
 // Send data from every process to every other process
@@ -740,8 +795,8 @@ void allToAll( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -759,7 +814,7 @@ void allToAll( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
 
-    SerialCommuniator::allToAll( input_values, number_of_input_values, output_values );
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -789,8 +844,8 @@ void broadcast( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -808,8 +863,16 @@ void broadcast( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    
-    SerialCommunicator::broadcast( values, number_of_values, root_process );
+
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "broadcast operation is "
+                                  << comm.rank() << "! The requested root "
+                                  "process " << root_process <<
+                                  " will be ignored!" );
+    }
   }
 }
 
@@ -890,8 +953,8 @@ void gather( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -909,8 +972,18 @@ void gather( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    
-    SerialCommunicator::gather( input_values, number_of_input_values, output_values, root_process );
+
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "gather operation is " << comm.rank() << "! "
+                                  "The requested root process "
+                                  << root_process <<
+                                  " will be ignored!" );
+    }
+  
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -958,15 +1031,15 @@ inline void gatherv( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
 
     try{
-      mpi_comm->gatherv( input_values, number_of_input_values, output_values, sizes, offests, root_process );
+      mpi_comm->gatherv( input_values, number_of_input_values, output_values, sizes, offsets, root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -977,13 +1050,31 @@ inline void gatherv( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
+
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "gatherv operation is " << comm.rank() << "!"
+                                  " The requested root process "
+                                  << root_process <<
+                                  " will be ignored!" );
+    }
     
-    SerialCommunicator::gatherv( input_values,
-                                 number_of_input_values,
-                                 output_values,
-                                 sizes,
-                                 offsets,
-                                 root_process );
+    if( !sizes.empty() )
+    {
+      int offset = 0;
+    
+      if( !offsets.empty() )
+        offset = offsets.front();
+    
+      Details::serialGathervImpl( comm,
+                                  input_values,
+                                  number_of_input_values,
+                                  sizes.front(),
+                                  offset,
+                                  output_values );
+    }
   }
 }
 
@@ -1027,8 +1118,8 @@ void gatherv( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -1047,11 +1138,25 @@ void gatherv( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    SerialCommunicator::gatherv( input_values,
-                                 number_of_input_values,
-                                 output_values,
-                                 sizes,
-                                 root_process );
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "gatherv operation is " << comm.rank() << "!"
+                                  " The requested root process "
+                                  << root_process <<
+                                  " will be ignored!" );
+    }
+
+    if( !sizes.empty() )
+    {
+      Details::serialGathervImpl( comm,
+                                  input_values,
+                                  number_of_input_values,
+                                  sizes.front(),
+                                  0, 
+                                  output_values );
+    }
   }
 }
 
@@ -1118,8 +1223,8 @@ void scatter( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -1137,8 +1242,21 @@ void scatter( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    
-    SerialCommunicator::scatter( input_values, output_values, number_of_values_per_proc, root_process );
+
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "scatter operation is " << comm.rank() << "!"
+                                  " The requested root process "
+                                  << root_process <<
+                                  " will be ignored!" );
+    }
+  
+    if( number_of_values_per_proc > 0 )
+    {
+      Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_values_per_proc, output_values );
+    }
   }
 }
 
@@ -1181,8 +1299,8 @@ void scatterv( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -1201,7 +1319,30 @@ void scatterv( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    SerialCommunicator::scatterv( input_values, sizes, offsets, output_values, number_of_output_values, root_process );
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "scatterv operation is " << comm.rank() <<
+                                  "! The requested root process "
+                                  << root_process <<
+                                  " will be ignored!" );
+    }
+    
+    if( !sizes.empty() )
+    {
+      int offset = 0;
+      
+      if( !offsets.empty() )
+        offset = offsets.front();
+    
+      Details::serialScattervImpl( comm,
+                                   input_values,
+                                   sizes.front(),
+                                   offset,
+                                   output_values,
+                                   number_of_output_values );
+    }
   }
 }
 
@@ -1240,15 +1381,15 @@ void scatterv( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
 
     try{
-      mpi_comm->scatterv( input_values, sizes, offsets, output_values, number_of_output_values, root_process );
+      mpi_comm->scatterv( input_values, sizes, output_values, number_of_output_values, root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -1260,7 +1401,25 @@ void scatterv( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
     
-    SerialCommunicator::scatterv( input_values, sizes, offsets, output_values, number_of_output_values, root_process );
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "scatterv operation is " << comm.rank() <<
+                                  "! The requested root process "
+                                  << root_process <<
+                                  " will be ignored!" );
+    }
+  
+    if( !sizes.empty() )
+    {
+      Details::serialScattervImpl( comm,
+                                   input_values,
+                                   sizes.front(),
+                                   0,
+                                   output_values,
+                                   number_of_output_values );
+    }
   }
 }
 
@@ -1296,8 +1455,8 @@ void reduce( const Communicator& comm,
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -1315,8 +1474,18 @@ void reduce( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    
-    SerialCommunicator::reduce( input_values, number_of_input_values, output_values, op, root_process );
+
+    if( root_process != comm.rank() )
+    {
+      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                  "The only process available for the "
+                                  "reduce operation is " << comm.rank() << "! "
+                                  "The requested root process "
+                                  << root_process <<
+                                  " will be ignored!" );
+    }
+
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
   }
 }
 
@@ -1345,13 +1514,13 @@ template<typename T, typename ReduceOperation>
 void scan( const Communicator& comm,
            const T* input_values,
            int number_of_input_values,
-           T* output_value,
+           T* output_values,
            ReduceOperation op )
 {
   if( comm.size() > 1 )
   {
-    const MPICommunicator const* mpi_comm =
-      dynamic_cast<const MPICommunicator const*>( &comm );
+    const MPICommunicator* const mpi_comm =
+      dynamic_cast<const MPICommunicator* const>( &comm );
 
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
@@ -1369,14 +1538,14 @@ void scan( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
 
-    SerialCommunicator::scan( input_values, number_of_input_values, output_values, op );
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
   }
 }
   
 } // end Utility namespace
 
-#endif // end UTILITY_COMMUNICATOR_HELPERS_DEF_HPP
+#endif // end UTILITY_COMMUNICATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_CommunicatorHelpers_def.hpp
+// end Utility_Communicator_def.hpp
 //---------------------------------------------------------------------------//

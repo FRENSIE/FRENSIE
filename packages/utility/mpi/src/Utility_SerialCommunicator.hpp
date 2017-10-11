@@ -10,7 +10,7 @@
 #define UTILITY_SERIAL_COMMUNICATOR_HPP
 
 // FRENSIE Includes
-#include "Utility_Communicator.hpp"
+#include "Utility_CommunicatorDecl.hpp"
 
 namespace Utility{
 
@@ -39,98 +39,6 @@ public:
 
   //! The any tag value
   int anyTagValue() const override;
-
-  /*! \brief Gather the array of values stored at every process into vectors of
-   * values from each process.
-   */
-  template<typename T>
-  static void allGather( const T* input_values,
-                         int number_of_input_values,
-                         T* output_values );
-
-  /*! \brief Combine the values stored by each process into a single value
-   * available to all processes.
-   */
-  template<typename T, typename ReduceOperation>
-  static void allReduce( const T* input_values,
-                         int number_of_input_values,
-                         T* output_values,
-                         ReduceOperation op );
-
-  //! Send data from every process to every other process
-  template<typename T>
-  static void allToAll( const T* input_values,
-                        int number_of_input_values,
-                        T* output_values );
-
-  //! Broadcast a value from a root process to all other processes
-  template<typename T>
-  static void broadcast( T* values,
-                         int number_of_values,
-                         int root_process );
-
-  //! Gather the values stored at every process into a vector at the root process
-  template<typename T>
-  static void gather( const T* input_values,
-                      int number_of_input_values,
-                      T* output_values,
-                      int root_process );
-
-  //! Gather the values stored at every process into a vector at the root process
-  template<typename T>
-  static void gatherv( const T* input_values,
-                       int number_of_input_values,
-                       T* output_values,
-                       const std::vector<int>& sizes,
-                       const std::vector<int>& offsets,
-                       const int root_process );
-
-  //! Gather the values stored at every process into a vector at the root process
-  template<typename T>
-  static void gatherv( const T* input_values,
-                       int number_of_input_values,
-                       T* output_values,
-                       const std::vector<int>& sizes,
-                       const int root_process );
-
-  //! Scatter the values stored at the root process to all other processes
-  template<typename T>
-  static void scatter( const T* input_values,
-                       T* output_values,
-                       int number_of_values_per_proc,
-                       int root_process );
-
-  //! Scatter the values stored at the root process to all other processes
-  template<typename T>
-  static void scatterv( const T* input_values,
-                        const std::vector<int>& sizes,
-                        const std::vector<int>& offsets,
-                        T* output_values,
-                        int number_of_output_values,
-                        int root_process );
-
-  //! Scatter the values stored at the root process to all other processes
-  template<typename T>
-  static void scatterv( const T* input_values,
-                        const std::vector<int>& sizes,
-                        T* output_values,
-                        int number_of_output_values,
-                        int root_process );
-
-  //! Combine the values stored by each process intoa single value at the root
-  template<typename T, typename ReduceOperation>
-  static void reduce( const T* input_values,
-                      int number_of_input_values,
-                      T* output_values,
-                      ReduceOperation op,
-                      int root_process );
-
-  //! Compute a prefix reduction of values from all processes
-  template<typename T, typename ReduceOperation>
-  static void scan( const T* input_values,
-                    int number_of_input_values,
-                    T* output_values,
-                    ReduceOperation op );
 
   //! Wait for all processes within the comm to reach the barrier
   void barrier() const override;
@@ -192,14 +100,6 @@ private:
 };
   
 } // end Utility namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "Utility_SerialCommunicator_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_SERIAL_COMMUNICATOR_HPP
 

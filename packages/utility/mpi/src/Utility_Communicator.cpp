@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_Communicator.hpp"
+#include "Utility_CommunicatorDecl.hpp"
 #include "Utility_SerialCommunicator.hpp"
 #include "Utility_MPICommunicator.hpp"
 #include "Utility_GlobalMPISession.hpp"
@@ -123,6 +123,151 @@ std::shared_ptr<const Communicator> Communicator::getNull()
 // Determine if this communicator is valid for communication
 Communicator::operator bool() const
 { return this->isValid(); }
+
+// Default constructor
+Communicator::Status::Status()
+{ /* ... */ }
+
+// Copy constructor
+Communicator::Status::Status( const Status& other_status )
+  : d_impl( other_status.d_impl )
+{ /* ... */ }
+
+// Implementation constructor
+Communicator::Status::Status( const std::shared_ptr<const Impl>& impl )
+  : d_impl( impl )
+{ /* ... */ }
+
+// Assignment operator
+Communicator::Status& Communicator::Status::operator=(
+                                     const Communicator::Status& other_status )
+{
+  if( this != &other_status )
+    d_impl = other_status.d_impl;
+
+  return *this;
+}
+
+// Check if there are message details
+/*! \details An example of when this will be false is after a call to
+ * Utility::iprobe.
+ */
+bool Communicator::Status::hasMessageDetails() const
+{
+  return d_impl.get() != NULL;
+}
+
+// Check if there are message details
+/*! \details An example of when this will be false is after a call to
+ * Utility::iprobe.
+ */
+Communicator::Status::operator bool() const
+{
+  return d_impl.get() != NULL;
+}
+
+// Check if the communication was cancelled successfully
+/*! \details If there are no message details, the return value is always false.
+ */
+bool Communicator::Status::cancelled() const
+{
+  if( d_impl )
+    return d_impl->cancelled();
+  else
+    return false;
+}
+  
+// Retrieve the source of the message
+/*! \details If there are no message details, the return value is always -1.
+ */
+int Communicator::Status::source() const
+{
+  if( d_impl )
+    return d_impl->source();
+  else
+    return -1;
+}
+
+// Retrieve the message tag
+/*! \details If there are no message details, the return value is always -1.
+ */
+int Communicator::Status::tag() const
+{
+  if( d_impl )
+    return d_impl->tag();
+  else
+    return -1;
+}
+
+// Count the number of elements that were contained in the message
+/*! \details If there are no message details, the return value is always -1.
+ */
+int Communicator::Status::count() const
+{
+  if( d_impl )
+    return d_impl->count();
+  else
+    return -1;
+}
+
+// Default constructor
+Communicator::Request::Request()
+{ /* ... */ }
+
+// Copy constructor
+Communicator::Request::Request( const Request& other_request )
+  : d_impl( other_request.d_impl )
+{ /* ... */ }
+
+// Implementation constructor
+Communicator::Request::Request( const std::shared_ptr<Impl>& impl )
+  : d_impl( impl )
+{ /* ... */ }
+
+// Assignment operator
+Communicator::Request& Communicator::Request::operator=(
+                                   const Communicator::Request& other_request )
+{
+  if( this != &other_request )
+    d_impl = other_request.d_impl;
+
+  return *this;
+}
+
+// Wait until the operation associated with this request has completed
+Communicator::Status Communicator::Request::wait()
+{
+  if( d_impl )
+  {
+    std::shared_ptr<const Communicator::Status::Impl>
+      status_impl( d_impl->wait() );
+
+    return Communicator::Status( status_impl );
+  }
+  else
+    return Communicator::Status();
+}
+
+// Cancel the pending operation associated with this request
+void Communicator::Request::cancel()
+{
+  if( d_impl )
+    d_impl->cancel();
+}
+
+// Create a new status object
+Communicator::Status Communicator::createStatus(
+                const std::shared_ptr<const Communicator::Status::Impl>& impl )
+{
+  return Communicator::Status( impl );
+}
+
+// Create a new request object
+Communicator::Request Communicator::createRequest(
+                     const std::shared_ptr<Communicator::Request::Impl>& impl )
+{
+  return Communicator::Request( impl );
+}
 
 /*! Determine if two communicators are identical
  * \ingroup mpi

@@ -10,7 +10,7 @@
 #define UTILITY_MPI_COMMUNICATOR_HPP
 
 // FRENSIE Includes
-#include "Utility_Communicator.hpp"
+#include "Utility_CommunicatorDecl.hpp"
 #include "FRENSIE_config.hpp"
 
 namespace Utility{
@@ -44,9 +44,33 @@ public:
   //! The any tag value
   int anyTagValue() const override;
 
-  //! Count the number of elements that were contained in a message
-  template<typename T>
-  int count( const CommunicatorStatus& status ) const;
+  //! Wait for all processes within the comm to reach the barrier
+  void barrier() const override;
+
+  //! Check if this communicator can be used for communication
+  bool isValid() const override;
+
+  //! Check if this communicator uses mpi
+  bool isMPIUsed() const override;
+
+  //! Check if this communicator is identical to another
+  bool isIdentical( const Communicator& comm ) const override;
+  
+  /*! \brief Split the communicator into multiple, disjoint communicators each
+   * of which is based on a particular color
+   */
+  std::shared_ptr<const Communicator> split( int color ) const override;
+
+  /*! \brief Split the communicator into multiple, disjoint communicators each
+   * of which is based on a particular color.
+   */
+  std::shared_ptr<const Communicator> split( int color, int key ) const override;
+
+  //! Create a timer
+  std::shared_ptr<Timer> createTimer() const override;
+
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const override;
 
   //! Send a message to another process (blocking)
   template<typename T>
@@ -54,21 +78,23 @@ public:
 
   //! Receive a message from another process (blocking)
   template<typename T>
-  std::shared_ptr<const CommunicatorStatus> recv( int source, int tag, T* values, int number_of_values ) const;
+  Communicator::Status recv( int source, int tag, T* values, int number_of_values ) const;
 
   //! Send a message to another process (non-blocking)
   template<typename T>
-  std::shared_ptr<CommunicatorRequest> isend( int dest, int tag, const T* values, int number_of_values ) const;
+  Communicator::Request isend( int dest, int tag, const T* values, int number_of_values ) const;
 
   //! Receive a message from another process (non-blocking)
   template<typename T>
-  std::shared_ptr<CommunicatorRequest> irecv( int source, int tag, T* values, int number_of_values ) const;
+  Communicator::Request irecv( int source, int tag, T* values, int number_of_values ) const;
 
   //! Wait until a message is available to be received
-  std::shared_ptr<const CommunicatorStatus> probe( int source, int tag ) const;
+  template<typename T>
+  Communicator::Status probe( int source, int tag ) const;
 
   //! Determine if a message is available to be received
-  std::shared_ptr<const CommunicatorStatus> iprobe( int source, int tag ) const;
+  template<typename T>
+  Communicator::Status iprobe( int source, int tag ) const;
   
   /*! \brief Gather the array of values stored at every process into vectors of
    * values from each process.
@@ -170,34 +196,6 @@ public:
              T* output_values,
              ReduceOperation op ) const;
 
-  //! Wait for all processes within the comm to reach the barrier
-  void barrier() const override;
-
-  //! Check if this communicator can be used for communication
-  bool isValid() const override;
-
-  //! Check if this communicator uses mpi
-  bool isMPIUsed() const override;
-
-  //! Check if this communicator is identical to another
-  bool isIdentical( const Communicator& comm ) const override;
-  
-  /*! \brief Split the communicator into multiple, disjoint communicators each
-   * of which is based on a particular color
-   */
-  std::shared_ptr<const Communicator> split( int color ) const override;
-
-  /*! \brief Split the communicator into multiple, disjoint communicators each
-   * of which is based on a particular color.
-   */
-  std::shared_ptr<const Communicator> split( int color, int key ) const override;
-
-  //! Create a timer
-  std::shared_ptr<Timer> createTimer() const override;
-
-  //! Method for placing the object in an output stream
-  void toStream( std::ostream& os ) const override;
-
 private:
 
   //! The communicator base class is a friend
@@ -213,72 +211,6 @@ private:
   // The boost mpi communicator
   boost::mpi::communicator d_comm;
 #endif // end HAVE_FRENSIE_MPI
-};
-
-/*! The maximum operator
- * \ingroup mpi
- */
-template<typename T>
-struct maximum
-{ 
-  typedef T InputType;
-
-  const T& operator()( const T&, const T& ) const;
-};
-
-/*! The minimum operator
- * \ingroup mpi
- */
-template<typename T>
-struct minimum
-{
-  typedef T InputType;
-
-  const T& operator()( const T&, const T& ) const;
-};
-
-/*! The bitwise and operator
- * \ingroup mpi
- */
-template<typename T>
-struct bitwiseAnd
-{
-  typedef T InputType;
-
-  T operator()( const T&, const T& ) const;
-};
-
-/*! The bitwise or operator
- * \ingroup mpi
- */
-template<typename T>
-struct bitwiseOr
-{
-  typedef T InputType;
-
-  T operator()( const T&, const T& ) const;
-};
-
-/*! The bitwise exclusive or operator
- * \ingroup mpi
- */
-template<typename T>
-struct bitwiseXor
-{
-  typedef T InputType;
-
-  T operator()( const T&, const T& ) const;
-};
-
-/*! The logical exclusive or operator
- * \ingroup mpi
- */
-template<typename T>
-struct logicalXor
-{
-  typedef T InputType;
-
-  T operator()( const T&, const T& ) const;
 };
   
 } // end Utility namespace

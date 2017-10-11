@@ -371,14 +371,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( MPICommunicator, send_recv_basic, BasicTypes )
 
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status = 
+        Utility::Communicator::Status comm_status = 
           mpi_comm.recv( i, tag, values_to_receive.data(), number_of_values );
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), tag );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<T>( *comm_status ),
-                             number_of_values );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), tag );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), number_of_values );
         FRENSIE_CHECK_EQUAL( values_to_receive, expected_values_to_receive );
 
         values_to_receive.clear();
@@ -419,14 +418,13 @@ FRENSIE_UNIT_TEST( MPICommunicator, send_recv_string )
 
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status = 
+        Utility::Communicator::Status comm_status = 
           mpi_comm.recv( i, tag, values_to_receive.data(), number_of_values );
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), tag );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<std::string>( *comm_status ),
-                             number_of_values );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), tag );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), number_of_values );
         FRENSIE_CHECK_EQUAL( values_to_receive, expected_values_to_receive );
 
         values_to_receive.clear();
@@ -461,16 +459,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( MPICommunicator, isend_irecv_basic, BasicTypes )
     {
       std::vector<T> values_to_send( number_of_values, value );
 
-      std::shared_ptr<Utility::CommunicatorRequest> request = 
+      Utility::Communicator::Request request =
         mpi_comm.isend( 0, tag, values_to_send.data(), number_of_values );
 
-      FRENSIE_REQUIRE( request.get() != NULL );
+      Utility::Communicator::Status comm_status = request.wait();
 
-      std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-        request->wait();
-
-      FRENSIE_REQUIRE( comm_status.get() != NULL );
-      FRENSIE_CHECK( !comm_status->cancelled() );
+      FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+      FRENSIE_CHECK( !comm_status.cancelled() );
     }
     else
     {
@@ -479,17 +474,15 @@ FRENSIE_UNIT_TEST_TEMPLATE( MPICommunicator, isend_irecv_basic, BasicTypes )
 
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<Utility::CommunicatorRequest> request =
+        Utility::Communicator::Request request = 
           mpi_comm.irecv( i, tag, values_to_receive.data(), number_of_values );
-        
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-          request->wait();
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), tag );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<T>( *comm_status ),
-                             number_of_values );
+        Utility::Communicator::Status comm_status = request.wait();
+
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), tag );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), number_of_values );
         FRENSIE_CHECK_EQUAL( values_to_receive, expected_values_to_receive );
 
         values_to_receive.clear();
@@ -521,16 +514,13 @@ FRENSIE_UNIT_TEST( MPICommunicator, isend_irecv_string )
     {
       std::vector<std::string> values_to_send( number_of_values, value );
 
-      std::shared_ptr<Utility::CommunicatorRequest> request = 
+      Utility::Communicator::Request request = 
         mpi_comm.isend( 0, tag, values_to_send.data(), number_of_values );
 
-      FRENSIE_REQUIRE( request.get() != NULL );
+      Utility::Communicator::Status comm_status = request.wait();
 
-      std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-        request->wait();
-
-      FRENSIE_REQUIRE( comm_status.get() != NULL );
-      FRENSIE_CHECK( !comm_status->cancelled() );
+      FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+      FRENSIE_CHECK( !comm_status.cancelled() );
     }
     else
     {
@@ -539,17 +529,15 @@ FRENSIE_UNIT_TEST( MPICommunicator, isend_irecv_string )
 
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<Utility::CommunicatorRequest> request =
+        Utility::Communicator::Request request =
           mpi_comm.irecv( i, tag, values_to_receive.data(), number_of_values );
-        
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-          request->wait();
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), tag );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<std::string>( *comm_status ),
-                             number_of_values );
+        Utility::Communicator::Status comm_status = request.wait();
+
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), tag );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), number_of_values );
         FRENSIE_CHECK_EQUAL( values_to_receive, expected_values_to_receive );
 
         values_to_receive.clear();
@@ -590,20 +578,19 @@ FRENSIE_UNIT_TEST( MPICommunicator, probe )
       // Probe for messages with tag 0
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-          mpi_comm.probe( i, 0 );
+        Utility::Communicator::Status comm_status =
+          mpi_comm.probe<double>( i, 0 );
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
 
-        values_to_receive.resize( mpi_comm.count<double>( *comm_status ) );
+        values_to_receive.resize( comm_status.count() );
         
-        comm_status =
-          mpi_comm.recv( i, 0, values_to_receive.data(), values_to_receive.size() );
+        comm_status = mpi_comm.recv( i, 0, values_to_receive.data(), values_to_receive.size() );
         
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), 0 );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<double>( *comm_status ), 10 );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), 0 );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), 10 );
         FRENSIE_CHECK_EQUAL( values_to_receive,
                              std::vector<double>( 10, 10.0 ) );
 
@@ -613,20 +600,19 @@ FRENSIE_UNIT_TEST( MPICommunicator, probe )
       // Probe for messages with tag 1
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-          mpi_comm.probe( i, 1 );
+        Utility::Communicator::Status comm_status =
+          mpi_comm.probe<double>( i, 1 );
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
 
-        values_to_receive.resize( mpi_comm.count<double>( *comm_status ) );
+        values_to_receive.resize( comm_status.count() );
         
-        comm_status =
-          mpi_comm.recv( i, 1, values_to_receive.data(), values_to_receive.size() );
+        comm_status = mpi_comm.recv( i, 1, values_to_receive.data(), values_to_receive.size() );
         
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), 1 );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<double>( *comm_status ), 20 );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() )
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), 1 );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), 20 );
         FRENSIE_CHECK_EQUAL( values_to_receive,
                              std::vector<double>( 20, 20.0 ) );
 
@@ -670,22 +656,21 @@ FRENSIE_UNIT_TEST( MPICommunicator, iprobe )
       // Probe for messages with tag 0
       while( message_count < comm->size() - 1 )
       {
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-          mpi_comm.iprobe( source_proc, 0 );
+        Utility::Communicator::Status comm_status = 
+          mpi_comm.iprobe<double>( source_proc, 0 );
 
         // A null comm status indicates that no messages have been posted
         if( !comm_status )
           continue;
 
-        values_to_receive.resize( mpi_comm.count<double>( *comm_status ) );
+        values_to_receive.resize( comm_status.count() );
         
-        comm_status =
-          mpi_comm.recv( source_proc, 0, values_to_receive.data(), values_to_receive.size() );
+        comm_status = mpi_comm.recv( source_proc, 0, values_to_receive.data(), values_to_receive.size() );
         
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), source_proc );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), 0 );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<double>( *comm_status ), 10 );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() )
+        FRENSIE_CHECK_EQUAL( comm_status.source(), source_proc );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), 0 );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), 10 );
         FRENSIE_CHECK_EQUAL( values_to_receive,
                              std::vector<double>( 10, 10.0 ) );
 
@@ -700,22 +685,21 @@ FRENSIE_UNIT_TEST( MPICommunicator, iprobe )
       // Probe for messages with tag 1
       while( message_count < comm->size() - 1 )
       {
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-          mpi_comm.probe( source_proc, 1 );
+        Utility::Communicator::Status comm_status = 
+          mpi_comm.iprobe<double>( source_proc, 1 );
 
         // A null comm status indicates that no messages have been posted
         if( !comm_status )
           continue;
           
-        values_to_receive.resize( mpi_comm.count<double>( *comm_status ) );
+        values_to_receive.resize( comm_status.count() );
         
-        comm_status =
-          mpi_comm.recv( source_proc, 1, values_to_receive.data(), values_to_receive.size() );
+        comm_status = mpi_comm.recv( source_proc, 1, values_to_receive.data(), values_to_receive.size() );
         
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), source_proc );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), 1 );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<double>( *comm_status ), 20 );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), source_proc );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), 1 );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), 20 );
         FRENSIE_CHECK_EQUAL( values_to_receive,
                              std::vector<double>( 20, 20.0 ) );
 

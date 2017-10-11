@@ -9,176 +9,387 @@
 #ifndef UTILITY_COMMUNICATOR_HPP
 #define UTILITY_COMMUNICATOR_HPP
 
-// Std Lib Includes
-#include <memory>
-#include <stdexcept>
-
 // FRENSIE Includes
-#include "Utility_Timer.hpp"
-#include "Utility_OStreamableObject.hpp"
+#include "Utility_CommunicatorDecl.hpp"
+#include "Utility_SerialCommunicator.hpp"
+#include "Utility_MPICommunicator.hpp"
 
 namespace Utility{
 
-/*! The communicator base class
- * \ingroup mpi
+//! Send data to another process
+template<typename T>
+void send( const Communicator& comm,
+           int destination_process,
+           int tag,
+           const T& value );
+
+//! Send an array of data to another process
+template<typename T>
+void send( const Communicator& comm,
+           int destination_process,
+           int tag,
+           const T* values,
+           int number_of_values );
+
+//! Receive data from another process
+template<typename T>
+Communicator::Status receive( const Communicator& comm,
+                              int source_process,
+                              int tag,
+                              T& value );
+
+//! Receive an array of data from another process
+template<typename T>
+Communicator::Status receive( const Communicator& comm,
+                              int source_process,
+                              int tag,
+                              T* values,
+                              int number_of_values );
+
+//! Send a data to another process without blocking
+template<typename T>
+Communicator::Request isend( const Communicator& comm,
+                             int destination_process,
+                             int tag,
+                             const T& value );
+
+//! Send an array of data to another process without blocking
+template<typename T>
+Communicator::Request isend( const Communicator& comm,
+                             int destination_process,
+                             int tag, 
+                             const T* values,
+                             int number_of_values );
+
+//! Prepare to receive data from another process
+template<typename T>
+Communicator::Request ireceive( const Communicator& comm,
+                                int source_process,
+                                int tag,
+                                T& value );
+
+//! Prepare to receive an array of data from another process
+template<typename T>
+Communicator::Request ireceive( const Communicator& comm,
+                                int source_process,
+                                int tag,
+                                T* values,
+                                int number_of_values );
+
+//! Wait until a message is available to be received
+template<typename T>
+Communicator::Status probe( const Communicator& comm,
+                            int source_process,
+                            int tag );
+
+//! Wait until a message is available to be received from any source
+template<typename T>
+Communicator::Status probe( const Communicator& comm, int tag );
+
+//! Wait until a message is available to be received from any source with any tag
+template<typename T>
+Communicator::Status probe( const Communicator& comm );
+
+//! Determine if a message is available to be received
+template<typename T>
+Communicator::Status iprobe( const Communicator& comm,
+                             int source_process,
+                             int tag );
+
+//! Determine if a message is available to be received from any source
+template<typename T>
+Communicator::Status iprobe( const Communicator& comm, int tag );
+
+//! Determine if a message is available to be received from any source with any tag
+template<typename T>
+Communicator::Status iprobe( const Communicator& comm );
+
+//! Wait for the requests to finish
+template<template<typename T,typename...> class STLCompliantInputSequenceContainer,
+         template<typename T,typename...> class STLCompliantOutputSequenceContainer,
+         typename T>
+void wait( STLCompliantInputSequenceContainer<Communicator::Request>& requests,
+           STLCompliantOutputSequenceContainer<Communicator::Status>& statuses );
+
+/*! \brief Gather the values stored at every process into vectors of values 
+ * from each process.
  */
-class Communicator : public OStreamableObject
-{
+template<typename T>
+void allGather( const Communicator& comm,
+                const T& input_value,
+                std::vector<T>& output_values );
 
-public:
-
-  //! Default constructor
-  Communicator()
-  { /* ... */ }
-
-  //! Destructor
-  virtual ~Communicator()
-  { /* ... */ }
-
-  //! Create a default communicator
-  static std::shared_ptr<const Communicator> getDefault();
-
-  //! Create a null communicator
-  static std::shared_ptr<const Communicator> getNull();
-
-  //! Determine the rank of the executing process
-  virtual int rank() const = 0;
-
-  //! Determine the number of processes in a communicator
-  virtual int size() const = 0;
-
-  //! The any source value
-  virtual int anySourceValue() const = 0;
-
-  //! The any tag value
-  virtual int anyTagValue() const = 0;
-
-  //! Wait for all processes within the comm to reach the barrier
-  virtual void barrier() const = 0;
-
-  //! Check if this communicator can be used for communication
-  virtual bool isValid() const = 0;
-
-  //! Check if this communicator uses mpi
-  virtual bool isMPIUsed() const = 0;
-  
-  //! Determine if this communicator is valid for communication
-  operator bool() const;
-
-  //! Check if this communicator is identical to another
-  virtual bool isIdentical( const Communicator& comm ) const = 0;
-
-  /*! \brief Split the communicator into multiple, disjoint communicators each
-   * of which is based on a particular color
-   */
-  virtual std::shared_ptr<const Communicator> split( int color ) const = 0;
-
-  /*! \brief Split the communicator into multiple, disjoint communicators each
-   * of which is based on a particular color.
-   */
-  virtual std::shared_ptr<const Communicator> split( int color, int key ) const = 0;
-
-  //! Create a timer
-  virtual std::shared_ptr<Timer> createTimer() const = 0;
-};
-
-/*! Determine if two communicators are identical
- * \ingroup mpi
+/*! \brief Gather the values stored at every process into vectors of values 
+ * from each process.
  */
-bool operator==( const Communicator& comm_a, const Communicator& comm_b );
+template<typename T>
+void allGather( const Communicator& comm,
+                const T& input_value,
+                T* output_values );
 
-/*! Determine if two communicators are different
- * \ingroup mpi
+/*! \brief Gather the array of values stored at every process into vectors of
+ * values from each process.
  */
-bool operator!=( const Communicator& comm_a, const Communicator& comm_b );
+template<typename T>
+void allGather( const Communicator& comm,
+                const T* input_values,
+                int number_of_input_values,
+                std::vector<T>& output_values );
 
-/*! The communicator status class
- * \ingroup mpi
+/*! \brief Gather the array of values stored at every process into vectors of
+ * values from each process.
  */
-class CommunicatorStatus
-{
+template<typename T>
+void allGather( const Communicator& comm,
+                const T* input_values,
+                int number_of_input_values,
+                T* output_values );
 
-public:
-
-  //! Default constructor
-  CommunicatorStatus()
-  { /* ... */ }
-
-  //! Destructor
-  virtual ~CommunicatorStatus()
-  { /* ... */ }
-
-  //! Retrieve the source of the message
-  virtual int source() const = 0;
-
-  //! Retrieve the message tag
-  virtual int tag() const = 0;
-
-  //! Check if the communication was cancelled successfully
-  virtual bool cancelled() const = 0;
-};
-
-/*! The communicator request class
- * \ingroup mpi
+/*! \brief Combine the values stored by each process into a single value
+ * available to all processes.
  */
-class CommunicatorRequest
-{
+template<typename T, typename ReduceOperation>
+void allReduce( const Communicator& comm,
+                const T* input_values,
+                int number_of_input_values,
+                T* output_values,
+                ReduceOperation op );
 
-public:
-
-  //! Default constructor
-  CommunicatorRequest()
-  { /* ... */ }
-
-  //! Destructor
-  virtual ~CommunicatorRequest()
-  { /* ... */ }
-
-  //! Wait until the communicator associated with this request has completed
-  virtual std::shared_ptr<const CommunicatorStatus> wait() = 0;
-
-  //! Cancel a pending communication
-  virtual void cancel() = 0;
-};
-
-/*! The invalid communicator exception
- * \ingroup mpi
+/*! \brief Combine the values stored by each process into a single value
+ * available to all processes.
  */
-class InvalidCommunicator : public std::logic_error
-{
-public:
+template<typename T, typename ReduceOperation>
+void allReduce( const Communicator& comm,
+                const T& input_value,
+                T& output_value,
+                ReduceOperation op );
 
-  //! Constructor
-  InvalidCommunicator( const std::string& details )
-    : std::logic_error( details )
-  { /* ... */ }
-
-  //! Destructor
-  ~InvalidCommunicator()
-  { /* ... */ }
-};
-
-/*! The communication error exception
- * \ingroup mpi
+/*! \brief Combine the values stored by each process into a single value
+ * available to all processes.
  */
-class CommunicationError : public std::runtime_error
-{
-public:
+template<typename T, typename ReduceOperation>
+void allReduce( const Communicator& comm,
+                T* input_output_values,
+                int number_of_values,
+                ReduceOperation op );
 
-  //! Constructor
-  CommunicationError( const std::string& details )
-    : std::runtime_error( details )
-  { /* ... */ }
+/*! \brief Combine the values stored by each process into a single value
+ * available to all processes.
+ */
+template<typename T, typename ReduceOperation>
+void allReduce( const Communicator& comm,
+                T& input_output_value,
+                ReduceOperation op );
 
-  //! Destructor
-  ~CommunicationError()
-  { /* ... */ }
-};
+//! Send data from every process to every other process
+template<typename T>
+void allToAll( const Communicator& comm,
+               const std::vector<T>& input_values,
+               std::vector<T>& output_values );
+
+//! Send data from every process to every other process
+template<typename T>
+void allToAll( const Communicator& comm,
+               const std::vector<T>& input_values,
+               int number_of_input_values,
+               std::vector<T>& output_values );
+
+//! Send data from every process to every other process
+template<typename T>
+void allToAll( const Communicator& comm,
+               const T* input_values,
+               int number_of_input_values,
+               T* output_values );
+
+//! Broadcast a value from a root process to all other processes
+template<typename T>
+void broadcast( const Communicator& comm, T& value, int root_process );
+
+//! Broadcast a value from a root process to all other processes
+template<typename T>
+void broadcast( const Communicator& comm,
+                T* values,
+                int number_of_values,
+                int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             const T& input_value,
+             std::vector<T>& output_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             const T& input_value,
+             T* output_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             const T* input_values,
+             int number_of_input_values,
+             std::vector<T>& output_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             const T* input_values,
+             int number_of_input_values,
+             T* output_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const std::vector<T>& input_values,
+              T* output_values,
+              const std::vector<int>& sizes,
+              const std::vector<int>& offsets,
+              const int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const T* input_values,
+              int number_of_input_values,
+              T* output_values,
+              const std::vector<int>& sizes,
+              const std::vector<int>& offsets,
+              const int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const std::vector<T>& input_values,
+              T* output_values,
+              const std::vector<int>& sizes,
+              const int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const T* input_values,
+              int number_of_input_values,
+              T* output_values,
+              const std::vector<int>& sizes,
+              const int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatter( const Communicator& comm,
+              const std::vector<T>& input_values,
+              T& output_value,
+              int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatter( const Communicator& comm,
+              const T* input_values,
+              T& output_value,
+              int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatter( const Communicator& comm,
+              const std::vector<T>& input_values,
+              T* output_values,
+              int number_of_values_per_proc,
+              int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatter( const Communicator& comm,
+              const T* input_values,
+              T* output_values,
+              int number_of_values_per_proc,
+              int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatterv( const Communicator& comm,
+               const std::vector<T>& input_values,
+               const std::vector<int>& sizes,
+               const std::vector<int>& offsets,
+               T* output_values,
+               int number_of_output_values,
+               int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatterv( const Communicator& comm,
+               const T* input_values,
+               const std::vector<int>& sizes,
+               const std::vector<int>& offsets,
+               T* output_values,
+               int number_of_output_values,
+               int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatterv( const Communicator& comm,
+               const std::vector<T>& input_values,
+               const std::vector<int>& sizes,
+               T* output_values,
+               int number_of_output_values,
+               int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
+void scatterv( const Communicator& comm,
+               const T* input_values,
+               const std::vector<int>& sizes,
+               T* output_values,
+               int number_of_output_values,
+               int root_process );
+
+//! Combine the values stored by each process intoa single value at the root
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const T& input_value,
+             T& output_value,
+             ReduceOperation op,
+             int root_process );
+
+//! Combine the values stored by each process intoa single value at the root
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const T* input_values,
+             int number_of_input_values,
+             T* output_values,
+             ReduceOperation op,
+             int root_process );
+
+//! Compute a prefix reduction of values from all processes
+template<typename T, typename ReduceOperation>
+void scan( const Communicator& comm,
+           const T& input_value,
+           T& output_value,
+           ReduceOperation op );
+
+//! Compute a prefix reduction of values from all processes
+template<typename T, typename ReduceOperation>
+void scan( const Communicator& comm,
+           const T* input_values,
+           int number_of_input_values,
+           T* output_values,
+           ReduceOperation op );
   
 } // end Utility namespace
 
-#endif // end UTILITY_COMMUNICATOR_HPP
+//---------------------------------------------------------------------------//
+// Template Includes.
+//---------------------------------------------------------------------------//
+
+#include "Utility_Communicator_def.hpp"
 
 //---------------------------------------------------------------------------//
-// end Utility_Communicator.hpp
+
+#endif // end UTILITY_COMMUNICATOR_DECL_HPP
+
+//---------------------------------------------------------------------------//
+// end Utility_CommunicatorDecl.hpp
 //---------------------------------------------------------------------------//

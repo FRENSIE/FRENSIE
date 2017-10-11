@@ -166,13 +166,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( MPICommunicator,
 
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status = 
+        Utility::Communicator::Status comm_status = 
           mpi_comm.recv( i, tag, &container_to_receive, 1 );
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), tag );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<Container>( *comm_status ), 1 );
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), tag );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), 1 );
         FRENSIE_CHECK_EQUAL( container_to_receive,
                              expected_container_to_receive );
 
@@ -208,16 +208,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( MPICommunicator,
       Container container_to_send;
       fillAssociativeContainer( container_to_send );
 
-      std::shared_ptr<Utility::CommunicatorRequest> request = 
+      Utility::Communicator::Request request = 
         mpi_comm.isend( 0, tag, &container_to_send, 1 );
 
-      FRENSIE_REQUIRE( request.get() != NULL );
+      Utility::Communicator::Status comm_status = request.wait();
 
-      std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-        request->wait();
-
-      FRENSIE_REQUIRE( comm_status.get() != NULL );
-      FRENSIE_CHECK( !comm_status->cancelled() );
+      FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+      FRENSIE_CHECK( !comm_status.cancelled() );
     }
     else
     {
@@ -227,16 +224,15 @@ FRENSIE_UNIT_TEST_TEMPLATE( MPICommunicator,
 
       for( int i = 1; i < comm->size(); ++i )
       {
-        std::shared_ptr<Utility::CommunicatorRequest> request =
+        Utility::Communicator::Request request = 
           mpi_comm.irecv( i, tag, &container_to_receive, 1 );
-        
-        std::shared_ptr<const Utility::CommunicatorStatus> comm_status =
-          request->wait();
 
-        FRENSIE_REQUIRE( comm_status.get() != NULL );
-        FRENSIE_CHECK_EQUAL( comm_status->source(), i );
-        FRENSIE_CHECK_EQUAL( comm_status->tag(), tag );
-        FRENSIE_CHECK_EQUAL( mpi_comm.count<Container>( *comm_status ), 1 );
+        Utility::Communicator::Status comm_status = request.wait();
+
+        FRENSIE_REQUIRE( comm_status.hasMessageDetails() );
+        FRENSIE_CHECK_EQUAL( comm_status.source(), i );
+        FRENSIE_CHECK_EQUAL( comm_status.tag(), tag );
+        FRENSIE_CHECK_EQUAL( comm_status.count(), 1 );
         FRENSIE_CHECK_EQUAL( container_to_receive,
                              expected_container_to_receive );
 
