@@ -14,6 +14,7 @@
 #include <array>
 #include <tuple>
 #include <utility>
+#include <type_traits>
 
 // FRENSIE Includes
 #include "Utility_View.hpp"
@@ -92,10 +93,7 @@ public:
   operator ArrayView<const typename std::remove_const<T>::type>() const;
 
   //! Return a direct pointer to the memory array used internally
-  typename View<T*>::pointer data();
-
-  //! Return a direct pointer to the memory array used internally
-  typename View<T*>::const_pointer data() const;
+  typename View<T*>::pointer data() const;
 };
 
 /*! The slice class 
@@ -270,6 +268,24 @@ struct ComparisonTraits<Utility::ArrayView<T> > : public ComparisonTraits<Utilit
 { /* ... */ };
   
 } // end Utility namespace
+
+namespace std{
+
+//! Partial specialization of common_type for Utility::ArrayView
+template<typename T>
+struct common_type<Utility::ArrayView<T>,Utility::ArrayView<const T> >
+{
+  typedef Utility::ArrayView<const T> type;
+};
+
+//! Partial specialization of common_type for Utility::ArrayView
+template<typename T>
+struct common_type<Utility::ArrayView<const T>,Utility::ArrayView<T> >
+{
+  typedef Utility::ArrayView<const T> type;
+};
+  
+} // end std namespace
 
 //---------------------------------------------------------------------------//
 // Template includes

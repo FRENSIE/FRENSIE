@@ -91,40 +91,22 @@ public:
   bool empty() const;
 
   //! Element access
-  reference operator[]( const size_type index );
+  reference operator[]( const size_type index ) const;
 
   //! Element access
-  const_reference operator[]( const size_type index ) const;
-
-  //! Element access
-  reference at( const size_type index );
-
-  //! Element access
-  const_reference at( const size_type index ) const;
+  reference at( const size_type index ) const;
 
   //! Access first element
-  reference front();
-
-  //! Access first element
-  const_reference front() const;
+  reference front() const;
 
   //! Access last element
-  reference back();
-
-  //! Access last element
-  const_reference back() const;
+  reference back() const;
 
   //! Return iterator to beginning
-  iterator begin();
-
-  //! Return iterator to beginning
-  const_iterator begin() const;
-
-  //! return iterator to end
-  iterator end();
+  iterator begin() const;
 
   //! Return iterator to end
-  const_iterator end() const;
+  iterator end() const;
 
   //! Return const iterator to beginning
   const_iterator cbegin() const;
@@ -256,6 +238,24 @@ struct ComparisonTraits<Utility::View<T> > : public Details::ComparisonTraitsSeq
 { /* ... */ };
   
 } // end Utility namespace
+
+namespace std{
+
+//! Partial specialization of common_type for Utility::View
+template<typename T>
+struct common_type<Utility::View<T>,Utility::View<const T> >
+{
+  typedef Utility::View<const T> type;
+};
+
+//! Partial specialization of common_type for Utility::View
+template<typename T>
+struct common_type<Utility::View<const T>,Utility::View<T> >
+{
+  typedef Utility::View<const T> type;
+};
+  
+} // end std namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes.

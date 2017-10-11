@@ -132,9 +132,9 @@ void serialScattervImpl( const Communicator& comm,
   
 // Send data to another process
 /*! \details The value on the calling process of the communicator will be 
- * sent with tag to destination_process of the communicator. This operation
- * will block until the destination process receives the value. This
- * operation can only be done with communicators of size two or greater.
+ * sent with tag to destination_process of the communicator.This operation will
+ * block until the destination process receives the value. This operation can 
+ * only be done with communicators of size two or greater.
  * \ingroup mpi
  */
 template<typename T>
@@ -143,6 +143,57 @@ inline void send( const Communicator& comm,
                   int tag,
                   const T& value )
 { Utility::send( comm, destination_process, tag, &value, 1 ); }
+
+// Send a std::initializer_list of data to another process
+/*! \details The underlying values of the initializer list on the calling 
+ * process of the communicator will be sent with tag to destination_process of 
+ * the communicator. This operation will block until the destination process 
+ * receives the values. This operation can only be done with communicators of 
+ * size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void send( const Communicator& comm,
+                  int destination_process,
+                  int tag,
+                  std::initializer_list<T> values )
+{
+  Utility::send( comm, destination_process, tag, values.begin(), values.size() );
+}
+
+// Send a Utility::ArrayView of data to another process
+/*! \details The underlying values of the array view on the calling 
+ * process of the communicator will be sent with tag to destination_process of 
+ * the communicator. This operation will block until the destination process 
+ * receives the values. This operation can only be done with communicators of 
+ * size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void send( const Communicator& comm,
+                  int destination_process,
+                  int tag,
+                  const Utility::ArrayView<const T>& values )
+{
+  Utility::send( comm, destination_process, tag, values.data(), values.size() );
+}
+
+// Send a Utility::ArrayView of data to another process
+/*! \details The underlying values of the array view on the calling 
+ * process of the communicator will be sent with tag to destination_process of 
+ * the communicator. This operation will block until the destination process 
+ * receives the values. This operation can only be done with communicators of 
+ * size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void send( const Communicator& comm,
+                  int destination_process,
+                  int tag,
+                  const Utility::ArrayView<T>& values )
+{
+  Utility::send( comm, destination_process, tag, values.toConst() );
+}
 
 // Send an array of data to another process
 /*! \details The values on the calling process of the communicator will be
@@ -194,6 +245,22 @@ inline Communicator::Status receive( const Communicator& comm,
                                      int tag,
                                      T& value )
 { return Utility::receive( comm, source_process, tag, &value, 1 ); }
+
+// Receive an array of data from another process
+/*! \details The values on the calling process of the communicator will be
+ * received with tag from source_process of the communicator. This operation
+ * will block until the source process sends the values. This
+ * operation can only be done with communicators of size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+inline Communicator::Status receive( const Communicator& comm,
+                                     int source_process,
+                                     int tag,
+                                     const ArrayView<T>& values )
+{
+  return Utility::receive( comm, source_process, tag, values.data(), values.size() );
+}
 
 // Receive an array of data from another process
 /*! \details The values on the calling process of the communicator will be
@@ -266,6 +333,40 @@ template<typename T>
 Communicator::Request isend( const Communicator& comm,
                              int destination_process,
                              int tag,
+                             const ArrayView<const T>& values )
+{
+  return Utility::isend( comm, destination_process, tag, values.data(), values.size() );
+}
+
+// Send an array of data to another process without blocking
+/*! \details The values on the calling process of the communicator will be 
+ * sent with tag to destination_process of the communicator. This operation
+ * will not block. Use the returned request to determine when the destination 
+ * process has received the values. This operation can only be done with 
+ * communicators of size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+Communicator::Request isend( const Communicator& comm,
+                             int destination_process,
+                             int tag,
+                             const ArrayView<T>& values )
+{
+  return Utility::isend( comm, destination_process, tag, values.toConst() );
+}
+
+// Send an array of data to another process without blocking
+/*! \details The values on the calling process of the communicator will be 
+ * sent with tag to destination_process of the communicator. This operation
+ * will not block. Use the returned request to determine when the destination 
+ * process has received the values. This operation can only be done with 
+ * communicators of size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+Communicator::Request isend( const Communicator& comm,
+                             int destination_process,
+                             int tag,
                              const T* values,
                              int number_of_values )
 {
@@ -312,6 +413,23 @@ inline Communicator::Request ireceive( const Communicator& comm,
                                        T& value )
 {
   return Utility::ireceive( comm, source_process, tag, &value, 1 );
+}
+
+// Prepare to receive an array of data from another process
+/*! \details The values on the calling process of the communicator will be
+ * received with tag from source_process of the communicator. This operation
+ * will not block. Use the returned request to determine when the source 
+ * process has sent the values. This operation can only be done with 
+ * communicators of size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+Communicator::Request ireceive( const Communicator& comm,
+                                int source_process,
+                                int tag,
+                                const Utility::ArrayView<T>& values )
+{
+  return Utility::ireceive( comm, source_process, tag, values.data(), values.size() );
 }
 
 // Prepare to receive an array of data from another process
@@ -510,8 +628,7 @@ inline Communicator::Status iprobe( const Communicator& comm )
  * \ingroup mpi
  */
 template<template<typename T,typename...> class STLCompliantInputSequenceContainer,
-         template<typename T,typename...> class STLCompliantOutputSequenceContainer,
-         typename T>
+         template<typename T,typename...> class STLCompliantOutputSequenceContainer>
 void wait( STLCompliantInputSequenceContainer<Communicator::Request>& requests,
            STLCompliantOutputSequenceContainer<Communicator::Status>& statuses )
 {

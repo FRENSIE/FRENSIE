@@ -13,6 +13,7 @@
 #include "Utility_CommunicatorDecl.hpp"
 #include "Utility_SerialCommunicator.hpp"
 #include "Utility_MPICommunicator.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace Utility{
 
@@ -22,6 +23,27 @@ void send( const Communicator& comm,
            int destination_process,
            int tag,
            const T& value );
+
+//! Send a std::initializer_list of data to another process
+template<typename T>
+void send( const Communicator& comm,
+           int destination_process,
+           int tag,
+           std::initializer_list<T> values );
+
+//! Send a Utility::ArrayView of data to another process
+template<typename T>
+void send( const Communicator& comm,
+           int destination_process,
+           int tag,
+           const Utility::ArrayView<T>& values );
+
+//! Send a Utility::ArrayView of data to another process
+template<typename T>
+void send( const Communicator& comm,
+           int destination_process,
+           int tag,
+           const Utility::ArrayView<const T>& values );
 
 //! Send an array of data to another process
 template<typename T>
@@ -43,6 +65,13 @@ template<typename T>
 Communicator::Status receive( const Communicator& comm,
                               int source_process,
                               int tag,
+                              const Utility::ArrayView<T>& values );
+
+//! Receive an array of data from another process
+template<typename T>
+Communicator::Status receive( const Communicator& comm,
+                              int source_process,
+                              int tag,
                               T* values,
                               int number_of_values );
 
@@ -58,6 +87,20 @@ template<typename T>
 Communicator::Request isend( const Communicator& comm,
                              int destination_process,
                              int tag, 
+                             const ArrayView<const T>& values );
+
+//! Send an array of data to another process without blocking
+template<typename T>
+Communicator::Request isend( const Communicator& comm,
+                             int destination_process,
+                             int tag, 
+                             const ArrayView<T>& values );
+
+//! Send an array of data to another process without blocking
+template<typename T>
+Communicator::Request isend( const Communicator& comm,
+                             int destination_process,
+                             int tag, 
                              const T* values,
                              int number_of_values );
 
@@ -67,6 +110,14 @@ Communicator::Request ireceive( const Communicator& comm,
                                 int source_process,
                                 int tag,
                                 T& value );
+
+//! Prepare to receive an array of data from another process
+template<typename T>
+Communicator::Request ireceive( const Communicator& comm,
+                                int source_process,
+                                int tag,
+                                const ArrayView<T>& values,
+                                int number_of_values );
 
 //! Prepare to receive an array of data from another process
 template<typename T>
@@ -106,8 +157,7 @@ Communicator::Status iprobe( const Communicator& comm );
 
 //! Wait for the requests to finish
 template<template<typename T,typename...> class STLCompliantInputSequenceContainer,
-         template<typename T,typename...> class STLCompliantOutputSequenceContainer,
-         typename T>
+         template<typename T,typename...> class STLCompliantOutputSequenceContainer>
 void wait( STLCompliantInputSequenceContainer<Communicator::Request>& requests,
            STLCompliantOutputSequenceContainer<Communicator::Status>& statuses );
 

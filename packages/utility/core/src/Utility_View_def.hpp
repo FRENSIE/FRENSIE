@@ -22,7 +22,7 @@ namespace Details{
 template<typename Iterator, typename Enabled = void>
 struct IteratorHelper
 { 
-  static inline typename std::iterator_traits<Iterator>::reference offsetValue( Iterator& start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
+  static inline typename std::iterator_traits<Iterator>::reference offsetValue( Iterator start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
   {
     Iterator offset_iterator = start_iterator;
     std::advance( offset_iterator, n );
@@ -30,7 +30,7 @@ struct IteratorHelper
     return *offset_iterator;
   }
 
-  static inline typename std::add_const<typename std::iterator_traits<Iterator>::reference>::type constOffsetValue( const Iterator& start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
+  static inline typename std::add_const<typename std::iterator_traits<Iterator>::reference>::type constOffsetValue( Iterator start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
   {
     Iterator offset_iterator = start_iterator;
     std::advance( offset_iterator, n );
@@ -43,10 +43,10 @@ struct IteratorHelper
 template<typename Iterator>
 struct IteratorHelper<Iterator,typename std::enable_if<std::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value>::type>
 {
-  static inline typename std::iterator_traits<Iterator>::reference offsetValue( Iterator& start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
+  static inline typename std::iterator_traits<Iterator>::reference offsetValue( Iterator start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
   { return start_iterator[n]; }
 
-  static inline typename std::add_const<typename std::iterator_traits<Iterator>::reference>::type constOffsetValue( const Iterator& start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
+  static inline typename std::add_const<typename std::iterator_traits<Iterator>::reference>::type constOffsetValue( Iterator start_iterator, typename std::iterator_traits<Iterator>::difference_type n )
   { return start_iterator[n]; }
 };
   
@@ -141,84 +141,42 @@ bool View<Iterator>::empty() const
 
 // Element access
 template<typename Iterator>
-auto View<Iterator>::operator[]( const size_type index ) -> reference
+auto View<Iterator>::operator[]( const size_type index ) const -> reference
 {
   return Details::IteratorHelper<Iterator>::offsetValue( d_start_iterator, index );
 }
 
 // Element access
 template<typename Iterator>
-auto View<Iterator>::operator[]( const size_type index ) const -> const_reference
-{
-  return Details::IteratorHelper<Iterator>::constOffsetValue( d_start_iterator, index );
-}
-
-// Element access
-template<typename Iterator>
-auto View<Iterator>::at( const size_type index ) -> reference
+auto View<Iterator>::at( const size_type index ) const -> reference
 {
   return Details::IteratorHelper<Iterator>::offsetValue( d_start_iterator, index );
 }
 
-// Element access
-template<typename Iterator>
-auto View<Iterator>::at( const size_type index ) const -> const_reference
-{
-  return Details::IteratorHelper<Iterator>::constOffsetValue( d_start_iterator, index );
-}
-
 // Access first element
 template<typename Iterator>
-auto View<Iterator>::front() -> reference
-{
-  return *d_start_iterator;
-}
-
-// Access first element
-template<typename Iterator>
-auto View<Iterator>::front() const -> const_reference
+auto View<Iterator>::front() const -> reference
 {
   return *d_start_iterator;
 }
 
 // Access last element
 template<typename Iterator>
-auto View<Iterator>::back() -> reference
+auto View<Iterator>::back() const -> reference
 {
   return Details::IteratorHelper<Iterator>::offsetValue( d_start_iterator, this->size()-1 );
 }
 
-// Access last element
-template<typename Iterator>
-auto View<Iterator>::back() const -> const_reference
-{
-  return Details::IteratorHelper<Iterator>::constOffsetValue( d_start_iterator, this->size()-1 );
-}
-
 // Return iterator to beginning
 template<typename Iterator>
-auto View<Iterator>::begin() -> iterator
-{
-  return d_start_iterator;
-}
-
-// Return iterator to beginning
-template<typename Iterator>
-auto View<Iterator>::begin() const -> const_iterator
+auto View<Iterator>::begin() const -> iterator
 {
   return d_start_iterator;
 }
 
 // return iterator to end
 template<typename Iterator>
-auto View<Iterator>::end() -> iterator
-{
-  return d_end_iterator;
-}
-
-// Return iterator to end
-template<typename Iterator>
-auto View<Iterator>::end() const -> const_iterator
+auto View<Iterator>::end() const -> iterator
 {
   return d_end_iterator;
 }
