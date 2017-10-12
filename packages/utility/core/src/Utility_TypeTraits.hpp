@@ -13,6 +13,8 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <array>
+#include <initializer_list>
 #include <bitset>
 #include <thread>
 #include <typeindex>
@@ -206,7 +208,47 @@ struct IsPair<volatile T> : public IsPair<T>
  */
 template<typename T>
 struct IsPair<const volatile T> : public IsPair<T>
-{ /* ... */ };  
+{ /* ... */ };
+
+/*! \brief Partial specialization of IsSequenceContainerWithContiguousMemory
+ * for std::array
+ * \ingroup type_traits
+ */
+template<typename T, size_t N>
+struct IsSequenceContainerWithContiguousMemory<std::array<T,N> > : public std::true_type
+{ /* ... */ };
+
+/*! \brief Partial specialization of IsSequenceContainerWithContiguousMemory
+ * for std::vector
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsSequenceContainerWithContiguousMemory<std::vector<T> > : public std::true_type
+{ /* ... */ };
+
+/*! \brief Partial specialization of IsSequenceContainerWithContiguousMemory
+ * for std::initializer_list
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsSequenceContainerWithContiguousMemory<std::initializer_list<T> > : public std::true_type
+{ /* ... */ };
+
+/*! \brief Specialization of IsSequenceContainerWithContiguousMemory
+ * for std::string
+ * \ingroup type_traits
+ */
+template<>
+struct IsSequenceContainerWithContiguousMemory<std::string> : public std::true_type
+{ /* ... */ };
+
+/*! \brief Partial specialization of IsSequenceContainerWithContiguousMemory
+ * for const types
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsSequenceContainerWithContiguousMemory<const T> : public IsSequenceContainerWithContiguousMemory<T>
+{ /* ... */ };
 
 } // end Utility namespace
 

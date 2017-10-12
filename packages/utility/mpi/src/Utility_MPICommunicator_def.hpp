@@ -262,6 +262,7 @@ void MPICommunicator::send( int MPI_ENABLED_PARAMETER(dest),
 {
   MPI_ENABLED_LINE( d_comm.send( dest, tag, values, number_of_values ) );
 }
+  
 // Receive a message from another process (blocking)
 template<typename T>
 Communicator::Status MPICommunicator::recv(

@@ -57,6 +57,23 @@ typedef typename MergeTypeLists<typename TypeList<Utility::EqualityComparisonPol
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that an array view is a container with contiguous memory
+BOOST_AUTO_TEST_CASE_TEMPLATE( IsSequenceContainerWithContiguousMemory, T, TestTypes )
+{
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<Utility::ArrayView<T> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::ArrayView<T>*>::value );
+  
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<Utility::ArrayView<const T> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::ArrayView<const T>*>::value );
+
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<const Utility::ArrayView<T> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::ArrayView<T>*>::value );
+
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<const Utility::ArrayView<const T> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::ArrayView<const T>*>::value );
+}
+
+//---------------------------------------------------------------------------//
 // Check that an array view can be constructed
 BOOST_AUTO_TEST_CASE_TEMPLATE( default_constructor, T, TestTypes )
 {

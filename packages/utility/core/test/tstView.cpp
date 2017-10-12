@@ -142,6 +142,43 @@ typename std::forward_list<T>::size_type size( const std::forward_list<T>& conta
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that a view of contiguous memory is a container with contiguous memory
+BOOST_AUTO_TEST_CASE_TEMPLATE( IsSequenceContainerWithContiguousMemory,
+                               Container,
+                               TestContainers )
+{
+  if( std::is_pointer<typename Container::iterator>::value )
+  {
+    BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::iterator>*>::value );
+    
+    BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::const_iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::const_iterator>*>::value );
+    
+    BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::iterator>*>::value );
+    
+    BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::const_iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::const_iterator>*>::value );
+  }
+  else
+  {
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::iterator>*>::value );
+    
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::const_iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<Utility::View<typename Container::const_iterator>*>::value );
+    
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::iterator>*>::value );
+    
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::const_iterator> >::value );
+    BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<const Utility::View<typename Container::const_iterator>*>::value );
+  }
+}
+
+
+//---------------------------------------------------------------------------//
 // Check that a view can be constructed
 BOOST_AUTO_TEST_CASE_TEMPLATE( default_constructor,
                                Container,

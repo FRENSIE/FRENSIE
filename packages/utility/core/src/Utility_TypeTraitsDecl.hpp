@@ -64,6 +64,13 @@ struct IsTuple : public std::false_type
 template<typename T, typename Enabled = void>
 struct IsPair : public std::false_type
 { /* ... */ };
+
+/*! Check if the type is a sequence container that uses contiguous memory
+ * \ingroup type_traits
+ */
+template<typename T, typename Enabled = void>
+struct IsSequenceContainerWithContiguousMemory : public std::false_type
+{ /* ... */ };
   
 } // end Utility namespace
 

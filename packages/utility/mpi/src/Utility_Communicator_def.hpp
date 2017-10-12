@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_TypeTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -94,7 +95,7 @@ void serialGathervImpl( const Communicator& comm,
   }
   else
   {
-    FRENSIE_LOG_TAGGED_WARNING( "Serial Comm",
+    FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
                                 "The requested offset of "
                                 << input_values_offset <<
                                 " is beyone the input array bounds! No "
@@ -127,6 +128,22 @@ void serialScattervImpl( const Communicator& comm,
 
   SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values+input_values_offset, number_to_send, output_values );
 }
+
+/*! \brief Check if a temporary value of this type is compatible with 
+ * non-blocking send ops
+ * \ingroup mpi
+ */
+template<typename T>
+struct IsTemporaryCompatibleWithNonBlockingSendOps : public std::false_type
+{ /* ... */ };
+
+/*! \brief Partial specialization of 
+ * IsTemporaryCompatibleWithNonBlockingSendOps for Utility::ArrayView
+ * \ingroup mpi
+ */
+template<typename T>
+struct IsTemporaryCompatibleWithNonBlockingSendOps<Utility::ArrayView<T> > : public std::true_type
+{ /* ... */ };
   
 } // end Details namespace
   
@@ -142,7 +159,9 @@ inline void send( const Communicator& comm,
                   int destination_process,
                   int tag,
                   const T& value )
-{ Utility::send( comm, destination_process, tag, &value, 1 ); }
+{
+  Utility::send( comm, destination_process, tag, &value, 1 );
+}
 
 // Send a std::initializer_list of data to another process
 /*! \details The underlying values of the initializer list on the calling 
@@ -244,7 +263,25 @@ inline Communicator::Status receive( const Communicator& comm,
                                      int source_process,
                                      int tag,
                                      T& value )
-{ return Utility::receive( comm, source_process, tag, &value, 1 ); }
+{
+  return Utility::receive( comm, source_process, tag, &value, 1 );
+}
+
+// Receive an array of data from another process
+/*! \details The values on the calling process of the communicator will be
+ * received with tag from source_process of the communicator. This operation
+ * will block until the source process sends the values. This
+ * operation can only be done with communicators of size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+inline Communicator::Status receive( const Communicator& comm,
+                                     int source_process,
+                                     int tag,
+                                     ArrayView<T>& values )
+{
+  return Utility::receive( comm, source_process, tag, const_cast<const ArrayView<T>&>(values) );
+}
 
 // Receive an array of data from another process
 /*! \details The values on the calling process of the communicator will be
@@ -319,6 +356,27 @@ inline Communicator::Request isend( const Communicator& comm,
                                     const T& value )
 {
   return Utility::isend( comm, destination_process, tag, &value, 1 );
+}
+
+/*! Send temporary data to another process without blocking
+ *
+ * The temporary data on the calling process of the communicator will
+ * be sent with tag to destination_process of the communicator. The only type
+ * of temporary data that can safely be sent is an ArrayView. All other 
+ * temporary data must be sent using a blocking send to ensure that it
+ * persists until it is sent. This operation will not block. Use the returned 
+ * request to determine when the destination process has received the value. 
+ * This operation can only be done with communicators of size two or greater.
+ * \ingroup mpi
+ */
+template<typename T>
+inline typename std::enable_if<Details::IsTemporaryCompatibleWithNonBlockingSendOps<T>::value,Communicator::Request>::type
+isend( const Communicator& comm,
+       int destination_process,
+       int tag, 
+       T&& value )
+{
+  return Utility::isend( comm, destination_process, tag, static_cast<const typename std::remove_reference<T>::type&>( value ) );
 }
 
 // Send an array of data to another process without blocking
@@ -479,7 +537,12 @@ Communicator::Request ireceive( const Communicator& comm,
  * returned status to determine the message details before conducting
  * a receive operation. This operation will block until the source 
  * process sends a message to the calling process. This operation can only be 
- * done with communicators of size two or greater.
+ * done with communicators of size two or greater. 
+ * \warning When probing types that must be serialized before they can be sent
+ * the returned status object will not have a count that reflects the number
+ * of objects of that type that were sent. This is because the implementation
+ * of the send and isend operations may require multiple MPI send operations,
+ * each of which only sends a part of the object data.
  * \ingroup mpi
  */
 template<typename T>
@@ -498,6 +561,13 @@ Communicator::Status probe( const Communicator& comm,
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
                       "An unknown communicator type was encountered!" );
+
+  if( !std::is_arithmetic<T>::value )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                "Utility::probe will only return the correct "
+                                "count for arithmetic types." );
+  }
 
   Communicator::Status status;
   
@@ -571,6 +641,13 @@ Communicator::Status iprobe( const Communicator& comm,
   TEST_FOR_EXCEPTION( mpi_comm == NULL,
                       InvalidCommunicator,
                       "An unknown communicator type was encountered!" );
+
+  if( !std::is_arithmetic<T>::value )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
+                                "Utility::iprobe will only return the correct "
+                                "count for arithmetic types." );
+  }
 
   Communicator::Status status;
   

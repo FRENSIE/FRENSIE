@@ -14,11 +14,11 @@
 #include <array>
 #include <tuple>
 #include <utility>
-#include <type_traits>
 
 // FRENSIE Includes
 #include "Utility_View.hpp"
 #include "Utility_TypeNameTraits.hpp"
+#include "Utility_TypeTraits.hpp"
 
 namespace Utility{
 
@@ -238,6 +238,15 @@ inline ArrayView<T2> av_reinterpret_cast( const ArrayView<T1>& array_view )
   return ArrayView<T2>( reinterpret_cast<T2*>( const_cast<ArrayView<T1>&>(array_view).begin() ),
                         reinterpret_cast<T2*>( const_cast<ArrayView<T1>&>(array_view).end() ) );
 }
+
+/*! \brief Partial specialization of IsSequenceContainerWithContiguousMemory
+ * for Utility::ArrayView
+ * \ingroup view
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsSequenceContainerWithContiguousMemory<Utility::ArrayView<T> > : public std::true_type
+{ /* ... */ };
 
 /*! Partial specialization of ToStringTraits for Utility::ArrayView
  * \ingroup view

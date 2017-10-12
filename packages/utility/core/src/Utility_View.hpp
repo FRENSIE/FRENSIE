@@ -17,6 +17,7 @@
 #include "Utility_IteratorTypeTraits.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
+#include "Utility_TypeTraits.hpp"
 
 /*! \defgroup view View
  *
@@ -182,6 +183,15 @@ inline View<typename STLCompliantContainer::const_reverse_iterator> reverseViewO
 {
   return View<typename STLCompliantContainer::const_reverse_iterator>( container.rbegin(), container.rend() );
 }
+
+/*! \brief Partial specialization of IsSequenceContainerWithContiguousMemory
+ * for Utility::View of pointer iterators
+ * \ingroup view
+ * \ingroup type_traits
+ */
+template<typename T>
+struct IsSequenceContainerWithContiguousMemory<Utility::View<T>, typename std::enable_if<std::is_pointer<T>::value>::type> : public std::true_type
+{ /* ... */ };
 
 /*! Partial specialization of ToStringTraits for Utility::View
  * \ingroup view

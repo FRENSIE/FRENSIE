@@ -9,6 +9,12 @@
 // Std Lib Includes
 #include <iostream>
 #include <string>
+#include <vector>
+#include <array>
+#include <initializer_list>
+#include <deque>
+#include <list>
+#include <forward_list>
 #include <type_traits>
 #include <utility>
 #include <tuple>
@@ -229,7 +235,7 @@ BOOST_AUTO_TEST_CASE( IsHashable )
 }
 
 //---------------------------------------------------------------------------//
-// Check if a type is hashable
+// Check if a type is a tuple
 BOOST_AUTO_TEST_CASE( IsTuple )
 {
   // Non-tuple types
@@ -468,7 +474,7 @@ BOOST_AUTO_TEST_CASE( IsTuple )
 }
 
 //---------------------------------------------------------------------------//
-// Check if a type is hashable
+// Check if a type is a pair
 BOOST_AUTO_TEST_CASE( IsPair )
 {
   // Non-tuple types
@@ -704,6 +710,57 @@ BOOST_AUTO_TEST_CASE( IsPair )
   BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double,int>*>::value) );
   BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double,double> >::value) );
   BOOST_CHECK( !(Utility::IsPair<std::tuple<double,double,double,double>*>::value) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if a type is a sequence container with contiguous memory
+BOOST_AUTO_TEST_CASE( IsSequenceContainerWithContiguousMemory )
+{
+  // Basic Types
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<int>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<int*>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<double>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<double*>::value );
+
+  // Sequence Container type
+  BOOST_CHECK( (Utility::IsSequenceContainerWithContiguousMemory<std::array<int,1> >::value) );
+  BOOST_CHECK( !(Utility::IsSequenceContainerWithContiguousMemory<std::array<int,1>*>::value) );
+  BOOST_CHECK( (Utility::IsSequenceContainerWithContiguousMemory<std::array<int,10> >::value) );
+  BOOST_CHECK( !(Utility::IsSequenceContainerWithContiguousMemory<std::array<int,10>*>::value) );
+  BOOST_CHECK( (Utility::IsSequenceContainerWithContiguousMemory<std::array<double,1> >::value) );
+  BOOST_CHECK( !(Utility::IsSequenceContainerWithContiguousMemory<std::array<double,1>*>::value) );
+  BOOST_CHECK( (Utility::IsSequenceContainerWithContiguousMemory<std::array<double,10> >::value) );
+  BOOST_CHECK( !(Utility::IsSequenceContainerWithContiguousMemory<std::array<double,10>*>::value) );
+
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<std::vector<int> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::vector<int>*>::value );
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<std::vector<double> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::vector<double>*>::value );
+
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<std::initializer_list<int> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::initializer_list<int>*>::value );
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<std::initializer_list<double> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::initializer_list<double>*>::value );
+
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<std::string>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::string*>::value );
+  BOOST_CHECK( Utility::IsSequenceContainerWithContiguousMemory<std::string>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::string*>::value );
+
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::deque<int> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::deque<int>*>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::deque<double> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::deque<double>*>::value );
+
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::list<int> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::list<int>*>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::list<double> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::list<double>*>::value );
+
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::forward_list<int> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::forward_list<int>*>::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::forward_list<double> >::value );
+  BOOST_CHECK( !Utility::IsSequenceContainerWithContiguousMemory<std::forward_list<double>*>::value );
 }
 
 //---------------------------------------------------------------------------//

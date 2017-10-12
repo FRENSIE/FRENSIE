@@ -65,6 +65,13 @@ template<typename T>
 Communicator::Status receive( const Communicator& comm,
                               int source_process,
                               int tag,
+                              Utility::ArrayView<T>& values );
+
+//! Receive an array of data from another process
+template<typename T>
+Communicator::Status receive( const Communicator& comm,
+                              int source_process,
+                              int tag,
                               const Utility::ArrayView<T>& values );
 
 //! Receive an array of data from another process
