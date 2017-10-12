@@ -579,7 +579,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluate_error_tol = 1e-16;
 
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::ElasticTwoDDistribution<Utility::LinLinLog>(
+      new Utility::ElasticTwoDDistribution<Utility::LinLinLog,Utility::Exact>(
         function_data,
         cutoff_angle_cosine,
         fuzzy_boundary_tol,

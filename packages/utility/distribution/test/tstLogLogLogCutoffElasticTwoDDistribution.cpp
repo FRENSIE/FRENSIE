@@ -51,12 +51,58 @@ std::shared_ptr<Utility::TwoDDistribution> distribution;
 std::shared_ptr<Utility::FullyTabularTwoDDistribution> tab_distribution;
 
 //---------------------------------------------------------------------------//
+// Testing Functions.
+//---------------------------------------------------------------------------//
+// Initialize the distribution
+template<typename TwoDSamplingPolicy,
+         typename BaseTabDistribution,
+         typename BaseDistribution>
+void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
+                 std::shared_ptr<BaseDistribution>& dist )
+{
+  typename BaseTabDistribution::SecondaryIndepQuantity cutoff;
+  Utility::setQuantity( cutoff, 0.999999 );
+
+  std::vector<typename BaseTabDistribution::PrimaryIndepQuantity> primary_bins( 2 );
+
+  Teuchos::Array<std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit> > > secondary_dists( 2 );
+
+  // Create the secondary distribution in the first bin
+  Teuchos::Array<typename BaseTabDistribution::SecondaryIndepQuantity> bin_boundaries( 3 );
+  Utility::setQuantity( bin_boundaries[0], -1.0 );
+  Utility::setQuantity( bin_boundaries[1], 0.0 );
+  Utility::setQuantity( bin_boundaries[2], 0.999999 );
+
+  Teuchos::Array<typename BaseTabDistribution::DepQuantity> values( 3 );
+  Utility::setQuantity( values[0], 0.1 );
+  Utility::setQuantity( values[1], 0.5 );
+  Utility::setQuantity( values[2], 1.0 );
+
+  Utility::setQuantity( primary_bins[0], 1.0 );
+  secondary_dists[0].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values ) );
+
+  // Create the secondary distribution beyond the second bin
+  Utility::setQuantity( values[0], 1.0 );
+  Utility::setQuantity( values[1], 5.0 );
+  Utility::setQuantity( values[2], 10.0 );
+
+  Utility::setQuantity( primary_bins[1], 2.0 );
+  secondary_dists[1].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values ) );
+
+  tab_dist.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogCosLog,TwoDSamplingPolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+      primary_bins, secondary_dists, cutoff, 1e-3, 1e-7 ) );
+
+  dist = tab_dist;
+}
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution is tabular in the primary dimension
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    isPrimaryDimensionTabular )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
   TEST_ASSERT( distribution->isPrimaryDimensionTabular() );
 }
 
@@ -65,6 +111,8 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    isPrimaryDimensionTabular )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionTabular() );
 }
 
@@ -73,6 +121,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    isPrimaryDimensionContinuous )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
   TEST_ASSERT( distribution->isPrimaryDimensionContinuous() );
 }
 
@@ -82,6 +131,8 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    isPrimaryDimensionContinuous )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionContinuous() );
 }
 
@@ -99,6 +150,8 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getLowerBoundOfPrimaryIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfPrimaryIndepVar(), 1.0*MeV );
 }
 
@@ -116,6 +169,8 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getUpperBoundOfPrimaryIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfPrimaryIndepVar(), 2.0*MeV );
 }
 
@@ -167,6 +222,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.0*MeV ),
                        0.0*cgs::dimensionless() );
@@ -252,6 +310,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.0*MeV ),
                        0.0*cgs::dimensionless() );
@@ -294,6 +355,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    hasSamePrimaryBounds )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Self test
   TEST_ASSERT( distribution->hasSamePrimaryBounds( *distribution ) );
 
@@ -312,7 +375,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog,Utility::Stochastic>(
                                                          distribution_data ) );
   }
 
@@ -331,7 +394,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 3.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog,Utility::Stochastic>(
                                                          distribution_data ) );
   }
 
@@ -362,7 +425,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog,Utility::Stochastic>(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -375,6 +438,8 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 0.0 );
@@ -430,6 +495,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluate )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
@@ -490,6 +558,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluateExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.0 ), 0.0 );
@@ -545,6 +615,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluateExact )
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
@@ -605,6 +678,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, correlatedEvaluate )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.0 ), 0.0 );
@@ -661,6 +736,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, correlatedEvaluate )
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluate )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
@@ -720,6 +798,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ), 0.0 );
@@ -799,6 +879,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
@@ -878,6 +961,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.0 ), 0.0 );
@@ -959,6 +1044,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact     ( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
@@ -1038,6 +1126,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.0 ), 0.0 );
@@ -1119,6 +1209,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF     ( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
@@ -1198,6 +1291,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ), 0.0 );
@@ -1261,6 +1356,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
@@ -1320,6 +1418,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.0 ), 0.0 );
@@ -1383,6 +1483,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
@@ -1442,6 +1545,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.0 ), 0.0 );
@@ -1505,6 +1610,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
@@ -1564,6 +1672,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditional )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditional( 0.0 ),
               std::logic_error );
@@ -1696,6 +1806,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditional )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV ),
               std::logic_error );
@@ -1829,6 +1942,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   unsigned trials = 0u;
 
   // Before the first bin - no extension
@@ -1989,7 +2104,11 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 // Check that a unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
-{  unsigned trials = 0u;
+{
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
+  unsigned trials = 0u;
 
   // Before the first bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials ),
@@ -2150,6 +2269,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
 
   // Before the first bin - no extension
@@ -2321,6 +2442,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
 
   // Before the first bin - no extension
@@ -2493,6 +2617,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices_with_raw )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
   double raw_sample;
 
@@ -2683,6 +2809,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices_with_raw )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
   quantity<cgs::dimensionless> raw_sample;
 
@@ -2874,6 +3003,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumber )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.5 ),
               std::logic_error );
@@ -2980,6 +3111,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumber )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.5 ),
               std::logic_error );
@@ -3105,6 +3239,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalInSubrange )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.0 ),
               std::logic_error );
@@ -3252,6 +3388,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalInSubrange )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.0*cgs::dimensionless() ),
               std::logic_error );
@@ -3399,6 +3538,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.5, 0.9 ),
               std::logic_error );
@@ -3516,6 +3657,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
               std::logic_error );
@@ -3635,6 +3779,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExact( 0.0 ),
               std::logic_error );
@@ -3726,6 +3872,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV ),
               std::logic_error );
@@ -3819,6 +3968,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumber )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.5 ),
               std::logic_error );
@@ -3890,6 +4041,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumber )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.5 ),
               std::logic_error );
@@ -3963,6 +4117,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExactInSubrange )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.0 ),
               std::logic_error );
@@ -4066,6 +4222,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExactInSubrange )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.0*cgs::dimensionless() ),
               std::logic_error );
@@ -4169,6 +4328,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.5, 0.9 ),
               std::logic_error );
@@ -4252,6 +4413,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
               std::logic_error );
@@ -4335,6 +4499,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditional )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->correlatedSampleSecondaryConditional( 0.0 ),
               std::logic_error );
@@ -4427,6 +4593,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditional )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 0.0*MeV ),
               std::logic_error );
@@ -4520,6 +4689,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumber )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 0.5 ),
               std::logic_error );
@@ -4606,6 +4777,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumber )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.5 ),
               std::logic_error );
@@ -4691,6 +4865,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalInSubrange )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 ),
               std::logic_error );
@@ -4794,6 +4970,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalInSubrange )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.0*cgs::dimensionless() ),
               std::logic_error );
@@ -4897,6 +5076,8 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInSubrange )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.5, 0.9 ),
               std::logic_error );
@@ -4980,6 +5161,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInSubrange )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
               std::logic_error );
@@ -5065,63 +5249,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-
-  // Create the two-dimensional distribution
-  {
-    Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>::DistributionType
-      distribution_data( 2 );
-
-    // Create the secondary distribution in the first bin
-    std::vector<double> bin_boundaries( 3 ), values( 3 );
-    bin_boundaries[0] = -1.0; values[0] = 0.1;
-    bin_boundaries[1] = 0.0; values[1] = 0.5;
-    bin_boundaries[2] = 0.999999; values[2] = 1.0;
-
-    distribution_data[0].first = 1.0;
-    distribution_data[0].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
-
-    // Create the secondary distribution In the first bin
-    bin_boundaries[0] = -1.0; values[0] = 1.0;
-    bin_boundaries[1] = 0.0; values[1] = 5.0;
-    bin_boundaries[2] = 0.999999; values[2] = 10.0;
-
-    distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
-
-    tab_distribution.reset( new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>( distribution_data, 0.999999, 1e-3, 1e-7 ) );
-    distribution = tab_distribution;
-  }
-
-  // Create the unit-aware two-dimensional distribution
-  {
-    std::vector<quantity<MegaElectronVolt> > primary_bins( 2 );
-
-    Teuchos::Array<std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<cgs::dimensionless,Barn> > > secondary_dists( 2 );
-
-    // Create the secondary distribution in the first bin
-    Teuchos::Array<quantity<cgs::dimensionless> > bin_boundaries( 3 );
-    Teuchos::Array<quantity<Barn> > values( 3 );
-    bin_boundaries[0] = -1.0*cgs::dimensionless(); values[0] = 0.1*barn;
-    bin_boundaries[1] = 0.0*cgs::dimensionless(); values[1] = 0.5*barn;
-    bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 1.0*barn;
-
-    primary_bins[0] = 1.0*MeV;
-    secondary_dists[0].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values ) );
-
-    // Create the secondary distribution In the first bin
-    bin_boundaries[0] = -1.0*cgs::dimensionless(); values[0] = 1.0*barn;
-    bin_boundaries[1] = 0.0*cgs::dimensionless(); values[1] = 5.0*barn;
-    bin_boundaries[2] = 0.999999*cgs::dimensionless(); values[2] = 10.0*barn;
-
-    primary_bins[1] = 2.0*MeV;
-    secondary_dists[1].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::dimensionless,Barn>( bin_boundaries, values ) );
-
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogCosLog,MegaElectronVolt,cgs::dimensionless,Barn>(
-        primary_bins, secondary_dists, 0.999999*cgs::dimensionless(), 1e-3, 1e-7 ) );
-
-    unit_aware_distribution = unit_aware_tab_distribution;
-  }
-
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

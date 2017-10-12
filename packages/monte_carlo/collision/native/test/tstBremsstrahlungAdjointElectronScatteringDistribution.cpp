@@ -271,7 +271,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the energy gain function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_gain_function(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
             function_data,
             1e-6,
             evaluation_tol ) );

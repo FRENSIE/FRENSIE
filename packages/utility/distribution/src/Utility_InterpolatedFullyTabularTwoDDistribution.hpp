@@ -75,16 +75,20 @@ struct CDFInterpolationHelper<LogCosIndepVarProcessingTag,LogIndepVarProcessingT
  * \ingroup two_d_distribution
  */
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 protected:
 
+  // Typedef for this type
+  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
 
   // The base one-dimensional distribution type (UnitAwareTabularOneDDist)
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -225,9 +229,9 @@ public:
 
   //! Return a random correlated sample from the secondary conditional PDF
   SecondaryIndepQuantity correlatedSampleSecondaryConditionalInBoundaries(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var_value,
-                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
 
   //! Return a random correlated sample from the secondary conditional PDF
   SecondaryIndepQuantity correlatedSampleSecondaryConditional(
@@ -244,10 +248,10 @@ public:
 
   //! Return a random correlated sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const double random_number,
-                const SecondaryIndepQuantity min_secondary_indep_var_value,
-                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const double random_number,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
 
   //! Return a random correlated sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumber(
@@ -266,9 +270,9 @@ public:
 
   //! Return a random correlated sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrangeInBoundaries(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var_value,
-                const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
 
   //! Return a random correlated sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrange(
@@ -287,6 +291,7 @@ public:
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random correlated sample from the secondary conditional PDF in the subrange
+
   SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
@@ -351,11 +356,11 @@ private:
                     unsigned max_number_of_iterations = 500 ) const;
 
   //! Correlated sample from the distribution using the desired sampling functor
-  template<typename SampleFunctor>
+  template<typename SampleFunctor, typename SecIndepBoundsFunctor>
   SecondaryIndepQuantity correlatedSampleImpl(
                     const PrimaryIndepQuantity primary_indep_var_value,
-                    const SecondaryIndepQuantity min_secondary_indep_var_value,
-                    const SecondaryIndepQuantity max_secondary_indep_var_value,
+                    const SecIndepBoundsFunctor min_secondary_indep_var_functor,
+                    const SecIndepBoundsFunctor max_secondary_indep_var_functor,
                     SampleFunctor sample_functor ) const;
 
   //! Sample from the distribution using the desired sampling functor
@@ -384,8 +389,8 @@ private:
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename TwoDInterpPolicy> using InterpolatedFullyTabularTwoDDistribution =
-  UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,void,void,void>;
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy> using InterpolatedFullyTabularTwoDDistribution =
+  UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
   
 } // end Utility namespace
 

@@ -21,10 +21,11 @@ namespace Utility{
  * \ingroup two_d_distribution
  */
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the primary independent unit corresponds to energy
@@ -32,8 +33,11 @@ class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabula
 
 private:
 
+  // The typedef for this type
+  typedef UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+
   // The parent distribution type
-  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
+  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
 
   // The base one-dimensional distribution type (UnitAwareTabularOneDDist)
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -252,12 +256,6 @@ private:
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
-  SecondaryIndepQuantity sampleExactImpl(
-                    const PrimaryIndepQuantity incoming_energy,
-                    SampleFunctor sample_functor ) const;
-
-  //! Sample from the distribution using the desired sampling functor
-  template<typename SampleFunctor>
   SecondaryIndepQuantity sampleDetailedImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SampleFunctor sample_functor,
@@ -293,8 +291,8 @@ private:
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename TwoDInterpPolicy> using ElasticTwoDDistribution =
-  UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,void,void,void>;
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy> using ElasticTwoDDistribution =
+  UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
   
 } // end Utility namespace
 

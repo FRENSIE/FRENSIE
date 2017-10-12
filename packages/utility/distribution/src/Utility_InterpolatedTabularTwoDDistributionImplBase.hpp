@@ -24,10 +24,13 @@ namespace Utility{
  * and differ only in the OneDDistribution base class that they operate on
  * (either the OneDDistribution or the TabularOneDDistribution respectively).
  */
-template<typename TwoDInterpPolicy, typename Distribution>
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 class UnitAwareInterpolatedTabularTwoDDistributionImplBase : public Distribution{
 
 protected:
+
+  // The typedef for this type
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution> ThisType;
 
   // The parent distribution type
   typedef Distribution ParentType;

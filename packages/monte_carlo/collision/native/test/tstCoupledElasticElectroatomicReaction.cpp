@@ -184,7 +184,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create coupled distribution
     std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         coupled_elastic_distribution,
         energy_grid,
         cutoff_cross_section,

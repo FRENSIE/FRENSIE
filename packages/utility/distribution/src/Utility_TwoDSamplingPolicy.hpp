@@ -20,27 +20,6 @@
 
 namespace Utility{
 
-//! Helper class used by sampling policy methods
-template<typename TwoDInterpPolicy,
-          typename XIndepType,
-          typename YIndepType,
-          typename YZIterator>
-struct SamplingPolicyHelpers
-{
-  // Return the lower bound of the conditional distribution
-  static YIndepType getLowerBoundOfConditionalIndepVar(
-                    const XIndepType& x_indep_value,
-                    const YZIterator& lower_bin_boundary,
-                    const YZIterator& upper_bin_boundary );
-
-  // Return the upper bound of the conditional distribution
-  static YIndepType getUpperBoundOfConditionalIndepVar(
-                    const XIndepType& x_indep_value,
-                    const YZIterator& lower_bin_boundary,
-                    const YZIterator& upper_bin_boundary );
-
-};
-
 /*! \brief Policy struct for sampling 2D tables ( stochastic unit base sampling
  * is performed ).
  */
@@ -50,29 +29,30 @@ public:
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
-          typename XIndepType,
-          typename YIndepType,
-          typename YZIterator,
-          typename SampleFunctor>
-  static YIndepType sample(
-              SampleFunctor sample_functor,
-              const YZIterator& lower_bin_boundary,
-              const YZIterator& upper_bin_boundary,
-              const XIndepType& x_indep_value );
+           typename XIndepType,
+           typename YIndepType,
+           typename YZIterator,
+           typename SampleFunctor,
+           typename YBoundsFunctor>
+  static YIndepType sample( const SampleFunctor& sample_functor,
+                            const YBoundsFunctor& min_y_indep_functor,
+                            const YBoundsFunctor& max_y_indep_functor,
+                            const XIndepType& x_indep_value,
+                            const YZIterator& lower_bin_boundary,
+                            const YZIterator& upper_bin_boundary );
 
-  //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-          typename XIndepType,
-          typename YIndepType,
-          typename YZIterator,
-          typename SampleFunctor>
-  static YIndepType sample(
-              SampleFunctor sample_functor,
-              const YZIterator& lower_bin_boundary,
-              const YZIterator& upper_bin_boundary,
-              const XIndepType& x_indep_value,
-              const YIndepType& min_y_indep_value,
-              const YIndepType& max_y_indep_value );
+  // //! Sample between bin boundaries using the desired sampling functor
+  // template<typename TwoDInterpPolicy,
+  //          typename XIndepType,
+  //          typename YIndepType,
+  //          typename YZIterator,
+  //          typename SampleFunctor>
+  // static YIndepType sample( const SampleFunctor& sample_functor,
+  //                           const XIndepType& x_indep_value,
+  //                           const YZIterator& lower_bin_boundary,
+  //                           const YZIterator& upper_bin_boundary,
+  //                           const YIndepType& min_y_indep_value,
+  //                           const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
@@ -80,29 +60,54 @@ public:
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
-  static YIndepType sampleDetailed(
-            SampleFunctor sample_functor,
-            YIndepType& raw_sample,
-            YZIterator& sampled_bin_boundary,
-            const YZIterator& lower_bin_boundary,
-            const YZIterator& upper_bin_boundary,
-            const XIndepType& x_indep_value );
+  static YIndepType sampleCos( const SampleFunctor& sample_functor,
+                               const XIndepType& x_indep_value,
+                               const YZIterator& lower_bin_boundary,
+                               const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
+           typename SampleFunctor,
+           typename YBoundsFunctor>
+  static YIndepType sampleDetailed( const SampleFunctor& sample_functor,
+                                    const YBoundsFunctor& min_y_indep_functor,
+                                    const YBoundsFunctor& max_y_indep_functor,
+                                    const XIndepType& x_indep_value,
+                                    const YZIterator& lower_bin_boundary,
+                                    const YZIterator& upper_bin_boundary,
+                                    YZIterator& sampled_bin_boundary,
+                                    YIndepType& raw_sample );
+
+  // //! Sample between bin boundaries using the desired sampling functor
+  // template<typename TwoDInterpPolicy,
+  //          typename XIndepType,
+  //          typename YIndepType,
+  //          typename YZIterator,
+  //          typename SampleFunctor>
+  // static YIndepType sampleDetailed( const SampleFunctor& sample_functor,
+  //                                   const XIndepType& x_indep_value,
+  //                                   const YZIterator& lower_bin_boundary,
+  //                                   const YZIterator& upper_bin_boundary,
+  //                                   const YIndepType& min_y_indep_value,
+  //                                   const YIndepType& max_y_indep_value,
+  //                                   YZIterator& sampled_bin_boundary,
+  //                                   YIndepType& raw_sample );
+
+ //! Sample between bin boundaries using the desired sampling functor
+  template<typename TwoDInterpPolicy,
+           typename XIndepType,
+           typename YIndepType,
+           typename YZIterator,
            typename SampleFunctor>
-  static YIndepType sampleDetailed(
-            SampleFunctor sample_functor,
-            YIndepType& raw_sample,
-            YZIterator& sampled_bin_boundary,
-            const YZIterator& lower_bin_boundary,
-            const YZIterator& upper_bin_boundary,
-            const XIndepType& x_indep_value,
-            const YIndepType& min_y_indep_value,
-            const YIndepType& max_y_indep_value );
+  static YIndepType sampleCosDetailed( const SampleFunctor& sample_functor,
+                                       const XIndepType& x_indep_value,
+                                       const YZIterator& lower_bin_boundary,
+                                       const YZIterator& upper_bin_boundary,
+                                       YZIterator& sampled_bin_boundary,
+                                       YIndepType& raw_sample );
 
   //! The name of the policy
   static const std::string name();
@@ -128,29 +133,30 @@ public:
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
-          typename XIndepType,
-          typename YIndepType,
-          typename YZIterator,
-          typename SampleFunctor>
-  static YIndepType sample(
-              SampleFunctor sample_functor,
-              const YZIterator& lower_bin_boundary,
-              const YZIterator& upper_bin_boundary,
-              const XIndepType& x_indep_value );
+           typename XIndepType,
+           typename YIndepType,
+           typename YZIterator,
+           typename SampleFunctor,
+           typename YBoundsFunctor>
+  static YIndepType sample( const SampleFunctor& sample_functor,
+                            const YBoundsFunctor& min_y_indep_functor,
+                            const YBoundsFunctor& max_y_indep_functor,
+                            const XIndepType& x_indep_value,
+                            const YZIterator& lower_bin_boundary,
+                            const YZIterator& upper_bin_boundary );
 
-  //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-          typename XIndepType,
-          typename YIndepType,
-          typename YZIterator,
-          typename SampleFunctor>
-  static YIndepType sample(
-              SampleFunctor sample_functor,
-              const YZIterator& lower_bin_boundary,
-              const YZIterator& upper_bin_boundary,
-              const XIndepType& x_indep_value,
-              const YIndepType& min_y_indep_value,
-              const YIndepType& max_y_indep_value );
+  // //! Sample between bin boundaries using the desired sampling functor
+  // template<typename TwoDInterpPolicy,
+  //          typename XIndepType,
+  //          typename YIndepType,
+  //          typename YZIterator,
+  //          typename SampleFunctor>
+  // static YIndepType sample( const SampleFunctor& sample_functor,
+  //                           const XIndepType& x_indep_value,
+  //                           const YZIterator& lower_bin_boundary,
+  //                           const YZIterator& upper_bin_boundary,
+  //                           const YIndepType& min_y_indep_value,
+  //                           const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
@@ -158,29 +164,54 @@ public:
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
-  static YIndepType sampleDetailed(
-            SampleFunctor sample_functor,
-            YIndepType& raw_sample,
-            YZIterator& sampled_bin_boundary,
-            const YZIterator& lower_bin_boundary,
-            const YZIterator& upper_bin_boundary,
-            const XIndepType& x_indep_value );
+  static YIndepType sampleCos( const SampleFunctor& sample_functor,
+                               const XIndepType& x_indep_value,
+                               const YZIterator& lower_bin_boundary,
+                               const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
+           typename SampleFunctor,
+           typename YBoundsFunctor>
+  static YIndepType sampleDetailed( const SampleFunctor& sample_functor,
+                                    const YBoundsFunctor& min_y_indep_functor,
+                                    const YBoundsFunctor& max_y_indep_functor,
+                                    const XIndepType& x_indep_value,
+                                    const YZIterator& lower_bin_boundary,
+                                    const YZIterator& upper_bin_boundary,
+                                    YZIterator& sampled_bin_boundary,
+                                    YIndepType& raw_sample );
+
+  // //! Sample between bin boundaries using the desired sampling functor
+  // template<typename TwoDInterpPolicy,
+  //          typename XIndepType,
+  //          typename YIndepType,
+  //          typename YZIterator,
+  //          typename SampleFunctor>
+  // static YIndepType sampleDetailed( const SampleFunctor& sample_functor,
+  //                                   const XIndepType& x_indep_value,
+  //                                   const YZIterator& lower_bin_boundary,
+  //                                   const YZIterator& upper_bin_boundary,
+  //                                   const YIndepType& min_y_indep_value,
+  //                                   const YIndepType& max_y_indep_value,
+  //                                   YZIterator& sampled_bin_boundary,
+  //                                   YIndepType& raw_sample );
+
+ //! Sample between bin boundaries using the desired sampling functor
+  template<typename TwoDInterpPolicy,
+           typename XIndepType,
+           typename YIndepType,
+           typename YZIterator,
            typename SampleFunctor>
-  static YIndepType sampleDetailed(
-            SampleFunctor sample_functor,
-            YIndepType& raw_sample,
-            YZIterator& sampled_bin_boundary,
-            const YZIterator& lower_bin_boundary,
-            const YZIterator& upper_bin_boundary,
-            const XIndepType& x_indep_value,
-            const YIndepType& min_y_indep_value,
-            const YIndepType& max_y_indep_value );
+  static YIndepType sampleCosDetailed( const SampleFunctor& sample_functor,
+                                       const XIndepType& x_indep_value,
+                                       const YZIterator& lower_bin_boundary,
+                                       const YZIterator& upper_bin_boundary,
+                                       YZIterator& sampled_bin_boundary,
+                                       YIndepType& raw_sample );
 
   //! The name of the policy
   static const std::string name();
@@ -195,29 +226,30 @@ public:
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
-          typename XIndepType,
-          typename YIndepType,
-          typename YZIterator,
-          typename SampleFunctor>
-  static YIndepType sample(
-              SampleFunctor sample_functor,
-              const YZIterator& lower_bin_boundary,
-              const YZIterator& upper_bin_boundary,
-              const XIndepType& x_indep_value );
+           typename XIndepType,
+           typename YIndepType,
+           typename YZIterator,
+           typename SampleFunctor,
+           typename YBoundsFunctor>
+  static YIndepType sample( const SampleFunctor& sample_functor,
+                            const YBoundsFunctor& min_y_indep_functor,
+                            const YBoundsFunctor& max_y_indep_functor,
+                            const XIndepType& x_indep_value,
+                            const YZIterator& lower_bin_boundary,
+                            const YZIterator& upper_bin_boundary );
 
-  //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-          typename XIndepType,
-          typename YIndepType,
-          typename YZIterator,
-          typename SampleFunctor>
-  static YIndepType sample(
-              SampleFunctor sample_functor,
-              const YZIterator& lower_bin_boundary,
-              const YZIterator& upper_bin_boundary,
-              const XIndepType& x_indep_value,
-              const YIndepType& min_y_indep_value,
-              const YIndepType& max_y_indep_value );
+  // //! Sample between bin boundaries using the desired sampling functor
+  // template<typename TwoDInterpPolicy,
+  //          typename XIndepType,
+  //          typename YIndepType,
+  //          typename YZIterator,
+  //          typename SampleFunctor>
+  // static YIndepType sample( const SampleFunctor& sample_functor,
+  //                           const XIndepType& x_indep_value,
+  //                           const YZIterator& lower_bin_boundary,
+  //                           const YZIterator& upper_bin_boundary,
+  //                           const YIndepType& min_y_indep_value,
+  //                           const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
@@ -225,29 +257,54 @@ public:
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
-  static YIndepType sampleDetailed(
-            SampleFunctor sample_functor,
-            YIndepType& raw_sample,
-            YZIterator& sampled_bin_boundary,
-            const YZIterator& lower_bin_boundary,
-            const YZIterator& upper_bin_boundary,
-            const XIndepType& x_indep_value );
+  static YIndepType sampleCos( const SampleFunctor& sample_functor,
+                               const XIndepType& x_indep_value,
+                               const YZIterator& lower_bin_boundary,
+                               const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
+           typename SampleFunctor,
+           typename YBoundsFunctor>
+  static YIndepType sampleDetailed( const SampleFunctor& sample_functor,
+                                    const YBoundsFunctor& min_y_indep_functor,
+                                    const YBoundsFunctor& max_y_indep_functor,
+                                    const XIndepType& x_indep_value,
+                                    const YZIterator& lower_bin_boundary,
+                                    const YZIterator& upper_bin_boundary,
+                                    YZIterator& sampled_bin_boundary,
+                                    YIndepType& raw_sample );
+
+  // //! Sample between bin boundaries using the desired sampling functor
+  // template<typename TwoDInterpPolicy,
+  //          typename XIndepType,
+  //          typename YIndepType,
+  //          typename YZIterator,
+  //          typename SampleFunctor>
+  // static YIndepType sampleDetailed( const SampleFunctor& sample_functor,
+  //                                   const XIndepType& x_indep_value,
+  //                                   const YZIterator& lower_bin_boundary,
+  //                                   const YZIterator& upper_bin_boundary,
+  //                                   const YIndepType& min_y_indep_value,
+  //                                   const YIndepType& max_y_indep_value,
+  //                                   YZIterator& sampled_bin_boundary,
+  //                                   YIndepType& raw_sample );
+
+ //! Sample between bin boundaries using the desired sampling functor
+  template<typename TwoDInterpPolicy,
+           typename XIndepType,
+           typename YIndepType,
+           typename YZIterator,
            typename SampleFunctor>
-  static YIndepType sampleDetailed(
-            SampleFunctor sample_functor,
-            YIndepType& raw_sample,
-            YZIterator& sampled_bin_boundary,
-            const YZIterator& lower_bin_boundary,
-            const YZIterator& upper_bin_boundary,
-            const XIndepType& x_indep_value,
-            const YIndepType& min_y_indep_value,
-            const YIndepType& max_y_indep_value );
+  static YIndepType sampleCosDetailed( const SampleFunctor& sample_functor,
+                                       const XIndepType& x_indep_value,
+                                       const YZIterator& lower_bin_boundary,
+                                       const YZIterator& upper_bin_boundary,
+                                       YZIterator& sampled_bin_boundary,
+                                       YIndepType& raw_sample );
 
   //! The name of the policy
   static const std::string name();

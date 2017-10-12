@@ -57,6 +57,9 @@ std::shared_ptr<Utility::UnitAwareFullyTabularTwoDDistribution<MegaElectronVolt,
 std::function<double(const Utility::TabularOneDDistribution&)> functor;
 std::function<YIndepType(const Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>&)> ua_functor;
 
+std::function<double (double)> func;
+std::function<YIndepType(const XIndepType)> ua_func;
+
 Utility::FullyTabularTwoDDistribution::DistributionType::const_iterator
   lower_bin, upper_bin, sampled_bin, start_bin;
 
@@ -120,21 +123,23 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   upper_bin = lower_bin;
   ++upper_bin;
 
+  double x_value = 0.0;;
+
   functor = getFunctor();
   double sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 0.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 0.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 5.0 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 0.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
@@ -143,90 +148,94 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 0.5;
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 0.5 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 1.25 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 0.5 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 4.615384615384615 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 0.5 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
 
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 1.0;
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 1.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 2.5 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 1.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 1.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
 
   // In the second bin
   ++lower_bin; ++upper_bin;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 1.5;
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 1.5 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 1.25 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 1.5 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 1.5 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
 
+
   // On the upper bin boundary
-  fake_stream.resize( 6 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 2.0;
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 2.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 2.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_EQUALITY_CONST( sample, 5.0 );
 
   functor = getFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,double,double>(
-                              functor, lower_bin, upper_bin, 2.0 );
+                  functor, func, func, x_value, lower_bin, upper_bin );
 
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
@@ -247,23 +256,24 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   ua_lower_bin = unit_aware_distribution->begin();
   ua_upper_bin = ua_lower_bin;
   ++ua_upper_bin;
+  quantity<MegaElectronVolt> x_value = 0.0*MeV;
 
   ua_functor = getUnitAwareFunctor();
   quantity<cgs::length> sample =
     Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-      ua_functor, ua_lower_bin, ua_upper_bin, 0.0*MeV );
+      ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 0.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 0.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
@@ -272,65 +282,68 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 0.5*MeV;
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 0.5*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 0.5*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 4.615384615384615*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 0.5*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
 
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 1.0*MeV;
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 1.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 1.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 1.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-15 );
 
   // In the second bin
   ++ua_lower_bin; ++ua_upper_bin;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 1.5*MeV;
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 1.5*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 1.5*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 1.5*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
 
@@ -339,22 +352,23 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   fake_stream[1] = 0.5;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  x_value = 2.0*MeV;
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 2.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 2.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, ua_lower_bin, ua_upper_bin, 2.0*MeV );
+    ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
@@ -382,7 +396,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   double sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-      functor, raw_sample, sampled_bin, lower_bin, upper_bin, 0.0, 0.0, 10.0 );
+    functor, func, func, 0.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -391,7 +405,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-      functor, raw_sample, sampled_bin, lower_bin, upper_bin, 0.0, 0.0, 10.0 );
+    functor, func, func, 0.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -400,7 +414,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-      functor, raw_sample, sampled_bin, lower_bin, upper_bin, 0.0, 0.0, 10.0 );
+    functor, func, func, 0.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -415,7 +429,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 0.5, 1.25, 8.75 );
+    functor, func, func, 0.5, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -424,16 +438,16 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 0.5, 1.25, 8.75 );
+    functor, func, func, 0.5, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-14 );
-  TEST_FLOATING_EQUALITY( raw_sample, 4.615384615384615, 1e-14 );
+  TEST_EQUALITY_CONST( sample, 4.615384615384615 );
+  TEST_EQUALITY_CONST( raw_sample, 4.615384615384615 );
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 0.5, 1.25, 8.75 );
+    functor, func, func, 0.5, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -445,7 +459,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 1.0, 2.5, 7.5 );
+    functor, func, func, 1.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -454,7 +468,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 1.0, 2.5, 7.5 );
+    functor, func, func, 1.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -463,7 +477,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 1.0, 2.5, 7.5 );
+    functor, func, func, 1.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -476,7 +490,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 1.5, 1.25, 8.75 );
+    functor, func, func, 1.5, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -485,7 +499,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 1.5, 1.25, 8.75 );
+    functor, func, func, 1.5, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -494,7 +508,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 1.5, 1.25, 8.75 );
+    functor, func, func, 1.5, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -509,7 +523,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 2.0, 0.0, 10.0 );
+    functor, func, func, 2.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 2u );
@@ -518,7 +532,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 2.0, 0.0, 10.0 );
+    functor, func, func, 2.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 2u );
@@ -527,7 +541,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   functor = getFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-    functor, raw_sample, sampled_bin, lower_bin, upper_bin, 2.0, 0.0, 10.0 );
+    functor, func, func, 2.0, lower_bin, upper_bin, sampled_bin, raw_sample );
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 2u );
@@ -558,7 +572,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
   ua_functor = getUnitAwareFunctor();
   quantity<cgs::length> sample =
     Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-      ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 0.0*MeV, 0.0*cgs::centimeter, 10.0*cgs::centimeter );
+      ua_functor, ua_func, ua_func, 0.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -567,7 +581,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 0.0*MeV, 0.0*cgs::centimeter, 10.0*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 0.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -576,7 +590,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 0.0*MeV, 0.0*cgs::centimeter, 10.0*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 0.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -591,7 +605,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 0.5*MeV, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 0.5*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -600,16 +614,16 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 0.5*MeV, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 0.5*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 4.615384615384615*cgs::centimeter, 1e-14 );
+  TEST_EQUALITY_CONST( sample, 4.615384615384615*cgs::centimeter );
+  TEST_EQUALITY_CONST( raw_sample, 4.615384615384615*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 0.5*MeV, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 0.5*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
@@ -621,7 +635,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 1.0*MeV, 2.5*cgs::centimeter, 7.5*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 1.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -630,7 +644,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 1.0*MeV, 2.5*cgs::centimeter, 7.5*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 1.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -639,7 +653,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 1.0*MeV, 2.5*cgs::centimeter, 7.5*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 1.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -652,7 +666,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 1.5*MeV, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 1.5*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -661,7 +675,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 1.5*MeV, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 1.5*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -670,7 +684,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 1.5*MeV, 1.25*cgs::centimeter, 8.75*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 1.5*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
@@ -685,7 +699,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 2.0*MeV, 0.0*cgs::centimeter, 10.0*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 2.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 2u );
@@ -694,7 +708,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 2.0*MeV, 0.0*cgs::centimeter, 10.0*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 2.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 2u );
@@ -703,7 +717,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   ua_functor = getUnitAwareFunctor();
   sample = Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-    ua_functor, raw_sample, ua_sampled_bin, ua_lower_bin, ua_upper_bin, 2.0*MeV, 0.0*cgs::centimeter, 10.0*cgs::centimeter );
+    ua_functor, ua_func, ua_func, 2.0*MeV, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 2u );

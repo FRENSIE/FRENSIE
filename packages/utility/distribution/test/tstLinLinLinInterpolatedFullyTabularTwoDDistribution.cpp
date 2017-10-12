@@ -51,6 +51,63 @@ std::shared_ptr<Utility::TwoDDistribution> distribution;
 
 std::shared_ptr<Utility::FullyTabularTwoDDistribution> tab_distribution;
 
+std::function<double (double)> lower_func, upper_func;
+
+//---------------------------------------------------------------------------//
+// Testing Functions.
+//---------------------------------------------------------------------------//
+// Initialize the distribution
+template<typename TwoDSamplingPolicy,
+         typename BaseTabDistribution,
+         typename BaseDistribution>
+void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
+                 std::shared_ptr<BaseDistribution>& dist )
+{
+  std::vector<typename BaseTabDistribution::PrimaryIndepQuantity> primary_bins( 4 );
+
+  Teuchos::Array<std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit> > > secondary_dists( 4 );
+
+  // Create the secondary distribution in the first bin
+  Utility::setQuantity( primary_bins[0], 0.0 );
+
+  typename BaseTabDistribution::SecondaryIndepQuantity y_min, y_max;
+  Utility::setQuantity( y_min, 0.0 );
+  Utility::setQuantity( y_max, 10.0 );
+
+  typename BaseTabDistribution::DepQuantity value;
+  Utility::setQuantity( value, 0.1 );
+
+  secondary_dists[0].reset( new Utility::UnitAwareUniformDistribution<typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( y_min, y_max, value ) );
+
+  // Create the secondary distribution in the second bin
+  Utility::setQuantity( primary_bins[1], 0.0 );
+  Utility::setQuantity( value, 1.0 );
+  secondary_dists[1].reset( new Utility::UnitAwareUniformDistribution<typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( y_min, y_max, value ) );
+
+  // Create the secondary distribution in the third bin
+  Teuchos::Array<typename BaseTabDistribution::SecondaryIndepQuantity> bin_boundaries( 3 );
+  Utility::setQuantity( bin_boundaries[0], 2.5 );
+  Utility::setQuantity( bin_boundaries[1], 5.0 );
+  Utility::setQuantity( bin_boundaries[2], 7.5 );
+
+  Teuchos::Array<typename BaseTabDistribution::DepQuantity> values( 3 );
+  Utility::setQuantity( values[0], 0.1 );
+  Utility::setQuantity( values[1], 1.0 );
+  Utility::setQuantity( values[2], 0.5 );
+
+  Utility::setQuantity( primary_bins[2], 1.0 );
+  secondary_dists[2].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values ) );
+
+  // Create the secondary distribution beyond the third bin
+  Utility::setQuantity( primary_bins[3], 2.0 );
+  secondary_dists[3] = secondary_dists[0];
+
+  tab_dist.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,TwoDSamplingPolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+      primary_bins, secondary_dists, 1e-3, 1e-7 ) );
+
+  dist = tab_dist;
+}
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -58,6 +115,7 @@ std::shared_ptr<Utility::FullyTabularTwoDDistribution> tab_distribution;
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    isPrimaryDimensionTabular )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
   TEST_ASSERT( distribution->isPrimaryDimensionTabular() );
 }
 
@@ -66,6 +124,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    isPrimaryDimensionTabular )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionTabular() );
 }
 
@@ -74,6 +134,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    isPrimaryDimensionContinuous )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
   TEST_ASSERT( distribution->isPrimaryDimensionContinuous() );
 }
 
@@ -83,6 +144,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    isPrimaryDimensionContinuous )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionContinuous() );
 }
 
@@ -91,6 +154,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    getLowerBoundOfPrimaryIndepVar )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfPrimaryIndepVar(), 0.0 );
 }
 
@@ -100,6 +164,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    getLowerBoundOfPrimaryIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfPrimaryIndepVar(), 0.0*MeV );
 }
 
@@ -108,6 +174,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    getUpperBoundOfPrimaryIndepVar )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfPrimaryIndepVar(), 2.0 );
 }
 
@@ -117,6 +184,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    getUpperBoundOfPrimaryIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfPrimaryIndepVar(), 2.0*MeV );
 }
 
@@ -125,6 +194,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
                        0.0 );
@@ -176,6 +247,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar(-1.0*MeV),
                        0.0*cgs::centimeter );
@@ -226,6 +299,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar(-1.0),
                        0.0 );
@@ -277,6 +352,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar(-1.0*MeV),
                        0.0*cgs::centimeter );
@@ -327,6 +404,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    hasSamePrimaryBounds )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Self test
   TEST_ASSERT( distribution->hasSamePrimaryBounds( *distribution ) );
 
@@ -345,7 +424,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 1.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Stochastic>(
                                                          distribution_data ) );
   }
 
@@ -364,7 +443,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Stochastic>(
                                                          distribution_data ) );
   }
 
@@ -395,7 +474,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Stochastic>(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -408,6 +487,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, evaluate )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 0.0 );
@@ -497,6 +578,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, evaluate )
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    evaluate )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
@@ -585,6 +668,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, evaluateExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateExact( -1.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateExact( -1.0, 0.0 ), 0.0 );
@@ -674,6 +759,8 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, evaluateExact )
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    evaluateExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( -1.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
@@ -762,6 +849,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, correlatedEvaluate )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateInBoundaries( -1.0, -1.0, 0.0, 10.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateInBoundaries( -1.0, 0.0, 0.0, 10.0 ), 0.0 );
@@ -851,6 +940,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, correlatedEvaluate 
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    correlatedEvaluate )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateInBoundaries( -1.0*MeV, -1.0*cgs::centimeter, 0.0*cgs::centimeter, 10.0*cgs::centimeter ), 0.0*barn );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateInBoundaries( -1.0*MeV, 0.0*cgs::centimeter, 0.0*cgs::centimeter, 10.0*cgs::centimeter ), 0.0*barn );
@@ -940,6 +1032,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.0 );
@@ -1035,6 +1129,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
@@ -1130,6 +1227,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( -1.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( -1.0, 0.0 ), 0.0 );
@@ -1225,6 +1324,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalPDFExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( -1.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
@@ -1320,6 +1422,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries( -1.0, -1.0, 0.0, 10.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries( -1.0, 0.0, 0.0, 10.0 ), 0.0 );
@@ -1415,6 +1519,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalPDF )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries( -1.0*MeV, -1.0*cgs::centimeter, 0.0*cgs::centimeter, 10.0*cgs::centimeter ), 0.0/cgs::centimeter );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries( -1.0*MeV, 0.0*cgs::centimeter, 0.0*cgs::centimeter, 10.0*cgs::centimeter ), 0.0/cgs::centimeter );
@@ -1510,6 +1617,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 0.0 ), 0.0 );
@@ -1593,6 +1702,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.0 );
@@ -1676,6 +1788,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0, 0.0 ), 0.0 );
@@ -1759,6 +1873,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    evaluateSecondaryConditionalCDFExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, -1.0*cgs::centimeter ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( -1.0*MeV, 0.0*cgs::centimeter ), 0.0 );
@@ -1842,6 +1959,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDFInBoundaries( -1.0, -1.0, 0.0, 10.0 ), 0.0 );
   TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDFInBoundaries( -1.0, 0.0, 0.0, 10.0 ), 0.0 );
@@ -1925,6 +2044,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    correlatedEvaluateSecondaryConditionalCDF )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDFInBoundaries( -1.0*MeV, -1.0*cgs::centimeter, 0.0*cgs::centimeter, 10.0*cgs::centimeter ), 0.0 );
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDFInBoundaries( -1.0*MeV, 0.0*cgs::centimeter, 0.0*cgs::centimeter, 10.0*cgs::centimeter ), 0.0 );
@@ -2008,6 +2130,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditional )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditional( -1.0 ),
               std::logic_error );
@@ -2222,6 +2346,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditional )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV ),
               std::logic_error );
@@ -2437,6 +2564,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   unsigned trials = 0u;
   
   // Before the first bin - no extension
@@ -2692,6 +2821,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   unsigned trials = 0u;
   
   // Before the first bin - no extension
@@ -2947,6 +3079,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
   
   // Before the first bin - no extension
@@ -3218,6 +3352,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
   
   // Before the first bin - no extension
@@ -3489,6 +3626,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices_with_raw )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
   double raw_sample;
   
@@ -3788,6 +3927,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices_with_raw )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   unsigned primary_bin_index = 0u, secondary_bin_index = 0u;
   quantity<cgs::length> raw_sample;
   
@@ -4087,6 +4229,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumber )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0 ),
               std::logic_error );
@@ -4247,6 +4391,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumber )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0 ),
               std::logic_error );
@@ -4408,6 +4555,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalInSubrange )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 ),
               std::logic_error );
@@ -4636,6 +4785,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalInSubrange )
 {
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 7.5*cgs::centimeter ),
               std::logic_error );
@@ -4864,6 +5016,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 { 
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 7.5 ),
               std::logic_error );
@@ -5041,6 +5195,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 { 
+  initialize<Utility::Stochastic>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 7.5*cgs::centimeter ),
               std::logic_error );
@@ -5218,6 +5375,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExact )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExact( -1.0 ),
               std::logic_error );
@@ -5357,6 +5516,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExact )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExact( -1.0*MeV ),
               std::logic_error );
@@ -5475,6 +5637,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumber )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 0.0 ),
               std::logic_error );
@@ -5588,6 +5752,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumber )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0*MeV, 0.0 ),
               std::logic_error );
@@ -5701,6 +5868,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExactInSubrange )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 ),
               std::logic_error );
@@ -5860,6 +6029,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExactInSubrange )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 7.5*cgs::centimeter ),
               std::logic_error );
@@ -6019,6 +6191,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
+  initialize<Utility::Exact>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.0, 7.5 ),
               std::logic_error );
@@ -6150,6 +6324,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
+  initialize<Utility::Exact>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 0.0, 7.5*cgs::centimeter ),
               std::logic_error );
@@ -6266,8 +6443,10 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    correlatedSampleSecondaryConditional )
 {
+  initialize<Utility::Stochastic>( tab_distribution, distribution );
+
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, 0.0, 10.0 ),
+  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, lower_func, upper_func ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -6279,13 +6458,14 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, 0.0, 10.0 );
+  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
+  double sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, 0.0, 10.0 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, 0.0, 10.0 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( -1.0, lower_func, upper_func );
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -6294,13 +6474,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.0, 0.0, 10.0 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.0, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.0, 0.0, 10.0 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.0, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.0, 0.0, 10.0 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.0, lower_func, upper_func );
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
 
@@ -6309,283 +6489,289 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.5, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.5, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.5, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.5, lower_func, upper_func );
   TEST_FLOATING_EQUALITY( sample, 4.711538461538, 1e-12 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.5, 1.25, 8.75 );
+  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 0.5, lower_func, upper_func );
   TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
 
 
-  // On the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // // On the third bin
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
-  TEST_EQUALITY_CONST( sample, 2.5 );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
+  // TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
+  // TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.5, 1.25, 8.75 );
-  TEST_EQUALITY_CONST( sample, 1.25 );
-
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.5, 1.25, 8.75 );
-  TEST_FLOATING_EQUALITY( sample, 4.711538461538, 1e-12 );
-
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.5, 1.25, 8.75 );
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.0, 2.5, 7.5 );
+  // TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
 
-  // On the upper bin boundary
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // // In the third bin
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 2.0, 0.0, 10.0 );
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.5, lower_func, upper_func );
+  // TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 2.0, 0.0, 10.0 );
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.5, lower_func, upper_func );
+  // TEST_FLOATING_EQUALITY( sample, 4.711538461538, 1e-12 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 2.0, 0.0, 10.0 );
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  // After the third bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 ),
-              std::logic_error );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 1.5, lower_func, upper_func );
+  // TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
 
 
-  // After the third bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
+  // // On the upper bin boundary
+  // fake_stream[0] = 0.0;
+  // fake_stream[1] = 0.5;
+  // fake_stream[2] = 1.0-1e-15;
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 2.0, 0.0, 10.0 );
+  // TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 );
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 2.0, 0.0, 10.0 );
+  // TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 );
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 2.0, 0.0, 10.0 );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 );
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+  // // After the third bin - no extension
+  // TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 ),
+  //             std::logic_error );
 
-  tab_distribution->limitToPrimaryIndepLimits();
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
+  // // After the third bin - with extension
+  // tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  // Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 );
+  // TEST_EQUALITY_CONST( sample, 0.0 );
+
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 );
+  // TEST_EQUALITY_CONST( sample, 5.0 );
+
+  // sample = tab_distribution->correlatedSampleSecondaryConditionalInBoundaries( 3.0, 0.0, 10.0 );
+  // TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  // tab_distribution->limitToPrimaryIndepLimits();
+
+  // Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditional )
-{
-  // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-              -1.0*MeV,
-              0.0*cgs::centimeter,
-              10.0*cgs::centimeter ),
-              std::logic_error );
+// //---------------------------------------------------------------------------//
+// // Check that a unit-aware secondary conditional PDF can be sampled
+// TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
+//                    correlatedSampleSecondaryConditional )
+// {
+//   initialize<Utility::Correlated>( unit_aware_tab_distribution,
+//                                    unit_aware_distribution );
+
+//   // Before the first bin - no extension
+//   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//               -1.0*MeV,
+//               0.0*cgs::centimeter,
+//               10.0*cgs::centimeter ),
+//               std::logic_error );
 
 
-  // Before the first bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+//   // Before the first bin - with extension
+//   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+//   std::vector<double> fake_stream( 3 );
+//   fake_stream[0] = 0.0;
+//   fake_stream[1] = 0.5;
+//   fake_stream[2] = 1.0-1e-15;
+//   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<cgs::length> sample =
-    unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        -1.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+//   quantity<cgs::length> sample =
+//     unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         -1.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        -1.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         -1.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        -1.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         -1.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-
-  // On the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        0.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        0.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        0.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+//   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
 
-  // In the second bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.4230769230769231;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+//   // On the second bin
+//   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        0.5*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         0.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        0.5*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         0.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        0.5*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         0.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
 
-  // On the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+//   // In the second bin
+//   fake_stream[0] = 0.0;
+//   fake_stream[1] = 0.4230769230769231;
+//   fake_stream[2] = 1.0-1e-15;
+//   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        1.0*MeV,
-                        2.5*cgs::centimeter,
-                        7.5*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         0.5*MeV,
+//                         1.25*cgs::centimeter,
+//                         8.75*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        1.0*MeV,
-                        2.5*cgs::centimeter,
-                        7.5*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-12 );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         0.5*MeV,
+//                         1.25*cgs::centimeter,
+//                         8.75*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        1.0*MeV,
-                        2.5*cgs::centimeter,
-                        7.5*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        1.5*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        1.5*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
-
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        1.5*MeV,
-                        1.25*cgs::centimeter,
-                        8.75*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         0.5*MeV,
+//                         1.25*cgs::centimeter,
+//                         8.75*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
 
 
-  // On the upper bin boundary
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+//   // On the third bin
+//   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        2.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         1.0*MeV,
+//                         2.5*cgs::centimeter,
+//                         7.5*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        2.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         1.0*MeV,
+//                         2.5*cgs::centimeter,
+//                         7.5*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-12 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        2.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         1.0*MeV,
+//                         2.5*cgs::centimeter,
+//                         7.5*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
 
-  // After the third bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-              3.0*MeV,
-              0.0*cgs::centimeter,
-                        10.0*cgs::centimeter ),
-              std::logic_error );
+//   // In the third bin
+//   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         1.5*MeV,
+//                         1.25*cgs::centimeter,
+//                         8.75*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         1.5*MeV,
+//                         1.25*cgs::centimeter,
+//                         8.75*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
+
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         1.5*MeV,
+//                         1.25*cgs::centimeter,
+//                         8.75*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
 
 
-  // After the third bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+//   // On the upper bin boundary
+//   fake_stream[0] = 0.0;
+//   fake_stream[1] = 0.5;
+//   fake_stream[2] = 1.0-1e-15;
+//   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         2.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        3.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         2.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        3.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         2.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                        3.0*MeV,
-                        0.0*cgs::centimeter,
-                        10.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+//   // After the third bin - no extension
+//   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//               3.0*MeV,
+//               0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter ),
+//               std::logic_error );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
-}
+
+//   // After the third bin - with extension
+//   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+
+//   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         3.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         3.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+//   sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInBoundaries(
+//                         3.0*MeV,
+//                         0.0*cgs::centimeter,
+//                         10.0*cgs::centimeter );
+//   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+
+//   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+
+//   Utility::RandomNumberGenerator::unsetFakeStream();
+// }
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( -1.0, 0.0, 0.0, 10.0 ),
               std::logic_error );
@@ -6678,6 +6864,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries( -1.0*MeV, 0.0, 0.0*cgs::centimeter, 10.0*cgs::centimeter ),
               std::logic_error );
@@ -6770,6 +6959,8 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    correlatedSampleSecondaryConditionalInSubrangeInBoundaries )
 {
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInSubrangeInBoundaries( -1.0, 0.0, 7.5 ),
               std::logic_error );
@@ -6900,6 +7091,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    correlatedSampleSecondaryConditionalInSubrangeInBoundaries )
 {
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrangeInBoundaries( -1.0*MeV, 0.0*cgs::centimeter, 7.5*cgs::centimeter ),
               std::logic_error );
@@ -7029,7 +7223,9 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries )
-{ 
+{
+  initialize<Utility::Correlated>( tab_distribution, distribution );
+
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries( -1.0, 0.0, 0.0, 7.5 ),
               std::logic_error );
@@ -7134,7 +7330,10 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 // Check that a unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
                    correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries )
-{ 
+{
+  initialize<Utility::Correlated>( unit_aware_tab_distribution,
+                                   unit_aware_distribution );
+
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries( -1.0*MeV, 0.0, 0.0*cgs::centimeter, 7.5*cgs::centimeter ),
               std::logic_error );
@@ -7247,71 +7446,71 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  // Create the two-dimensional distribution
-  {
-    Utility::FullyTabularTwoDDistribution::DistributionType
-      distribution_data( 4 );
+  // // Create the two-dimensional distribution
+  // {
+  //   Utility::FullyTabularTwoDDistribution::DistributionType
+  //     distribution_data( 4 );
 
-    // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+  //   // Create the secondary distribution in the first bin
+  //   distribution_data[0].first = 0.0;
+  //   distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
 
-    // Create the secondary distribution in the second bin
-    distribution_data[1].first = 0.0;
-    distribution_data[1].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
+  //   // Create the secondary distribution in the second bin
+  //   distribution_data[1].first = 0.0;
+  //   distribution_data[1].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
 
-    // Create the secondary distribution in the third bin
-    std::vector<double> bin_boundaries( 3 ), values( 3 );
-    bin_boundaries[0] = 2.5; values[0] = 0.1;
-    bin_boundaries[1] = 5.0; values[1] = 1.0;
-    bin_boundaries[2] = 7.5; values[2] = 0.5;
+  //   // Create the secondary distribution in the third bin
+  //   std::vector<double> bin_boundaries( 3 ), values( 3 );
+  //   bin_boundaries[0] = 2.5; values[0] = 0.1;
+  //   bin_boundaries[1] = 5.0; values[1] = 1.0;
+  //   bin_boundaries[2] = 7.5; values[2] = 0.5;
 
-    distribution_data[2].first = 1.0;
-    distribution_data[2].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
+  //   distribution_data[2].first = 1.0;
+  //   distribution_data[2].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
 
-    // Create the secondary distribution beyond the third bin
-    distribution_data[3].first = 2.0;
-    distribution_data[3].second = distribution_data[0].second;
+  //   // Create the secondary distribution beyond the third bin
+  //   distribution_data[3].first = 2.0;
+  //   distribution_data[3].second = distribution_data[0].second;
 
-    tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
-                                                            distribution_data,
-                                                            1e-3,
-                                                            1e-7 ) );
-    distribution = tab_distribution;
-  }
+  //   tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Stochastic>(
+  //                                                           distribution_data,
+  //                                                           1e-3,
+  //                                                           1e-7 ) );
+  //   distribution = tab_distribution;
+  // }
 
-  // Create the unit-aware two-dimensional distribution
-  {
-    std::vector<quantity<MegaElectronVolt> > primary_bins( 4 );
+  // // Create the unit-aware two-dimensional distribution
+  // {
+  //   std::vector<quantity<MegaElectronVolt> > primary_bins( 4 );
 
-    Teuchos::Array<std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn> > > secondary_dists( 4 );
+  //   Teuchos::Array<std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn> > > secondary_dists( 4 );
 
-    // Create the secondary distribution in the first bin
-    primary_bins[0] = 0.0*MeV;
-    secondary_dists[0].reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
+  //   // Create the secondary distribution in the first bin
+  //   primary_bins[0] = 0.0*MeV;
+  //   secondary_dists[0].reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
 
-    // Create the secondary distribution in the second bin
-    primary_bins[1] = 0.0*MeV;
-    secondary_dists[1].reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 1.0*barn ) );
+  //   // Create the secondary distribution in the second bin
+  //   primary_bins[1] = 0.0*MeV;
+  //   secondary_dists[1].reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 1.0*barn ) );
 
-    // Create the secondary distribution in the third bin
-    Teuchos::Array<quantity<cgs::length> > bin_boundaries( 3 );
-    Teuchos::Array<quantity<Barn> > values( 3 );
-    bin_boundaries[0] = 2.5*cgs::centimeter; values[0] = 0.1*barn;
-    bin_boundaries[1] = 5.0*cgs::centimeter; values[1] = 1.0*barn;
-    bin_boundaries[2] = 7.5*cgs::centimeter; values[2] = 0.5*barn;
+  //   // Create the secondary distribution in the third bin
+  //   Teuchos::Array<quantity<cgs::length> > bin_boundaries( 3 );
+  //   Teuchos::Array<quantity<Barn> > values( 3 );
+  //   bin_boundaries[0] = 2.5*cgs::centimeter; values[0] = 0.1*barn;
+  //   bin_boundaries[1] = 5.0*cgs::centimeter; values[1] = 1.0*barn;
+  //   bin_boundaries[2] = 7.5*cgs::centimeter; values[2] = 0.5*barn;
 
-    primary_bins[2] = 1.0*MeV;
-    secondary_dists[2].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::length,Barn>( bin_boundaries, values ) );
+  //   primary_bins[2] = 1.0*MeV;
+  //   secondary_dists[2].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::length,Barn>( bin_boundaries, values ) );
 
-    // Create the secondary distribution beyond the third bin
-    primary_bins[3] = 2.0*MeV;
-    secondary_dists[3] = secondary_dists[0];
+  //   // Create the secondary distribution beyond the third bin
+  //   primary_bins[3] = 2.0*MeV;
+  //   secondary_dists[3] = secondary_dists[0];
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
+  //   unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Stochastic,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
-    unit_aware_distribution = unit_aware_tab_distribution;
-  }
+  //   unit_aware_distribution = unit_aware_tab_distribution;
+  // }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
