@@ -184,7 +184,7 @@ public:
   //! Return a random correlated sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity correlatedSampleSecondaryConditionalInSubrangeInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity min_secondary_indep_var_value,
+        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random correlated sample from the secondary conditional PDF in the subrange
@@ -352,7 +352,7 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit>
 inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalInSubrangeInBoundaries(
         const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity min_secondary_indep_var_value,
+        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
