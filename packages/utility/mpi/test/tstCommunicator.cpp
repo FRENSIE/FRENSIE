@@ -1287,6 +1287,39 @@ FRENSIE_UNIT_TEST_TEMPLATE( Communicator, allGather, BasicTypes )
 
   std::shared_ptr<const Utility::Communicator> comm =
     Utility::Communicator::getDefault();
+
+  T value;
+  initializeValue( value, comm->rank() );
+
+  std::vector<T> data_to_send( 10, value );
+  Utility::ArrayView<const T> view_of_data_to_send( data_to_send );
+
+  std::vector<T> data_to_receive( comm->size() );
+
+  // Gather the first values only
+  FRENSIE_REQUIRE_NO_THROW( Utility::allGather( *comm, data_to_send.front(), data_to_receive ) );
+    
+  for( size_t i = 0; i < comm->size(); ++i )
+  {
+    T expected_value;
+    initializeValue( expected_value, i );
+    
+    FRENSIE_CHECK_EQUAL( data_to_receive[i], expected_value );
+  }
+  
+  data_to_receive.clear();
+  data_to_receive.resize( comm->size() );
+  
+  // Gather the first values only
+  FRENSIE_REQUIRE_NO_THROW( Utility::allGather( *comm, data_to_send.front(), data_to_receive.data() ) );
+
+  for( size_t i = 0; i < comm->size(); ++i )
+  {
+    T expected_value;
+    initializeValue( expected_value, i );
+    
+    FRENSIE_CHECK_EQUAL( data_to_receive[i], expected_value );
+  }
 }
 
 //---------------------------------------------------------------------------//

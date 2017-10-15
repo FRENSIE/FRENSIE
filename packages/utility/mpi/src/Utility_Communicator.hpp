@@ -36,22 +36,7 @@ template<typename T>
 void send( const Communicator& comm,
            int destination_process,
            int tag,
-           const Utility::ArrayView<T>& values );
-
-//! Send a Utility::ArrayView of data to another process
-template<typename T>
-void send( const Communicator& comm,
-           int destination_process,
-           int tag,
            const Utility::ArrayView<const T>& values );
-
-//! Send an array of data to another process
-template<typename T>
-void send( const Communicator& comm,
-           int destination_process,
-           int tag,
-           const T* values,
-           int number_of_values );
 
 //! Receive data from another process
 template<typename T>
@@ -65,22 +50,7 @@ template<typename T>
 Communicator::Status receive( const Communicator& comm,
                               int source_process,
                               int tag,
-                              Utility::ArrayView<T>& values );
-
-//! Receive an array of data from another process
-template<typename T>
-Communicator::Status receive( const Communicator& comm,
-                              int source_process,
-                              int tag,
                               const Utility::ArrayView<T>& values );
-
-//! Receive an array of data from another process
-template<typename T>
-Communicator::Status receive( const Communicator& comm,
-                              int source_process,
-                              int tag,
-                              T* values,
-                              int number_of_values );
 
 //! Send a data to another process without blocking
 template<typename T>
@@ -96,21 +66,6 @@ Communicator::Request isend( const Communicator& comm,
                              int tag, 
                              const ArrayView<const T>& values );
 
-//! Send an array of data to another process without blocking
-template<typename T>
-Communicator::Request isend( const Communicator& comm,
-                             int destination_process,
-                             int tag, 
-                             const ArrayView<T>& values );
-
-//! Send an array of data to another process without blocking
-template<typename T>
-Communicator::Request isend( const Communicator& comm,
-                             int destination_process,
-                             int tag, 
-                             const T* values,
-                             int number_of_values );
-
 //! Prepare to receive data from another process
 template<typename T>
 Communicator::Request ireceive( const Communicator& comm,
@@ -123,16 +78,7 @@ template<typename T>
 Communicator::Request ireceive( const Communicator& comm,
                                 int source_process,
                                 int tag,
-                                const ArrayView<T>& values,
-                                int number_of_values );
-
-//! Prepare to receive an array of data from another process
-template<typename T>
-Communicator::Request ireceive( const Communicator& comm,
-                                int source_process,
-                                int tag,
-                                T* values,
-                                int number_of_values );
+                                const ArrayView<T>& values );
 
 //! Wait until a message is available to be received
 template<typename T>
@@ -168,7 +114,7 @@ template<template<typename T,typename...> class STLCompliantInputSequenceContain
 void wait( STLCompliantInputSequenceContainer<Communicator::Request>& requests,
            STLCompliantOutputSequenceContainer<Communicator::Status>& statuses );
 
-/*! \brief Gather the values stored at every process into vectors of values 
+/*! \brief Gather the values stored at every process into an array of values 
  * from each process.
  */
 template<typename T>
@@ -176,41 +122,45 @@ void allGather( const Communicator& comm,
                 const T& input_value,
                 std::vector<T>& output_values );
 
-/*! \brief Gather the values stored at every process into vectors of values 
+/*! \brief Gather the values stored at every process into an array of values 
  * from each process.
  */
 template<typename T>
 void allGather( const Communicator& comm,
                 const T& input_value,
-                T* output_values );
+                const Utility::ArrayView<T>& output_values );
 
-/*! \brief Gather the array of values stored at every process into vectors of
- * values from each process.
+/*! \brief Gather the values stored at every process into an array of values 
+ * from each process.
  */
 template<typename T>
 void allGather( const Communicator& comm,
-                const T* input_values,
-                int number_of_input_values,
+                std::initializer_list<T> input_values,
+                const std::vector<T>& output_values );
+
+/*! \brief Gather the values stored at every process into an array of values 
+ * from each process.
+ */
+template<typename T>
+void allGather( const Communicator& comm,
+                std::initializer_list<T> input_values,
+                const Utility::ArrayView<T>& output_values );
+
+/*! \brief Gather the values stored at every process into an array of values 
+ * from each process.
+ */
+template<typename T>
+void allGather( const Communicator& comm,
+                const Utility::ArrayView<const T>& input_values,
                 std::vector<T>& output_values );
 
-/*! \brief Gather the array of values stored at every process into vectors of
- * values from each process.
+/*! \brief Gather the values stored at every process into an array of values 
+ * from each process.
  */
 template<typename T>
 void allGather( const Communicator& comm,
-                const T* input_values,
-                int number_of_input_values,
-                T* output_values );
-
-/*! \brief Combine the values stored by each process into a single value
- * available to all processes.
- */
-template<typename T, typename ReduceOperation>
-void allReduce( const Communicator& comm,
-                const T* input_values,
-                int number_of_input_values,
-                T* output_values,
-                ReduceOperation op );
+                const Utility::ArrayView<const T>& input_values,
+                const Utility::ArrayView<T>& output_values );
 
 /*! \brief Combine the values stored by each process into a single value
  * available to all processes.
@@ -226,8 +176,7 @@ void allReduce( const Communicator& comm,
  */
 template<typename T, typename ReduceOperation>
 void allReduce( const Communicator& comm,
-                T* input_output_values,
-                int number_of_values,
+                T& input_output_value,
                 ReduceOperation op );
 
 /*! \brief Combine the values stored by each process into a single value
@@ -235,28 +184,29 @@ void allReduce( const Communicator& comm,
  */
 template<typename T, typename ReduceOperation>
 void allReduce( const Communicator& comm,
-                T& input_output_value,
+                const Utility::ArrayView<const T>& input_values,
+                const Utility::ArrayView<T>& output_values,
+                ReduceOperation op );
+
+/*! \brief Combine the values stored by each process into a single value
+ * available to all processes.
+ */
+template<typename T, typename ReduceOperation>
+void allReduce( const Communicator& comm,
+                const Utility::ArrayView<T>& input_output_values,
                 ReduceOperation op );
 
 //! Send data from every process to every other process
 template<typename T>
 void allToAll( const Communicator& comm,
-               const std::vector<T>& input_values,
+               const Utility::ArrayView<const T>& input_values,
                std::vector<T>& output_values );
 
 //! Send data from every process to every other process
 template<typename T>
 void allToAll( const Communicator& comm,
-               const std::vector<T>& input_values,
-               int number_of_input_values,
-               std::vector<T>& output_values );
-
-//! Send data from every process to every other process
-template<typename T>
-void allToAll( const Communicator& comm,
-               const T* input_values,
-               int number_of_input_values,
-               T* output_values );
+               const Utility::ArrayView<const T>& input_values,
+               const Utility::ArrayView<T>& output_values );
 
 //! Broadcast a value from a root process to all other processes
 template<typename T>
@@ -265,8 +215,7 @@ void broadcast( const Communicator& comm, T& value, int root_process );
 //! Broadcast a value from a root process to all other processes
 template<typename T>
 void broadcast( const Communicator& comm,
-                T* values,
-                int number_of_values,
+                const Utility::ArrayView<T>& values,
                 int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
@@ -280,130 +229,291 @@ void gather( const Communicator& comm,
 template<typename T>
 void gather( const Communicator& comm,
              const T& input_value,
-             T* output_values,
+             const Utility::ArrayView<T>& output_values,
              int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
 template<typename T>
 void gather( const Communicator& comm,
-             const T* input_values,
-             int number_of_input_values,
+             const T& input_value,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             std::initializer_list<T> input_values,
              std::vector<T>& output_values,
              int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
 template<typename T>
 void gather( const Communicator& comm,
-             const T* input_values,
-             int number_of_input_values,
-             T* output_values,
+             std::initializer_list<T> input_values,
+             const Utility::ArrayView<T>& output_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             std::initializer_list<T> input_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             const Utility::ArrayView<const T>& input_values,
+             std::vector<T>& output_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             const Utility::ArrayView<const T>& input_values,
+             const Utility::ArrayView<T>& output_values,
+             int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gather( const Communicator& comm,
+             const Utility::ArrayView<const T>& input_values,
              int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
 template<typename T>
 void gatherv( const Communicator& comm,
-              const std::vector<T>& input_values,
-              T* output_values,
+              const T& input_value,
+              std::vector<T>& output_values,
               const std::vector<int>& sizes,
               const std::vector<int>& offsets,
-              const int root_process );
+              int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
 template<typename T>
 void gatherv( const Communicator& comm,
-              const T* input_values,
-              int number_of_input_values,
-              T* output_values,
+              const T& input_value,
+              const Utility::ArrayView<T>& output_values,
               const std::vector<int>& sizes,
               const std::vector<int>& offsets,
-              const int root_process );
+              int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
 template<typename T>
 void gatherv( const Communicator& comm,
-              const std::vector<T>& input_values,
-              T* output_values,
+              std::initializer_list<T> input_values,
+              std::vector<T>& output_values,
               const std::vector<int>& sizes,
-              const int root_process );
+              const std::vector<int>& offsets,
+              int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
 template<typename T>
 void gatherv( const Communicator& comm,
-              const T* input_values,
-              int number_of_input_values,
-              T* output_values,
+              std::initializer_list<T> input_values,
+              const Utility::ArrayView<T>& output_values,
               const std::vector<int>& sizes,
-              const int root_process );
+              const std::vector<int>& offsets,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              std::vector<T>& output_values,
+              const std::vector<int>& sizes,
+              const std::vector<int>& offsets,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              const Utility::ArrayView<T>& output_values,
+              const std::vector<int>& sizes,
+              const std::vector<int>& offsets,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              std::initializer_list<T> input_values,
+              std::vector<T>& output_values,
+              const vector<int>& sizes,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const T& input_value,
+              std::vector<T>& output_values,
+              const std::vector<int>& sizes,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const T& input_value,
+              const Utility::ArrayView<T>& output_values,
+              const std::vector<int>& sizes,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              std::initializer_list<T> input_values,
+              std::vector<T>& output_values,
+              const std::vector<int>& sizes,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              std::initializer_list<T> input_values,
+              const Utility::ArrayView<T>& output_values,
+              const std::vector<int>& sizes,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              std::vector<T>& output_values,
+              const std::vector<int>& sizes,
+              int root_process );
+  
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              const Utility::ArrayView<T>& output_values,
+              const std::vector<int>& sizes,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const T& input_value,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              std::initializer_list<T> input_values,
+              int root_process );
+
+//! Gather the values stored at every process into a vector at the root process
+template<typename T>
+void gatherv( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              int root_process );
 
 //! Scatter the values stored at the root process to all other processes
 template<typename T>
 void scatter( const Communicator& comm,
-              const std::vector<T>& input_values,
+              std::initializer_list<T> input_values,
               T& output_value,
               int root_process );
 
 //! Scatter the values stored at the root process to all other processes
 template<typename T>
 void scatter( const Communicator& comm,
-              const T* input_values,
+              const Utility::ArrayView<const T>& input_values,
               T& output_value,
               int root_process );
 
 //! Scatter the values stored at the root process to all other processes
 template<typename T>
 void scatter( const Communicator& comm,
-              const std::vector<T>& input_values,
-              T* output_values,
-              int number_of_values_per_proc,
+              T& output_value,
               int root_process );
 
 //! Scatter the values stored at the root process to all other processes
 template<typename T>
 void scatter( const Communicator& comm,
-              const T* input_values,
-              T* output_values,
-              int number_of_values_per_proc,
+              std::initializer_list<T> input_values,
+              const Utility::ArrayView<T>& output_values,
               int root_process );
 
 //! Scatter the values stored at the root process to all other processes
 template<typename T>
-void scatterv( const Communicator& comm,
-               const std::vector<T>& input_values,
-               const std::vector<int>& sizes,
-               const std::vector<int>& offsets,
-               T* output_values,
-               int number_of_output_values,
-               int root_process );
+void scatter( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              const Utility::ArrayView<T>& output_values,
+              int root_process );
 
 //! Scatter the values stored at the root process to all other processes
 template<typename T>
+void scatter( const Communicator& comm,
+              const Utility::ArrayView<T>& output_values,
+              int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<template<typename,typename...> class STLCompliantSequenceContainerA,
+         template<typename,typename...> class STLCompliantSequenceContainerB,
+         typename T>
 void scatterv( const Communicator& comm,
-               const T* input_values,
-               const std::vector<int>& sizes,
-               const std::vector<int>& offsets,
-               T* output_values,
-               int number_of_output_values,
+               std::initializer_list<T> input_values,
+               const STLCompliantSequenceContainerA<int>& sizes,
+               const STLCompliantSequenceContainerB<int>& offsets,
+               const Utility::ArrayView<T>& output_values,
                int root_process );
 
 //! Scatter the values stored at the root process to all other processes
-template<typename T>
+template<template<typename,typename...> class STLCompliantSequenceContainerA,
+         template<typename,typename...> class STLCompliantSequenceContainerB,
+         typename T>
 void scatterv( const Communicator& comm,
-               const std::vector<T>& input_values,
-               const std::vector<int>& sizes,
-               T* output_values,
-               int number_of_output_values,
+               const Utility::ArrayView<T>& input_values,
+               const STLCompliantSequenceContainerA<int>& sizes,
+               const STLCompliantSequenceContainerB<int>& offsets,
+               const Utility::ArrayView<T>& output_values,
                int root_process );
 
 //! Scatter the values stored at the root process to all other processes
-template<typename T>
+template<template<typename,typename...> class STLCompliantSequenceContainerA,
+         template<typename,typename...> class STLCompliantSequenceContainerB,
+         typename T>
 void scatterv( const Communicator& comm,
-               const T* input_values,
-               const std::vector<int>& sizes,
-               T* output_values,
-               int number_of_output_values,
+               const Utility::ArrayView<const T>& input_values,
+               const STLCompliantSequenceContainerA<int>& sizes,
+               const STLCompliantSequenceContainerB<int>& offsets,
+               const Utility::ArrayView<T>& output_values,
                int root_process );
 
-//! Combine the values stored by each process intoa single value at the root
+//! Scatter the values stored at the root process to all other processes
+template<template<typename,typename...> class STLCompliantSequenceContainer,
+         typename T>
+void scatterv( const Communicator& comm,
+               std::initializer_list<T> input_values,
+               const STLCompliantSequenceContainer<int>& sizes,
+               const Utility::ArrayView<T>& output_values,
+               int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<template<typename,typename...> class STLCompliantSequenceContainer,
+         typename T>
+void scatterv( const Communicator& comm,
+               const Utility::ArrayView<T>& input_values,
+               const STLCompliantSequenceContainer<int>& sizes,
+               const Utility::ArrayView<T>& output_values,
+               int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<template<typename,typename...> class STLCompliantSequenceContainer,
+         typename T>
+void scatterv( const Communicator& comm,
+               const Utility::ArrayView<const T>& input_values,
+               const STLCompliantSequenceContainer<int>& sizes,
+               const Utility::ArrayView<T>& output_values,
+               int root_process );
+
+//! Scatter the values stored at the root process to all other processes
+template<template<typename,typename...> class STLCompliantSequenceContainer,
+         typename T>
+void scatterv( const Communicator& comm,
+               const Utility::ArrayView<T>& output_values,
+               int root_process );
+
+//! Combine the values stored by each process into ka single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
              const T& input_value,
@@ -414,9 +524,38 @@ void reduce( const Communicator& comm,
 //! Combine the values stored by each process intoa single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
-             const T* input_values,
-             int number_of_input_values,
-             T* output_values,
+             std::initializer_list<T> input_values,
+             const Utility::ArrayView<T>& output_values,
+             ReduceOperation op,
+             int root_process );
+
+//! Combine the values stored by each process intoa single value at the root
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const Utility::ArrayView<T>& input_values,
+             const Utility::ArrayView<T>& output_values,
+             ReduceOperation op,
+             int root_process );
+
+//! Combine the values stored by each process intoa single value at the root
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const Utility::ArrayView<const T>& input_values,
+             const Utility::ArrayView<T>& output_values,
+             ReduceOperation op,
+             int root_process );
+
+//! Combine the values stored by each process intoa single value at the root
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             std::initializer_list<T>& input_values,
+             ReduceOperation op,
+             int root_process );
+
+//! Combine the values stored by each process intoa single value at the root
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const Utility::ArrayView<const T>& input_values,
              ReduceOperation op,
              int root_process );
 
@@ -430,9 +569,22 @@ void scan( const Communicator& comm,
 //! Compute a prefix reduction of values from all processes
 template<typename T, typename ReduceOperation>
 void scan( const Communicator& comm,
-           const T* input_values,
-           int number_of_input_values,
-           T* output_values,
+           std::initializer_list<T> input_values,
+           const Utility::ArrayView<T>& output_values,
+           ReduceOperation op );
+
+//! Compute a prefix reduction of values from all processes
+template<typename T, typename ReduceOperation>
+void scan( const Communicator& comm,
+           const Utility::ArrayView<T>& input_values,
+           const Utility::ArrayView<T>& output_values,
+           ReduceOperation op );
+
+//! Compute a prefix reduction of values from all processes
+template<typename T, typename ReduceOperation>
+void scan( const Communicator& comm,
+           const Utility::ArrayView<const T>& input_values,
+           const Utility::ArrayView<T>& output_values,
            ReduceOperation op );
   
 } // end Utility namespace
