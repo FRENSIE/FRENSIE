@@ -661,7 +661,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffCrossSectio
   }
     // Create cross section ratios
     cross_section_ratios.reset(
-      new const TabularDist( energy_grid, cross_section_ratio ) );
+      new const Utility::TabularDistribution<Utility::LogLog>( energy_grid, cross_section_ratio ) );
 }
 
 // Create the ratio of the cutoff to the moment preserving cross section
@@ -697,7 +697,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
   }
     // Create cross section ratios
     cross_section_ratios.reset(
-      new const TabularDist( energy_grid, cross_section_ratio ) );
+      new const Utility::TabularDistribution<Utility::LogLog>( energy_grid, cross_section_ratio ) );
 }
 
 // Create the hybrid elastic scattering functions
