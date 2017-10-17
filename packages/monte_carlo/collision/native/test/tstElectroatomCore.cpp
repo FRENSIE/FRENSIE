@@ -522,9 +522,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
                 data_container.getAtomicNumber(),
-                b_energy_loss_function,
-                true,
-                true ) );
+                b_energy_loss_function ) );
 
 
     // Create the bremsstrahlung scattering reaction

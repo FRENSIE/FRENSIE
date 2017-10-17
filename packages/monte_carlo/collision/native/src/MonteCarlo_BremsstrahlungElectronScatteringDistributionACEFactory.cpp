@@ -36,9 +36,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
                               evaluation_tol );
 
   scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( scattering_function,
-                                                     true,
-                                                     false ) );
+   new BremsstrahlungElectronScatteringDistribution( scattering_function ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -62,9 +60,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( atomic_number,
-                                                     scattering_function,
-                                                     true,
-                                                     false ) );
+                                                     scattering_function ) );
 }
 
 // Create the energy loss function

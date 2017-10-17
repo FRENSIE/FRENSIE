@@ -160,7 +160,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     MonteCarlo::CoupledElasticSamplingMethod sampling_method =
         MonteCarlo::SIMPLIFIED_UNION;
-    bool correlated_sampling_mode_on = true;
     double evaluation_tol = 1e-7;
 
     // Get electron energy grid
@@ -191,7 +190,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         total_cross_section,
         data_container,
         sampling_method,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
     // Create the reaction

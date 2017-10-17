@@ -125,16 +125,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         scattering_distribution;
 
-    bool correlated_sampling_mode_on = true;
-    bool unit_based_interpolation_mode_on = true;
     double evaluation_tol = 1e-7;
 
-    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
+    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         scattering_distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
 
     // Get the energy grid

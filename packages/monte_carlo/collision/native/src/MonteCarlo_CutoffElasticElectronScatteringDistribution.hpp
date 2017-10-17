@@ -32,15 +32,13 @@ public:
 
   //! Basic Constructor
   CutoffElasticElectronScatteringDistribution(
-        const std::shared_ptr<TwoDDist>& scattering_distribution,
-        const bool correlated_sampling_mode_on );
+        const std::shared_ptr<TwoDDist>& scattering_distribution );
 
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
         const std::shared_ptr<TwoDDist>& full_scattering_distribution,
         const std::shared_ptr<TwoDDist>& partial_scattering_distribution,
-        const double cutoff_angle_cosine,
-        const bool correlated_sampling_mode_on );
+        const double cutoff_angle_cosine );
 
   //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
@@ -99,9 +97,6 @@ private:
 
   // The cutoff elastic scattering distribution below cutoff_angle_cosine
   std::shared_ptr<TwoDDist> d_partial_cutoff_distribution;
-
-  // The sample function pointer
-  std::function<double ( const double )> d_sample_function;
 };
 
 } // end MonteCarlo namespace

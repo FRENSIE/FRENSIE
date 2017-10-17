@@ -187,7 +187,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
     double cutoff_angle_cosine = 0.999999;
-    bool correlated_sampling_mode_on = true;
     double evaluation_tol = 1e-7;
 
     // Get electron energy grid
@@ -222,7 +221,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         cutoff_elastic_distribution,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
     // Create screened Rutherford distribution

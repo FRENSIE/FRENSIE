@@ -560,8 +560,6 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
-        true,
-        true,
         1e-15 );
 
 
@@ -599,8 +597,6 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
-        true,
-        true,
         1e-15 );
 
 

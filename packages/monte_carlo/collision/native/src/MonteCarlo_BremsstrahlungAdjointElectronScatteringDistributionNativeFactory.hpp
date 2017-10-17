@@ -28,8 +28,6 @@ public:
     const std::vector<double>& adjoint_energy_grid,
     std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
   //! Create the energy gain function

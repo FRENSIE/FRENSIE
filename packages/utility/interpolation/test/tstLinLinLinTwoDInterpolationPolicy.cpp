@@ -119,7 +119,6 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
                                               zmember,
                                               ytuple,
                                               ztuple )
-
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
   Teuchos::Array<ytuple> y_0_grid( 4 );

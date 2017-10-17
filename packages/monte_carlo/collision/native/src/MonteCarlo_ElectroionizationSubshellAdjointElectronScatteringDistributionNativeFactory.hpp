@@ -31,8 +31,6 @@ public:
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
 //protected:

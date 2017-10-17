@@ -187,17 +187,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Teuchos::Array<double> combined_cross_section(
                            energy_grid.size() - hybrid_threshold_energy_index );
 
-
-  bool correlated_sampling_mode_on = true;
-
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         cutoff_elastic_distribution,
         data_container,
         data_container.getCutoffAngleCosine(),
-        correlated_sampling_mode_on,
         evaluation_tol );
 
 
@@ -230,14 +226,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
         data_container.getCutoffAngleCosine(),
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Create the reaction

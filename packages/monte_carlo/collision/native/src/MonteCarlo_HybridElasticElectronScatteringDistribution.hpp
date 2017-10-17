@@ -35,7 +35,6 @@ public:
   HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& hybrid_distribution,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Destructor
@@ -92,10 +91,6 @@ private:
 
   // The hybrid elastic distribution
   std::shared_ptr<TwoDDist> d_hybrid_distribution;
-
-  // The sample function pointer
-  std::function<double ( const double, const double )> d_sample_function;
-
 };
 
 } // end MonteCarlo namespace

@@ -177,16 +177,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
 
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Exact>(
         function_data ) );
-
-    bool correlated_sampling_mode_on = true;
 
     discrete_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                cutoff_angle_cosine,
-                correlated_sampling_mode_on ) );
+                cutoff_angle_cosine ) );
 
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(

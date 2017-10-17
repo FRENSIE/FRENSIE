@@ -17,8 +17,7 @@ namespace MonteCarlo{
 // Constructor
 MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
-    const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on )
+    const double cutoff_angle_cosine )
   : d_discrete_scattering_distribution( discrete_scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
@@ -27,24 +26,6 @@ MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticEl
   // Make sure the cutoff angle cosine is valid
   testPostcondition( d_cutoff_angle_cosine >= -1.0 );
   testPostcondition( d_cutoff_angle_cosine < 1.0 );
-  // Make sure the bool is valid
-  testPrecondition( correlated_sampling_mode_on == 0 ||
-                    correlated_sampling_mode_on == 1 )
-
-  if( correlated_sampling_mode_on )
-  {
-    // Set the correlated unit based sample routine
-    d_sample_function = [this]( const double energy ){
-      return d_discrete_scattering_distribution->sampleSecondaryConditionalExact(energy);
-    };
-  }
-  else
-  {
-    // Set the stochastic unit based sample routine
-    d_sample_function = [this]( const double energy ){
-      return d_discrete_scattering_distribution->sampleSecondaryConditional(energy);
-    };
-  }
 }
 
 
@@ -186,7 +167,7 @@ void MomentPreservingElasticElectronScatteringDistribution::sampleAndRecordTrial
   ++trials;
 
   scattering_angle_cosine =
-    d_discrete_scattering_distribution->sampleSecondaryConditionalExact(
+    d_discrete_scattering_distribution->sampleSecondaryConditional(
         incoming_energy );
 
   // Make sure the scattering angle cosine is valid

@@ -276,15 +276,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             1e-6,
             evaluation_tol ) );
 
-  bool correlated_sampling_mode_on = true;
-  bool unit_based_interpolation_mode_on = true;
-
   // Create the scattering distribution
   adjoint_brem_dist.reset(
     new MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution(
-        energy_gain_function,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on ) );
+        energy_gain_function ) );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

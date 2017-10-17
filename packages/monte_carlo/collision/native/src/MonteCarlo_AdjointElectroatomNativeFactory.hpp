@@ -20,6 +20,7 @@
 #include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_TwoDSamplingPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -53,7 +54,8 @@ public:
 private:
 
   //! Create the elastic reaction for a electroatom core
-  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createElasticElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,

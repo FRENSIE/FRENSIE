@@ -19,15 +19,8 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBre
     const std::vector<double>& adjoint_energy_grid,
     std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
-  // Make sure bool are valid
-  testPrecondition( correlated_sampling_mode_on == 0 ||
-                    correlated_sampling_mode_on == 1 );
-  testPrecondition( unit_based_interpolation_mode_on == 0 ||
-                    unit_based_interpolation_mode_on == 1 );
   // Make sure the eval tol is valid
   testPrecondition( evaluation_tol <= 1.0 );
   testPrecondition( evaluation_tol > 0.0 );
@@ -43,9 +36,7 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBre
 
   scattering_distribution.reset(
    new BremsstrahlungAdjointElectronScatteringDistribution(
-                                energy_gain_function,
-                                correlated_sampling_mode_on,
-                                unit_based_interpolation_mode_on ) );
+                                energy_gain_function ) );
 }
 
 // Create the energy gain function

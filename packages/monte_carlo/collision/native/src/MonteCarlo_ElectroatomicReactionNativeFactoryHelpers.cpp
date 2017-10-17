@@ -45,35 +45,32 @@ createCoupledElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -114,32 +111,29 @@ createDecoupledElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -181,35 +175,32 @@ createHybridElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -251,35 +242,32 @@ createCutoffElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -351,35 +339,32 @@ createMomentPreservingElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -458,38 +443,32 @@ createSubshellElectroionizationReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         subshell,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         subshell,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         subshell,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else
@@ -531,35 +510,29 @@ createSubshellElectroionizationReactions(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reactions,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reactions,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reactions,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else
@@ -615,38 +588,32 @@ createBremsstrahlungReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog>(
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         photon_distribution_function,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog>(
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         photon_distribution_function,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin>(
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         photon_distribution_function,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else

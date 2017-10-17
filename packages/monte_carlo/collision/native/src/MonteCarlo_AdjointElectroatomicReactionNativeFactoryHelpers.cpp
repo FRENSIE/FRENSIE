@@ -44,35 +44,32 @@ createCoupledElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -94,7 +91,6 @@ std::shared_ptr<AdjointElectroatomicReaction>
 createDecoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -113,32 +109,29 @@ createDecoupledElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -161,7 +154,6 @@ createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
     const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -180,35 +172,32 @@ createHybridElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -231,7 +220,6 @@ createCutoffElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
     const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -250,35 +238,32 @@ createCutoffElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -331,7 +316,6 @@ createMomentPreservingElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
     const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -350,35 +334,32 @@ createMomentPreservingElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -437,8 +418,6 @@ createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const unsigned subshell,
     const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -457,38 +436,32 @@ createSubshellElectroionizationReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         subshell,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         subshell,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         subshell,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else
@@ -510,8 +483,6 @@ std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
 createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -530,35 +501,29 @@ createSubshellElectroionizationReactions(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reactions,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reactions,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reactions,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else
@@ -582,8 +547,6 @@ createBremsstrahlungReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const bool dipole_distribution_mode_on,
     const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -602,35 +565,29 @@ createBremsstrahlungReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog>(
+    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog>(
+    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin>(
+    AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::Correlated>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
         reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else

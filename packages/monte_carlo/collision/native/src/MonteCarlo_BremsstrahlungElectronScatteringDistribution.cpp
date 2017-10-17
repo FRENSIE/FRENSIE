@@ -17,9 +17,7 @@ namespace MonteCarlo{
 
 // Constructor with simple analytical photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on )
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
 {
   // Make sure the array is valid
@@ -32,17 +30,13 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
         return this->SampleDipoleAngle( incoming_energy, photon_energy );
   };
 
-  this->setSamplingRoutine( correlated_sampling_mode_on,
-                            unit_based_interpolation_mode_on );
-  this->setEvaluationRoutines( unit_based_interpolation_mode_on );
+  this->setEvaluationRoutines( true );
 }
 
 // Constructor with detailed 2BS photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on )
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution )
   : d_atomic_number( atomic_number ),
     d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
 {
@@ -56,52 +50,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
         return this->Sample2BSAngle( incoming_energy, photon_energy );
   };
 
-  this->setSamplingRoutine( correlated_sampling_mode_on,
-                            unit_based_interpolation_mode_on );
-  this->setEvaluationRoutines( unit_based_interpolation_mode_on );
-}
-
-// Set the sampling routine
-/*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). This function sets
- * the sample function pointer to the desired sampling routine.
- */
-void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
-                                    const bool correlated_sampling_mode_on,
-                                    const bool unit_based_interpolation_mode_on )
-{
-  if( unit_based_interpolation_mode_on )
-  {
-    if( correlated_sampling_mode_on )
-    {
-      // Set the correlated unit based sample routine
-      d_sample_function = [this]( const double& energy )
-      {
-        auto min = [](){return 1e-7;};
-        auto max = [energy](){return energy;};
-        return d_bremsstrahlung_scattering_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                    energy, [](double energy){return 1e-7;}, [](double energy){return energy;} );
-      };
-    }
-    else
-    {
-      // Set the stochastic unit based sample routine
-      d_sample_function = [this]( const double& energy )
-      {
-        return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditional(
-                    energy );
-      };
-    }
-  }
-  else
-  {
-    // Set the correlated exact sample routine
-    d_sample_function = [this]( const double& energy )
-    {
-      return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalExact(
-                    energy );
-    };
-  }
+  this->setEvaluationRoutines( true );
 }
 
 // Set the evaluation routines
@@ -221,7 +170,11 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy = d_sample_function( incoming_energy );
+  photon_energy = 
+    d_bremsstrahlung_scattering_distribution->sampleSecondaryConditional(
+      incoming_energy,
+      [](double energy){return 1e-7;},
+      [](double energy){return energy;} );
 
   // Sample the photon outgoing angle cosine
   photon_angle_cosine = d_angular_distribution_func( incoming_energy,

@@ -25,9 +25,7 @@ namespace MonteCarlo{
 ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double binding_energy,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on )
+    const double binding_energy )
   : d_electroionization_shell_distribution(
       electroionization_subshell_scattering_distribution ),
     d_binding_energy( binding_energy )
@@ -38,51 +36,7 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
   testPrecondition( d_electroionization_shell_distribution->getLowerBoundOfPrimaryIndepVar()
                     == binding_energy );
 
-  this->setSamplingRoutine( correlated_sampling_mode_on,
-                            unit_based_interpolation_mode_on );
-  this->setEvaluationRoutines( unit_based_interpolation_mode_on );
-}
-
-// Set the sampling routine
-/*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). This function sets
- * the sample function pointer to the desired sampling routine.
- */
-void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine(
-                                    const bool correlated_sampling_mode_on,
-                                    const bool unit_based_interpolation_mode_on )
-{
-  if( unit_based_interpolation_mode_on )
-  {
-    if( correlated_sampling_mode_on )
-    {
-      // Set the correlated unit based sample routine
-      d_sample_function = [this]( const double& energy )
-      {
-        return d_electroionization_shell_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                energy,
-                [this]( const double& energy ){return this->getMinSecondaryEnergyAtIncomingEnergy( energy );},
-                [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} );
-      };
-    }
-    else
-    {
-      // Set the stochastic unit based sample routine
-      d_sample_function = [this]( const double& energy )
-      {
-        return d_electroionization_shell_distribution->sampleSecondaryConditional( energy );
-      };
-    }
-  }
-  else
-  {
-    // Set the correlated exact sample routine
-    d_sample_function = [this]( const double& energy )
-    {
-      return std::min( energy - d_binding_energy,
-                       d_electroionization_shell_distribution->sampleSecondaryConditionalExact( energy ) );
-    };
-  }
+  this->setEvaluationRoutines( true );
 }
 
 // Set the evaluation routines
@@ -283,7 +237,11 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   testPrecondition( incoming_energy > d_binding_energy );
 
   // Sample knock-on electron energy
-  knock_on_energy = d_sample_function( incoming_energy );
+  knock_on_energy =
+    d_electroionization_shell_distribution->sampleSecondaryConditional(
+      incoming_energy,
+      [this]( const double& energy ){return this->getMinSecondaryEnergyAtIncomingEnergy( energy );},
+      [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} );
 
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,

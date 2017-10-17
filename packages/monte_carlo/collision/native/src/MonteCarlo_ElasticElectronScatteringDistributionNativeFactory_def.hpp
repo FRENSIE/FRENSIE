@@ -27,7 +27,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
         coupled_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
@@ -51,7 +50,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     data_container.getElasticAngularEnergyGrid(),
     data_container.getAtomicNumber(),
     sampling_method,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -65,7 +63,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
@@ -78,7 +75,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     data_container.getElasticAngularEnergyGrid(),
     data_container.getAtomicNumber(),
     sampling_method,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -92,7 +88,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   testPostcondition( data_container.hasMomentPreservingData() );
@@ -108,7 +103,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
     data_container.getMomentPreservingElasticWeights(),
     data_container.getElasticAngularEnergyGrid(),
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -119,7 +113,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
         cutoff_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
@@ -128,7 +121,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
     data_container.getCutoffElasticPDF(),
     data_container.getElasticAngularEnergyGrid(),
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -139,7 +131,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
         moment_preserving_elastic_distribution,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   testPostcondition( data_container.hasMomentPreservingData() );
@@ -150,7 +141,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
     data_container.getMomentPreservingElasticDiscreteAngles(),
     data_container.getMomentPreservingElasticWeights(),
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -168,7 +158,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const Teuchos::ArrayRCP<const double> total_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
@@ -181,7 +170,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     data_container.getAdjointElasticAngularEnergyGrid(),
     data_container.getAtomicNumber(),
     sampling_method,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -195,7 +183,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
     const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   testPostcondition( data_container.hasAdjointMomentPreservingData() );
@@ -211,7 +198,6 @@ ThisType::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     data_container.getAdjointMomentPreservingElasticWeights(),
     data_container.getAdjointElasticAngularEnergyGrid(),
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -222,7 +208,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
         cutoff_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
@@ -231,7 +216,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
     data_container.getAdjointCutoffElasticPDF(),
     data_container.getAdjointElasticAngularEnergyGrid(),
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -242,7 +226,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
         moment_preserving_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   testPostcondition( data_container.hasAdjointMomentPreservingData() );
@@ -253,7 +236,6 @@ ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSampleP
     data_container.getAdjointMomentPreservingElasticDiscreteAngles(),
     data_container.getAdjointMomentPreservingElasticWeights(),
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 }
 
@@ -278,7 +260,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const std::vector<double>& angular_energy_grid,
     const unsigned atomic_number,
     const CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Make sure the cross sections are valid
@@ -339,8 +320,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
                 scattering_function,
                 cross_section_ratios,
                 elastic_traits,
-                sampling_method,
-                correlated_sampling_mode_on ) );
+                sampling_method ) );
 }
 
 // Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
@@ -357,7 +337,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
     const std::map<double,std::vector<double> >& moment_preserving_weights,
     const std::vector<double>& angular_energy_grid,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Make sure the angular energy grid is valid
@@ -373,28 +352,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
   // Make sure the evaluation tolerance is valid
   testPrecondition( evaluation_tol > 0.0 );
   testPrecondition( evaluation_tol < 1.0 );
-
-//  // Create the discrete scattering function
-//  std::shared_ptr<TwoDDist> discrete_function;
-//  ThisType::createScatteringFunction<TwoDInterpPolicy>(
-//                moment_preserving_angles,
-//                moment_preserving_weights,
-//                angular_energy_grid,
-//                discrete_function,
-//                1.0,
-//                evaluation_tol,
-//                true );
-
-//  // Create the continuous scattering function
-//  std::shared_ptr<TwoDDist> continuous_function;
-//  ThisType::createScatteringFunction<TwoDInterpPolicy>(
-//                cutoff_elastic_angles,
-//                cutoff_elastic_pdf,
-//                angular_energy_grid,
-//                continuous_function,
-//                cutoff_angle_cosine,
-//                evaluation_tol,
-//                false );
 
   // Create the full continuous scattering function
   std::shared_ptr<TwoDDist> full_continuous_function;
@@ -435,7 +392,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
         new HybridElasticElectronScatteringDistribution(
                 hybrid_function,
                 cutoff_angle_cosine,
-                correlated_sampling_mode_on,
                 evaluation_tol ) );
 }
 
@@ -448,7 +404,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Make sure the angular energy grid is valid
@@ -480,8 +435,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   {
     cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
-                full_scattering_function,
-                correlated_sampling_mode_on ) );
+                full_scattering_function ) );
   }
   else
   {
@@ -500,8 +454,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
         new CutoffElasticElectronScatteringDistribution(
                 full_scattering_function,
                 scattering_function,
-                cutoff_angle_cosine,
-                correlated_sampling_mode_on ) );
+                cutoff_angle_cosine ) );
   }
 }
 
@@ -514,7 +467,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
     const std::map<double,std::vector<double> >& discrete_angles,
     const std::map<double,std::vector<double> >& discrete_weights,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Make sure the angular energy grid is valid
@@ -546,8 +498,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
   moment_preserving_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
                 scattering_function,
-                cutoff_angle_cosine,
-                correlated_sampling_mode_on ) );
+                cutoff_angle_cosine ) );
 }
 
 // Return angle cosine grid with the evaluated pdf for the given energy
@@ -572,9 +523,6 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
   // Get the angular grid
   if( angles.count( energy ) > 0 )
   {
-//    angular_grid = angles.at( energy );
-//    evaluated_pdf = pdf.at( energy );
-
     ThisType::getAngularGridAndPDF(
         angular_grid,
         evaluated_pdf,

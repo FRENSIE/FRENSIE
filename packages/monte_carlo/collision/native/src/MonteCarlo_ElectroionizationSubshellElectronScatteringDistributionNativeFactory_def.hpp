@@ -25,17 +25,12 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Make sure the subshell is valid
   testPrecondition( subshell >= 0 );
   // Make sure the binding energy is valid
   testPrecondition( binding_energy > 0.0 );
-  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
-  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
-                        unit_based_interpolation_mode_on ) );
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
@@ -57,9 +52,7 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy,
-            correlated_sampling_mode_on,
-            unit_based_interpolation_mode_on ) );
+            binding_energy ) );
 }
 
 // Create the subshell recoil distribution
@@ -109,17 +102,6 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
             function_data,
             1e-6,
             evaluation_tol ) );
-}
-
-// Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
-template <typename TwoDInterpPolicy>
-bool ElectroionizationSubshellElectronScatteringDistributionNativeFactory::isCompatibleWithUnitBaseSamplingMode(
-        const bool unit_based_interpolation_mode_on )
-{
-  if( TwoDInterpPolicy::name() == "LinLinLog" && !unit_based_interpolation_mode_on )
-    return false;
-  else
-    return true;
 }
 
 } // end MonteCarlo namespace

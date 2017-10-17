@@ -23,7 +23,7 @@
 namespace MonteCarlo{
 
 // Create the elastic reaction for a electroatom core
-template <typename TwoDInterpPolicy>
+template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomNativeFactory::createElasticElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -40,13 +40,12 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
                         properties.getCoupledElasticSamplingMode(),
-                        properties.isCorrelatedSamplingModeOn(),
                         properties.getElectronEvaluationTolerance() );
   }
   else if( distribution_type == DECOUPLED_DISTRIBUTION )
@@ -54,12 +53,11 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
-                        properties.isCorrelatedSamplingModeOn(),
                         properties.getElectronEvaluationTolerance() );
   }
   else if( distribution_type == HYBRID_DISTRIBUTION )
@@ -70,12 +68,11 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy>(
+      ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
-                        properties.isCorrelatedSamplingModeOn(),
                         properties.getElectronEvaluationTolerance() );
     }
     // Create the moment preserving elastic scattering reaction (no coupled elastic scattering)
@@ -84,13 +81,12 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy>(
+      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
                         properties.getElasticCutoffAngleCosine(),
-                        properties.isCorrelatedSamplingModeOn(),
                         properties.getElectronEvaluationTolerance() );
     }
     // Create the hybrid elastic scattering reaction (if cutoff is within range)
@@ -99,13 +95,12 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy>(
+      ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
                         properties.getElasticCutoffAngleCosine(),
-                        properties.isCorrelatedSamplingModeOn(),
                         properties.getElectronEvaluationTolerance() );
     }
   }
@@ -114,13 +109,12 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy>(
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
                         properties.getElasticCutoffAngleCosine(),
-                        properties.isCorrelatedSamplingModeOn(),
                         properties.getElectronEvaluationTolerance() );
   }
   else

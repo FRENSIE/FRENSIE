@@ -43,38 +43,35 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         distribution,
         energy_grid,
         cutoff_cross_section,
         total_cross_section,
         data_container,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         distribution,
         energy_grid,
         cutoff_cross_section,
         total_cross_section,
         data_container,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog,Utility::Correlated>(
         distribution,
         energy_grid,
         cutoff_cross_section,
         total_cross_section,
         data_container,
         method,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -127,38 +124,35 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         distribution,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         distribution,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogLog,Utility::Correlated>(
         distribution,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -185,29 +179,26 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         distribution,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         distribution,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogLog,Utility::Correlated>(
         distribution,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -234,29 +225,26 @@ std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution> cre
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         distribution,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin>(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         distribution,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogLog>(
+    ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogLog,Utility::Correlated>(
         distribution,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
   }
   else
@@ -287,32 +275,26 @@ std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution> creat
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
+  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::Correlated>(
     data_container,
     data_container.getAdjointElectronEnergyGrid(),
     distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
     evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin>(
+  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::Correlated>(
     data_container,
     data_container.getAdjointElectronEnergyGrid(),
     distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
     evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog>(
+  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
     data_container,
     data_container.getAdjointElectronEnergyGrid(),
     distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
     evaluation_tol );
   }
   else
@@ -345,35 +327,29 @@ std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribu
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
+    ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::Correlated>(
         data_container,
         subshell,
         binding_energy,
         distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin>(
+    ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::Correlated>(
         data_container,
         subshell,
         binding_energy,
         distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog>(
+    ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Correlated>(
         data_container,
         subshell,
         binding_energy,
         distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
   }
   else

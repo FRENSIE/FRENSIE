@@ -32,8 +32,7 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
 
   cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
-                scattering_function,
-                true ) );
+                scattering_function ) );
 }
 
 // Create a screened Rutherford elastic distribution

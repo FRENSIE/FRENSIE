@@ -381,11 +381,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         elastic_distribution,
         *data_container,
         properties->getElasticCutoffAngleCosine(),
-        properties->isCorrelatedSamplingModeOn(),
         properties->getElectronEvaluationTolerance() );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >

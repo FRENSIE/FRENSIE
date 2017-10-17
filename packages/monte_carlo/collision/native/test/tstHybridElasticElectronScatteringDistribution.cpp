@@ -39,12 +39,10 @@ public:
   TestHybridElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& hybrid_distribution,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
     : MonteCarlo::HybridElasticElectronScatteringDistribution(
                             hybrid_distribution,
                             cutoff_angle_cosine,
-                            correlated_sampling_mode_on,
                             evaluation_tol )
   { /* ... */ }
 
@@ -66,7 +64,6 @@ std::shared_ptr<TestHybridElasticElectronScatteringDistribution>
     test_hybrid_distribution, test_lin_hybrid_distribution, test_linlog_hybrid_distribution;
 
 double angle_cosine_cutoff = 0.9;
-bool correlated_sampling_mode_on = true;
 
 //---------------------------------------------------------------------------//
 // LogLogLog Tests
@@ -1619,14 +1616,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new MonteCarlo::HybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_hybrid_distribution.reset(
         new TestHybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
 
@@ -1687,14 +1682,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new MonteCarlo::HybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_lin_hybrid_distribution.reset(
         new TestHybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
 
@@ -1756,14 +1749,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new MonteCarlo::HybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_linlog_hybrid_distribution.reset(
         new TestHybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
 

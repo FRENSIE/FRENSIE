@@ -372,16 +372,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the scattering distributions
   ace_dipole_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-        scattering_distribution,
-        true,
-        false ) );
+        scattering_distribution ) );
 
   twobs_brem_dist.reset(
     new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
         xss_data_extractor->extractAtomicNumber(),
-        scattering_distribution,
-        true,
-        false ) );
+        scattering_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

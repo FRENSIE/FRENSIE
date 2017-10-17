@@ -92,7 +92,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
     if( elastic_interp == LOGLOGLOG_INTERPOLATION )
     {
-      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog>(
+      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Correlated>(
                                                 raw_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
@@ -101,7 +101,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     }
     else if( elastic_interp == LINLINLOG_INTERPOLATION )
     {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLog>(
+      ThisType::createElasticElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
                                                 raw_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
@@ -110,7 +110,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     }
     else if( elastic_interp == LINLINLIN_INTERPOLATION )
     {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLin>(
+      ThisType::createElasticElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
                                                 raw_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
@@ -136,38 +136,32 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
     if( brem_interp == LOGLOGLOG_INTERPOLATION )
     {
-      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LogLogLog>(
+      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
                     raw_electroatom_data,
                     energy_grid,
                     grid_searcher,
                     reaction_pointer,
                     properties.getBremsstrahlungAngularDistributionFunction(),
-                    properties.isCorrelatedSamplingModeOn(),
-                    properties.isUnitBasedInterpolationModeOn(),
                     properties.getElectronEvaluationTolerance() );
     }
     else if( brem_interp == LINLINLOG_INTERPOLATION )
     {
-      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLog>(
+      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
                     raw_electroatom_data,
                     energy_grid,
                     grid_searcher,
                     reaction_pointer,
                     properties.getBremsstrahlungAngularDistributionFunction(),
-                    properties.isCorrelatedSamplingModeOn(),
-                    properties.isUnitBasedInterpolationModeOn(),
                     properties.getElectronEvaluationTolerance() );
     }
     else if( brem_interp == LINLINLIN_INTERPOLATION )
     {
-      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLin>(
+      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
                     raw_electroatom_data,
                     energy_grid,
                     grid_searcher,
                     reaction_pointer,
                     properties.getBremsstrahlungAngularDistributionFunction(),
-                    properties.isCorrelatedSamplingModeOn(),
-                    properties.isUnitBasedInterpolationModeOn(),
                     properties.getElectronEvaluationTolerance() );
     }
     else
@@ -202,35 +196,29 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
     if( ionization_interp == LOGLOGLOG_INTERPOLATION )
     {
-      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LogLogLog>(
+      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointers,
-                       properties.isCorrelatedSamplingModeOn(),
-                       properties.isUnitBasedInterpolationModeOn(),
                        properties.getElectronEvaluationTolerance() );
     }
     else if( ionization_interp == LINLINLOG_INTERPOLATION )
     {
-      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLog>(
+      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointers,
-                       properties.isCorrelatedSamplingModeOn(),
-                       properties.isUnitBasedInterpolationModeOn(),
                        properties.getElectronEvaluationTolerance() );
     }
     else if( ionization_interp == LINLINLIN_INTERPOLATION )
     {
-      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLin>(
+      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
                        raw_electroatom_data,
                        energy_grid,
                        grid_searcher,
                        reaction_pointers,
-                       properties.isCorrelatedSamplingModeOn(),
-                       properties.isUnitBasedInterpolationModeOn(),
                        properties.getElectronEvaluationTolerance() );
     }
     else

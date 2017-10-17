@@ -334,8 +334,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                                pdf ) );
   }
 
-  bool correlated_sampling_mode_on = true;
-  bool unit_based_interpolation_mode_on = true;
   double evaluation_tol = 1e-7;
 
   { // Create the LinLinLog scattering function
@@ -348,9 +346,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   linlinlog_native_distribution.reset(
      new MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy,
-            correlated_sampling_mode_on,
-            unit_based_interpolation_mode_on ) );
+            binding_energy ) );
 
   }
 
@@ -364,9 +360,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   native_distribution.reset(
      new MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy,
-            correlated_sampling_mode_on,
-            unit_based_interpolation_mode_on ) );
+            binding_energy ) );
 
   }
 

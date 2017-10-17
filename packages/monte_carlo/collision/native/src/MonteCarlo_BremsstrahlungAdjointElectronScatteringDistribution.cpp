@@ -13,54 +13,12 @@ namespace MonteCarlo{
 
 // Constructor
 BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& adjoint_brem_scatter_dist,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on )
+    const std::shared_ptr<TwoDDist>& adjoint_brem_scatter_dist )
   : d_adjoint_brem_scatter_dist( adjoint_brem_scatter_dist )
 {
   // Make sure the array is valid
   testPrecondition( d_adjoint_brem_scatter_dist.use_count() > 0 );
-
-  this->setSamplingRoutine( correlated_sampling_mode_on,
-                            unit_based_interpolation_mode_on );
-  this->setEvaluationRoutines( unit_based_interpolation_mode_on );
-}
-
-// Set the sampling routine
-/*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). This function sets
- * the sample function pointer to the desired sampling routine.
- */
-void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
-                                    const bool correlated_sampling_mode_on,
-                                    const bool unit_based_interpolation_mode_on )
-{
-  if( unit_based_interpolation_mode_on )
-  {
-    if( correlated_sampling_mode_on )
-    {
-      // Set the correlated unit based sample routine
-      d_sample_function = [this]( double energy ){
-        return d_adjoint_brem_scatter_dist->correlatedSampleSecondaryConditional(
-          energy);
-      };
-    }
-    else
-    {
-      // Set the stochastic unit based sample routine
-      d_sample_function = [this]( double energy ){
-        return d_adjoint_brem_scatter_dist->sampleSecondaryConditional( energy);
-      };
-    }
-  }
-  else
-  {
-    // Set the correlated exact sample routine
-    d_sample_function = [this]( double energy ){
-      return d_adjoint_brem_scatter_dist->sampleSecondaryConditionalExact(
-        energy);
-    };
-  }
+  this->setEvaluationRoutines( true );
 }
 
 // Set the evaluation routines
@@ -182,7 +140,8 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
 
-  outgoing_energy = d_sample_function( incoming_energy );
+  outgoing_energy =
+    d_adjoint_brem_scatter_dist->sampleSecondaryConditional( incoming_energy );
 
   testPostcondition( outgoing_energy > incoming_energy );
 }

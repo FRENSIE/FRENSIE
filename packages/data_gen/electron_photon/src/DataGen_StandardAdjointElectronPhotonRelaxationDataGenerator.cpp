@@ -2093,35 +2093,32 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
     else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
     else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
         d_forward_epr_data->getElasticAngularEnergyGrid(),
         d_forward_epr_data->getCutoffAngleCosine(),
-        d_electron_correlated_sampling_mode,
         d_tabular_evaluation_tol );
     }
     else
@@ -2484,38 +2481,32 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog,Utility::Correlated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        d_electron_correlated_sampling_mode,
-        d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin,Utility::Correlated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        d_electron_correlated_sampling_mode,
-        d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LogLogLog>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LogLogLog,Utility::Correlated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
         bremsstrahlung_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        d_electron_correlated_sampling_mode,
-        d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
   else
@@ -2557,38 +2548,32 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog,Utility::Correlated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        d_electron_correlated_sampling_mode,
-        d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin,Utility::Correlated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        d_electron_correlated_sampling_mode,
-        d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LogLogLog>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LogLogLog,Utility::Correlated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
         shell,
         electroionization_subshell_reaction,
-        d_electron_correlated_sampling_mode,
-        d_electron_unit_based_interpolation_mode,
         d_tabular_evaluation_tol );
   }
   else

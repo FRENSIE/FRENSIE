@@ -21,8 +21,7 @@ CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDi
     const std::shared_ptr<const TwoDDist> &coupled_elastic_distribution,
     const std::shared_ptr<const OneDDist> &cutoff_cross_section_ratios,
     const std::shared_ptr<const ElasticTraits> &screened_rutherford_traits,
-    const CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on)
+    const CoupledElasticSamplingMethod& sampling_method )
     : d_coupled_dist(coupled_elastic_distribution),
       d_cutoff_ratios(cutoff_cross_section_ratios),
       d_elastic_traits(screened_rutherford_traits)
@@ -31,25 +30,6 @@ CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDi
   testPrecondition( d_coupled_dist.use_count() > 0 );
   testPrecondition( d_cutoff_ratios.use_count() > 0 );
   testPrecondition( d_elastic_traits.use_count() > 0 );
-
-  if( correlated_sampling_mode_on )
-  {
-    // Set the correlated exact sample routine
-    d_sample_function = [this]( const double& energy, const double& random_number )
-    {
-      return d_coupled_dist->sampleSecondaryConditionalExactWithRandomNumber(
-        energy, random_number );
-    };
-  }
-  else
-  {
-    // Set the stochastic unit based sample routine
-    d_sample_function = [this]( const double& energy, const double& random_number )
-    {
-      return d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
-        energy, random_number );
-    };
-  }
 
   // Set the sampling method
   this->setSamplingMethod( sampling_method );
@@ -420,7 +400,8 @@ double CoupledElasticElectronScatteringDistribution::sampleOneDUnion(
   double random_number =
             Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  return d_sample_function( incoming_energy, random_number );
+  return d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
+     incoming_energy, random_number );
 }
 
 // Sample using the 2-D Union method
@@ -451,11 +432,15 @@ double CoupledElasticElectronScatteringDistribution::sampleTwoDUnion(
   else if ( random_number < cutoff_ratio )
   {
     // Sample the scattering angle cosine from the tabular part of the distribution
-    double raw_angle_cosine = d_sample_function( incoming_energy,
+    double raw_angle_cosine =
+      d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
+                                                 incoming_energy,
                                                  random_number );
 
     // Normalized the scattering angle cosine to the cosine at cutoff ratio
-    double max_angle_cosine = d_sample_function( incoming_energy,
+    double max_angle_cosine =
+      d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
+                                                 incoming_energy,
                                                  cutoff_ratio );
 
     /* Normalize the sampled value to range of ( -1 <= mu <= mu_peak )
@@ -497,7 +482,10 @@ double CoupledElasticElectronScatteringDistribution::sampleSimplifiedUnion(
   if ( random_number == cutoff_ratio ) // Sample mu_peak
     return ElasticTraits::mu_peak;
   else if ( random_number < cutoff_ratio ) // Sample tabular Cutoff
-    return d_sample_function( incoming_energy, random_number );
+  {
+    return d_coupled_dist->sampleSecondaryConditionalWithRandomNumber(
+                               incoming_energy, random_number );
+  }
   else
   {
     // Sample the screened Rutherford analytical peak

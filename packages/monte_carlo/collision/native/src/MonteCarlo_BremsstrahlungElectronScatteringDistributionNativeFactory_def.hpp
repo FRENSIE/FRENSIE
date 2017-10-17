@@ -21,13 +21,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
-  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
-  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
-                        unit_based_interpolation_mode_on ) );
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
@@ -41,9 +36,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
         evaluation_tol );
 
   scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
-                                                     correlated_sampling_mode_on,
-                                                     unit_based_interpolation_mode_on ) );
+   new BremsstrahlungElectronScatteringDistribution( energy_loss_function ) );
 }
 
 // Create a simple dipole bremsstrahlung distribution
@@ -52,13 +45,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
-  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
-  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
-                        unit_based_interpolation_mode_on ) );
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
@@ -70,8 +58,6 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     raw_electroatom_data,
     bremsstrahlung_energy_grid,
     scattering_distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
     evaluation_tol );
 }
 
@@ -83,13 +69,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
-  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
-  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
-                        unit_based_interpolation_mode_on ) );
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
@@ -104,9 +85,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( atomic_number,
-                                                     energy_loss_function,
-                                                     correlated_sampling_mode_on,
-                                                     unit_based_interpolation_mode_on ) );
+                                                     energy_loss_function ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -116,13 +95,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const int atomic_number,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
-  // Make sure the TwoDInterpPolicy and unit base sampling mode are compatible
-  testPrecondition( ThisType::isCompatibleWithUnitBaseSamplingMode<TwoDInterpPolicy>(
-                        unit_based_interpolation_mode_on ) );
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
@@ -132,8 +106,6 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     atomic_number,
     raw_electroatom_data.getBremsstrahlungEnergyGrid(),
     scattering_distribution,
-    correlated_sampling_mode_on,
-    unit_based_interpolation_mode_on,
     evaluation_tol );
 }
 
@@ -175,17 +147,6 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
             function_data,
             1e-6,
             evaluation_tol ) );
-}
-
-// Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
-template <typename TwoDInterpPolicy>
-bool BremsstrahlungElectronScatteringDistributionNativeFactory::isCompatibleWithUnitBaseSamplingMode(
-        const bool unit_based_interpolation_mode_on )
-{
-  if( TwoDInterpPolicy::name() == "LinLinLog" && !unit_based_interpolation_mode_on )
-    return false;
-  else
-    return true;
 }
 
 } // end MonteCarlo namespace

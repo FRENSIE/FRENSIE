@@ -1996,8 +1996,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_distribution;
 
-  bool correlated_sampling_mode_on = true;
-
   // Get the cutoff and total elastic cross sections and the energy grid
   Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
 
@@ -2013,7 +2011,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2023,12 +2021,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         data_container.getAtomicNumber(),
         MonteCarlo::SIMPLIFIED_UNION,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Exact>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2038,12 +2035,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         data_container.getAtomicNumber(),
         MonteCarlo::SIMPLIFIED_UNION,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2053,7 +2049,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         data_container.getAtomicNumber(),
         MonteCarlo::SIMPLIFIED_UNION,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
 
@@ -2133,13 +2128,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             cross_section_reduction ) );
 
     // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         cutoff_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         Utility::ElasticElectronTraits::mu_peak,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
@@ -2151,13 +2145,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             cross_section_reduction ) );
 
     // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
         cutoff_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         Utility::ElasticElectronTraits::mu_peak,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
@@ -2169,13 +2162,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             cross_section_reduction ) );
 
     // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         cutoff_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         Utility::ElasticElectronTraits::mu_peak,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
 
@@ -2885,35 +2877,32 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
     if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
             Utility::ElasticElectronTraits::mu_peak,
-            d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
             Utility::ElasticElectronTraits::mu_peak,
-            d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
             Utility::ElasticElectronTraits::mu_peak,
-            d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
 

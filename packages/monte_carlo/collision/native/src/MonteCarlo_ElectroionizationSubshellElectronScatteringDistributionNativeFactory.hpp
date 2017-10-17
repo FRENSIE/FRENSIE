@@ -32,8 +32,6 @@ public:
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
 //protected:
@@ -48,14 +46,6 @@ public:
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
       subshell_distribution,
     const double evaluation_tol );
-
-private:
-
-  //! Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
-  template <typename TwoDInterpPolicy>
-  static bool isCompatibleWithUnitBaseSamplingMode(
-    const bool unit_based_interpolation_mode_on );
-
 };
 
 } // end MonteCarlo namespace

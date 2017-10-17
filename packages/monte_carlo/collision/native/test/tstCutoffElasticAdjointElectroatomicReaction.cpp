@@ -168,14 +168,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
     double cutoff_angle_cosine = 1.0;
     double evaluation_tol = 1e-15;
-    bool correlated_sampling_mode_on = true;
 
     // Create the distribution
-    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
                 elastic_scattering_distribution,
                 *data_container,
                 cutoff_angle_cosine,
-                correlated_sampling_mode_on,
                 evaluation_tol );
 
     // Create the reaction
@@ -190,7 +188,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
     double cutoff_angle_cosine = 0.9;
     double evaluation_tol = 1e-7;
-    bool correlated_sampling_mode_on = true;
 
     Teuchos::ArrayRCP<double> cutoff_cross_section;
     cutoff_cross_section.assign(
@@ -201,11 +198,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
-    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
                 cutoff_distribution,
                 *data_container,
                 cutoff_angle_cosine,
-                correlated_sampling_mode_on,
                 evaluation_tol );
 
     // Create the reaction

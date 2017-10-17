@@ -54,8 +54,6 @@ std::shared_ptr< const MonteCarlo::CoupledElasticElectronScatteringDistribution>
 Teuchos::ArrayRCP<double> energy_grid, cutoff_cross_section, total_cross_section,
   adjoint_energy_grid, adjoint_cutoff_cross_section, adjoint_total_cross_section;
 
-bool correlated_sampling_mode_on = true;
-
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -463,7 +461,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -515,7 +512,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -567,7 +563,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -619,7 +614,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -665,7 +659,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_cutoff_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -809,7 +802,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -856,7 +848,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -903,7 +894,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -950,7 +940,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_mp_elastic_distribution,
         *adjoint_data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1003,7 +992,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         data_container->getElasticAngularEnergyGrid(),
         data_container->getAtomicNumber(),
         sampling_method,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1137,7 +1125,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   data_container->getElasticAngularEnergyGrid(),
   data_container->getAtomicNumber(),
   sampling_method,
-  correlated_sampling_mode_on,
   evaluation_tol );
 
   // Set fake random number stream
@@ -1271,7 +1258,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   data_container->getElasticAngularEnergyGrid(),
   data_container->getAtomicNumber(),
   sampling_method,
-  correlated_sampling_mode_on,
   evaluation_tol );
 
   // Set fake random number stream
@@ -1405,7 +1391,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         data_container->getElasticAngularEnergyGrid(),
         data_container->getAtomicNumber(),
         sampling_method,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1501,7 +1486,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         data_container->getElasticAngularEnergyGrid(),
         data_container->getAtomicNumber(),
         sampling_method,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1597,7 +1581,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
         adjoint_data_container->getAtomicNumber(),
         sampling_method,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1693,7 +1676,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         adjoint_data_container->getAdjointElasticAngularEnergyGrid(),
         adjoint_data_container->getAtomicNumber(),
         sampling_method,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream
@@ -1804,7 +1786,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         mp_cross_section,
         *data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   double incoming_energy = 1.0e-3;
@@ -2008,7 +1989,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         mp_cross_section,
         *data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   double incoming_energy = 1.0e-3;
@@ -2216,7 +2196,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         mp_cross_section,
         *adjoint_data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Set fake random number stream

@@ -52,46 +52,46 @@ public:
   using ThisType = ElectroatomicReactionNativeFactory;
 
   //! Create an coupled elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a decoupled elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
@@ -102,14 +102,14 @@ public:
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog>
+  template< typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
   //! Create an atomic excitation scattering electroatomic reaction
@@ -122,43 +122,37 @@ public:
   //! Create the subshell electroionization electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename InterpPolicy = Utility::LogLog>
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename InterpPolicy = Utility::LogLog>
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
         electroionization_subshell_reactions,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename InterpPolicy = Utility::LogLog>
+            typename TwoDSamplingPolicy = Utility::Correlated>
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
   //! Create a void absorption electroatomic reaction

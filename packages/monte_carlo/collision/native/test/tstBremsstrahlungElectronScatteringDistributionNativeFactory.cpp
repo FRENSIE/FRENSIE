@@ -41,9 +41,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::Correlated>(
                                                  *data_container,
-                                                 dipole_distribution,
-                                                 true,
-                                                 true );
+                                                 dipole_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -74,9 +72,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::Correlated>(
                                                  *data_container,
-                                                 dipole_distribution,
-                                                 true,
-                                                 true );
+                                                 dipole_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -107,9 +103,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Exact>(
                                                  *data_container,
-                                                 dipole_distribution,
-                                                 true,
-                                                 false );
+                                                 dipole_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -140,9 +134,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::Exact>(
                                                  *data_container,
-                                                 dipole_distribution,
-                                                 true,
-                                                 false );
+                                                 dipole_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -173,9 +165,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::Correlated>(
                                                  *data_container,
-                                                 dipole_distribution,
-                                                 true,
-                                                 true );
+                                                 dipole_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -208,9 +198,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::Correlated>(
                     *data_container,
                     data_container->getAtomicNumber(),
-                    twobs_distribution,
-                    true,
-                    true );
+                    twobs_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -244,9 +232,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::Correlated>(
                     *data_container,
                     data_container->getAtomicNumber(),
-                    twobs_distribution,
-                    true,
-                    true );
+                    twobs_distribution );
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );

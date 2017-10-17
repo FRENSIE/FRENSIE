@@ -361,8 +361,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  bool correlated_sampling_mode_on = true;
-  bool unit_based_interpolation_mode_on = true;
   double evaluation_tol = 1e-7;
 
   // Create the H distributions
@@ -390,8 +388,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         grid_searcher,
         h_brem_reaction,
         MonteCarlo::DIPOLE_DISTRIBUTION,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
 
     brem_energy_grid = data_container.getBremsstrahlungEnergyGrid();
@@ -414,8 +410,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         grid_searcher,
         *shell,
         h_ionization_reaction,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
 
     binding_energy = data_container.getSubshellBindingEnergy( *shell );

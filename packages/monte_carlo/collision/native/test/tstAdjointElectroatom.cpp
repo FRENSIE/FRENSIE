@@ -415,17 +415,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         b_distribution;
 
-    bool correlated_sampling_mode_on = true;
-    bool unit_based_interpolation_mode_on = true;
     double evaluation_tol = 1e-7;
 
      // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungDistribution(
+    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         b_distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
 
     // Create the bremsstrahlung scattering reaction
