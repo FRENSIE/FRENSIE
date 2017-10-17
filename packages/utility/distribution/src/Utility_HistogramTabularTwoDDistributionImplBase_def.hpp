@@ -197,6 +197,23 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSeco
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
 
+// Return a random sample from the secondary conditional PDF
+template<typename Distribution>
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditional(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+  -> SecondaryIndepQuantity
+{
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                                             &BaseOneDDistributionType::sample,
+                                             std::placeholders::_1 );
+
+  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+}
+
 // Return a random sample and record the number of trials
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditionalAndRecordTrials(

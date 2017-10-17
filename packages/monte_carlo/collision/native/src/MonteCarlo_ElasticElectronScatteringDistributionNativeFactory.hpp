@@ -251,7 +251,7 @@ public:
 
   //! Create the coupled elastic scattering function
   template<typename TwoDInterpPolicy = Utility::LogLogLog, typename TwoDSamplePolicy = Utility::Stochastic>
-  static void createAnalogScatteringFunction(
+  static void createCoupledScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const std::map<double,std::vector<double> >& angles,

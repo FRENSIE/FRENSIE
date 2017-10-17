@@ -46,27 +46,26 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::setSampling
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_function = std::bind<double>(
-        &TwoDDist::correlatedSampleSecondaryConditional,
-        std::cref( *d_ionization_subshell_dist ),
-        std::placeholders::_1 );
+      d_sample_function = [this]( const double energy){
+        return d_ionization_subshell_dist->correlatedSampleSecondaryConditional(
+          energy );
+      };
     }
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_function = std::bind<double>(
-            &TwoDDist::sampleSecondaryConditional,
-            std::cref( *d_ionization_subshell_dist ),
-            std::placeholders::_1 );
+      d_sample_function = [this]( const double energy){
+        return d_ionization_subshell_dist->sampleSecondaryConditional( energy );
+      };
     }
   }
   else
   {
-      // Set the correlated exact sample routine
-    d_sample_function = std::bind<double>(
-            &TwoDDist::sampleSecondaryConditionalExact,
-            std::cref( *d_ionization_subshell_dist ),
-            std::placeholders::_1 );
+    // Set the correlated exact sample routine
+    d_sample_function = [this]( const double energy){
+      return d_ionization_subshell_dist->sampleSecondaryConditionalExact(
+        energy );
+    };
   }
 }
 

@@ -289,7 +289,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   if( BOOST_VERSION < 106000 )
     fake_stream[1] = 3.06e-01; // select elastic (for boost below version 1.60)
   else
-    fake_stream[1] =  6.94e-01; // select elastic (for boost above version 1.60)
+    fake_stream[1] = 6.94e-01; // select elastic (for boost above version 1.60)
   fake_stream[2] = 0.0; // sample cutoff distribution
   fake_stream[3] = 0.0; // sample mu = -1.0
 
@@ -314,11 +314,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
                           1e-12 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
 
-  // Sample the coherent reaction
+  // Sample the brem reaction
   fake_stream.resize( 3 );
   fake_stream[0] = 0.99; // choose the only electroatom
-  fake_stream[1] = 5.9883e-01; // choose brem scattering
-  fake_stream[2] = 1.00475965594E-03; // sample outgoing energy =
+  if( BOOST_VERSION < 106000 )
+    fake_stream[1] = 5.9883e-01; // select elastic (for boost below version 1.60)
+  else
+    fake_stream[1] = 5.9883e-01; // select elastic (for boost above version 1.60)
+  fake_stream[2] = 1.00475965594E-03; // sample outgoing energy = 1.5500002045388603
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   

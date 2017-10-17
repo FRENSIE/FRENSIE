@@ -793,13 +793,41 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
+  // Use this random number to sample
+  const double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                                             &BaseOneDDistributionType::sample,
-                                             std::placeholders::_1 );
+                             &BaseOneDDistributionType::sampleWithRandomNumber,
+                             std::placeholders::_1,
+                             random_number );
 
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
+}
+
+
+// Return a random sample from the secondary conditional PDF
+/*! \details A stochastic sampling procedure is used. If the primary value
+ * provided is outside of the primary grid limits the appropriate limiting
+ * secondary distribution will be used to create the sample. The alternative
+ * to this behavior is to throw an exception unless the distribution has 
+ * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
+ * this is a performance critical method we decided against this behavior.
+ */
+template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditional( primary_indep_var_value );
 }
 
 // Return a random sample and record the number of trials
@@ -820,14 +848,8 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
                             unsigned& trials ) const
   -> SecondaryIndepQuantity
 {
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                              &BaseOneDDistributionType::sampleAndRecordTrials,
-                              std::placeholders::_1,
-                              std::ref( trials ) );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+  ++trials;
+  return this->sampleSecondaryConditional( primary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF and the index
@@ -916,33 +938,26 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
 
-// Return a random sample from the secondary conditional PDF at the CDF val
-/*! \details A sample is made using an exact correlated sampling technique.
- */
+// Return a random sample from the secondary conditional PDF in the subrange
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
+  // Use this random number to do create the correlated sample
+  const double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseOneDDistributionType::sampleWithRandomNumber,
-                             std::placeholders::_1,
-                             random_number );
-
-  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+  return this->sampleSecondaryConditionalWithRandomNumberInSubrange(
+                                               primary_indep_var_value,
+                                               random_number,
+                                               max_secondary_indep_var_value );
 }
-
 // Return a random sample from the secondary conditional PDF in the subrange
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
@@ -950,57 +965,6 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const double random_number,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Make sure the max secondary independent variable is above the lower
-  // bound of the conditional independent variable
-  testPrecondition( max_secondary_indep_var_value >
-                    d_lower_bound_conditional_indep_var );
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-
-  // Generate a sample in the subrange
-  if( max_secondary_indep_var_value < d_upper_bound_conditional_indep_var )
-  {
-    // Find the bin boundaries
-    typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-
-    this->findBinBoundaries( primary_indep_var_value,
-                             lower_bin_boundary,
-                             upper_bin_boundary );
-
-    typename DistributionType::const_iterator sampled_bin_boundary =
-      this->sampleBinBoundary( primary_indep_var_value,
-                               lower_bin_boundary,
-                               upper_bin_boundary );
-
-    // Sample in the bin's subrange
-    return sampled_bin_boundary->second->sampleWithRandomNumberInSubrange(
-                                     random_number,
-                                     max_secondary_indep_var_value );
-  }
-  // Generate a sample in the full range
-  else
-  {
-    return this->sampleSecondaryConditionalWithRandomNumber(
-                                      primary_indep_var_value, random_number );
-  }
-}
-
-
-// Return a random sample from the secondary conditional PDF in the subrange
-/*! \details A sample is made using an exact correlated sampling technique.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -1038,72 +1002,6 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
   }
 
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
-}
-
-// Return a random correlated sample from the secondary conditional PDF at the CDF val
-/*! \details The lower and upper bounds of the secondary independent variable
- *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
- *  necessary and an exact method is used to sample instead.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
-                    const PrimaryIndepQuantity primary_indep_var_value,
-                    const double random_number,
-                    const SecondaryIndepQuantity min_secondary_indep_var_value,
-                    const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the secondary limit is valid
-  testPrecondition( max_secondary_indep_var_value >
-                    d_lower_bound_conditional_indep_var );
-  
-  // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseOneDDistributionType::sampleWithRandomNumber,
-                             std::placeholders::_1,
-                             random_number );
-
-  return this->sampleImpl( primary_indep_var_value,
-                           sampling_functor );
-}
-
-// Return a random sample from the secondary conditional PDF in the subrange
-/*! \details The lower and upper bounds of the secondary independent variable
- *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
- *  necessary and an exact method is used to sample instead.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const double random_number,
-             const SecondaryIndepQuantity min_secondary_indep_var_value,
-             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
-  -> SecondaryIndepQuantity
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the secondary limit is valid
-  testPrecondition( max_secondary_indep_var_value >
-                    d_lower_bound_conditional_indep_var );
-
-
-  return this->sampleSecondaryConditionalExactWithRandomNumberInSubrange(
-             primary_indep_var_value,
-             random_number,
-             max_secondary_indep_var_value );
 }
 
 // Sample from the distribution using the desired sampling functor

@@ -60,9 +60,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::setSamplingRoutine
       d_sample_function = [this]( const double& energy )
       {
         return d_electroionization_shell_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                  energy,
-                  getMinSecondaryEnergyAtIncomingEnergy( energy ),
-                  getMaxSecondaryEnergyAtIncomingEnergy( energy ) );
+                energy,
+                [this]( const double& energy ){return this->getMinSecondaryEnergyAtIncomingEnergy( energy );},
+                [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} );
       };
     }
     else

@@ -129,6 +129,12 @@ public:
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF
+  SecondaryIndepQuantity sampleSecondaryConditional(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
+
+  //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditionalNormalized(
         const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity min_secondary_indep_var,

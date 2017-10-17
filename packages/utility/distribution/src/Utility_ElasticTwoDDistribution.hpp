@@ -140,6 +140,12 @@ public:
   SecondaryIndepQuantity sampleSecondaryConditional(
             const PrimaryIndepQuantity primary_indep_var_value ) const;
 
+  //! Return a random sample from the secondary conditional PDF
+  SecondaryIndepQuantity sampleSecondaryConditional(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
+
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
             const PrimaryIndepQuantity primary_indep_var_value,
@@ -163,19 +169,13 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const double random_number ) const;
 
-  //! Return a random sample from the secondary conditional PDF at the CDF val
-  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const double random_number ) const;
-
   //! Return a random sample from the secondary conditional PDF in the subrange
-  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
+  SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
-  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
@@ -211,21 +211,7 @@ private:
             const SecondaryIndepQuantity min_secondary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
-  //! Return a random correlated sample from the secondary conditional PDF
-  SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const double random_number,
-            const SecondaryIndepQuantity min_secondary_indep_var_value,
-            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
-
-  //! Return a random correlated sample from the secondary conditional PDF in the subrange
-  SecondaryIndepQuantity correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const double random_number,
-            const SecondaryIndepQuantity min_secondary_indep_var_value,
-            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
-
-  //! Evaluate the distribution using the desired evaluation method
+    //! Evaluate the distribution using the desired evaluation method
   template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(

@@ -40,27 +40,26 @@ void BremsstrahlungAdjointElectronScatteringDistribution::setSamplingRoutine(
     if( correlated_sampling_mode_on )
     {
       // Set the correlated unit based sample routine
-      d_sample_function = std::bind<double>(
-           &TwoDDist::correlatedSampleSecondaryConditional,
-           std::cref( *d_adjoint_brem_scatter_dist ),
-           std::placeholders::_1 );
+      d_sample_function = [this]( double energy ){
+        return d_adjoint_brem_scatter_dist->correlatedSampleSecondaryConditional(
+          energy);
+      };
     }
     else
     {
       // Set the stochastic unit based sample routine
-      d_sample_function = std::bind<double>(
-           &TwoDDist::sampleSecondaryConditional,
-           std::cref( *d_adjoint_brem_scatter_dist ),
-           std::placeholders::_1 );
+      d_sample_function = [this]( double energy ){
+        return d_adjoint_brem_scatter_dist->sampleSecondaryConditional( energy);
+      };
     }
   }
   else
   {
-      // Set the correlated exact sample routine
-    d_sample_function = std::bind<double>(
-           &TwoDDist::sampleSecondaryConditionalExact,
-           std::cref( *d_adjoint_brem_scatter_dist ),
-           std::placeholders::_1 );
+    // Set the correlated exact sample routine
+    d_sample_function = [this]( double energy ){
+      return d_adjoint_brem_scatter_dist->sampleSecondaryConditionalExact(
+        energy);
+    };
   }
 }
 

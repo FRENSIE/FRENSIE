@@ -98,9 +98,17 @@ public:
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
+  using ParentType::sampleSecondaryConditional;
+
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF
+  SecondaryIndepQuantity sampleSecondaryConditional(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
@@ -147,9 +155,27 @@ protected:
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleDetailedImpl(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    SampleFunctor sample_functor,
+    SecondaryIndepQuantity& raw_sample,
+    unsigned& primary_bin_index,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
   SecondaryIndepQuantity sampleImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SampleFunctor sample_functor ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleImpl(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    SampleFunctor sample_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
 
   //! Sample the bin boundary that will be used for stochastic sampling
   typename DistributionType::const_iterator

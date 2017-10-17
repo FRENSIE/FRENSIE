@@ -77,8 +77,10 @@ void BremsstrahlungElectronScatteringDistribution::setSamplingRoutine(
       // Set the correlated unit based sample routine
       d_sample_function = [this]( const double& energy )
       {
+        auto min = [](){return 1e-7;};
+        auto max = [energy](){return energy;};
         return d_bremsstrahlung_scattering_distribution->correlatedSampleSecondaryConditionalInBoundaries(
-                    energy, 1e-7, energy );
+                    energy, [](double energy){return 1e-7;}, [](double energy){return energy;} );
       };
     }
     else

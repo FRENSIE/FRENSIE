@@ -39,18 +39,16 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   if( correlated_sampling_mode_on )
   {
     // Set the correlated unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExact,
-         std::cref( *d_full_cutoff_distribution ),
-         std::placeholders::_1 );
+    d_sample_function = [this]( const double energy ){
+      return d_full_cutoff_distribution->sampleSecondaryConditionalExact(energy);
+    };
   }
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditional,
-         std::cref( *d_full_cutoff_distribution ),
-         std::placeholders::_1 );
+    d_sample_function = [this]( const double energy ){
+      return d_full_cutoff_distribution->sampleSecondaryConditional(energy);
+    };
   }
 }
 
@@ -82,18 +80,16 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   if( correlated_sampling_mode_on )
   {
     // Set the correlated unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExact,
-         std::cref( *d_partial_cutoff_distribution ),
-         std::placeholders::_1 );
+    d_sample_function = [this]( const double energy ){
+      return d_partial_cutoff_distribution->sampleSecondaryConditionalExact(energy);
+    };
   }
   else
   {
     // Set the stochastic unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditional,
-         std::cref( *d_partial_cutoff_distribution ),
-         std::placeholders::_1 );
+    d_sample_function = [this]( const double energy ){
+      return d_partial_cutoff_distribution->sampleSecondaryConditional(energy);
+    };
   }
 }
 

@@ -191,12 +191,12 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
 }
 
 // Return a random sample from the secondary conditional PDF
-/*! \details A stochastic sampling procedure is used. If the primary value
- * provided is outside of the primary grid limits the appropriate limiting
- * secondary distribution will be used to create the sample. The alternative
- * to this behavior is to throw an exception unless the distribution has 
- * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
- * this is a performance critical method we decided against this behavior.
+/*! \details If the primary valueprovided is outside of the primary grid limits
+ * the appropriate limiting secondary distribution will be used to create the
+ * sample. The alternative to this behavior is to throw an exception unless the
+ * distribution has been extended by calling the extendBeyondPrimaryIndepLimits
+ * method. Since this is a performance critical method we decided against this
+ * behavior.
  */
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleSecondaryConditional(
@@ -210,6 +210,33 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDS
                                              std::placeholders::_1 );
 
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
+}
+
+// Return a random sample from the secondary conditional PDF
+/*! \details If the primary value provided is outside of the primary grid limits
+ * the appropriate limiting secondary distribution will be used to create the
+ * sample. The alternative to this behavior is to throw an exception unless the
+ * distribution has been extended by calling the extendBeyondPrimaryIndepLimits
+ * method. Since this is a performance critical method we decided against this
+ * behavior.
+ */
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleSecondaryConditional(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+  -> SecondaryIndepQuantity
+{
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
+    sampling_functor = std::bind<SecondaryIndepQuantity>(
+                                             &BaseOneDDistributionType::sample,
+                                             std::placeholders::_1 );
+
+  return this->sampleImpl( primary_indep_var_value,
+                           sampling_functor,
+                           min_secondary_indep_var_functor,
+                           max_secondary_indep_var_functor );
 }
 
 // Return a random sample and record the number of trials
@@ -246,6 +273,40 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
                             unsigned& primary_bin_index ) const
   -> SecondaryIndepQuantity
 {
+  // Create the lower bound functor
+  std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+    lower_bound_functor = std::bind<SecondaryIndepQuantity>(
+                              &ThisType::getLowerBoundOfConditionalIndepVar,
+                              std::cref( *this ),
+                              std::placeholders::_1 );
+
+  // Create the upper bound functor
+  std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+    upper_bound_functor = std::bind<SecondaryIndepQuantity>(
+                              &ThisType::getUpperBoundOfConditionalIndepVar,
+                              std::cref( *this ),
+                              std::placeholders::_1 );
+
+  return this->sampleDetailedImpl( primary_indep_var_value,
+                                   sample_functor,
+                                   raw_sample,
+                                   primary_bin_index,
+                                   lower_bound_functor,
+                                   upper_bound_functor );
+}
+
+// Sample from the distribution using the desired sampling functor
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename SampleFunctor>
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleDetailedImpl(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  SampleFunctor sample_functor,
+  SecondaryIndepQuantity& raw_sample,
+  unsigned& primary_bin_index,
+  const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+  const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+  -> SecondaryIndepQuantity
+{
   // Find the bin boundaries
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -256,26 +317,12 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
   SecondaryIndepQuantity sample;
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    // Create the lower bound functor
-    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
-      lower_bound_functor = std::bind<SecondaryIndepQuantity>(
-                                &ThisType::getLowerBoundOfConditionalIndepVar,
-                                std::cref( *this ),
-                                std::placeholders::_1 );
-
-    // Create the upper bound functor
-    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
-      upper_bound_functor = std::bind<SecondaryIndepQuantity>(
-                                &ThisType::getUpperBoundOfConditionalIndepVar,
-                                std::cref( *this ),
-                                std::placeholders::_1 );
-
     typename DistributionType::const_iterator sampled_bin_boundary;
     sample =
       TwoDSamplePolicy::template sampleDetailed<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
           sample_functor,
-          lower_bound_functor,
-          upper_bound_functor,
+          min_secondary_indep_var_functor,
+          max_secondary_indep_var_functor,
           primary_indep_var_value,
           lower_bin_boundary,
           upper_bin_boundary,
@@ -318,54 +365,36 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
                             SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
 {
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  SecondaryIndepQuantity dummy_raw_sample;
+  unsigned dummy_primary_bin_index;
 
-  this->findBinBoundaries( primary_indep_var_value,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  SecondaryIndepQuantity sample;
-  if( lower_bin_boundary != upper_bin_boundary )
-  {
-    // Create the lower bound functor
-    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
-      lower_bound_functor = std::bind<SecondaryIndepQuantity>(
-                                &ThisType::getLowerBoundOfConditionalIndepVar,
-                                std::cref( *this ),
-                                std::placeholders::_1 );
-
-    // Create the upper bound functor
-    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
-      upper_bound_functor = std::bind<SecondaryIndepQuantity>(
-                                &ThisType::getUpperBoundOfConditionalIndepVar,
-                                std::cref( *this ),
-                                std::placeholders::_1 );
-
-    return
-      TwoDSamplePolicy::template sample<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
-          sample_functor,
-          lower_bound_functor,
-          upper_bound_functor,
-          primary_indep_var_value,
-          lower_bin_boundary,
-          upper_bin_boundary );
-  }
-  else
-  {
-    if( this->arePrimaryLimitsExtended() )
-      return sample_functor( *lower_bin_boundary->second );
-    else
-    {
-      THROW_EXCEPTION( std::logic_error,
-                       "Error: Sampling beyond the primary grid boundaries "
-                       "cannot be done unless the grid has been extended ("
-                       << primary_indep_var_value << " not in ["
-                       << this->getLowerBoundOfPrimaryIndepVar() << ","
-                       << this->getUpperBoundOfPrimaryIndepVar() << "])!" );
-    }
-  }
+  return this->sampleDetailedImpl( primary_indep_var_value,
+                                   sample_functor,
+                                   dummy_raw_sample,
+                                   dummy_primary_bin_index );
 }
+
+// Sample from the distribution using the desired sampling functor
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename SampleFunctor>
+inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleImpl(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    SampleFunctor sample_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+  -> SecondaryIndepQuantity
+{
+  SecondaryIndepQuantity dummy_raw_sample;
+  unsigned dummy_primary_bin_index;
+
+  return this->sampleDetailedImpl( primary_indep_var_value,
+                                   sample_functor,
+                                   dummy_raw_sample,
+                                   dummy_primary_bin_index,
+                                   min_secondary_indep_var_functor,
+                                   max_secondary_indep_var_functor );
+}
+
 
 // Sample the bin boundary that will be used for stochastic sampling
 /*! \details This method will throw an exception if the primary independent

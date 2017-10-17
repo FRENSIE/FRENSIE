@@ -377,41 +377,41 @@ YIndepType Exact::sampleInSubrange(
                     min_y_indep_functor( x_indep_value ) );
 
   // Get the max y indep value at the lower bin boundary
-  YIndepType lower_bin_max_y_indep_value =
+  YIndepType max_y_indep_var_0 =
     lower_bin_boundary->second->getUpperBoundOfIndepVar();
 
   // Only set the subrange if it is below the max y indep value
-  if( subrange_max_y_indep_value < lower_bin_max_y_indep_value )
-    lower_bin_max_y_indep_value = subrange_max_y_indep_value;
+  if( subrange_max_y_indep_value < max_y_indep_var_0 )
+    max_y_indep_var_0 = subrange_max_y_indep_value;
 
   // Get the max y indep value at the upper bin boundary
-  YIndepType upper_bin_max_y_indep_value =
+  YIndepType max_y_indep_var_1 =
     upper_bin_boundary->second->getUpperBoundOfIndepVar();
 
   // Only set the subrange if it is below the max y indep value
-  if( subrange_max_y_indep_value < upper_bin_max_y_indep_value )
-    upper_bin_max_y_indep_value = subrange_max_y_indep_value;
+  if( subrange_max_y_indep_value < max_y_indep_var_1 )
+    max_y_indep_var_1 = subrange_max_y_indep_value;
 
   // Check for a primary value at the primary grid upper limit
   if( x_indep_value == upper_bin_boundary->first )
   {
     return subrange_sample_functor( *upper_bin_boundary->second,
-                                    lower_bin_max_y_indep_value );
+                                    max_y_indep_var_0 );
   }
   // Check for a primary value at the primary grid lower limit
   else if( x_indep_value == lower_bin_boundary->first )
   {
     return subrange_sample_functor( *lower_bin_boundary->second,
-                                    upper_bin_max_y_indep_value );
+                                    max_y_indep_var_1 );
   }
   else
   {
     YIndepType lower_sample =
       subrange_sample_functor( *lower_bin_boundary->second,
-                               lower_bin_max_y_indep_value );
+                               max_y_indep_var_0 );
     YIndepType upper_sample =
       subrange_sample_functor( *upper_bin_boundary->second,
-                               upper_bin_max_y_indep_value );
+                               max_y_indep_var_1 );
 
     // Check if the samples are equal
     /*! \details Special cases can arise where the min/max of a secondary
@@ -599,66 +599,87 @@ YIndepType Correlated::sampleInSubrange(
           const YZIterator& upper_bin_boundary,
           const YIndepType& subrange_max_y_indep_value )
 {
-  // // Make sure the max y independent variable is above the lower bound of the
-  // // conditional independent variable
-  // testPrecondition( subrange_max_y_indep_value >
-  //                   min_y_indep_functor( x_indep_value ) );
+  // Get the min y indep var values for the x_indep_value
+  YIndepType min_y_indep_var = min_y_indep_functor( x_indep_value );
 
-  // // Get the max y indep value at the lower bin boundary
-  // YIndepType lower_bin_max_y_indep_value =
-  //   lower_bin_boundary->second->getUpperBoundOfIndepVar();
+  // Get the max y indep var values for the x_indep_value
+  YIndepType max_y_indep_var;
+  if( subrange_max_y_indep_value > max_y_indep_functor( x_indep_value ) )
+    max_y_indep_var = max_y_indep_functor( x_indep_value );
+  else
+    max_y_indep_var = subrange_max_y_indep_value;
 
-  // // Only set the subrange if it is below the max y indep value
-  // if( subrange_max_y_indep_value < lower_bin_max_y_indep_value )
-  //   lower_bin_max_y_indep_value = subrange_max_y_indep_value;
+  // Check for a x value at a grid limit
+  if( x_indep_value == upper_bin_boundary->first )
+    return subrange_sample_functor( *upper_bin_boundary->second, max_y_indep_var );
+  else if( x_indep_value == lower_bin_boundary->first )
+    return subrange_sample_functor( *lower_bin_boundary->second, max_y_indep_var );
+  else
+  {
+    typename QuantityTraits<YIndepType>::RawType
+    intermediate_grid_length =
+      TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                  min_y_indep_var, max_y_indep_var );
 
-  // // Get the max y indep value at the upper bin boundary
-  // YIndepType upper_bin_max_y_indep_value =
-  //   upper_bin_boundary->second->getUpperBoundOfIndepVar();
+    // Calculate the unit base variable on the intermediate grid corresponding to the
+    // raw samples on the lower and upper boundaries
+    typename QuantityTraits<YIndepType>::RawType eta, eta_0, eta_1;
 
-  // // Only set the subrange if it is below the max y indep value
-  // if( subrange_max_y_indep_value < upper_bin_max_y_indep_value )
-  //   upper_bin_max_y_indep_value = subrange_max_y_indep_value;
+    {
+      // Get the max y indep value at the lower bin boundary
+      YIndepType max_y_indep_var_0 =
+        lower_bin_boundary->second->getUpperBoundOfIndepVar();
 
-  // // Check for a primary value at the primary grid upper limit
-  // if( x_indep_value == upper_bin_boundary->first )
-  // {
-  //   return subrange_sample_functor( *upper_bin_boundary->second,
-  //                                   lower_bin_max_y_indep_value );
-  // }
-  // // Check for a primary value at the primary grid lower limit
-  // else if( x_indep_value == lower_bin_boundary->first )
-  // {
-  //   return subrange_sample_functor( *lower_bin_boundary->second,
-  //                                   upper_bin_max_y_indep_value );
-  // }
-  // else
-  // {
-  //   YIndepType lower_sample =
-  //     subrange_sample_functor( *lower_bin_boundary->second,
-  //                              lower_bin_max_y_indep_value );
-  //   YIndepType upper_sample =
-  //     subrange_sample_functor( *upper_bin_boundary->second,
-  //                              upper_bin_max_y_indep_value );
+      // Only set the subrange if it is below the max y indep value
+      if( subrange_max_y_indep_value < max_y_indep_var_0 )
+        max_y_indep_var_0 = subrange_max_y_indep_value;
 
-  //   // Check if the samples are equal
-  //   /*! \details Special cases can arise where the min/max of a secondary
-  //    * distribution is zero. If the min/max is sampled both the upper and lower
-  //    * samples will be zero.
-  //    * In order to avoid log interpolation errors no interpolation is performed.
-  //    */
-  //   if( lower_sample == upper_sample )
-  //     return lower_sample;
-  //   else
-  //   {
-  //     return TwoDInterpPolicy::YXInterpPolicy::interpolate(
-  //                           lower_bin_boundary->first,
-  //                           upper_bin_boundary->first,
-  //                           x_indep_value,
-  //                           lower_sample,
-  //                           upper_sample );
-  //   }
-  // }
+      // Calculate the unit base variable on the lower grid corresponding to the
+      // lower raw sample
+      typename QuantityTraits<YIndepType>::RawType grid_length_0 =
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                    lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                    max_y_indep_var_0 );
+
+      eta_0 = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+            subrange_sample_functor( *lower_bin_boundary->second, max_y_indep_var_0 ),
+            lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+            grid_length_0 );
+
+
+      // Get the max y indep value at the upper bin boundary
+      YIndepType max_y_indep_var_1 =
+        upper_bin_boundary->second->getUpperBoundOfIndepVar();
+
+      // Only set the subrange if it is below the max y indep value
+      if( subrange_max_y_indep_value < max_y_indep_var_1 )
+        max_y_indep_var_1 = subrange_max_y_indep_value;
+
+      // Calculate the unit base variable on the upper grid corresponding to the
+      // upper raw sample
+      typename QuantityTraits<YIndepType>::RawType grid_length_1 =
+        TwoDInterpPolicy::SecondaryBasePolicy::calculateUnitBaseGridLength(
+                    upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                    max_y_indep_var_1 );
+
+      eta_1 = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+            subrange_sample_functor( *upper_bin_boundary->second, max_y_indep_var_1 ),
+            upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+            grid_length_1 );
+
+      // Interpolate between the lower and upper unit based variables
+      eta = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                                                  lower_bin_boundary->first,
+                                                  upper_bin_boundary->first,
+                                                  x_indep_value,
+                                                  eta_0,
+                                                  eta_1 );
+    }
+
+    // Scale the sample so that it preserves the intermediate limits.
+    return TwoDInterpPolicy::SecondaryBasePolicy::calculateIndepVar(
+              eta, min_y_indep_var, intermediate_grid_length );
+  }
 }
 
 // Sample between bin boundaries using the desired sampling functor

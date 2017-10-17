@@ -1911,13 +1911,13 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // On the first bin
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sampleSecondaryConditional( 1.0 );
@@ -1934,22 +1934,22 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
-  fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
-  fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
-  fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
-  fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
-  fake_stream[15] = 1.0-1e-15;
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5; // use lower bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.5; // use lower bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.5; // use lower bin boundary
+  fake_stream[8] = 0.0;
+  fake_stream[9] = 0.49; // use upper bin boundary
+  fake_stream[10] = 2.57143040816457724151e-01;
+  fake_stream[11] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.9;
+  fake_stream[13] = 0.49; // use upper bin boundary
+  fake_stream[14] = 1.0-1e-15;
+  fake_stream[15] = 0.49; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Samples from lower boundary of second bin
@@ -1981,13 +1981,13 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // On the upper bin boundary
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sampleSecondaryConditional( 2.0 );
@@ -2074,13 +2074,13 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // On the first bin
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
@@ -2097,22 +2097,22 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
-  fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
-  fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
-  fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
-  fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
-  fake_stream[15] = 1.0-1e-15;
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5; // use lower bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.5; // use lower bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.5; // use lower bin boundary
+  fake_stream[8] = 0.0;
+  fake_stream[9] = 0.49; // use upper bin boundary
+  fake_stream[10] = 2.57143040816457724151e-01;
+  fake_stream[11] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.9;
+  fake_stream[13] = 0.49; // use upper bin boundary
+  fake_stream[14] = 1.0-1e-15;
+  fake_stream[15] = 0.49; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Samples from lower boundary of second bin
@@ -2144,13 +2144,13 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // On the upper bin boundary
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
@@ -2208,7 +2208,9 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // Before the first bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials ),
               std::logic_error );
-  TEST_EQUALITY_CONST( trials, 0u );
+  TEST_EQUALITY_CONST( trials, 1u );
+
+  trials = 0u;
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
@@ -2241,13 +2243,13 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // On the first bin
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0u;
@@ -2270,22 +2272,22 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
-  fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
-  fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
-  fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
-  fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
-  fake_stream[15] = 1.0-1e-15;
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5; // use lower bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.5; // use lower bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.5; // use lower bin boundary
+  fake_stream[8] = 0.0;
+  fake_stream[9] = 0.49; // use upper bin boundary
+  fake_stream[10] = 2.57143040816457724151e-01;
+  fake_stream[11] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.9;
+  fake_stream[13] = 0.49; // use upper bin boundary
+  fake_stream[14] = 1.0-1e-15;
+  fake_stream[15] = 0.49; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0u;
@@ -2327,13 +2329,13 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // On the upper bin boundary
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0u;
@@ -2357,7 +2359,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // After the second bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials ),
               std::logic_error );
-  TEST_EQUALITY_CONST( trials, 4u );
+  TEST_EQUALITY_CONST( trials, 5u );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
@@ -2405,7 +2407,9 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // Before the first bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials ),
               std::logic_error );
-  TEST_EQUALITY_CONST( trials, 0u );
+  TEST_EQUALITY_CONST( trials, 1u );
+
+  trials = 0u;
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
@@ -2438,13 +2442,13 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // On the first bin
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0u;
@@ -2467,22 +2471,22 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   // In the first bin
   fake_stream.resize( 16 );
-  fake_stream[0] = 0.5; // use lower bin boundary
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5; // use lower bin boundary
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.5; // use lower bin boundary
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.5; // use lower bin boundary
-  fake_stream[7] = 1.0-1e-15;
-  fake_stream[8] = 0.49; // use upper bin boundary
-  fake_stream[9] = 0.0;
-  fake_stream[10] = 0.49; // use upper bin boundary
-  fake_stream[11] = 2.57143040816457724151e-01;
-  fake_stream[12] = 0.49; // use upper bin boundary
-  fake_stream[13] = 0.9;
-  fake_stream[14] = 0.49; // use upper bin boundary
-  fake_stream[15] = 1.0-1e-15;
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5; // use lower bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.5; // use lower bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.5; // use lower bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.5; // use lower bin boundary
+  fake_stream[8] = 0.0;
+  fake_stream[9] = 0.49; // use upper bin boundary
+  fake_stream[10] = 2.57143040816457724151e-01;
+  fake_stream[11] = 0.49; // use upper bin boundary
+  fake_stream[12] = 0.9;
+  fake_stream[13] = 0.49; // use upper bin boundary
+  fake_stream[14] = 1.0-1e-15;
+  fake_stream[15] = 0.49; // use upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0u;
@@ -2524,13 +2528,13 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // On the upper bin boundary
   fake_stream.resize( 8 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 2.57143040816457724151e-01;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 0.9;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 1.0-1e-15;
+  fake_stream[1] = 0.0; // Sample the bin boundary
+  fake_stream[2] = 2.57143040816457724151e-01;
+  fake_stream[3] = 0.0; // Sample the bin boundary
+  fake_stream[4] = 0.9;
+  fake_stream[5] = 0.0; // Sample the bin boundary
+  fake_stream[6] = 1.0-1e-15;
+  fake_stream[7] = 0.0; // Sample the bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   trials = 0u;
@@ -2554,7 +2558,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // After the second bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials ),
               std::logic_error );
-  TEST_EQUALITY_CONST( trials, 4u );
+  TEST_EQUALITY_CONST( trials, 5u );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
@@ -4415,7 +4419,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Exact>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExact( 0.0 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditional( 0.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -4428,16 +4432,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
+  double sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -4445,16 +4449,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // On the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // In the first bin
@@ -4464,35 +4468,35 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExact( 3.0 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditional( 3.0 ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -4500,16 +4504,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -4525,7 +4529,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Exact>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -4539,16 +4543,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<cgs::dimensionless> sample =
-    unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV );
+    unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -4556,16 +4560,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // On the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
@@ -4575,35 +4579,35 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -4611,16 +4615,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -4635,81 +4639,81 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Exact>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.5 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.5 ),
               std::logic_error );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  double sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.0 );
+  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // In the first bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.5 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.5 ),
               std::logic_error );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -4723,83 +4727,83 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Exact>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.5 ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.5 ),
               std::logic_error );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
   quantity<cgs::dimensionless> sample =
-    unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.0 );
+    unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 1.0-1e-15 );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.5 ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.5 ),
               std::logic_error );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -4812,7 +4816,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Exact>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.0 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -4827,31 +4831,31 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Subrange
-  double sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.9 );
+  double sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // Beyond full range - check that expected range will be used
   fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -4860,50 +4864,50 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[1] = 0.2;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // In the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -4911,16 +4915,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -4936,7 +4940,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Exact>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.0*cgs::dimensionless() ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -4951,31 +4955,31 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Subrange
-  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
   fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -4984,50 +4988,50 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   fake_stream[1] = 0.2;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -5035,16 +5039,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -5059,96 +5063,96 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Exact>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.5, 0.9 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.5, 0.9 ),
               std::logic_error );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
   // Subrange
-  double sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.0, 0.9 );
+  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // Beyond full range - check that expected range will be used
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 2.57143040816457724151e-01, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 2.57143040816457724151e-01, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.9, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // In the first bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // On the upper bin boundary
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.5, 0.9),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.5, 0.9),
               std::logic_error );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -5162,96 +5166,96 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Exact>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
               std::logic_error );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
   // Subrange
-  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV,0.0, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV,0.0, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 2.57143040816457724151e-01, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 2.57143040816457724151e-01, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.9, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
               std::logic_error );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -5264,7 +5268,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Correlated>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditional( 0.0 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditional( 0.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -5277,16 +5281,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double sample = tab_distribution->correlatedSampleSecondaryConditional( 0.0 );
+  double sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 0.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 0.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 0.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -5294,16 +5298,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   // On the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // In the first bin
@@ -5313,35 +5317,35 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 1.5 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 2.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditional( 3.0 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditional( 3.0 ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -5349,16 +5353,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditional( 3.0 );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -5374,7 +5378,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Correlated>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 0.0*MeV ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -5388,16 +5392,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<cgs::dimensionless> sample =
-    unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 0.0*MeV );
+    unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 0.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 0.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 0.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -5405,16 +5409,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   // On the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
@@ -5424,35 +5428,35 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   fake_stream[3] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 1.5*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 2.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 3.0*MeV ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -5460,16 +5464,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditional( 3.0*MeV );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -5484,81 +5488,81 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Correlated>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 0.5 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.5 ),
               std::logic_error );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  double sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 0.0 );
+  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // In the first bin
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 0.5 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.5 ),
               std::logic_error );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 0.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 2.57143040816457724151e-01 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-14 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0, 1.0-1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 1.0-1e-15 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -5572,83 +5576,83 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Correlated>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.5 ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.5 ),
               std::logic_error );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
   quantity<cgs::dimensionless> sample =
-    unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.0 );
+    unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 1.0-1e-15 );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.5 ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.5 ),
               std::logic_error );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0 );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 2.57143040816457724151e-01 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 2.57143040816457724151e-01 );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.9 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.9 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-14 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 1.0-1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 1.0-1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -5661,7 +5665,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Correlated>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.0 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -5676,31 +5680,31 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Subrange
-  double sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 );
+  double sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // Beyond full range - check that expected range will be used
   fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -5709,50 +5713,50 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   fake_stream[1] = 0.2;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // In the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -5760,16 +5764,16 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -5785,7 +5789,7 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Correlated>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.0*cgs::dimensionless() ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -5800,31 +5804,31 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Subrange
-  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
   fake_stream[1] = 2.57143040816457724151e-01;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -5833,50 +5837,50 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   fake_stream[1] = 0.2;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() ),
               std::logic_error );
 
   // After the second bin - with extension
@@ -5884,16 +5888,16 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -5908,96 +5912,96 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
 {
   initialize<Utility::Correlated>( tab_distribution, distribution );
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.5, 0.9 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.5, 0.9 ),
               std::logic_error );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
   // Subrange
-  double sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 0.9 );
+  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // Beyond full range - check that expected range will be used
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 2.0 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 2.57143040816457724151e-01, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 2.57143040816457724151e-01, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.9, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 0.999999, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 2.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 2.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // In the first bin
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // On the upper bin boundary
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.5, 0.9),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.5, 0.9),
               std::logic_error );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.0, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.0, 0.9 );
   TEST_EQUALITY_CONST( sample, -1.0 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.2, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.2, 0.9 );
   TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.9, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.9, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01, 1e-15 );
 
-  sample = tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 0.9 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 0.9 );
   TEST_FLOATING_EQUALITY( sample, 0.9, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -6011,96 +6015,96 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
   initialize<Utility::Correlated>( unit_aware_tab_distribution,
                                    unit_aware_distribution );
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
               std::logic_error );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
   // Subrange
-  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  quantity<cgs::dimensionless> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-15 );
 
   // Beyond full range - check that expected range will be used
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV,0.0, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV,0.0, 2.0*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 2.57143040816457724151e-01, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 2.57143040816457724151e-01, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.9, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.999999*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 2.0*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 2.0*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034774482*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.96941872705888565e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // In the first bin
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.969418727058884544e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // On the upper bin boundary
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   // After the second bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.5, 0.9*cgs::dimensionless() ),
               std::logic_error );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.0, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.0, 0.9*cgs::dimensionless() );
   TEST_EQUALITY_CONST( sample, -1.0*cgs::dimensionless() );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.2, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.2, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, -0.24252781552034763379*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.9, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.9, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.9694187270588834338e-01*cgs::dimensionless(), 1e-15 );
 
-  sample = unit_aware_tab_distribution->correlatedSampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 0.9*cgs::dimensionless() );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.9*cgs::dimensionless(), 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();

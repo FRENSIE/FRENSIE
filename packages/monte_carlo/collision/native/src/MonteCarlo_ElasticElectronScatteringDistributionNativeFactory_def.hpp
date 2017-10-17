@@ -324,7 +324,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
 
   // Create the scattering function
   std::shared_ptr<TwoDDist> scattering_function;
-  ThisType::createAnalogScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCoupledScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
         cross_section_ratios,
         elastic_traits,
         cutoff_elastic_angles,
@@ -744,7 +744,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringF
 
 // Create the coupled scattering function
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
-void ElasticElectronScatteringDistributionNativeFactory::createAnalogScatteringFunction(
+void ElasticElectronScatteringDistributionNativeFactory::createCoupledScatteringFunction(
     const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const std::map<double,std::vector<double> >& elastic_angles,
