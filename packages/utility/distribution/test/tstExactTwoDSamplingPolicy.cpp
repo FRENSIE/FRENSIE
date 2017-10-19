@@ -137,11 +137,11 @@ TEUCHOS_UNIT_TEST( Exact, evaluateDirect )
   // In the first bin
   func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
 
-  TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( evaluate( 0.5, 1.25 ), 0.7, 1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.5 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 1.25 ), 0.5, 1e-15 );
   TEST_FLOATING_EQUALITY( evaluate( 0.5, 5.0 ), 1.0, 1e-6 );
-  TEST_FLOATING_EQUALITY( evaluate( 0.5, 8.75 ), 5.0/6.0, 1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 8.75 ), 0.5, 1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 0.5 );
 
   // On the second bin boundary
   ++lower_bin; ++upper_bin;
@@ -156,11 +156,11 @@ TEUCHOS_UNIT_TEST( Exact, evaluateDirect )
   // In the second bin
   func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
 
-  TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( evaluate( 1.5, 1.25 ), 0.1, 1e-15 );
-  TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 0.4, 1e-6 );
-  TEST_FLOATING_EQUALITY( evaluate( 1.5, 8.75 ), 7.0/30.0, 1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.05 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 1.25 ), 0.05, 1e-15 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 0.55, 1e-6 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 8.75 ), 0.05, 1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 0.05 );
 
   // On the upper bin boundary
   func = [](double x){return 0.0;}; func = [](double x){return 10.0;};
@@ -201,17 +201,17 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateDirect )
   ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
   ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
-  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.5*barn );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
-                                  0.7*barn,
+                                  0.5*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
                                   1.0*barn,
                                   1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
-                                  5.0/6.0*barn,
+                                  0.5*barn,
                                   1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.5*barn );
 
   // On the second bin boundary
   ++ua_lower_bin; ++ua_upper_bin;
@@ -228,17 +228,17 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateDirect )
   ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
   ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
-  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.05*barn );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
-                                  0.1*barn,
+                                  0.05*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
-                                  0.4*barn,
+                                  0.55*barn,
                                   1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
-                                  7.0/30.0*barn,
+                                  0.05*barn,
                                   1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.05*barn );
 
   // On the upper bin boundary
   ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
