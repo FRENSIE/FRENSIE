@@ -145,7 +145,6 @@ private:
 
   // HDF5 file identifier
   Teuchos::RCP<H5::H5File> d_hdf5_file;
-
 };
 
 } // end FRENSIE namespace

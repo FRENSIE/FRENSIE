@@ -11,11 +11,7 @@
 
 // Std Lib Includes
 #include <utility>
-#include <tuple>
 #include <type_traits>
-
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "Utility_HDF5TypeTraitsDecl.hpp"
@@ -24,7 +20,109 @@
 
 namespace Utility{
 
-/*! \brief the partial specialization of the Utility::HDF5TypeTraits for
+namespace Details{
+
+/*! Helper class for types that have the same internal and external types
+ * \ingroup hdf5_type_traits
+ */
+template<typename T, size_t SizeOfT = sizeof(T)>
+struct BasicHDF5TypeTraits
+{
+  //! Typedef for the type that will be used outside of HDF5 files
+  typedef T ExternalType;
+
+  //! Typedef for the type that will be stored in HDF5 files
+  typedef ExternalType InternalType;
+
+  //! Initialize internal data
+  static inline InternalType* initializeInternalData(
+                                            const ExternalType* const raw_data,
+                                            const size_t size )
+  { return raw_data; }
+
+  //! Convert external type data to internal type data
+  static inline void convertExternalDataToInternalData(
+                                           const ExternalType* const raw_data,
+                                           const size_t size,
+                                           const InternalType* converted_data )
+  {
+    if( raw_data != converted_data )
+      std::memcpy( converted_data, raw_data, SizeOfT*size );
+  }
+  
+  //! Covert inner type to outer type
+  static inline void convertInternalDataToExternalData(
+                                           const InternalType* const raw_data,
+                                           const size_t size,
+                                           const ExternalType* converted_data )
+  {
+    if( raw_data != converted_data )
+      std::memcpy( converted_data, raw_data, SizeOfT*size );
+  }
+
+  //! Calculate the size of an internal array of data
+  static inline size_t calculateInternalDataSize( const size_t raw_size )
+  { return raw_size; }
+
+  //! Free the inner data created from outer data
+  static inline void freeInternalData( InternalType*& )
+  { /* ... */ }
+};
+
+/*! Helper class for types that use an opaque internal type
+ * \ingroup hdf5_type_traits
+ */
+template<typename T>
+struct OpaqueHDF5TypeTraits
+{
+  //! Typedef for the type that will be used outside of HDF5 files
+  typedef T ExternalType;
+
+  //! Typedef for the type that will be stored in HDF5 files
+  typedef void InternalType;
+
+  //! Returns the HDF5 data type object corresponding to opaque type T
+  static inline H5::PredType dataType()
+  { return H5::NATIVE_OPAQUE; }
+
+  //! Initialize internal data
+  static inline InternalType* initializeInternalData(
+                                            const ExternalType* const raw_data,
+                                            const size_t size )
+  { return raw_data; }
+
+  //! Convert external type data to internal type data
+  static inline void convertExternalDataToInternalData(
+                                           const ExternalType* const raw_data,
+                                           const size_t size,
+                                           const InternalType* converted_data )
+  {
+    if( raw_data != converted_data )
+      std::memcpy( converted_data, raw_data, sizeof(ExternalType)*size );
+  }
+  
+  //! Covert inner type to outer type
+  static inline void convertInternalDataToExternalData(
+                                           const InternalType* const raw_data,
+                                           const size_t size,
+                                           const ExternalType* converted_data )
+  {
+    if( raw_data != converted_data )
+      std::memcpy( converted_data, raw_data, sizeof(ExternalType)*size );
+  }
+
+  //! Calculate the size of an internal array of data
+  static inline size_t calculateInternalDataSize( const size_t raw_size )
+  { return raw_size*sizeof(ExternalType); }
+
+  //! Free the inner data created from outer data
+  static inline void freeInternalData( InternalType*& )
+  { /* ... */ }
+};
+  
+} // end Details namespace
+
+/*! \brief Partial specialization of Utility::HDF5TypeTraits for
  * all constant types
  * \ingroup hdf5_type_traits
  */
@@ -32,292 +130,233 @@ template<typename T>
 struct HDF5TypeTraits<T,typename std::enable_if<std::is_const<T>::value>::type> : public HDF5TypeTraits<typename std::remove_const<T>::type>
 { /* ... */ };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for double
+/*! \brief Specialization of Utility::HDF5TypeTraits for bool
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<double>
+struct HDF5TypeTraits<bool>
 {
-  //! Typedef for the raw type
-  typedef double RawType;
+  //! Typedef for the type that will be used outside of HDF5 files
+  typedef bool ExternalType;
+
+  //! The enumeration type used to represent boolean values
+  typedef enum { False = 0, True = 1 } BoolEnumType;
   
-  //! Returns the HDF5 data type object corresponding to double
-  static inline H5::PredType dataType()
-  { return H5::PredType::NATIVE_DOUBLE; }
+  //! Typedef for the type that will be stored in HDF5 files
+  typedef BoolEnumType InternalType;
+  
+  //! Returns the HDF5 data type object corresponding to bool
+  static H5::EnumType dataType();
 
-  //! Returns the name of this type
-  static inline std::string name()
-  { return "double"; }
+  //! Initialize internal data
+  static InternalType* initializeInternalData( const ExternalType* const,
+                                               const size_t size );
 
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0.0; }
+  //! Convert external type data to internal type data
+  static void convertExternalDataToInternalData(
+                                          const ExternalType* const raw_data,
+                                          const size_t size,
+                                          const InternalType* converted_data );
+  //! Covert inner type to outer type
+  static void convertInternalDataToExternalData(
+                                          const InternalType* const raw_data,
+                                          const size_t size,
+                                          const ExternalType* converted_data );
+  //! Free the inner data created from outer data
+  static void freeInternalData( InternalType*& data );
 
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1.0; }
+private:
+
+  // The data type
+  static std::unique_ptr<H5::EnumType> s_data_type;
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for float
+/*! \brief Specialization of Utility::HDF5TypeTraits for char
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<float>
-{
-  //! Typedef for the raw type
-  typedef float RawType;
-  
-  //! Returns the HDF5 data type object corresponding to double
+struct HDF5TypeTraits<char> : public Details::BasicHDF5TypeTraits<char>
+{  
+  //! Returns the HDF5 data type object corresponding tochar
   static inline H5::PredType dataType()
-  { return H5::PredType::NATIVE_FLOAT; }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  { return "float"; }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0.0f; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1.0f; }
+  { return H5::PredType::NATIVE_CHAR; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for int
+/*! \brief Specialization of Utility::HDF5TypeTraits for signed char
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<int>
+struct HDF5TypeTraits<signed char> : public Details::BasicHDF5TypeTraits<signed char>
 {
-  //! Typedef for the raw type
-  typedef int RawType;
+  //! Returns the HDF5 data type object corresponding to signed char
+  static inline H5::PredType dataType()
+  { return H5::PredType::NATIVE_SCHAR; }
+};
+
+/*! \brief Specialization of Utility::HDF5TypeTraits for unsigned char
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<unsigned char> : public Details::BasicHDF5TypeTraits<unsigned char>
+{
+  //! Returns the HDF5 data type object corresponding to unsigned char
+  static inline H5::PredType dataType()
+  { return H5::PredType::NATIVE_UCHAR; }
+};
+
+/*! \brief Specialization of Utility::HDF5TypeTraits for wchar_t
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<wchar_t> : public Details::OpaqueHDF5TypeTraits<wchar_t>
+{ /* ... */ };
+
+/*! \brief Specialization of Utility::HDF5TypeTraits for short
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<short> : public Details::BasicHDF5TypeTraits<short>
+{
+  //! Returns the HDF5 data type object corresponding to int
+  static inline H5::PredType dataType()
+  { return H5::PredType::NATIVE_SHORT; }
+};
   
+/*! \brief Specialization of Utility::HDF5TypeTraits for unsigned short
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<unsigned short> : public Details::BasicHDF5TypeTraits<unsigned short>
+{
+  //! Returns the HDF5 data type object corresponding to int
+  static inline H5::PredType dataType()
+  { return H5::PredType::NATIVE_USHORT; }
+};
+
+/*! \brief Specialization of Utility::HDF5TypeTraits for int
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<int> : public Details::BasicHDF5TypeTraits<int>
+{
   //! Returns the HDF5 data type object corresponding to int
   static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_INT; }
-
-  //! Returns the name of this type
-  static inline std::string name()
-  { return "int"; }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned int
+/*! \brief Specialization of Utility::HDF5TypeTraits for unsigned int
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<unsigned int>
+struct HDF5TypeTraits<unsigned int> : public Details::BasicHDF5TypeTraits<unsigned int>
 {
-  //! Typedef for the raw type
-  typedef unsigned int RawType;
-  
   //! Returns the HDF5 data type object corresponding to unsigned int
   static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_UINT; }
-
-  //! Returns the name of the type
-  static inline std::string name()
-  { return "unsigned int"; }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0u; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1u; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for long
+/*! \brief Specialization of Utility::HDF5TypeTraits for long
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<long>
+struct HDF5TypeTraits<long> : public Details::BasicHDF5TypeTraits<long>
 {
-  //! Typedef for the raw type
-  typedef long RawType;
-  
   //! Returns the HDF5 data type object corresponding to long
   static inline H5::PredType dataType() 
   { return H5::PredType::NATIVE_LONG; }
-  
-  //! Returns the name of the type
-  static inline std::string name() 
-  { return "long int"; }
-  
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0l; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1l; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned long
+/*! \brief Specialization of Utility::HDF5TypeTraits for unsigned long
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<unsigned long>
+struct HDF5TypeTraits<unsigned long> : public Details::BasicHDF5TypeTraits<unsigned long>
 {
-  //! Typedef for the raw type
-  typedef unsigned long RawType;
-  
   //! Returns the HDF5 data type object corresponding to unsigned int
   static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_ULONG; }
-
-  //! Returns the name of the type
-  static inline std::string name()
-  { return "unsigned long int"; }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0ul; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1ul; }
 };
 
-
-/*! \brief The specialization of the Utility::HDF5TypeTraits for long long
+/*! \brief Specialization of Utility::HDF5TypeTraits for long long
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<long long>
+struct HDF5TypeTraits<long long> : public Details::BasicHDF5TypeTraits<long long>
 {
-  //! Typedef for the raw type
-  typedef long long RawType;
-  
   //! Returns the HDF5 data type object corresponding to long long int
   static inline H5::PredType dataType() 
   { return H5::PredType::NATIVE_LLONG; }
-  
-  //! Returns the name of the type
-  static inline std::string name() 
-  { return "long long int"; }
-  
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0ll; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1ll; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned long
+/*! \brief Specialization of Utility::HDF5TypeTraits for unsigned long
  * long
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<unsigned long long>
+struct HDF5TypeTraits<unsigned long long> : public Details::BasicHDF5TypeTraits<unsigned long long>
 {
-  //! Typedef for the raw type
-  typedef unsigned long long RawType;
-  
   //! Returns the HDF5 data type object corresponding to unsigned int
   static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_ULLONG; }
-
-  //! Returns the name of the type
-  static inline std::string name()
-  { return "unsigned long long int"; }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0ull; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1ull; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for char
+/*! \brief Specialization of Utility::HDF5TypeTraits for float
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<char>
+struct HDF5TypeTraits<float> : public Details::BasicHDF5TypeTraits<double>
 {
-  //! Typedef for the raw type
-  typedef char RawType;
-  
-  //! Returns the HDF5 data type object corresponding to bool
+  //! Returns the HDF5 data type object corresponding to double
   static inline H5::PredType dataType()
-  { return H5::PredType::NATIVE_CHAR; }
-
-  //! Returns the name of the type
-  static inline std::string name()
-  { return "char"; }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return '0'; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return '1'; }
+  { return H5::PredType::NATIVE_FLOAT; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for signed char
+/*! \brief Specialization of Utility::HDF5TypeTraits for double
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<signed char>
+struct HDF5TypeTraits<double> : public Details::BasicHDF5TypeTraits<double>
 {
-  //! Typedef for the raw type
-  typedef signed char RawType;
-  
-  //! Returns the HDF5 data type object corresponding to bool
+  //! Returns the HDF5 data type object corresponding to double
   static inline H5::PredType dataType()
-  { return H5::PredType::NATIVE_SCHAR; }
-
-  //! Returns the name of the type
-  static inline std::string name()
-  { return "signed char"; }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { return 0; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { return 1; }
+  { return H5::PredType::NATIVE_DOUBLE; }
 };
 
-/*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned char
+/*! \brief Specialization of Utility::HDF5TypeTraits for long double
  * \ingroup hdf5_type_traits
  */
 template<>
-struct HDF5TypeTraits<unsigned char>
+struct HDF5TypeTraits<long double> : public Details::BasicHDF5TypeTraits<long double>
 {
-  //! Typedef for the raw type
-  typedef unsigned char RawType;
-  
-  //! Returns the HDF5 data type object corresponding to bool
+  //! Returns the HDF5 data type object corresponding to double
   static inline H5::PredType dataType()
-  { return H5::PredType::NATIVE_UCHAR; }
+  { return H5::PredType::NATIVE_LDOUBLE; }
+};
 
-  //! Returns the name of the type
-  static inline std::string name()
-  { return "unsigned char"; }
+/*! \brief Partial specialization of Utility::HDF5TypeTraits for std::pair
+ * \ingroup hdf5_type_traits
+ */
+template<typename T1, typename T2>
+struct HDF5TypeTraits<std::pair<T1,T2> > : public Details::BasicHDF5TypeTraits<std::pair<T1,T2> >
+{
+  //! Returns the HDF5 data type object corresponding to bool
+  static inline H5::CompType dataType()
+  {
+    if( !s_data_type )
+    {
+      s_data_type.reset( new H5::CompType( sizeof(std::pair<T1,T2>) ) );
+      
+      s_data_type.insertMember( "first", HOFFSET(std::pair<T1,T2>, first), HDF5TypeTraits<T1>::dataType() );
+      s_data_type.insertMember( "second", HOFFSET(std::pair<T1,T2>, second), HDF5TypeTraits<T2>::dataType() );
+    }
 
-  //! Returns the zero value for this type
-  static inline unsigned char zero()
-  { return 0u; }
+    return *s_data_type;
+  }
 
-  //! Returns the unity value for this type
-  static inline unsigned char one()
-  { return 1u; }
+private:
+
+  // The data type
+  static std::unique_ptr<H5::CompType> s_data_type;
 };
 
 namespace Details{
@@ -415,63 +454,30 @@ struct HDF5TupleTypeHelper<I,TupleType,typename std::enable_if<I==TupleSize<Tupl
   
 } // end Details namespace
 
-/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
+/*! \brief The partial specialization of Utility::HDF5TypeTraits for the
  * Utility::Tuple struct
  * \ingroup hdf5_type_traits
  */
 template<typename... Types>
-struct HDF5TypeTraits<Tuple<Types...> >
+struct HDF5TypeTraits<Tuple<Types...> > : public Details::BasicHDF5TypeTraits<Tuple<Types...> >
 {
-  //! Typedef for the raw type
-  typedef Tuple<Types...> RawType;
-  
   //! Returns the HDF5 data type object corresponding to Utility::Tuple
-  static H5::CompType dataType()
+  static inline H5::CompType dataType()
   {
-    H5::CompType memtype( sizeof(RawType) );
-
-    // the insertMember function can throw H5::DataTypeIException exceptions
-    try
+    if( !s_data_type )
     {
-      Details::HDF5TupleTypeHelper<0,RawType>::addElementTypes( memtype, RawType() );
+      s_data_type.reset( new H5::CompType( sizeof(Tuple<Types...>) ) );
+      
+      Details::HDF5TupleTypeHelper<0,RawType>::addElementTypes( *s_data_type, Tuple<Types...>() );
     }
 
-    HDF5_EXCEPTION_CATCH_RETHROW_AS( std::logic_error,
-                                     "unable to create the HDF5 data type ("
-                                     << name() << ")!" );
-
-    return memtype;
+    return *s_data_type;
   }
 
-  //! Returns the name of this type
-  static inline std::string name()
-  {
-    std::string type_name = "Utility::Tuple<";
-    Details::HDF5TupleTypeHelper<0,RawType>::addElementNames( type_name );
-    type_name += ">";
+private:
 
-    return type_name;
-  }
-
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  {
-    RawType tuple;
-
-    Details::HDF5TupleTypeHelper<0,RawType>::zeroElements( tuple );
-    
-    return tuple;
-  }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  {
-    RawType tuple;
-
-    Details::HDF5TupleTypeHelper<0,RawType>::oneElements( tuple );
-    
-    return tuple;
-  }
+  // The data type
+  std::unique_ptr<H5::CompType> s_data_type
 };
 
 } // end Utility namespace

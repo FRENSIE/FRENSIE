@@ -47,24 +47,54 @@ namespace Utility{
 template<typename T, typename Enabled = void>
 struct HDF5TypeTraits
 {
-  //! Typedef for the raw type
-  typedef T RawType;
+  //! Typedef for the type that will be used outside of HDF5 files
+  typedef T ExternalType;
+
+  //! Typedef for the type that will be stored in HDF5 files
+  typedef T InternalType;
   
   //! Returns the HDF5 data type object corresponding to the type
   static inline H5::DataType dataType()
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 
-  //! Returns the name of this type
-  static inline std::string name()
+  /*! Initialize internal data
+   *
+   * If necessary new memory will be allocated for the internal type data.
+   * Always call freeInternalData once the returned pointer is no longer 
+   * needed.
+   */
+  static inline InternalType* initializeInternalData(
+                                            const ExternalType* const raw_data,
+                                            const size_t size )
+  { (void)UndefinedTraits<T>::notDefined(); return NULL; }
+
+  /*! Convert external type data to internal type data
+   * 
+   * The memory for the InternalType data must already be allocated.
+   */
+  static inline void convertExternalDataToInternalData(
+                                           const ExternalType* const raw_data,
+                                           const size_t size,
+                                           const InternalType* converted_data )
+  { (void)UndefinedTraits<T>::notDefined();
+  
+  /*! Convert internal type data to external type data
+   * 
+   * The memory for the ExternalType data must already be allocated.
+   */
+  static inline void convertInternalDataToExternalData(
+                                              const InternalType* const raw_data,
+                                              const size_t size,
+                                              const ExternalType* converted_data )
+  { (void)UndefinedTraits<T>::notDefined(); }
+
+  //! Calculate the size of an internal array of data
+  static inline size_t calculateInternalDataSize( const size_t raw_size )
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 
-  //! Returns the zero value for this type
-  static inline RawType zero()
-  { (void)UndefinedTraits<T>::notDefined(); return 0; }
-
-  //! Returns the unity value for this type
-  static inline RawType one()
-  { (void)UndefinedTraits<T>::notDefined(); return 0; }
+  //! Free the inner data created from outer data
+  static inline void freeInternalData( InternalType*& data )
+  { (void)UndefinedTraits<T>::notDefined(); }
 };
 
 } // end Utility namespace
