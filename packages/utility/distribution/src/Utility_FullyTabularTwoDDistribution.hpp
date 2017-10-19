@@ -232,7 +232,6 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
             const bool use_direct_eval_method ) const
   ->InverseSecondaryIndepQuantity
 {
-  std::cout << std::setprecision(16) << std::scientific << "\n\nThis should not be called called\n\n"<< std::endl;
   return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
                                                 secondary_indep_var_value,
                                                 use_direct_eval_method );
@@ -288,7 +287,7 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
                                       primary_indep_var_value, random_number );
 }
 
-// Return a random correlated sample from the secondary conditional PDF in the subrange
+// Return a random sample from the secondary conditional PDF in the subrange
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>

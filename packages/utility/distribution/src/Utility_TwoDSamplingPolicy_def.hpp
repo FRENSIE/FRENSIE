@@ -1164,8 +1164,8 @@ inline const std::string Exact::name()
 // Evaluate between bin boundaries using the desired evaluation method
 /*! \details This method performs a type of binary search using sampling to
  *  estimate the CDF to a relative error tolerance to find the interpolation.
- * The lower and upper bounds of the secondary independent variable
- *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
+ *  The lower and upper bounds of the secondary independent variable
+ *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit base method is not
  *  necessary and an exact method is used to evaluate instead.
  */
 template<typename TwoDInterpPolicy,
@@ -1665,7 +1665,7 @@ YIndepType Correlated::sampleInSubrange(
             upper_bin_boundary->second->getLowerBoundOfIndepVar(),
             grid_length_1 );
 
-      // Interpolate between the lower and upper unit based variables
+      // Interpolate between the lower and upper unit base variables
       eta = TwoDInterpPolicy::ZXInterpPolicy::interpolate(
                                                   lower_bin_boundary->first,
                                                   upper_bin_boundary->first,
@@ -1758,7 +1758,7 @@ YIndepType Correlated::sampleDetailed(
                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
                         grid_length_1 );
 
-        // Interpolate between the lower and upper unit based variables
+        // Interpolate between the lower and upper unit base variables
         eta = TwoDInterpPolicy::YXInterpPolicy::interpolate(
                                                   lower_bin_boundary->first,
                                                   upper_bin_boundary->first,

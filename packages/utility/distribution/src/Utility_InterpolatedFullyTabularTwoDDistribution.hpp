@@ -187,7 +187,7 @@ public:
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
-    const PrimaryIndepQuantity primary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
@@ -199,13 +199,13 @@ public:
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    unsigned& trials ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            unsigned& trials ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const double random_number ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -232,9 +232,9 @@ public:
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const double random_number,
-    const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
@@ -248,19 +248,19 @@ public:
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            unsigned& primary_bin_index,
+            unsigned& secondary_bin_index ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            SecondaryIndepQuantity& raw_sample,
+            unsigned& primary_bin_index,
+            unsigned& secondary_bin_index ) const;
 };
 
-/*! \brief The interpolated fully tabular two-dimensional distribution 
+/*! \brief The interpolated fully tabular two-dimensional distribution
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */

@@ -46,6 +46,7 @@ using DistributionType = Utility::FullyTabularTwoDDistribution::DistributionType
 using UnitAwareDistributionType = Utility::UnitAwareFullyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType;
 using XIndepType = Utility::UnitTraits<MegaElectronVolt>::template GetQuantityType<double>::type;
 using YIndepType = Utility::UnitTraits<cgs::length>::template GetQuantityType<double>::type;
+using ZDepType = Utility::UnitTraits<Barn>::template GetQuantityType<double>::type;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -76,6 +77,290 @@ TEUCHOS_UNIT_TEST( Stochastic,
   std::string name = Utility::Stochastic::name();
 
   TEST_ASSERT( name == "Stochastic" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( Stochastic, evaluateDirect )
+{
+  std::function<double(double,double)> evaluate =
+  [&min_func, &max_func, &lower_bin, &upper_bin](double x_value, double y_value)
+  {
+    return Utility::Stochastic::evaluateDirect<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
+      x_value, y_value, min_func, max_func, &Utility::TabularOneDDistribution::evaluate, lower_bin, upper_bin );
+  };
+
+  lower_bin = distribution->begin();
+  upper_bin = lower_bin;
+  ++upper_bin;
+
+  double x_value = 0.0;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};;
+
+  // On the first bin boundary
+  TEST_EQUALITY_CONST( evaluate( 0.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 5.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 11.0 ), 0.0 );
+
+  // In the first bin
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
+
+  TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 1.25 ), 0.7, 1e-15 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 5.0 ), 1.0, 1e-6 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 8.75 ), 5.0/6.0, 1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 0.0 );
+
+  // On the second bin boundary
+  ++lower_bin; ++upper_bin;
+  min_func = [](double x){return 2.5;}; max_func = [](double x){return 7.5;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.0, 2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 2.5 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 5.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 7.5 ), 0.5 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 8.0 ), 0.0 );
+
+  // In the second bin
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 1.25 ), 0.1, 1e-15 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 0.4, 1e-6 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 8.75 ), 7.0/30.0, 1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 0.0 );
+
+  // On the upper bin boundary
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
+
+  TEST_EQUALITY_CONST( evaluate( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 11.0 ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareStochastic, evaluateDirect )
+{
+  std::function<ZDepType(XIndepType,YIndepType)> evaluate = 
+  [&ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
+  {
+    return Utility::Stochastic::evaluateDirect<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,ZDepType>(
+      x_value, y_value, ua_min_func, ua_max_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluate, ua_lower_bin, ua_upper_bin );
+  };
+
+  ua_lower_bin = unit_aware_distribution->begin();
+  ua_upper_bin = ua_lower_bin;
+  ++ua_upper_bin;
+
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+
+  // On the first bin boundary
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 10.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  // In the first bin
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
+                                  0.7*barn,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+                                  1.0*barn,
+                                  1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
+                                  5.0/6.0*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  // On the second bin boundary
+  ++ua_lower_bin; ++ua_upper_bin;
+  ua_min_func = [](XIndepType x){return 2.5*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 7.5*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 0.5*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+
+  // In the second bin
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
+                                  0.1*barn,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
+                                  0.4*barn,
+                                  1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
+                                  7.0/30.0*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  // On the upper bin boundary
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( Stochastic, evaluateSampleBased )
+{
+  std::function<double(double,double)> evaluate =
+  [&min_func, &max_func, &lower_bin, &upper_bin](double x_value, double y_value)
+  {
+    return Utility::Stochastic::evaluateSampleBased<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
+      x_value, y_value, min_func, max_func, &Utility::TabularOneDDistribution::evaluate, lower_bin, upper_bin );
+  };
+
+  lower_bin = distribution->begin();
+  upper_bin = lower_bin;
+  ++upper_bin;
+
+  double x_value = 0.0;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};;
+
+  // On the first bin boundary
+  TEST_EQUALITY_CONST( evaluate( 0.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 5.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 11.0 ), 0.0 );
+
+  // In the first bin
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
+
+  TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 1.25 ), 0.7, 1e-15 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 5.0 ), 1.0, 1e-6 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 8.75 ), 5.0/6.0, 1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 0.0 );
+
+  // On the second bin boundary
+  ++lower_bin; ++upper_bin;
+  min_func = [](double x){return 2.5;}; max_func = [](double x){return 7.5;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.0, 2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 2.5 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 5.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 7.5 ), 0.5 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 8.0 ), 0.0 );
+
+  // In the second bin
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 1.25 ), 0.1, 1e-15 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 0.4, 1e-6 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 8.75 ), 7.0/30.0, 1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 0.0 );
+
+  // On the upper bin boundary
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
+
+  TEST_EQUALITY_CONST( evaluate( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 0.0 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 5.0 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 10.0 ), 0.1 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 11.0 ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareStochastic, evaluateSampleBased )
+{
+  std::function<ZDepType(XIndepType,YIndepType)> evaluate = 
+  [&ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
+  {
+    return Utility::Stochastic::evaluateSampleBased<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,ZDepType>(
+      x_value, y_value, ua_min_func, ua_max_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluate, ua_lower_bin, ua_upper_bin );
+  };
+
+  ua_lower_bin = unit_aware_distribution->begin();
+  ua_upper_bin = ua_lower_bin;
+  ++ua_upper_bin;
+
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+
+  // On the first bin boundary
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 10.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  // In the first bin
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
+                                  0.7*barn,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+                                  1.0*barn,
+                                  1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
+                                  5.0/6.0*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  // On the second bin boundary
+  ++ua_lower_bin; ++ua_upper_bin;
+  ua_min_func = [](XIndepType x){return 2.5*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 7.5*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 0.5*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+
+  // In the second bin
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
+                                  0.1*barn,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
+                                  0.4*barn,
+                                  1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
+                                  7.0/30.0*barn,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  // On the upper bin boundary
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 }
 
 //---------------------------------------------------------------------------//
@@ -1013,7 +1298,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the secondary distribution beyond the second bin
     distribution_data[2].first = 2.0;
-    distribution_data[2].second = distribution_data[0].second;
+    distribution_data[2].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
 
     distribution.reset( new Utility::FullyTabularTwoDDistribution::DistributionType(
                                                         distribution_data ) );
@@ -1044,7 +1329,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the secondary distribution beyond the second bin
     distribution_data[2].first = 2.0*MeV;
-    distribution_data[2].second = distribution_data[0].second;
+    distribution_data[2].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
 
     unit_aware_distribution.reset(
         new Utility::UnitAwareFullyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType(
@@ -1063,5 +1348,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstLinLinLinInterpolatedFullyTabularTwoDDistribution.cpp
+// end tstStochasticTwoDSamplingPolicy.cpp
 //---------------------------------------------------------------------------//

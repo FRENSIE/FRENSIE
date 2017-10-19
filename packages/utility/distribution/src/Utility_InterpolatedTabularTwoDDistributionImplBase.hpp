@@ -121,13 +121,13 @@ public:
               max_secondary_indep_var_functor,
             const bool use_direct_eval_method = true ) const;
 
-  //! Evaluate the secondary conditional PDF using unit based interpolation
+  //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
             const bool use_direct_eval_method = true ) const;
 
-  //! Evaluate the secondary conditional PDF using unit based interpolation
+  //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
@@ -235,13 +235,6 @@ protected:
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               max_secondary_indep_var_functor ) const;
-
-  //! Sample the bin boundary that will be used for stochastic sampling
-  typename DistributionType::const_iterator
-  sampleBinBoundary(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const typename DistributionType::const_iterator lower_bin_boundary,
-    const typename DistributionType::const_iterator upper_bin_boundary ) const;
 
 private:
 

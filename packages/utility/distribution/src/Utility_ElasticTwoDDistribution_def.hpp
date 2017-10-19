@@ -72,7 +72,7 @@ UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndepe
 //// EVALUATING METHODS
 ////---------------------------------------------------------------------------//
 
-// Evaluate the distribution using unit based interpolation
+// Evaluate the distribution
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,

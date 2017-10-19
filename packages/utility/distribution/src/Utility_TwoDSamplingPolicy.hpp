@@ -37,16 +37,16 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateCosSampleBased(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const double rel_error_tol,
-                              const double error_tol,
-                              unsigned max_number_of_iterations );
+                      const XIndepType& x_indep_value,
+                      const YIndepType& y_indep_value,
+                      const YBoundsFunctor& min_y_indep_functor,
+                      const YBoundsFunctor& max_y_indep_functor,
+                      const EvaluationMethod& evaluate,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary,
+                      const double rel_error_tol = 1e-7,
+                      const double error_tol = 1e-15,
+                      unsigned max_number_of_iterations = 500u );
 
   //! Evaluate between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
@@ -58,19 +58,21 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateSampleBased(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const ReturnType& below_lower_bound_return,
-                              const ReturnType& above_upper_bound_return,
-                              const double fuzzy_boundary_tol,
-                              const double rel_error_tol,
-                              const double error_tol,
-                              unsigned max_number_of_iterations );
+              const XIndepType& x_indep_value,
+              const YIndepType& y_indep_value,
+              const YBoundsFunctor& min_y_indep_functor,
+              const YBoundsFunctor& max_y_indep_functor,
+              const EvaluationMethod& evaluate,
+              const YZIterator& lower_bin_boundary,
+              const YZIterator& upper_bin_boundary,
+              const ReturnType& below_lower_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const ReturnType& above_upper_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const double fuzzy_boundary_tol = 1e-3,
+              const double rel_error_tol = 1e-7,
+              const double error_tol = 1e-15,
+              unsigned max_number_of_iterations = 500u );
 
   //! Evaluate between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
@@ -82,16 +84,18 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateDirect(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const ReturnType& below_lower_bound_return,
-                              const ReturnType& above_upper_bound_return,
-                              const double fuzzy_boundary_tol );
+              const XIndepType& x_indep_value,
+              const YIndepType& y_indep_value,
+              const YBoundsFunctor& min_y_indep_functor,
+              const YBoundsFunctor& max_y_indep_functor,
+              const EvaluationMethod& evaluate,
+              const YZIterator& lower_bin_boundary,
+              const YZIterator& upper_bin_boundary,
+              const ReturnType& below_lower_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const ReturnType& above_upper_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const double fuzzy_boundary_tol = 1e-3 );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
@@ -195,16 +199,16 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateCosSampleBased(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const double rel_error_tol,
-                              const double error_tol,
-                              unsigned max_number_of_iterations );
+                      const XIndepType& x_indep_value,
+                      const YIndepType& y_indep_value,
+                      const YBoundsFunctor& min_y_indep_functor,
+                      const YBoundsFunctor& max_y_indep_functor,
+                      const EvaluationMethod& evaluate,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary,
+                      const double rel_error_tol = 1e-7,
+                      const double error_tol = 1e-15,
+                      unsigned max_number_of_iterations = 500u );
 
   //! Evaluate between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
@@ -216,19 +220,21 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateSampleBased(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const ReturnType& below_lower_bound_return,
-                              const ReturnType& above_upper_bound_return,
-                              const double fuzzy_boundary_tol,
-                              const double rel_error_tol,
-                              const double error_tol,
-                              unsigned max_number_of_iterations );
+              const XIndepType& x_indep_value,
+              const YIndepType& y_indep_value,
+              const YBoundsFunctor& min_y_indep_functor,
+              const YBoundsFunctor& max_y_indep_functor,
+              const EvaluationMethod& evaluate,
+              const YZIterator& lower_bin_boundary,
+              const YZIterator& upper_bin_boundary,
+              const ReturnType& below_lower_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const ReturnType& above_upper_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const double fuzzy_boundary_tol = 1e-3,
+              const double rel_error_tol = 1e-7,
+              const double error_tol = 1e-15,
+              unsigned max_number_of_iterations = 500u );
 
 
   //! Evaluate between bin boundaries using the desired evaluation method
@@ -241,16 +247,18 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateDirect(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const ReturnType& below_lower_bound_return,
-                              const ReturnType& above_upper_bound_return,
-                              const double fuzzy_boundary_tol );
+              const XIndepType& x_indep_value,
+              const YIndepType& y_indep_value,
+              const YBoundsFunctor& min_y_indep_functor,
+              const YBoundsFunctor& max_y_indep_functor,
+              const EvaluationMethod& evaluate,
+              const YZIterator& lower_bin_boundary,
+              const YZIterator& upper_bin_boundary,
+              const ReturnType& below_lower_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const ReturnType& above_upper_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const double fuzzy_boundary_tol = 1e-3 );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
@@ -343,16 +351,16 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateCosSampleBased(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const double rel_error_tol,
-                              const double error_tol,
-                              unsigned max_number_of_iterations );
+                      const XIndepType& x_indep_value,
+                      const YIndepType& y_indep_value,
+                      const YBoundsFunctor& min_y_indep_functor,
+                      const YBoundsFunctor& max_y_indep_functor,
+                      const EvaluationMethod& evaluate,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary,
+                      const double rel_error_tol = 1e-7,
+                      const double error_tol = 1e-15,
+                      unsigned max_number_of_iterations = 500u );
 
   //! Evaluate between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
@@ -364,19 +372,21 @@ public:
            typename EvaluationMethod,
            typename YBoundsFunctor>
   static ReturnType evaluateSampleBased(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const ReturnType& below_lower_bound_return,
-                              const ReturnType& above_upper_bound_return,
-                              const double fuzzy_boundary_tol,
-                              const double rel_error_tol,
-                              const double error_tol,
-                              unsigned max_number_of_iterations );
+              const XIndepType& x_indep_value,
+              const YIndepType& y_indep_value,
+              const YBoundsFunctor& min_y_indep_functor,
+              const YBoundsFunctor& max_y_indep_functor,
+              const EvaluationMethod& evaluate,
+              const YZIterator& lower_bin_boundary,
+              const YZIterator& upper_bin_boundary,
+              const ReturnType& below_lower_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const ReturnType& above_upper_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const double fuzzy_boundary_tol = 1e-3,
+              const double rel_error_tol = 1e-7,
+              const double error_tol = 1e-15,
+              unsigned max_number_of_iterations = 500u );
 
 
   //! Evaluate between bin boundaries using the desired evaluation method
@@ -388,17 +398,19 @@ public:
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateDirect(
-                              const XIndepType& x_indep_value,
-                              const YIndepType& y_indep_value,
-                              const YBoundsFunctor& min_y_indep_functor,
-                              const YBoundsFunctor& max_y_indep_functor,
-                              const EvaluationMethod& evaluate,
-                              const YZIterator& lower_bin_boundary,
-                              const YZIterator& upper_bin_boundary,
-                              const ReturnType& below_lower_bound_return,
-                              const ReturnType& above_upper_bound_return,
-                              const double fuzzy_boundary_tol );
+static ReturnType evaluateDirect(
+              const XIndepType& x_indep_value,
+              const YIndepType& y_indep_value,
+              const YBoundsFunctor& min_y_indep_functor,
+              const YBoundsFunctor& max_y_indep_functor,
+              const EvaluationMethod& evaluate,
+              const YZIterator& lower_bin_boundary,
+              const YZIterator& upper_bin_boundary,
+              const ReturnType& below_lower_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const ReturnType& above_upper_bound_return =
+                Utility::QuantityTraits<ReturnType>::zero(),
+              const double fuzzy_boundary_tol = 1e-3 );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
