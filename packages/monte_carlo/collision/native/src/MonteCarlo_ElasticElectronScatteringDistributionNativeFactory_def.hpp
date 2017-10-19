@@ -577,7 +577,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     for ( unsigned i = 0; i < angular_grid.size(); ++i )
     {
       evaluated_pdf[i] =
-        scattering_function->evaluateExact( energy, angular_grid[i] );
+        scattering_function->evaluate( energy, angular_grid[i], false );
     }
     testPostcondition( evaluated_pdf.size() > 1 );
     testPostcondition( angular_grid.size() > 1 );
@@ -632,9 +632,10 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-            cutoff_scattering_function->evaluateSecondaryConditionalCDFExact(
+            cutoff_scattering_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
-                                                        cutoff_angle_cosine );
+                                                        cutoff_angle_cosine,
+                                                        false );
 
     // Get the reduced cutoff cross section
     double reduced_cross_section = cutoff_cross_section[n]*cutoff_cdf;

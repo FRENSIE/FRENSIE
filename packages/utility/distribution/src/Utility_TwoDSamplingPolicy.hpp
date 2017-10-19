@@ -27,6 +27,72 @@ struct Stochastic
 {
 public:
 
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateCosSampleBased(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const double rel_error_tol,
+                              const double error_tol,
+                              unsigned max_number_of_iterations );
+
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateSampleBased(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const ReturnType& below_lower_bound_return,
+                              const ReturnType& above_upper_bound_return,
+                              const double fuzzy_boundary_tol,
+                              const double rel_error_tol,
+                              const double error_tol,
+                              unsigned max_number_of_iterations );
+
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateDirect(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const ReturnType& below_lower_bound_return,
+                              const ReturnType& above_upper_bound_return,
+                              const double fuzzy_boundary_tol );
+
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
            typename XIndepType,
@@ -119,6 +185,73 @@ struct Exact
 {
 public:
 
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateCosSampleBased(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const double rel_error_tol,
+                              const double error_tol,
+                              unsigned max_number_of_iterations );
+
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateSampleBased(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const ReturnType& below_lower_bound_return,
+                              const ReturnType& above_upper_bound_return,
+                              const double fuzzy_boundary_tol,
+                              const double rel_error_tol,
+                              const double error_tol,
+                              unsigned max_number_of_iterations );
+
+
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateDirect(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const ReturnType& below_lower_bound_return,
+                              const ReturnType& above_upper_bound_return,
+                              const double fuzzy_boundary_tol );
+
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,
            typename XIndepType,
@@ -199,6 +332,73 @@ public:
 struct Correlated
 {
 public:
+
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateCosSampleBased(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const double rel_error_tol,
+                              const double error_tol,
+                              unsigned max_number_of_iterations );
+
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateSampleBased(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const ReturnType& below_lower_bound_return,
+                              const ReturnType& above_upper_bound_return,
+                              const double fuzzy_boundary_tol,
+                              const double rel_error_tol,
+                              const double error_tol,
+                              unsigned max_number_of_iterations );
+
+
+  //! Evaluate between bin boundaries using the desired evaluation method
+  template<typename TwoDInterpPolicy,
+           typename BaseOneDDistributionType,
+           typename XIndepType,
+           typename YIndepType,
+           typename ReturnType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename YBoundsFunctor>
+  static ReturnType evaluateDirect(
+                              const XIndepType& x_indep_value,
+                              const YIndepType& y_indep_value,
+                              const YBoundsFunctor& min_y_indep_functor,
+                              const YBoundsFunctor& max_y_indep_functor,
+                              const EvaluationMethod& evaluate,
+                              const YZIterator& lower_bin_boundary,
+                              const YZIterator& upper_bin_boundary,
+                              const ReturnType& below_lower_bound_return,
+                              const ReturnType& above_upper_bound_return,
+                              const double fuzzy_boundary_tol );
 
   //! Sample between bin boundaries using the desired sampling functor
   template<typename TwoDInterpPolicy,

@@ -396,9 +396,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
 
 MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+        xss_data_extractor->extractAtomicNumber(),
         *xss_data_extractor,
-        b_scattering_distribution,
-        xss_data_extractor->extractAtomicNumber() );
+        b_scattering_distribution );
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(

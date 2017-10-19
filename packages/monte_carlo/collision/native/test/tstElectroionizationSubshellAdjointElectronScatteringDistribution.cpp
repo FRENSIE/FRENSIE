@@ -334,7 +334,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                                pdf ) );
   }
 
-  double evaluation_tol = 1e-7;
+  double evaluation_tol = 1e-10;
 
   { // Create the LinLinLog scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(

@@ -87,69 +87,53 @@ public:
   virtual ~UnitAwareFullyTabularTwoDDistribution()
   { /* ... */ }
 
- //! Correlated evaluate the distribution (Unit Based)
-  virtual DepQuantity correlatedEvaluateInBoundaries(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value,
-        const SecondaryIndepQuantity min_secondary_indep_var_value,
-        const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
-
- //! Correlated evaluate the distribution (Unit Based)
-  virtual DepQuantity correlatedEvaluate(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
+  using ParentType::evaluate;
+  using ParentType::evaluateSecondaryConditionalPDF;
+  using ParentType::sampleSecondaryConditional;
 
   //! Evaluate the distribution
-  virtual DepQuantity evaluateExact(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
-
-  //! Correlated evaluate the secondary conditional PDF (Unit Based)
-  virtual InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value,
-        const SecondaryIndepQuantity min_secondary_indep_var_value,
-        const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
-
-  //! Correlated evaluate the secondary conditional PDF (Unit Based)
-  virtual InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
+  virtual DepQuantity evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method = true ) const;
 
   //! Evaluate the secondary conditional PDF
-  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
+  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method = true ) const;
 
   //! Evaluate the secondary conditional CDF
   virtual double evaluateSecondaryConditionalCDF(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
-
-  //! Correlated evaluate the secondary conditional CDF
-  virtual double correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value,
-        const SecondaryIndepQuantity min_secondary_indep_var_value,
-        const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
-
-  //! Correlated evaluate the secondary conditional CDF
-  virtual double correlatedEvaluateSecondaryConditionalCDF(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const bool use_direct_eval_method = true ) const = 0;
 
   //! Evaluate the secondary conditional CDF
-  virtual double evaluateSecondaryConditionalCDFExact(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
-
-  using ParentType::sampleSecondaryConditional;
+  virtual double evaluateSecondaryConditionalCDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method = true ) const;
 
   //! Return a random sample from the secondary conditional PDF
   virtual SecondaryIndepQuantity sampleSecondaryConditional(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const = 0;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -158,10 +142,12 @@ public:
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const double random_number,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
@@ -170,10 +156,12 @@ public:
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor,
-        const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
@@ -183,11 +171,13 @@ public:
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const double random_number,
-        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor,
-        const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
@@ -209,15 +199,89 @@ protected:
   { /* ... */ }
 };
 
+// Evaluate the distribution
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method ) const
+  -> DepQuantity
+{
+  return this->evaluate( primary_indep_var_value,
+                         secondary_indep_var_value,
+                         use_direct_eval_method );
+}
+
+// Evaluate the secondary conditional PDF
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method ) const
+  ->InverseSecondaryIndepQuantity
+{
+  std::cout << std::setprecision(16) << std::scientific << "\n\nThis should not be called called\n\n"<< std::endl;
+  return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
+                                                secondary_indep_var_value,
+                                                use_direct_eval_method );
+}
+
+// Evaluate the secondary conditional CDF
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline double UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method ) const
+{
+  return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
+                                                secondary_indep_var_value,
+                                                use_direct_eval_method );
+}
+
+// Return a random sample from the secondary conditional PDF
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditional( primary_indep_var_value );
+}
+
 // Return a random sample from the secondary conditional PDF at the CDF val
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const double random_number,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditionalWithRandomNumber(
@@ -229,10 +293,12 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
-        const PrimaryIndepQuantity primary_indep_var_value,
-        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-        const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor,
-        const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditionalInSubrange(
@@ -244,11 +310,13 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const double random_number,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor,
-    const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditionalWithRandomNumberInSubrange(

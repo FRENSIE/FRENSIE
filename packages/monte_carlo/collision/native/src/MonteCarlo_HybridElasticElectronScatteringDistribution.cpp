@@ -51,7 +51,7 @@ double HybridElasticElectronScatteringDistribution::evaluate(
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
     return d_hybrid_distribution->evaluate(
-      incoming_energy, scattering_angle_cosine );
+              incoming_energy, scattering_angle_cosine, true );
   }
   else
     return 0.0;
@@ -72,8 +72,12 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
 
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
-    return d_hybrid_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-      incoming_energy, scattering_angle_cosine, -1.0, d_cutoff_angle_cosine );
+    return d_hybrid_distribution->evaluateSecondaryConditionalPDF(
+              incoming_energy,
+              scattering_angle_cosine,
+              [](const double& x){return -1.0;},
+              [this](const double& x){return d_cutoff_angle_cosine;},
+              false );
   }
   else
     return 0.0;
@@ -92,8 +96,8 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return d_hybrid_distribution->evaluateSecondaryConditionalCDFExact(
-                                    incoming_energy, scattering_angle_cosine);
+  return d_hybrid_distribution->evaluateSecondaryConditionalCDF(
+            incoming_energy, scattering_angle_cosine, false );
 }
 
 // Sample an outgoing energy and direction from the distribution

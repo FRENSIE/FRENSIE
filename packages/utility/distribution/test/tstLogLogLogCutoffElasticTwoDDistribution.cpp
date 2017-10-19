@@ -441,51 +441,51 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluate )
   initialize<Utility::Stochastic>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0, -1.0 ), 0.1, 1e-14 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 0.5 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0, 0.999999 ), 1.0, 1e-14 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0, -1.0, false ), 0.1, 1e-14 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0, false ), 0.5 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0, 0.999999, false ), 1.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, -1.0 ), 0.1, 1e-14 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.0 ), 0.5 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, 0.999999 ), 1.0, 1e-14 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, -1.0, false ), 0.1, 1e-14 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 0.0, false ), 0.5 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.0, 0.999999, false ), 1.0, 1e-14 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, -1.0, false ),
                           3.84558575793691015399e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 0.0, false ),
                           1.92279287896845474393,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 0.999999, false ),
                           3.84558575793690993194e+00,
                           1e-14 );
 
   // On the upper bin boundary
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0, -1.0 ), 1.0, 1e-14 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0 ), 5.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0, 0.999999 ), 10.0, 1e-14 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0, -1.0, false ), 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0, false ), 5.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0, 0.999999, false ), 10.0, 1e-14 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0, false ), 5.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.999999, false ), 10.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -499,57 +499,57 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0*barn );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   0.1*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   0.1*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.0*cgs::dimensionless(), false ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0*barn );
 
   // In the first bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, -1.0*cgs::dimensionless(), false ),
                                   3.84558575793691015399e-01*barn,
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   1.92279287896845474393*barn,
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 0.999999*cgs::dimensionless(), false ),
                                   3.84558575793690993194e+00*barn,
                                   1e-14 );
 
   // On the upper bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   1.0*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::dimensionless(), false ), 5.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.999999*cgs::dimensionless(), false ), 10.0*barn );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0*barn );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 5.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 10.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -561,51 +561,51 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, evaluateExact )
   initialize<Utility::Exact>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 0.0, -1.0 ), 0.1, 1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 0.0, 0.999999 ), 1.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.0, -1.0, false ), 0.1, 1e-14 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.999999, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.0, -1.0 ), 0.1, 1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 1.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 1.0, 0.999999 ), 1.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.0, -1.0, false ), 0.1, 1e-14 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 0.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 0.999999, false ), 1.0 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, -1.0, false ),
                           3.84558575793691015399e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.0, false ),
                           1.92279287896845474393,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.999999, false ),
                           3.84558575793690993194e+00,
                           1e-14 );
 
   // On the upper bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateExact( 2.0, -1.0 ), 1.0, 1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 2.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 2.0, 0.999999 ), 10.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 2.0, -1.0, false ), 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 0.0, false ), 5.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 0.999999, false ), 10.0 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateExact( 3.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, false ), 5.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.999999, false ), 10.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -619,57 +619,57 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0*barn );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   0.1*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   0.1*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 0.0*cgs::dimensionless(), false ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0*barn );
 
   // In the first bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, -1.0*cgs::dimensionless(), false ),
                                   3.84558575793691015399e-01*barn,
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   1.92279287896845474393*barn,
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 1.5*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 0.999999*cgs::dimensionless(), false ),
                                   3.84558575793690993194e+00*barn,
                                   1e-14 );
 
   // On the upper bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 2.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   1.0*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 2.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 0.0*cgs::dimensionless(), false ), 5.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 0.999999*cgs::dimensionless(), false ), 10.0*barn );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0*barn );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 5.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 10.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -681,52 +681,52 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution, correlatedEvaluate )
   initialize<Utility::Correlated>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 0.0, -1.0 ), 0.1, 1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 0.0, 0.999999 ), 1.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.0, -1.0, false ), 0.1, 1e-14 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.999999, false ), 1.0 );
 
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.0, -1.0 ), 0.1, 1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 1.0, 0.0 ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 1.0, 0.999999 ), 1.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.0, -1.0, false ), 0.1, 1e-14 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 0.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 0.999999, false ), 1.0 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, -1.0, false ),
                           3.84558575793691015399e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.0, false ),
                           1.92279287896845474393,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluate( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 0.999999, false ),
                           3.84558575793690993194e+00,
                           1e-14 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 2.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, -1.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 0.0, false ), 5.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 0.999999, false ), 10.0 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.0 ), 5.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluate( 3.0, 0.999999 ), 10.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, false ), 5.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.999999, false ), 10.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -740,55 +740,55 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0*barn );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   0.1*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   0.1*barn,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 0.0*cgs::dimensionless() ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 0.0*cgs::dimensionless(), false ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0*barn );
 
   // In the first bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, -1.0*cgs::dimensionless(), false ),
                                   3.84558575793691015399e-01*barn,
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   1.92279287896845474393*barn,
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluate( 1.5*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 0.999999*cgs::dimensionless(), false ),
                                   3.84558575793690993194e+00*barn,
                                   1e-14 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 2.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, -1.0*cgs::dimensionless(), false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 0.0*cgs::dimensionless(), false ), 5.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 0.999999*cgs::dimensionless(), false ), 10.0*barn );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0*barn );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, -1.0*cgs::dimensionless() ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.0*cgs::dimensionless() ), 5.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluate( 3.0*MeV, 0.999999*cgs::dimensionless() ), 10.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 5.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 10.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -801,73 +801,73 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   initialize<Utility::Stochastic>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, false ),
                           9.52381632653547249845e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, false ),
                           4.76190816326773569411e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999, false ),
                           9.52381632653547138823e-01,
                           1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0, false ),
                           9.52381632653547249845e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0, false ),
                           4.76190816326773569411e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.999999, false ),
                           9.52381632653547138823e-01,
                           1e-14 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0, false ),
                           4.761908163267735139e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.999999, false ),
                           9.523816326535470278e-01,
                           1e-14 );
 
   // On the upper bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
@@ -883,73 +883,73 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653547249845e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773569411e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547138823e-01/cgs::dimensionless(),
                                   1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653547249845e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773569411e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547138823e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // In the first bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // On the upper bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
@@ -964,75 +964,75 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   initialize<Utility::Exact>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, false ),
                           9.52381632653547249845e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, false ),
                           4.76190816326773569411e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999, false ),
                           9.52381632653547138823e-01,
                           1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0, false ),
                           9.52381632653547249845e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0, false ),
                           4.76190816326773569411e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.999999, false ),
                           9.52381632653547138823e-01,
                           1e-14 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
 
   // On the upper bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
@@ -1048,73 +1048,73 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact     ( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653547249845e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773569411e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 0.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547138823e-01/cgs::dimensionless(),
                                   1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653547249845e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773569411e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547138823e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // In the first bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 1.5*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // On the upper bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 2.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDFExact( 3.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
@@ -1129,75 +1129,75 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   initialize<Utility::Correlated>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, false ),
                           9.52381632653547249845e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, false ),
                           4.76190816326773569411e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.999999, false ),
                           9.52381632653547138823e-01,
                           1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, -1.0, false ),
                           9.52381632653547249845e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.0, false ),
                           4.76190816326773569411e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 0.999999, false ),
                           9.52381632653547138823e-01,
                           1e-14 );
 
   // In the first bin
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
 
   // On the upper bin boundary
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, -1.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ),
                           9.52381632653546972289e-02,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, 0.0 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ),
                           4.76190816326773513900e-01,
                           1e-14 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0, 0.999999 ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.999999, false ),
                           9.52381632653547027800e-01,
                           1e-14 );
 
@@ -1213,73 +1213,73 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF     ( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653547249845e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773569411e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547138823e-01/cgs::dimensionless(),
                                   1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653547249845e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773569411e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547138823e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // In the first bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 1.5*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // On the upper bin boundary
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 2.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0/cgs::dimensionless() );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ),
                                   9.52381632653546972289e-02/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   4.76190816326773513900e-01/cgs::dimensionless(),
                                   1e-14 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless() ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ),
                                   9.52381632653547027800e-01/cgs::dimensionless(),
                                   1e-14 );
 
@@ -1294,59 +1294,59 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   initialize<Utility::Stochastic>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.999999, false ), 1.0 );
 
   // In the first bin
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.0, false ),
                           2.85714489796064063931e-01,
                           1e-14 );
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.999999, false ), 1.0 );
 
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0, false ),
                           2.85714489796064063931e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999, false ), 1.0 );
 
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0, false ),
                           2.85714489796064063931e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1360,55 +1360,55 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0 );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064174953e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064174953e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // In the first bin
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0 );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1421,59 +1421,59 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   initialize<Utility::Exact>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.999999, false ), 1.0 );
 
   // In the first bin
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.999999, false ), 1.0 );
 
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0, false ),
                           2.85714489796064063931e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999, false ), 1.0 );
 
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, false ),
                           2.85714489796064063931e-01,
                           1e-14 );
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.999999, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1487,55 +1487,55 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0 );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064174953e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064174953e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // In the first bin
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 1.5*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 2.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0 );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDFExact( 3.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1548,59 +1548,59 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
   initialize<Utility::Correlated>( tab_distribution, distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
 
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.999999, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 0.999999, false ), 1.0 );
 
   // In the first bin
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.0, false ),
                           2.85714489796064174953e-01,
                           1e-14 );
 
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 0.999999, false ), 1.0 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0, false ),
                           2.85714489796064063931e-01,
                           1e-14 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999, false ), 1.0 );
 
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0, 0.999999 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.999999, false ), 0.0 );
 
   // After the second bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.0 ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0, false ),
                           2.85714489796064063931e-01,
                           1e-14 );
 
-  TEST_EQUALITY_CONST( tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0, 0.999999 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.999999, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1614,55 +1614,55 @@ TEUCHOS_UNIT_TEST( UnitAwareElasticTwoDDistribution,
                                    unit_aware_distribution );
 
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0 );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064174953e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the first bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064174953e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // In the first bin
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 1.5*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 2.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   // After the second bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless() ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 0.0 );
 
   // After the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless() ), 0.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless() ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::dimensionless(), false ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::dimensionless(), false ),
                                   2.85714489796064063931e-01,
                                   1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->correlatedEvaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless() ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.999999*cgs::dimensionless(), false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }

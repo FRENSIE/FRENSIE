@@ -128,34 +128,28 @@ public:
   //! The distribution type
   typedef typename ParentType::DistributionType DistributionType;
 
+  using ParentType::sampleSecondaryConditional;
+  using ParentType::evaluateSecondaryConditionalPDF;
   using ParentType::ParentType::sampleSecondaryConditionalWithRandomNumber;
   using ParentType::ParentType::sampleSecondaryConditionalInSubrange;
   using ParentType::ParentType::sampleSecondaryConditionalWithRandomNumberInSubrange;
 
   //! Constructor
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
-                            const DistributionType& distribution,
-                            const double fuzzy_boundary_tol = 1e-3,
-                            const double evaluate_relative_error_tol = 1e-7,
-                            const double evaluate_error_tol = 1e-16 )
-    : ParentType( distribution, fuzzy_boundary_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol ),
-      d_error_tol( evaluate_error_tol )
-  { /* ... */ }
+        const DistributionType& distribution,
+        const double fuzzy_boundary_tol = 1e-3,
+        const double evaluate_relative_error_tol = 1e-7,
+        const double evaluate_error_tol = 1e-16 );
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
   UnitAwareInterpolatedFullyTabularTwoDDistribution(
-                   const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                   const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
-                   const double fuzzy_boundary_tol = 1e-3,
-                   const double evaluate_relative_error_tol = 1e-7,
-                   const double evaluate_error_tol = 1e-16 )
-    : ParentType( primary_indep_grid, secondary_distributions, fuzzy_boundary_tol ),
-      d_relative_error_tol( evaluate_relative_error_tol ),
-      d_error_tol( evaluate_error_tol )
-  { /* ... */ }
+        const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+        const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
+        const double fuzzy_boundary_tol = 1e-3,
+        const double evaluate_relative_error_tol = 1e-7,
+        const double evaluate_error_tol = 1e-16 );
 
   //! Raw constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -175,61 +169,21 @@ public:
   ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
   { /* ... */ }
 
-  //! Correlated evaluate the distribution (unit based)
-  DepQuantity correlatedEvaluateInBoundaries(
+  //! Evaluate the secondary conditional CDF
+  double evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
-            const SecondaryIndepQuantity min_secondary_indep_var_value,
-            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
-
-  //! Correlated evaluate the distribution (unit based)
-  DepQuantity correlatedEvaluate(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the distribution
-  DepQuantity evaluateExact(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Correlated evaluate the secondary conditional PDF (unit based)
-  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const SecondaryIndepQuantity min_secondary_indep_var_value,
-            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
-
-  //! Correlated evaluate the secondary conditional PDF (unit based)
-  InverseSecondaryIndepQuantity correlatedEvaluateSecondaryConditionalPDF(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional PDF
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDFExact(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const;
+            const bool use_direct_eval_method = true ) const;
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Correlated evaluate the secondary conditional CDF (unit based)
-  double correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-            const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
-            const SecondaryIndepQuantity min_secondary_indep_var_value,
-            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
-
-  //! Correlated evaluate the secondary conditional CDF (unit based)
-  double correlatedEvaluateSecondaryConditionalCDF(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF
-  double evaluateSecondaryConditionalCDFExact(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const;
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method = true ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
@@ -237,9 +191,11 @@ public:
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
@@ -253,22 +209,26 @@ public:
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const double random_number,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
-  //! Return a random correlated sample from the secondary conditional PDF in the subrange
+  //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor,
-    const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
@@ -278,11 +238,13 @@ public:
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const double random_number,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor,
-    const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
@@ -296,59 +258,6 @@ public:
                             SecondaryIndepQuantity& raw_sample,
                             unsigned& primary_bin_index,
                             unsigned& secondary_bin_index ) const;
-
-private:
-
-  //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
-           typename EvaluationMethod>
-  ReturnType correlatedEvaluateImpl(
-                    const PrimaryIndepQuantity primary_indep_var_value,
-                    const SecondaryIndepQuantity secondary_indep_var_value,
-                    const SecondaryIndepQuantity min_secondary_indep_var_value,
-                    const SecondaryIndepQuantity max_secondary_indep_var_value,
-                    EvaluationMethod evaluate,
-                    const ReturnType below_lower_bound_return =
-                    QuantityTraits<ReturnType>::zero(),
-                    const ReturnType above_upper_bound_return =
-                    QuantityTraits<ReturnType>::zero(),
-                    unsigned max_number_of_iterations = 500 ) const;
-
-  //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
-           typename EvaluationMethod>
-  ReturnType evaluateExactImpl(
-                    const PrimaryIndepQuantity primary_indep_var_value,
-                    const SecondaryIndepQuantity secondary_indep_var_value,
-                    EvaluationMethod evaluate,
-                    const ReturnType below_lower_bound_return =
-                    QuantityTraits<ReturnType>::zero(),
-                    const ReturnType above_upper_bound_return =
-                    QuantityTraits<ReturnType>::zero(),
-                    unsigned max_number_of_iterations = 500 ) const;
-
-  //! Sample from the distribution using the desired sampling functor
-  template<typename SampleFunctor>
-  SecondaryIndepQuantity sampleExactImpl(
-                    const PrimaryIndepQuantity primary_indep_var_value,
-                    SampleFunctor sample_functor ) const;
-
-  // Return the correlated sampling functor for the desired bin boundary
-  template<typename SampleFunctor>
-  void getCorrelatedSampleInSubrangeFunctor(
-                    typename DistributionType::const_iterator bin_boundary,
-                    const SecondaryIndepQuantity max_secondary_indep_var_value,
-                    const double random_number,
-                    SampleFunctor& sample_functor,
-                    SecondaryIndepQuantity& bin_boundary_max_value ) const;
-
-  // The relative error tolerance for the evaluate impl schemes
-  double d_relative_error_tol;
-
-  // The error tolerance for the evaluate impl schemes
-  double d_error_tol;
 };
 
 /*! \brief The interpolated fully tabular two-dimensional distribution 

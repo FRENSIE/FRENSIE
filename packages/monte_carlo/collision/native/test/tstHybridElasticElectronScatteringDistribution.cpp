@@ -1581,7 +1581,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-            full_continuous_function->evaluateSecondaryConditionalCDFExact(
+            full_continuous_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
                                                         cutoff_angle_cosine );
 
@@ -1647,7 +1647,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-            full_continuous_function->evaluateSecondaryConditionalCDFExact(
+            full_continuous_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
                                                         cutoff_angle_cosine );
 
@@ -1713,7 +1713,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-            full_continuous_function->evaluateSecondaryConditionalCDFExact(
+            full_continuous_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
                                                         cutoff_angle_cosine );
 

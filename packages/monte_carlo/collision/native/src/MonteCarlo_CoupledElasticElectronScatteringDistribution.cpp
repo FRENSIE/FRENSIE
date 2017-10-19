@@ -89,7 +89,9 @@ double CoupledElasticElectronScatteringDistribution::evaluate(
   else
   {
     // evaluate on the cutoff distribution
-    return d_coupled_dist->evaluateExact( incoming_energy, scattering_angle_cosine );
+    return d_coupled_dist->evaluate( incoming_energy,
+                                     scattering_angle_cosine,
+                                     false );
   }
 }
 
@@ -118,9 +120,10 @@ double CoupledElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     // evaluate on the cutoff distribution
-    return d_coupled_dist->evaluateSecondaryConditionalPDFExact(
+    return d_coupled_dist->evaluateSecondaryConditionalPDF(
                                 incoming_energy,
-                                scattering_angle_cosine );
+                                scattering_angle_cosine,
+                                false );
   }
 }
 
@@ -149,9 +152,10 @@ double CoupledElasticElectronScatteringDistribution::evaluateCDF(
   else
   {
     // evaluate CDF on the cutoff distribution
-    return d_coupled_dist->evaluateSecondaryConditionalCDFExact(
+    return d_coupled_dist->evaluateSecondaryConditionalCDF(
                     incoming_energy,
-                    scattering_angle_cosine );
+                    scattering_angle_cosine,
+                    false );
   }
 }
 
@@ -238,15 +242,17 @@ double CoupledElasticElectronScatteringDistribution::evaluateScreenedRutherfordC
 double CoupledElasticElectronScatteringDistribution::evaluateAtCutoff(
                     const double incoming_energy ) const
 {
-  return d_coupled_dist->evaluateExact( incoming_energy, ElasticTraits::mu_peak );
+  return d_coupled_dist->evaluate( incoming_energy,
+                                   ElasticTraits::mu_peak,
+                                   false );
 }
 
 // Evaluate the PDF at the cutoff angle cosine
 double CoupledElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
                     const double incoming_energy ) const
 {
-  return d_coupled_dist->evaluateSecondaryConditionalPDFExact(
-                                    incoming_energy, ElasticTraits::mu_peak );
+  return d_coupled_dist->evaluateSecondaryConditionalPDF(
+                            incoming_energy, ElasticTraits::mu_peak, false );
 
 //  return this->evaluateAtCutoff( incoming_energy )*
 //         this->evaluateCDFAtCutoff( incoming_energy );

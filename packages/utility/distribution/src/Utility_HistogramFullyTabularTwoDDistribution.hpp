@@ -73,8 +73,8 @@ public:
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
   UnitAwareHistogramFullyTabularTwoDDistribution(
-                   const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                   const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
+            const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+            const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
@@ -84,30 +84,14 @@ public:
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF
-  double correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var,
-                const SecondaryIndepQuantity max_secondary_indep_var ) const;
-
-  //! Evaluate the secondary conditional CDF
-  double correlatedEvaluateSecondaryConditionalCDF(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional CDF
-  double evaluateSecondaryConditionalCDFExact(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const bool use_direct_eval_method = true ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
@@ -122,9 +106,9 @@ public:
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            unsigned& primary_bin_index,
+            unsigned& secondary_bin_index ) const;
 };
 
 /*! The histogram fully tabular two-dimensional distribution (unit-agnostic)

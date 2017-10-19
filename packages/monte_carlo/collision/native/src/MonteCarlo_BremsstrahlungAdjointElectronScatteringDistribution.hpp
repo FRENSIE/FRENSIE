@@ -32,9 +32,6 @@ public:
   virtual ~BremsstrahlungAdjointElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Set the evaluation routines
-  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
-
   //! Return the min incoming energy
   double getMinEnergy() const;
 
@@ -73,16 +70,6 @@ private:
 
   // bremsstrahlung scattering distribution
   std::shared_ptr<TwoDDist> d_adjoint_brem_scatter_dist;
-
-  // The evaluate function pointer
-  std::function<double ( const double, const double )> d_evaluate_function;
-
-  // The evaluatePDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_pdf_function;
-
-  // The evaluateCDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_cdf_function;
-
 };
 
 } // end MonteCarlo namespace

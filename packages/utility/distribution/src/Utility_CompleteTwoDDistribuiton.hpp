@@ -68,7 +68,8 @@ public:
   //! Evaluate the secondary conditional PDF
   virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
                const PrimaryIndepQuantity primary_indep_var_value,
-               const SecondaryIndepQuantity secondary_indep_var_value ) const
+               const SecondaryIndepQuantity secondary_indep_var_value,
+                const bool use_direct_eval_method = true ) const
 
   //! Return a random sample from the distribution
   virtual std::pair<PrimaryIndepQuantity,SecondaryIndepQuantity>
@@ -133,8 +134,9 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 InverseSecondaryIndepQuantity UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const bool use_direct_eval_method ) const
 {
   return this->evaluateJointPDF( primary_indep_var_value,
                                  secondary_indep_var_value )/

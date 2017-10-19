@@ -34,8 +34,6 @@ UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndepe
                 fuzzy_boundary_tol,
                 evaluate_relative_error_tol,
                 evaluate_error_tol ),
-    d_relative_error_tol( evaluate_relative_error_tol ),
-    d_error_tol( evaluate_error_tol ),
     d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
     d_max_upper_bound_conditional_indep_var( SIQT::one() ),
     d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
@@ -63,8 +61,6 @@ UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndepe
                 fuzzy_boundary_tol,
                 evaluate_relative_error_tol,
                 evaluate_error_tol ),
-    d_relative_error_tol( evaluate_relative_error_tol ),
-    d_error_tol( evaluate_error_tol ),
     d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
     d_max_upper_bound_conditional_indep_var( SIQT::one() ),
     d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
@@ -84,126 +80,59 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const bool use_direct_eval_method ) const
   -> DepQuantity
 {
   return this->template evaluateImpl<DepQuantity>(
-                                          primary_indep_var_value,
-                                          secondary_indep_var_value,
-                                          &BaseOneDDistributionType::evaluate );
+                                      primary_indep_var_value,
+                                      secondary_indep_var_value,
+                                      &BaseOneDDistributionType::evaluate,
+                                      use_direct_eval_method );
 }
 
-// Correlated evaluate the distribution (unit based)
-/*! \details This method performs a type of binary search using sampling to
- *  estimate the CDF to a relative error tolerance to find the interpolation.
- * The lower and upper bounds of the secondary independent variable
- *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
- *  necessary and an exact method is used to evaluate instead.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateInBoundaries(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var,
-                const SecondaryIndepQuantity max_secondary_indep_var ) const
-  -> DepQuantity
-{
-  return this->template evaluateExactInSubrangeImpl<DepQuantity>(
-                                          primary_indep_var_value,
-                                          secondary_indep_var_value,
-                                          max_secondary_indep_var,
-                                          &BaseOneDDistributionType::evaluate );
-}
-
-// Evaluate the distribution
-/*! \details This method performs a type of binary search using a unit based
- *  correlated sampling to estimate the CDF to a relative error tolerance in
- *  order to find the proper interpolation. The result is consistent with the
- *  sampleSecondaryConditionalExact methods.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExact(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-  -> DepQuantity
-{
-  return this->template evaluateExactImpl<DepQuantity>(
-                                          primary_indep_var_value,
-                                          secondary_indep_var_value,
-                                          &BaseOneDDistributionType::evaluate );
-}
-
-// Evaluate the secondary conditional PDF using unit based interpolation
+// Evaluate the secondary conditional PDF
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const bool use_direct_eval_method ) const
   -> InverseSecondaryIndepQuantity
 {
   return this->template evaluateImpl<InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluatePDF );
-}
-
-// Correlated evaluate the secondary conditional PDF
-/*! \details This method performs a type of binary search using sampling to
- *  estimate the CDF to a relative error tolerance to find the interpolation.
- * The lower and upper bounds of the secondary independent variable
- *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
- *  necessary and an exact method is used to evaluate instead.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var,
-                const SecondaryIndepQuantity max_secondary_indep_var ) const
-  ->  InverseSecondaryIndepQuantity
-{
-  return this->template evaluateExactInSubrangeImpl<InverseSecondaryIndepQuantity>(
-                                    primary_indep_var_value,
-                                    secondary_indep_var_value,
-                                    max_secondary_indep_var,
-                                    &BaseOneDDistributionType::evaluatePDF );
+                                      &BaseOneDDistributionType::evaluatePDF,
+                                      use_direct_eval_method );
 }
 
 // Evaluate the secondary conditional PDF
-/*! \details This method performs a type of binary search using a unit based
- *  correlated sampling to estimate the CDF to a relative error tolerance in
- *  order to find the proper interpolation. The result is consistent with the
- *  sampleSecondaryConditionalExact methods.
- */
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDFExact(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method ) const
   -> InverseSecondaryIndepQuantity
 {
-  return this->template evaluateExactImpl<InverseSecondaryIndepQuantity>(
+  return this->evaluateImpl<InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluatePDF );
+                                      min_secondary_indep_var_functor,
+                                      max_secondary_indep_var_functor,
+                                      &BaseOneDDistributionType::evaluatePDF,
+                                      use_direct_eval_method );
 }
 
 // Evaluate the secondary conditional CDF
@@ -213,502 +142,15 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value,
+                const bool use_direct_eval_method ) const
 {
   return this->template evaluateImpl<double>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
-}
-
-// Correlated evaluate the secondary conditional CDF
-/*! \details This method performs a type of binary search using sampling to
- *  estimate the CDF to a relative error tolerance.
- * The lower and upper bounds of the secondary independent variable
- *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit based method is not
- *  necessary and an exact method is used to evaluate instead.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const SecondaryIndepQuantity min_secondary_indep_var,
-                const SecondaryIndepQuantity max_secondary_indep_var ) const
-{
-  return this->template evaluateExactImpl<double>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
-}
-
-// Evaluate the secondary conditional CDF
-/*! \details This method performs a type of binary search using a unit based
- *  correlated sampling to estimate the CDF to a relative error tolerance.
- *  The result is consistent with the sampleSecondaryConditionalExact methods.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->template evaluateExactImpl<double>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
-}
-
-// Evaluate the distribution using the desired evaluation method
-/*! \details This method performs a type of binary search using an exact
- *  correlated sampling to estimate the CDF to a relative error tolerance to
- *  find the proper interpolation for the evaluation method. If the realtive
- *  error tolerance is not met after the max number of iterations but the error
- *  tolerance is met then the estimated value will be returned, otherwise an
- *  error message will be thrown. The estimated result is consistent with the
- *  sampleSecondaryConditionalExact methods.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-template<typename ReturnType,
-         typename EvaluationMethod>
-inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExactImpl(
-                        const PrimaryIndepQuantity incoming_energy,
-                        const SecondaryIndepQuantity angle_cosine,
-                        EvaluationMethod evaluate,
-                        unsigned max_number_of_iterations ) const
-{
-  // Make sure the angle cosine is valid
-  testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
-  testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
-
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-
-  this->findBinBoundaries( incoming_energy,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
-  {
-    if( this->arePrimaryLimitsExtended() )
-      return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-    else
-      return QuantityTraits<ReturnType>::zero();
-  }
-  else if( lower_bin_boundary->first == incoming_energy )
-  {
-    return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-  }
-  else if( upper_bin_boundary->first == incoming_energy )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
-  }
-  else if ( angle_cosine == d_lower_bound_conditional_indep_var )
-  {
-    ReturnType min_eval_0 =
-      ((*lower_bin_boundary->second).*evaluate)(d_lower_bound_conditional_indep_var);
-    ReturnType min_eval_1 =
-      ((*upper_bin_boundary->second).*evaluate)(d_lower_bound_conditional_indep_var);
-
-    if ( min_eval_0 == min_eval_1 )
-      return min_eval_0;
-    else
-    {
-      return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                incoming_energy,
-                min_eval_0,
-                min_eval_1 );
-    }
-  }
-  else if ( angle_cosine == d_upper_bound_conditional_indep_var )
-  {
-    return TwoDInterpPolicy::PrimaryBasePolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                incoming_energy,
-                ((*lower_bin_boundary->second).*evaluate)(d_upper_bound_conditional_indep_var),
-                ((*upper_bin_boundary->second).*evaluate)(d_upper_bound_conditional_indep_var) );
-  }
-  else
-  {
-    // Get the lower and upper boundaries of the evaluated cdf
-    double lower_cdf_bound, upper_cdf_bound;
-    {
-      // Evaluate the cdf at the upper and lower bin boundaries
-      double bin_eval_0 =
-        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( angle_cosine );
-      double bin_eval_1 =
-        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( angle_cosine );
-
-      if ( bin_eval_0 <= bin_eval_1 )
-      {
-        lower_cdf_bound = bin_eval_0;
-        upper_cdf_bound = bin_eval_1;
-      }
-      else
-      {
-        lower_cdf_bound = bin_eval_1;
-        upper_cdf_bound = bin_eval_0;
-      }
-    }
-
-    unsigned number_of_iterations = 0;
-    SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
-    double rel_error = 1.0;
-    SecondaryIndepQuantity error_norm_constant = angle_cosine;
-    double tolerance = d_relative_error_tol;
-
-    /*! \detials If the secondary indep var value is zero the relative error
-     *  will always zero or inf. When this is the case the error tolerance will
-     *  be used instead of the relative error tolerance.
-     */
-    if ( angle_cosine == SIQT::zero() )
-    {
-      error_norm_constant = SIQT::one();
-      tolerance = d_error_tol;
-    }
-
-    // Calculate the bin length of the first indep variable
-    const typename QuantityTraits<PrimaryIndepQuantity>::RawType primary_bin_length =
-      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseGridLength(
-                                                    lower_bin_boundary->first,
-                                                    upper_bin_boundary->first );
-
-    // Calculate the first indep variable bin ratio (beta)
-    const typename QuantityTraits<PrimaryIndepQuantity>::RawType beta =
-      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
-                                                    incoming_energy,
-                                                    lower_bin_boundary->first,
-                                                    primary_bin_length );
-
-    // Refine the estimated cdf value until it meet the tolerance
-    while ( rel_error > tolerance )
-    {
-      // Estimate the cdf as the midpoint of the lower and upper boundaries
-      double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
-
-      // Get the sampled values at the upper and lower bin for the estimated_cdf
-      lower_bin_sample =
-        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
-      upper_bin_sample =
-        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
-
-      // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
-      SecondaryIndepQuantity est_angle_cosine =
-       TwoDInterpPolicy::YXInterpPolicy::interpolate(
-            beta,
-            lower_bin_sample,
-            upper_bin_sample );
-
-      if ( angle_cosine == est_angle_cosine )
-        break;
-
-      // Calculate the relative error between the angle_cosine and the estimate
-      rel_error = (angle_cosine - est_angle_cosine )/error_norm_constant;
-
-      // Make sure the relative error is positive
-      rel_error = rel_error < 0 ? -rel_error : rel_error;
-
-      // Update the number of iterations
-      ++number_of_iterations;
-
-      // If tolerance is met exit loop
-      if ( rel_error <= tolerance )
-        break;
-
-      // Update the estimated_cdf estimate
-      if ( est_angle_cosine < angle_cosine )
-      {
-        // Old estimated_cdf estimate is new lower cdf boundary
-        lower_cdf_bound = estimated_cdf;
-      }
-      else
-      {
-        // Old estimated_cdf estimate is new upper cdf boundary
-        upper_cdf_bound = estimated_cdf;
-      }
-
-      // Check for the max number of iterations
-      if ( number_of_iterations > max_number_of_iterations )
-      {
-        // Get error in estimate
-        double error =
-            (angle_cosine - est_angle_cosine )/SIQT::one();
-        error = error < 0 ? -error : error;
-
-        // If error meets error tolerance accept estimate
-        if ( error < d_error_tol )
-          break;
-        else
-        {
-          THROW_EXCEPTION( std::logic_error,
-                           "Error: The evaluation could not be completed. "
-                           "The max number of iterations ("
-                           << max_number_of_iterations
-                           << ") was reached before the relative error ("
-                           << rel_error
-                           << ") reached the evaluation tolerance ("
-                           << tolerance
-                           << ")"
-                           << " or the error ("
-                           << error
-                           << ") reached the error tolerance ("
-                           << d_error_tol
-                           << ")." );
-        }
-      }
-    }
-
-    ReturnType lower_eval =
-                  ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample);
-    ReturnType upper_eval =
-                  ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample);
-
-    if( lower_eval == upper_eval )
-      return lower_eval;
-    else
-    {
-      // Return the interpolated evaluation
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                beta, lower_eval, upper_eval );
-    }
-  }
-}
-
-// Evaluate the distribution using the desired evaluation method in a subrange
-/*! \details This method performs a type of binary search using an exact
- *  correlated sampling in a subrange to estimate the CDF to a relative error
- *  tolerance to find the proper interpolation for the evaluation method. If the
- *  realtive error tolerance is not met after the max number of iterations but
- *  the error tolerance is met then the estimated value will be returned,
- *  otherwise an error message will be thrown. The estimated result is
- *  consistent with the sampleSecondaryConditionalExact methods.
- */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-template<typename ReturnType,
-         typename EvaluationMethod>
-inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateExactInSubrangeImpl(
-                        const PrimaryIndepQuantity incoming_energy,
-                        const SecondaryIndepQuantity angle_cosine,
-                        const SecondaryIndepQuantity max_angle_cosine,
-                        EvaluationMethod evaluate,
-                        ReturnType above_max_angle_cosine_return,
-                        unsigned max_number_of_iterations ) const
-{
-  // Make sure the angle cosine is valid
-  testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
-  testPrecondition( max_angle_cosine <= d_max_upper_bound_conditional_indep_var );
-  testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
-
-  // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-
-  this->findBinBoundaries( incoming_energy,
-                           lower_bin_boundary,
-                           upper_bin_boundary );
-
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
-  {
-    if( this->arePrimaryLimitsExtended() )
-      return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-    else
-      return QuantityTraits<ReturnType>::zero();
-  }
-  else if( lower_bin_boundary->first == incoming_energy )
-  {
-    return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-  }
-  else if( upper_bin_boundary->first == incoming_energy )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
-  }
-  else if ( angle_cosine == d_lower_bound_conditional_indep_var )
-  {
-    ReturnType min_eval_0 =
-      ((*lower_bin_boundary->second).*evaluate)(d_lower_bound_conditional_indep_var);
-    ReturnType min_eval_1 =
-      ((*upper_bin_boundary->second).*evaluate)(d_lower_bound_conditional_indep_var);
-
-    if ( min_eval_0 == min_eval_1 )
-      return min_eval_0;
-    else
-    {
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                incoming_energy,
-                min_eval_0,
-                min_eval_1 );
-    }
-  }
-  else if ( angle_cosine == max_angle_cosine )
-  {
-    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                incoming_energy,
-                ((*lower_bin_boundary->second).*evaluate)(max_angle_cosine),
-                ((*upper_bin_boundary->second).*evaluate)(max_angle_cosine) );
-  }
-  else if( angle_cosine > max_angle_cosine )
-    return above_max_angle_cosine_return;
-  else
-  {
-    // Get the lower and upper boundaries of the evaluated cdf
-    double lower_cdf_bound, upper_cdf_bound;
-    {
-      // Evaluate the cdf at the upper and lower bin boundaries
-      double bin_eval_0 =
-        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( angle_cosine )/
-        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( max_angle_cosine );
-      double bin_eval_1 =
-        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( angle_cosine )/
-        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( max_angle_cosine );
-
-      if ( bin_eval_0 <= bin_eval_1 )
-      {
-        lower_cdf_bound = bin_eval_0;
-        upper_cdf_bound = bin_eval_1;
-      }
-      else
-      {
-        lower_cdf_bound = bin_eval_1;
-        upper_cdf_bound = bin_eval_0;
-      }
-    }
-
-    unsigned number_of_iterations = 0;
-    SecondaryIndepQuantity lower_bin_sample, upper_bin_sample;
-    double rel_error = 1.0;
-    SecondaryIndepQuantity error_norm_constant = angle_cosine;
-    double tolerance = d_relative_error_tol;
-
-    /*! \detials If the secondary indep var value is zero the relative error
-     *  will always zero or inf. When this is the case the error tolerance will
-     *  be used instead of the relative error tolerance.
-     */
-    if ( angle_cosine == SIQT::zero() )
-    {
-      error_norm_constant = SIQT::one();
-      tolerance = d_error_tol;
-    }
-
-    // Calculate the bin length of the first indep variable
-    const typename QuantityTraits<PrimaryIndepQuantity>::RawType primary_bin_length =
-      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseGridLength(
-                                                    lower_bin_boundary->first,
-                                                    upper_bin_boundary->first );
-
-    // Calculate the first indep variable bin ratio (beta)
-    const typename QuantityTraits<PrimaryIndepQuantity>::RawType beta =
-      TwoDInterpPolicy::PrimaryBasePolicy::calculateUnitBaseIndepVar(
-                                                    incoming_energy,
-                                                    lower_bin_boundary->first,
-                                                    primary_bin_length );
-
-    // Refine the estimated cdf value until it meet the tolerance
-    while ( rel_error > tolerance )
-    {
-      // Estimate the cdf as the midpoint of the lower and upper boundaries
-      double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
-
-      // Get the sampled values at the upper and lower bin for the estimated_cdf
-      lower_bin_sample =
-        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumberInSubrange)( estimated_cdf, max_angle_cosine );
-      upper_bin_sample =
-        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumberInSubrange)( estimated_cdf, max_angle_cosine );
-
-      // Interpolate using the templated TwoDInterpPolicy::ZXInterpPolicy
-      SecondaryIndepQuantity est_angle_cosine =
-       TwoDInterpPolicy::YXInterpPolicy::interpolate(
-            beta,
-            lower_bin_sample,
-            upper_bin_sample );
-
-      if ( angle_cosine == est_angle_cosine )
-        break;
-
-      // Calculate the relative error between the angle_cosine and the estimate
-      rel_error = (angle_cosine - est_angle_cosine )/error_norm_constant;
-
-      // Make sure the relative error is positive
-      rel_error = rel_error < 0 ? -rel_error : rel_error;
-
-      // Update the number of iterations
-      ++number_of_iterations;
-
-      // If tolerance is met exit loop
-      if ( rel_error <= tolerance )
-        break;
-
-      // Update the estimated_cdf estimate
-      if ( est_angle_cosine < angle_cosine )
-      {
-        // Old estimated_cdf estimate is new lower cdf boundary
-        lower_cdf_bound = estimated_cdf;
-      }
-      else
-      {
-        // Old estimated_cdf estimate is new upper cdf boundary
-        upper_cdf_bound = estimated_cdf;
-      }
-
-      // Check for the max number of iterations
-      if ( number_of_iterations > max_number_of_iterations )
-      {
-        // Get error in estimate
-        double error =
-            (angle_cosine - est_angle_cosine )/SIQT::one();
-        error = error < 0 ? -error : error;
-
-        // If error meets error tolerance accept estimate
-        if ( error < d_error_tol )
-          break;
-        else
-        {
-          THROW_EXCEPTION( std::logic_error,
-                           "Error: The evaluation could not be completed. "
-                           "The max number of iterations ("
-                           << max_number_of_iterations
-                           << ") was reached before the relative error ("
-                           << rel_error
-                           << ") reached the evaluation tolerance ("
-                           << tolerance
-                           << ")"
-                           << " or the error ("
-                           << error
-                           << ") reached the error tolerance ("
-                           << d_error_tol
-                           << ")." );
-        }
-      }
-    }
-
-    // Return the interpolated evaluation
-    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-              beta,
-              ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
-              ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
-  }
+                                      &BaseOneDDistributionType::evaluateCDF,
+                                      use_direct_eval_method );
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -720,9 +162,10 @@ template<typename TwoDInterpPolicy,
 template<typename ReturnType,
          typename EvaluationMethod>
 inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const PrimaryIndepQuantity incoming_energy,
                         const SecondaryIndepQuantity angle_cosine,
-                        EvaluationMethod evaluate ) const
+                        EvaluationMethod evaluate,
+                        const bool use_direct_eval_method ) const
 {
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
@@ -731,44 +174,162 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
   // Find the bin boundaries
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
 
-  this->findBinBoundaries( primary_indep_var_value,
+  this->findBinBoundaries( incoming_energy,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    // Create the lower bound functor
+    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+      min_secondary_indep_var_functor =
+        [this](const PrimaryIndepQuantity x){
+          return d_lower_bound_conditional_indep_var;
+        };
+
+    // Create the upper bound functor
+    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+      max_secondary_indep_var_functor =
+        [this](const PrimaryIndepQuantity x){
+          return d_upper_bound_conditional_indep_var;
+        };
+
+    if ( use_direct_eval_method )
+    {
+      return Stochastic::evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+          incoming_energy,
+          angle_cosine,
+          min_secondary_indep_var_functor,
+          max_secondary_indep_var_functor,
+          evaluate,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          this->getRelativeErrorTolerance(),
+          this->getErrorTolerance(),
+          500 );
+    }
+    else
+    {
+      return TwoDSamplePolicy::template evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+          incoming_energy,
+          angle_cosine,
+          min_secondary_indep_var_functor,
+          max_secondary_indep_var_functor,
+          evaluate,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          this->getRelativeErrorTolerance(),
+          this->getErrorTolerance(),
+          500 );
+    }
+  }
   // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
+  else
   {
     if( this->arePrimaryLimitsExtended() )
       return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
     else
       return QuantityTraits<ReturnType>::zero();
   }
-  else if( lower_bin_boundary->first == primary_indep_var_value )
-  {
-    return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-  }
-  else if( upper_bin_boundary->first == primary_indep_var_value )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
-  }
-  else
-  {
-    // Get the evaluation at the lower and upper bin boundaries
-    ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
-    ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
+  // else if( lower_bin_boundary->first == primary_indep_var_value )
+  // {
+  //   return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
+  // }
+  // else if( upper_bin_boundary->first == primary_indep_var_value )
+  // {
+  //   return ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
+  // }
+  // else
+  // {
+  //   // Get the evaluation at the lower and upper bin boundaries
+  //   ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
+  //   ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(angle_cosine);
 
-    if ( min_eval_0 == min_eval_1 )
-      return min_eval_0;
+  //   if ( min_eval_0 == min_eval_1 )
+  //     return min_eval_0;
+  //   else
+  //   {
+  //     // Return the interpolated evaluation
+  //     return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+  //             lower_bin_boundary->first,
+  //             upper_bin_boundary->first,
+  //             primary_indep_var_value,
+  //             min_eval_0,
+  //             min_eval_1 );
+  //   }
+  // }
+}
+
+// Evaluate the distribution using the desired evaluation method
+template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+template<typename ReturnType,
+         typename EvaluationMethod>
+inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
+            const PrimaryIndepQuantity incoming_energy,
+            const SecondaryIndepQuantity angle_cosine,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            EvaluationMethod evaluate,
+            const bool use_direct_eval_method,
+            const ReturnType below_lower_bound_return,
+            const ReturnType above_upper_bound_return,
+            unsigned max_number_of_iterations ) const
+{
+  // Make sure the angle cosine is valid
+  testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
+  testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
+
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( incoming_energy,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    if ( use_direct_eval_method )
+    {
+      return Stochastic::evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+          incoming_energy,
+          angle_cosine,
+          min_secondary_indep_var_functor,
+          max_secondary_indep_var_functor,
+          evaluate,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          this->getRelativeErrorTolerance(),
+          this->getErrorTolerance(),
+          500 );
+    }
     else
     {
-      // Return the interpolated evaluation
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-              lower_bin_boundary->first,
-              upper_bin_boundary->first,
-              primary_indep_var_value,
-              min_eval_0,
-              min_eval_1 );
+      return TwoDSamplePolicy::template evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+          incoming_energy,
+          angle_cosine,
+          min_secondary_indep_var_functor,
+          max_secondary_indep_var_functor,
+          evaluate,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          this->getRelativeErrorTolerance(),
+          this->getErrorTolerance(),
+          500 );
     }
+  }
+  // Check for a primary value outside of the primary grid limits
+  else
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
+    else
+      return QuantityTraits<ReturnType>::zero();
   }
 }
 
@@ -777,13 +338,6 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
 ////---------------------------------------------------------------------------//
 
 // Return a random sample from the secondary conditional PDF
-/*! \details A stochastic sampling procedure is used. If the primary value
- * provided is outside of the primary grid limits the appropriate limiting
- * secondary distribution will be used to create the sample. The alternative
- * to this behavior is to throw an exception unless the distribution has 
- * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
- * this is a performance critical method we decided against this behavior.
- */
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
@@ -809,13 +363,6 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 
 
 // Return a random sample from the secondary conditional PDF
-/*! \details A stochastic sampling procedure is used. If the primary value
- * provided is outside of the primary grid limits the appropriate limiting
- * secondary distribution will be used to create the sample. The alternative
- * to this behavior is to throw an exception unless the distribution has 
- * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
- * this is a performance critical method we decided against this behavior.
- */
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
@@ -823,21 +370,14 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
     const PrimaryIndepQuantity primary_indep_var_value,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& max_secondary_indep_var_functor ) const
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditional( primary_indep_var_value );
 }
 
 // Return a random sample and record the number of trials
-/*! \details A stochastic sampling procedure is used. If the primary value
- * provided is outside of the primary grid limits the appropriate limiting
- * secondary distribution will be used to create the sample. The alternative
- * to this behavior is to throw an exception unless the distribution has 
- * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
- * this is a performance critical method we decided against this behavior.
- */
 template<typename TwoDInterpPolicy,
          typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
@@ -949,7 +489,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  // Use this random number to do create the correlated sample
+  // Use this random number to do create the sample functor
   const double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 

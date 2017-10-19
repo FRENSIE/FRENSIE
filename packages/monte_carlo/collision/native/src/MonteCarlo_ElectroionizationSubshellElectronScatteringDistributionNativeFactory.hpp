@@ -25,7 +25,7 @@ public:
   using ThisType = ElectroionizationSubshellElectronScatteringDistributionNativeFactory;
 
   //! Create a electroionization subshell distribution
-  template <typename TwoDInterpPolicy = Utility::LogLogLog, typename TwoDSamplePolicy = Utility::Stochastic>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog, typename TwoDSamplePolicy = Utility::Correlated>
   static void createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
@@ -38,7 +38,7 @@ public:
 
 
   //! Create the electroionization subshell distribution function
-  template <typename TwoDInterpPolicy = Utility::LogLogLog, typename TwoDSamplePolicy = Utility::Stochastic>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog, typename TwoDSamplePolicy = Utility::Correlated>
   static void createSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> energy_grid,

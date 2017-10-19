@@ -539,18 +539,18 @@ template<TupleMember YIndepMember,
      typename T>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
                                 const T indep_var_x_0,
-                        const T indep_var_x_1,
-                        const T indep_var_x,
-                        const T indep_var_y,
+                                const T indep_var_x_1,
+                                const T indep_var_x,
+                                const T indep_var_y,
                                 YIterator start_indep_y_grid_0,
-                        YIterator end_indep_y_grid_0,
-                        ZIterator start_dep_grid_0,
-                        ZIterator end_dep_grid_0,
-                        YIterator start_indep_y_grid_1,
-                        YIterator end_indep_y_grid_1,
-                        ZIterator start_dep_grid_1,
-                        ZIterator end_dep_grid_1,
-                        const double fuzzy_boundary_tol )
+                                YIterator end_indep_y_grid_0,
+                                ZIterator start_dep_grid_0,
+                                ZIterator end_dep_grid_0,
+                                YIterator start_indep_y_grid_1,
+                                YIterator end_indep_y_grid_1,
+                                ZIterator start_dep_grid_1,
+                                ZIterator end_dep_grid_1,
+                                const double fuzzy_boundary_tol )
 {
   // The interpolation type on the Z variable must be consistent
   testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );

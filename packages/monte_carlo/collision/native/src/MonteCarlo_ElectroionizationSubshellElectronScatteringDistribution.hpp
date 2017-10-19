@@ -42,9 +42,6 @@ public:
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Set the evaluation routines
-  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
-
   //! Return the binding energy
   double getBindingEnergy() const;
 
@@ -102,15 +99,6 @@ private:
 
   // Subshell binding energy
   double d_binding_energy;
-
-  // The evaluate function pointer
-  std::function<double ( const double, const double )> d_evaluate_function;
-
-  // The evaluatePDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_pdf_function;
-
-  // The evaluateCDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_cdf_function;
 };
 
 } // end MonteCarlo namespace

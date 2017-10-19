@@ -21,7 +21,7 @@ namespace MonteCarlo{
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-                                                    scattering_distribution,
+      scattering_distribution,
     const double evaluation_tol )
 {
   // Get the number of tables
@@ -44,7 +44,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
     const int atomic_number,
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-                                                        scattering_distribution,
+      scattering_distribution,
     const double evaluation_tol )
 {
   // Get the number of tables

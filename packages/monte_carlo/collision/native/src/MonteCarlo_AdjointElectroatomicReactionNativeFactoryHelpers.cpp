@@ -91,6 +91,7 @@ std::shared_ptr<AdjointElectroatomicReaction>
 createDecoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -154,6 +155,7 @@ createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
     const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -172,7 +174,7 @@ createHybridElasticReaction(
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog,Utility::Exact>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -182,7 +184,7 @@ createHybridElasticReaction(
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogLog,Utility::Correlated>(
+    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogLog,Utility::Exact>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -192,7 +194,7 @@ createHybridElasticReaction(
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLin,Utility::Correlated>(
+    AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLin,Utility::Exact>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -220,6 +222,7 @@ createCutoffElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
     const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -316,6 +319,7 @@ createMomentPreservingElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
     const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -418,6 +422,8 @@ createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const unsigned subshell,
     const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -483,6 +489,8 @@ std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
 createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -547,6 +555,8 @@ createBremsstrahlungReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const bool dipole_distribution_mode_on,
     const std::string two_d_interp_policy_name,
+    const bool correlated_sampling_mode_on,
+    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Extract the common energy grid

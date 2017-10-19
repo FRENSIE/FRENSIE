@@ -124,7 +124,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
 
   if ( two_d_interp_policy_name == Utility::LinLinLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         distribution,
         energy_grid,
         cutoff_cross_section,
@@ -135,7 +135,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   }
   else if ( two_d_interp_policy_name == Utility::LinLinLin::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLin,Utility::Exact>(
         distribution,
         energy_grid,
         cutoff_cross_section,
@@ -146,7 +146,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   }
   else if ( two_d_interp_policy_name == Utility::LogLogLog::name() )
   {
-    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogLog,Utility::Correlated>(
+    ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogLog,Utility::Exact>(
         distribution,
         energy_grid,
         cutoff_cross_section,

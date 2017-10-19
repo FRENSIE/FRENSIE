@@ -29,8 +29,6 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
   {
         return this->SampleDipoleAngle( incoming_energy, photon_energy );
   };
-
-  this->setEvaluationRoutines( true );
 }
 
 // Constructor with detailed 2BS photon angular distribution
@@ -49,67 +47,6 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
   {
         return this->Sample2BSAngle( incoming_energy, photon_energy );
   };
-
-  this->setEvaluationRoutines( true );
-}
-
-// Set the evaluation routines
-/*! \details This function sets the evalute, evaluatePDF and evaluateCDF
- *  function pointers to either an exact or unit based routine. The exact and
- *  unit based routines are consistent with the correlatedSampleExact and
- *  correlatedSampleUnitBased respectively.
- */
-void BremsstrahlungElectronScatteringDistribution::setEvaluationRoutines(
-                                    const bool unit_based_interpolation_mode_on )
-{
-  if( unit_based_interpolation_mode_on )
-  {
-    // Set the correlated unit based evaluation routines
-    d_evaluate_function = [this]( const double& incoming_energy,
-                                  const double& photon_energy )
-    {
-      return d_bremsstrahlung_scattering_distribution->correlatedEvaluateInBoundaries(
-                    incoming_energy, photon_energy, 1e-7, incoming_energy );
-    };
-
-    d_evaluate_pdf_function = [this]( const double& incoming_energy,
-                                      const double& photon_energy )
-    {
-      return d_bremsstrahlung_scattering_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-                    incoming_energy, photon_energy, 1e-7, incoming_energy );
-    };
-
-    d_evaluate_cdf_function = [this]( const double& incoming_energy,
-                                      const double& photon_energy )
-    {
-      return d_bremsstrahlung_scattering_distribution->correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-                    incoming_energy, photon_energy, 1e-7, incoming_energy );
-    };
-  }
-  else
-  {
-    // Set the correlated exact evaluation routines
-    d_evaluate_function = [this]( const double& incoming_energy,
-                                  const double& photon_energy )
-    {
-      return d_bremsstrahlung_scattering_distribution->evaluateExact(
-                    incoming_energy, photon_energy );
-    };
-
-    d_evaluate_pdf_function = [this]( const double& incoming_energy,
-                                      const double& photon_energy )
-    {
-      return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDFExact(
-                    incoming_energy, photon_energy );
-    };
-
-    d_evaluate_cdf_function = [this]( const double& incoming_energy,
-                                      const double& photon_energy )
-    {
-      return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDFExact(
-                    incoming_energy, photon_energy );
-    };
-  }
 }
 
 // Return the min incoming energy
@@ -134,7 +71,12 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_function( incoming_energy, photon_energy );
+  return d_bremsstrahlung_scattering_distribution->evaluate(
+            incoming_energy,
+            photon_energy,
+            [](const double& energy){return 1e-7;},
+            [](const double& energy){return energy;},
+            false );
 }
 
 // Evaluate the PDF value for a given incoming and photon energy
@@ -147,7 +89,12 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_pdf_function( incoming_energy, photon_energy );
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalPDF(
+            incoming_energy,
+            photon_energy,
+            [](const double& energy){return 1e-7;},
+            [](const double& energy){return energy;},
+            false );
 }
 
 // Evaluate the CDF value for a given incoming and photon energy
@@ -160,7 +107,12 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
   testPrecondition( photon_energy <= incoming_energy );
 
   // evaluate the distribution
-  return d_evaluate_cdf_function( incoming_energy, photon_energy );
+  return d_bremsstrahlung_scattering_distribution->evaluateSecondaryConditionalCDF(
+            incoming_energy,
+            photon_energy,
+            [](const double& energy){return 1e-7;},
+            [](const double& energy){return energy;},
+            false );
 }
 
 // Sample the photon energy and direction from the distribution

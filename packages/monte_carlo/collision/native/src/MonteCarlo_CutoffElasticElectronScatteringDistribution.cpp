@@ -65,9 +65,10 @@ double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRa
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
 
-  return d_full_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+  return d_full_cutoff_distribution->evaluateSecondaryConditionalCDF(
                                                         incoming_energy,
-                                                        d_cutoff_angle_cosine );
+                                                        d_cutoff_angle_cosine,
+                                                        false );
 }
 
 // Evaluate the distribution
@@ -83,8 +84,9 @@ double CutoffElasticElectronScatteringDistribution::evaluate(
   if ( scattering_angle_cosine > d_cutoff_angle_cosine )
     return 0.0;
   else
-    return d_partial_cutoff_distribution->evaluateExact( incoming_energy,
-                                                         scattering_angle_cosine );
+    return d_partial_cutoff_distribution->evaluate( incoming_energy,
+                                                    scattering_angle_cosine,
+                                                    false );
 }
 
 // Evaluate the PDF
@@ -100,9 +102,10 @@ double CutoffElasticElectronScatteringDistribution::evaluatePDF(
   if ( scattering_angle_cosine > d_cutoff_angle_cosine )
     return 0.0;
   else
-    return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDF(
                         incoming_energy,
-                        scattering_angle_cosine );
+                        scattering_angle_cosine,
+                        false );
 }
 
 // Evaluate the CDF
@@ -118,9 +121,10 @@ double CutoffElasticElectronScatteringDistribution::evaluateCDF(
   if ( scattering_angle_cosine >= d_cutoff_angle_cosine )
     return 1.0;
   else
-    return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDF(
                         incoming_energy,
-                        scattering_angle_cosine );
+                        scattering_angle_cosine,
+                        false );
 }
 
 // Sample an outgoing energy and direction from the distribution

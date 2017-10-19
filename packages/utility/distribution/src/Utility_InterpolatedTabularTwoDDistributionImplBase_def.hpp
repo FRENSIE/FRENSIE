@@ -21,8 +21,10 @@ template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribu
 UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                                          const DistributionType& distribution,
                                          const double fuzzy_boundary_tol )
-    : ParentType( distribution ),
-      d_fuzzy_boundary_tol( fuzzy_boundary_tol )
+  : ParentType( distribution ),
+    d_fuzzy_boundary_tol( fuzzy_boundary_tol ),
+    d_relative_error_tol( 1e-7 ),
+    d_error_tol( 1e-16 )
 {
   // Make sure the distributions are continuous
   testPrecondition( this->areSecondaryDistributionsContinuous() );
@@ -43,7 +45,9 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSample
                 secondary_distributions,
                 const double fuzzy_boundary_tol )
   : ParentType( primary_indep_grid, secondary_distributions ),
-    d_fuzzy_boundary_tol( fuzzy_boundary_tol )
+    d_fuzzy_boundary_tol( fuzzy_boundary_tol ),
+    d_relative_error_tol( 1e-7 ),
+    d_error_tol( 1e-16 )
 {
   // Make sure the distributions are continuous
   testPrecondition( this->areSecondaryDistributionsContinuous() );
@@ -59,6 +63,49 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSample
   // Make sure the fuzzy boundary tolerance is valid
   testPrecondition( d_fuzzy_boundary_tol >= 0.0 )
   testPrecondition( d_fuzzy_boundary_tol < 1.0 )
+}
+
+// Set the evaluation tolerances
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+void UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::setEvaluationTolerances(
+                                const double& fuzzy_boundary_tol,
+                                const double& relative_error_tol,
+                                const double& error_tol )
+{
+  // Make sure the fuzzy boundary tolerance is valid
+  testPrecondition( fuzzy_boundary_tol >= 0.0 );
+  testPrecondition( fuzzy_boundary_tol < 1.0 );
+  // Make sure the relative error tolerance is valid
+  testPrecondition( relative_error_tol >= 0.0 );
+  testPrecondition( relative_error_tol < 1.0 );
+  // Make sure the error tolerance is valid
+  testPrecondition( error_tol >= 0.0 );
+  testPrecondition( error_tol < 1.0 );
+
+  d_fuzzy_boundary_tol = fuzzy_boundary_tol;
+  d_relative_error_tol = relative_error_tol;
+  d_error_tol = error_tol;
+}
+
+// Return the fuzzy bound tolerance
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+double UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getFuzzyBoundTolerance() const
+{
+  return d_fuzzy_boundary_tol;
+}
+
+// Return the evaluation relative error tolerance
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+double UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getRelativeErrorTolerance() const
+{
+  return d_relative_error_tol;
+}
+
+// Return the evaluation error tolerance
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+double UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getErrorTolerance() const
+{
+  return d_error_tol;
 }
 
 // Check that the secondary dists are compatible with the requested interp
@@ -106,27 +153,75 @@ bool UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDS
 // Evaluate the distribution using unit based interpolation
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluate(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const bool use_direct_eval_method ) const
   -> DepQuantity
 {
   return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
                                           primary_indep_var_value,
                                           secondary_indep_var_value,
-                                          &BaseOneDDistributionType::evaluate );
+                                          &BaseOneDDistributionType::evaluate,
+                                          use_direct_eval_method );
+}
+
+// Evaluate the distribution using unit based interpolation
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method ) const
+  -> DepQuantity
+{
+  return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
+                                          primary_indep_var_value,
+                                          secondary_indep_var_value,
+                                          min_secondary_indep_var_functor,
+                                          max_secondary_indep_var_functor,
+                                          &BaseOneDDistributionType::evaluate,
+                                          use_direct_eval_method );
 }
 
 // Evaluate the secondary conditional PDF using unit based interpolation
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluateSecondaryConditionalPDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const bool use_direct_eval_method ) const
   -> InverseSecondaryIndepQuantity
 {
   return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluatePDF );
+                                      &BaseOneDDistributionType::evaluatePDF,
+                                      use_direct_eval_method );
+}
+
+// Evaluate the secondary conditional PDF using unit based interpolation
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method ) const
+  -> InverseSecondaryIndepQuantity
+{
+  std::cout << std::setprecision(16) << std::scientific << "\n\nThis is called\n\n"<< std::endl;
+  
+  return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
+                                      primary_indep_var_value,
+                                      secondary_indep_var_value,
+                                      min_secondary_indep_var_functor,
+                                      max_secondary_indep_var_functor,
+                                      &BaseOneDDistributionType::evaluatePDF,
+                                      use_direct_eval_method );
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -135,11 +230,17 @@ template<typename LocalTwoDInterpPolicy,
          typename ReturnType,
          typename EvaluationMethod>
 inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluateImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate,
-                        const ReturnType below_lower_bound_return,
-                        const ReturnType above_upper_bound_return ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            EvaluationMethod evaluate,
+            const bool use_direct_eval_method,
+            const ReturnType below_lower_bound_return,
+            const ReturnType above_upper_bound_return,
+            unsigned max_number_of_iterations ) const
 {
   // Find the bin boundaries
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
@@ -148,8 +249,42 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    if( use_direct_eval_method )
+    {
+      return TwoDSamplePolicy::template evaluateDirect<LocalTwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+          primary_indep_var_value,
+          secondary_indep_var_value,
+          min_secondary_indep_var_functor,
+          max_secondary_indep_var_functor,
+          evaluate,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          below_lower_bound_return,
+          above_upper_bound_return,
+          d_fuzzy_boundary_tol );
+    }
+    else
+    {
+      return TwoDSamplePolicy::template evaluateSampleBased<LocalTwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+          primary_indep_var_value,
+          secondary_indep_var_value,
+          min_secondary_indep_var_functor,
+          max_secondary_indep_var_functor,
+          evaluate,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          below_lower_bound_return,
+          above_upper_bound_return,
+          d_fuzzy_boundary_tol,
+          d_relative_error_tol,
+          d_error_tol,
+          max_number_of_iterations );
+    }
+  }
+  // Primary value is outside of the primary grid limits
+  else
   {
     if( this->arePrimaryLimitsExtended() )
     {
@@ -158,36 +293,121 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
     else 
       return QuantityTraits<ReturnType>::zero();
   }
-  else
-  {
-    // Create the grid evaluation functors
-    std::function<ReturnType(const SecondaryIndepQuantity)>
-      evaluate_grid_0_functor =
-      std::bind<ReturnType>( evaluate,
-                             std::cref( *lower_bin_boundary->second ),
-                             std::placeholders::_1 );
+}
 
-    std::function<ReturnType(const SecondaryIndepQuantity)>
-      evaluate_grid_1_functor =
-      std::bind<ReturnType>( evaluate,
-                             std::cref( *upper_bin_boundary->second ),
-                             std::placeholders::_1 );
+// Evaluate the distribution using the desired evaluation method
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename LocalTwoDInterpPolicy,
+         typename ReturnType,
+         typename EvaluationMethod>
+inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluateImpl(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            EvaluationMethod evaluate,
+            const bool use_direct_eval_method,
+            const ReturnType below_lower_bound_return,
+            const ReturnType above_upper_bound_return ) const
+{
+    // Create the lower bound functor
+    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+      min_secondary_indep_var_functor = std::bind<SecondaryIndepQuantity>(
+                                &ThisType::getLowerBoundOfConditionalIndepVar,
+                                std::cref( *this ),
+                                std::placeholders::_1 );
 
-    return LocalTwoDInterpPolicy::interpolateUnitBase(
-                         lower_bin_boundary->first,
-                         upper_bin_boundary->first,
-                         primary_indep_var_value,
-                         secondary_indep_var_value,
-                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                         upper_bin_boundary->second->getUpperBoundOfIndepVar(),
-                         evaluate_grid_0_functor,
-                         evaluate_grid_1_functor,
-                         below_lower_bound_return,
-                         above_upper_bound_return,
-                         d_fuzzy_boundary_tol );
-  }
+    // Create the upper bound functor
+    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+      max_secondary_indep_var_functor = std::bind<SecondaryIndepQuantity>(
+                                &ThisType::getUpperBoundOfConditionalIndepVar,
+                                std::cref( *this ),
+                                std::placeholders::_1 );
+
+  return this->evaluateImpl<LocalTwoDInterpPolicy,ReturnType,EvaluationMethod>(
+              primary_indep_var_value,
+              secondary_indep_var_value,
+              min_secondary_indep_var_functor,
+              max_secondary_indep_var_functor,
+              evaluate,
+              use_direct_eval_method,
+              below_lower_bound_return,
+              above_upper_bound_return );
+
+  // // Find the bin boundaries
+  // typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  // this->findBinBoundaries( primary_indep_var_value,
+  //                          lower_bin_boundary,
+  //                          upper_bin_boundary );
+
+  // if( lower_bin_boundary != upper_bin_boundary )
+  // {
+  //   // Create the lower bound functor
+  //   std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+  //     min_secondary_indep_var_functor = std::bind<SecondaryIndepQuantity>(
+  //                               &ThisType::getLowerBoundOfConditionalIndepVar,
+  //                               std::cref( *this ),
+  //                               std::placeholders::_1 );
+
+  //   // Create the upper bound functor
+  //   std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+  //     max_secondary_indep_var_functor = std::bind<SecondaryIndepQuantity>(
+  //                               &ThisType::getUpperBoundOfConditionalIndepVar,
+  //                               std::cref( *this ),
+  //                               std::placeholders::_1 );
+
+  //   return TwoDSamplePolicy::template evaluateSampleBased<LocalTwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+  //         primary_indep_var_value,
+  //         secondary_indep_var_value,
+  //         min_secondary_indep_var_functor,
+  //         max_secondary_indep_var_functor,
+  //         evaluate,
+  //         lower_bin_boundary,
+  //         upper_bin_boundary,
+  //         below_lower_bound_return,
+  //         above_upper_bound_return,
+  //         d_fuzzy_boundary_tol,
+  //         d_relative_error_tol,
+  //         d_error_tol,
+  //         500u );
+  // }
+  // else // Check for a primary value outside of the primary grid limits
+  // {
+  //   if( this->arePrimaryLimitsExtended() )
+  //   {
+  //     return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
+  //   }
+  //   else 
+  //     return QuantityTraits<ReturnType>::zero();
+  // }
+
+    // // Create the grid evaluation functors
+    // std::function<ReturnType(const SecondaryIndepQuantity)>
+    //   evaluate_grid_0_functor =
+    //   std::bind<ReturnType>( evaluate,
+    //                          std::cref( *lower_bin_boundary->second ),
+    //                          std::placeholders::_1 );
+
+    // std::function<ReturnType(const SecondaryIndepQuantity)>
+    //   evaluate_grid_1_functor =
+    //   std::bind<ReturnType>( evaluate,
+    //                          std::cref( *upper_bin_boundary->second ),
+    //                          std::placeholders::_1 );
+
+    // return LocalTwoDInterpPolicy::interpolateUnitBase(
+    //                      lower_bin_boundary->first,
+    //                      upper_bin_boundary->first,
+    //                      primary_indep_var_value,
+    //                      secondary_indep_var_value,
+    //                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+    //                      lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+    //                      upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+    //                      upper_bin_boundary->second->getUpperBoundOfIndepVar(),
+    //                      evaluate_grid_0_functor,
+    //                      evaluate_grid_1_functor,
+    //                      below_lower_bound_return,
+    //                      above_upper_bound_return,
+    //                      d_fuzzy_boundary_tol );
+  // }
 }
 
 // Return a random sample from the secondary conditional PDF
@@ -222,9 +442,11 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDS
  */
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleSecondaryConditional(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor
@@ -299,12 +521,14 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 template<typename SampleFunctor>
 inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleDetailedImpl(
-  const PrimaryIndepQuantity primary_indep_var_value,
-  SampleFunctor sample_functor,
-  SecondaryIndepQuantity& raw_sample,
-  unsigned& primary_bin_index,
-  const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-  const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            SampleFunctor sample_functor,
+            SecondaryIndepQuantity& raw_sample,
+            unsigned& primary_bin_index,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const
   -> SecondaryIndepQuantity
 {
   // Find the bin boundaries
@@ -378,10 +602,12 @@ inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolic
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 template<typename SampleFunctor>
 inline auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleImpl(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    SampleFunctor sample_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)> max_secondary_indep_var_functor ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            SampleFunctor sample_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const
   -> SecondaryIndepQuantity
 {
   SecondaryIndepQuantity dummy_raw_sample;

@@ -42,9 +42,6 @@ public:
   virtual ~ElectroionizationSubshellAdjointElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Set the evaluation routines
-  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
-
   //! Return the binding energy
   double getBindingEnergy() const;
 
@@ -87,16 +84,6 @@ private:
   // Calculate the outgoing angle cosine
   double outgoingAngle( const double incoming_energy,
                         const double outgoing_energy ) const;
-
-  // The evaluate function pointer
-  std::function<double ( const double, const double )> d_evaluate_function;
-
-  // The evaluatePDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_pdf_function;
-
-  // The evaluateCDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_cdf_function;
-
 };
 
 } // end MonteCarlo namespace
