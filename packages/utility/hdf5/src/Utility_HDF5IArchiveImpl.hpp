@@ -17,6 +17,7 @@
 #include <boost/archive/detail/common_iarchive.hpp>
 #include <boost/serialization/collection_size_type.hpp>
 #include <boost/serialization/item_version_type.hpp>
+#include <boost/serialization/nvp.hpp>
 #include <boost/serialization/pfto.hpp>
 
 // FRENSIE Includes
@@ -24,7 +25,7 @@
 
 namespace Utility{
 
-/*! The HDf5 input archive implementation
+/*! The HDF5 input archive implementation
  * \ingroup hdf5
  */
 template<typename Archive>
@@ -34,6 +35,18 @@ class HDF5IArchiveImpl : public boost::archive::detail::common_iarchive<Archive>
 
   //! Load opaque object
   void load_binary( void* address, std::size_t count );
+
+  /*! Use optimized array loading (load_array) when possible
+   *
+   * This struct is used by the boost::serialization library when serializing
+   * std::vector, std::array and c-array types.
+   */
+  struct use_array_optimization
+  {
+    template<typename T>
+    struct apply : public std::conditional<HDF5TypeTraits<T>::IsSpecialized::value,boost::mpl::true_,boost::mpl::false_>::type
+    { /* ... */ };
+  };
 
   //! Load an array
   template<typename ValueType>
@@ -64,35 +77,35 @@ protected:
 
   //! Load a boost::archive::object_id_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::object_id_type& t, int )
+  load_override( boost::archive::object_id_type& t, int );
 
   //! Load a boost::archive::object_reference_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::object_reference_type& t, int )
+  load_override( boost::archive::object_reference_type& t, int );
 
   //! Load a boost::archive::version_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::version_type& t, int )
+  load_override( boost::archive::version_type& t, int );
 
   //! Load a boost::archive::class_id_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::arhcive::class_id_type& t, int )
+  load_override( boost::arhcive::class_id_type& t, int );
 
   //! Load a boost::archive::class_id_optional_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::class_id_optional_type& t, int )
+  load_override( boost::archive::class_id_optional_type& t, int );
 
   //! Load a boost::archive::class_id_reference_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::class_id_reference_type& t, int )
+  load_override( boost::archive::class_id_reference_type& t, int );
 
   //! Load a boost::archive::class_name_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::class_name_type& t, int )
+  load_override( boost::archive::class_name_type& t, int );
 
   //! Load a boost::archive::tracking_type attribute
   BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::tracking_type& t, int )
+  load_override( boost::archive::tracking_type& t, int );
 
   //! Load any type with a Utility::HDF5TypeTraits specialization
   template<typename T>
@@ -113,7 +126,7 @@ protected:
 private:
 
   friend class boost::archive::detail::interface_iarchive<Archive>;
-  friend class boost::archive::detail::load_access;
+  friend class boost::archive::load_access;
 
   // Load implementation
   template<typename T>

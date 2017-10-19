@@ -1,0 +1,85 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   Utility_HDF5OArchive.hpp
+//! \author Alex Robinson
+//! \brief  HDF5 output archive class declaration
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef UTILITY_HDF5_OARCHIVE_HPP
+#define UTILITY_HDF5_OARCHIVE_HPP
+
+// Std Lib Includes
+#include <string>
+
+// Boost Includes
+#include <boost/archive/detail/register_archive.hpp>
+#include <boost/archive/shared_ptr_helper.hpp>
+
+// FRENSIE Includes
+#include "Utility_HDF5OArchiveImpl.hpp"
+
+namespace Utility{
+
+/*! The HDF5 output archive
+ *
+ * If you want to extend the functionality provided by this class, you MUST 
+ * derive from Utility::HDF5IArchiveImpl instead of this class to ensure that 
+ * the correct static polymorphism is preserved.
+ * \ingroup hdf5
+ */
+class HDF5OArchive : public HDF5OArchiveImpl<HDF5OArchive>
+{
+  
+public:
+
+  //! Constructor
+  HDF5OArchive( const std::string& hdf5_filename, unsigned flags = 0 )
+    : HDF5OArchiveImpl<HDF5OArchive>( hdf5_filename, flags )
+  { /* ... */ }
+
+  //! Constructor
+  template<class CharType, class CharTraits>
+  HDF5OArchive( std::basic_ostream<CharType,CharTraits>& os,
+                unsigned flags = 0 )
+    : HDF5OArchiveImpl<HDF5OArchive>( this->extractHDF5FileNameFromOStream(os), flags )
+  { /* ... */ }
+
+  //! Destructor
+  ~HDF5OArchive()
+  { /* ... */ }
+
+private:
+
+  template<class CharType, class CharTraits>
+  static inline std::string extractHDF5FileNameFromOStream( std::basic_ostream<CharType,CharTraits>& os )
+  {
+    std::basic_ostringstream<CharType,CharTraits>* hdf5_file_name_oss =
+      dynamic_cast<std::basic_ostringstream<CharType,CharTraits>*>( &os );
+
+    TEST_FOR_EXCEPTION( hdf5_file_name_oss == NULL,
+                        Utility::HDF5ArchiveException,
+                        "Could not determine the HDF5 archive file name!" );
+
+    return oss->str();
+  }
+};
+
+/*! The naked HDF5 output archive
+ * \ingroup hdf5
+ */
+typedef HDF5OArchive NakedHDF5OArchive;
+
+} // end Utility namespace
+
+// The archive must be registered before we can use the export method
+BOOST_SERIALIZATION_REGISTER_ARCHIVE(Utility::HDF5OArchive)
+
+// Allow use of our custom HDF5 array optimization methods
+BOOST_SERIALIZATION_USE_ARRAY_OPTIMIZATION(Utility::HDF5OArchive)
+
+#endif // end UTILITY_HDF5_OARCHIVE_HPP
+
+//---------------------------------------------------------------------------//
+// end Utility_HDF5OArchive.hpp
+//---------------------------------------------------------------------------//

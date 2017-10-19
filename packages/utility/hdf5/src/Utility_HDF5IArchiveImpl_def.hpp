@@ -24,7 +24,7 @@ BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 HDF5IArchiveImpl<Archive>::HDF5IArchiveImpl( const std::string& hdf5_filename,
                                              unsigned flags )
   : boost::archive::detail::common_iarchive<Archive>( flags ),
-    Utility::HDF5File(hdf5_filename, flags & boost::archive::no_header),
+    Utility::HDF5CommonArchive( hdf5_filename, HDF5File::READ_ONLY ),
     d_object_count( 0 )
 {
   this->init( flags );

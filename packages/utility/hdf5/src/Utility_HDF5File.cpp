@@ -77,7 +77,8 @@ std::string HDF5File::Exception::createErrorMessage(
 }
 
 // Constructor
-HDF5File::HDF5File( const std::string& filename, HDF5File::OpenMode mode )
+HDF5File::HDF5File( const std::string& filename,
+                    const HDF5File::OpenMode mode )
   : d_filename( filename ),
     d_hdf5_file()
 {
@@ -106,8 +107,8 @@ HDF5File::HDF5File( const std::string& filename, HDF5File::OpenMode mode )
       try{
         d_hdf5_file.reset( new H5::H5File( filename, H5F_ACC_TRUNC ) );
       }
-      HDF5_EXCEPTION_CATCH( "Could not open and overwrite hdf5 file "
-                            << filename << "!" );
+      HDF5_EXCEPTION_CATCH( "Could not open hdf5 file " << filename <<
+                            "and overwrite it!" );
     }
     default:
     {

@@ -25,6 +25,13 @@ class HDF5CommonArchive : public HDF5File
 
 public:
 
+  //! Constructor
+  HDF5CommonArchive( const std::string& hdf5_filename,
+                     const HDF5File::OpenMode mode = HDF5File::READ_WRITE );
+
+  //! Destructor
+  virtual ~HDF5CommonArchive();
+
   //! Return the archive properties directory
   static const std::string& getPropertiesDir();
 
@@ -44,10 +51,10 @@ public:
   static const std::string& getVersionAttributeName();
 
   //! Return the hdf5 object data path
-  static std::string getObjectDataPath( const size_t object_count );
+  static std::string getObjectDataPath( const size_t object_id );
 
   //! Return the hdf5 tracked objects path
-  static std::string getTrackedObjectsPath( const unsigned object_count );
+  static std::string getTrackedObjectsPath( const unsigned object_id );
 
 private:
 

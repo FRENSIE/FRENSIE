@@ -65,9 +65,28 @@ public:
     : HDF5IArchiveImpl<NakedHDF5IArchive>( hdf5_filename, flags )
   { /* ... */ }
 
+  //! Constructor
+  template<class CharType, class CharTraits>
+  NakedHDF5IArchive( std::basic_istream<CharType,CharTraits>& is,
+                     unsigned flags = 0 )
+    : HDF5IArchiveImpl<NakedHDF5IArchive>( this->extractHDF5FileNameFromIStream(is), flags )
+  { /* ... */ }
+
   //! Destructor
   ~NakedHDF5IArchive()
   { /* ... */ }
+
+private:
+
+  template<class CharType, class CharTraits>
+  static inline std::string extractHDF5FileNameFromIStream( std::basic_istream<CharType,CharTraits>& is )
+  {
+    std::string hdf5_file_name;
+
+    is >> hdf5_file_name;
+
+    return hdf5_file_name;
+  }
 };
   
 } // end Utility namespace

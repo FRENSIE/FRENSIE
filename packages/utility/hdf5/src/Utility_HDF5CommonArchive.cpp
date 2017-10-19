@@ -22,6 +22,19 @@ const std::string HDF5CommonArchive::s_tree_dir = "/<tree>";
 const std::string HDF5CommonArchive::s_signature_attribute_name = "attribute";
 const std::string HDF5CommonArchive::s_version_attribute_name = "version";
 
+// Constructor
+/*! \details The default open mode for an hdf5 archive is HDF5File::READ_WRITE
+ * to prevent accidental archive file overwrites.
+ */
+HDF5CommonArchive::HDF5CommonArchive( const std::string& hdf5_filename,
+                                      const HDF5File::OpenMode mode )
+  : HDF5File( hdf5_filename, mode )
+{ /* ... */ }
+
+// Destructor
+HDF5CommonArchive::~HDF5CommonArchive()
+{ /* ... */ }
+
 // Return the archive properties directory
 const std::string& HDF5CommonArchive::getPropertiesDir()
 {
@@ -59,20 +72,20 @@ const std::string& HDF5CommonArchive::getVersionAttributeName()
 }
 
 // Return the hdf5 object data path
-std::string HDF5CommonArchive::getObjectDataPath( const size_t object_count )
+std::string HDF5CommonArchive::getObjectDataPath( const size_t object_id )
 {
   std::ostringstream oss;
-  oss << s_data_dir << "/" << object_count;
+  oss << s_data_dir << "/" << object_id;
 
   return oss.str();
 }
 
 // Return the hdf5 tracked objects path
 std::string HDF5CommonArchive::getTrackedObjectsPath(
-                                                  const unsigned object_count )
+                                                  const unsigned object_id )
 {
   std::ostringstream oss;
-  oss << s_tracked_objects_dir << "_o" << count;
+  oss << s_tracked_objects_dir << "_o" << id;
 
   return oss.str();
 }

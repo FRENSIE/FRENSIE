@@ -46,7 +46,8 @@ public:
   class Exception;
 
   //! Constructor
-  HDF5File( const std::string& filename, HDF5File::OpenMode mode );
+  HDF5File( const std::string& filename,
+            const HDF5File::OpenMode mode = HDF5File::OVERWRITE );
 
   //! Destructor
   virtual ~HDF5File();

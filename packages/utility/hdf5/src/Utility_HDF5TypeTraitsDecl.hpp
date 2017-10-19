@@ -52,6 +52,9 @@ struct HDF5TypeTraits
 
   //! Typedef for the type that will be stored in HDF5 files
   typedef T InternalType;
+
+  //! Check if the type has a type traits specialization
+  typedef std::false_type IsSpecialized;
   
   //! Returns the HDF5 data type object corresponding to the type
   static inline H5::DataType dataType()

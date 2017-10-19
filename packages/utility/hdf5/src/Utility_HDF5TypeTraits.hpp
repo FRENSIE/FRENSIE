@@ -34,6 +34,9 @@ struct BasicHDF5TypeTraits
   //! Typedef for the type that will be stored in HDF5 files
   typedef ExternalType InternalType;
 
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+
   //! Initialize internal data
   static inline InternalType* initializeInternalData(
                                             const ExternalType* const raw_data,
@@ -80,6 +83,9 @@ struct OpaqueHDF5TypeTraits
 
   //! Typedef for the type that will be stored in HDF5 files
   typedef void InternalType;
+
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
 
   //! Returns the HDF5 data type object corresponding to opaque type T
   static inline H5::PredType dataType()
@@ -144,6 +150,9 @@ struct HDF5TypeTraits<bool>
   
   //! Typedef for the type that will be stored in HDF5 files
   typedef BoolEnumType InternalType;
+
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
   
   //! Returns the HDF5 data type object corresponding to bool
   static H5::EnumType dataType();
@@ -382,33 +391,6 @@ struct HDF5TupleTypeHelper
 
     // Add the remaining tuple elements
     HDF5TupleTypeHelper<I+1,TupleType>::addElementTypes( type, layout_tuple );
-  }
-
-  static inline void addElementNames( std::string& type_name )
-  {
-    type_name += HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::name();
-    type_name += ",";
-
-    // Add the remaining tuple element names
-    HDF5TupleTypeHelper<I+1,TupleType>::addElementNames( type_name );
-  }
-
-  static inline void zeroElements( TupleType& tuple )
-  {
-    Utility::get<I>( tuple ) =
-      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::zero();
-
-    // Zero the remaining elements
-    HDF5TupleTypeHelper<I+1,TupleType>::zeroElements( tuple );
-  }
-
-  static inline void oneElements( TupleType& tuple )
-  {
-    Utility::get<I>( tuple ) =
-      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::one();
-
-    // Set the remaining elements to one
-    HDF5TupleTypeHelper<I+1,TupleType>::oneElements( tuple );
   }
 };
 
