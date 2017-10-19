@@ -41,7 +41,7 @@ H5::EnumType HDF5TypeTraits<bool>::dataType()
 
 // Initialize internal data
 auto HDF5TypeTraits<bool>::initializeInternalData(
-                                           const ExternalType* const,
+                                           const ExternalType*,
                                            const size_t size ) -> InternalType*
 {
   return new InternalType[size];
@@ -49,9 +49,9 @@ auto HDF5TypeTraits<bool>::initializeInternalData(
 
 // Convert external type data to internal type data
 void HDF5TypeTraits<bool>::convertExternalDataToInternalData(
-                                           const ExternalType* const raw_data,
+                                           const ExternalType* raw_data,
                                            const size_t size,
-                                           const InternalType* converted_data )
+                                           InternalType* converted_data )
 {
   for( size_t i = 0; i < size; ++i )
   {
@@ -64,9 +64,9 @@ void HDF5TypeTraits<bool>::convertExternalDataToInternalData(
   
 // Covert inner type to outer type
 void HDF5TypeTraits<bool>::convertInternalDataToExternalData(
-                                           const InternalType* const raw_data,
+                                           const InternalType* raw_data,
                                            const size_t size,
-                                           const ExternalType* converted_data )
+                                           ExternalType* converted_data )
 {
   for( size_t i = 0; i < size; ++i )
   {
@@ -79,50 +79,6 @@ void HDF5TypeTraits<bool>::convertInternalDataToExternalData(
 
 // Free the inner data created from outer data
 void HDF5TypeTraits<bool>::freeInternalData( InternalType*& data )
-{
-  delete[] data;
-  data = NULL;
-}
-
-// Returns the HDF5 data type object corresponding to bool
-H5::PredType HDF5TypeTraits<boost::serialization::collection_size_type>::dataType()
-{
-  return HDF5TypeTraits<typename boost::serialization::collection_size_type::base_type>::dataType();
-}
-
-// Initialize internal data
-InternalType* HDF5TypeTraits<boost::serialization::collection_size_type>::initializeInternalData(
-                                                     const ExternalType* const,
-                                                     const size_t size )
-{
-  return new InternalType[size];
-}
-
-// Convert external type data to internal type data
-void HDF5TypeTraits<boost::serialization::collection_size_type>::convertExternalDataToInternalData(
-                                           const ExternalType* const raw_data,
-                                           const size_t size,
-                                           const InternalType* converted_data )
-{
-  for( size_t i = 0; i < size; ++i )
-    converted_data[i] = raw_data[i];
-}
-  
-// Covert inner type to outer type
-void HDF5TypeTraits<boost::serialization::collection_size_type>::convertInternalDataToExternalData(
-                                           const InternalType* const raw_data,
-                                           const size_t size,
-                                           const ExternalType* converted_data )
-{
-  for( size_t i = 0; i < size; ++i )
-  {
-    converted_data[i] =
-      boost::serialization::collection_size_type( raw_data[i] );
-  }
-}
-  
-// Free the inner data created from outer data
-void HDF5TypeTraits<boost::serialization::collection_size_type>::freeInternalData( InternalType*& data )
 {
   delete[] data;
   data = NULL;

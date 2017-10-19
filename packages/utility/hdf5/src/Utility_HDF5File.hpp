@@ -13,7 +13,7 @@
 #include <string>
 #include <memory>
 #include <stdexcept>
-#include <ostringstream>
+#include <sstream>
 
 // Boost Includes
 #include <boost/noncopyable.hpp>
@@ -91,77 +91,77 @@ public:
   //! Write data to a data set
   template<typename T>
   void writeToDataSet( const std::string& path_to_data_set,
-                       const T* const data,
+                       const T* data,
                        const size_t size );
 
   //! Read data from a data set
   template<typename T>
   void readFromDataSet( const std::string& path_to_data_set,
-                        const T* data,
+                        T* data,
                         const size_t size ) const;
 
   //! Write data to a data set attribute
   template<typename T>
   void writeToDataSetAttribute( const std::string& path_to_data_set,
                                 const std::string& attribute_name,
-                                const T* const data,
+                                const T* data,
                                 const size_t size );
 
   //! Read data from a data set attribute
   template<typename T>
   void readFromDataSetAttribute( const std::string& path_to_data_set,
                                  const std::string& attribute_name,
-                                 const T* data,
+                                 T* data,
                                  const size_t size ) const;
 
   //! Write data to a group attribute
   template<typename T>
   void writeToGroupAttribute( const std::string& path_to_group,
                               const std::string& attribute_name,
-                              const T* const data,
+                              const T* data,
                               const size_t size );
 
   //! Read data from a group attribute
   template<typename T>
   void readFromGroupAttribute( const std::string& path_to_group,
                                const std::string& attribute_name,
-                               const T* data,
+                               T* data,
                                const size_t size ) const;
 
 protected:
 
   //! Write opaque data to a data set
   void writeToDataSet( const std::string& path_to_data_set,
-                       const void* const data,
+                       const void* data,
                        const size_t size );
 
   //! Read data from a data set
   void readFromDataSet( const std::string& path_to_data_set,
-                        const void* data,
+                        void* data,
                         const size_t size ) const;
 
   //! Write data to a data set attribute
   void writeToDataSetAttribute( const std::string& path_to_data_set,
                                 const std::string& attribute_name,
-                                const void* const data,
+                                const void* data,
                                 const size_t size );
 
   //! Read data from a data set attribute
   void readFromDataSetAttribute( const std::string& path_to_data_set,
                                  const std::string& attribute_name,
-                                 const void* data,
+                                 void* data,
                                  const size_t size ) const;
 
   //! Write data to a group attribute
   void writeToGroupAttribute( const std::string& path_to_group,
                               const std::string& attribute_name,
-                              const void* const data,
+                              const void* data,
                               const size_t size );
 
   //! Read data from a group attribute
   void readFromGroupAttribute( const std::string& path_to_group,
                                const std::string& attribute_name,
-                               const void* data,
+                               void* data,
                                const size_t size ) const;
   
 private:
@@ -195,7 +195,8 @@ private:
 
   // Create a data set attribute
   template<typename T>
-  void createDataSetAttribute( H5::DataSet& data_set,
+  void createDataSetAttribute( const H5::DataSet& data_set,
+                               const std::string& data_set_name,
                                const std::string& attribute_name,
                                const size_t attribute_size,
                                std::unique_ptr<H5::Attribute>& attribute );
@@ -208,15 +209,15 @@ private:
 
   // Create a group attribute
   template<typename T>
-  void createGroupAttribute( H5::Group& group,
+  void createGroupAttribute( const H5::Group& group,
                              const std::string& group_name,
                              const std::string& attribute_name,
                              const size_t attribute_size,
                              std::unique_ptr<H5::Attribute>& attribute );
 
   // Open a group attribute
-  template<typename T>
-  void openGroupAttribute( H5::Group& group,
+  void openGroupAttribute( const H5::Group& group,
+                           const std::string& group_name,
                            const std::string& attribute_name,
                            std::unique_ptr<const H5::Attribute>& attribute ) const;
 
@@ -303,7 +304,8 @@ private:
 #define HDF5_EXCEPTION_CATCH( raw_msg ) \
 catch( const H5::Exception& exception )       \
 {                                           \
-  std::ostringstream msg << raw_msg;                                    \
+  std::ostringstream msg;                                               \
+  msg << raw_msg;                                                       \
                                                                         \
   throw HDF5File::Exception( __FILE__, __LINE__, exception.getFuncName(), exception.getDetailMsg(), msg.str() ); \
 }

@@ -61,12 +61,12 @@ void HDF5File::writeToDataSet( const std::string& path_to_data_set,
 
 // Read data from a data set
 template<typename T>
-void HDF5File::readFromDataSet( const T* data,
-                                const size_t size,
-                                const std::string& path_to_data_set )
+void HDF5File::readFromDataSet( const std::string& path_to_data_set,
+                                T* data,
+                                const size_t size ) const
 {
   // Open the data set
-  std::unique_ptr<H5::DataSet> data_set;
+  std::unique_ptr<const H5::DataSet> data_set;
 
   this->openDataSet( path_to_data_set, data_set );
 
@@ -84,7 +84,7 @@ void HDF5File::readFromDataSet( const T* data,
   try{
     data_set->read( internal_data, HDF5TypeTraits<T>::dataType() );
   }
-  CATCH_HDF5_EXCEPTION( "Could not read data from data set "
+  HDF5_EXCEPTION_CATCH( "Could not read data from data set "
                         << path_to_data_set << "!" );
 
   // Convert the internal data to the desired format
@@ -98,13 +98,13 @@ void HDF5File::readFromDataSet( const T* data,
 
 // Write data to a data set attribute
 template<typename T>
-void HDF5File::writeToDataSetAttribute( const T* data,
-                                        const size_t size,
-                                        const std::string& path_to_data_set,
-                                        const std::string& attribute_name )
+void HDF5File::writeToDataSetAttribute( const std::string& path_to_data_set,
+                                        const std::string& attribute_name,
+                                        const T* data,
+                                        const size_t size )
 {
   // Open the data set
-  std::unique_ptr<H5::DataSet> data_set;
+  std::unique_ptr<const H5::DataSet> data_set;
 
   this->openDataSet( path_to_data_set, data_set );
 
@@ -142,10 +142,10 @@ void HDF5File::writeToDataSetAttribute( const T* data,
   
 // Read data from a data set attribute
 template<typename T>
-void HDF5File::readFromDataSetAttribute( const T* data,
-                                         const size_t size,
-                                         const std::string& path_to_data_set,
-                                         const std::string& attribute_name ) const
+void HDF5File::readFromDataSetAttribute( const std::string& path_to_data_set,
+                                         const std::string& attribute_name,
+                                         T* data,
+                                         const size_t size ) const
 {
   // Open the data set
   std::unique_ptr<const H5::DataSet> data_set;
@@ -155,7 +155,10 @@ void HDF5File::readFromDataSetAttribute( const T* data,
   // Open the attribute
   std::unique_ptr<const H5::Attribute> attribute;
 
-  this->openDataSetAttribute( *data_set, attribute_name, attribute );
+  this->openDataSetAttribute( *data_set,
+                              path_to_data_set,
+                              attribute_name,
+                              attribute );
 
   // Load the data from the attribute in its internal format
   typename HDF5TypeTraits<T>::InternalType* internal_data =
@@ -185,10 +188,10 @@ void HDF5File::readFromDataSetAttribute( const T* data,
 
 // Write data to a group attribute
 template<typename T>
-void HDF5File::writeToGroupAttribute( const T* data,
-                                      const size_t size,
-                                      const std::string& path_to_group,
-                                      const std::string& attribute_name )
+void HDF5File::writeToGroupAttribute( const std::string& path_to_group,
+                                      const std::string& attribute_name,
+                                      const T* data,
+                                      const size_t size )
 {
   // Open the group
   std::unique_ptr<const H5::Group> group;
@@ -226,16 +229,16 @@ void HDF5File::writeToGroupAttribute( const T* data,
     // Clean up the temporary data
     HDF5TypeTraits<T>::freeInternalData( internal_data );
   }
-  HDF5_EXCEPTION_CATCH( "Could not write data to data set attribute ("
-                        << path_to_data_set << ":" << attribute_name << ")!" );
+  HDF5_EXCEPTION_CATCH( "Could not write data to group attribute ("
+                        << path_to_group << ":" << attribute_name << ")!" );
 }
 
 // Read data from a group attribute
 template<typename T>
-void HDF5File::readFromGroupAttribute( const T* data,
-                                       const size_t size,
-                                       const std::string& path_to_group,
-                                       const std::string& attribute_name )
+void HDF5File::readFromGroupAttribute( const std::string& path_to_group,
+                                       const std::string& attribute_name,
+                                       T* data,
+                                       const size_t size ) const
 {
   // Open the group
   std::unique_ptr<const H5::Group> group;
@@ -245,7 +248,7 @@ void HDF5File::readFromGroupAttribute( const T* data,
   // Open the attribute
   std::unique_ptr<const H5::Attribute> attribute;
 
-  this->openGroupAttribute( *group, attribute_name, attribute );
+  this->openGroupAttribute( *group, path_to_group, attribute_name, attribute );
 
   // Load the data from the attribute in its internal format
   typename HDF5TypeTraits<T>::InternalType* internal_data =
@@ -280,7 +283,7 @@ void HDF5File::createDataSet( const std::string& path_to_data_set,
                               std::unique_ptr<H5::DataSet>& data_set )
 {
   try{
-    size_t data_set_size =
+    hsize_t data_set_size =
       HDF5TypeTraits<T>::calculateInternalDataSize( array_size );
     
     H5::DataSpace space( 1, &data_set_size );
@@ -296,14 +299,14 @@ void HDF5File::createDataSet( const std::string& path_to_data_set,
 
 // Create a data set attribute
 template<typename T>
-void HDF5File::createDataSetAttribute( H5::DataSet& data_set,
+void HDF5File::createDataSetAttribute( const H5::DataSet& data_set,
                                        const std::string& data_set_name,
                                        const std::string& attribute_name,
                                        const size_t array_size,
                                        std::unique_ptr<H5::Attribute>& attribute )
 {
   try{
-    size_t attribute_size =
+    hsize_t attribute_size =
       HDF5TypeTraits<T>::calculateInternalDataSize( array_size );
     
     H5::DataSpace space( 1, &attribute_size );
@@ -319,14 +322,14 @@ void HDF5File::createDataSetAttribute( H5::DataSet& data_set,
 
 // Create a group attribute
 template<typename T>
-void HDF5File::createGroupAttribute( H5::Group& group,
+void HDF5File::createGroupAttribute( const H5::Group& group,
                                      const std::string& group_name,
                                      const std::string& attribute_name,
                                      const size_t array_size,
                                      std::unique_ptr<H5::Attribute>& attribute )
 {
   try{
-    size_t attribute_size =
+    hsize_t attribute_size =
       HDF5TypeTraits<T>::calculateInternalDataSize( array_size );
     
     H5::DataSpace space( 1, &attribute_size );
@@ -351,7 +354,9 @@ bool HDF5File::doesDataSetTypeMatch( const H5::DataSet& data_set ) const
     return data_set_data_type == HDF5TypeTraits<T>::dataType();
   }
   catch( ... )
+  {
     return false;
+  }
 }
 
 // Check that the type matches the attribute type
@@ -368,7 +373,9 @@ bool HDF5File::doesAttributeTypeMatch( const H5::Attribute& attribute ) const
     return attribute_type == HDF5TypeTraits<T>::dataType();
   }
   catch( ... )
+  {
     return false;
+  }
 }
 
 
@@ -383,7 +390,7 @@ bool HDF5File::canArrayStoreDataSetContents( const T*,
     return false;
   
   // Check that the sizes are equal
-  if( HDF5TypeTraits<T>::calculateArraySize( size ) != this->getDataSetSize( data_set ) )
+  if( HDF5TypeTraits<T>::calculateInternalDataSize( size ) != this->getDataSetSize( data_set ) )
     return false;
 
   return true;
@@ -401,7 +408,7 @@ bool HDF5File::canArrayStoreAttributeContents(
     return false;
 
   // Check that the sizes are equal
-  if( HDF5TypeTraits<T>::calculateArraySize( size ) != this->getAttributeSize( attribute ) )
+  if( HDF5TypeTraits<T>::calculateInternalDataSize( size ) != this->getAttributeSize( attribute ) )
     return false;
 
   return true;

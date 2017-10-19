@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5File.hpp"
-#incluce "Utility_HDF5ArchiveException.hpp"
+#include "Utility_HDF5ArchiveException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 

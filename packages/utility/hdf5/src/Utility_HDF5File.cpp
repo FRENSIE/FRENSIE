@@ -36,7 +36,7 @@ struct HDF5TypeTraits<void> : public Details::BasicHDF5TypeTraits<void,1>
 {
   //! Returns the HDF5 data type object corresponding to void
   static inline H5::PredType dataType()
-  { return H5::NATIVE_OPAQUE; }
+  { return H5::PredType::NATIVE_OPAQUE; }
 };
 
 // Constructor
@@ -61,9 +61,9 @@ std::string HDF5File::Exception::createErrorMessage(
                                          const std::string& hdf5_error_message,
                                          const std::string& message )
 {
-  std::ostringstream oss detailed_message;
+  std::ostringstream detailed_message;
 
-  detailed_message << FRENSIE_LOG_ERROR_MSG << msg << "\n"
+  detailed_message << FRENSIE_LOG_ERROR_MSG << message << "\n"
                    << FRENSIE_LOG_EXCEPTION_TYPE_MSG
                    << "H5::Exception" << FRENSIE_LOG_ARROW_SEP
                    << "Utility::HDF5File::Exception" << "\n"
@@ -93,6 +93,7 @@ HDF5File::HDF5File( const std::string& filename,
       }
       HDF5_EXCEPTION_CATCH( "Could not open hdf5 file " << filename <<
                             " in read-only mode!" );
+      break;
     }
     case READ_WRITE:
     {
@@ -101,6 +102,7 @@ HDF5File::HDF5File( const std::string& filename,
       }
       HDF5_EXCEPTION_CATCH( "Could not open hdf5 file " << filename <<
                             " in read-write mode!" );
+      break;
     }
     case OVERWRITE:
     {
@@ -109,6 +111,7 @@ HDF5File::HDF5File( const std::string& filename,
       }
       HDF5_EXCEPTION_CATCH( "Could not open hdf5 file " << filename <<
                             "and overwrite it!" );
+      break;
     }
     default:
     {
@@ -122,13 +125,13 @@ HDF5File::~HDF5File()
 { /* ... */ }
 
 // Get the file name
-const std::string& HDF5File::getFilename() const
+const std::string& HDF5File::getFilename() const throw()
 {
   return d_filename;
 }
 
 // Check if the group exists
-bool HDF5File::doesGroupExist( const std::string& path_to_group ) const
+bool HDF5File::doesGroupExist( const std::string& path_to_group ) const throw()
 {
   try{
     std::unique_ptr<const H5::Group> group;
@@ -144,9 +147,9 @@ bool HDF5File::doesGroupExist( const std::string& path_to_group ) const
 
 // Check if the group attribute exists
 bool HDF5File::doesGroupAttributeExist( const std::string& path_to_group,
-                                        const std::string& attribute_name ) const
+                                        const std::string& attribute_name ) const throw()
 {
-  if( this->doesGroupExist( group_location ) )
+  if( this->doesGroupExist( path_to_group ) )
   {
     std::unique_ptr<const H5::Group> group;
     this->openGroup( path_to_group, group );
@@ -165,7 +168,7 @@ bool HDF5File::doesGroupAttributeExist( const H5::Group& group,
 }
 
 // Check if the data set exists
-bool HDF5File::doesDataSetExist( const std::string& path_to_data_set ) const
+bool HDF5File::doesDataSetExist( const std::string& path_to_data_set ) const throw()
 {
   try{
     std::unique_ptr<const H5::DataSet> data_set;
@@ -181,7 +184,7 @@ bool HDF5File::doesDataSetExist( const std::string& path_to_data_set ) const
 
 // Check if the data set attribute exists
 bool HDF5File::doesDataSetAttributeExist( const std::string& path_to_data_set,
-                                          const std::string& attribute_name ) const
+                                          const std::string& attribute_name ) const throw()
 {
   if( this->doesDataSetExist( path_to_data_set ) )
   {
@@ -204,7 +207,7 @@ bool HDF5File::doesDataSetAttributeExist( const H5::DataSet& data_set,
 // Get the size of a data set
 hsize_t HDF5File::getDataSetSize( const std::string& path_to_data_set ) const
 {
-  std::unique_ptr<H5::DataSet> data_set;
+  std::unique_ptr<const H5::DataSet> data_set;
   
   this->openDataSet( path_to_data_set, data_set );
   
@@ -227,7 +230,7 @@ hsize_t HDF5File::getDataSetAttributeSize( const std::string& path_to_data_set,
 
   std::unique_ptr<const H5::Attribute> attribute;
 
-  this->openDataSetAttribute( *data_set, attribute_name, attribute );
+  this->openDataSetAttribute( *data_set, path_to_data_set, attribute_name, attribute );
 
   return this->getAttributeSize( *attribute );
 }
@@ -242,7 +245,7 @@ hsize_t HDF5File::getGroupAttributeSize( const std::string& path_to_group,
 
   std::unique_ptr<const H5::Attribute> attribute;
 
-  this->openGroupAttribute( *group, attribute_name, attribute );
+  this->openGroupAttribute( *group, path_to_group, attribute_name, attribute );
 
   return this->getAttributeSize( *attribute );
 }
@@ -295,55 +298,55 @@ void HDF5File::createSoftLink( const std::string& source_path,
 }
 
 // Write opaque data to a data set
-void writeToDataSet( const std::string& path_to_data_set,
-                     const void* const data,
-                     const size_t size )
+void HDF5File::writeToDataSet( const std::string& path_to_data_set,
+                               const void* data,
+                               const size_t size )
 {
-  this->writeToDataSet( path_to_data_set, data, size );
+  this->writeToDataSet<void>( path_to_data_set, data, size );
 }
 
 // Read data from a data set
 void HDF5File::readFromDataSet( const std::string& path_to_data_set,
-                                const void* data,
+                                void* data,
                                 const size_t size ) const
 {
-  this->readFromDataSet( path_to_data_set, data, size );
+  this->readFromDataSet<void>( path_to_data_set, data, size );
 }
 
 // Write data to a data set attribute
 void HDF5File::writeToDataSetAttribute( const std::string& path_to_data_set,
                                         const std::string& attribute_name,
-                                        const void* const data,
+                                        const void* data,
                                         const size_t size )
 {
-  this->writeToDataSetAttribute( path_to_data_set, attribute_name, data, size );
+  this->writeToDataSetAttribute<void>( path_to_data_set, attribute_name, data, size );
 }
 
 // Read data from a data set attribute
 void HDF5File::readFromDataSetAttribute( const std::string& path_to_data_set,
                                          const std::string& attribute_name,
-                                         const void* data,
+                                         void* data,
                                          const size_t size ) const
 {
-  this->readFromDataSetAttribute( path_to_data_set, attribute_name, data, size );
+  this->readFromDataSetAttribute<void>( path_to_data_set, attribute_name, data, size );
 }
 
 // Write data to a group attribute
 void HDF5File::writeToGroupAttribute( const std::string& path_to_group,
                                       const std::string& attribute_name,
-                                      const void* const data,
+                                      const void* data,
                                       const size_t size )
 {
-  this->writeToGroupAttribute( path_to_group, attribute_name, data, size );
+  this->writeToGroupAttribute<void>( path_to_group, attribute_name, data, size );
 }
 
 // Read data from a group attribute
 void HDF5File::readFromGroupAttribute( const std::string& path_to_group,
                                        const std::string& attribute_name,
-                                       const void* data,
+                                       void* data,
                                        const size_t size ) const
 {
-  this->readFromGroupAttribute( path_to_group, attribute_name, data, size );
+  this->readFromGroupAttribute<void>( path_to_group, attribute_name, data, size );
 }
 
 // Extract the parent group path
@@ -369,7 +372,9 @@ bool HDF5File::doesParentGroupExist( const std::string& path ) const
     this->openGroup( this->extractParentGroupPath( path ), group );
   }
   catch( ... )
+  {
     return false;
+  }
 
   return true;
 }
@@ -422,6 +427,7 @@ void HDF5File::openDataSet( const std::string& path_to_data_set,
 
 // Open a data set attribute
 void HDF5File::openDataSetAttribute( const H5::DataSet& data_set,
+                                     const std::string& path_to_data_set,
                                      const std::string& attribute_name,
                                      std::unique_ptr<const H5::Attribute>& attribute ) const
 {
@@ -430,6 +436,19 @@ void HDF5File::openDataSetAttribute( const H5::DataSet& data_set,
   }
   HDF5_EXCEPTION_CATCH( "Could not open data set attribute "
                         << path_to_data_set << ":" << attribute_name << "!" );
+}
+
+// Open a group attribute
+void HDF5File::openGroupAttribute( const H5::Group& group,
+                                   const std::string& path_to_group,
+                                   const std::string& attribute_name,
+                                   std::unique_ptr<const H5::Attribute>& attribute ) const
+{
+  try{
+    attribute.reset( new H5::Attribute( group.openAttribute( attribute_name ) ) );
+  }
+  HDF5_EXCEPTION_CATCH( "Could not open group attribute "
+                        << path_to_group << ":" << attribute_name << "!" );
 }
   
 } // end Utility namespace

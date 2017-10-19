@@ -79,7 +79,7 @@ struct HDF5TypeTraits
                                            const ExternalType* const raw_data,
                                            const size_t size,
                                            const InternalType* converted_data )
-  { (void)UndefinedTraits<T>::notDefined();
+  { (void)UndefinedTraits<T>::notDefined(); }
   
   /*! Convert internal type data to external type data
    * 

@@ -10,12 +10,12 @@
 #include <sstream>
 
 // FRENSIE Includes
-#include "Utility_HDF5CommonArchive.cpp"
+#include "Utility_HDF5CommonArchive.hpp"
 
 namespace Utility{
 
 // Initialize static member data
-const std::string HDF5CommonArchive::s_properties_dir = "/"
+  const std::string HDF5CommonArchive::s_properties_dir = "/";
 const std::string HDF5CommonArchive::s_data_dir = "/<data>";
 const std::string HDF5CommonArchive::s_tracked_objects_dir = "/<tracked_objects>";
 const std::string HDF5CommonArchive::s_tree_dir = "/<tree>";
@@ -85,7 +85,7 @@ std::string HDF5CommonArchive::getTrackedObjectsPath(
                                                   const unsigned object_id )
 {
   std::ostringstream oss;
-  oss << s_tracked_objects_dir << "_o" << id;
+  oss << s_tracked_objects_dir << "_o" << object_id;
 
   return oss.str();
 }

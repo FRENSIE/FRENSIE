@@ -15,7 +15,6 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5TypeTraitsDecl.hpp"
-#include "Utility_HDF5ExceptionCatchMacros.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace Utility{
@@ -39,15 +38,15 @@ struct BasicHDF5TypeTraits
 
   //! Initialize internal data
   static inline InternalType* initializeInternalData(
-                                            const ExternalType* const raw_data,
+                                            const ExternalType* raw_data,
                                             const size_t size )
-  { return raw_data; }
+  { return const_cast<InternalType*>(raw_data); }
 
   //! Convert external type data to internal type data
   static inline void convertExternalDataToInternalData(
-                                           const ExternalType* const raw_data,
+                                           const ExternalType* raw_data,
                                            const size_t size,
-                                           const InternalType* converted_data )
+                                           InternalType* converted_data )
   {
     if( raw_data != converted_data )
       std::memcpy( converted_data, raw_data, SizeOfT*size );
@@ -55,9 +54,9 @@ struct BasicHDF5TypeTraits
   
   //! Covert inner type to outer type
   static inline void convertInternalDataToExternalData(
-                                           const InternalType* const raw_data,
+                                           const InternalType* raw_data,
                                            const size_t size,
-                                           const ExternalType* converted_data )
+                                           ExternalType* converted_data )
   {
     if( raw_data != converted_data )
       std::memcpy( converted_data, raw_data, SizeOfT*size );
@@ -89,19 +88,19 @@ struct OpaqueHDF5TypeTraits
 
   //! Returns the HDF5 data type object corresponding to opaque type T
   static inline H5::PredType dataType()
-  { return H5::NATIVE_OPAQUE; }
+  { return H5::PredType::NATIVE_OPAQUE; }
 
   //! Initialize internal data
   static inline InternalType* initializeInternalData(
-                                            const ExternalType* const raw_data,
+                                            const ExternalType* raw_data,
                                             const size_t size )
-  { return raw_data; }
+  { return const_cast<InternalType*>(raw_data); }
 
   //! Convert external type data to internal type data
   static inline void convertExternalDataToInternalData(
-                                           const ExternalType* const raw_data,
+                                           const ExternalType* raw_data,
                                            const size_t size,
-                                           const InternalType* converted_data )
+                                           InternalType* converted_data )
   {
     if( raw_data != converted_data )
       std::memcpy( converted_data, raw_data, sizeof(ExternalType)*size );
@@ -109,9 +108,9 @@ struct OpaqueHDF5TypeTraits
   
   //! Covert inner type to outer type
   static inline void convertInternalDataToExternalData(
-                                           const InternalType* const raw_data,
+                                           const InternalType* raw_data,
                                            const size_t size,
-                                           const ExternalType* converted_data )
+                                           ExternalType* converted_data )
   {
     if( raw_data != converted_data )
       std::memcpy( converted_data, raw_data, sizeof(ExternalType)*size );
@@ -158,19 +157,20 @@ struct HDF5TypeTraits<bool>
   static H5::EnumType dataType();
 
   //! Initialize internal data
-  static InternalType* initializeInternalData( const ExternalType* const,
+  static InternalType* initializeInternalData( const ExternalType*,
                                                const size_t size );
 
   //! Convert external type data to internal type data
   static void convertExternalDataToInternalData(
-                                          const ExternalType* const raw_data,
+                                          const ExternalType* raw_data,
                                           const size_t size,
-                                          const InternalType* converted_data );
+                                          InternalType* converted_data );
   //! Covert inner type to outer type
   static void convertInternalDataToExternalData(
-                                          const InternalType* const raw_data,
+                                          const InternalType* raw_data,
                                           const size_t size,
-                                          const ExternalType* converted_data );
+                                          ExternalType* converted_data );
+  
   //! Free the inner data created from outer data
   static void freeInternalData( InternalType*& data );
 
@@ -353,10 +353,11 @@ struct HDF5TypeTraits<std::pair<T1,T2> > : public Details::BasicHDF5TypeTraits<s
   {
     if( !s_data_type )
     {
-      s_data_type.reset( new H5::CompType( sizeof(std::pair<T1,T2>) ) );
-      
-      s_data_type.insertMember( "first", HOFFSET(std::pair<T1,T2>, first), HDF5TypeTraits<T1>::dataType() );
-      s_data_type.insertMember( "second", HOFFSET(std::pair<T1,T2>, second), HDF5TypeTraits<T2>::dataType() );
+      typedef typename Details::BasicHDF5TypeTraits<std::pair<T1,T2> >::ExternalType Pair;
+      s_data_type.reset( new H5::CompType( sizeof(Pair) ) );
+
+      s_data_type->insertMember( "first", HOFFSET(Pair, first), HDF5TypeTraits<T1>::dataType() );
+      s_data_type->insertMember( "second", HOFFSET(Pair, second), HDF5TypeTraits<T2>::dataType() );
     }
 
     return *s_data_type;
@@ -397,41 +398,10 @@ struct HDF5TupleTypeHelper
 // The helper class that constructs a tuple HDF5 data type (specialization for
 // I = TupleSize-1, which is for the last element)
 template<size_t I, typename TupleType>
-struct HDF5TupleTypeHelper<I,TupleType,typename std::enable_if<I==TupleSize<TupleType>::value-1>::type>
+struct HDF5TupleTypeHelper<I,TupleType,typename std::enable_if<(I>=TupleSize<TupleType>::value)>::type>
 {
-  static inline void addElementTypes( H5::CompType& type,
-                                      const TupleType& layout_tuple )
-  {
-    std::ostringstream oss;
-    oss << "element_" << I;
-
-    const size_t offset =
-      reinterpret_cast<const uint8_t*>(&Utility::get<I>( layout_tuple )) -
-      reinterpret_cast<const uint8_t*>(&layout_tuple);
-
-
-    H5::DataType element_type =
-      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::dataType();
-    
-    type.insertMember( oss.str(), offset, element_type );
-  }
-
-  static inline void addElementNames( std::string& type_name )
-  { 
-    type_name += HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::name();
-  }
-
-  static inline void zeroElements( TupleType& tuple )
-  {
-    Utility::get<I>( tuple ) =
-      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::zero();
-  }
-
-  static inline void oneElements( TupleType& tuple )
-  {
-    Utility::get<I>( tuple ) =
-      HDF5TypeTraits<typename TupleElement<I,TupleType>::type>::one();
-  }
+  static inline void addElementTypes( H5::CompType&, const TupleType& )
+  { /* ... */ }
 };
   
 } // end Details namespace
@@ -441,16 +411,16 @@ struct HDF5TupleTypeHelper<I,TupleType,typename std::enable_if<I==TupleSize<Tupl
  * \ingroup hdf5_type_traits
  */
 template<typename... Types>
-struct HDF5TypeTraits<Tuple<Types...> > : public Details::BasicHDF5TypeTraits<Tuple<Types...> >
+struct HDF5TypeTraits<std::tuple<Types...> > : public Details::BasicHDF5TypeTraits<std::tuple<Types...> >
 {
   //! Returns the HDF5 data type object corresponding to Utility::Tuple
   static inline H5::CompType dataType()
   {
     if( !s_data_type )
     {
-      s_data_type.reset( new H5::CompType( sizeof(Tuple<Types...>) ) );
+      s_data_type.reset( new H5::CompType( sizeof(std::tuple<Types...>) ) );
       
-      Details::HDF5TupleTypeHelper<0,RawType>::addElementTypes( *s_data_type, Tuple<Types...>() );
+      Details::HDF5TupleTypeHelper<0,std::tuple<Types...> >::addElementTypes( *s_data_type, std::tuple<Types...>() );
     }
 
     return *s_data_type;
@@ -459,7 +429,7 @@ struct HDF5TypeTraits<Tuple<Types...> > : public Details::BasicHDF5TypeTraits<Tu
 private:
 
   // The data type
-  std::unique_ptr<H5::CompType> s_data_type
+  static std::unique_ptr<H5::CompType> s_data_type;
 };
 
 } // end Utility namespace
