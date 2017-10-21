@@ -43,16 +43,10 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
       std::string archive_signature;
       
       try{
-        hsize_t signature_size =
-          this->getGroupAttributeSize( this->getPropertiesDir(),
-                                       this->getSignatureAttributeName() );
-      
-        archive_signature.resize( signature_size );
-
-        this->readFromGroupAttribute( this->getPropertiesDir(),
-                                      this->getSignatureAttributeName(),
-                                      archive_signature.data(),
-                                      signature_size );
+        Utility::readFromGroupAttribute( *this,
+                                         this->getPropertiesDir(),
+                                         this->getSignatureAttributeName(),
+                                         archive_signature );
       }
       HDF5_FILE_EXCEPTION_CATCH( "The archive signature could not be "
                                  "retrieved from hdf5 archive "
@@ -254,14 +248,14 @@ inline void HDF5IArchiveImpl<Archive>::load( T& t )
 template<typename Archive>
 inline void HDF5IArchiveImpl<Archive>::load( std::string& t )
 {
-  this->loadImpl( t );
+  this->loadContainerImpl( t );
 }
 
 // Load a std::wstring
 template<typename Archive>
 inline void HDF5IArchiveImpl<Archive>::load( std::wstring& t )
 {
-  this->loadImpl( t );
+  this->loadContainerImpl( t );
 }
 
 // Load a bost::serialization::collection_size_type

@@ -14,6 +14,7 @@
 #include <memory>
 #include <stdexcept>
 #include <sstream>
+#include <initializer_list>
 
 // Boost Includes
 #include <boost/noncopyable.hpp>
@@ -300,6 +301,66 @@ private:
                                          const std::string& hdf5_error_message,
                                          const std::string& message );
 };
+
+//! Write a container to a data set
+template<typename Container>
+void writeToDataSet( HDF5File& hdf5_file,
+                     const std::string& path_to_data_set,
+                     const Container& container );
+
+//! Write an initializer list to a data set
+template<typename T>
+void writeToDataSet( HDF5File& hdf5_file,
+                     const std::string& path_to_data_set,
+                     std::initializer_list<T> container );
+
+//! Write a container to a data set attribute
+template<typename Container>
+void writeToDataSetAttribute( HDF5File& hdf5_file,
+                              const std::string& path_to_data_set,
+                              const std::string& attribute_name,
+                              const Container& container );
+
+//! Write an initializer list to a data set attribute
+template<typename T>
+void writeToDataSetAttribute( HDF5File& hdf5_file,
+                              const std::string& path_to_data_set,
+                              const std::string& attribute_name,
+                              std::initializer_list<T> container );
+
+//! Write a container to a group attribute
+template<typename Container>
+void writeToGroupAttribute( HDF5File& hdf5_file,
+                            const std::string& path_to_group,
+                            const std::string& attribute_name,
+                            const Container& container );
+
+//! Write an initializer list to a group attribute
+template<typename T>
+void writeToGroupAttribute( HDF5File& hdf5_file,
+                            const std::string& path_to_group,
+                            const std::string& attribute_name,
+                            std::initializer_list<T> container );
+
+//! Read a container from a data set
+template<typename Container>
+void readFromDataSet( const HDF5File& hdf5_file,
+                      const std::string& path_to_data_set,
+                      Container& container );
+
+//! Read a container from a data set attribute
+template<typename Container>
+void readFromDataSetAttribute( const HDF5File& hdf5_file,
+                               const std::string& path_to_data_set,
+                               const std::string& attribute_name,
+                               Container& container );
+
+//! Read a container from a group attribute
+template<typename Container>
+void readFromGroupAttribute( const HDF5File& hdf5_file,
+                             const std::string& path_to_group,
+                             const std::string& attribute_name,
+                             Container& container );
   
 } // end Utility namespace
 

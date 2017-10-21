@@ -11,6 +11,10 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5TypeTraits.hpp"
+#include "Utility_Array.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_TypeTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -418,6 +422,499 @@ bool HDF5File::canArrayStoreAttributeContents(
     return false;
 
   return true;
+}
+
+namespace Details{
+
+/*! Helper used to determine if a container has a contiguous memory layout
+ * \ingroup hdf5
+ */
+template<typename Container, typename Enabled = void>
+struct IsContiguousMemoryContainer : public std::false_type
+{ /* ... */ };
+
+/*! Specialization of ContiguousMemoryContainer for std::string
+ * \ingroup hdf5
+ */
+template<>
+struct IsContiguousMemoryContainer<std::string> : public std::true_type
+{ /* ... */ };
+
+/*! Specialization of ContiguousMemoryContainer for std::wstring
+ * \ingroup hdf5
+ */
+template<>
+struct IsContiguousMemoryContainer<std::wstring> : public std::true_type
+{ /* ... */ };
+
+/*! Specialization of ContiguousMemoryContainer for std::vector
+ * \ingroup hdf5
+ */
+template<typename T>
+struct IsContiguousMemoryContainer<std::vector<T> > : public std::true_type
+{ /* ... */ };
+
+/*! Specialization of ContiguousMemoryContainer for std::array
+ * \ingroup HDF5
+ */
+template<typename T, size_t N>
+struct IsContiguousMemoryContainer<std::array<T,N> > : public std::true_type
+{ /* ... */ };
+
+/*! Specialization of ContiguousMemoryContainer for Utility::ArrayView
+ * \ingroup HDF5
+ */
+template<typename T>
+struct IsContiguousMemoryContainer<Utility::ArrayView<T> > : public std::true_type
+{ /* ... */ };
+
+/*! Specialization of ContiguousMemoryContainer for Utility::ArrayView of const
+ * \ingroup HDF5
+ */
+template<typename T>
+struct IsContiguousMemoryContainer<Utility::ArrayView<const T> > : public std::true_type
+{ /* ... */ };
+
+/*! \brief Helper used to copy contents of a container that does not have 
+ * contiguous memory to a std::vector
+ * \ingroup hdf5
+ */
+template<typename Container, typename Enable = void>
+struct CopyContainerContentsToFromVectorHelper;
+
+/*! \brief Specialization of CopyContainerContentsToFromVectorHelper for non-map 
+ * containers
+ * \ingroup hdf5
+ */
+template<template<typename,typename...> class Container, typename T>
+struct CopyContainerContentsToFromVectorHelper<Container<T>,typename std::enable_if<std::is_same<T,typename Container<T>::value_type>::value>::type>
+{
+  typedef std::vector<T> VectorType;
+  
+  static inline void copyToVector( const Container<T>& container,
+                                   VectorType& container_copy )
+  { container_copy.assign( container.begin(), container.end() ); }
+
+  static inline void copyFromVector( Container<T>& container,
+                                     const VectorType& container_copy )
+  { container.assign( container_copy.begin(), container_copy.end() ); }
+};
+
+/*! \brief Specialization of CopyContainerContentsToFromVectorHelper for map 
+ * containers
+ * \ingroup hdf5
+ */
+template<template<typename,typename,typename...> class Container,
+         typename Key, typename T>
+struct CopyContainerContentsToFromVectorHelper<Container<Key,T>,typename std::enable_if<Utility::IsPair<typename Container<Key,T>::value_type>::value>::type>
+{
+  typedef std::vector<std::pair<Key,T> > VectorType;
+  
+  static inline void copyToVector( const Container<Key,T>& container,
+                                   VectorType& container_copy )
+  { container_copy.assign( container.begin(), container.end() ); }
+
+  static inline void copyFromVector( Container<Key,T>& container,
+                                     const VectorType& container_copy )
+  { container.assign( container_copy.begin(), container_copy.end() ); }
+};
+
+/*! Implementation of writeToDataSet for containers with contiguous memory
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void writeToDataSetImpl( HDF5File& hdf5_file,
+                                const std::string& path_to_data_set,
+                                const Container& container,
+                                std::true_type )
+{
+  hdf5_file.writeToDataSet( path_to_data_set, container.data(), container.size() );
+}
+
+/*! \brief Implementation of writeToDataSet for containers with memory that is
+ * not contiguous
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void writeToDataSetImpl( HDF5File& hdf5_file,
+                                const std::string& path_to_data_set,
+                                const Container& container,
+                                std::false_type )
+{
+  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+
+  CopyContainerContentsToFromVectorHelper<Container>::copyToVector( container, container_copy );
+
+  hdf5_file.writeToDataSet( path_to_data_set, container_copy.data(), container_copy.size() );
+}
+
+/*! \brief Implementation of writeToDataSetAttribute for containers with 
+ * contiguous memory
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void writeToDataSetAttributeImpl( HDF5File& hdf5_file,
+                                         const std::string& path_to_data_set,
+                                         const std::string& attribute_name,
+                                         const Container& container,
+                                         std::true_type )
+{
+  hdf5_file.writeToDataSetAttribute( path_to_data_set, attribute_name, container.data(), container.size() );
+}
+
+/*! \brief Implementation of writeToDataSetAttribute for containers with 
+ * memory that is not contiguous
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void writeToDataSetAttributeImpl( HDF5File& hdf5_file,
+                                         const std::string& path_to_data_set,
+                                         const std::string& attribute_name,
+                                         const Container& container,
+                                         std::false_type )
+{
+  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+
+  CopyContainerContentsToFromVectorHelper<Container>::copyToVector( container, container_copy );
+
+  hdf5_file.writeToDataSetAttribute( path_to_data_set, attribute_name, container_copy.data(), container_copy.size() );
+}
+
+/*! \brief Implementation of writeToGroupAttribute for containers with 
+ * contiguous memory
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void writeToGroupAttributeImpl( HDF5File& hdf5_file,
+                                       const std::string& path_to_group,
+                                       const std::string& attribute_name,
+                                       const Container& container,
+                                       std::true_type )
+{
+  hdf5_file.writeToGroupAttribute( path_to_group, attribute_name, container.data(), container.size() );
+}
+
+/*! \brief Implementation of writeToGroupAttribute for containers with 
+ * memory that is not contiguous
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void writeToGroupAttributeImpl( HDF5File& hdf5_file,
+                                       const std::string& path_to_group,
+                                       const std::string& attribute_name,
+                                       const Container& container,
+                                       std::false_type )
+{
+  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+
+  CopyContainerContentsToFromVectorHelper<Container>::copyToVector( container, container_copy );
+
+  hdf5_file.writeToGroupAttribute( path_to_group, attribute_name, container_copy.data(), container_copy.size() );
+}
+  
+} // end Details namespace
+    
+// Write a container to a data set
+/*! \ingroup hdf5
+ */
+template<typename Container>
+void writeToDataSet( HDF5File& hdf5_file,
+                     const std::string& path_to_data_set,
+                     const Container& container )
+{
+  Details::writeToDataSetImpl( hdf5_file,
+                               path_to_data_set,
+                               container,
+                               Details::IsContiguousMemoryContainer<Container>() );
+}
+
+// Write an initializer list to a data set
+/*! \ingroup hdf5
+ */
+template<typename T>
+inline void writeToDataSet( HDF5File& hdf5_file,
+                            const std::string& path_to_data_set,
+                            std::initializer_list<T> container )
+{
+  hdf5_file.writeToDataSet( path_to_data_set,
+                            container.begin(),
+                            container.size() );
+}
+
+// Write a container to a data set attribute
+/*! \ingroup hdf5
+ */
+template<typename Container>
+void writeToDataSetAttribute( HDF5File& hdf5_file,
+                              const std::string& path_to_data_set,
+                              const std::string& attribute_name,
+                              const Container& container )
+{
+  Details::writeToDataSetAttributeImpl( hdf5_file,
+                                        path_to_data_set,
+                                        attribute_name,
+                                        container,
+                                        Details::IsContiguousMemoryContainer<Container>() );
+}
+
+// Write an initializer list to a data set attribute
+/*! \ingroup hdf5
+ */
+template<typename T>
+inline void writeToDataSetAttribute( HDF5File& hdf5_file,
+                                     const std::string& path_to_data_set,
+                                     const std::string& attribute_name,
+                                     std::initializer_list<T> container )
+{
+  hdf5_file.writeToDataSetAttribute( path_to_data_set,
+                                     attribute_name,
+                                     container.begin(),
+                                     container.size() );
+}
+
+// Write a container to a group attribute
+/*! \ingroup hdf5
+ */
+template<typename Container>
+void writeToGroupAttribute( HDF5File& hdf5_file,
+                            const std::string& path_to_group,
+                            const std::string& attribute_name,
+                            const Container& container )
+{
+  Details::writeToGroupAttributeImpl( hdf5_file,
+                                      path_to_group,
+                                      attribute_name,
+                                      container,
+                                      Details::IsContiguousMemoryContainer<Container>() );
+}
+
+// Write an initializer list to a group attribute
+/*! \ingroup hdf5
+ */
+template<typename T>
+void writeToGroupAttribute( HDF5File& hdf5_file,
+                            const std::string& path_to_group,
+                            const std::string& attribute_name,
+                            std::initializer_list<T> container )
+{
+  hdf5_file.writeToGroupAttribute( path_to_group,
+                                   attribute_name,
+                                   container.begin(),
+                                   container.end() );
+}
+
+namespace Details{
+
+/*! Helper for resizing a container
+ * \ingroup hdf5
+ */
+template<typename Container, typename Enabled = void>
+struct ContainerResizeHelper;
+
+/*! Specialization of ContainerResizeHelper for std::vector
+ * \ingroup hdf5
+ */
+template<typename T>
+struct ContainerResizeHelper<std::vector<T> >
+{
+  //! Resize the container
+  static inline void resize( std::vector<T>& container,
+                             const hsize_t data_set_size )
+  {
+    container.resize( Utility::HDF5TypeTraits<T>::calculateExternalDataSize( data_set_size ) );
+  }
+};
+
+/*! Specialization of ContainerResizeHelper for std::string
+ * \ingroup hdf5
+ */
+template<>
+struct ContainerResizeHelper<std::string>
+{
+  //! Resize the container
+  static inline void resize( std::string& container,
+                             const hsize_t data_set_size )
+  {
+    container.resize( Utility::HDF5TypeTraits<std::string::value_type>::calculateExternalDataSize( data_set_size ) );
+  }
+};
+
+/*! Specialization of ContainerResizeHelper for std::wstring
+ * \ingroup hdf5
+ */
+template<>
+struct ContainerResizeHelper<std::wstring>
+{
+  //! Resize the container
+  static inline void resize( std::string& container,
+                             const hsize_t data_set_size )
+  {
+    container.resize( Utility::HDF5TypeTraits<std::wstring::value_type>::calculateExternalDataSize( data_set_size ) );
+  }
+};
+
+/*! Implementation of readFromDataSet for containers with contiguous memory
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void readFromDataSetImpl( const HDF5File& hdf5_file,
+                                 const std::string& path_to_data_set,
+                                 Container& container,
+                                 std::true_type )
+{
+  // Extract the data set size
+  hsize_t data_set_size = hdf5_file.getDataSetSize( path_to_data_set );
+
+  ContainerResizeHelper<Container>::resize( container, data_set_size );
+  
+  hdf5_file.readFromDataSet( path_to_data_set, container.data(), container.size() );
+}
+
+/*! \brief Implementation of readFromDataSet for containers with memory that is
+ * not contiguous
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void readFromDataSetImpl( const HDF5File& hdf5_file,
+                                 const std::string& path_to_data_set,
+                                 Container& container,
+                                 std::false_type )
+{
+  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+
+  Details::readFromDataSetImpl( hdf5_file, path_to_data_set, container_copy, std::true_type() );
+
+  CopyContainerContentsToFromVectorHelper<Container>::copyFromVector( container, container_copy );
+}
+
+/*! \brief Implementation of readFromDataSetAttribute for containers with 
+ * contiguous memory
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void readFromDataSetAttributeImpl( const HDF5File& hdf5_file,
+                                          const std::string& path_to_data_set,
+                                          const std::string& attribute_name,
+                                          Container& container,
+                                          std::true_type )
+{
+  // Extract the data set size
+  hsize_t data_set_attribute_size =
+    hdf5_file.getDataSetAttributeSize( path_to_data_set, attribute_name );
+
+  ContainerResizeHelper<Container>::resize( container, data_set_attribute_size );
+  
+  hdf5_file.readFromDataSet( path_to_data_set, container.data(), container.size() );
+}
+
+/*! \brief Implementation of readFromDataSetAttribute for containers with 
+ * memory that is not contiguous
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void readFromDataSetAttributeImpl( const HDF5File& hdf5_file,
+                                          const std::string& path_to_data_set,
+                                          const std::string& attribute_name,
+                                          Container& container,
+                                          std::false_type )
+{
+  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+
+  Details::readFromDataSetAttributeImpl( hdf5_file, path_to_data_set, attribute_name, container_copy, std::true_type() );
+
+  CopyContainerContentsToFromVectorHelper<Container>::copyFromVector( container, container_copy );
+}
+
+/*! \brief Implementation of readFromGroupAttribute for containers with 
+ * contiguous memory
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void readFromGroupAttributeImpl( const HDF5File& hdf5_file,
+                                        const std::string& path_to_group,
+                                        const std::string& attribute_name,
+                                        Container& container,
+                                        std::true_type )
+{
+  // Extract the data set size
+  hsize_t group_attribute_size =
+    hdf5_file.getGroupAttributeSize( path_to_group, attribute_name );
+
+  ContainerResizeHelper<Container>::resize( container, group_attribute_size );
+  
+  hdf5_file.readFromGroupAttribute( path_to_group, attribute_name, container.data(), container.size() );
+}
+
+/*! \brief Implementation of readFromGroupAttribute for containers with 
+ * memory that is not contiguous
+ * \ingroup HDF5
+ */
+template<typename Container>
+inline void readFromGroupAttributeImpl( const HDF5File& hdf5_file,
+                                        const std::string& path_to_group,
+                                        const std::string& attribute_name,
+                                        Container& container,
+                                        std::false_type )
+{
+  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+
+  Details::readFromGroupAttributeImpl( hdf5_file, path_to_group, attribute_name, container_copy, std::true_type() );
+
+  CopyContainerContentsToFromVectorHelper<Container>::copyFromVector( container, container_copy );
+}
+  
+} // end Details namespace
+
+// Read a container from a data set
+/*! \details Only containers that can be resized can be passed to this method
+ * (std::array and Utility::ArrayView cannot be used).
+ * \ingroup hdf5
+ */
+template<typename Container>
+void readFromDataSet( const HDF5File& hdf5_file,
+                      const std::string& path_to_data_set,
+                      Container& container )
+{
+  Details::readFromDataSetImpl( hdf5_file,
+                                path_to_data_set,
+                                container,
+                                Details::IsContiguousMemoryContainer<Container>() );
+}
+
+// Read a container from a data set attribute
+/*! \details Only containers that can be resized can be passed to this method
+ * (std::array and Utility::ArrayView cannot be used).
+ * \ingroup hdf5
+ */
+template<typename Container>
+void readFromDataSetAttribute( const HDF5File& hdf5_file,
+                               const std::string& path_to_data_set,
+                               const std::string& attribute_name,
+                               Container& container )
+{
+  Details::readFromDataSetAttributeImpl( hdf5_file,
+                                         path_to_data_set,
+                                         attribute_name,
+                                         container,
+                                         Details::IsContiguousMemoryContainer<Container>() );
+}
+
+// Read a container from a group attribute
+/*! \details Only containers that can be resized can be passed to this method
+ * (std::array and Utility::ArrayView cannot be used).
+ * \ingroup hdf5
+ */
+template<typename Container>
+void readFromGroupAttribute( const HDF5File& hdf5_file,
+                             const std::string& path_to_group,
+                             const std::string& attribute_name,
+                             Container& container )
+{
+  Details::readFromGroupAttributeImpl( hdf5_file,
+                                       path_to_group,
+                                       attribute_name,
+                                       container,
+                                       Details::IsContiguousMemoryContainer<Container>() );
 }
 
 } // end Utility namespace
