@@ -79,6 +79,9 @@ public:
   ~ArrayView()
   { /* ... */ }
 
+  //! Fill the array with values
+  void fill( const T& value );
+
   //! Return a sub-array view
   ArrayView<T> operator()( const typename ArrayView<T>::size_type offset,
                            const typename ArrayView<T>::size_type size ) const;

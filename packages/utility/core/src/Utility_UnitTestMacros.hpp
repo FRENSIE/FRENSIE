@@ -248,8 +248,9 @@
       local_result = false;                                           \
                                                                         \
       local_log << std::string( Utility::Details::incrementRightShift(INDENT), ' ' ) \
-                << "Caught std::exception with message \""              \
-                << Utility::toString( exception ) << "\" ";              \
+                << "Caught std::exception with the following message:\n\n" \
+                << Utility::toString( exception ) << "\n"               \
+                << std::string( Utility::Details::incrementRightShift(INDENT), ' ' ); \
     }                                                                   \
     catch( const int error_code )                                       \
     {                                                                 \

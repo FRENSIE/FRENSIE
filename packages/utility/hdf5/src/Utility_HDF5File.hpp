@@ -80,13 +80,16 @@ public:
   hsize_t getGroupAttributeSize( const std::string& path_to_group,
                                  const std::string& attribute_name ) const;
 
+  //! Create a group
+  void createGroup( const std::string& path_to_group );
+
   //! Create a hard link
-  void createHardLink( const std::string& source_path,
-                       const std::string& target_path );
+  void createHardLink( const std::string& existing_object_path,
+                       const std::string& path_to_link );
 
   //! Create a soft link
-  void createSoftLink( const std::string& source_path,
-                       const std::string& target_path );
+  void createSoftLink( const std::string& existing_object_path,
+                       const std::string& path_to_link );
 
   //! Write data to a data set
   template<typename T>
@@ -240,21 +243,23 @@ private:
 
   // Check that the type matches the data set type
   template<typename T>
-  bool doesDataSetTypeMatch( const H5::DataSet& data_set ) const;
+  bool doesDataSetTypeMatch( const T& data_type,
+                             const H5::DataSet& data_set ) const;
 
   // Check that the type matches the attribute type
   template<typename T>
-  bool doesAttributeTypeMatch( const H5::Attribute& attribute ) const;
+  bool doesAttributeTypeMatch( const T& data_type,
+                               const H5::Attribute& attribute ) const;
 
   // Check if an array can store the contents of a data set
-  template<typename T>
-  bool canArrayStoreDataSetContents( const T* data,
+  template<typename ExternalT, typename InternalT>
+  bool canArrayStoreDataSetContents( const InternalT* data,
                                      const size_t size,
                                      const H5::DataSet& data_set ) const;
 
   // Check if an array can store the contents of a data set attribute
-  template<typename T>
-  bool canArrayStoreAttributeContents( const T* data,
+  template<typename ExternalT, typename InternalT>
+  bool canArrayStoreAttributeContents( const InternalT* data,
                                        const size_t size,
                                        const H5::Attribute& attribute ) const;
 

@@ -94,6 +94,23 @@ ArrayView<T>& ArrayView<T>::operator=( const ArrayView<U>& other_view )
   return *this;
 }
 
+// Fill the array with values
+/*! \details Calling this method on an array view of const will result in a
+ * compilation error.
+ */
+template<typename T>
+void ArrayView<T>::fill( const T& value )
+{
+  typename View<T*>::iterator element = this->begin();
+
+  while( element != this->end() )
+  {
+    *element = value;
+
+    ++element;
+  }    
+}
+
 // Return a sub-array view
 template<typename T>
 ArrayView<T> ArrayView<T>::operator()(

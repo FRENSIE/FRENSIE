@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <iterator>
 #include <type_traits>
+#include <algorithm>
 
 // FRENSIE Includes
 #include "Utility_IteratorTypeTraits.hpp"
@@ -114,6 +115,9 @@ public:
 
   //! Return const iterator to end
   const_iterator cend() const;
+
+  //! Swap with another view
+  void swap( View<Iterator>& other_view );
 
   //! Return a const view
   View<const_iterator> toConst() const;
@@ -251,19 +255,37 @@ struct ComparisonTraits<Utility::View<T> > : public Details::ComparisonTraitsSeq
 
 namespace std{
 
-//! Partial specialization of common_type for Utility::View
+/*! Partial specialization of common_type for Utility::View
+ * \ingroup view
+ */
 template<typename T>
 struct common_type<Utility::View<T>,Utility::View<const T> >
 {
   typedef Utility::View<const T> type;
 };
 
-//! Partial specialization of common_type for Utility::View
+/*! Partial specialization of common_type for Utility::View
+ * \ingroup view
+ */
 template<typename T>
 struct common_type<Utility::View<const T>,Utility::View<T> >
 {
   typedef Utility::View<const T> type;
 };
+
+/*! Overload of std::swap for Utility::View
+ * \ingroup view
+ */
+template<typename T>
+inline void swap( Utility::View<T>& lhs, Utility::View<T>& rhs )
+{ lhs.swap( rhs ); }
+
+/*! Overload of std::swap for Utility::View of const
+ * \ingroup view
+ */
+template<typename T>
+inline void swap( Utility::View<const T>& lhs, Utility::View<const T>& rhs )
+{ lhs.swap( rhs ); }
   
 } // end std namespace
 

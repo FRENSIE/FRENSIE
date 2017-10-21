@@ -318,7 +318,8 @@ inline void HDF5IArchiveImpl<Archive>::loadContainerImpl( T& container )
   std::string object_data_set_path = this->getObjectDataPath( d_object_count );
 
   try{
-    hsize_t container_size = this->getDataSetSize( object_data_set_path );
+    hsize_t data_set_size = this->getDataSetSize( object_data_set_path );
+    size_t container_size = Utility::HDF5TypeTraits<typename T::value_type>::calculateExternalDataSize( data_set_size );
 
     container.resize( container_size );
 

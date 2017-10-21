@@ -195,6 +195,20 @@ auto View<Iterator>::cend() const -> const_iterator
   return d_end_iterator;
 }
 
+// Swap with another view
+template<typename Iterator>
+void View<Iterator>::swap( View<Iterator>& other_view )
+{
+  Iterator cached_start_iterator = d_start_iterator;
+  Iterator cached_end_iterator = d_end_iterator;
+
+  d_start_iterator = other_view.d_start_iterator;
+  d_end_iterator = other_view.d_end_iterator;
+
+  other_view.d_start_iterator = cached_start_iterator;
+  other_view.d_end_iterator = cached_end_iterator;
+}
+
 // Return a const view
 template<typename Iterator>
 auto View<Iterator>::toConst() const -> View<const_iterator>

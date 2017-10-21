@@ -31,9 +31,6 @@ H5::EnumType HDF5TypeTraits<bool>::dataType()
     enum_type = HDF5TypeTraits<bool>::True;
     
     s_data_type->insert( "True", &enum_type );
-    
-    // Lock the data type
-    s_data_type->lock();
   }
   
   return *s_data_type;
@@ -75,6 +72,18 @@ void HDF5TypeTraits<bool>::convertInternalDataToExternalData(
     else
       converted_data[i] = false;
   }
+}
+
+// Calculate the size of an internal array of data
+size_t HDF5TypeTraits<bool>::calculateInternalDataSize( const size_t external_size )
+{
+  return external_size;
+}
+
+// Calculate the size of an external array of data
+size_t HDF5TypeTraits<bool>::calculateExternalDataSize( const size_t internal_size )
+{
+  return internal_size;
 }
 
 // Free the inner data created from outer data

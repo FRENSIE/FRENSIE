@@ -26,8 +26,12 @@ namespace Utility{
 
 TYPE_NAME_TRAITS_QUICK_DECL( float );
 TYPE_NAME_TRAITS_QUICK_DECL( double );
+TYPE_NAME_TRAITS_QUICK_DECL( long double );
+TYPE_NAME_TRAITS_QUICK_DECL( bool );
 TYPE_NAME_TRAITS_QUICK_DECL( char );
 TYPE_NAME_TRAITS_QUICK_DECL( unsigned char );
+TYPE_NAME_TRAITS_QUICK_DECL( signed char );
+TYPE_NAME_TRAITS_QUICK_DECL( wchar_t );
 TYPE_NAME_TRAITS_QUICK_DECL( short );
 TYPE_NAME_TRAITS_QUICK_DECL( unsigned short );
 TYPE_NAME_TRAITS_QUICK_DECL( int );
@@ -39,6 +43,7 @@ TYPE_NAME_TRAITS_QUICK_DECL( unsigned long long int );
 TYPE_NAME_TRAITS_QUICK_DECL( std::complex<float> );
 TYPE_NAME_TRAITS_QUICK_DECL( std::complex<double> );
 TYPE_NAME_TRAITS_QUICK_DECL( std::string );
+TYPE_NAME_TRAITS_QUICK_DECL( std::wstring );
 
 /*! \brief Partial specialization of Utility::TypeNameTraits for 
  * std::integral_constant types

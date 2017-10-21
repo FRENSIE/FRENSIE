@@ -25,22 +25,19 @@ namespace Utility{
  * \ingroup iterator_type_traits
  */
 template<typename T, typename Enabled = void>
-struct IsConstIterator : public UndefinedTraits<T>
-{ /* ... */ };
+struct IsConstIterator;
 
 /*! Get the const iterator associated with the iterator of interest
  * \ingroup iterator_type_traits
  */
 template<typename T, typename Enabled = void>
-struct ConstIterator
-{ /* ... */ };
+struct ConstIterator;
 
 /*! Get the iterator associated with the const iterator of interest
  * \ingroup iterator_type_traits
  */
 template<typename T, typename Enabled = void>
-struct NonConstIterator
-{ /* ... */ };
+struct NonConstIterator;
   
 } // end Utility namespace
 

@@ -34,6 +34,9 @@ void enableExceptionsInHDF5()
 template<>
 struct HDF5TypeTraits<void> : public Details::BasicHDF5TypeTraits<void,1>
 {
+  //! Check if the type has an opaque data type
+  typedef std::true_type UsesOpaqueDataType;
+  
   //! Returns the HDF5 data type object corresponding to void
   static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_OPAQUE; }
@@ -67,9 +70,9 @@ std::string HDF5File::Exception::createErrorMessage(
                    << FRENSIE_LOG_EXCEPTION_TYPE_MSG
                    << "H5::Exception" << FRENSIE_LOG_ARROW_SEP
                    << "Utility::HDF5File::Exception" << "\n"
-                   << "HDF5 " << FRENSIE_LOG_STACK_MSG_BASIC << " "
+                   << "  HDF5 " << FRENSIE_LOG_STACK_MSG_BASIC << " "
                    << hdf5_function_name << "\n"
-                   << "HDF5 Error Msg: " << hdf5_error_message << "\n"
+                   << "  HDF5 Error Msg: " << hdf5_error_message << "\n"
                    << FRENSIE_LOG_LOCATION_MSG
                    << file << FRENSIE_LOG_FILE_LINE_SEP << line << "\n";
 
@@ -273,28 +276,51 @@ hsize_t HDF5File::getDataSpaceSize( const H5::DataSpace& data_space ) const
   return size;
 }
 
+// Create a group
+void HDF5File::createGroup( const std::string& path_to_group )
+{
+  // Check if the group exists
+  if( !this->doesGroupExist( path_to_group ) )
+  {
+    std::unique_ptr<const H5::Group> group;
+
+    try{
+      this->createGroup( path_to_group, group );
+    }
+    HDF5_EXCEPTION_CATCH( "Could not create group " << path_to_group << "!" );
+  }
+}
+
 // Create a hard link
-void HDF5File::createHardLink( const std::string& source_path,
-                               const std::string& target_path )
+void HDF5File::createHardLink( const std::string& existing_object_path,
+                               const std::string& path_to_link )
 {
   try{
-    d_hdf5_file->link( H5L_TYPE_HARD, source_path, target_path );
+    // Check if the parent group needs to be created first
+    if( !this->doesParentGroupExist( path_to_link ) )
+      this->createParentGroup( path_to_link );
+    
+    d_hdf5_file->link( H5L_TYPE_HARD, existing_object_path, path_to_link );
   }
   HDF5_EXCEPTION_CATCH( "Could not create a hard link with name "
-                        << target_path << " that points to source "
-                        << source_path << "!" );
+                        << path_to_link << " that points to object "
+                        << existing_object_path << "!" );
 }
 
 // Create a soft link
-void HDF5File::createSoftLink( const std::string& source_path,
-                               const std::string& target_path )
+void HDF5File::createSoftLink( const std::string& existing_object_path,
+                               const std::string& path_to_link )
 {
   try{
-    d_hdf5_file->link( H5L_TYPE_SOFT, source_path, target_path );
+    // Check if the parent group needs to be created first
+    if( !this->doesParentGroupExist( path_to_link ) )
+      this->createParentGroup( path_to_link );
+    
+    d_hdf5_file->link( H5L_TYPE_SOFT, existing_object_path, path_to_link );
   }
   HDF5_EXCEPTION_CATCH( "Could not create a soft link with name "
-                        << target_path << " that points to source "
-                        << source_path << "!" );
+                        << path_to_link << " that points to object "
+                        << existing_object_path << "!" );
 }
 
 // Write opaque data to a data set

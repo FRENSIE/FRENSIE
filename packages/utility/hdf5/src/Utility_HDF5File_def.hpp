@@ -75,7 +75,7 @@ void HDF5File::readFromDataSet( const std::string& path_to_data_set,
     HDF5TypeTraits<T>::initializeInternalData( data, size );
 
   // Check if the array can store the data set contents
-  TEST_FOR_EXCEPTION( !this->canArrayStoreDataSetContents( internal_data, size, *data_set ),
+  TEST_FOR_EXCEPTION( !this->canArrayStoreDataSetContents<T>( internal_data, size, *data_set ),
                       HDF5File::Exception,
                       "Cannot store the contents of data set "
                       << path_to_data_set << " in the desired memory "
@@ -165,7 +165,7 @@ void HDF5File::readFromDataSetAttribute( const std::string& path_to_data_set,
     HDF5TypeTraits<T>::initializeInternalData( data, size );
   
   // Check if the array of interest can store the contents of the attribute
-  TEST_FOR_EXCEPTION( !this->canArrayStoreAttributeContents( internal_data, size, *attribute ),
+  TEST_FOR_EXCEPTION( !this->canArrayStoreAttributeContents<T>( internal_data, size, *attribute ),
                       HDF5File::Exception,
                       "Cannot store the contents of data set attribute "
                       << path_to_data_set << ":" << attribute_name <<
@@ -255,7 +255,7 @@ void HDF5File::readFromGroupAttribute( const std::string& path_to_group,
     HDF5TypeTraits<T>::initializeInternalData( data, size );
   
   // Check if the array of interest can store the contents of the attribute
-  TEST_FOR_EXCEPTION( !this->canArrayStoreAttributeContents( internal_data, size, *attribute ),
+  TEST_FOR_EXCEPTION( !this->canArrayStoreAttributeContents<T>( internal_data, size, *attribute ),
                       HDF5File::Exception,
                       "Cannot store the contents of group attribute "
                       << path_to_group << ":" << attribute_name <<
@@ -345,13 +345,14 @@ void HDF5File::createGroupAttribute( const H5::Group& group,
 
 // Check that the type matches the data set type
 template<typename T>
-bool HDF5File::doesDataSetTypeMatch( const H5::DataSet& data_set ) const
+bool HDF5File::doesDataSetTypeMatch( const T& data_type,
+                                     const H5::DataSet& data_set ) const
 {
   try{
     H5::DataType data_set_data_type;
     data_set_data_type.copy( data_set );
 
-    return data_set_data_type == HDF5TypeTraits<T>::dataType();
+    return data_set_data_type == data_type;
   }
   catch( ... )
   {
@@ -361,7 +362,8 @@ bool HDF5File::doesDataSetTypeMatch( const H5::DataSet& data_set ) const
 
 // Check that the type matches the attribute type
 template<typename T>
-bool HDF5File::doesAttributeTypeMatch( const H5::Attribute& attribute ) const
+bool HDF5File::doesAttributeTypeMatch( const T& data_type,
+                                       const H5::Attribute& attribute ) const
 {
   // For some reason, H5::Attribute has no getType method - we will use the
   // C interface instead
@@ -370,7 +372,11 @@ bool HDF5File::doesAttributeTypeMatch( const H5::Attribute& attribute ) const
     
     H5::DataType attribute_type( attribute_data_type_id );
 
-    return attribute_type == HDF5TypeTraits<T>::dataType();
+    const bool do_types_match = attribute_type == data_type;
+
+    attribute_type.close();
+
+    return do_types_match;
   }
   catch( ... )
   {
@@ -380,35 +386,35 @@ bool HDF5File::doesAttributeTypeMatch( const H5::Attribute& attribute ) const
 
 
 // Check if an array can store the contents of a data set
-template<typename T>
-bool HDF5File::canArrayStoreDataSetContents( const T*,
+template<typename ExternalT, typename InternalT>
+bool HDF5File::canArrayStoreDataSetContents( const InternalT*,
                                              const size_t size,
                                              const H5::DataSet& data_set ) const
 {
   // Check that the types are equal
-  if( !this->doesDataSetTypeMatch<T>( data_set ) )
+  if( !this->doesDataSetTypeMatch( HDF5TypeTraits<ExternalT>::dataType(), data_set ) )
     return false;
   
   // Check that the sizes are equal
-  if( HDF5TypeTraits<T>::calculateInternalDataSize( size ) != this->getDataSetSize( data_set ) )
+  if( HDF5TypeTraits<ExternalT>::calculateInternalDataSize( size ) != this->getDataSetSize( data_set ) )
     return false;
 
   return true;
 }
 
 // Check if an array can store the contents of a data set attribute
-template<typename T>
+template<typename ExternalT, typename InternalT>
 bool HDF5File::canArrayStoreAttributeContents(
-                                         const T*,
+                                         const InternalT*,
                                          const size_t size,
                                          const H5::Attribute& attribute ) const
 {
   // Check that the types are equal
-  if( !this->doesAttributeTypeMatch<T>( attribute ) )
+  if( !this->doesAttributeTypeMatch( HDF5TypeTraits<ExternalT>::dataType(), attribute ) )
     return false;
 
   // Check that the sizes are equal
-  if( HDF5TypeTraits<T>::calculateInternalDataSize( size ) != this->getAttributeSize( attribute ) )
+  if( HDF5TypeTraits<ExternalT>::calculateInternalDataSize( size ) != this->getAttributeSize( attribute ) )
     return false;
 
   return true;

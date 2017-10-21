@@ -55,6 +55,12 @@ struct HDF5TypeTraits
 
   //! Check if the type has a type traits specialization
   typedef std::false_type IsSpecialized;
+
+  //! Check if the type has an opaque data type
+  typedef std::false_type UsesOpaqueDataType;
+
+  //! Check if the type uses a custom internal type
+  typedef std::false_type UsesCustomInternalType;
   
   //! Returns the HDF5 data type object corresponding to the type
   static inline H5::DataType dataType()
@@ -67,7 +73,7 @@ struct HDF5TypeTraits
    * needed.
    */
   static inline InternalType* initializeInternalData(
-                                            const ExternalType* const raw_data,
+                                            const ExternalType* raw_data,
                                             const size_t size )
   { (void)UndefinedTraits<T>::notDefined(); return NULL; }
 
@@ -76,9 +82,9 @@ struct HDF5TypeTraits
    * The memory for the InternalType data must already be allocated.
    */
   static inline void convertExternalDataToInternalData(
-                                           const ExternalType* const raw_data,
+                                           const ExternalType* raw_data,
                                            const size_t size,
-                                           const InternalType* converted_data )
+                                           InternalType* converted_data )
   { (void)UndefinedTraits<T>::notDefined(); }
   
   /*! Convert internal type data to external type data
@@ -86,13 +92,17 @@ struct HDF5TypeTraits
    * The memory for the ExternalType data must already be allocated.
    */
   static inline void convertInternalDataToExternalData(
-                                              const InternalType* const raw_data,
+                                              const InternalType* raw_data,
                                               const size_t size,
-                                              const ExternalType* converted_data )
+                                              ExternalType* converted_data )
   { (void)UndefinedTraits<T>::notDefined(); }
 
   //! Calculate the size of an internal array of data
-  static inline size_t calculateInternalDataSize( const size_t raw_size )
+  static inline size_t calculateInternalDataSize( const size_t external_size )
+  { (void)UndefinedTraits<T>::notDefined(); return 0; }
+
+  //! Calculate the size of an external array of data
+  static inline size_t calculateExternalDataSize( const size_t internal_size )
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 
   //! Free the inner data created from outer data

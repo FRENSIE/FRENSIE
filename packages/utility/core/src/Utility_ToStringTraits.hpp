@@ -164,6 +164,13 @@ struct ToStringTraits<double>
   }
 };
 
+/*! Specialization of ToStringTraits for long double
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<long double> : public ToStringTraits<double>
+{ /* ... */ };
+
 /*! Partial specialization of ToStringTraits for integral types
  * \ingroup to_string_traits
  */
