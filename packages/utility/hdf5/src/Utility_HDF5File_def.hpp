@@ -448,10 +448,13 @@ struct IsContiguousMemoryContainer<std::wstring> : public std::true_type
 { /* ... */ };
 
 /*! Specialization of ContiguousMemoryContainer for std::vector
+ *
+ * std::vector<bool> is a specialization of std::vector and it is not
+ * guaranteed to be implemented as a contiguous memory container.
  * \ingroup hdf5
  */
 template<typename T>
-struct IsContiguousMemoryContainer<std::vector<T> > : public std::true_type
+struct IsContiguousMemoryContainer<std::vector<T>,typename std::enable_if<!std::is_same<T,bool>::value>::type> : public std::true_type
 { /* ... */ };
 
 /*! Specialization of ContiguousMemoryContainer for std::array
@@ -476,47 +479,149 @@ struct IsContiguousMemoryContainer<Utility::ArrayView<const T> > : public std::t
 { /* ... */ };
 
 /*! \brief Helper used to copy contents of a container that does not have 
- * contiguous memory to a std::vector
+ * contiguous memory to an array (usually a std::vector)
  * \ingroup hdf5
  */
 template<typename Container, typename Enable = void>
-struct CopyContainerContentsToFromVectorHelper;
+struct CopyContainerContentsToFromArrayHelper;
 
-/*! \brief Specialization of CopyContainerContentsToFromVectorHelper for non-map 
+/*! \brief Specialization of CopyContainerContentsToFromArrayHelper for
+ * containers with a value_type==bool
+ * \ingroup hdf5
+ */
+template<template<typename,typename...> class Container, typename T>
+struct CopyContainerContentsToFromArrayHelper<Container<T>,typename std::enable_if<std::is_same<T,typename Container<T>::value_type>::value && std::is_same<T,bool>::value>::type>
+{
+  struct ArrayType : private boost::noncopyable
+  {
+    typedef bool value_type;
+    
+    ArrayType()
+      : d_data( NULL ), d_size( 0 )
+    { /* ... */ }
+    
+    ArrayType( const size_t size )
+      : d_data( new bool[size] ), d_size( size )
+    { /* ... */ }
+
+    ~ArrayType()
+    { this->clear(); }
+
+    void resize( const size_t size )
+    {
+      this->clear();
+      
+      d_data = new bool[size];
+      d_size = size;
+    }
+    
+    size_t size() const
+    { return d_size; }
+
+    bool* data()
+    { return d_data; }
+
+    const bool* data() const
+    { return d_data; }
+
+    bool& operator[]( const size_t i )
+    { return d_data[i]; }
+
+    const bool& operator[]( const size_t i ) const
+    { return d_data[i]; }
+
+    void clear()
+    {
+      if( d_data )
+      {
+        delete[] d_data;
+        d_data = NULL;
+      }
+      
+      d_size = 0;
+    }
+
+  private:
+
+    bool* d_data;
+    size_t d_size;
+  };
+
+  static inline void resizeArray( ArrayType& container_copy,
+                                  const size_t size )
+  { container_copy.resize( size ); }
+  
+  static inline void copyToArray( const Container<bool>& container,
+                                  ArrayType& container_copy )
+  {
+    // Get the container size using its iterators
+    // (required by std::forward_list )
+    container_copy.resize( std::distance( container.begin(), container.end() ) );
+
+    typename Container<bool>::const_iterator it = container.begin();
+    bool* copy_it = container_copy.data();
+    
+    while( it != container.end() )
+    {
+      *copy_it = *it;
+
+      ++it;
+      ++copy_it;
+    }
+  }
+
+  static inline void copyFromArray( Container<bool>& container,
+                                    const ArrayType& container_copy )
+  {
+    container = Container<bool>( container_copy.data(),
+                                 container_copy.data()+container_copy.size() );
+  }
+
+  static inline void freeArray( ArrayType& container_copy )
+  { container_copy.clear(); }
+};
+
+/*! \brief Specialization of CopyContainerContentsToFromArrayHelper for non-map 
  * containers
  * \ingroup hdf5
  */
 template<template<typename,typename...> class Container, typename T>
-struct CopyContainerContentsToFromVectorHelper<Container<T>,typename std::enable_if<std::is_same<T,typename Container<T>::value_type>::value>::type>
+struct CopyContainerContentsToFromArrayHelper<Container<T>,typename std::enable_if<std::is_same<T,typename Container<T>::value_type>::value && !std::is_same<T,bool>::value>::type>
 {
-  typedef std::vector<T> VectorType;
+  typedef std::vector<T> ArrayType;
   
-  static inline void copyToVector( const Container<T>& container,
-                                   VectorType& container_copy )
+  static inline void copyToArray( const Container<T>& container,
+                                  ArrayType& container_copy )
   { container_copy.assign( container.begin(), container.end() ); }
 
-  static inline void copyFromVector( Container<T>& container,
-                                     const VectorType& container_copy )
-  { container.assign( container_copy.begin(), container_copy.end() ); }
+  static inline void copyFromArray( Container<T>& container,
+                                    const ArrayType& container_copy )
+  { container = Container<T>( container_copy.begin(), container_copy.end() ); }
+
+  static inline void freeArray( ArrayType& container_copy )
+  { container_copy.clear(); }
 };
 
-/*! \brief Specialization of CopyContainerContentsToFromVectorHelper for map 
+/*! \brief Specialization of CopyContainerContentsToFromArrayHelper for map 
  * containers
  * \ingroup hdf5
  */
 template<template<typename,typename,typename...> class Container,
          typename Key, typename T>
-struct CopyContainerContentsToFromVectorHelper<Container<Key,T>,typename std::enable_if<Utility::IsPair<typename Container<Key,T>::value_type>::value>::type>
+struct CopyContainerContentsToFromArrayHelper<Container<Key,T>,typename std::enable_if<!std::is_same<Key,typename Container<Key,T>::value_type>::value>::type>
 {
-  typedef std::vector<std::pair<Key,T> > VectorType;
+  typedef std::vector<std::pair<Key,T> > ArrayType;
   
-  static inline void copyToVector( const Container<Key,T>& container,
-                                   VectorType& container_copy )
+  static inline void copyToArray( const Container<Key,T>& container,
+                                   ArrayType& container_copy )
   { container_copy.assign( container.begin(), container.end() ); }
 
-  static inline void copyFromVector( Container<Key,T>& container,
-                                     const VectorType& container_copy )
-  { container.assign( container_copy.begin(), container_copy.end() ); }
+  static inline void copyFromArray( Container<Key,T>& container,
+                                     const ArrayType& container_copy )
+  { container.insert( container_copy.begin(), container_copy.end() ); }
+
+  static inline void freeArray( ArrayType& container_copy )
+  { container_copy.clear(); }
 };
 
 /*! Implementation of writeToDataSet for containers with contiguous memory
@@ -541,11 +646,13 @@ inline void writeToDataSetImpl( HDF5File& hdf5_file,
                                 const Container& container,
                                 std::false_type )
 {
-  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+  typename CopyContainerContentsToFromArrayHelper<Container>::ArrayType container_copy;
 
-  CopyContainerContentsToFromVectorHelper<Container>::copyToVector( container, container_copy );
+  CopyContainerContentsToFromArrayHelper<Container>::copyToArray( container, container_copy );
 
   hdf5_file.writeToDataSet( path_to_data_set, container_copy.data(), container_copy.size() );
+
+  CopyContainerContentsToFromArrayHelper<Container>::freeArray( container_copy );
 }
 
 /*! \brief Implementation of writeToDataSetAttribute for containers with 
@@ -573,11 +680,13 @@ inline void writeToDataSetAttributeImpl( HDF5File& hdf5_file,
                                          const Container& container,
                                          std::false_type )
 {
-  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+  typename CopyContainerContentsToFromArrayHelper<Container>::ArrayType container_copy;
 
-  CopyContainerContentsToFromVectorHelper<Container>::copyToVector( container, container_copy );
+  CopyContainerContentsToFromArrayHelper<Container>::copyToArray( container, container_copy );
 
   hdf5_file.writeToDataSetAttribute( path_to_data_set, attribute_name, container_copy.data(), container_copy.size() );
+
+  CopyContainerContentsToFromArrayHelper<Container>::freeArray( container_copy );
 }
 
 /*! \brief Implementation of writeToGroupAttribute for containers with 
@@ -605,11 +714,13 @@ inline void writeToGroupAttributeImpl( HDF5File& hdf5_file,
                                        const Container& container,
                                        std::false_type )
 {
-  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+  typename CopyContainerContentsToFromArrayHelper<Container>::ArrayType container_copy;
 
-  CopyContainerContentsToFromVectorHelper<Container>::copyToVector( container, container_copy );
+  CopyContainerContentsToFromArrayHelper<Container>::copyToArray( container, container_copy );
 
   hdf5_file.writeToGroupAttribute( path_to_group, attribute_name, container_copy.data(), container_copy.size() );
+
+  CopyContainerContentsToFromArrayHelper<Container>::freeArray( container_copy );
 }
   
 } // end Details namespace
@@ -705,54 +816,6 @@ void writeToGroupAttribute( HDF5File& hdf5_file,
 
 namespace Details{
 
-/*! Helper for resizing a container
- * \ingroup hdf5
- */
-template<typename Container, typename Enabled = void>
-struct ContainerResizeHelper;
-
-/*! Specialization of ContainerResizeHelper for std::vector
- * \ingroup hdf5
- */
-template<typename T>
-struct ContainerResizeHelper<std::vector<T> >
-{
-  //! Resize the container
-  static inline void resize( std::vector<T>& container,
-                             const hsize_t data_set_size )
-  {
-    container.resize( Utility::HDF5TypeTraits<T>::calculateExternalDataSize( data_set_size ) );
-  }
-};
-
-/*! Specialization of ContainerResizeHelper for std::string
- * \ingroup hdf5
- */
-template<>
-struct ContainerResizeHelper<std::string>
-{
-  //! Resize the container
-  static inline void resize( std::string& container,
-                             const hsize_t data_set_size )
-  {
-    container.resize( Utility::HDF5TypeTraits<std::string::value_type>::calculateExternalDataSize( data_set_size ) );
-  }
-};
-
-/*! Specialization of ContainerResizeHelper for std::wstring
- * \ingroup hdf5
- */
-template<>
-struct ContainerResizeHelper<std::wstring>
-{
-  //! Resize the container
-  static inline void resize( std::string& container,
-                             const hsize_t data_set_size )
-  {
-    container.resize( Utility::HDF5TypeTraits<std::wstring::value_type>::calculateExternalDataSize( data_set_size ) );
-  }
-};
-
 /*! Implementation of readFromDataSet for containers with contiguous memory
  * \ingroup HDF5
  */
@@ -765,7 +828,7 @@ inline void readFromDataSetImpl( const HDF5File& hdf5_file,
   // Extract the data set size
   hsize_t data_set_size = hdf5_file.getDataSetSize( path_to_data_set );
 
-  ContainerResizeHelper<Container>::resize( container, data_set_size );
+  container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( data_set_size ) );
   
   hdf5_file.readFromDataSet( path_to_data_set, container.data(), container.size() );
 }
@@ -780,11 +843,13 @@ inline void readFromDataSetImpl( const HDF5File& hdf5_file,
                                  Container& container,
                                  std::false_type )
 {
-  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+  typename CopyContainerContentsToFromArrayHelper<Container>::ArrayType container_copy;
 
   Details::readFromDataSetImpl( hdf5_file, path_to_data_set, container_copy, std::true_type() );
 
-  CopyContainerContentsToFromVectorHelper<Container>::copyFromVector( container, container_copy );
+  CopyContainerContentsToFromArrayHelper<Container>::copyFromArray( container, container_copy );
+
+  CopyContainerContentsToFromArrayHelper<Container>::freeArray( container_copy );
 }
 
 /*! \brief Implementation of readFromDataSetAttribute for containers with 
@@ -802,7 +867,7 @@ inline void readFromDataSetAttributeImpl( const HDF5File& hdf5_file,
   hsize_t data_set_attribute_size =
     hdf5_file.getDataSetAttributeSize( path_to_data_set, attribute_name );
 
-  ContainerResizeHelper<Container>::resize( container, data_set_attribute_size );
+  container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( data_set_attribute_size ) );
   
   hdf5_file.readFromDataSet( path_to_data_set, container.data(), container.size() );
 }
@@ -818,11 +883,13 @@ inline void readFromDataSetAttributeImpl( const HDF5File& hdf5_file,
                                           Container& container,
                                           std::false_type )
 {
-  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+  typename CopyContainerContentsToFromArrayHelper<Container>::ArrayType container_copy;
 
   Details::readFromDataSetAttributeImpl( hdf5_file, path_to_data_set, attribute_name, container_copy, std::true_type() );
 
-  CopyContainerContentsToFromVectorHelper<Container>::copyFromVector( container, container_copy );
+  CopyContainerContentsToFromArrayHelper<Container>::copyFromArray( container, container_copy );
+
+  CopyContainerContentsToFromArrayHelper<Container>::freeArray( container_copy );
 }
 
 /*! \brief Implementation of readFromGroupAttribute for containers with 
@@ -840,7 +907,7 @@ inline void readFromGroupAttributeImpl( const HDF5File& hdf5_file,
   hsize_t group_attribute_size =
     hdf5_file.getGroupAttributeSize( path_to_group, attribute_name );
 
-  ContainerResizeHelper<Container>::resize( container, group_attribute_size );
+  container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( group_attribute_size ) );
   
   hdf5_file.readFromGroupAttribute( path_to_group, attribute_name, container.data(), container.size() );
 }
@@ -856,11 +923,13 @@ inline void readFromGroupAttributeImpl( const HDF5File& hdf5_file,
                                         Container& container,
                                         std::false_type )
 {
-  typename CopyContainerContentsToFromVectorHelper<Container>::VectorType container_copy;
+  typename CopyContainerContentsToFromArrayHelper<Container>::ArrayType container_copy;
 
   Details::readFromGroupAttributeImpl( hdf5_file, path_to_group, attribute_name, container_copy, std::true_type() );
 
-  CopyContainerContentsToFromVectorHelper<Container>::copyFromVector( container, container_copy );
+  CopyContainerContentsToFromArrayHelper<Container>::copyFromArray( container, container_copy );
+
+  CopyContainerContentsToFromArrayHelper<Container>::freeArray( container_copy );
 }
   
 } // end Details namespace
