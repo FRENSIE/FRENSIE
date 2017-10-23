@@ -160,13 +160,16 @@ inline std::tuple<Types...> one( std::tuple<Types...> )
 }
 
 //---------------------------------------------------------------------------//
+// Testing variables
+//---------------------------------------------------------------------------//
+std::string hdf5_file_name( "test_file.h5" );
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the filename can be returned
 FRENSIE_UNIT_TEST( HDF5File, getFilename )
 {
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name );
 
   FRENSIE_CHECK_EQUAL( hdf5_file.getFilename(), hdf5_file_name );
@@ -176,8 +179,6 @@ FRENSIE_UNIT_TEST( HDF5File, getFilename )
 // Check that a group exists
 FRENSIE_UNIT_TEST( HDF5File, doesGroupExist )
 {
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::OVERWRITE );
 
   // The root group should always exist
@@ -193,8 +194,6 @@ FRENSIE_UNIT_TEST( HDF5File, doesGroupExist )
 // Check that a group can be created
 FRENSIE_UNIT_TEST( HDF5File, createGroup )
 {
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::OVERWRITE );
 
   FRENSIE_REQUIRE_NO_THROW(hdf5_file.createGroup( "/test_dir/" ));
@@ -216,8 +215,6 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE  );
 
   std::array<T,10> data;
@@ -239,7 +236,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw, TestTypes )
   }
 
   FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToDataSet( data_set_1_name, data.data(), data.size() ));
-  FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToDataSet( data_set_2_name, data.data(), 1 ));
+  FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToDataSet( data_set_2_name, data[0] ));
 
   // Check that expected groups exist
   FRENSIE_REQUIRE( hdf5_file.doesGroupExist( "/" ) );
@@ -323,8 +320,6 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE  );
 
   std::array<T,10> data;
@@ -348,7 +343,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw, TestTypes )
   std::string attribute_name( "test_attribute" );
 
   FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToDataSetAttribute( data_set_1_name, attribute_name, data.data(), data.size() ));
-  FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToDataSetAttribute( data_set_2_name, attribute_name, data.data(), 1 ));
+  FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToDataSetAttribute( data_set_2_name, attribute_name, data[0] ));
 
   // Check that expected attributes exist
   FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_1_name, attribute_name ) );
@@ -431,8 +426,6 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, group_attribute_rw, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE  );
 
   std::array<T,10> data;
@@ -449,7 +442,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, group_attribute_rw, TestTypes )
   boost::replace_all( attribute_name, " ", "_" );  
 
   FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToGroupAttribute( group_1_name, attribute_name, data.data(), data.size() ));
-  FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToGroupAttribute( group_2_name, attribute_name, data.data(), 1 ));
+  FRENSIE_REQUIRE_NO_THROW(hdf5_file.writeToGroupAttribute( group_2_name, attribute_name, data[0] ));
 
   // Check that expected attributes exist
   FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_1_name, attribute_name ) );
@@ -530,8 +523,6 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, group_attribute_rw, TestTypes )
 // Check that a hard link can be created
 FRENSIE_UNIT_TEST( HDF5File, createHardLink )
 {
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE  );
   // Link to the root group
   FRENSIE_REQUIRE_NO_THROW(hdf5_file.createHardLink( "/", "/link_dir/hard_links/link_to_root" ));
@@ -572,8 +563,6 @@ FRENSIE_UNIT_TEST( HDF5File, createHardLink )
 // Check that a soft link can be created
 FRENSIE_UNIT_TEST( HDF5File, createSoftLink )
 {
-  std::string hdf5_file_name( "test_file.h5" );
-  
   Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE  );
   // Link to the root group
   FRENSIE_REQUIRE_NO_THROW(hdf5_file.createSoftLink( "/", "/link_dir/soft_links/link_to_root" ));
@@ -609,6 +598,19 @@ FRENSIE_UNIT_TEST( HDF5File, createSoftLink )
   FRENSIE_REQUIRE_NO_THROW(hdf5_file.createSoftLink( "/test_dir/int", "/link_dir/soft_links/link_to_test_dir_int_data_set" ));
   FRENSIE_REQUIRE(hdf5_file.doesDataSetExist( "/link_dir/soft_links/link_to_test_dir_int_data_set" ));
 }
+
+//---------------------------------------------------------------------------//
+// Custom Setup
+//---------------------------------------------------------------------------//
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
+  // Delete any existing hdf5 test file
+  Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::OVERWRITE  );
+}
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstHDF5File.cpp

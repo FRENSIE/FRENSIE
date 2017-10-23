@@ -98,6 +98,11 @@ public:
                        const T* data,
                        const size_t size );
 
+  //! Write data to a data set
+  template<typename T>
+  void writeToDataSet( const std::string& path_to_data_set,
+                       const T& data );
+
   //! Read data from a data set
   template<typename T>
   void readFromDataSet( const std::string& path_to_data_set,
@@ -110,6 +115,12 @@ public:
                                 const std::string& attribute_name,
                                 const T* data,
                                 const size_t size );
+
+  //! Write data to a data set attribute
+  template<typename T>
+  void writeToDataSetAttribute( const std::string& path_to_data_set,
+                                const std::string& attribute_name,
+                                const T& data );
 
   //! Read data from a data set attribute
   template<typename T>
@@ -124,6 +135,12 @@ public:
                               const std::string& attribute_name,
                               const T* data,
                               const size_t size );
+
+  //! Write data to a group attribute
+  template<typename T>
+  void writeToGroupAttribute( const std::string& path_to_group,
+                              const std::string& attribute_name,
+                              const T& data );
 
   //! Read data from a group attribute
   template<typename T>

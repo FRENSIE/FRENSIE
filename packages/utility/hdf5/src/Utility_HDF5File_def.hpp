@@ -24,7 +24,6 @@ namespace Utility{
  * reduced or freed. While increasing it is possible, data sets that allow this
  * operation use chunked data, which can incur a large performance penalty. 
  * Furthermore, it isn't obvious how we would determine the optimal chunk size.
- * 
  */ 
 template<typename T>
 void HDF5File::writeToDataSet( const std::string& path_to_data_set,
@@ -62,6 +61,12 @@ void HDF5File::writeToDataSet( const std::string& path_to_data_set,
     HDF5TypeTraits<T>::freeInternalData( internal_data );
   }
 }
+
+// Write data to a data set
+template<typename T>
+inline void HDF5File::writeToDataSet( const std::string& path_to_data_set,
+                                      const T& data )
+{ this->writeToDataSet( path_to_data_set, &data, 1 ); }
 
 // Read data from a data set
 template<typename T>
@@ -142,6 +147,16 @@ void HDF5File::writeToDataSetAttribute( const std::string& path_to_data_set,
   }
   HDF5_EXCEPTION_CATCH( "Could not write data to data set attribute ("
                         << path_to_data_set << ":" << attribute_name << ")!" );
+}
+
+// Write data to a data set attribute
+template<typename T>
+inline void HDF5File::writeToDataSetAttribute(
+                                           const std::string& path_to_data_set,
+                                           const std::string& attribute_name,
+                                           const T& data )
+{
+  this->writeToDataSetAttribute( path_to_data_set, attribute_name, &data, 1 );
 }
   
 // Read data from a data set attribute
@@ -236,6 +251,13 @@ void HDF5File::writeToGroupAttribute( const std::string& path_to_group,
   HDF5_EXCEPTION_CATCH( "Could not write data to group attribute ("
                         << path_to_group << ":" << attribute_name << ")!" );
 }
+
+// Write data to a group attribute
+template<typename T>
+inline void HDF5File::writeToGroupAttribute( const std::string& path_to_group,
+                                             const std::string& attribute_name,
+                                             const T& data )
+{ this->writeToGroupAttribute( path_to_group, attribute_name, &data, 1 ); }
 
 // Read data from a group attribute
 template<typename T>
