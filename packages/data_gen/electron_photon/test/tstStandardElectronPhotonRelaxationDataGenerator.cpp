@@ -850,15 +850,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 111 );
 
   // Check the atomic excitation data
-  threshold =
-    data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
+  threshold = data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
   TEST_EQUALITY_CONST( threshold, 7 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.36100e-5 );
 
-  cross_section =
-    data_container.getAtomicExcitationCrossSection();
+  cross_section = data_container.getAtomicExcitationCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
@@ -879,6 +877,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 1.36100e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
+
+  // Check the total electron cross section data
+  cross_section = data_container.getTotalElectronCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.74896167231337309e+08 );
+
+  TEST_EQUALITY_CONST( cross_section.back(), 1.77239524290144647e+05 );
+
+  TEST_EQUALITY_CONST( cross_section.size(), 797 );
 
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
@@ -1464,6 +1471,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
 
+  // Check the total electron cross section data
+  cross_section = data_container.getTotalElectronCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.7489602978320003e+08 );
+
+  TEST_EQUALITY_CONST( cross_section.back(), 1.7732209062100001e+05 );
+
+  TEST_EQUALITY_CONST( cross_section.size(), 797 );
+
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
 }
@@ -2044,6 +2060,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
 
+  // Check the total electron cross section data
+  cross_section = data_container.getTotalElectronCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.7489602978320003e+08 );
+
+  TEST_EQUALITY_CONST( cross_section.back(), 1.7732209062100001e+05 );
+
+  TEST_EQUALITY_CONST( cross_section.size(), 797 );
+
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
 }
@@ -2618,6 +2643,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 1.36100e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
+
+  // Check the total electron cross section data
+  cross_section = data_container.getTotalElectronCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.7489602978320003e+08 );
+
+  TEST_EQUALITY_CONST( cross_section.back(), 1.7732209062100001e+05 );
+
+  TEST_EQUALITY_CONST( cross_section.size(), 797 );
 
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
@@ -3424,6 +3458,17 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 1.981540E-05 );
 //  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 181 );
 
+  // // Check the total electron cross section data
+  // cross_section = data_container.getTotalElectronCrossSection();
+
+  // TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  // std::cout << std::setprecision(16) << std::scientific << "cross_section.front() = \t" << cross_section.front() << std::endl;
+
+  // TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
+  // std::cout << std::setprecision(16) << std::scientific << "cross_section.back() = \t" << cross_section.back() << std::endl;
+
+  // TEST_EQUALITY_CONST( cross_section.size(), 797 );
+
 //  data_container.exportData( "test_c_epr.xml",
 //                             Utility::ArchivableObject::XML_ARCHIVE );
 //}
@@ -4076,6 +4121,17 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 9.232690E-06 );
 //  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 1.981540E-05 );
 //  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 181 );
+
+  // // Check the total electron cross section data
+  // cross_section = data_container.getTotalElectronCrossSection();
+
+  // TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  // std::cout << std::setprecision(16) << std::scientific << "cross_section.front() = \t" << cross_section.front() << std::endl;
+
+  // TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
+  // std::cout << std::setprecision(16) << std::scientific << "cross_section.back() = \t" << cross_section.back() << std::endl;
+
+  // TEST_EQUALITY_CONST( cross_section.size(), 797 );
 
 //  data_container.exportData( "test_c_epr.xml",
 //                             Utility::ArchivableObject::XML_ARCHIVE );
