@@ -781,6 +781,13 @@ ElectronPhotonRelaxationDataContainer::getElectronCrossSectionInterpPolicy() con
   return d_electron_cross_section_interp;
 }
 
+// Return the total electron electron cross section
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getTotalElectronCrossSection() const
+{
+  return d_total_electron_cross_section;
+}
+
 // Return the cutoff elastic electron cross section
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getCutoffElasticCrossSection() const
@@ -807,6 +814,7 @@ ElectronPhotonRelaxationDataContainer::getScreenedRutherfordElasticCrossSectionT
 {
   return d_screened_rutherford_elastic_cross_section_threshold_index;
 }
+
 // Return the total elastic electron cross section
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getTotalElasticCrossSection() const
@@ -1954,6 +1962,18 @@ void ElectronPhotonRelaxationDataContainer::setElectronCrossSectionInterpPolicy(
   testPrecondition( isInterpPolicyValid( electron_cross_section_interp ) );
 
   d_electron_cross_section_interp = electron_cross_section_interp;
+}
+
+// Set the total electron electron cross section
+void ElectronPhotonRelaxationDataContainer::setTotalElectronCrossSection(
+             const std::vector<double>& total_electron_cross_section )
+{
+  // Make sure the total electron cross section is valid
+  testPrecondition( total_electron_cross_section.size() ==
+                    d_electron_energy_grid.size() );
+  testPrecondition( ValuesGreaterThanZero( total_electron_cross_section ) );
+
+  d_total_electron_cross_section = total_electron_cross_section;
 }
 
 // Set the cutoff elastic electron cross section

@@ -365,6 +365,9 @@ public:
   //! Return the electron cross section interpolation policy
   const std::string& getElectronCrossSectionInterpPolicy() const;
 
+  //! Return the total electron cross section
+  const std::vector<double>& getTotalElectronCrossSection() const;
+
   //! Return the elastic electron cross section below mu = 0.999999
   const std::vector<double>& getCutoffElasticCrossSection() const;
 
@@ -787,6 +790,10 @@ protected:
   void setElectronCrossSectionInterpPolicy(
     const std::string& electron_cross_section_interp );
 
+  //! Set the total electron electron cross section
+  void setTotalElectronCrossSection(
+    const std::vector<double>& total_electron_cross_section );
+
   //! Set the elastic electron cross section below mu = 0.999999
   void setCutoffElasticCrossSection(
     const std::vector<double>& cutoff_elastic_cross_section );
@@ -1124,6 +1131,9 @@ private:
 
   // The electron cross section InterpPolicy
   std::string d_electron_cross_section_interp;
+
+  // The total electron electron cross section (b)
+  std::vector<double> d_total_electron_cross_section;
 
   // The cutoff elastic electron cross section (b)
   std::vector<double> d_cutoff_elastic_cross_section;
