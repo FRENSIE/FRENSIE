@@ -6,4 +6,10 @@ FRENSIE_ADD_TEST(HDF5File)
 FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileDataSetHelpers DEPENDS tstHDF5FileDataSetHelpers.cpp)
 FRENSIE_ADD_TEST(HDF5FileDataSetHelpers)
 
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileDataSetAttributeHelpers DEPENDS tstHDF5FileDataSetAttributeHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileDataSetAttributeHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(HDF5FileGroupAttributeHelpers DEPENDS tstHDF5FileGroupAttributeHelpers.cpp)
+FRENSIE_ADD_TEST(HDF5FileGroupAttributeHelpers)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_hdf5)

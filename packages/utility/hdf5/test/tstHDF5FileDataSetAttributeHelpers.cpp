@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstHDF5FileDataSetHelpers.cpp
+//! \file   tstHDF5FileDataSetAttributeHelpers.cpp
 //! \author Alex Robinson
-//! \brief  HDF5 file read/write data set helper method unit tests
+//! \brief  HDF5 file read/write data set attribute helper method unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -169,13 +169,14 @@ inline std::tuple<Types...> one( std::tuple<Types...> )
 //---------------------------------------------------------------------------//
 // Testing variables
 //---------------------------------------------------------------------------//
-std::string hdf5_file_name( "container_data_set_test_file.h5" );
+std::string hdf5_file_name( "container_data_set_attr_test_file.h5" );
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an initializer_list can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_init_list, TestTypes )
+// attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_init_list, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -190,20 +191,25 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_init_list, TestTypes )
 
   std::string data_set_name_with_path( "/init_list/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T()), zero(T()), one(T())} ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, {zero(T()), one(T()), zero(T()), one(T())} ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   // Init lists cannot used in read operations since their size is fixed
   std::vector<T> init_list_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, init_list_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, init_list_data ) );
   FRENSIE_CHECK_EQUAL( init_list_data, std::vector<T>({zero(T()), one(T()), zero(T()), one(T())}) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that an array can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_array, TestTypes )
+// Check that an array can be written to and read from a data set attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_array, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -219,23 +225,28 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_array, TestTypes )
   std::string data_set_name_with_path( "/array/" );
   data_set_name_with_path += data_set_name;
 
+    std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
+
   std::array<T,10> array_data;
   array_data.fill( one(T()) );
 
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, array_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, array_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   // Arrays cannot be used in read operations since their size is fixed
   std::vector<T> extracted_array_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_array_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_array_data ) );
   FRENSIE_CHECK_EQUAL( extracted_array_data,
                        std::vector<T>(array_data.begin(), array_data.end()) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that an array view can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_array_view, TestTypesExceptBool )
+// Check that an array view can be written to and read from a data set attr
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_array_view, TestTypesExceptBool )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -251,6 +262,11 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_array_view, TestTypesExceptBoo
   std::string data_set_name_with_path( "/array_view/" );
   data_set_name_with_path += data_set_name;
 
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
+
   std::array<T,20> array_data;
   array_data.fill( zero(T()) );
 
@@ -258,13 +274,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_array_view, TestTypesExceptBoo
   Utility::ArrayView<T> array_view = array_data | Utility::Slice( 5, 10 );
   array_view.fill( one(T()) );
 
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, array_view ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, array_view ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
 
   // Array views cannot be used in read operations since their size is fixed
   std::vector<T> extracted_data( 10, zero(T()) );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_data ) );
   FRENSIE_CHECK_EQUAL( Utility::arrayView(extracted_data), array_view );
   FRENSIE_CHECK_EQUAL( std::vector<T>( array_data.begin(), array_data.begin()+5 ),
                        std::vector<T>( 5, zero(T()) ) );
@@ -273,8 +289,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_array_view, TestTypesExceptBoo
 }
 
 //---------------------------------------------------------------------------//
-// Check that a vector can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_vector, TestTypes )
+// Check that a vector can be written to and read from a data set attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_vector, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -289,21 +305,26 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_vector, TestTypes )
 
   std::string data_set_name_with_path( "/vector/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::vector<T> vector_data( 10, one(T()) );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, vector_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, vector_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   std::vector<T> extracted_vector_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_vector_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_vector_data ) );
   FRENSIE_CHECK_EQUAL( extracted_vector_data, vector_data );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a deque can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_deque, TestTypes )
+// Check that a deque can be written to and read from a data set attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_deque, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -318,21 +339,26 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_deque, TestTypes )
 
   std::string data_set_name_with_path( "/deque/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::deque<T> deque_data( 10, one(T()) );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, deque_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, deque_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   std::deque<T> extracted_deque_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_deque_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_deque_data ) );
   FRENSIE_CHECK_EQUAL( extracted_deque_data, deque_data );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a list can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_list, TestTypes )
+// Check that a list can be written to and read from a data set attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_list, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -347,21 +373,26 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_list, TestTypes )
 
   std::string data_set_name_with_path( "/list/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::list<T> list_data( 10, one(T()) );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, list_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, list_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   std::list<T> extracted_list_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_list_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_list_data ) );
   FRENSIE_CHECK_EQUAL( extracted_list_data, list_data );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a forward_list can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_forward_list, TestTypes )
+// Check that a forward_list can be written to and read from a data set attr
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_forward_list, TestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -376,21 +407,26 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_forward_list, TestTypes )
 
   std::string data_set_name_with_path( "/forward_list/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::forward_list<T> forward_list_data( 10, one(T()) );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, forward_list_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, forward_list_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
     
   std::forward_list<T> extracted_forward_list_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_forward_list_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_forward_list_data ) );
   FRENSIE_CHECK_EQUAL( extracted_forward_list_data, forward_list_data );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a set can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_set, BasicTestTypes )
+// Check that a set can be written to and read from a data set attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_set, BasicTestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -405,23 +441,28 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_set, BasicTestTypes )
 
   std::string data_set_name_with_path( "/set/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::set<T> set_data;
   set_data.insert( zero(T()) );
   set_data.insert( one(T()) );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, set_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, set_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   std::set<T> extracted_set_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_set_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_set_data ) );
   FRENSIE_CHECK_EQUAL( extracted_set_data, set_data );
 }
 
 //---------------------------------------------------------------------------//
-// Check that an unordered_set can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_unordered_set, BasicTestTypes )
+// Check that an unordered_set can be written to and read from a data set attr
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_unordered_set, BasicTestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -436,23 +477,28 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_unordered_set, BasicTestTypes 
 
   std::string data_set_name_with_path( "/unordered_set/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::unordered_set<T> unordered_set_data;
   unordered_set_data.insert( zero(T()) );
   unordered_set_data.insert( one(T()) );
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, unordered_set_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, unordered_set_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   std::unordered_set<T> extracted_unordered_set_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_unordered_set_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_unordered_set_data ) );
   FRENSIE_CHECK_EQUAL( extracted_unordered_set_data, unordered_set_data );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a map can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_map, BasicTestTypes )
+// Check that a map can be written to and read from a data set attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_map, BasicTestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -467,23 +513,28 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_map, BasicTestTypes )
 
   std::string data_set_name_with_path( "/map/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::map<T,T> map_data;
   map_data[zero(T())] = one(T());
   map_data[one(T())] = zero(T());
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, map_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, map_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   std::map<T,T> extracted_map_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_map_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_map_data ) );
   FRENSIE_CHECK_EQUAL( extracted_map_data, map_data );
 }
 
 //---------------------------------------------------------------------------//
-// Check that an unordered_map can be written to and read from a data set
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_unordered_map, BasicTestTypes )
+// Check that an unordered_map can be written to and read from a data set attr
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_attribute_rw_unordered_map, BasicTestTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -498,17 +549,22 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_unordered_map, BasicTestTypes 
 
   std::string data_set_name_with_path( "/unordered_map/" );
   data_set_name_with_path += data_set_name;
+
+  std::string attribute_name( "prop" );
+
+  // Create the data set
+  Utility::writeToDataSet( hdf5_file, data_set_name_with_path, {zero(T()), one(T())} );
   
   std::unordered_map<T,T> unordered_map_data;
   unordered_map_data[zero(T())] = one(T());
   unordered_map_data[one(T())] = zero(T());
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSet( hdf5_file, data_set_name_with_path, unordered_map_data ) );
-  FRENSIE_REQUIRE( hdf5_file.doesDataSetExist( data_set_name_with_path ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, unordered_map_data ) );
+  FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
   
   std::unordered_map<T,T> extracted_unordered_map_data;
   
-  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSet( hdf5_file, data_set_name_with_path, extracted_unordered_map_data ) );
+  FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_unordered_map_data ) );
   FRENSIE_CHECK_EQUAL( extracted_unordered_map_data, unordered_map_data );
 }
 
@@ -526,5 +582,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstHDF5FileDataSetHelpers.cpp
+// end tstHDF5FileDataSetAttributeHelpers.cpp
 //---------------------------------------------------------------------------//
