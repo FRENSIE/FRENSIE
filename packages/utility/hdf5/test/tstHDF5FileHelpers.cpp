@@ -373,6 +373,502 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5File, data_set_rw_associative_containers, BasicT
 }
 
 //---------------------------------------------------------------------------//
+// Check that containers can be written to and read from a data set attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File,
+                            data_set_attribute_rw_sequence_containers,
+                            TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE );
+
+  std::string data_set_name = Utility::typeName<T>();
+  boost::replace_all( data_set_name, ":", "_" );
+  boost::replace_all( data_set_name, "<", "__" );
+  boost::replace_all( data_set_name, ">", "__" );
+  boost::replace_all( data_set_name, ",", "_" );
+  boost::replace_all( data_set_name, " ", "_" );
+
+  std::string attribute_name( "prop" );
+
+  // Read/write an initializer list
+  {
+    std::string data_set_name_with_path( "/init_list/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, {zero(T()), one(T()), zero(T()), one(T())} ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    // Init lists cannot used in read operations since their size is fixed
+    std::vector<T> init_list_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, init_list_data ) );
+    FRENSIE_CHECK_EQUAL( init_list_data, std::vector<T>({zero(T()), one(T()), zero(T()), one(T())}) );
+  }
+
+  // Read/write an array 
+  {
+    std::string data_set_name_with_path( "/array/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::array<T,10> array_data;
+    array_data.fill( one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, array_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    // Arrays cannot be used in read operations since their size is fixed
+    std::vector<T> extracted_array_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_array_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_array_data,
+                         std::vector<T>(array_data.begin(), array_data.end()) );
+  }
+
+  // Read/write a vector 
+  {
+    std::string data_set_name_with_path( "/vector/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+    
+    std::vector<T> vector_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, vector_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::vector<T> extracted_vector_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_vector_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_vector_data, vector_data );
+  }
+
+  // Read/write a deque 
+  {
+    std::string data_set_name_with_path( "/deque/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::deque<T> deque_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, deque_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::deque<T> extracted_deque_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_deque_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_deque_data, deque_data );
+  }
+
+  // Read/write a list 
+  {
+    std::string data_set_name_with_path( "/list/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::list<T> list_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, list_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::list<T> extracted_list_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_list_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_list_data, list_data );
+  }
+
+  // Read/write a forward_list
+  {
+    std::string data_set_name_with_path( "/forward_list/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::forward_list<T> forward_list_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, forward_list_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::forward_list<T> extracted_forward_list_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_forward_list_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_forward_list_data, forward_list_data );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that containers can be written to and read from a data set
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File,
+                            data_set_attribute_rw_associative_containers,
+                            BasicTestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE );
+
+  std::string data_set_name = Utility::typeName<T>();
+  boost::replace_all( data_set_name, ":", "_" );
+  boost::replace_all( data_set_name, "<", "__" );
+  boost::replace_all( data_set_name, ">", "__" );
+  boost::replace_all( data_set_name, ",", "_" );
+  boost::replace_all( data_set_name, " ", "_" );
+
+  std::string attribute_name( "prop" );
+
+  // Read/write a set
+  {
+    std::string data_set_name_with_path( "/set/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::set<T> set_data;
+    set_data.insert( zero(T()) );
+    set_data.insert( one(T()) );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, set_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::set<T> extracted_set_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_set_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_set_data, set_data );
+  }
+
+  // Read/write an unordered_set
+  {
+    std::string data_set_name_with_path( "/unordered_set/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::unordered_set<T> unordered_set_data;
+    unordered_set_data.insert( zero(T()) );
+    unordered_set_data.insert( one(T()) );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, unordered_set_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::unordered_set<T> extracted_unordered_set_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_unordered_set_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_unordered_set_data, unordered_set_data );
+  }
+
+  // Read/write a map
+  {
+    std::string data_set_name_with_path( "/map/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::map<T,T> map_data;
+    map_data[zero(T())] = one(T());
+    map_data[one(T())] = zero(T());
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, map_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::map<T,T> extracted_map_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_map_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_map_data, map_data );
+  }
+
+  // Read/write a unordered_map
+  {
+    std::string data_set_name_with_path( "/unordered_map/" );
+    data_set_name_with_path += data_set_name;
+
+    if( !hdf5_file.doesDataSetExist( data_set_name_with_path ) )
+    {
+      T data = zero(T());
+      hdf5_file.writeToDataSet( data_set_name_with_path, &data, 1 );
+    }
+
+    std::unordered_map<T,T> unordered_map_data;
+    unordered_map_data[zero(T())] = one(T());
+    unordered_map_data[one(T())] = zero(T());
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, unordered_map_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesDataSetAttributeExist( data_set_name_with_path, attribute_name ) );
+
+    std::unordered_map<T,T> extracted_unordered_map_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromDataSetAttribute( hdf5_file, data_set_name_with_path, attribute_name, extracted_unordered_map_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_unordered_map_data, unordered_map_data );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that containers can be written to and read from a group attribute
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File,
+                            group_attribute_rw_sequence_containers,
+                            TestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE );
+
+  std::string attribute_name = Utility::typeName<T>();
+  boost::replace_all( attribute_name, ":", "_" );
+  boost::replace_all( attribute_name, "<", "__" );
+  boost::replace_all( attribute_name, ">", "__" );
+  boost::replace_all( attribute_name, ",", "_" );
+  boost::replace_all( attribute_name, " ", "_" );
+
+  // Read/write an initializer list
+  {
+    std::string group_name_with_path( "/init_list/" );
+
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, {zero(T()), one(T()), zero(T()), one(T())} ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    // Init lists cannot used in read operations since their size is fixed
+    std::vector<T> init_list_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, init_list_data ) );
+    FRENSIE_CHECK_EQUAL( init_list_data, std::vector<T>({zero(T()), one(T()), zero(T()), one(T())}) );
+  }
+
+  // Read/write an array 
+  {
+    std::string group_name_with_path( "/array/" );
+
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::array<T,10> array_data;
+    array_data.fill( one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, array_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    // Arrays cannot be used in read operations since their size is fixed
+    std::vector<T> extracted_array_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_array_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_array_data,
+                         std::vector<T>(array_data.begin(), array_data.end()) );
+  }
+
+  // Read/write a vector 
+  {
+    std::string group_name_with_path( "/vector/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+    
+    std::vector<T> vector_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, vector_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::vector<T> extracted_vector_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_vector_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_vector_data, vector_data );
+  }
+
+  // Read/write a deque 
+  {
+    std::string group_name_with_path( "/deque/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::deque<T> deque_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, deque_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::deque<T> extracted_deque_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_deque_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_deque_data, deque_data );
+  }
+
+  // Read/write a list 
+  {
+    std::string group_name_with_path( "/list/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::list<T> list_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, list_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::list<T> extracted_list_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_list_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_list_data, list_data );
+  }
+
+  // Read/write a forward_list
+  {
+    std::string group_name_with_path( "/forward_list/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::forward_list<T> forward_list_data( 10, one(T()) );
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, forward_list_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::forward_list<T> extracted_forward_list_data;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_forward_list_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_forward_list_data, forward_list_data );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that containers can be written to and read from a data set
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5File,
+                            group_attribute_rw_associative_containers,
+                            BasicTestTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::HDF5File hdf5_file( hdf5_file_name, Utility::HDF5File::READ_WRITE );
+
+  std::string attribute_name = Utility::typeName<T>();
+  boost::replace_all( attribute_name, ":", "_" );
+  boost::replace_all( attribute_name, "<", "__" );
+  boost::replace_all( attribute_name, ">", "__" );
+  boost::replace_all( attribute_name, ",", "_" );
+  boost::replace_all( attribute_name, " ", "_" );
+
+  // Read/write a set
+  {
+    std::string group_name_with_path( "/set/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::set<T> set_data;
+    set_data.insert( zero(T()) );
+    set_data.insert( one(T()) );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, set_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::set<T> extracted_set_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_set_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_set_data, set_data );
+  }
+
+  // Read/write an unordered_set
+  {
+    std::string group_name_with_path( "/unordered_set/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::unordered_set<T> unordered_set_data;
+    unordered_set_data.insert( zero(T()) );
+    unordered_set_data.insert( one(T()) );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, unordered_set_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::unordered_set<T> extracted_unordered_set_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_unordered_set_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_unordered_set_data, unordered_set_data );
+  }
+
+  // Read/write a map
+  {
+    std::string group_name_with_path( "/map/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::map<T,T> map_data;
+    map_data[zero(T())] = one(T());
+    map_data[one(T())] = zero(T());
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, map_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::map<T,T> extracted_map_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_map_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_map_data, map_data );
+  }
+
+  // Read/write a unordered_map
+  {
+    std::string group_name_with_path( "/unordered_map/" );
+    
+    if( !hdf5_file.doesGroupExist( group_name_with_path ) )
+      hdf5_file.createGroup( group_name_with_path );
+
+    std::unordered_map<T,T> unordered_map_data;
+    unordered_map_data[zero(T())] = one(T());
+    unordered_map_data[one(T())] = zero(T());
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::writeToGroupAttribute( hdf5_file, group_name_with_path, attribute_name, unordered_map_data ) );
+    FRENSIE_REQUIRE( hdf5_file.doesGroupAttributeExist( group_name_with_path, attribute_name ) );
+
+    std::unordered_map<T,T> extracted_unordered_map_data;
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::readFromGroupAttribute( hdf5_file, group_name_with_path, attribute_name, extracted_unordered_map_data ) );
+    FRENSIE_CHECK_EQUAL( extracted_unordered_map_data, unordered_map_data );
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Custom Setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();

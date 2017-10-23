@@ -811,7 +811,7 @@ void writeToGroupAttribute( HDF5File& hdf5_file,
   hdf5_file.writeToGroupAttribute( path_to_group,
                                    attribute_name,
                                    container.begin(),
-                                   container.end() );
+                                   container.size() );
 }
 
 namespace Details{
@@ -869,7 +869,7 @@ inline void readFromDataSetAttributeImpl( const HDF5File& hdf5_file,
 
   container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( data_set_attribute_size ) );
   
-  hdf5_file.readFromDataSet( path_to_data_set, container.data(), container.size() );
+  hdf5_file.readFromDataSetAttribute( path_to_data_set, attribute_name, container.data(), container.size() );
 }
 
 /*! \brief Implementation of readFromDataSetAttribute for containers with 

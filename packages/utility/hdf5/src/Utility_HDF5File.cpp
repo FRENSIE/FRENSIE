@@ -380,6 +380,16 @@ std::string HDF5File::extractParentGroupPath( const std::string& path ) const
 {
   // Start the search for the group name deliminator from the second-to-last
   // character in case the current path is a group path (ends with "/")
+  TEST_FOR_EXCEPTION( path.empty(),
+                      HDF5File::Exception,
+                      "All paths must be absolute (the staring character "
+                      "must be '/')" );
+  
+  TEST_FOR_EXCEPTION( path.front() != '/',
+                      HDF5File::Exception,
+                      "All paths must be absolute (the staring character "
+                      "must be '/')" );
+  
   if( path.size() > 1 )
   {
     size_t loc = path.find_last_of( "/", path.size()-2 );

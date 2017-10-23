@@ -1386,8 +1386,11 @@ FRENSIE_DATA_UNIT_TEST( UnitTestHarness, DataDrivenTest_fail )
 
 //---------------------------------------------------------------------------//
 // Check that a template unit test can be constructed
+// Note: bool and double have been added multiple times on purpose - the
+//       harness should filter out multiple type instances to ensure that each
+//       test is unique.
 FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestRawParamPack_pass,
-                            bool, short, int, long, long long, float, double )
+                            bool, bool, short, int, long, long long, bool, float, double, double )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -1398,8 +1401,11 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestRawParamPack_pass,
 
 //---------------------------------------------------------------------------//
 // Check that a template unit test can be constructed
+// Note: bool and double have been added multiple times on purpose - the
+//       harness should filter out multiple type instances to ensure that each
+//       test is unique.
 FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestWrappedParamPack_pass,
-                            std::tuple<bool, short, int, long, long long, float, double> )
+                            std::tuple<bool, bool, short, int, long, long long, bool, float, double, double> )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
@@ -1410,11 +1416,14 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestWrappedParamPack_pass,
 
 //---------------------------------------------------------------------------//
 // Check that a template unit test can be constructed
+// Note: Every tuple type has been added multiple times on purpose - the
+//       harness should filter out multiple type instances to ensure that each
+//       test is unique
 FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestTupleTypes_pass,
-                            std::tuple<>,
-                            std::tuple<int,int>,
-                            std::tuple<int,int,int>,
-                            std::tuple<int,int,int,int> )
+                            std::tuple<>, std::tuple<>,
+                            std::tuple<int,int>, std::tuple<int,int>,
+                            std::tuple<int,int,int>, std::tuple<int,int,int>,
+                            std::tuple<int,int,int,int>, std::tuple<int,int,int,int> )
 {
   FETCH_TEMPLATE_PARAM( 0, Tuple );
 
@@ -1425,11 +1434,14 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitTestHarness, TemplateTestTupleTypes_pass,
 
 //---------------------------------------------------------------------------//
 // Check that a template unit test can be constructed
+// Note: Every tuple type has been added multiple times on purpose - the
+//       harness should filter out multiple type instances to ensure that each
+//       test is unique
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitTestHarness, TemplateTestRawExpandedTupleTypes_pass,
-                                   std::tuple<int,int>,
-                                   std::tuple<int,double>,
-                                   std::tuple<double,double>,
-                                   std::tuple<double,int> )
+                                   std::tuple<int,int>, std::tuple<int,int>,
+                                   std::tuple<int,double>, std::tuple<int,double>,
+                                   std::tuple<double,double>, std::tuple<double,double>,
+                                   std::tuple<double,int>, std::tuple<double,int> )
 {
   FETCH_TEMPLATE_PARAM( 0, T0 );
   FETCH_TEMPLATE_PARAM( 1, T1 );
@@ -1443,11 +1455,16 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitTestHarness, TemplateTestRawExpandedTuple
 
 //---------------------------------------------------------------------------//
 // Check that a template unit test can be constructed
+// Note: Every tuple type has been added multiple times on purpose - the
+//       harness should filter out multiple type instances to ensure that each
+//       test is unique
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitTestHarness, TemplateTestWrappedExpandedTupleTypes_pass,
-                                   std::tuple<std::tuple<int,int>,
-                                              std::tuple<int,double>,
-                                              std::tuple<double,double>,
-                                              std::tuple<double,int> > )
+                                   std::tuple<
+                                     std::tuple<int,int>, std::tuple<int,int>,
+                                     std::tuple<int,double>, std::tuple<int,double>,
+                                     std::tuple<double,double>, std::tuple<double,double>,
+                                     std::tuple<double,int>, std::tuple<double,int>
+                                   > )
 {
   FETCH_TEMPLATE_PARAM( 0, T0 );
   FETCH_TEMPLATE_PARAM( 1, T1 );
