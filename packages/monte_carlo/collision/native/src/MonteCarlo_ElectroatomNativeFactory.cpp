@@ -90,6 +90,9 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
     TwoDInterpolationType elastic_interp = properties.getElasticTwoDInterpPolicy();
 
+    /*! \todo These if else statements should be eliminated once testing for the
+     *  proper TwoDInterpolation and TwoDSampling Policy is complete.
+     */
     if( elastic_interp == LOGLOGLOG_INTERPOLATION )
     {
       ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Correlated>(

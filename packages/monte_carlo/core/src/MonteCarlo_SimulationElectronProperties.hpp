@@ -14,6 +14,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
 
 namespace MonteCarlo{
 
@@ -74,6 +75,18 @@ public:
 
   //! Return if unit based interpolation mode is on
   bool isUnitBasedInterpolationModeOn() const;
+
+  //! Set the electron 2D interpolation policy (LogLogLog by default)
+  void setElectronTwoDInterpPolicy( TwoDInterpolationType interp_type );
+
+  //! Return the electron 2D interpolation policy
+  TwoDInterpolationType getElectronTwoDInterpPolicy() const;
+
+  //! Set the electron 2D sampling policy (Correlated by default)
+  void setElectronTwoDSamplingPolicy( TwoDSamplingType sampling_type );
+
+  //! Return the electron 2D sampling policy
+  TwoDSamplingType getElectronTwoDSamplingPolicy() const;
 
   //! Set the number of electron hash grid bins
   void setNumberOfElectronHashGridBins( const unsigned bins );
@@ -202,6 +215,12 @@ private:
   /* The unit based interpolation mode for bremsstrahlung and electroionization
    * (true = on - default, false = off) */
   bool d_unit_based_interpolation_mode_on;
+
+  // The electron 2D interpolation type ( LogLogLog - default )
+  TwoDInterpolationType d_electron_interpolation_type;
+
+  // The electron 2D sampling type ( Correlated - default )
+  TwoDSamplingType d_electron_sampling_type;
 
   // The number of electron hash grid bins
   unsigned d_num_electron_hash_grid_bins;

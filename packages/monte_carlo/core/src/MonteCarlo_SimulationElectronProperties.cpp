@@ -141,6 +141,34 @@ bool SimulationElectronProperties::isUnitBasedInterpolationModeOn() const
   return d_unit_based_interpolation_mode_on;
 }
 
+// Set the electron 2D interpolation policy (LogLogLog by default)
+void SimulationElectronProperties::setElectronTwoDInterpPolicy(
+    TwoDInterpolationType interp_type )
+{
+  d_electron_interpolation_type = interp_type;
+}
+
+// Return the electron 2D interpolation policy
+TwoDInterpolationType
+SimulationElectronProperties::getElectronTwoDInterpPolicy() const
+{
+  return d_electron_interpolation_type;
+}
+
+// Set the electron 2D sampling policy (LogLogLog by default)
+void SimulationElectronProperties::setElectronTwoDSamplingPolicy(
+    TwoDSamplingType sampling_type )
+{
+  d_electron_sampling_type = sampling_type;
+}
+
+// Return the electron 2D sampling policy
+TwoDSamplingType
+SimulationElectronProperties::getElectronTwoDSamplingPolicy() const
+{
+  return d_electron_sampling_type;
+}
+
 // Set the number of electron hash grid bins
 void SimulationElectronProperties::setNumberOfElectronHashGridBins(
                                                           const unsigned bins )
