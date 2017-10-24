@@ -37,7 +37,8 @@ class CoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createCoupledElasticReaction( self.data, "LinLinLog", "Simplified Union", True, 1e-7 )
+        self.reaction = Collision.createLinLinLogExactCoupledElasticReaction( self.data, "Simplified Union", 1e-7 )
+        # self.reaction = Collision.createCoupledElasticReaction( self.data, "LinLinLog", "Simplified Union", True, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCoupledElasticReaction getThresholdEnergy method"
@@ -65,7 +66,7 @@ class DecoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createDecoupledElasticReaction( self.data, "LinLinLog", True, 1e-7 )
+        self.reaction = Collision.createLinLinLogExactDecoupledElasticReaction( self.data, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createDecoupledElasticReaction getThresholdEnergy method"
@@ -93,7 +94,7 @@ class HybridElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createHybridElasticReaction( self.data, 0.9, "LinLinLog", True, 1e-14 )
+        self.reaction = Collision.createLinLinLogExactHybridElasticReaction( self.data, 0.9, 1e-14 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createHybridElasticReaction getThresholdEnergy method"
@@ -121,7 +122,7 @@ class CutoffElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createCutoffElasticReaction( self.data, 1.0, "LinLinLog", True, 1e-7 )
+        self.reaction = Collision.createLinLinLogExactCutoffElasticReaction( self.data, 1.0, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCutoffElasticReaction getThresholdEnergy method"
@@ -177,7 +178,7 @@ class MomentPreservingElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createMomentPreservingElasticReaction( self.data, 0.9, "LinLinLog", True, 1e-7 )
+        self.reaction = Collision.createLinLinLogExactMomentPreservingElasticReaction( self.data, 0.9, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createMomentPreservingElasticReaction getThresholdEnergy method"
@@ -233,10 +234,10 @@ class SubshellElectroionizationReactionsTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction_first = Collision.createSubshellElectroionizationReaction( self.data, 1,  "LinLinLog", True, True, 1e-7 )
+        self.reaction_first = Collision.createLinLinLogCorrelatedSubshellElectroionizationReaction( self.data, 1, 1e-7 )
         subshells = self.data.getSubshells()
         shell = subshells[(len(subshells) -1 )]
-        self.reaction_last = Collision.createSubshellElectroionizationReaction( self.data, shell,  "LinLinLog", True, True, 1e-7 )
+        self.reaction_last = Collision.createLinLinLogCorrelatedSubshellElectroionizationReaction( self.data, shell, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createSubshellElectroionizationReactions getThresholdEnergy method"
@@ -287,7 +288,7 @@ class BremsstrahlungReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createBremsstrahlungReaction( self.data, False, "LinLinLog", True, True, 1e-7 )
+        self.reaction = Collision.createLinLinLogCorrelatedBremsstrahlungReaction( self.data, False, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungReaction getThresholdEnergy method"

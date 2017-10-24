@@ -36,7 +36,7 @@ class CoupledElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createCoupledElasticDistribution( self.data, "LinLinLog", "Simplified Union", True, 1e-15 )
+        self.dist = Collision.createLinLinLogExactCoupledElasticDistribution( self.data, "Simplified Union", 1e-15 )
 
     def testevaluate(self):
         "*Test MonteCarlo.Collision.createCoupledElasticDistribution evaluate method"
@@ -174,7 +174,7 @@ class CutoffElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createCutoffElasticDistribution( self.data, 0.9, "LinLinLog", True, 1e-14 )
+        self.dist = Collision.createLinLinLogExactCutoffElasticDistribution( self.data, 0.9, 1e-14 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createCutoffElasticDistribution evaluate method"
@@ -357,7 +357,7 @@ class HybridElasticElectronScatteringDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createHybridElasticDistribution( self.data, 0.9, "LinLinLog", True, 1e-14 )
+        self.dist = Collision.createLinLinLogExactHybridElasticDistribution( self.data, 0.9, 1e-14 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createHybridElasticDistribution evaluate method"
@@ -448,7 +448,7 @@ class MomentPreservingElasticElectronScatteringDistributionTestCase(unittest.Tes
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createMomentPreservingElasticDistribution( self.data, 0.9, "LinLinLog", True, 1e-14 )
+        self.dist = Collision.createLinLinLogExactMomentPreservingElasticDistribution( self.data, 0.9, 1e-14 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createMomentPreservingElasticDistribution evaluate method"
@@ -535,7 +535,7 @@ class BremsstrahlungElectronScatteringDistributionTestCase_dipole(unittest.TestC
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createBremsstrahlungDistribution( self.data, "LinLinLog", True, True, 1e-7 )
+        self.dist = Collision.createLinLinLogCorrelatedBremsstrahlungDistribution( self.data, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungDistribution dipole evaluate method"
@@ -647,7 +647,7 @@ class BremsstrahlungElectronScatteringDistributionTestCase_2bs(unittest.TestCase
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.dist = Collision.createBremsstrahlungDistribution( self.data, 1, "LinLinLog", True, True, 1e-7 )
+        self.dist = Collision.createLinLinLogCorrelatedBremsstrahlungDistribution( self.data, 1, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungDistribution 2bs evaluate method"
@@ -763,7 +763,7 @@ class ElectroionizationSubshellElectronScatteringDistributionTestCase(unittest.T
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
         self.shell = 1
         self.binding_energy = self.data.getSubshellBindingEnergy( self.shell )
-        self.dist = Collision.createElectroionizationSubshellDistribution( self.data, self.shell, self.binding_energy, "LinLinLog", True, True, 1e-7 )
+        self.dist = Collision.createLinLinLogCorrelatedElectroionizationSubshellDistribution( self.data, self.shell, self.binding_energy, 1e-7 )
 
     def testEvaluate(self):
         "*Test MonteCarlo.Collision.createElectroionizationSubshellDistribution evaluate method"

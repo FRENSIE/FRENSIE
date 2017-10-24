@@ -172,14 +172,6 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_evaluation_tol;
 
-  /* The correlated sampling mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_correlated_sampling_mode_on;
-
-  /* The unit based interpolation mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_unit_based_interpolation_mode_on;
-
   // The electron 2D interpolation type ( LogLogLog - default )
   TwoDInterpolationType d_electron_interpolation_type;
 

@@ -27,8 +27,6 @@ SimulationAdjointElectronProperties::SimulationAdjointElectronProperties()
     d_adjoint_electroionization_mode_on( true ),
     d_adjoint_atomic_excitation_mode_on( true ),
     d_adjoint_evaluation_tol( 1e-7 ),
-    d_adjoint_correlated_sampling_mode_on( true ),
-    d_adjoint_unit_based_interpolation_mode_on( true ),
     d_adjoint_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_adjoint_elastic_distribution_mode( DECOUPLED_DISTRIBUTION ),
     d_adjoint_elastic_cutoff_angle_cosine( 1.0 ),

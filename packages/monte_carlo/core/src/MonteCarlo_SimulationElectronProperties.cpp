@@ -23,8 +23,6 @@ SimulationElectronProperties::SimulationElectronProperties()
   : d_min_electron_energy( s_absolute_min_electron_energy ),
     d_max_electron_energy( 20.0 ),
     d_evaluation_tol( 1e-7 ),
-    d_correlated_sampling_mode_on( true ),
-    d_unit_based_interpolation_mode_on( true ),
     d_electron_interpolation_type( LOGLOGLOG_INTERPOLATION ),
     d_electron_sampling_type( CORRELATED_SAMPLING ),
     d_num_electron_hash_grid_bins( 1000 ),

@@ -41,6 +41,7 @@
 
 // Include the electron scattering distribution distribution helpers
 %include "MonteCarlo_ElectronScatteringDistributionHelpers.i"
+%include "MonteCarlo_ElectronTemplateHelpers.i"
 
 // Add use of std::shared_ptr
 %shared_ptr(MonteCarlo::CoupledElasticElectronScatteringDistribution)
@@ -92,14 +93,23 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 "The Adjoint Electron Scattering Distribution Native Factory Helpers"
 
 //---------------------------------------------------------------------------//
+// Add support for the templated factory helpers
+//---------------------------------------------------------------------------//
+
+%cos_electron_function_interface_setup( CoupledElasticDistribution )
+%cos_electron_function_interface_setup( HybridElasticDistribution )
+%cos_electron_function_interface_setup( CutoffElasticDistribution )
+%cos_electron_function_interface_setup( MomentPreservingElasticDistribution )
+%electron_function_interface_setup( ElectroionizationSubshellDistribution )
+%electron_function_interface_setup( BremsstrahlungDistribution )
+
+//---------------------------------------------------------------------------//
 // Add support for the elastic electron scattering distributions (forward and adjoint)
 //---------------------------------------------------------------------------//
 
 // Add a general typemap for sampling
 %apply double& OUTPUT { double& outgoing_energy };
 %apply double& OUTPUT { double& scattering_angle_cosine };
-
-%ignore *::evaluateMoliereScreeningConstant( const double, const double, const double, const double );
 
 %ignore *::evaluateCDFAtCutoff( const double, const double );
 
@@ -115,26 +125,6 @@ MonteCarlo::AdjointElectronScatteringDistributionNativeFactoryHelpers
 %electron_distribution_interface_setup( CutoffElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( ScreenedRutherfordElasticElectronScatteringDistribution )
 %electron_distribution_interface_setup( MomentPreservingElasticElectronScatteringDistribution )
-
-//---------------------------------------------------------------------------//
-// Add support for the extra coupled electron scattering distribution functions
-//---------------------------------------------------------------------------//
-
-/*%feature("autodoc",*/
-/*"evaluateMoliereScreeningConstant(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
-/*MonteCarlo::DISTRIBUTION::evaluateMoliereScreeningConstant;*/
-
-/*%feature("autodoc",*/
-/*"evaluateAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
-/*MonteCarlo::DISTRIBUTION::evaluateAtCutoff;*/
-
-/*%feature("autodoc",*/
-/*"evaluatePDFAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
-/*MonteCarlo::DISTRIBUTION::evaluatePDFAtCutoff;*/
-
-/*%feature("autodoc",*/
-/*"evaluateCDFAtCutoff(DISTRIBUTION self, const double incoming_energy ) -> double" )*/
-/*MonteCarlo::DISTRIBUTION::evaluateCDFAtCutoff;*/
 
 //---------------------------------------------------------------------------//
 // Add support for the bremsstrahlung electron scattering distribution

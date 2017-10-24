@@ -151,14 +151,6 @@ private:
   // The adjoint electron FullyTabularTwoDDistribution evaluation tolerance
   double d_adjoint_evaluation_tol;
 
-  /* The adjoint correlated sampling mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_adjoint_correlated_sampling_mode_on;
-
-  /* The adjoint unit based interpolation mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_adjoint_unit_based_interpolation_mode_on;
-
   // The adjoint bremsstrahlung photon angular distribution function (default is 2BS)
   BremsstrahlungAngularDistributionType
   d_adjoint_bremsstrahlung_angular_distribution_function;

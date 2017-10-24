@@ -48,6 +48,7 @@
 
 // Include the electroatomic reaction helpers
 %include "MonteCarlo_ElectroatomicReactionHelpers.i"
+%include "MonteCarlo_ElectronTemplateHelpers.i"
 
 // Add use of std::shared_ptr
 %shared_ptr(MonteCarlo::AtomicReaction)
@@ -67,7 +68,7 @@
 %ignore *::getCrossSection( double const, unsigned const) const;
 
 //---------------------------------------------------------------------------//
-// Add support for the Atomic, Electroatomic, and  AdjointElectroatomic Reaction classes
+// Add support for the Atomic, Electroatomic, and AdjointElectroatomic Reaction classes
 //---------------------------------------------------------------------------//
 
 %include "MonteCarlo_AtomicReaction.hpp"
@@ -98,6 +99,18 @@ MonteCarlo::ElectroatomicReactionNativeFactoryHelpers
 %feature("docstring")
 MonteCarlo::AdjointElectroatomicReactionNativeFactoryHelpers
 "The Adjoint Electroatomic Reaction Native Factory Helpers"
+
+//---------------------------------------------------------------------------//
+// Add support for the templated factory helpers
+//---------------------------------------------------------------------------//
+
+%cos_electron_function_interface_setup( CoupledElasticReaction )
+%cos_electron_function_interface_setup( DecoupledElasticReaction )
+%cos_electron_function_interface_setup( HybridElasticReaction )
+%cos_electron_function_interface_setup( CutoffElasticReaction )
+%cos_electron_function_interface_setup( MomentPreservingElasticReaction )
+%electron_function_interface_setup( SubshellElectroionizationReaction )
+%electron_function_interface_setup( BremsstrahlungReaction )
 
 /*//---------------------------------------------------------------------------//*/
 /*// Add support for the electron scattering distribution ACE factory helpers*/

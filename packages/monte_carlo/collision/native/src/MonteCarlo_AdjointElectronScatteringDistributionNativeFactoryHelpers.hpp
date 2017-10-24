@@ -23,35 +23,31 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create an adjoint coupled elastic distribution ( combined Cutoff and Screened Rutherford )
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const std::string two_d_interp_policy_name,
     const std::string sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create an adjoint hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create an adjoint cutoff elastic distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create an adjoint moment preserving elastic distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -59,11 +55,9 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //----------------------------------------------------------------------------//
 
 //! Create an adjoint bremsstrahlung distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
@@ -71,13 +65,11 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistrib
 //----------------------------------------------------------------------------//
 
 //! Create an adjoint electroionization subshell distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
@@ -89,6 +81,14 @@ std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistr
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container );
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_AdjointElectronScatteringDistributionNativeFactoryHelpers_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
 
