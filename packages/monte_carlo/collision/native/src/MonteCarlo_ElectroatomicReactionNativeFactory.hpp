@@ -52,8 +52,8 @@ public:
   using ThisType = ElectroatomicReactionNativeFactory;
 
   //! Create an coupled elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplingPolicy = Utility::Correlated>
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+            typename TwoDSamplingPolicy = Utility::Exact>
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -63,8 +63,8 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplingPolicy = Utility::Correlated>
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+            typename TwoDSamplingPolicy = Utility::Exact>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -74,8 +74,8 @@ public:
     const double evaluation_tol );
 
   //! Create a decoupled elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplingPolicy = Utility::Correlated>
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+            typename TwoDSamplingPolicy = Utility::Exact>
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -84,8 +84,8 @@ public:
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplingPolicy = Utility::Correlated>
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+            typename TwoDSamplingPolicy = Utility::Exact>
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -102,8 +102,8 @@ public:
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplingPolicy = Utility::Correlated>
+  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
+            typename TwoDSamplingPolicy = Utility::Exact>
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,

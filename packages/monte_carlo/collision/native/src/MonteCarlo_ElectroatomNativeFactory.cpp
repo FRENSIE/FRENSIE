@@ -41,208 +41,126 @@ void ElectroatomNativeFactory::createElectroatom(
 
   Teuchos::RCP<ElectroatomCore> core;
 
+  TwoDInterpolationType electron_interp =
+                          properties.getElectronTwoDInterpPolicy();
+
+  TwoDSamplingType electron_sampling =
+                          properties.getElectronTwoDSamplingPolicy();
+
   // Create the electroatom core
-  ElectroatomNativeFactory::createElectroatomCore( raw_electroatom_data,
-                                                   atomic_relaxation_model,
-                                                   properties,
-                                                   core );
+  /*! \todo Once testing for the proper 2D interp and sampling policies is
+   * finished, these if else statements should be removed and replaced with the
+   * default policies.
+   */
+  if( electron_interp == LOGLOGLOG_INTERPOLATION )
+  {
+    if( electron_sampling == CORRELATED_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Correlated>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == EXACT_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Exact>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == EXACT_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Stochastic>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error, "Error: the 2D sampling policy "
+                       << electron_sampling << " is not currently supported!" );
+    }
+  }
+  else if( electron_interp == LINLINLIN_INTERPOLATION )
+  {
+    if( electron_sampling == CORRELATED_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == EXACT_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Exact>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == EXACT_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Stochastic>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error, "Error: the 2D sampling policy "
+                       << electron_sampling << " is not currently supported!" );
+    }
+  }
+  else if( electron_interp == LINLINLOG_INTERPOLATION )
+  {
+    if( electron_sampling == CORRELATED_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == EXACT_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Exact>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == EXACT_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Stochastic>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error, "Error: the 2D sampling policy "
+                       << electron_sampling << " is not currently supported!" );
+    }
+  }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error, "Error: the 2D interpolation policy "
+                      << electron_interp << " is not currently supported!" );
+  }
+
+
 
   // Create the electroatom
   electroatom.reset( new Electroatom( electroatom_name,
                                       raw_electroatom_data.getAtomicNumber(),
                                       atomic_weight,
                                       *core ) );
-}
-
-// Create a electroatom core (using the provided atomic relaxation model)
-/*! \details The provided atomic relaxation model will be used with this
- * core. Special care must be taken to assure that the model corresponds to
- * the atom of interest. If the use of atomic relaxation data has been
- * requested, a electroionization reaction for each subshell will be created.
- * Otherwize a single total electroionization reaction will be created.
- */
-void ElectroatomNativeFactory::createElectroatomCore(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        const SimulationElectronProperties& properties,
-        Teuchos::RCP<ElectroatomCore>& electroatom_core )
-{
-  // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
-
-  electroatom_core.reset( new ElectroatomCore() );
-
-  Electroatom::ReactionMap scattering_reactions, absorption_reactions;
-
-  // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( raw_electroatom_data.getElectronEnergyGrid().begin(),
-                      raw_electroatom_data.getElectronEnergyGrid().end() );
-
-  // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-                              energy_grid,
-                              properties.getNumberOfElectronHashGridBins() ) );
-
-  TwoDInterpolationType electron_interp =
-                          properties.getElectronTwoDInterpPolicy();
-
-  // Create the elastic scattering reaction
-  if ( properties.isElasticModeOn() )
-  {
-    /*! \todo These if else statements should be eliminated once testing for the
-     *  proper TwoDInterpolation and TwoDSampling Policy is complete.
-     */
-    if( electron_interp == LOGLOGLOG_INTERPOLATION )
-    {
-      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Correlated>(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
-    }
-    else if( electron_interp == LINLINLOG_INTERPOLATION )
-    {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
-    }
-    else if( electron_interp == LINLINLIN_INTERPOLATION )
-    {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
-                                                raw_electroatom_data,
-                                                energy_grid,
-                                                grid_searcher,
-                                                properties,
-                                                scattering_reactions );
-    }
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: the 2D interpolation policy "
-                       << electron_interp <<
-                       " is not currently supported!" );
-    }
-  }
-
-  // Create the bremsstrahlung scattering reaction
-  if ( properties.isBremsstrahlungModeOn() )
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
-
-    if( electron_interp == LOGLOGLOG_INTERPOLATION )
-    {
-      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
-                    raw_electroatom_data,
-                    energy_grid,
-                    grid_searcher,
-                    reaction_pointer,
-                    properties.getBremsstrahlungAngularDistributionFunction(),
-                    properties.getElectronEvaluationTolerance() );
-    }
-    else if( electron_interp == LINLINLOG_INTERPOLATION )
-    {
-      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
-                    raw_electroatom_data,
-                    energy_grid,
-                    grid_searcher,
-                    reaction_pointer,
-                    properties.getBremsstrahlungAngularDistributionFunction(),
-                    properties.getElectronEvaluationTolerance() );
-    }
-    else if( electron_interp == LINLINLIN_INTERPOLATION )
-    {
-      ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
-                    raw_electroatom_data,
-                    energy_grid,
-                    grid_searcher,
-                    reaction_pointer,
-                    properties.getBremsstrahlungAngularDistributionFunction(),
-                    properties.getElectronEvaluationTolerance() );
-    }
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: the 2D interpolation policy "
-                       << electron_interp <<
-                       " is not currently supported!" );
-    }
-  }
-
-  // Create the atomic excitation scattering reaction
-  if ( properties.isAtomicExcitationModeOn() )
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
-
-    ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
-                               raw_electroatom_data,
-                               energy_grid,
-                               grid_searcher,
-                               reaction_pointer );
-  }
-
-  // Create the subshell electroionization reactions
-  if ( properties.isElectroionizationModeOn() )
-  {
-    std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
-
-    if( electron_interp == LOGLOGLOG_INTERPOLATION )
-    {
-      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
-                       raw_electroatom_data,
-                       energy_grid,
-                       grid_searcher,
-                       reaction_pointers,
-                       properties.getElectronEvaluationTolerance() );
-    }
-    else if( electron_interp == LINLINLOG_INTERPOLATION )
-    {
-      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
-                       raw_electroatom_data,
-                       energy_grid,
-                       grid_searcher,
-                       reaction_pointers,
-                       properties.getElectronEvaluationTolerance() );
-    }
-    else if( electron_interp == LINLINLIN_INTERPOLATION )
-    {
-      ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
-                       raw_electroatom_data,
-                       energy_grid,
-                       grid_searcher,
-                       reaction_pointers,
-                       properties.getElectronEvaluationTolerance() );
-    }
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: the 2D interpolation policy "
-                       << electron_interp <<
-                       " is not currently supported!" );
-    }
-
-    for( unsigned i = 0; i < reaction_pointers.size(); ++i )
-    {
-      scattering_reactions[reaction_pointers[i]->getReactionType()] =
-        reaction_pointers[i];
-    }
-  }
-
-  // Create the electroatom core
-  electroatom_core.reset( new ElectroatomCore( energy_grid,
-                                               grid_searcher,
-                                               scattering_reactions,
-                                               absorption_reactions,
-                                               atomic_relaxation_model,
-                                               false,
-                                               Utility::LinLin() ) );
 }
 
 } // end MonteCarlo namespace
