@@ -214,9 +214,8 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_coupled )
 {
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::TWOBS_DISTRIBUTION );
-  properties.setElasticTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
+  properties.setElectronTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
   properties.setElasticElectronDistributionMode( MonteCarlo::COUPLED_DISTRIBUTION );
-  properties.setUnitBasedInterpolationModeOn();
   properties.setElasticCutoffAngleCosine( 1.0 );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
@@ -379,9 +378,8 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
 {
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties.setElasticTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
   properties.setElasticElectronDistributionMode( MonteCarlo::CUTOFF_DISTRIBUTION );
-  properties.setUnitBasedInterpolationModeOn();
   properties.setElasticCutoffAngleCosine( 0.999999 );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
@@ -550,10 +548,9 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
 
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties.setUnitBasedInterpolationModeOff();
-  properties.setElasticTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties.setElectronTwoDSamplingPolicy( MonteCarlo::EXACT_SAMPLING );
   properties.setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
-  properties.setCorrelatedSamplingModeOn();
   properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setElectronEvaluationTolerance( evaluation_tol );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
@@ -753,7 +750,6 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_elastic )
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties.setElectronEvaluationTolerance( 1e-7 );
-  properties.setCorrelatedSamplingModeOn();
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
   properties.setElasticModeOff();

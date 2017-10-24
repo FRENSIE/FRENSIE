@@ -50,8 +50,6 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
 
   MonteCarlo::SimulationAdjointElectronProperties properties;
   properties.setAdjointBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties.setAdjointUnitBasedInterpolationModeOff();
-  properties.setAdjointCorrelatedSamplingModeOn();
   properties.setAdjointElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setAdjointElectronEvaluationTolerance( evaluation_tol );
   properties.setNumberOfAdjointElectronHashGridBins( 100 );
@@ -195,8 +193,6 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomNativeFactory,
 
   MonteCarlo::SimulationAdjointElectronProperties properties;
   properties.setAdjointBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties.setAdjointUnitBasedInterpolationModeOff();
-  properties.setAdjointCorrelatedSamplingModeOn();
   properties.setAdjointElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setAdjointElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
   properties.setAdjointElectronEvaluationTolerance( evaluation_tol );

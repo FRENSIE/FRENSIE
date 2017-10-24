@@ -773,15 +773,15 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // ELECTRON TESTS
 //---------------------------------------------------------------------------//
-// Check that the elstic TwoDInterpPolicy can be set
+// Check that the electron TwoDInterpPolicy can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElasticTwoDInterpPolicy )
+                   setElectronTwoDInterpPolicy )
 {
   std::string interp = "Lin-Lin-Lin";
-  epr_data_container.setElasticTwoDInterpPolicy( interp );
+  epr_data_container.setElectronTwoDInterpPolicy( interp );
 
   TEST_EQUALITY_CONST( interp,
-                       epr_data_container.getElasticTwoDInterpPolicy() );
+                       epr_data_container.getElectronTwoDInterpPolicy() );
 }
 
 //---------------------------------------------------------------------------//
@@ -970,18 +970,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electroionization TwoDInterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectroionizationTwoDInterpPolicy )
-{
-  std::string interp = "Lin-Lin-Lin";
-  epr_data_container.setElectroionizationTwoDInterpPolicy( interp );
-
-  TEST_EQUALITY_CONST( interp,
-                       epr_data_container.getElectroionizationTwoDInterpPolicy() );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the electroionization energy grid can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectroionizationEnergyGrid )
@@ -1106,18 +1094,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_COMPARE_ARRAYS(
     epr_data_container.getElectroionizationRecoilPDF( subshell, energy_bin ),
     pdf );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the bremsstrahlung TwoDInterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setBremsstrahlungTwoDInterpPolicy )
-{
-  std::string interp = "Lin-Lin-Lin";
-  epr_data_container.setBremsstrahlungTwoDInterpPolicy( interp );
-
-  TEST_EQUALITY_CONST( interp,
-                       epr_data_container.getBremsstrahlungTwoDInterpPolicy() );
 }
 
 //---------------------------------------------------------------------------//

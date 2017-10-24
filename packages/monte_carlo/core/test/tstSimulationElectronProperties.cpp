@@ -17,6 +17,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -29,23 +30,19 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
   TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1.5e-5 );
   TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 20.0 );
   TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-7 );
-  TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
-  TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::CORRELATED_SAMPLING );
   TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
   TEST_ASSERT( properties.isElasticModeOn() );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::DECOUPLED_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
                        MonteCarlo::SIMPLIFIED_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
   TEST_ASSERT( properties.isElectroionizationModeOn() );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_ASSERT( properties.isBremsstrahlungModeOn() );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_EQUALITY_CONST( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   TEST_ASSERT( properties.isAtomicExcitationModeOn() );
@@ -85,33 +82,69 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronEvaluationTolerance 
 }
 
 //---------------------------------------------------------------------------//
-// Test that correlated sampling mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCorrelatedSamplingModeOffOn )
+// Test that the electron 2D interpolation policy can be set
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDInterpPolicy )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  properties.setCorrelatedSamplingModeOff();
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
 
-  TEST_ASSERT( !properties.isCorrelatedSamplingModeOn() );
+  MonteCarlo::TwoDInterpolationType interp;
 
-  properties.setCorrelatedSamplingModeOn();
-  
-  TEST_ASSERT( properties.isCorrelatedSamplingModeOn() );
+  interp = MonteCarlo::LINLINLIN_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+
+  interp = MonteCarlo::LINLINLOG_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+
+  interp = MonteCarlo::LINLOGLIN_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+
+  interp = MonteCarlo::LOGLINLIN_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+
+  interp = MonteCarlo::LINLOGLOG_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+
+  interp = MonteCarlo::LOGLINLOG_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+
+  interp = MonteCarlo::LOGLOGLIN_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
+
+  interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
+  properties.setElectronTwoDInterpPolicy( interp );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(), interp );
 }
 
 //---------------------------------------------------------------------------//
-// Test that unit based interpolation mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setUnitBasedInterpolationModeOffOn )
+// Test that the electron 2D sampling policy can be set
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDSamplingPolicy )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  properties.setUnitBasedInterpolationModeOff();
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::CORRELATED_SAMPLING );
 
-  TEST_ASSERT( !properties.isUnitBasedInterpolationModeOn() );
+  MonteCarlo::TwoDSamplingType type = MonteCarlo::CORRELATED_SAMPLING;
+  properties.setElectronTwoDSamplingPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
 
-  properties.setUnitBasedInterpolationModeOn();
-  
-  TEST_ASSERT( properties.isUnitBasedInterpolationModeOn() );
+  type = MonteCarlo::EXACT_SAMPLING;
+  properties.setElectronTwoDSamplingPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
+
+  type = MonteCarlo::STOCHASTIC_SAMPLING;
+  properties.setElectronTwoDSamplingPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
 }
 
 //---------------------------------------------------------------------------//
@@ -142,58 +175,6 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticModeOffOn )
   properties.setElasticModeOn();
   
   TEST_ASSERT( properties.isElasticModeOn() );
-}
-
-//---------------------------------------------------------------------------//
-// Test that the elastic 2D interpolation policy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticTwoDInterpPolicy )
-{
-  MonteCarlo::SimulationElectronProperties properties;
-
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  MonteCarlo::TwoDInterpolationType interp;
-
-  interp = MonteCarlo::LINLINLIN_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLINLOG_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLOGLIN_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLINLIN_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLOGLOG_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLINLOG_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLOGLIN_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
-  properties.setElasticTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       interp );
 }
 
 //---------------------------------------------------------------------------//
@@ -282,58 +263,6 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectroionizationModeOffOn )
 }
 
 //---------------------------------------------------------------------------//
-// Test that the electroionization 2D interpolation policy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectroionizationTwoDInterpPolicy )
-{
-  MonteCarlo::SimulationElectronProperties properties;
-
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  MonteCarlo::TwoDInterpolationType interp;
-
-  interp = MonteCarlo::LINLINLIN_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLINLOG_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLOGLIN_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLINLIN_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLOGLOG_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLINLOG_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLOGLIN_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
-  properties.setElectroionizationTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getElectroionizationTwoDInterpPolicy(),
-                       interp );
-}
-
-//---------------------------------------------------------------------------//
 // Test that bremsstrahlung mode can be turned off
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
 {
@@ -346,58 +275,6 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
   properties.setBremsstrahlungModeOn();
   
   TEST_ASSERT( properties.isBremsstrahlungModeOn() );
-}
-
-//---------------------------------------------------------------------------//
-// Test that the bremsstrahlung 2D interpolation policy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungTwoDInterpPolicy )
-{
-  MonteCarlo::SimulationElectronProperties properties;
-
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
-
-  MonteCarlo::TwoDInterpolationType interp;
-
-  interp = MonteCarlo::LINLINLIN_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLINLOG_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLOGLIN_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLINLIN_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LINLOGLOG_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLINLOG_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLOGLIN_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
-
-  interp = MonteCarlo::LOGLOGLOG_INTERPOLATION;
-  properties.setBremsstrahlungTwoDInterpPolicy( interp );
-  TEST_EQUALITY_CONST( properties.getBremsstrahlungTwoDInterpPolicy(),
-                       interp );
 }
 
 //---------------------------------------------------------------------------//

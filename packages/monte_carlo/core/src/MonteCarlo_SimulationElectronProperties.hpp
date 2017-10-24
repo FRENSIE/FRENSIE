@@ -58,24 +58,6 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
   double getElectronEvaluationTolerance() const;
 
-  //! Set correlated sampling mode to off (on by default)
-  void setCorrelatedSamplingModeOff();
-
-  //! Set correlated sampling mode to on (on by default)
-  void setCorrelatedSamplingModeOn();
-
-  //! Return if correlated sampling mode is on
-  bool isCorrelatedSamplingModeOn() const;
-
-  //! Set unit based interpolation mode to off (on by default)
-  void setUnitBasedInterpolationModeOff();
-
-  //! Set unit based interpolation mode to on (on by default)
-  void setUnitBasedInterpolationModeOn();
-
-  //! Return if unit based interpolation mode is on
-  bool isUnitBasedInterpolationModeOn() const;
-
   //! Set the electron 2D interpolation policy (LogLogLog by default)
   void setElectronTwoDInterpPolicy( TwoDInterpolationType interp_type );
 
@@ -114,12 +96,6 @@ public:
   //! Return if elastic mode is on
   bool isElasticModeOn() const;
 
-  //! Set the elastic 2D interpolation policy (LogLogLog by default)
-  void setElasticTwoDInterpPolicy( TwoDInterpolationType interp_type );
-
-  //! Return the elastic 2D interpolation policy
-  TwoDInterpolationType getElasticTwoDInterpPolicy() const;
-
   //! Set the elastic distribution mode ( Decoupled by default )
   void setElasticElectronDistributionMode( ElasticElectronDistributionType distribution_mode );
 
@@ -149,12 +125,6 @@ public:
   //! Return if electroionization mode is on
   bool isElectroionizationModeOn() const;
 
-  //! Set the electroionization 2D interpolation policy (LogLogLog by default)
-  void setElectroionizationTwoDInterpPolicy( TwoDInterpolationType interp_type );
-
-  //! Return the electroionization 2D interpolation policy
-  TwoDInterpolationType getElectroionizationTwoDInterpPolicy() const;
-
   /* ------ Bremsstrahlung Properties ------ */
 
   //! Set bremsstrahlung mode to off (on by default)
@@ -165,12 +135,6 @@ public:
 
   //! Return if bremsstrahlung mode is on
   bool isBremsstrahlungModeOn() const;
-
-  //! Set the bremsstrahlung 2D interpolation policy (LogLogLog by default)
-  void setBremsstrahlungTwoDInterpPolicy( TwoDInterpolationType interp_type );
-
-  //! Return the bremsstrahlung 2D interpolation policy
-  TwoDInterpolationType getBremsstrahlungTwoDInterpPolicy() const;
 
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
   void setBremsstrahlungAngularDistributionFunction(

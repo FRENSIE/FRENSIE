@@ -95,23 +95,35 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setAtomicRelaxationModeOff();
   }
 
+  // Get the electron 2D interpolation policy - optional
+  if( properties.isParameter( "Electron Interpolation Policy" ) )
+  {
+    std::string raw_policy =
+      properties.get<std::string>( "Electron Interpolation Policy" );
+
+    TwoDInterpolationType interp_policy =
+      convertStringToTwoDInterpolationType( raw_policy );
+
+    electron_properties.setElectronTwoDInterpPolicy( interp_policy );
+  }
+
+  // Get the electron 2D sampling policy - optional
+  if( properties.isParameter( "Electron Sampling Policy" ) )
+  {
+    std::string raw_policy =
+      properties.get<std::string>( "Electron Sampling Policy" );
+
+    TwoDSamplingType sample_policy =
+      convertStringToTwoDSamplingType( raw_policy );
+
+    electron_properties.setElectronTwoDSamplingPolicy( sample_policy );
+  }
+
   // Get the elastic scattering reaction mode - optional
   if( properties.isParameter( "Electron Elastic" ) )
   {
     if( !properties.get<bool>( "Electron Elastic" ) )
       electron_properties.setElasticModeOff();
-  }
-
-  // Get the elastic 2D interpolation policy - optional
-  if( properties.isParameter( "Electron Elastic Interpolation" ) )
-  {
-    std::string raw_policy =
-      properties.get<std::string>( "Electron Elastic Interpolation" );
-
-    TwoDInterpolationType interp_policy =
-      convertStringToTwoDInterpolationType( raw_policy );
-
-    electron_properties.setElasticTwoDInterpPolicy( interp_policy );
   }
 
   // Get the elastic electron distribution type - optional
@@ -201,35 +213,11 @@ void SimulationElectronPropertiesFactory::initializeProperties(
       electron_properties.setElectroionizationModeOff();
   }
 
-  // Get the electroionization 2D interpolation policy - optional
-  if( properties.isParameter( "Electron Electroionization Interpolation" ) )
-  {
-    std::string raw_policy =
-      properties.get<std::string>( "Electron Electroionization Interpolation" );
-
-    TwoDInterpolationType interp_policy =
-      convertStringToTwoDInterpolationType( raw_policy );
-
-    electron_properties.setElectroionizationTwoDInterpPolicy( interp_policy );
-  }
-
   // Get the bremsstrahlung reaction mode - optional
   if( properties.isParameter( "Electron Bremsstrahlung" ) )
   {
     if( !properties.get<bool>( "Electron Bremsstrahlung" ) )
       electron_properties.setBremsstrahlungModeOff();
-  }
-
-  // Get the bremsstrahlung 2D interpolation policy - optional
-  if( properties.isParameter( "Electron Bremsstrahlung Interpolation" ) )
-  {
-    std::string raw_policy =
-      properties.get<std::string>( "Electron Bremsstrahlung Interpolation" );
-
-    TwoDInterpolationType interp_policy =
-      convertStringToTwoDInterpolationType( raw_policy );
-
-    electron_properties.setBremsstrahlungTwoDInterpPolicy( interp_policy );
   }
 
   // Get the bremsstrahlung photon angular distribution function - optional
@@ -263,39 +251,6 @@ void SimulationElectronPropertiesFactory::initializeProperties(
   {
     if( !properties.get<bool>( "Electron Atomic Excitation" ) )
       electron_properties.setAtomicExcitationModeOff();
-  }
-
-  // Get the correlated sampling mode - optional
-  if( properties.isParameter( "Electron Correlated Sampling" ) )
-  {
-    if( !properties.get<bool>( "Electron Correlated Sampling" ) )
-      electron_properties.setCorrelatedSamplingModeOff();
-  }
-
-  // Get the unit based interpolation mode - optional
-  if( properties.isParameter( "Electron Unit Based Interpolation" ) )
-  {
-    if( !properties.get<bool>( "Electron Unit Based Interpolation" ) )
-    {
-      if( electron_properties.getBremsstrahlungTwoDInterpPolicy() ==
-                                                    LINLINLOG_INTERPOLATION )
-      {
-        THROW_EXCEPTION( std::runtime_error,
-                         "Error: bremsstrahlung TwoDInterpPolicy "
-                         << electron_properties.getBremsstrahlungTwoDInterpPolicy() <<
-                         " is not compatible with exact interpolation!" );
-      }
-      else if( electron_properties.getElectroionizationTwoDInterpPolicy() ==
-                                                    LINLINLOG_INTERPOLATION )
-      {
-        THROW_EXCEPTION( std::runtime_error,
-                         "Error: electroionization TwoDInterpPolicy "
-                         << electron_properties.getElectroionizationTwoDInterpPolicy() <<
-                         " is not compatible with exact interpolation!" );
-      }
-      else
-        electron_properties.setUnitBasedInterpolationModeOff();
-    }
   }
 
   properties.unused( *os_warn );

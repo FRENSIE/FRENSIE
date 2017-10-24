@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="14">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Tue Oct  3 18:11:25 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Tue Oct 24 09:08:21 CDT 2017. It is for testing only!</notes>
 	<atomic_number>14</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -52765,7 +52765,7 @@
 		<item>1.08778379960893834e+00</item>
 		<item>1.08824634875521409e+00</item>
 	</impulse_approx_total_cross_section>
-	<elastic_two_d_interp>Log-Log-Log</elastic_two_d_interp>
+	<electron_two_d_interp>Log-Log-Log</electron_two_d_interp>
 	<angular_energy_grid>
 		<count>16</count>
 		<item_version>0</item_version>
@@ -55243,7 +55243,6 @@
 		<item>2.95636938596096624e-05</item>
 		<item>5.14633061701720204e-11</item>
 	</moment_preserving_cross_section_reductions>
-	<electroionization_two_d_interp>Log-Log-Log</electroionization_two_d_interp>
 	<electroionization_energy_grid>
 		<count>7</count>
 		<item_version>0</item_version>
@@ -61061,7 +61060,6 @@
 			</second>
 		</item>
 	</electroionization_recoil_pdf>
-	<bremsstrahlung_two_d_interp>Log-Log-Log</bremsstrahlung_two_d_interp>
 	<bremsstrahlung_energy_grid>
 		<count>10</count>
 		<item_version>0</item_version>

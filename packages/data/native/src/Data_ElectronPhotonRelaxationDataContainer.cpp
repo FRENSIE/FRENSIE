@@ -506,11 +506,11 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getImpulseAppr
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-// Return the elastic TwoDInterpPolicy
+// Return the electron TwoDInterpPolicy
 const std::string&
-ElectronPhotonRelaxationDataContainer::getElasticTwoDInterpPolicy() const
+ElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() const
 {
-  return d_elastic_two_d_interp;
+  return d_electron_two_d_interp;
 }
 
 // Return the elastic angular energy grid
@@ -638,13 +638,6 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSectionReduction(
   return d_moment_preserving_cross_section_reductions;
 }
 
-// Return the electroionization TwoDInterpPolicy
-const std::string&
-ElectronPhotonRelaxationDataContainer::getElectroionizationTwoDInterpPolicy() const
-{
-  return d_electroionization_two_d_interp;
-}
-
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
@@ -699,13 +692,6 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
             d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incoming_energy )->second;
-}
-
-// Return the bremsstrahlung TwoDInterpPolicy
-const std::string&
-ElectronPhotonRelaxationDataContainer::getBremsstrahlungTwoDInterpPolicy() const
-{
-  return d_bremsstrahlung_two_d_interp;
 }
 
 // Return the bremsstrahlung energy grid
@@ -1570,14 +1556,14 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-// Set the elastic TwoDInterpPolicy
-void ElectronPhotonRelaxationDataContainer::setElasticTwoDInterpPolicy(
-    const std::string& elastic_two_d_interp )
+// Set the electron TwoDInterpPolicy
+void ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
+    const std::string& electron_two_d_interp )
 {
   // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( elastic_two_d_interp ) );
+  testPrecondition( isTwoDInterpPolicyValid( electron_two_d_interp ) );
 
-  d_elastic_two_d_interp = elastic_two_d_interp;
+  d_electron_two_d_interp = electron_two_d_interp;
 }
 
 // Set the elastic angular energy grid
@@ -1741,16 +1727,6 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionReduc
   d_moment_preserving_cross_section_reductions = cross_section_reduction;
 }
 
-// Set the electroionization TwoDInterpPolicy
-void ElectronPhotonRelaxationDataContainer::setElectroionizationTwoDInterpPolicy(
-    const std::string& electroionization_two_d_interp )
-{
-  // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( electroionization_two_d_interp ) );
-
-  d_electroionization_two_d_interp = electroionization_two_d_interp;
-}
-
 // Set the electroionization energy grid for a subshell
 void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
             const unsigned subshell,
@@ -1831,16 +1807,6 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF(
 
   d_electroionization_recoil_pdf[subshell] =
     electroionization_recoil_pdf;
-}
-
-// Set the bremsstrahlung TwoDInterpPolicy
-void ElectronPhotonRelaxationDataContainer::setBremsstrahlungTwoDInterpPolicy(
-    const std::string& bremsstrahlung_two_d_interp )
-{
-  // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( bremsstrahlung_two_d_interp ) );
-
-  d_bremsstrahlung_two_d_interp = bremsstrahlung_two_d_interp;
 }
 
 // Set the bremsstrahlung energy grid

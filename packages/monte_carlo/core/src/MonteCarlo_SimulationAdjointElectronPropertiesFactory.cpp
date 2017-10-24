@@ -111,20 +111,6 @@ void SimulationAdjointElectronPropertiesFactory::initializeProperties(
     }
   }
 
-  // Get the adjoint correlated sampling mode - optional
-  if( properties.isParameter( "Adjoint Electron Correlated Sampling" ) )
-  {
-    if( !properties.get<bool>( "Adjoint Electron Correlated Sampling" ) )
-      adjoint_electron_properties.setAdjointCorrelatedSamplingModeOff();
-  }
-
-  // Get the adjoint unit based interpolation mode - optional
-  if( properties.isParameter( "Adjoint Electron Unit Based Interpolation" ) )
-  {
-    if( !properties.get<bool>( "Adjoint Electron Unit Based Interpolation" ) )
-      adjoint_electron_properties.setAdjointUnitBasedInterpolationModeOff();
-  }
-
   // Get the adjoint bremsstrahlung photon angular distribution function - optional
   if( properties.isParameter( "Adjoint Bremsstrahlung Angular Distribution" ) )
   {

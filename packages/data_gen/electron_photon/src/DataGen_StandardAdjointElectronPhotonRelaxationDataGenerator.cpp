@@ -736,9 +736,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
   {
   std::string interp =
     MonteCarlo::convertTwoDInterpolationTypeToString( d_electron_two_d_interp );
-  data_container.setElasticTwoDInterpPolicy( interp );
-  data_container.setElectroionizationTwoDInterpPolicy( interp );
-  data_container.setBremsstrahlungTwoDInterpPolicy( interp );
+  data_container.setElectronTwoDInterpPolicy( interp );
   }
   data_container.setElectronCorrelatedSamplingModeOnOff(
     d_electron_correlated_sampling_mode );

@@ -344,9 +344,7 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   {
   std::string interp =
     MonteCarlo::convertTwoDInterpolationTypeToString( d_two_d_interp );
-  data_container.setElasticTwoDInterpPolicy( interp );
-  data_container.setElectroionizationTwoDInterpPolicy( interp );
-  data_container.setBremsstrahlungTwoDInterpPolicy( interp );
+  data_container.setElectronTwoDInterpPolicy( interp );
   }
   data_container.setElectronTabularEvaluationTolerance(
     d_tabular_evaluation_tol );
@@ -507,11 +505,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   data_container.setCutoffAngleCosine( cutoff_angle_cosine );
   data_container.setNumberOfMomentPreservingAngles(
     number_of_moment_preserving_angles );
-  data_container.setElasticTwoDInterpPolicy(
-    MonteCarlo::convertTwoDInterpolationTypeToString( two_d_interp ) );
-  data_container.setElectroionizationTwoDInterpPolicy(
-    MonteCarlo::convertTwoDInterpolationTypeToString( two_d_interp ) );
-  data_container.setBremsstrahlungTwoDInterpPolicy(
+  data_container.setElectronTwoDInterpPolicy(
     MonteCarlo::convertTwoDInterpolationTypeToString( two_d_interp ) );
 
   std::vector<double> angular_energy_grid(

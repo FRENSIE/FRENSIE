@@ -344,10 +344,9 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_hybrid )
 
   // Set the bremsstrahlung photon angular distribution function
   properties->setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties->setUnitBasedInterpolationModeOff();
-  properties->setElasticTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties->setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties->setElectronTwoDSamplingPolicy( MonteCarlo::EXACT_SAMPLING );
   properties->setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
-  properties->setCorrelatedSamplingModeOn();
   properties->setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties->setElectronEvaluationTolerance( evaluation_tol );
   properties->setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );

@@ -85,15 +85,16 @@ void ElectroatomNativeFactory::createElectroatomCore(
                               energy_grid,
                               properties.getNumberOfElectronHashGridBins() ) );
 
+  TwoDInterpolationType electron_interp =
+                          properties.getElectronTwoDInterpPolicy();
+
   // Create the elastic scattering reaction
   if ( properties.isElasticModeOn() )
   {
-    TwoDInterpolationType elastic_interp = properties.getElasticTwoDInterpPolicy();
-
     /*! \todo These if else statements should be eliminated once testing for the
      *  proper TwoDInterpolation and TwoDSampling Policy is complete.
      */
-    if( elastic_interp == LOGLOGLOG_INTERPOLATION )
+    if( electron_interp == LOGLOGLOG_INTERPOLATION )
     {
       ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Correlated>(
                                                 raw_electroatom_data,
@@ -102,7 +103,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                                 properties,
                                                 scattering_reactions );
     }
-    else if( elastic_interp == LINLINLOG_INTERPOLATION )
+    else if( electron_interp == LINLINLOG_INTERPOLATION )
     {
       ThisType::createElasticElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
                                                 raw_electroatom_data,
@@ -111,7 +112,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                                 properties,
                                                 scattering_reactions );
     }
-    else if( elastic_interp == LINLINLIN_INTERPOLATION )
+    else if( electron_interp == LINLINLIN_INTERPOLATION )
     {
       ThisType::createElasticElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
                                                 raw_electroatom_data,
@@ -124,7 +125,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the 2D interpolation policy "
-                       << elastic_interp <<
+                       << electron_interp <<
                        " is not currently supported!" );
     }
   }
@@ -135,9 +136,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
 
-    TwoDInterpolationType brem_interp = properties.getBremsstrahlungTwoDInterpPolicy();
-
-    if( brem_interp == LOGLOGLOG_INTERPOLATION )
+    if( electron_interp == LOGLOGLOG_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
                     raw_electroatom_data,
@@ -147,7 +146,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                     properties.getBremsstrahlungAngularDistributionFunction(),
                     properties.getElectronEvaluationTolerance() );
     }
-    else if( brem_interp == LINLINLOG_INTERPOLATION )
+    else if( electron_interp == LINLINLOG_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
                     raw_electroatom_data,
@@ -157,7 +156,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                     properties.getBremsstrahlungAngularDistributionFunction(),
                     properties.getElectronEvaluationTolerance() );
     }
-    else if( brem_interp == LINLINLIN_INTERPOLATION )
+    else if( electron_interp == LINLINLIN_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
                     raw_electroatom_data,
@@ -171,7 +170,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the 2D interpolation policy "
-                       << brem_interp <<
+                       << electron_interp <<
                        " is not currently supported!" );
     }
   }
@@ -194,10 +193,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
     std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
-    TwoDInterpolationType ionization_interp =
-                            properties.getElectroionizationTwoDInterpPolicy();
-
-    if( ionization_interp == LOGLOGLOG_INTERPOLATION )
+    if( electron_interp == LOGLOGLOG_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
                        raw_electroatom_data,
@@ -206,7 +202,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        reaction_pointers,
                        properties.getElectronEvaluationTolerance() );
     }
-    else if( ionization_interp == LINLINLOG_INTERPOLATION )
+    else if( electron_interp == LINLINLOG_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
                        raw_electroatom_data,
@@ -215,7 +211,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        reaction_pointers,
                        properties.getElectronEvaluationTolerance() );
     }
-    else if( ionization_interp == LINLINLIN_INTERPOLATION )
+    else if( electron_interp == LINLINLIN_INTERPOLATION )
     {
       ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
                        raw_electroatom_data,
@@ -228,7 +224,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the 2D interpolation policy "
-                       << ionization_interp <<
+                       << electron_interp <<
                        " is not currently supported!" );
     }
 

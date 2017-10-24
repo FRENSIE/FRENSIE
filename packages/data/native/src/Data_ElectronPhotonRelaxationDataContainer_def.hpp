@@ -89,22 +89,18 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_total_cross_section );
   // Electron Data
-  DATA_MAKE_NVP_DEFAULT( ar, elastic_two_d_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_interp );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_pdf );
-//  DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_normalization_constant );
-//  DATA_MAKE_NVP_DEFAULT( ar, moliere_screening_constant );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_cross_section_reductions );
-  DATA_MAKE_NVP_DEFAULT( ar, electroionization_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
-  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_energy );
@@ -198,22 +194,18 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_total_cross_section );
   // Electron Data
-  DATA_MAKE_NVP_DEFAULT( ar, elastic_two_d_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_interp );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_pdf );
-//  DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_normalization_constant );
-//  DATA_MAKE_NVP_DEFAULT( ar, moliere_screening_constant );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_cross_section_reductions );
-  DATA_MAKE_NVP_DEFAULT( ar, electroionization_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
-  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_energy );

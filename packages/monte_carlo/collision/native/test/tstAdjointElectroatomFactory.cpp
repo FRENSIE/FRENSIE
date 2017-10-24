@@ -47,7 +47,6 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   electroatom_aliases.insert( "H-Native" );
 
   properties->setAdjointElasticCutoffAngleCosine( 0.9 );
-  properties->setAdjointCorrelatedSamplingModeOn();
   properties->setAdjointElectronEvaluationTolerance( 1e-7 );
   properties->setAdjointElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
 

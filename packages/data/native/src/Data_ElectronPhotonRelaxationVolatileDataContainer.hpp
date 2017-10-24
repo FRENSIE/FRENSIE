@@ -88,27 +88,23 @@ public:
   using ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection;
 
   // Electron functions
-  using ElectronPhotonRelaxationDataContainer::setElasticTwoDInterpPolicy;
+  using ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticAnglesAtEnergy;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDFAtEnergy;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticAngles;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF;
-//  using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant;
-//  using ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant;
   using ElectronPhotonRelaxationDataContainer::clearMomentPreservingData;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionReduction;
-  using ElectronPhotonRelaxationDataContainer::setElectroionizationTwoDInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF;
-  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungTwoDInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy;

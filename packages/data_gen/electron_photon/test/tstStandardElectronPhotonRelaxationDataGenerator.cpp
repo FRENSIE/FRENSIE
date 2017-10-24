@@ -358,9 +358,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Lin" );
-  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Lin" );
-  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Lin" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -940,9 +938,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Log" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -1519,9 +1515,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Log" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -2104,9 +2098,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
-  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Log-Log-Log" );
-  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Log-Log-Log" );
-  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Log-Log-Log" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
   TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
   TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
@@ -2675,9 +2667,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 1.0 );
 //  TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 0 );
 //  TEST_EQUALITY_CONST( data_container.getTabularEvaluationTolerance(), 1e-7 );
-//  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Log" );
-//  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Log" );
-//  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Log" );
+//  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
 //  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
@@ -3456,9 +3446,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( data_container.getMinElectronEnergy(), 1.0e-5 );
 //  TEST_EQUALITY_CONST( data_container.getMaxElectronEnergy(), 1.0e+5 );
 //  TEST_EQUALITY_CONST( data_container.getTabularEvaluationTolerance(), 1e-7 );
-//  TEST_EQUALITY_CONST( data_container.getElasticTwoDInterpPolicy(), "Lin-Lin-Lin" );
-//  TEST_EQUALITY_CONST( data_container.getElectroionizationTwoDInterpPolicy(), "Lin-Lin-Lin" );
-//  TEST_EQUALITY_CONST( data_container.getBremsstrahlungTwoDInterpPolicy(), "Lin-Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );

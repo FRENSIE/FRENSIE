@@ -88,24 +88,6 @@ public:
   //! Return the adjoint electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
   double getAdjointElectronEvaluationTolerance() const;
 
-  //! Set adjoint correlated sampling mode to off (on by default)
-  void setAdjointCorrelatedSamplingModeOff();
-
-  //! Set adjoint correlated sampling mode to on (on by default)
-  void setAdjointCorrelatedSamplingModeOn();
-
-  //! Return if adjoint correlated sampling mode is on
-  bool isAdjointCorrelatedSamplingModeOn() const;
-
-  //! Set adjoint unit based interpolation mode to off (on by default)
-  void setAdjointUnitBasedInterpolationModeOff();
-
-  //! Set adjoint unit based interpolation mode to on (on by default)
-  void setAdjointUnitBasedInterpolationModeOn();
-
-  //! Return if adjoint unit based interpolation mode is on
-  bool isAdjointUnitBasedInterpolationModeOn() const;
-
   //! Set the adjoint bremsstrahlung photon angular distribution function (2BS by default)
   void setAdjointBremsstrahlungAngularDistributionFunction(
                          const BremsstrahlungAngularDistributionType function );
