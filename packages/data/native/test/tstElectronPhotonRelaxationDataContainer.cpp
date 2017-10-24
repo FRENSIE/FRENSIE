@@ -167,30 +167,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron correlated sampling mode can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectronCorrelatedSamplingModeOnOff )
-{
-  epr_data_container.setElectronCorrelatedSamplingModeOnOff( false );
-  TEST_ASSERT( !epr_data_container.isElectronCorrelatedSamplingModeOn() );
-
-  epr_data_container.setElectronCorrelatedSamplingModeOnOff( true );
-  TEST_ASSERT( epr_data_container.isElectronCorrelatedSamplingModeOn() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the electron unit based interpolation mode can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectronUnitBasedInterpolationModeOnOff )
-{
-  epr_data_container.setElectronUnitBasedInterpolationModeOnOff( false );
-  TEST_ASSERT( !epr_data_container.isElectronUnitBasedInterpolationModeOn() );
-
-  epr_data_container.setElectronUnitBasedInterpolationModeOnOff( true );
-  TEST_ASSERT( epr_data_container.isElectronUnitBasedInterpolationModeOn() );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the grid convergence tolerance can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setGridConvergenceTolerance )
@@ -782,6 +758,18 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   TEST_EQUALITY_CONST( interp,
                        epr_data_container.getElectronTwoDInterpPolicy() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron TwoDSamplingPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronTwoDSamplingPolicy )
+{
+  std::string sampling = "Correlated";
+  epr_data_container.setElectronTwoDSamplingPolicy( sampling );
+
+  TEST_EQUALITY_CONST( sampling,
+                       epr_data_container.getElectronTwoDSamplingPolicy() );
 }
 
 //---------------------------------------------------------------------------//

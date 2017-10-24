@@ -90,12 +90,6 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
 
-  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-  bool isElectronCorrelatedSamplingModeOn() const;
-
-  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-  bool isElectronUnitBasedInterpolationModeOn() const;
-
   //! Return the union energy grid convergence tolerance
   double getGridConvergenceTolerance() const;
 
@@ -261,6 +255,9 @@ public:
 
   //! Return the electron TwoDInterpPolicy
   const std::string& getElectronTwoDInterpPolicy() const;
+
+  //! Return the electron TwoDSamplingPolicy
+  const std::string& getElectronTwoDSamplingPolicy() const;
 
   //! Return the elastic angular energy grid
   const std::vector<double>& getElasticAngularEnergyGrid() const;
@@ -452,14 +449,6 @@ protected:
   void setElectronTabularEvaluationTolerance(
     const double electron_tabular_evaluation_tol );
 
-  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
-  void setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on );
-
-  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-  void setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on );
-
   //! Set the union energy grid convergence tolerance
   void setGridConvergenceTolerance( const double grid_convergence_tol );
 
@@ -637,6 +626,9 @@ protected:
 
   //! Set the electronTwoDInterpPolicy
   void setElectronTwoDInterpPolicy( const std::string& electron_two_d_interp );
+
+  //! Set the electronTwoDSamplingPolicy
+  void setElectronTwoDSamplingPolicy( const std::string& electron_two_d_sampling );
 
   //! Set the elastic angular energy grid
   void setElasticAngularEnergyGrid(
@@ -880,12 +872,6 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;
 
-  // The electron FullyTabularTwoDDistribution correlated sampling mode
-  bool d_electron_correlated_sampling_mode_on;
-
-  // The electron FullyTabularTwoDDistribution unit based interpolation mode
-  bool d_electron_unit_based_interpolation_mode_on;
-
   // The union energy grid convergence tolerance
   double d_grid_convergence_tol;
 
@@ -1028,6 +1014,9 @@ private:
   // The electron TwoDInterpPolicy
   std::string d_electron_two_d_interp;
 
+  // The electron TwoDSamplingPolicy
+  std::string d_electron_two_d_sampling;
+
   // The elastic angular energy grid (MeV)
   std::vector<double> d_angular_energy_grid;
 
@@ -1039,12 +1028,6 @@ private:
 
   // The cutoff elastic scattering pdf
   std::map<double,std::vector<double> > d_cutoff_elastic_pdf;
-
-//  // The screened rutherford normalization constant for elastic scattering
-//  std::vector<double> d_screened_rutherford_normalization_constant;
-
-//  // Moliere's screening constant
-//  std::vector<double> d_moliere_screening_constant;
 
   // The moment preserving elastic discrete angles
   std::map<double,std::vector<double> > d_moment_preserving_elastic_discrete_angles;

@@ -58,8 +58,6 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_correlated_sampling_mode_on );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_unit_based_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_evaluation_tolerance );
@@ -117,6 +115,7 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );
@@ -187,8 +186,6 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electron_distance_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_correlated_sampling_mode_on );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_unit_based_interpolation_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_max_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_evaluation_tolerance );
@@ -246,6 +243,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
 
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );

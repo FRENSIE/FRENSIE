@@ -124,18 +124,6 @@ double ElectronPhotonRelaxationDataContainer::getElectronTabularEvaluationTolera
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-bool ElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
-{
-  return d_electron_correlated_sampling_mode_on;
-}
-
-// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-bool ElectronPhotonRelaxationDataContainer::isElectronUnitBasedInterpolationModeOn() const
-{
-  return d_electron_unit_based_interpolation_mode_on;
-}
-
 // Return the union energy grid convergence tolerance
 double
 ElectronPhotonRelaxationDataContainer::getGridConvergenceTolerance() const
@@ -511,6 +499,13 @@ const std::string&
 ElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() const
 {
   return d_electron_two_d_interp;
+}
+
+// Return the electron TwoDSamplingPolicy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getElectronTwoDSamplingPolicy() const
+{
+  return d_electron_two_d_sampling;
 }
 
 // Return the elastic angular energy grid
@@ -1000,21 +995,6 @@ void ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationToleranc
   testPrecondition( electron_tabular_evaluation_tol > 0.0 );
 
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
-}
-
-// Set the electron FullyTabularTwoDDistribution correlated sampling mode
-void ElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on )
-{
-  d_electron_correlated_sampling_mode_on = electron_correlated_sampling_mode_on;
-}
-
-// Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-void ElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on )
-{
-  d_electron_unit_based_interpolation_mode_on =
-    electron_unit_based_interpolation_mode_on;
 }
 
 // Set the union energy grid convergence tolerance
@@ -1564,6 +1544,16 @@ void ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
   testPrecondition( isTwoDInterpPolicyValid( electron_two_d_interp ) );
 
   d_electron_two_d_interp = electron_two_d_interp;
+}
+
+// Set the electron TwoDSamplingPolicy
+void ElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy(
+    const std::string& electron_two_d_sampling )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDSamplingPolicyValid( electron_two_d_sampling ) );
+
+  d_electron_two_d_sampling = electron_two_d_sampling;
 }
 
 // Set the elastic angular energy grid

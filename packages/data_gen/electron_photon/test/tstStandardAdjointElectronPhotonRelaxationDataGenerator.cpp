@@ -136,8 +136,6 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( generator.getAdjointElectronDistanceTolerance(), 1e-8 );
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(),
                        1e-8 );
-  TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
                        0.2 );
   TEST_EQUALITY_CONST( generator.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
@@ -208,8 +206,6 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( generator.getAdjointElectronDistanceTolerance(), 1e-8 );
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(),
                        1e-8 );
-  TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
                        0.2 );
   TEST_EQUALITY_CONST( generator.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
@@ -462,9 +458,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   generator_h->setAdjointElectronDistanceTolerance( 1e-9 );
 
   generator_h->setTabularEvaluationTolerance( 1e-4 );
-  generator_h->setElectronCorrelatedSamplingModeOn();
-  generator_h->setElectronUnitBasedInterpolationModeOn();
   generator_h->setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  generator_h->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
   generator_h->setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
   generator_h->setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
   generator_h->setAdjointBremsstrahlungEvaluationTolerance( 1e-3 );
@@ -525,8 +520,6 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( h_data_container.getAdjointElectronDistanceTolerance(), 1e-9 );
   TEST_EQUALITY_CONST( h_data_container.getElectronTabularEvaluationTolerance(),
                        1e-4 );
-  TEST_ASSERT( h_data_container.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( h_data_container.isElectronUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
                        0.2 );
   TEST_EQUALITY_CONST( h_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
@@ -997,6 +990,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   generator_h->setAdjointElectronData( h_data_container );
 
   // Check the electron data
+  TEST_EQUALITY_CONST( generator_h->getElectronTwoDInterpPolicy(), MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  TEST_EQUALITY_CONST( generator_h->getElectronTwoDSamplingPolicy(), MonteCarlo::CORRELATED_SAMPLING );
   TEST_EQUALITY_CONST( generator_h->getAdjointElectronGridConvergenceTolerance(), 0.5 );
   TEST_EQUALITY_CONST( generator_h->getAdjointElectronAbsoluteDifferenceTolerance(), 1e-16 );
   TEST_EQUALITY_CONST( generator_h->getAdjointElectronDistanceTolerance(), 1e-9 );

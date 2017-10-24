@@ -70,8 +70,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::CORRELATED_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
@@ -107,8 +107,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
   TEST_EQUALITY_CONST( generator.getTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::CORRELATED_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
@@ -271,35 +271,24 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the correlated sampling interpolation can be set
+// Check that the electron TwoDSamplingPolicy can be set
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
-                   setElectronCorrelatedSamplingMode )
+                   setElectronTwoDSamplingPolicy )
 {
   DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
-  TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
-  generator.setElectronCorrelatedSamplingModeOff();
-  TEST_ASSERT( !generator.isElectronCorrelatedSamplingModeOn() );
-  generator.setElectronCorrelatedSamplingModeOn();
-  TEST_ASSERT( generator.isElectronCorrelatedSamplingModeOn() );
-}
+  TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::CORRELATED_SAMPLING );
 
-//---------------------------------------------------------------------------//
-// Check that the unit based interpolation can be set
-TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
-                   setElectronUnitBasedInterpolationMode )
-{
-  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
-                                                       h_xss_data_extractor,
-                                                       h_endl_data_container );
+  generator.setElectronTwoDSamplingPolicy( MonteCarlo::EXACT_SAMPLING );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::EXACT_SAMPLING );
 
-  TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
-  generator.setElectronUnitBasedInterpolationModeOff();
-  TEST_ASSERT( !generator.isElectronUnitBasedInterpolationModeOn() );
-  generator.setElectronUnitBasedInterpolationModeOn();
-  TEST_ASSERT( generator.isElectronUnitBasedInterpolationModeOn() );
+  generator.setElectronTwoDSamplingPolicy( MonteCarlo::STOCHASTIC_SAMPLING );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::STOCHASTIC_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
@@ -328,8 +317,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
-    raw_data_generator->setElectronCorrelatedSamplingModeOn();
-    raw_data_generator->setElectronUnitBasedInterpolationModeOn();
+    raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
     raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
     raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-80 );
     raw_data_generator->setDefaultGridDistanceTolerance( 1e-20 );
@@ -359,8 +347,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Lin" );
-  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -908,8 +895,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
-    raw_data_generator->setElectronCorrelatedSamplingModeOn();
-    raw_data_generator->setElectronUnitBasedInterpolationModeOn();
+    raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
     raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
     raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-80 );
     raw_data_generator->setDefaultGridDistanceTolerance( 1e-20 );
@@ -939,8 +925,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -1516,8 +1501,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -2099,8 +2083,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
-  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
-  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -2668,13 +2651,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 0 );
 //  TEST_EQUALITY_CONST( data_container.getTabularEvaluationTolerance(), 1e-7 );
 //  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
+//  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
 //  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
-//  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
-//  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
 //  TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
 //  TEST_EQUALITY_CONST(
 //    data_container.getGridAbsoluteDifferenceTolerance(), 1e-70 );
@@ -3447,13 +3429,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  TEST_EQUALITY_CONST( data_container.getMaxElectronEnergy(), 1.0e+5 );
 //  TEST_EQUALITY_CONST( data_container.getTabularEvaluationTolerance(), 1e-7 );
 //  TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Lin" );
+//  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
 //  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
 //  TEST_EQUALITY_CONST( data_container.getAtomicExcitationEnergyLossInterpPolicy(), "Lin-Lin" );
-//  TEST_ASSERT( data_container.isElectronCorrelatedSamplingModeOn() );
-//  TEST_ASSERT( data_container.isElectronUnitBasedInterpolationModeOn() );
 //  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.9 );
 //  TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
 //  TEST_EQUALITY_CONST(

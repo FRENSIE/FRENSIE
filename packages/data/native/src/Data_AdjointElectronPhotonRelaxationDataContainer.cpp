@@ -207,18 +207,6 @@ double AdjointElectronPhotonRelaxationDataContainer::getElectronTabularEvaluatio
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-bool AdjointElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
-{
-  return d_electron_correlated_sampling_mode_on;
-}
-
-// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-bool AdjointElectronPhotonRelaxationDataContainer::isElectronUnitBasedInterpolationModeOn() const
-{
-  return d_electron_unit_based_interpolation_mode_on;
-}
-
 // Return the adjoint bremsstrahlung max energy nudge value
 double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
 {
@@ -635,6 +623,16 @@ const std::string&
 AdjointElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() const
 {
   return d_electron_two_d_interp;
+}
+
+// Return the electron TwoDSamplingPolicy
+/*! The TwoDSamplingPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+const std::string&
+AdjointElectronPhotonRelaxationDataContainer::getElectronTwoDSamplingPolicy() const
+{
+  return d_electron_two_d_sampling;
 }
 
 // Return the elastic angular energy grid
@@ -1255,21 +1253,6 @@ void AdjointElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationT
   testPrecondition( electron_tabular_evaluation_tol > 0.0 );
 
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
-}
-
-// Set the electron FullyTabularTwoDDistribution correlated sampling mode
-void AdjointElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on )
-{
-  d_electron_correlated_sampling_mode_on = electron_correlated_sampling_mode_on;
-}
-
-// Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-void AdjointElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on )
-{
-  d_electron_unit_based_interpolation_mode_on =
-                                    electron_unit_based_interpolation_mode_on;
 }
 
 // Set the adjoint bremsstrahlung max energy nudge value
@@ -1960,6 +1943,19 @@ void AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
   testPrecondition( isTwoDInterpPolicyValid( electron_two_d_interp ) );
 
   d_electron_two_d_interp = electron_two_d_interp;
+}
+
+// Set the electron TwoDSamplingPolicy
+/*! The TwoDSamplingPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+void AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy(
+    const std::string& electron_two_d_sampling )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDSamplingPolicyValid( electron_two_d_sampling ) );
+
+  d_electron_two_d_sampling = electron_two_d_sampling;
 }
 
 // Set the elastic angular energy grid

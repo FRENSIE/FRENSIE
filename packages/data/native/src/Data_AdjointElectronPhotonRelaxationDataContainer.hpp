@@ -134,12 +134,6 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
 
-  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-  bool isElectronCorrelatedSamplingModeOn() const;
-
-  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-  bool isElectronUnitBasedInterpolationModeOn() const;
-
   //! Return the adjoint bremsstrahlung max energy nudge value
   double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
 
@@ -336,6 +330,9 @@ public:
 
   //! Return the electron TwoDInterpPolicy
   const std::string& getElectronTwoDInterpPolicy() const;
+
+  //! Return the electron TwoDSamplingPolicy
+  const std::string& getElectronTwoDSamplingPolicy() const;
 
   //! Return the elastic angular energy grid
   const std::vector<double>& getAdjointElasticAngularEnergyGrid() const;
@@ -574,14 +571,6 @@ protected:
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
   void setElectronTabularEvaluationTolerance(
     const double electron_tabular_evaluation_tol );
-
-  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
-  void setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on );
-
-  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-  void setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on );
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue(
@@ -825,6 +814,9 @@ protected:
 
   //! Set the electron TwoDInterpPolicy
   void setElectronTwoDInterpPolicy( const std::string& electron_two_d_interp );
+
+  //! Set the electron TwoDSamplingPolicy
+  void setElectronTwoDSamplingPolicy( const std::string& electron_two_d_sampling );
 
   //! Set the elastic angular energy grid
   void setAdjointElasticAngularEnergyGrid(
@@ -1106,12 +1098,6 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;
 
-  // The electron FullyTabularTwoDDistribution correlated sampling mode
-  bool d_electron_correlated_sampling_mode_on;
-
-  // The electron FullyTabularTwoDDistribution unit based interpolation mode
-  bool d_electron_unit_based_interpolation_mode_on;
-
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;
 
@@ -1288,6 +1274,9 @@ private:
 
   // The electron TwoDInterpPolicy
   std::string d_electron_two_d_interp;
+
+  // The electron TwoDSamplingPolicy
+  std::string d_electron_two_d_sampling;
 
   // The elastic angular energy grid (MeV)
   std::vector<double> d_adjoint_angular_energy_grid;

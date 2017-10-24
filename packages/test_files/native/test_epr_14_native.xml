@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="14">
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Tue Oct 24 09:08:21 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Tue Oct 24 11:26:28 CDT 2017. It is for testing only!</notes>
 	<atomic_number>14</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -15,8 +15,6 @@
 	<cutoff_angle_cosine>9.00000000000000022e-01</cutoff_angle_cosine>
 	<number_of_moment_preserving_angles>1.00000000000000000e+00</number_of_moment_preserving_angles>
 	<electron_tabular_evaluation_tol>1.00000000000000008e-15</electron_tabular_evaluation_tol>
-	<electron_correlated_sampling_mode_on>1</electron_correlated_sampling_mode_on>
-	<electron_unit_based_interpolation_mode_on>1</electron_unit_based_interpolation_mode_on>
 	<grid_convergence_tol>1.00000000000000002e-03</grid_convergence_tol>
 	<grid_absolute_diff_tol>9.99999999999999970e-61</grid_absolute_diff_tol>
 	<grid_distance_tol>1.00000000000000007e-18</grid_distance_tol>
@@ -52766,6 +52764,7 @@
 		<item>1.08824634875521409e+00</item>
 	</impulse_approx_total_cross_section>
 	<electron_two_d_interp>Log-Log-Log</electron_two_d_interp>
+	<electron_two_d_sampling>Correlated</electron_two_d_sampling>
 	<angular_energy_grid>
 		<count>16</count>
 		<item_version>0</item_version>

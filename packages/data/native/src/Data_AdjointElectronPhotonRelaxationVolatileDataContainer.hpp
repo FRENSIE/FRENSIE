@@ -60,8 +60,6 @@ public:
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronAbsoluteDifferenceTolerance;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointElectronDistanceTolerance;
   using AdjointElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance;
-  using AdjointElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff;
-  using AdjointElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungMaxEnergyNudgeValue;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungEvaluationTolerance;
@@ -121,6 +119,7 @@ public:
 
   // Electron functions
   using AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy;
+  using AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointElasticAngularEnergyGrid;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointCutoffElasticAnglesAtEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointCutoffElasticPDFAtEnergy;

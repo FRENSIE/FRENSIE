@@ -42,8 +42,6 @@ public:
   using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
   using ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles;
   using ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationTolerance;
-  using ElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff;
-  using ElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff;
   using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;
@@ -89,6 +87,7 @@ public:
 
   // Electron functions
   using ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy;
+  using ElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy;
   using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticAnglesAtEnergy;

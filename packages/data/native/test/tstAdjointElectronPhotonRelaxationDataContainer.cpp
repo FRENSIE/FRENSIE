@@ -311,30 +311,6 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron correlated sampling mode can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setElectronCorrelatedSamplingModeOnOff )
-{
-  epr_data_container.setElectronCorrelatedSamplingModeOnOff( false );
-  TEST_ASSERT( !epr_data_container.isElectronCorrelatedSamplingModeOn() );
-
-  epr_data_container.setElectronCorrelatedSamplingModeOnOff( true );
-  TEST_ASSERT( epr_data_container.isElectronCorrelatedSamplingModeOn() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the electron unit based interpolation mode can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setElectronUnitBasedInterpolationModeOnOff )
-{
-  epr_data_container.setElectronUnitBasedInterpolationModeOnOff( false );
-  TEST_ASSERT( !epr_data_container.isElectronUnitBasedInterpolationModeOn() );
-
-  epr_data_container.setElectronUnitBasedInterpolationModeOnOff( true );
-  TEST_ASSERT( epr_data_container.isElectronUnitBasedInterpolationModeOn() );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the adjoint_bremsstrahlung_max_energy_nudge_value can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setAdjointBremsstrahlungMaxEnergyNudgeValue )
@@ -1312,6 +1288,18 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   TEST_EQUALITY_CONST( interp,
                        epr_data_container.getElectronTwoDInterpPolicy() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron TwoDSamplingPolicy can be set
+TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setElectronTwoDSamplingPolicy )
+{
+  std::string sampling = "Exact";
+  epr_data_container.setElectronTwoDSamplingPolicy( sampling );
+
+  TEST_EQUALITY_CONST( sampling,
+                       epr_data_container.getElectronTwoDSamplingPolicy() );
 }
 
 //---------------------------------------------------------------------------//

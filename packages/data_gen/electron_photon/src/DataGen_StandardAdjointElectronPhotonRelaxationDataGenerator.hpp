@@ -29,6 +29,7 @@
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
 
 namespace DataGen{
 
@@ -188,23 +189,12 @@ public:
   //! Return the electron TwoDInterpPolicy (LogLogLog by default)
   MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode on (on by default)
-  void setElectronCorrelatedSamplingModeOn();
+  //! Set the electron TwoDSamplingPolicy (Corrleated by default)
+  void setElectronTwoDSamplingPolicy(
+                    const MonteCarlo::TwoDSamplingType two_d_sampling );
 
-  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode off (on by default)
-  void setElectronCorrelatedSamplingModeOff();
-
-  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-  bool isElectronCorrelatedSamplingModeOn() const;
-
-  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode on (on by default)
-  void setElectronUnitBasedInterpolationModeOn();
-
-  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode off (on by default)
-  void setElectronUnitBasedInterpolationModeOff();
-
-  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-  bool isElectronUnitBasedInterpolationModeOn() const;
+  //! Return the electron TwoDSamplingPolicy (Corrleated by default)
+  MonteCarlo::TwoDSamplingType getElectronTwoDSamplingPolicy() const;
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
@@ -523,14 +513,11 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_tabular_evaluation_tol;
 
-  // The electron FullyTabularTwoDDistribution correlated sampling mode
-  bool d_electron_correlated_sampling_mode;
-
-  // The electron FullyTabularTwoDDistribution unit based interpolation mode
-  bool d_electron_unit_based_interpolation_mode;
-
   // The electron TwoDInterpPolicy
   MonteCarlo::TwoDInterpolationType d_electron_two_d_interp;
+
+  // The electron TwoDSamplingPolicy
+  MonteCarlo::TwoDSamplingType d_electron_two_d_sampling;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;
