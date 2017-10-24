@@ -13,6 +13,9 @@
 #include <functional>
 #include <utility>
 
+// Boost Includes
+#include <boost/serialization/nvp.hpp>
+
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -683,7 +686,10 @@ struct TupleSerializationHelper
   template<typename Archive>
   static inline void serialize( Archive& archive, TupleType& tuple, const unsigned version )
   {
-    archive & Utility::get<I>( tuple );
+    std::string element_name( "element_" );
+    element_name += Utility::toString( I );
+    
+    archive & boost::serialization::make_nvp( element_name.c_str(), Utility::get<I>( tuple ) );
 
     TupleSerializationHelper<I+1,TupleType>::template serialize( archive, tuple, version );
   }

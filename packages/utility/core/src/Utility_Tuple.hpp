@@ -287,7 +287,7 @@ struct ComparisonTraits<std::tuple<T> >
   { /* ... */ };
   
   //! The extra data type (usually a comparison tolerance)
-  typedef double ExtraDataType;
+  typedef typename Utility::ComparisonTraits<T>::ExtraDataType ExtraDataType;
 
   //! Create a comparison header
   template<typename ComparisonPolicy, size_t RightShift>
@@ -300,7 +300,8 @@ struct ComparisonTraits<std::tuple<T> >
                            const bool log_right_name,
                            const std::string& name_suffix,
                            const ExtraDataType& extra_data = ExtraDataType() )
-  { return Utility::ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy,RightShift>(
+  {
+    return Utility::ComparisonTraits<T>::template createComparisonHeader<ComparisonPolicy,RightShift>(
                                                 Utility::get<0>( left_value ),
                                                 left_name,
                                                 log_left_name,

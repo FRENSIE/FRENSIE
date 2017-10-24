@@ -20,7 +20,7 @@ namespace Utility{
 
 // Constructor
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
 HDF5IArchiveImpl<Archive>::HDF5IArchiveImpl( const std::string& hdf5_filename,
                                              unsigned flags )
   : boost::archive::detail::common_iarchive<Archive>( flags ),
@@ -48,9 +48,9 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
                                          this->getSignatureAttributeName(),
                                          archive_signature );
       }
-      HDF5_FILE_EXCEPTION_CATCH( "The archive signature could not be "
-                                 "retrieved from hdf5 archive "
-                                 << hdf5_filename << "!" );
+      HDF5_FILE_EXCEPTION_CATCH_RETHROW( "The archive signature could not be "
+                                         "retrieved from hdf5 archive "
+                                         << this->getFilename() << "!" );
 
       TEST_FOR_ARCHIVE_EXCEPTION(
                 archive_signature != boost::archive::BOOST_ARCHIVE_SIGNATURE(),
@@ -75,7 +75,7 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
       }
       HDF5_FILE_EXCEPTION_CATCH_RETHROW( "The archive signature could not be "
                                          "retrieved from hdf5 archive "
-                                         << hdf5_filename << "!" );
+                                         << this->getFilename() << "!" );
 
       TEST_FOR_ARCHIVE_EXCEPTION( 
                       version != boost::archive::BOOST_ARCHIVE_VERSION(),
@@ -117,28 +117,27 @@ inline void HDF5IArchiveImpl<Archive>::load_array(
  */
 template<typename Archive>
 template<typename T>
-inline void HDF5IArchiveImpl<Archive>::load_override( T& t, BOOST_PFTO int )
+inline void HDF5IArchiveImpl<Archive>::load_override( T& t )
 {
-  testStaticPrecondition((boost::serialization::is_wrapper<T>::value));
+  testStaticPrecondition((boost::serialization::is_wrapper<T>::type::value));
 
   // This should never be called
-  this->CommonIArchive::load_override( t, 0 );
+  this->CommonIArchive::load_override( t );
 }
 
 // Load a type that is wrapped in a boost::serialization::nvp
 template<typename Archive>
 template<typename T>
 inline void HDF5IArchiveImpl<Archive>::load_override(
-       HANDLE_BOOST_FUNCTION_TEMPLATE_ORDERING boost::serialization::nvp<T>& t,
-       int )
+                                        const boost::serialization::nvp<T>& t )
 {
-  this->CommonIArchive::load_override( t.value(), 0 );
+  this->loadIntercept( t.value(), typename std::conditional<IsTuple<T>::value && Utility::HDF5TypeTraits<T>::IsSpecialized::value,std::true_type,std::false_type>::type() );
 }
 
 // Load a boost::archive::object_id_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t )
 {
   unsigned i;
   this->load(i);
@@ -148,8 +147,8 @@ HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t, int
 
 // Load a boost::archive::object_reference_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_type& t )
 {
   unsigned i;
   this->load(i);
@@ -159,8 +158,8 @@ HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_type&
 
 // Load a boost::archive::version_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t )
 {
   unsigned i;
   this->load(i);
@@ -170,8 +169,8 @@ HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t, int )
 
 // Load a boost::archive::class_id_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::arhcive::class_id_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_type& t )
 {
   size_t i;
   this->load(i);
@@ -181,8 +180,8 @@ HDF5IArchiveImpl<Archive>::load_override( boost::arhcive::class_id_type& t, int 
 
 // Load a boost::archive::class_id_optional_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_optional_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_optional_type& t )
 {
   // Ignore the reading of this type - it is not needed by this archive type
   // Note: this implementation of this method is similar to the implementation
@@ -197,8 +196,8 @@ HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_optional_type
 
 // Load a boost::archive::class_id_reference_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_reference_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_reference_type& t )
 {
   size_t i;
   this->load(i);
@@ -208,8 +207,8 @@ HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_reference_typ
 
 // Load a boost::archive::class_name_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& t )
 {
   std::string s;
   s.reserve(BOOST_SERIALIZATION_MAX_KEY_SIZE);
@@ -222,13 +221,13 @@ HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& t, in
   std::memcpy( t, s.data(), s.size() );
 
   // This step is required by some compilers
-  t.t[s.size()] = '\0'
+  t.t[s.size()] = '\0';
 }
 
 // Load a boost::archive::tracking_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5IArchiveImpl<Archive>::load_override( boost::archive::tracking_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::tracking_type& t )
 {
   bool i;
   this->load(i);
@@ -278,6 +277,22 @@ inline void HDF5IArchiveImpl<Archive>::load( boost::serialization::item_version_
   t = boost::serialization::item_version_type(version);
 }
 
+// Intercept a type that is about to be loaded using load_override
+template<typename Archive>
+template<typename T>
+void HDF5IArchiveImpl<Archive>::loadIntercept( T& t, std::true_type is_fast_serializable_tuple )
+{
+  this->load(t);
+}
+
+// Intercept a type that is about to be loaded using load_override
+template<typename Archive>
+template<typename T>
+void HDF5IArchiveImpl<Archive>::loadIntercept( T& t, std::false_type is_fast_serializable_tuple )
+{
+  this->CommonIArchive::load_override(t);
+}
+
 // Load implementation
 template<typename Archive>
 template<typename T>
@@ -317,7 +332,9 @@ inline void HDF5IArchiveImpl<Archive>::loadContainerImpl( T& container )
 
     container.resize( container_size );
 
-    this->loadImpl( object_data_set_path, container.data(), container_size );
+    this->loadImpl( object_data_set_path,
+                    const_cast<typename T::pointer>(container.data()),
+                    container_size );
   }
   HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not load data for container "
                                      "object " << d_object_count <<

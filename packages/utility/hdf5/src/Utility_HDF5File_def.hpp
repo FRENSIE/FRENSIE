@@ -851,8 +851,13 @@ inline void readFromDataSetImpl( const HDF5File& hdf5_file,
   hsize_t data_set_size = hdf5_file.getDataSetSize( path_to_data_set );
 
   container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( data_set_size ) );
-  
-  hdf5_file.readFromDataSet( path_to_data_set, container.data(), container.size() );
+
+  // Note: we have to do a const cast of the pointer returned by the data
+  //       method since std::string will return a const pointer regardless of
+  //       the const qualifier of the string
+  hdf5_file.readFromDataSet( path_to_data_set,
+                             const_cast<typename Container::pointer>(container.data()),
+                             container.size() );
 }
 
 /*! \brief Implementation of readFromDataSet for containers with memory that is
@@ -891,7 +896,10 @@ inline void readFromDataSetAttributeImpl( const HDF5File& hdf5_file,
 
   container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( data_set_attribute_size ) );
   
-  hdf5_file.readFromDataSetAttribute( path_to_data_set, attribute_name, container.data(), container.size() );
+  hdf5_file.readFromDataSetAttribute( path_to_data_set,
+                                      attribute_name,
+                                      const_cast<typename Container::pointer>(container.data()),
+                                      container.size() );
 }
 
 /*! \brief Implementation of readFromDataSetAttribute for containers with 
@@ -931,7 +939,10 @@ inline void readFromGroupAttributeImpl( const HDF5File& hdf5_file,
 
   container.resize( Utility::HDF5TypeTraits<typename Container::value_type>::calculateExternalDataSize( group_attribute_size ) );
   
-  hdf5_file.readFromGroupAttribute( path_to_group, attribute_name, container.data(), container.size() );
+  hdf5_file.readFromGroupAttribute( path_to_group,
+                                    attribute_name,
+                                    const_cast<typename Container::pointer>(container.data()),
+                                    container.size() );
 }
 
 /*! \brief Implementation of readFromGroupAttribute for containers with 

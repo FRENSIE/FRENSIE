@@ -17,6 +17,7 @@
 #include <boost/archive/detail/common_iarchive.hpp>
 #include <boost/serialization/collection_size_type.hpp>
 #include <boost/serialization/item_version_type.hpp>
+#include <boost/serialization/binary_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/pfto.hpp>
 
@@ -32,7 +33,9 @@ template<typename Archive>
 class HDF5IArchiveImpl : public boost::archive::detail::common_iarchive<Archive>,
                          public Utility::HDF5CommonArchive
 {
-
+  
+public:
+  
   //! Load opaque object
   void load_binary( void* address, std::size_t count );
 
@@ -59,7 +62,7 @@ protected:
   typedef boost::archive::detail::common_iarchive<Archive> CommonIArchive;
 
   //! Constructor
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
   HDF5IArchiveImpl( const std::string& hdf5_filename, unsigned flags );
 
   //! Initialize the archive
@@ -67,45 +70,43 @@ protected:
 
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
-  void load_override( T& t, BOOST_PFTO int );
+  void load_override( T& t );
 
   //! Load a type that is wrapped in a boost::serialization::nvp
   template<typename T>
-  void load_override(
-       HANDLE_BOOST_FUNCTION_TEMPLATE_ORDERING boost::serialization::nvp<T>& t,
-       int );
+  void load_override( const boost::serialization::nvp<T>& t );
 
   //! Load a boost::archive::object_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::object_id_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::object_id_type& t );
 
   //! Load a boost::archive::object_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::object_reference_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::object_reference_type& t );
 
   //! Load a boost::archive::version_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::version_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::version_type& t );
 
   //! Load a boost::archive::class_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::arhcive::class_id_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::class_id_type& t );
 
   //! Load a boost::archive::class_id_optional_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::class_id_optional_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::class_id_optional_type& t );
 
   //! Load a boost::archive::class_id_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::class_id_reference_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::class_id_reference_type& t );
 
   //! Load a boost::archive::class_name_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::class_name_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::class_name_type& t );
 
   //! Load a boost::archive::tracking_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  load_override( boost::archive::tracking_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void load_override( boost::archive::tracking_type& t );
 
   //! Load any type with a Utility::HDF5TypeTraits specialization
   template<typename T>
@@ -128,6 +129,16 @@ private:
   friend class boost::archive::detail::interface_iarchive<Archive>;
   friend class boost::archive::load_access;
 
+  // Intercept a type that is about to be loaded using load_override
+  template<typename T>
+  void loadIntercept( T& t, std::true_type is_fast_serializable_tuple );
+
+  // Intercept a type that is about to be loaded using load_override
+  template<typename T>
+  void loadIntercept( T& t, std::false_type is_fast_serializable_tuple );
+
+  // Intercept a type that is about to be loaded using load_override
+  
   // Load implementation
   template<typename T>
   void loadImpl( T* data, size_t count );

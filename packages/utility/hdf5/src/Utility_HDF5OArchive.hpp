@@ -14,7 +14,6 @@
 
 // Boost Includes
 #include <boost/archive/detail/register_archive.hpp>
-#include <boost/archive/shared_ptr_helper.hpp>
 
 // FRENSIE Includes
 #include "Utility_HDF5OArchiveImpl.hpp"
@@ -61,14 +60,43 @@ private:
                         Utility::HDF5ArchiveException,
                         "Could not determine the HDF5 archive file name!" );
 
-    return oss->str();
+    return hdf5_file_name_oss->str();
   }
 };
 
-/*! The naked HDF5 output archive
- * \ingroup hdf5
- */
-typedef HDF5OArchive NakedHDF5OArchive;
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const bool& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const char& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const unsigned char& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const signed char& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const wchar_t& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const short& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const unsigned short& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const int& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const unsigned& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const long& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const unsigned long& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const long long& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const unsigned long long& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const float& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const double& );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const long double& );
+
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<bool>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<char>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<unsigned char>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<signed char>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<wchar_t>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<short>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<unsigned short>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<int>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<unsigned>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<long>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<unsigned long>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<long long>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<unsigned long long>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<float>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<double>&, unsigned int );
+extern template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array<long double>&, unsigned int );
 
 } // end Utility namespace
 

@@ -20,12 +20,15 @@ namespace Utility{
 
 // Constructor
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
 HDF5OArchiveImpl<Archive>::HDF5OArchiveImpl( const std::string& hdf5_filename,
                                              unsigned flags )
   : boost::archive::detail::common_oarchive<Archive>( flags ),
-    HDF5CommonArchive( hdf5_filename, ((flags & OVERWRITE_EXISTING_ARCHIVE) ? HDF5File::OVERWRITE : HDF5File::READ_WRITE ) ),
-  
+    HDF5CommonArchive( hdf5_filename, ((flags & HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE) ? HDF5File::OVERWRITE : HDF5File::READ_WRITE ) ),
+    d_object_count( 0 ),
+    d_group_count( 0 ),
+    d_group_stack(),
+    d_next_object_is_attribute( false )
 {
   this->init( flags );
 }
@@ -35,29 +38,26 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::init( unsigned flags )
 {
   // Add a header to the archive
-  if( 0 != (flags & boost::archive::no_header ) )
+  if( !(flags & boost::archive::no_header ) )
   {
-    const std::string archive_signature =
-      boost::archive::BOOST_ARCHIVE_SIGNATURE();
+    try{
+      Utility::writeToGroupAttribute( *this,
+                                      this->getPropertiesDir(),
+                                      this->getSignatureAttributeName(),
+                                      std::string(boost::archive::BOOST_ARCHIVE_SIGNATURE()) );
+    }
+    HDF5_FILE_EXCEPTION_CATCH_RETHROW( "The archive signature could not be "
+                                       "set in hdf5 archive "
+                                       << this->getFilename() << "!" );
 
     try{
-      this->writeToGroupAttribute( this->getPropertiesDir(),
-                                   this->getSignatureAttributeName(),
-                                   archive_signature.data(),
-                                   archive_signature.size() );
+      this->writeToGroupAttribute<unsigned>( this->getPropertiesDir(),
+                                             this->getVersionAttributeName(),
+                                             boost::archive::BOOST_ARCHIVE_VERSION() );
     }
-    HDF5_FILE_EXCEPTION_CATCH( "The archive signature could not be set in "
-                               "hdf5 archive " << hdf5_filename << "!" );
-
-    const unsigned version = boost::archive::BOOST_ARCHIVE_VERSION();
-
-    try{
-      this->writeToGroupAttribute( this->getPropertiesDir(),
-                                   this->getVersionAttributeName(),
-                                   &version, 1 );
-    }
-    HDF5_FILE_EXCEPTION_CATCH( "The archive version could not be set in "
-                               "hdf5 archive " << hdf5_filename << "!" );
+    HDF5_FILE_EXCEPTION_CATCH_RETHROW( "The archive version could not be set "
+                                       "in hdf5 archive "
+                                       << this->getFilename() << "!" );
   }
 }
 
@@ -86,29 +86,30 @@ inline void HDF5OArchiveImpl<Archive>::save_array(
  */
 template<typename Archive>
 template<typename T>
-void HDF5OArchiveImpl<Archive>::save_override( const T& t, BOOST_PFTO int )
+void HDF5OArchiveImpl<Archive>::save_override( const T& t )
 {
-  testStaticPrecondition((boost::serialization::is_wrapper<T>::value));
+  testStaticPrecondition((boost::serialization::is_wrapper<T>::type::value));
 
   // This should never be called
-  this->CommonOArchive::save_override( t, 0 );
+  this->CommonOArchive::save_override( t );
 }
 
 // Save a type that is wrapped in a boost::serialization::nvp
 template<typename Archive>
 template<typename T>
 inline void HDF5OArchiveImpl<Archive>::save_override(
-       HANDLE_BOOST_FUNCTION_TEMPLATE_ORDERING boost::serialization::nvp<T>& t,
-       int )
+                                        const boost::serialization::nvp<T>& t )
 {
-  this->save_override( t.const_value(), 0 );
+  this->startHDF5Group(t.name());
+  this->saveIntercept(t.const_value(), typename std::conditional<IsTuple<T>::value && Utility::HDF5TypeTraits<T>::IsSpecialized::value,std::true_type,std::false_type>::type());
+  this->endHDF5Group();
 }
 
 // Save a boost::archive::object_id_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                                 const boost::archive::object_id_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                                      const boost::archive::object_id_type& t )
 {
   unsigned object_id = t;
   this->writeToCurrentGroupAttribute( "object_id", &object_id, 1 );
@@ -120,9 +121,9 @@ HDF5OArchiveImpl<Archive>::save_override(
 
 // Save a boost::archive::object_reference_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                          const boost::archive::object_reference_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                               const boost::archive::object_reference_type& t )
 {
   unsigned object_reference = t;
   this->writeToCurrentGroupAttribute( "object_reference", &object_reference, 1 );
@@ -134,9 +135,9 @@ HDF5OArchiveImpl<Archive>::save_override(
 
 // Save a boost::archive::version_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                                   const boost::archive::version_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                                        const boost::archive::version_type& t )
 {
   unsigned version = t;
   this->writeToCurrentGroupAttribute( "version", &version, 1 );
@@ -147,9 +148,9 @@ HDF5OArchiveImpl<Archive>::save_override(
 
 // Save a boost::archive::class_id_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                                  const boost::arhcive::class_id_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                                       const boost::archive::class_id_type& t )
 {
   size_t class_id = t;
   this->writeToCurrentGroupAttribute( "class_id", &class_id, 1 );
@@ -160,9 +161,9 @@ HDF5OArchiveImpl<Archive>::save_override(
 
 // Save a boost::archive::class_id_optional_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                         const boost::archive::class_id_optional_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                              const boost::archive::class_id_optional_type& t )
 {
   // Ignore the writing of this type - it is not needed by this archive type
   // Note: this implementation of this method is similar to the implementation
@@ -178,9 +179,9 @@ HDF5OArchiveImpl<Archive>::save_override(
 
 // Save a boost::archive::class_id_reference_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                        const boost::archive::class_id_reference_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                             const boost::archive::class_id_reference_type& t )
 {
   size_t class_id_reference = t;
   this->writeToCurrentGroupAttribute( "class_id_reference", &class_id_reference, 1 );
@@ -191,9 +192,9 @@ HDF5OArchiveImpl<Archive>::save_override(
 
 // Save a boost::archive::class_name_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                                const boost::archive::class_name_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                                     const boost::archive::class_name_type& t )
 {
   const std::string class_name( t );
   this->writeToCurrentGroupAttribute( "class_name", class_name.data(), class_name.size() );
@@ -204,9 +205,9 @@ HDF5OArchiveImpl<Archive>::save_override(
 
 // Save a boost::archive::tracking_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::save_override(
-                                  const boost::archive::tracking_type& t, int )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::save_override(
+                                       const boost::archive::tracking_type& t )
 {
   this->writeToCurrentGroupAttribute( "class_tracking", &t.t, 1 );
 
@@ -264,7 +265,7 @@ void HDF5OArchiveImpl<Archive>::writeToCurrentGroupAttribute(
                                              const T* const data,
                                              const size_t size )
 {
-  std::ostringstream oss full_attribute_name;
+  std::ostringstream full_attribute_name;
   full_attribute_name << attribute_name << "_d" << d_object_count;
 
   try{
@@ -275,7 +276,23 @@ void HDF5OArchiveImpl<Archive>::writeToCurrentGroupAttribute(
   }
   HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not write data to group attribute "
                                      << this->getTreeObjectPath() << ":"
-                                     << full_attribute_name << "!" );
+                                     << full_attribute_name.str() << "!" );
+}
+
+// Intercept a type that is about to be saved
+template<typename Archive>
+template<typename T>
+void HDF5OArchiveImpl<Archive>::saveIntercept( const T& t, std::true_type is_fast_serializable_tuple )
+{
+  this->save(t);
+}
+
+// Intercept a type that is about to be saved
+template<typename Archive>
+template<typename T>
+void HDF5OArchiveImpl<Archive>::saveIntercept( const T& t, std::false_type is_fast_serializable_tuple )
+{
+  this->CommonOArchive::save_override(t);
 }
 
 // Save implementation
@@ -300,7 +317,7 @@ void HDF5OArchiveImpl<Archive>::saveImpl(
                                        const T* data,
                                        size_t count )
 {
-  this->readFromDataSet( object_data_set_path, data, count );
+  this->writeToDataSet( object_data_set_path, data, count );
   this->linkDataAndUpdateObjectCount();
 }
 
@@ -312,11 +329,7 @@ void HDF5OArchiveImpl<Archive>::saveContainerImpl( const T& container )
   std::string object_data_set_path = this->getObjectDataPath( d_object_count );
 
   try{
-    hsize_t container_size = this->getDataSetSize( object_data_set_path );
-
-    container.resize( container_size );
-
-    this->saveImpl( object_data_set_path, container.data(), container_size );
+    this->saveImpl( object_data_set_path, container.data(), container.size() );
   }
   HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not save data for container "
                                      "object " << d_object_count <<
@@ -324,10 +337,32 @@ void HDF5OArchiveImpl<Archive>::saveContainerImpl( const T& container )
                                      "!" );
 }
 
+// Start an hdf5 group
+template<typename Archive>
+void HDF5OArchiveImpl<Archive>::startHDF5Group( const char* group_name )
+{
+  std::ostringstream full_group_name;
+
+  if( group_name == NULL )
+    full_group_name << "_g" << d_group_count;
+  else
+    full_group_name << group_name << "_g" << d_group_count;
+
+  d_group_stack.push_back( full_group_name.str() );
+  ++d_group_count;
+}
+
+// End an hdf5 group
+template<typename Archive>
+void HDF5OArchiveImpl<Archive>::endHDF5Group()
+{
+  d_group_stack.pop_back();
+}
+
 // Get the tree object path
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(std::string)
-HDF5OArchive<Archive>::getTreeObjectPath() const
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+std::string HDF5OArchiveImpl<Archive>::getTreeObjectPath() const
 {
   std::ostringstream oss;
 
@@ -348,24 +383,24 @@ HDF5OArchive<Archive>::getTreeObjectPath() const
 
 // Link the data object
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::linkDataObject()
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::linkDataObject()
 {
   if( !d_next_object_is_attribute )
   {
-    std::ostringstream source_path;
+    std::ostringstream link_path;
 
-    source_path << this->getTreeObjectPath() << "/<data>_d" << d_object_count;
+    link_path << this->getTreeObjectPath() << "/<data>_d" << d_object_count;
 
-    const std::string target_path = this->getObjectDataPath( d_object_count );
+    const std::string object_path = this->getObjectDataPath( d_object_count );
 
     try{
-      this->createHardLink( source_path.str(), target_path );
+      this->createHardLink( object_path, link_path.str() );
     }
-    HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could link data object "
-                                       << d_object_count << " with source "
-                                       "path " << source_path.str() << " to "
-                                       "target at " << target_path << "!" );
+    HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not create a link with path "
+                                       << link_path.str() << " to data object "
+                                       << d_object_count << " at "
+                                       << object_path <<  "!" );
   }
 
   d_next_object_is_attribute = false;
@@ -373,49 +408,50 @@ HDF5OArchiveImpl<Archive>::linkDataObject()
 
 // Link the tracked object
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::linkTrackedObject( unsigned object )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::linkTrackedObject( unsigned object )
 {
-  const std::string source_path = this->getTrackedObjectsPath( object );
-  const std::string target_path = this->getTreeObjectPath();
+  const std::string link_path = this->getTrackedObjectsPath( object );
+  
+  const std::string object_path = this->getTreeObjectPath();
 
   try{
-    this->createSoftLink( source_path, target_path );
+    this->createSoftLink( object_path, link_path );
   }
-  HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not link tracked object "
-                                     << object << " with source path "
-                                     << source_path << " to target at "
-                                     << target_path << "!" );
+  HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not create a link with path "
+                                     << link_path << " to data object "
+                                     << object << " at "
+                                     << object_path <<  "!" );
 }
 
 // Link the tracked object reference
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::linkTrackedObjectReference( unsigned object_reference )
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::linkTrackedObjectReference( unsigned object_reference )
 {
-  std::ostringstream oss source_path;
-  source_path << this->getTreeObjectPath()
+  std::ostringstream link_path;
+  link_path << this->getTreeObjectPath()
               << "/<reference>_o"
               << object_reference;
-
-  const std::string target_path =
+  
+  const std::string object_path =
     this->getTrackedObjectsPath( object_reference );
 
   try{
-    this->createSoftLink( source_path.str(), target_path );
+    this->createSoftLink( object_path, link_path.str() );
   }
-  HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not link tracked object reference "
-                                     << object << " with source path "
-                                     << source_path.str() << " to target at "
-                                     << target_path << "!" );
+  HDF5_FILE_EXCEPTION_CATCH_RETHROW( "Could not create a link with path "
+                                     << link_path.str() << " to data object "
+                                     << object_reference << " at "
+                                     << object_path <<  "!" );
 }
 
 // Link the data and update the object count
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-HDF5OArchiveImpl<Archive>::linkDataAndUpdateObjectCount()
+BOOST_ARCHIVE_OR_WARCHIVE_DECL
+void HDF5OArchiveImpl<Archive>::linkDataAndUpdateObjectCount()
 {
-  this-linkDataObject();
+  this->linkDataObject();
 
   ++d_object_count;
 }

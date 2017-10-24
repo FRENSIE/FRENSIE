@@ -15,6 +15,12 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+#define HANDLE_BOOST_FUNCTION_TEMPLATE_ORDERING const
+#else
+#define HANDLE_BOOST_FUNCTION_TEMPLATE_ORDERING
+#endif // end BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+
 namespace Utility{
 
 /*! The HDF5 common archive base class
@@ -88,7 +94,7 @@ private:
   if( throw_exception )                                               \
   {                                                                 \
     boost::serialization::throw_exception(                          \
-                                    boost::archive_exception( error_type ) ); \
+                           boost::archive::archive_exception( error_type ) ); \
   }                                                                     \
 }
 
@@ -111,7 +117,7 @@ private:
  * \ingroup hdf5
  */
 #define HDF5_FILE_EXCEPTION_CATCH_RETHROW( raw_msg ) \
-EXCEPTION_CATCH_RETHROW_AS( Utility::HDF5File::Exception, Utility::HDF5ArchiveException, raw_msg ) \
+  EXCEPTION_CATCH_RETHROW_AS( Utility::HDF5File::Exception, Utility::HDF5ArchiveException, raw_msg ) \
 catch( ... )                                                           \
 {                                                                    \
   THROW_EXCEPTION( HDF5ArchiveException, raw_msg );                  \

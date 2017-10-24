@@ -33,9 +33,6 @@ struct BasicHDF5TypeTraits
   //! Typedef for the type that will be stored in HDF5 files
   typedef ExternalType InternalType;
 
-  //! Check if the type has a type traits specialization
-  typedef std::true_type IsSpecialized;
-
   //! Check if the type uses a custom internal type
   typedef std::false_type UsesCustomInternalType;
 
@@ -215,6 +212,9 @@ private:
 template<>
 struct HDF5TypeTraits<char> : public Details::BasicHDF5TypeTraits<char>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -229,6 +229,9 @@ struct HDF5TypeTraits<char> : public Details::BasicHDF5TypeTraits<char>
 template<>
 struct HDF5TypeTraits<signed char> : public Details::BasicHDF5TypeTraits<signed char>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -243,6 +246,9 @@ struct HDF5TypeTraits<signed char> : public Details::BasicHDF5TypeTraits<signed 
 template<>
 struct HDF5TypeTraits<unsigned char> : public Details::BasicHDF5TypeTraits<unsigned char>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -264,6 +270,9 @@ struct HDF5TypeTraits<wchar_t> : public Details::OpaqueHDF5TypeTraits<wchar_t>
 template<>
 struct HDF5TypeTraits<short> : public Details::BasicHDF5TypeTraits<short>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -278,6 +287,9 @@ struct HDF5TypeTraits<short> : public Details::BasicHDF5TypeTraits<short>
 template<>
 struct HDF5TypeTraits<unsigned short> : public Details::BasicHDF5TypeTraits<unsigned short>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -292,6 +304,9 @@ struct HDF5TypeTraits<unsigned short> : public Details::BasicHDF5TypeTraits<unsi
 template<>
 struct HDF5TypeTraits<int> : public Details::BasicHDF5TypeTraits<int>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -306,6 +321,9 @@ struct HDF5TypeTraits<int> : public Details::BasicHDF5TypeTraits<int>
 template<>
 struct HDF5TypeTraits<unsigned int> : public Details::BasicHDF5TypeTraits<unsigned int>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -320,6 +338,9 @@ struct HDF5TypeTraits<unsigned int> : public Details::BasicHDF5TypeTraits<unsign
 template<>
 struct HDF5TypeTraits<long> : public Details::BasicHDF5TypeTraits<long>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -334,6 +355,9 @@ struct HDF5TypeTraits<long> : public Details::BasicHDF5TypeTraits<long>
 template<>
 struct HDF5TypeTraits<unsigned long> : public Details::BasicHDF5TypeTraits<unsigned long>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -348,6 +372,9 @@ struct HDF5TypeTraits<unsigned long> : public Details::BasicHDF5TypeTraits<unsig
 template<>
 struct HDF5TypeTraits<long long> : public Details::BasicHDF5TypeTraits<long long>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -363,6 +390,9 @@ struct HDF5TypeTraits<long long> : public Details::BasicHDF5TypeTraits<long long
 template<>
 struct HDF5TypeTraits<unsigned long long> : public Details::BasicHDF5TypeTraits<unsigned long long>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -377,6 +407,9 @@ struct HDF5TypeTraits<unsigned long long> : public Details::BasicHDF5TypeTraits<
 template<>
 struct HDF5TypeTraits<float> : public Details::BasicHDF5TypeTraits<float>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -391,6 +424,9 @@ struct HDF5TypeTraits<float> : public Details::BasicHDF5TypeTraits<float>
 template<>
 struct HDF5TypeTraits<double> : public Details::BasicHDF5TypeTraits<double>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -405,6 +441,9 @@ struct HDF5TypeTraits<double> : public Details::BasicHDF5TypeTraits<double>
 template<>
 struct HDF5TypeTraits<long double> : public Details::BasicHDF5TypeTraits<long double>
 {
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -421,7 +460,6 @@ namespace Details{
   template<typename T1, typename T2, typename InternalT1 = T1, typename InternalT2 = T2>
 struct HDF5TypeTraitsPairHelper
 {
-
   //! Returns the HDF5 data type object
   static inline H5::CompType dataType()
   {
@@ -459,6 +497,11 @@ std::unique_ptr<H5::CompType> HDF5TypeTraitsPairHelper<T1,T2,InternalT1,Internal
 template<typename T1, typename T2>
 struct HDF5TypeTraits<std::pair<T1,T2>,typename std::enable_if<!HDF5TypeTraits<T1>::UsesCustomInternalType::value && !HDF5TypeTraits<T2>::UsesCustomInternalType::value>::type> : public Details::BasicHDF5TypeTraits<std::pair<T1,T2> >
 {
+  /*! \brief Check if the type has a type traits specialization (only true if
+   * both T1 and T2 have specializations)
+   */
+  typedef typename std::conditional<HDF5TypeTraits<T1>::IsSpecialized::value && HDF5TypeTraits<T2>::IsSpecialized::value,std::true_type,std::false_type>::type IsSpecialized;
+  
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
   
@@ -492,8 +535,10 @@ struct HDF5TypeTraits<std::pair<T1,T2>,typename std::enable_if<HDF5TypeTraits<T1
   //! Typedef for the type that will be stored in HDF5 files
   typedef std::pair<InternalT1,InternalT2> InternalType;
 
-  //! Check if the type has a type traits specialization
-  typedef std::true_type IsSpecialized;
+  /*! \brief Check if the type has a type traits specialization (only true if
+   * both T1 and T2 have specializations)
+   */
+  typedef typename std::conditional<HDF5TypeTraits<T1>::IsSpecialized::value && HDF5TypeTraits<T2>::IsSpecialized::value,std::true_type,std::false_type>::type IsSpecialized;
   
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;
@@ -657,7 +702,8 @@ struct NextElementHDF5TypeTraits<I,ExternalTuple,typename std::enable_if<(I==Uti
   typedef HDF5TypeTraits<typename Utility::TupleElement<I,ExternalTuple>::type> type;
 };
 
-/*! \brief The helper class that serializes tuple data
+/*! \brief The helper class that serializes tuple data in a portable way (by
+ * ignoring platform specific tuple memory layout details).
  * \ingroup hdf5
  */
 template<size_t I, typename ExternalTuple, typename Enabled = void>
@@ -808,6 +854,30 @@ private:
 // Initialize static member data
 template<typename ExternalType>
 std::unique_ptr<H5::CompType> HDF5TupleSerializer<ExternalType>::s_data_type;
+
+/*! IsSpecialized helper for tuples
+ * \ingroup hdf5
+ */
+template<typename... Types>
+struct IsSpecializedHelper;
+
+/*! \brief Partial specialization of IsSpecializedHelper for parameter packs 
+ * with at least two elements
+ */
+template<typename T, typename... Types>
+struct IsSpecializedHelper<T,Types...>
+{
+  typedef typename std::conditional<HDF5TypeTraits<T>::IsSpecialized::value && IsSpecializedHelper<Types...>::type::value,std::true_type,std::false_type>::type type;
+};
+
+/*! \brief Partial specialization of IsSpecializedHelper for parameter packs 
+ * with a single element
+ */
+template<typename T>
+struct IsSpecializedHelper<T>
+{
+  typedef typename std::conditional<HDF5TypeTraits<T>::IsSpecialized::value,std::true_type,std::false_type>::type type;
+};
   
 } // end Details namespace
 
@@ -825,7 +895,7 @@ struct HDF5TypeTraits<std::tuple<Types...> >
   typedef void InternalType;
 
   //! Check if the type has a type traits specialization
-  typedef std::true_type IsSpecialized;
+  typedef typename Details::IsSpecializedHelper<Types...>::type IsSpecialized;
   
   //! Check if the type has an opaque data type
   typedef std::false_type UsesOpaqueDataType;

@@ -17,6 +17,7 @@
 #include <boost/archive/detail/common_oarchive.hpp>
 #include <boost/serialization/collection_size_type.hpp>
 #include <boost/serialization/item_version_type.hpp>
+#include <boost/serialization/binary_object.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/pfto.hpp>
@@ -27,20 +28,22 @@
 
 namespace Utility{
 
+/*! HDF5 output archive flags
+ * \ingroup hdf5
+ */
+enum HDF5OArchiveFlags{
+  OVERWRITE_EXISTING_ARCHIVE = 16
+};
+
 /*! The HDF5 output archive implementation
  * \ingroup hdf5
  */
 template<typename Archive>
-class HDF5OArchiveImpl : public boost::archive::details::common_oarchive<Archive>,
+class HDF5OArchiveImpl : public boost::archive::detail::common_oarchive<Archive>,
                          public Utility::HDF5CommonArchive
 {
 
 public:
-
-  //! HDF5 archive flags
-  enum HDF5ArchiveFlags{
-    OVERWRITE_EXISTING_ARCHIVE = 16
-  };
 
   //! Save opaque object
   void save_binary( const void* address, std::size_t count );
@@ -68,7 +71,7 @@ protected:
   typedef boost::archive::detail::common_oarchive<Archive> CommonOArchive;
 
   //! Constructor
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
   HDF5OArchiveImpl( const std::string& hdf5_filename, unsigned flags );
 
   //! Initialize the archive
@@ -76,45 +79,43 @@ protected:
 
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
-  void save_override( const T& t, BOOST_PFTO int );
+  void save_override( const T& t );
 
   //! Save a type that is wrapped in a boost::serialization::nvp
   template<typename T>
-  void save_override(
-       HANDLE_BOOST_FUNCTION_TEMPLATE_ORDERING boost::serialization::nvp<T>& t,
-       int );
+  void save_override( const boost::serialization::nvp<T>& t );
 
   //! Save a boost::archive::object_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::archive::object_id_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::object_id_type& t );
 
   //! Save a boost::archive::object_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::archive::object_reference_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::object_reference_type& t );
 
   //! Save a boost::archive::version_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::archive::version_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::version_type& t );
 
   //! Save a boost::archive::class_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::arhcive::class_id_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::class_id_type& t );
 
   //! Save a boost::archive::class_id_optional_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::archive::class_id_optional_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::class_id_optional_type& t );
 
   //! Save a boost::archive::class_id_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::archive::class_id_reference_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::class_id_reference_type& t );
 
   //! Save a boost::archive::class_name_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::archive::class_name_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::class_name_type& t );
 
   //! Save a boost::archive::tracking_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-  save_override( const boost::archive::tracking_type& t, int );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL
+  void save_override( const boost::archive::tracking_type& t );
 
   //! Save any type with a Utility::HDF5TypeTraits specialization
   template<typename T>
@@ -126,7 +127,7 @@ protected:
   //! Save a std::wstring
   void save( const std::wstring& t );
 
-  //! Save a bost::serialization::collection_size_type
+  //! Save a boost::serialization::collection_size_type
   void save( const boost::serialization::collection_size_type& t );
 
   //! Save a boost::serialization::item_version_type attribute
@@ -143,6 +144,14 @@ private:
                                      const T* const data,
                                      const size_t size );
 
+  // Intercept a type that is about to be saved using save_override
+  template<typename T>
+  void saveIntercept( const T& t, std::true_type is_fast_serializable_tuple );
+
+  // Intercept a type that is about to be saved using save_override
+  template<typename T>
+  void saveIntercept( const T& t, std::false_type is_fast_serializable_tuple );
+
   // Save implementation
   template<typename T>
   void saveImpl( const T* data, size_t count );
@@ -157,21 +166,27 @@ private:
   template<typename T>
   void saveContainerImpl( const T& container );
 
+  // Start an hdf5 group
+  void startHDF5Group( const char* group_name );
+
+  // End an hdf5 group
+  void endHDF5Group();
+
   // Get the tree object path
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(std::string) getTreeObjectPath() const;
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL std::string getTreeObjectPath() const;
 
   // Link the data object
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void) linkDataObject();
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL void linkDataObject();
 
   // Link the tracked object
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void) linkTrackedObject( unsigned object );
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL void linkTrackedObject( unsigned object );
 
   // Link the tracked object reference
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL void
   linkTrackedObjectReference( unsigned object_reference );
 
   // Link the data and update the object count
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL(void) linkDataAndUpdateObjectCount();
+  BOOST_ARCHIVE_OR_WARCHIVE_DECL void linkDataAndUpdateObjectCount();
 
   // The object count
   std::size_t d_object_count;
@@ -193,7 +208,7 @@ private:
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "Utility_HDf5OArchiveImpl_def.hpp"
+#include "Utility_HDF5OArchiveImpl_def.hpp"
 
 //---------------------------------------------------------------------------//
 

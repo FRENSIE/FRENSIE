@@ -14,7 +14,6 @@
 
 // Boost Includes
 #include <boost/archive/detail/register_archive.hpp>
-#include <boost/archive/shared_ptr_helper.hpp>
 
 // FRENSIE Includes
 #include "Utility_HDF5IArchiveImpl.hpp"
@@ -28,8 +27,7 @@ namespace Utility{
  * the correct static polymorphism is preserved.
  * \ingroup hdf5
  */
-  class HDF5IArchive : public HDF5IArchiveImpl<HDF5IArchive>,
-                       public boost::archive::detail::shared_ptr_helper
+class HDF5IArchive : public HDF5IArchiveImpl<HDF5IArchive>
 {
 
 public:
@@ -45,49 +43,39 @@ public:
   { /* ... */ }
 };
 
-/*! The naked HDF5 input archive
- * 
- * This class is the same as the Utility::HDF5IArchive except that the
- * boost::archive::detail::shared_ptr_helper is not inherited. If you want to 
- * extend the functionality provided by this class, you MUST derive from 
- * Utility::HDF5IArchiveImpl instead of this class to ensure that the correct 
- * static polymorphism is preserved.
- * \ingroup hdf5
- */
-class NakedHDF5IArchive : public HDF5IArchiveImpl<NakedHDF5IArchive>
-{
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( bool& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( char& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( unsigned char& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( signed char& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( wchar_t& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( short& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( unsigned short& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( int& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( unsigned& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( long& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( unsigned long& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( long long& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( unsigned long long& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( float& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( double& );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load( long double& );
 
-public:
-
-  //! Constructor
-  NakedHDF5IArchive( const std::string& hdf5_filename,
-                     unsigned flags = 0 )
-    : HDF5IArchiveImpl<NakedHDF5IArchive>( hdf5_filename, flags )
-  { /* ... */ }
-
-  //! Constructor
-  template<class CharType, class CharTraits>
-  NakedHDF5IArchive( std::basic_istream<CharType,CharTraits>& is,
-                     unsigned flags = 0 )
-    : HDF5IArchiveImpl<NakedHDF5IArchive>( this->extractHDF5FileNameFromIStream(is), flags )
-  { /* ... */ }
-
-  //! Destructor
-  ~NakedHDF5IArchive()
-  { /* ... */ }
-
-private:
-
-  template<class CharType, class CharTraits>
-  static inline std::string extractHDF5FileNameFromIStream( std::basic_istream<CharType,CharTraits>& is )
-  {
-    std::string hdf5_file_name;
-
-    is >> hdf5_file_name;
-
-    return hdf5_file_name;
-  }
-};
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<bool>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<char>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned char>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<signed char>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<wchar_t>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<short>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned short>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<int>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<long>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned long>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<long long>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned long long>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<float>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<double>&, unsigned int );
+extern template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<long double>&, unsigned int );
   
 } // end Utility namespace
 
