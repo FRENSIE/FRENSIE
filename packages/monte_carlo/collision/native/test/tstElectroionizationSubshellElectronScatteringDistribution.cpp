@@ -32,14 +32,10 @@ public:
   TestElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
       electroionization_subshell_scattering_distribution,
-    const double binding_energy,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on )
+    const double binding_energy )
     : MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
         electroionization_subshell_scattering_distribution,
-        binding_energy,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on )
+        binding_energy )
   { /* ... */ }
 
   ~TestElectroionizationSubshellElectronScatteringDistribution()
@@ -495,7 +491,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
             function_data,
             1e-6,
             1e-13 ) );
@@ -504,9 +500,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   ace_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energies[subshell],
-                            true,
-                            false ) );
+                            binding_energies[subshell] ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -557,7 +551,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
             function_data,
             1e-6,
             1e-16 ) );
@@ -566,14 +560,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   native_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energy,
-                            true,
-                            true ) );
+                            binding_energy ) );
   }
   {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Exact>(
             function_data,
             1e-6,
             1e-16 ) );
@@ -582,9 +574,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   exact_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energy,
-                            true,
-                            false ) );
+                            binding_energy ) );
   }
   }
 

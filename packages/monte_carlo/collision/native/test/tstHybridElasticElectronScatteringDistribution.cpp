@@ -39,12 +39,10 @@ public:
   TestHybridElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& hybrid_distribution,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
     : MonteCarlo::HybridElasticElectronScatteringDistribution(
                             hybrid_distribution,
                             cutoff_angle_cosine,
-                            correlated_sampling_mode_on,
                             evaluation_tol )
   { /* ... */ }
 
@@ -66,7 +64,6 @@ std::shared_ptr<TestHybridElasticElectronScatteringDistribution>
     test_hybrid_distribution, test_lin_hybrid_distribution, test_linlog_hybrid_distribution;
 
 double angle_cosine_cutoff = 0.9;
-bool correlated_sampling_mode_on = true;
 
 //---------------------------------------------------------------------------//
 // LogLogLog Tests
@@ -1566,7 +1563,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog,Utility::Exact>(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1584,7 +1581,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-            full_continuous_function->evaluateSecondaryConditionalCDFExact(
+            full_continuous_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
                                                         cutoff_angle_cosine );
 
@@ -1603,7 +1600,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LogLogCosLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LogLogCosLog,Utility::Exact>(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -1619,14 +1616,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new MonteCarlo::HybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_hybrid_distribution.reset(
         new TestHybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
 
@@ -1634,7 +1629,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin,Utility::Exact>(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1652,7 +1647,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-            full_continuous_function->evaluateSecondaryConditionalCDFExact(
+            full_continuous_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
                                                         cutoff_angle_cosine );
 
@@ -1671,7 +1666,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLin,Utility::Exact>(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -1687,14 +1682,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new MonteCarlo::HybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_lin_hybrid_distribution.reset(
         new TestHybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
 
@@ -1702,7 +1695,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog,Utility::Exact>(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1720,7 +1713,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
-            full_continuous_function->evaluateSecondaryConditionalCDFExact(
+            full_continuous_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
                                                         cutoff_angle_cosine );
 
@@ -1740,7 +1733,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLog,Utility::Exact>(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -1756,14 +1749,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         new MonteCarlo::HybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
 
     test_linlog_hybrid_distribution.reset(
         new TestHybridElasticElectronScatteringDistribution(
             hybrid_function,
             angle_cosine_cutoff,
-            correlated_sampling_mode_on,
             evaluation_tol ) );
     }
 

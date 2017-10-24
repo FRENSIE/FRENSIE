@@ -195,9 +195,9 @@ TEUCHOS_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the H atom
   if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 0.6; // select pair production (for boost below version 1.60)
+    fake_stream[1] = 0.6; // select elastic (for boost below version 1.60)
   else
-    fake_stream[1] = 9.065e-01; // select pair production (for boost above version 1.60)
+    fake_stream[1] = 9.065e-01; // select elastic (for boost above version 1.60)
   fake_stream[2] = 0.0; // sample cutoff distribution
   fake_stream[3] = 0.0; // sample mu = -1.0
 

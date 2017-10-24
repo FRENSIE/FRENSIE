@@ -46,23 +46,19 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory, initializeProperties )
   TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 10.0 );
   TEST_EQUALITY_CONST( properties.getNumberOfElectronHashGridBins(), 400 );
   TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-5 );
-  TEST_ASSERT( !properties.isCorrelatedSamplingModeOn() );
-  TEST_ASSERT( !properties.isUnitBasedInterpolationModeOn() );
   TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
-  TEST_ASSERT( !properties.isElasticModeOn() );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LINLINLIN_INTERPOLATION );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::EXACT_SAMPLING );
+  TEST_ASSERT( !properties.isElasticModeOn() );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::COUPLED_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
                        MonteCarlo::ONE_D_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 0.9 );
   TEST_ASSERT( !properties.isElectroionizationModeOn() );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       MonteCarlo::LINLINLIN_INTERPOLATION );
   TEST_ASSERT( !properties.isBremsstrahlungModeOn() );
-  TEST_EQUALITY_CONST( properties.getElasticTwoDInterpPolicy(),
-                       MonteCarlo::LINLINLIN_INTERPOLATION );
   TEST_EQUALITY_CONST(
              properties.getBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );

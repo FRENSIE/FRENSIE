@@ -23,8 +23,7 @@ namespace MonteCarlo{
  *  when sampling from a subrange of the cutoff distribution.
  */
 CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& scattering_distribution,
-    const bool correlated_sampling_mode_on )
+    const std::shared_ptr<TwoDDist>& scattering_distribution )
   : d_full_cutoff_distribution( scattering_distribution ),
     d_partial_cutoff_distribution( scattering_distribution ),
     d_cutoff_angle_cosine( scattering_distribution->getUpperBoundOfConditionalIndepVar(
@@ -35,23 +34,6 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   // Make sure the cutoff angle cosine is valid
   testPrecondition( d_cutoff_angle_cosine > -1.0 );
   testPrecondition( d_cutoff_angle_cosine <= 1.0 );
-
-  if( correlated_sampling_mode_on )
-  {
-    // Set the correlated unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExact,
-         std::cref( *d_full_cutoff_distribution ),
-         std::placeholders::_1 );
-  }
-  else
-  {
-    // Set the stochastic unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditional,
-         std::cref( *d_full_cutoff_distribution ),
-         std::placeholders::_1 );
-  }
 }
 
 // Constructor
@@ -62,8 +44,7 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
 CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& full_scattering_distribution,
     const std::shared_ptr<TwoDDist>& partial_scattering_distribution,
-    const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on )
+    const double cutoff_angle_cosine )
   : d_full_cutoff_distribution( full_scattering_distribution ),
     d_partial_cutoff_distribution( partial_scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
@@ -75,26 +56,6 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
   // Make sure the cutoff_angle_cosine is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
-  // Make sure the bool is valid
-  testPrecondition( correlated_sampling_mode_on == 0 ||
-                    correlated_sampling_mode_on == 1 );
-
-  if( correlated_sampling_mode_on )
-  {
-    // Set the correlated unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExact,
-         std::cref( *d_partial_cutoff_distribution ),
-         std::placeholders::_1 );
-  }
-  else
-  {
-    // Set the stochastic unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditional,
-         std::cref( *d_partial_cutoff_distribution ),
-         std::placeholders::_1 );
-  }
 }
 
 // Evaluate the cutoff cross section ratio
@@ -104,9 +65,10 @@ double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRa
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
 
-  return d_full_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+  return d_full_cutoff_distribution->evaluateSecondaryConditionalCDF(
                                                         incoming_energy,
-                                                        d_cutoff_angle_cosine );
+                                                        d_cutoff_angle_cosine,
+                                                        false );
 }
 
 // Evaluate the distribution
@@ -122,8 +84,9 @@ double CutoffElasticElectronScatteringDistribution::evaluate(
   if ( scattering_angle_cosine > d_cutoff_angle_cosine )
     return 0.0;
   else
-    return d_partial_cutoff_distribution->evaluateExact( incoming_energy,
-                                                         scattering_angle_cosine );
+    return d_partial_cutoff_distribution->evaluate( incoming_energy,
+                                                    scattering_angle_cosine,
+                                                    false );
 }
 
 // Evaluate the PDF
@@ -139,9 +102,10 @@ double CutoffElasticElectronScatteringDistribution::evaluatePDF(
   if ( scattering_angle_cosine > d_cutoff_angle_cosine )
     return 0.0;
   else
-    return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDFExact(
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDF(
                         incoming_energy,
-                        scattering_angle_cosine );
+                        scattering_angle_cosine,
+                        false );
 }
 
 // Evaluate the CDF
@@ -157,9 +121,10 @@ double CutoffElasticElectronScatteringDistribution::evaluateCDF(
   if ( scattering_angle_cosine >= d_cutoff_angle_cosine )
     return 1.0;
   else
-    return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDFExact(
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDF(
                         incoming_energy,
-                        scattering_angle_cosine );
+                        scattering_angle_cosine,
+                        false );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -252,7 +217,8 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   ++trials;
 
   // sample the scattering angle cosine
-  scattering_angle_cosine = d_sample_function( incoming_energy );
+  scattering_angle_cosine =
+    d_partial_cutoff_distribution->sampleSecondaryConditional( incoming_energy );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

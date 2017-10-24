@@ -27,8 +27,6 @@ SimulationAdjointElectronProperties::SimulationAdjointElectronProperties()
     d_adjoint_electroionization_mode_on( true ),
     d_adjoint_atomic_excitation_mode_on( true ),
     d_adjoint_evaluation_tol( 1e-7 ),
-    d_adjoint_correlated_sampling_mode_on( true ),
-    d_adjoint_unit_based_interpolation_mode_on( true ),
     d_adjoint_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_adjoint_elastic_distribution_mode( DECOUPLED_DISTRIBUTION ),
     d_adjoint_elastic_cutoff_angle_cosine( 1.0 ),
@@ -170,42 +168,6 @@ void SimulationAdjointElectronProperties::setAdjointElectronEvaluationTolerance(
 double SimulationAdjointElectronProperties::getAdjointElectronEvaluationTolerance() const
 {
   return d_adjoint_evaluation_tol;
-}
-
-// Set adjoint correlated sampling mode to off (on by default)
-void SimulationAdjointElectronProperties::setAdjointCorrelatedSamplingModeOff()
-{
-  d_adjoint_correlated_sampling_mode_on = false;
-}
-
-// Set adjoint correlated sampling mode to on (on by default)
-void SimulationAdjointElectronProperties::setAdjointCorrelatedSamplingModeOn()
-{
-  d_adjoint_correlated_sampling_mode_on = true;
-}
-
-// Return if adjoint correlated sampling mode is on
-bool SimulationAdjointElectronProperties::isAdjointCorrelatedSamplingModeOn() const
-{
-  return d_adjoint_correlated_sampling_mode_on;
-}
-
-// Set adjoint unit based interpolation mode to off (on by default)
-void SimulationAdjointElectronProperties::setAdjointUnitBasedInterpolationModeOff()
-{
-  d_adjoint_unit_based_interpolation_mode_on = false;
-}
-
-// Set adjoint unit based interpolation mode to on (on by default)
-void SimulationAdjointElectronProperties::setAdjointUnitBasedInterpolationModeOn()
-{
-  d_adjoint_unit_based_interpolation_mode_on = true;
-}
-
-// Return if adjoint unit based interpolation mode is on
-bool SimulationAdjointElectronProperties::isAdjointUnitBasedInterpolationModeOn() const
-{
-  return d_adjoint_unit_based_interpolation_mode_on;
 }
 
 // Set the adjoint bremsstrahlung photon angular distribution function (2BS by default)

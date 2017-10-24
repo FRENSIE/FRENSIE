@@ -58,6 +58,9 @@ public:
   //! Return the number density (atom/b-cm)
   double getNumberDensity() const;
 
+  //! Check if the energy corresponds to a line energy reaction
+  bool doesEnergyHaveLineEnergyReaction( const double energy ) const;
+
   //! Return the macroscopic total cross section (1/cm)
   double getMacroscopicTotalCrossSection( const double energy ) const;
 
@@ -69,6 +72,9 @@ public:
 
   //! Return the adjoint weight factor
   double getAdjointWeightFactor( const double energy ) const;
+
+  //! Return the adjoint line energy weight factor
+  double getAdjointLineEnergyWeightFactor( const double energy ) const;
 
   //! Return the survival probability
   double getSurvivalProbability( const double energy ) const;
@@ -84,6 +90,10 @@ public:
 
   //! Collide with a adjoint electron and survival bias
   void collideSurvivalBias( AdjointElectronState& adjoint_electron,
+                            ParticleBank& bank ) const;
+
+  //! Collide with an adjoint electron at a line energy
+  void collideAtLineEnergy( AdjointElectronState& adjoint_electron,
                             ParticleBank& bank ) const;
 
 private:
@@ -105,6 +115,31 @@ private:
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const AdjointElectroatom> > >
   d_atoms;
 };
+
+// Check if the energy corresponds to a line energy reaction
+//! \details There are currently no line energy adjoint reactions.
+inline bool AdjointElectronMaterial::doesEnergyHaveLineEnergyReaction(
+                                                    const double energy ) const
+{
+  return false;
+}
+
+// Return the adjoint line energy weight factor
+/*! \details There are currently no line energy adjoint reactions. A weight
+ * of one will always be returned.
+ */
+inline double AdjointElectronMaterial::getAdjointLineEnergyWeightFactor(
+                                                    const double energy ) const
+{
+  return 1.0;
+}
+
+// Collide with an adjoint electron at a line energy
+//! \details There are currently no line energy adjoint reactions.
+inline void AdjointElectronMaterial::collideAtLineEnergy(
+                                            AdjointElectronState& adjoint_electron,
+                                            ParticleBank& bank ) const
+{ /* ... */}
 
 } // end MonteCarlo namespace
 

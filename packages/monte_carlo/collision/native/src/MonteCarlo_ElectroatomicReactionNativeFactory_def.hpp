@@ -27,14 +27,13 @@
 namespace MonteCarlo{
 
 // Create the coupled elastic scattering electroatomic reactions
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const CoupledElasticSamplingMethod& sampling_method,
-            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -57,14 +56,13 @@ void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 
   // Create the coupled elastic scattering distribution
   std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
-  ElasticFactory::createCoupledElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     distribution,
     energy_grid,
     cutoff_cross_section,
     total_cross_section,
     raw_electroatom_data,
     sampling_method,
-    correlated_sampling_mode_on,
     evaluation_tol );
 
   elastic_reaction.reset(
@@ -77,13 +75,12 @@ void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 }
 
 // Create the decoupled elastic scattering electroatomic reactions
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -117,11 +114,10 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 
   // Create the tabular cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     tabular_distribution,
     raw_electroatom_data,
     Utility::ElasticElectronTraits::mu_peak,
-    correlated_sampling_mode_on,
     evaluation_tol );
 
   // Create the analytical screened Rutherford elastic scattering distribution
@@ -142,14 +138,13 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 }
 
 // Create a hybrid elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -183,22 +178,20 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> cutoff_distribution;
 
   // Create the hybrid elastic scattering distribution
-  ElasticFactory::createHybridElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
             distribution,
             energy_grid,
             cutoff_cross_section,
             mp_cross_section,
             raw_electroatom_data,
             cutoff_angle_cosine,
-            correlated_sampling_mode_on,
             evaluation_tol );
 
   // Create the cutoff elastic scattering distribution
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
             cutoff_distribution,
             raw_electroatom_data,
             cutoff_angle_cosine,
-            correlated_sampling_mode_on,
             evaluation_tol );
 
   // Calculate the hybrid cross section
@@ -252,14 +245,13 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 }
 
 // Create the cutoff elastic scattering electroatomic reactions
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine,
-            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -280,11 +272,10 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 
   // Create the cutoff elastic scattering distribution using the cutoff angle cosine
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     distribution,
     raw_electroatom_data,
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 
   elastic_reaction.reset(
@@ -297,14 +288,13 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 }
 
 // Create the moment preserving elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine,
-            const bool correlated_sampling_mode_on,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -317,11 +307,10 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy>(
+  ElasticFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     distribution,
     raw_electroatom_data,
     cutoff_angle_cosine,
-    correlated_sampling_mode_on,
     evaluation_tol );
 
   // Moment preserving elastic cross section
@@ -345,15 +334,15 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename ReactionType, typename TwoDInterpPolicy, typename InterpPolicy>
+template<typename ReactionType,
+         typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Convert subshell number to enum
@@ -376,19 +365,17 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
       electroionization_subshell_distribution;
 
   // Create the electroionization subshell distribution
-  ElectroionizationFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy>(
+  ElectroionizationFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       subshell,
       raw_electroatom_data.getSubshellBindingEnergy( subshell ),
       electroionization_subshell_distribution,
-      correlated_sampling_mode_on,
-      unit_based_interpolation_mode_on,
       evaluation_tol );
 
 
   // Create the subshell electroelectric reaction
   electroionization_subshell_reaction.reset(
-      new ElectroionizationSubshellElectroatomicReaction<InterpPolicy>(
+      new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
@@ -398,15 +385,15 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename ReactionType, typename TwoDInterpPolicy, typename InterpPolicy>
+template<typename ReactionType,
+         typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
     electroionization_subshell_reactions,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   electroionization_subshell_reactions.clear();
@@ -420,14 +407,12 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 
   for( shell; shell != subshells.end(); ++shell )
   {
-    ThisType::createSubshellElectroionizationReaction<ElectroatomicReaction,TwoDInterpPolicy,InterpPolicy>(
+    ThisType::createSubshellElectroionizationReaction<ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
       *shell,
       electroionization_subshell_reaction,
-      correlated_sampling_mode_on,
-      unit_based_interpolation_mode_on,
       evaluation_tol );
 
     electroionization_subshell_reactions.push_back(
@@ -439,15 +424,15 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 }
 
 // Create a bremsstrahlung electroatomic reactions
-template<typename ReactionType, typename TwoDInterpPolicy, typename InterpPolicy>
+template<typename ReactionType,
+         typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy>
 void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -472,11 +457,9 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 
   if( photon_distribution_function = DIPOLE_DISTRIBUTION )
   {
-    BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
+    BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       bremsstrahlung_distribution,
-      correlated_sampling_mode_on,
-      unit_based_interpolation_mode_on,
       evaluation_tol );
 
   }
@@ -487,18 +470,16 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   }
   else if( photon_distribution_function = TWOBS_DISTRIBUTION )
   {
-    BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy>(
+    BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       raw_electroatom_data.getAtomicNumber(),
       bremsstrahlung_distribution,
-      correlated_sampling_mode_on,
-      unit_based_interpolation_mode_on,
       evaluation_tol );
   }
 
   // Create the bremsstrahlung reaction
   bremsstrahlung_reaction.reset(
-        new BremsstrahlungElectroatomicReaction<InterpPolicy>(
+        new BremsstrahlungElectroatomicReaction<Utility::LogLog>(
                         energy_grid,
                         bremsstrahlung_cross_section,
                         threshold_energy_index,

@@ -777,6 +777,23 @@ TEUCHOS_UNIT_TEST( Electroatom, collideSurvivalBias )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atom can be relaxed
+TEUCHOS_UNIT_TEST( Electroatom, relaxAtom )
+{
+  Teuchos::RCP<MonteCarlo::ElectronState> electron(
+                                          new MonteCarlo::ElectronState( 0 ) );
+  electron->setEnergy( exp( -1.214969212306E+01 ) );
+  electron->setDirection( 0.0, 0.0, 1.0 );
+  electron->setWeight( 1.0 );
+
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
+  MonteCarlo::ParticleBank bank;
+
+  ace_electroatom->relaxAtom( vacancy, *electron, bank );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a electroatom can be constructed from a core
 TEUCHOS_UNIT_TEST( Electroatom, core_constructor )
 {
@@ -929,9 +946,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         b_scattering_distribution;
 
     MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+        xss_data_extractor->extractAtomicNumber(),
         *xss_data_extractor,
-        b_scattering_distribution,
-        xss_data_extractor->extractAtomicNumber() );
+        b_scattering_distribution );
 
     // Create the scattering distributions
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
@@ -1056,16 +1073,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering function
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> b_energy_loss_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
             function_data ) );
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
                 data_container.getAtomicNumber(),
-                b_energy_loss_function,
-                true,
-                true ) );
+                b_energy_loss_function ) );
 
 
     // Create the bremsstrahlung scattering reaction

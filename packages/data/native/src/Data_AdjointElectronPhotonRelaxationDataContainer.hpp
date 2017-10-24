@@ -134,12 +134,6 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
 
-  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-  bool isElectronCorrelatedSamplingModeOn() const;
-
-  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-  bool isElectronUnitBasedInterpolationModeOn() const;
-
   //! Return the adjoint bremsstrahlung max energy nudge value
   double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
 
@@ -334,8 +328,11 @@ public:
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-  //! Return the elastic TwoDInterpPolicy
-  const std::string& getElasticTwoDInterpPolicy() const;
+  //! Return the electron TwoDInterpPolicy
+  const std::string& getElectronTwoDInterpPolicy() const;
+
+  //! Return the electron TwoDSamplingPolicy
+  const std::string& getElectronTwoDSamplingPolicy() const;
 
   //! Return the elastic angular energy grid
   const std::vector<double>& getAdjointElasticAngularEnergyGrid() const;
@@ -376,9 +373,6 @@ public:
   //! Return the ratio of the reduced cutoff cross section to the full cutoff
   const std::vector<double>& getReducedCutoffCrossSectionRatios() const;
 
-  //! Return the electroionization TwoDInterpPolicy
-  const std::string& getElectroionizationTwoDInterpPolicy() const;
-
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
                            const unsigned subshell ) const;
@@ -395,9 +389,6 @@ public:
   const std::vector<double>& getAdjointElectroionizationRecoilPDF(
                            const unsigned subshell,
                            const double incoming_adjoint_energy ) const;
-
-  //! Return the bremsstrahlung TwoDInterpPolicy
-  const std::string& getBremsstrahlungTwoDInterpPolicy() const;
 
   //! Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergyGrid() const;
@@ -580,14 +571,6 @@ protected:
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
   void setElectronTabularEvaluationTolerance(
     const double electron_tabular_evaluation_tol );
-
-  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
-  void setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on );
-
-  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-  void setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on );
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue(
@@ -829,8 +812,11 @@ protected:
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-  //! Set the elastic TwoDInterpPolicy
-  void setElasticTwoDInterpPolicy( const std::string& elastic_two_d_interp );
+  //! Set the electron TwoDInterpPolicy
+  void setElectronTwoDInterpPolicy( const std::string& electron_two_d_interp );
+
+  //! Set the electron TwoDSamplingPolicy
+  void setElectronTwoDSamplingPolicy( const std::string& electron_two_d_sampling );
 
   //! Set the elastic angular energy grid
   void setAdjointElasticAngularEnergyGrid(
@@ -876,10 +862,6 @@ protected:
   void setReducedCutoffCrossSectionRatios(
     const std::vector<double>& reduced_cutoff_cross_section_ratios );
 
-  //! Set the electroionization TwoDInterpPolicy
-  void setElectroionizationTwoDInterpPolicy(
-    const std::string& electroionization_two_d_interp );
-
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setAdjointElectroionizationEnergyGrid(
     const unsigned subshell,
@@ -908,10 +890,6 @@ protected:
     const unsigned subshell,
     const std::map<double,std::vector<double> >&
     adjoint_electroionization_recoil_pdf );
-
-  //! Set the bremsstrahlung TwoDInterpPolicy
-  void setBremsstrahlungTwoDInterpPolicy(
-    const std::string& bremsstrahlung_two_d_interp );
 
   //! Set the bremsstrahlung incoming electron energy grid for the scattering spectrum
   void setAdjointElectronBremsstrahlungEnergyGrid(
@@ -1120,12 +1098,6 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;
 
-  // The electron FullyTabularTwoDDistribution correlated sampling mode
-  bool d_electron_correlated_sampling_mode_on;
-
-  // The electron FullyTabularTwoDDistribution unit based interpolation mode
-  bool d_electron_unit_based_interpolation_mode_on;
-
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;
 
@@ -1300,8 +1272,11 @@ private:
 // ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-  // The elastic TwoDInterpPolicy
-  std::string d_elastic_two_d_interp;
+  // The electron TwoDInterpPolicy
+  std::string d_electron_two_d_interp;
+
+  // The electron TwoDSamplingPolicy
+  std::string d_electron_two_d_sampling;
 
   // The elastic angular energy grid (MeV)
   std::vector<double> d_adjoint_angular_energy_grid;
@@ -1321,9 +1296,6 @@ private:
   //! The ratio of the reduced cutoff cross section to the full cutoff
   std::vector<double> d_reduced_cutoff_cross_section_ratios;
 
-  // The electroionization TwoDInterpPolicy
-  std::string d_electroionization_two_d_interp;
-
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_adjoint_electroionization_energy_grid;
 
@@ -1334,9 +1306,6 @@ private:
   // The electroionization recoil pdf for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
     d_adjoint_electroionization_recoil_pdf;
-
-  // The bremsstrahlung TwoDInterpPolicy
-  std::string d_bremsstrahlung_two_d_interp;
 
   // The electron bremsstrahlung energy grid (MeV)
   std::vector<double> d_adjoint_electron_bremsstrahlung_energy_grid;

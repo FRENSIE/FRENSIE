@@ -344,10 +344,9 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_hybrid )
 
   // Set the bremsstrahlung photon angular distribution function
   properties->setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
-  properties->setUnitBasedInterpolationModeOff();
-  properties->setElasticTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties->setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  properties->setElectronTwoDSamplingPolicy( MonteCarlo::EXACT_SAMPLING );
   properties->setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
-  properties->setCorrelatedSamplingModeOn();
   properties->setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties->setElectronEvaluationTolerance( evaluation_tol );
   properties->setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
@@ -381,11 +380,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         elastic_distribution,
         *data_container,
         properties->getElasticCutoffAngleCosine(),
-        properties->isCorrelatedSamplingModeOn(),
         properties->getElectronEvaluationTolerance() );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >

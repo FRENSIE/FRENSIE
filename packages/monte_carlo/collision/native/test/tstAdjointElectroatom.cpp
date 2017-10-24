@@ -274,6 +274,23 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, collideSurvivalBias )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atom can be relaxed
+TEUCHOS_UNIT_TEST( AdjointElectroatom, relaxAtom )
+{
+  Teuchos::RCP<MonteCarlo::AdjointElectronState> electron(
+                                  new MonteCarlo::AdjointElectronState( 0 ) );
+  electron->setEnergy( exp( -1.214969212306E+01 ) );
+  electron->setDirection( 0.0, 0.0, 1.0 );
+  electron->setWeight( 1.0 );
+
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
+  MonteCarlo::ParticleBank bank;
+
+  electroatom->relaxAtom( vacancy, *electron, bank );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a electroatom can be constructed from a core
 TEUCHOS_UNIT_TEST( AdjointElectroatom, core_constructor )
 {
@@ -398,17 +415,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
         b_distribution;
 
-    bool correlated_sampling_mode_on = true;
-    bool unit_based_interpolation_mode_on = true;
     double evaluation_tol = 1e-7;
 
      // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungDistribution(
+    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         b_distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
 
     // Create the bremsstrahlung scattering reaction

@@ -123,7 +123,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  std::cout << "beta min: " << d_beta_min << std::endl;
+
   // Calculate the norm constant
   double norm_constant_error;
 

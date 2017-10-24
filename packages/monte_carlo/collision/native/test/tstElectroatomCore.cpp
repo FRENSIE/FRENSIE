@@ -396,9 +396,9 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
 
 MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+        xss_data_extractor->extractAtomicNumber(),
         *xss_data_extractor,
-        b_scattering_distribution,
-        xss_data_extractor->extractAtomicNumber() );
+        b_scattering_distribution );
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
@@ -509,22 +509,20 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
         data_container.getBremsstrahlungPhotonPDF( b_energy_grid[n] ) );
 
       function_data[n].second.reset(
-            new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
+        new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
                                                                  pdf ) );
     }
 
     // Create the scattering function
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> b_energy_loss_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
             function_data ) );
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
                 data_container.getAtomicNumber(),
-                b_energy_loss_function,
-                true,
-                true ) );
+                b_energy_loss_function ) );
 
 
     // Create the bremsstrahlung scattering reaction

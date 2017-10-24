@@ -31,8 +31,6 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
   TEST_ASSERT( properties.isAdjointElectroionizationModeOn() );
   TEST_ASSERT( properties.isAdjointBremsstrahlungModeOn() );
   TEST_ASSERT( properties.isAdjointAtomicExcitationModeOn() );
-  TEST_ASSERT( properties.isAdjointCorrelatedSamplingModeOn() );
-  TEST_ASSERT( properties.isAdjointUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );
@@ -141,38 +139,6 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
   properties.setAdjointElectronEvaluationTolerance( 1e-4 );
 
   TEST_EQUALITY( properties.getAdjointElectronEvaluationTolerance(), 1e-4 );
-}
-
-//---------------------------------------------------------------------------//
-// Test that adjoint correlated sampling mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
-                   setAdjointCorrelatedSamplingModeOffOn )
-{
-  MonteCarlo::SimulationAdjointElectronProperties properties;
-
-  properties.setAdjointCorrelatedSamplingModeOff();
-
-  TEST_ASSERT( !properties.isAdjointCorrelatedSamplingModeOn() );
-
-  properties.setAdjointCorrelatedSamplingModeOn();
-  
-  TEST_ASSERT( properties.isAdjointCorrelatedSamplingModeOn() );
-}
-
-//---------------------------------------------------------------------------//
-// Test that adjoint unit based interpolation mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
-                   setAdjointUnitBasedInterpolationModeOffOn )
-{
-  MonteCarlo::SimulationAdjointElectronProperties properties;
-
-  properties.setAdjointUnitBasedInterpolationModeOff();
-
-  TEST_ASSERT( !properties.isAdjointUnitBasedInterpolationModeOn() );
-
-  properties.setAdjointUnitBasedInterpolationModeOn();
-  
-  TEST_ASSERT( properties.isAdjointUnitBasedInterpolationModeOn() );
 }
 
 //---------------------------------------------------------------------------//

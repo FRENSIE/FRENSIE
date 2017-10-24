@@ -13,15 +13,13 @@
 namespace MonteCarlo{
 
 // Create a electroionization subshell distribution
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
 void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol )
 {
   // Get the energies for which knock-on sampling tables are given
@@ -32,7 +30,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
 
   // Create the subshell distribution
-  ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createSubshellDistribution<TwoDInterpPolicy>(
+  ThisType::createSubshellDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
                                 raw_electroionization_data,
                                 energy_grid,
                                 subshell,
@@ -42,13 +40,11 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy,
-            correlated_sampling_mode_on,
-            unit_based_interpolation_mode_on ) );
+            binding_energy ) );
 }
 
 // Create the subshell recoil distribution
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
 void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
@@ -84,7 +80,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
 
   // Create the scattering function
   subshell_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
             function_data,
             1e-6,
             evaluation_tol ) );

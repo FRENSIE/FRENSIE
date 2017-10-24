@@ -36,20 +36,11 @@ public:
   ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double binding_energy,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on );
+    const double binding_energy );
 
   //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
   { /* ... */ }
-
-  //! Set the sampling routine
-  void setSamplingRoutine( const bool correlated_sampling_mode_on,
-                           const bool unit_based_interpolation_mode_on );
-
-  //! Set the evaluation routines
-  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
 
   //! Return the binding energy
   double getBindingEnergy() const;
@@ -108,18 +99,6 @@ private:
 
   // Subshell binding energy
   double d_binding_energy;
-
-  // The sample function pointer
-  std::function<double ( const double )> d_sample_function;
-
-  // The evaluate function pointer
-  std::function<double ( const double, const double )> d_evaluate_function;
-
-  // The evaluatePDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_pdf_function;
-
-  // The evaluateCDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_cdf_function;
 };
 
 } // end MonteCarlo namespace

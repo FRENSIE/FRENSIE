@@ -47,7 +47,6 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   electroatom_aliases.insert( "H-Native" );
 
   properties->setAdjointElasticCutoffAngleCosine( 0.9 );
-  properties->setAdjointCorrelatedSamplingModeOn();
   properties->setAdjointElectronEvaluationTolerance( 1e-7 );
   properties->setAdjointElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
 
@@ -80,11 +79,10 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         cutoff_elastic_distribution,
         *data_container,
         properties->getAdjointElasticCutoffAngleCosine(),
-        properties->isAdjointCorrelatedSamplingModeOn(),
         properties->getAdjointElectronEvaluationTolerance() );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >

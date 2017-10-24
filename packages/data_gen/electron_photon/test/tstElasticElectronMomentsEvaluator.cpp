@@ -1224,7 +1224,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     coupled_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -1234,7 +1234,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         al_data->getElasticAngularEnergyGrid(),
         al_data->getAtomicNumber(),
         MonteCarlo::SIMPLIFIED_UNION,
-        true,
         tabular_evaluation_tol );
 
   // Create the moment evaluator

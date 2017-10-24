@@ -17,6 +17,7 @@
 #include "MonteCarlo_PhotonCollisionHandler.hpp"
 #include "MonteCarlo_AdjointPhotonCollisionHandler.hpp"
 #include "MonteCarlo_ElectronCollisionHandler.hpp"
+#include "MonteCarlo_AdjointElectronCollisionHandler.hpp"
 
 namespace MonteCarlo{
 
@@ -29,7 +30,8 @@ namespace MonteCarlo{
 class CollisionHandler : public NeutronCollisionHandler,
                          public PhotonCollisionHandler,
                          public AdjointPhotonCollisionHandler,
-                         public ElectronCollisionHandler
+                         public ElectronCollisionHandler,
+                         public AdjointElectronCollisionHandler
 {
 
 public:
@@ -75,6 +77,9 @@ public:
   //! Add a material to the collision handler (electron mode)
   using ElectronCollisionHandler::addMaterial;
 
+  //! Add a material to the collision handler (adjoint electron mode)
+  using AdjointElectronCollisionHandler::addMaterial;
+
   //! Check if a cell is void (as experienced by the given particle type)
   bool isCellVoid( const Geometry::ModuleTraits::InternalCellHandle cell,
                    const MonteCarlo::ParticleType particle_type );
@@ -91,6 +96,9 @@ public:
   //! Get the total macroscopic cross section of a material for electrons
   using ElectronCollisionHandler::getMacroscopicTotalCrossSection;
 
+ //! Get the total macroscopic cross section of a material for adjoint electrons
+  using AdjointElectronCollisionHandler::getMacroscopicTotalCrossSection;
+
   //! Get the total forward macroscopic cs of a material for neutrons
   using NeutronCollisionHandler::getMacroscopicTotalForwardCrossSection;
 
@@ -103,6 +111,9 @@ public:
   //! Get the total forward macroscopic cs of a material for adjoint electrons
   using ElectronCollisionHandler::getMacroscopicTotalForwardCrossSection;
 
+  //! Get the total forward macroscopic cs of a material for adjoint electrons
+  using AdjointElectronCollisionHandler::getMacroscopicTotalForwardCrossSection;
+
   //! Have a neutron collide with the material in a cell
   using NeutronCollisionHandler::collideWithCellMaterial;
 
@@ -114,6 +125,9 @@ public:
 
   //! Have an electron collide with the material in a cell
   using ElectronCollisionHandler::collideWithCellMaterial;
+
+  //! Have an adjoint electron collide with the material in a cell
+  using AdjointElectronCollisionHandler::collideWithCellMaterial;
 };
 
 } // end MonteCarlo namespace

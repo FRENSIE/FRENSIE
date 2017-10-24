@@ -23,8 +23,8 @@ SimulationElectronProperties::SimulationElectronProperties()
   : d_min_electron_energy( s_absolute_min_electron_energy ),
     d_max_electron_energy( 20.0 ),
     d_evaluation_tol( 1e-7 ),
-    d_correlated_sampling_mode_on( true ),
-    d_unit_based_interpolation_mode_on( true ),
+    d_electron_interpolation_type( LOGLOGLOG_INTERPOLATION ),
+    d_electron_sampling_type( CORRELATED_SAMPLING ),
     d_num_electron_hash_grid_bins( 1000 ),
     d_atomic_relaxation_mode_on( true ),
     d_elastic_mode_on( true ),
@@ -105,40 +105,32 @@ double SimulationElectronProperties::getElectronEvaluationTolerance() const
   return d_evaluation_tol;
 }
 
-// Set correlated sampling mode to off (on by default)
-void SimulationElectronProperties::setCorrelatedSamplingModeOff()
+// Set the electron 2D interpolation policy (LogLogLog by default)
+void SimulationElectronProperties::setElectronTwoDInterpPolicy(
+    TwoDInterpolationType interp_type )
 {
-  d_correlated_sampling_mode_on = false;
+  d_electron_interpolation_type = interp_type;
 }
 
-// Set correlated sampling mode to on (on by default)
-void SimulationElectronProperties::setCorrelatedSamplingModeOn()
+// Return the electron 2D interpolation policy
+TwoDInterpolationType
+SimulationElectronProperties::getElectronTwoDInterpPolicy() const
 {
-  d_correlated_sampling_mode_on = true;
+  return d_electron_interpolation_type;
 }
 
-// Return if correlated sampling mode is on
-bool SimulationElectronProperties::isCorrelatedSamplingModeOn() const
+// Set the electron 2D sampling policy (LogLogLog by default)
+void SimulationElectronProperties::setElectronTwoDSamplingPolicy(
+    TwoDSamplingType sampling_type )
 {
-  return d_correlated_sampling_mode_on;
+  d_electron_sampling_type = sampling_type;
 }
 
-// Set unit based interpolation mode to off (on by default)
-void SimulationElectronProperties::setUnitBasedInterpolationModeOff()
+// Return the electron 2D sampling policy
+TwoDSamplingType
+SimulationElectronProperties::getElectronTwoDSamplingPolicy() const
 {
-  d_unit_based_interpolation_mode_on = false;
-}
-
-// Set unit based interpolation mode to on (on by default)
-void SimulationElectronProperties::setUnitBasedInterpolationModeOn()
-{
-  d_unit_based_interpolation_mode_on = true;
-}
-
-// Return if unit based interpolation mode is on
-bool SimulationElectronProperties::isUnitBasedInterpolationModeOn() const
-{
-  return d_unit_based_interpolation_mode_on;
+  return d_electron_sampling_type;
 }
 
 // Set the number of electron hash grid bins
@@ -191,20 +183,6 @@ void SimulationElectronProperties::setElasticModeOn()
 bool SimulationElectronProperties::isElasticModeOn() const
 {
   return d_elastic_mode_on;
-}
-
-// Set the elastic 2D interpolation policy (LogLogLog by default)
-void SimulationElectronProperties::setElasticTwoDInterpPolicy(
-    TwoDInterpolationType interp_type )
-{
-  d_elastic_interpolation_type = interp_type;
-}
-
-// Return the elastic 2D interpolation policy
-TwoDInterpolationType
-SimulationElectronProperties::getElasticTwoDInterpPolicy() const
-{
-  return d_elastic_interpolation_type;
 }
 
 // Set the elastic distribution mode ( Decoupled by default )
@@ -266,20 +244,6 @@ bool SimulationElectronProperties::isElectroionizationModeOn() const
   return d_electroionization_mode_on;
 }
 
-// Set the electroionization 2D interpolation policy (LogLogLog by default)
-void SimulationElectronProperties::setElectroionizationTwoDInterpPolicy(
-    TwoDInterpolationType interp_type )
-{
-  d_electroionization_interpolation_type = interp_type;
-}
-
-// Return the electroionization 2D interpolation policy
-TwoDInterpolationType
-SimulationElectronProperties::getElectroionizationTwoDInterpPolicy() const
-{
-  return d_electroionization_interpolation_type;
-}
-
 // Set bremsstrahlung mode to off (on by default)
 void SimulationElectronProperties::setBremsstrahlungModeOff()
 {
@@ -296,20 +260,6 @@ void SimulationElectronProperties::setBremsstrahlungModeOn()
 bool SimulationElectronProperties::isBremsstrahlungModeOn() const
 {
   return d_bremsstrahlung_mode_on;
-}
-
-// Set the bremsstrahlung 2D interpolation policy (LogLogLog by default)
-void SimulationElectronProperties::setBremsstrahlungTwoDInterpPolicy(
-    TwoDInterpolationType interp_type )
-{
-  d_bremsstrahlung_interpolation_type = interp_type;
-}
-
-// Return the bremsstrahlung 2D interpolation policy
-TwoDInterpolationType
-SimulationElectronProperties::getBremsstrahlungTwoDInterpPolicy() const
-{
-  return d_bremsstrahlung_interpolation_type;
 }
 
 // Set the bremsstrahlung photon angular distribution function (2BS by default)

@@ -71,7 +71,7 @@ convertStringToTwoDInterpolationType( const std::string raw_policy )
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: elastic electron distribution "
+                     "Error: the 2D interpolation type "
                      << raw_policy <<
                      " is not currently supported!" );
   }

@@ -88,24 +88,6 @@ public:
   //! Return the adjoint electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
   double getAdjointElectronEvaluationTolerance() const;
 
-  //! Set adjoint correlated sampling mode to off (on by default)
-  void setAdjointCorrelatedSamplingModeOff();
-
-  //! Set adjoint correlated sampling mode to on (on by default)
-  void setAdjointCorrelatedSamplingModeOn();
-
-  //! Return if adjoint correlated sampling mode is on
-  bool isAdjointCorrelatedSamplingModeOn() const;
-
-  //! Set adjoint unit based interpolation mode to off (on by default)
-  void setAdjointUnitBasedInterpolationModeOff();
-
-  //! Set adjoint unit based interpolation mode to on (on by default)
-  void setAdjointUnitBasedInterpolationModeOn();
-
-  //! Return if adjoint unit based interpolation mode is on
-  bool isAdjointUnitBasedInterpolationModeOn() const;
-
   //! Set the adjoint bremsstrahlung photon angular distribution function (2BS by default)
   void setAdjointBremsstrahlungAngularDistributionFunction(
                          const BremsstrahlungAngularDistributionType function );
@@ -168,14 +150,6 @@ private:
 
   // The adjoint electron FullyTabularTwoDDistribution evaluation tolerance
   double d_adjoint_evaluation_tol;
-
-  /* The adjoint correlated sampling mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_adjoint_correlated_sampling_mode_on;
-
-  /* The adjoint unit based interpolation mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_adjoint_unit_based_interpolation_mode_on;
 
   // The adjoint bremsstrahlung photon angular distribution function (default is 2BS)
   BremsstrahlungAngularDistributionType

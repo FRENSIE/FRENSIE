@@ -124,18 +124,6 @@ double ElectronPhotonRelaxationDataContainer::getElectronTabularEvaluationTolera
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-bool ElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
-{
-  return d_electron_correlated_sampling_mode_on;
-}
-
-// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-bool ElectronPhotonRelaxationDataContainer::isElectronUnitBasedInterpolationModeOn() const
-{
-  return d_electron_unit_based_interpolation_mode_on;
-}
-
 // Return the union energy grid convergence tolerance
 double
 ElectronPhotonRelaxationDataContainer::getGridConvergenceTolerance() const
@@ -506,11 +494,18 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getImpulseAppr
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-// Return the elastic TwoDInterpPolicy
+// Return the electron TwoDInterpPolicy
 const std::string&
-ElectronPhotonRelaxationDataContainer::getElasticTwoDInterpPolicy() const
+ElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() const
 {
-  return d_elastic_two_d_interp;
+  return d_electron_two_d_interp;
+}
+
+// Return the electron TwoDSamplingPolicy
+const std::string&
+ElectronPhotonRelaxationDataContainer::getElectronTwoDSamplingPolicy() const
+{
+  return d_electron_two_d_sampling;
 }
 
 // Return the elastic angular energy grid
@@ -638,13 +633,6 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSectionReduction(
   return d_moment_preserving_cross_section_reductions;
 }
 
-// Return the electroionization TwoDInterpPolicy
-const std::string&
-ElectronPhotonRelaxationDataContainer::getElectroionizationTwoDInterpPolicy() const
-{
-  return d_electroionization_two_d_interp;
-}
-
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
@@ -699,13 +687,6 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
             d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incoming_energy )->second;
-}
-
-// Return the bremsstrahlung TwoDInterpPolicy
-const std::string&
-ElectronPhotonRelaxationDataContainer::getBremsstrahlungTwoDInterpPolicy() const
-{
-  return d_bremsstrahlung_two_d_interp;
 }
 
 // Return the bremsstrahlung energy grid
@@ -1014,21 +995,6 @@ void ElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationToleranc
   testPrecondition( electron_tabular_evaluation_tol > 0.0 );
 
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
-}
-
-// Set the electron FullyTabularTwoDDistribution correlated sampling mode
-void ElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on )
-{
-  d_electron_correlated_sampling_mode_on = electron_correlated_sampling_mode_on;
-}
-
-// Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-void ElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on )
-{
-  d_electron_unit_based_interpolation_mode_on =
-    electron_unit_based_interpolation_mode_on;
 }
 
 // Set the union energy grid convergence tolerance
@@ -1570,14 +1536,24 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-// Set the elastic TwoDInterpPolicy
-void ElectronPhotonRelaxationDataContainer::setElasticTwoDInterpPolicy(
-    const std::string& elastic_two_d_interp )
+// Set the electron TwoDInterpPolicy
+void ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
+    const std::string& electron_two_d_interp )
 {
   // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( elastic_two_d_interp ) );
+  testPrecondition( isTwoDInterpPolicyValid( electron_two_d_interp ) );
 
-  d_elastic_two_d_interp = elastic_two_d_interp;
+  d_electron_two_d_interp = electron_two_d_interp;
+}
+
+// Set the electron TwoDSamplingPolicy
+void ElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy(
+    const std::string& electron_two_d_sampling )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDSamplingPolicyValid( electron_two_d_sampling ) );
+
+  d_electron_two_d_sampling = electron_two_d_sampling;
 }
 
 // Set the elastic angular energy grid
@@ -1741,16 +1717,6 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionReduc
   d_moment_preserving_cross_section_reductions = cross_section_reduction;
 }
 
-// Set the electroionization TwoDInterpPolicy
-void ElectronPhotonRelaxationDataContainer::setElectroionizationTwoDInterpPolicy(
-    const std::string& electroionization_two_d_interp )
-{
-  // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( electroionization_two_d_interp ) );
-
-  d_electroionization_two_d_interp = electroionization_two_d_interp;
-}
-
 // Set the electroionization energy grid for a subshell
 void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
             const unsigned subshell,
@@ -1831,16 +1797,6 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF(
 
   d_electroionization_recoil_pdf[subshell] =
     electroionization_recoil_pdf;
-}
-
-// Set the bremsstrahlung TwoDInterpPolicy
-void ElectronPhotonRelaxationDataContainer::setBremsstrahlungTwoDInterpPolicy(
-    const std::string& bremsstrahlung_two_d_interp )
-{
-  // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( bremsstrahlung_two_d_interp ) );
-
-  d_bremsstrahlung_two_d_interp = bremsstrahlung_two_d_interp;
 }
 
 // Set the bremsstrahlung energy grid

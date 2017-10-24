@@ -207,18 +207,6 @@ double AdjointElectronPhotonRelaxationDataContainer::getElectronTabularEvaluatio
   return d_electron_tabular_evaluation_tol;
 }
 
-// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-bool AdjointElectronPhotonRelaxationDataContainer::isElectronCorrelatedSamplingModeOn() const
-{
-  return d_electron_correlated_sampling_mode_on;
-}
-
-// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-bool AdjointElectronPhotonRelaxationDataContainer::isElectronUnitBasedInterpolationModeOn() const
-{
-  return d_electron_unit_based_interpolation_mode_on;
-}
-
 // Return the adjoint bremsstrahlung max energy nudge value
 double AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
 {
@@ -627,14 +615,24 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointBremsstrahlungPhotonCros
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-// Return the elastic TwoDInterpPolicy
+// Return the electron TwoDInterpPolicy
 /*! The TwoDInterpPolicy used on the forward cross sections to generate the
  *  adjoint distribution data.
  */
 const std::string&
-AdjointElectronPhotonRelaxationDataContainer::getElasticTwoDInterpPolicy() const
+AdjointElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() const
 {
-  return d_elastic_two_d_interp;
+  return d_electron_two_d_interp;
+}
+
+// Return the electron TwoDSamplingPolicy
+/*! The TwoDSamplingPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+const std::string&
+AdjointElectronPhotonRelaxationDataContainer::getElectronTwoDSamplingPolicy() const
+{
+  return d_electron_two_d_sampling;
 }
 
 // Return the elastic angular energy grid
@@ -733,16 +731,6 @@ AdjointElectronPhotonRelaxationDataContainer::getReducedCutoffCrossSectionRatios
   return d_reduced_cutoff_cross_section_ratios;
 }
 
-// Return the electroionization TwoDInterpPolicy
-/*! The TwoDInterpPolicy used on the forward cross sections to generate the
- *  adjoint distribution data.
- */
-const std::string&
-AdjointElectronPhotonRelaxationDataContainer::getElectroionizationTwoDInterpPolicy() const
-{
-  return d_electroionization_two_d_interp;
-}
-
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyGrid(
@@ -807,16 +795,6 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilP
   }
 
   return d_adjoint_electroionization_recoil_pdf.find( subshell )->second.find( incoming_adjoint_energy )->second;
-}
-
-// Return the bremsstrahlung TwoDInterpPolicy
-/*! The TwoDInterpPolicy used on the forward cross sections to generate the
- *  adjoint distribution data.
- */
-const std::string&
-AdjointElectronPhotonRelaxationDataContainer::getBremsstrahlungTwoDInterpPolicy() const
-{
-  return d_bremsstrahlung_two_d_interp;
 }
 
 // Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
@@ -1275,21 +1253,6 @@ void AdjointElectronPhotonRelaxationDataContainer::setElectronTabularEvaluationT
   testPrecondition( electron_tabular_evaluation_tol > 0.0 );
 
   d_electron_tabular_evaluation_tol = electron_tabular_evaluation_tol;
-}
-
-// Set the electron FullyTabularTwoDDistribution correlated sampling mode
-void AdjointElectronPhotonRelaxationDataContainer::setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on )
-{
-  d_electron_correlated_sampling_mode_on = electron_correlated_sampling_mode_on;
-}
-
-// Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-void AdjointElectronPhotonRelaxationDataContainer::setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on )
-{
-  d_electron_unit_based_interpolation_mode_on =
-                                    electron_unit_based_interpolation_mode_on;
 }
 
 // Set the adjoint bremsstrahlung max energy nudge value
@@ -1969,17 +1932,30 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungPhoto
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-// Set the elastic TwoDInterpPolicy
+// Set the electron TwoDInterpPolicy
 /*! The TwoDInterpPolicy used on the forward cross sections to generate the
  *  adjoint distribution data.
  */
-void AdjointElectronPhotonRelaxationDataContainer::setElasticTwoDInterpPolicy(
-    const std::string& elastic_two_d_interp )
+void AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
+    const std::string& electron_two_d_interp )
 {
   // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( elastic_two_d_interp ) );
+  testPrecondition( isTwoDInterpPolicyValid( electron_two_d_interp ) );
 
-  d_elastic_two_d_interp = elastic_two_d_interp;
+  d_electron_two_d_interp = electron_two_d_interp;
+}
+
+// Set the electron TwoDSamplingPolicy
+/*! The TwoDSamplingPolicy used on the forward cross sections to generate the
+ *  adjoint distribution data.
+ */
+void AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy(
+    const std::string& electron_two_d_sampling )
+{
+  // Make sure the string is valid
+  testPrecondition( isTwoDSamplingPolicyValid( electron_two_d_sampling ) );
+
+  d_electron_two_d_sampling = electron_two_d_sampling;
 }
 
 // Set the elastic angular energy grid
@@ -2115,19 +2091,6 @@ void AdjointElectronPhotonRelaxationDataContainer::setReducedCutoffCrossSectionR
   d_reduced_cutoff_cross_section_ratios = reduced_cutoff_cross_section_ratios;
 }
 
-// Set the electroionization TwoDInterpPolicy
-/*! The TwoDInterpPolicy used on the forward cross sections to generate the
- *  adjoint distribution data.
- */
-void AdjointElectronPhotonRelaxationDataContainer::setElectroionizationTwoDInterpPolicy(
-    const std::string& electroionization_two_d_interp )
-{
-  // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( electroionization_two_d_interp ) );
-
-  d_electroionization_two_d_interp = electroionization_two_d_interp;
-}
-
 // Set the electroionization energy grid for a subshell
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationEnergyGrid(
             const unsigned subshell,
@@ -2215,19 +2178,6 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationRe
 
   d_adjoint_electroionization_recoil_pdf[subshell] =
     adjoint_electroionization_recoil_pdf;
-}
-
-// Set the bremsstrahlung TwoDInterpPolicy
-/*! The TwoDInterpPolicy used on the forward cross sections to generate the
- *  adjoint distribution data.
- */
-void AdjointElectronPhotonRelaxationDataContainer::setBremsstrahlungTwoDInterpPolicy(
-    const std::string& bremsstrahlung_two_d_interp )
-{
-  // Make sure the string is valid
-  testPrecondition( isTwoDInterpPolicyValid( bremsstrahlung_two_d_interp ) );
-
-  d_bremsstrahlung_two_d_interp = bremsstrahlung_two_d_interp;
 }
 
 // Set the bremsstrahlung incoming electron energy grid for the scattering spectrum

@@ -13,6 +13,7 @@
 #include "Utility_PartiallyTabularTwoDDistribution.hpp"
 #include "Utility_FullyTabularTwoDDistribution.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_TwoDSamplingPolicy.hpp"
 
 namespace Utility{
 
@@ -23,10 +24,13 @@ namespace Utility{
  * and differ only in the OneDDistribution base class that they operate on
  * (either the OneDDistribution or the TabularOneDDistribution respectively).
  */
-template<typename TwoDInterpPolicy, typename Distribution>
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
 class UnitAwareInterpolatedTabularTwoDDistributionImplBase : public Distribution{
 
 protected:
+
+  // The typedef for this type
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution> ThisType;
 
   // The parent distribution type
   typedef Distribution ParentType;
@@ -66,10 +70,13 @@ public:
   //! The distribution type
   typedef typename ParentType::DistributionType DistributionType;
 
+  using ParentType::sampleSecondaryConditional;
+  using ParentType::evaluateSecondaryConditionalPDF;
+
   //! Constructor
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
-                                        const DistributionType& distribution,
-                                        const double fuzzy_boundary_tol = 1e-3 );
+                                      const DistributionType& distribution,
+                                      const double fuzzy_boundary_tol = 1e-3 );
   
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -84,19 +91,63 @@ public:
   virtual ~UnitAwareInterpolatedTabularTwoDDistributionImplBase()
   { /* ... */ }
 
-  //! Evaluate the distribution using unit based interpolation
-  DepQuantity evaluate(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+  //! Set the evaluation tolerances
+  void setEvaluationTolerances( const double& fuzzy_boundary_tol,
+                                const double& realtive_error_tol,
+                                const double& error_tol );
 
-  //! Evaluate the secondary conditional PDF using unit based interpolation
+  //! Return the evaluation fuzzy bound tolerance
+  double getFuzzyBoundTolerance() const;
+
+  //! Return the evaluation relative error tolerance
+  double getRelativeErrorTolerance() const;
+
+  //! Return the evaluation error tolerance
+  double getErrorTolerance() const;
+
+  //! Evaluate the distribution
+  DepQuantity evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const bool use_direct_eval_method = true ) const;
+
+  //! Evaluate the distribution
+  DepQuantity evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method = true ) const;
+
+  //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const bool use_direct_eval_method = true ) const;
+
+  //! Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            const bool use_direct_eval_method = true ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
                     const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF
+  SecondaryIndepQuantity sampleSecondaryConditional(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
@@ -120,18 +171,34 @@ protected:
   UnitAwareInterpolatedTabularTwoDDistributionImplBase()
   { /* ... */ }
 
-  //! Evaluate the distribution using the desired evaluation method and unit based interpolation
+  //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,
            typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        const SecondaryIndepQuantity secondary_indep_var_value,
-                        EvaluationMethod evaluate,
-                        const ReturnType below_lower_bound_return =
-                        QuantityTraits<ReturnType>::zero(),
-                        const ReturnType above_upper_bound_return =
-                        QuantityTraits<ReturnType>::zero() ) const;
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const SecondaryIndepQuantity secondary_indep_var_value,
+    EvaluationMethod evaluate,
+    const bool use_direct_eval_method = true,
+    const ReturnType below_lower_bound_return = QuantityTraits<ReturnType>::zero(),
+    const ReturnType above_upper_bound_return = QuantityTraits<ReturnType>::zero() ) const;
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
+           typename EvaluationMethod>
+  ReturnType evaluateImpl(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const SecondaryIndepQuantity secondary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+      min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+      max_secondary_indep_var_functor,
+    EvaluationMethod evaluate,
+    const bool use_direct_eval_method = true,
+    const ReturnType below_lower_bound_return = QuantityTraits<ReturnType>::zero(),
+    const ReturnType above_upper_bound_return = QuantityTraits<ReturnType>::zero(),
+    unsigned max_number_of_iterations = 500 ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
@@ -143,16 +210,31 @@ protected:
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
-  SecondaryIndepQuantity sampleImpl(
-                        const PrimaryIndepQuantity primary_indep_var_value,
-                        SampleFunctor sample_functor ) const;
+  SecondaryIndepQuantity sampleDetailedImpl(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            SampleFunctor sample_functor,
+            SecondaryIndepQuantity& raw_sample,
+            unsigned& primary_bin_index,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
-  //! Sample the bin boundary that will be used for stochastic sampling
-  typename DistributionType::const_iterator
-  sampleBinBoundary(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const typename DistributionType::const_iterator lower_bin_boundary,
-    const typename DistributionType::const_iterator upper_bin_boundary ) const;
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleImpl(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            SampleFunctor sample_functor ) const;
+
+  //! Sample from the distribution using the desired sampling functor
+  template<typename SampleFunctor>
+  SecondaryIndepQuantity sampleImpl(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            SampleFunctor sample_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
 private:
 
@@ -166,7 +248,14 @@ private:
                  const Array<std::shared_ptr<const BaseOneDDistributionType> >&
                  secondary_distributions ) const;
 
+  // The evaluation fuzzy boundary tol
   double d_fuzzy_boundary_tol;
+
+  // The evaluation relative error tol
+  double d_relative_error_tol;
+
+  // The evaluation error tol
+  double d_error_tol;
 };
 
 } // end Utility namespace

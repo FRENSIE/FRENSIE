@@ -82,7 +82,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler, getMaterial )
 TEUCHOS_UNIT_TEST( ElectronCollisionHandler, getMacroscopicTotalCrossSection )
 {
   MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.00000e-05 );
+  electron.setEnergy( 1e-5 );
   electron.setCell( 1 );
 
   double cross_section =
@@ -92,7 +92,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler, getMacroscopicTotalCrossSection )
                           7.641204418336E+06,
                           1e-12 );
 
-  electron.setEnergy( 1.00000e+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( electron );
@@ -102,7 +102,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler, getMacroscopicTotalCrossSection )
                           1e-12 );
 
   electron.setCell( 2 );
-  electron.setEnergy( 1.00000e-05 );
+  electron.setEnergy( 1e-5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( electron );
@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler, getMacroscopicTotalCrossSection )
                           7.641204418336E+06,
                           1e-12 );
 
-  electron.setEnergy( 1.00000e+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( electron );
@@ -121,7 +121,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler, getMacroscopicTotalCrossSection )
                           1e-12 );
 
   electron.setCell( 3 );
-  electron.setEnergy( 1.00000e-05 );
+  electron.setEnergy( 1e-5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( electron );
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler, getMacroscopicTotalCrossSection )
                           7.641204418336E+06,
                           1e-12 );
 
-  electron.setEnergy( 1.00000e+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( electron );
@@ -147,7 +147,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                    getMacroscopicTotalForwardCrossSection )
 {
   MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.00000e-05 );
+  electron.setEnergy( 1e-5 );
   electron.setCell( 1 );
 
   double cross_section =
@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                           7.641204418336E+06,
                           1e-12 );
 
-  electron.setEnergy( 1.00000e+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( electron );
@@ -167,7 +167,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                           1e-12 );
 
   electron.setCell( 2 );
-  electron.setEnergy( 1.00000e-05 );
+  electron.setEnergy( 1e-5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( electron );
@@ -176,7 +176,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                           7.641204418336E+06,
                           1e-12 );
 
-  electron.setEnergy( 1.00000e+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( electron );
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                           1e-12 );
 
   electron.setCell( 3 );
-  electron.setEnergy( 1.00000e-05 );
+  electron.setEnergy( 1e-5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( electron );
@@ -195,7 +195,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                           7.641204418336E+06,
                           1e-12 );
 
-  electron.setEnergy( 1.00000e+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( electron );
@@ -212,7 +212,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
                    getMacroscopicReactionCrossSection )
 {
   MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.00000E-05 );
+  electron.setEnergy( 1e-5 );
   electron.setCell( 1 );
 
   double cross_section =
@@ -222,7 +222,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
   TEST_FLOATING_EQUALITY( cross_section, 2.545329003693E+04, 1e-12 );
   
-  electron.setEnergy( 1.00000E+05 );
+  electron.setEnergy( 1e5 );
   
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
@@ -231,7 +231,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
   TEST_FLOATING_EQUALITY( cross_section, 4.588134602166E+03, 1e-12 );
   
-  electron.setEnergy( 1.00000E-05 );
+  electron.setEnergy( 1e-5 );
   
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
@@ -240,7 +240,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
   TEST_FLOATING_EQUALITY( cross_section, 1.415377951846E+01, 1e-12 );
   
-  electron.setEnergy( 1.00000E+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
@@ -249,16 +249,16 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
   TEST_FLOATING_EQUALITY( cross_section, 5.679677054824E+00, 1e-12 );
   
-  electron.setEnergy( 1.00000E-05 );
+  electron.setEnergy( 1e-5 );
   
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
 		   electron,
 		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
   
-  electron.setEnergy( 1.00000E+05 );
+  electron.setEnergy( 1e5 );
   
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
@@ -267,7 +267,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
   TEST_FLOATING_EQUALITY( cross_section, 1.060615028974E-01, 1e-12 );
   
-  electron.setEnergy( 1.00000E-05 );
+  electron.setEnergy( 1e-5 );
 
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
@@ -276,7 +276,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
   TEST_FLOATING_EQUALITY( cross_section, 3.096230095899E+05, 1e-12 );
   
-  electron.setEnergy( 1.00000E+05 );
+  electron.setEnergy( 1e5 );
 
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
@@ -285,9 +285,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 
   TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
   
-  double energy = 1.00000e-05;
-
-  electron.setEnergy( energy );
+  electron.setEnergy( 1e-5 );
 
   cross_section =
      collision_handler->getMacroscopicReactionCrossSection(
@@ -297,11 +295,8 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
   TEST_FLOATING_EQUALITY( cross_section,
                           7.234825686582E+06,
                           1e-12 );
-
-
-  energy = 1.00000e+05;
   
-  electron.setEnergy( energy );
+  electron.setEnergy( 1e5 );
   
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(

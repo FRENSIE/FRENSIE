@@ -21,7 +21,7 @@ namespace MonteCarlo{
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-                                                    scattering_distribution,
+      scattering_distribution,
     const double evaluation_tol )
 {
   // Get the number of tables
@@ -36,9 +36,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
                               evaluation_tol );
 
   scattering_distribution.reset(
-   new BremsstrahlungElectronScatteringDistribution( scattering_function,
-                                                     true,
-                                                     false ) );
+   new BremsstrahlungElectronScatteringDistribution( scattering_function ) );
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
@@ -46,7 +44,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
     const int atomic_number,
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-                                                        scattering_distribution,
+      scattering_distribution,
     const double evaluation_tol )
 {
   // Get the number of tables
@@ -62,9 +60,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 
   scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( atomic_number,
-                                                     scattering_function,
-                                                     true,
-                                                     false ) );
+                                                     scattering_function ) );
 }
 
 // Create the energy loss function
@@ -116,7 +112,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
 
     // Create the scattering function with LogLogLog interp (eprdata14)
     scattering_function.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Exact>(
             function_data,
             1e-6,
             evaluation_tol ) );
@@ -136,7 +132,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
 
     // Create the scattering function with LinLinLin interp (eprdata12)
     scattering_function.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
             function_data,
             1e-6,
             evaluation_tol ) );

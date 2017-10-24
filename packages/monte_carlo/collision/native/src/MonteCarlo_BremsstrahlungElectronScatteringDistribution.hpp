@@ -30,27 +30,16 @@ public:
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on );
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on );
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution );
 
   //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
   { /* ... */ }
-
-  //! Set the sampling routine
-  void setSamplingRoutine( const bool correlated_sampling_mode_on,
-                           const bool unit_based_interpolation_mode_on );
-
-  //! Set the evaluation routines
-  void setEvaluationRoutines( const bool unit_based_interpolation_mode_on );
 
   //! Return the min incoming energy
   double getMinEnergy() const;
@@ -111,19 +100,6 @@ private:
   // The outgoing angle function pointer
   std::function<double ( const double, const double )>
                                         d_angular_distribution_func;
-
-  // The sample function pointer
-  std::function<double ( const double )> d_sample_function;
-
-  // The evaluate function pointer
-  std::function<double ( const double, const double )> d_evaluate_function;
-
-  // The evaluatePDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_pdf_function;
-
-  // The evaluateCDF function pointer
-  std::function<double ( const double, const double )> d_evaluate_cdf_function;
-
 };
 
 } // end MonteCarlo namespace

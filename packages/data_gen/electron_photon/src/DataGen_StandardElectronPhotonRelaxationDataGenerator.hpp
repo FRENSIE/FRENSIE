@@ -22,6 +22,7 @@
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -109,23 +110,11 @@ public:
   //! Return the electron TwoDInterpPolicy
   MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set electron FullyTabularTwoDDistribution correlated sampling mode to off (on by default)
-  void setElectronCorrelatedSamplingModeOff();
+  //! Set the electron TwoDSamplingPolicy (LogLogLog by default)
+  void setElectronTwoDSamplingPolicy( MonteCarlo::TwoDSamplingType sampling );
 
-  //! Set electron FullyTabularTwoDDistribution correlated sampling mode to on (on by default)
-  void setElectronCorrelatedSamplingModeOn();
-
-  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-  bool isElectronCorrelatedSamplingModeOn() const;
-
-  //! Set electron FullyTabularTwoDDistribution unit based interpolation mode to off (on by default)
-  void setElectronUnitBasedInterpolationModeOff();
-
-  //! Set electron FullyTabularTwoDDistribution unit based interpolation mode to on (on by default)
-  void setElectronUnitBasedInterpolationModeOn();
-
-  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-  bool isElectronUnitBasedInterpolationModeOn() const;
+  //! Return the electron TwoDSamplingPolicy
+  MonteCarlo::TwoDSamplingType getElectronTwoDSamplingPolicy() const;
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -375,12 +364,8 @@ private:
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
-  // The electron FullyTabularTwoDDistribution correlated sampling mode
-  bool d_correlated_sampling_mode_on;
-
-  // The electron FullyTabularTwoDDistribution unit based interpolation mode
-  bool d_unit_based_interpolation_mode_on;
-
+  // The electron TwoDSamplingPolicy (LogLogLog - default)
+  MonteCarlo::TwoDSamplingType d_two_d_sampling;
 };
 
 // The if a value is not equal to zero

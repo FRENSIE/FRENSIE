@@ -271,10 +271,7 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
   weights.resize( node.size() );
 
   for ( int i = 0; i < node.size(); ++i )
-  {/*
-std::cout << std::endl << "i = \t" << i << std::endl;
-std::cout << std::setprecision(20) << "node[i] = \t" << node[i] << std::endl;
-std::cout << std::setprecision(20) << "weight[i] = \t" << weight[i] << std::endl;*/
+  {
     nodes[i] = node[i].convert_to<double>();
     weights[i] = weight[i].convert_to<long double>();
   }

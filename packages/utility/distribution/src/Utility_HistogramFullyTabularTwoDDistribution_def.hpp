@@ -22,51 +22,14 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const bool use_direct_eval_method ) const
 {
   return this->template evaluateImpl<double>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluateCDF );
-}
-
-// Evaluate the secondary conditional CDF
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-inline double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDFInBoundaries(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value,
-                 const SecondaryIndepQuantity min_secondary_indep_var,
-                 const SecondaryIndepQuantity max_secondary_indep_var ) const
-{
-  return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
-                                                secondary_indep_var_value );
-}
-
-
-// Evaluate the secondary conditional CDF
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-inline double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::correlatedEvaluateSecondaryConditionalCDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
-                                                secondary_indep_var_value );
-}
-// Evaluate the secondary conditional CDF
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-inline double UnitAwareHistogramFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDFExact(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
-                                                secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF and the index

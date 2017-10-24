@@ -36,22 +36,18 @@ public:
         full_cutoff_elastic_distribution,
         const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         partial_cutoff_elastic_distribution,
-        const double cutoff_angle_cosine,
-        const bool correlated_sampling_mode_on )
+        const double cutoff_angle_cosine )
     : MonteCarlo::CutoffElasticElectronScatteringDistribution(
         full_cutoff_elastic_distribution,
         partial_cutoff_elastic_distribution,
-        cutoff_angle_cosine,
-        correlated_sampling_mode_on )
+        cutoff_angle_cosine )
   { /* ... */ }
 
   TestCutoffElasticElectronScatteringDistribution(
         const std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
-        full_cutoff_elastic_distribution,
-        const bool correlated_sampling_mode_on )
+        full_cutoff_elastic_distribution )
     : MonteCarlo::CutoffElasticElectronScatteringDistribution(
-        full_cutoff_elastic_distribution,
-        correlated_sampling_mode_on )
+        full_cutoff_elastic_distribution )
   { /* ... */ }
 
   ~TestCutoffElasticElectronScatteringDistribution()
@@ -666,8 +662,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  bool correlated_sampling_mode_on = true;
-
   // Create ACE distribution
   {
     // Create a file handler and data extractor
@@ -720,19 +714,17 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering distribution
     ace_scattering_distribution.reset(
-        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
                 ace_data ) );
 
     // Create the distributions
     ace_elastic_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-                ace_scattering_distribution,
-                correlated_sampling_mode_on ) );
+                ace_scattering_distribution ) );
 
     test_ace_elastic_distribution.reset(
         new TestCutoffElasticElectronScatteringDistribution(
-                ace_scattering_distribution,
-                correlated_sampling_mode_on ) );
+                ace_scattering_distribution ) );
 
     // Clear setup data
     ace_file_handler.reset();
@@ -801,26 +793,24 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering distribution
   native_scattering_distribution.reset(
-    new Utility::ElasticTwoDDistribution<Utility::LinLinLin>( native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Exact>( native_data ) );
 
   // Create the scattering distribution
   partial_native_scattering_distribution.reset(
-    new Utility::ElasticTwoDDistribution<Utility::LinLinLin>( partial_native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Exact>( partial_native_data ) );
 
   // Create cutoff distributions
   native_elastic_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 native_scattering_distribution,
                 partial_native_scattering_distribution,
-                0.9,
-                correlated_sampling_mode_on ) );
+                0.9 ) );
 
   test_native_elastic_distribution.reset(
         new TestCutoffElasticElectronScatteringDistribution(
                 native_scattering_distribution,
                 partial_native_scattering_distribution,
-                0.9,
-                correlated_sampling_mode_on ) );
+                0.9 ) );
   }
 
   // Initialize the random number generator

@@ -90,12 +90,6 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
   double getElectronTabularEvaluationTolerance() const;
 
-  //! Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-  bool isElectronCorrelatedSamplingModeOn() const;
-
-  //! Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-  bool isElectronUnitBasedInterpolationModeOn() const;
-
   //! Return the union energy grid convergence tolerance
   double getGridConvergenceTolerance() const;
 
@@ -259,8 +253,11 @@ public:
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-  //! Return the elastic TwoDInterpPolicy
-  const std::string& getElasticTwoDInterpPolicy() const;
+  //! Return the electron TwoDInterpPolicy
+  const std::string& getElectronTwoDInterpPolicy() const;
+
+  //! Return the electron TwoDSamplingPolicy
+  const std::string& getElectronTwoDSamplingPolicy() const;
 
   //! Return the elastic angular energy grid
   const std::vector<double>& getElasticAngularEnergyGrid() const;
@@ -281,15 +278,6 @@ public:
   //! Return the cutoff elastic scatering pdf for an incoming energy
   const std::vector<double>& getCutoffElasticPDF(
                     const double incoming_energy ) const;
-
-//  //! Return if there is screened Rutherford data
-//  bool hasScreenedRutherfordData() const;
-
-//  //! Return the screened Rutherford elastic normalization constants
-//  const std::vector<double>& getScreenedRutherfordNormalizationConstant() const;
-
-//  //! Return Moliere's screening constant
-//  const std::vector<double>& getMoliereScreeningConstant() const;
 
   //! Return if there is moment preserving data
   bool hasMomentPreservingData() const;
@@ -313,9 +301,6 @@ public:
   const std::vector<double>& getMomentPreservingElasticWeights(
                                 const double incoming_energy ) const;
 
-  //! Return the electroionization TwoDInterpPolicy
-  const std::string& getElectroionizationTwoDInterpPolicy() const;
-
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationEnergyGrid(
                                 const unsigned subshell ) const;
@@ -332,9 +317,6 @@ public:
   const std::vector<double>& getElectroionizationRecoilPDF(
                                 const unsigned subshell,
                                 const double incoming_energy ) const;
-
-  //! Return the bremsstrahlung TwoDInterpPolicy
-  const std::string& getBremsstrahlungTwoDInterpPolicy() const;
 
   //! Return the bremsstrahlung energy grid for the secondary photon spectrum
   const std::vector<double>& getBremsstrahlungEnergyGrid() const;
@@ -466,14 +448,6 @@ protected:
   //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
   void setElectronTabularEvaluationTolerance(
     const double electron_tabular_evaluation_tol );
-
-  //! Set the electron FullyTabularTwoDDistribution correlated sampling mode
-  void setElectronCorrelatedSamplingModeOnOff(
-    const bool electron_correlated_sampling_mode_on );
-
-  //! Set the electron FullyTabularTwoDDistribution unit based interpolation mode
-  void setElectronUnitBasedInterpolationModeOnOff(
-    const bool electron_unit_based_interpolation_mode_on );
 
   //! Set the union energy grid convergence tolerance
   void setGridConvergenceTolerance( const double grid_convergence_tol );
@@ -650,8 +624,11 @@ protected:
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-  //! Set the elastic TwoDInterpPolicy
-  void setElasticTwoDInterpPolicy( const std::string& elastic_two_d_interp );
+  //! Set the electronTwoDInterpPolicy
+  void setElectronTwoDInterpPolicy( const std::string& electron_two_d_interp );
+
+  //! Set the electronTwoDSamplingPolicy
+  void setElectronTwoDSamplingPolicy( const std::string& electron_two_d_sampling );
 
   //! Set the elastic angular energy grid
   void setElasticAngularEnergyGrid(
@@ -703,10 +680,6 @@ protected:
   void setMomentPreservingCrossSectionReduction(
     const std::vector<double>& cross_section_reduction );
 
-  //! Set the electroionization TwoDInterpPolicy
-  void setElectroionizationTwoDInterpPolicy(
-    const std::string& electroionization_two_d_interp );
-
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setElectroionizationEnergyGrid(
     const unsigned subshell,
@@ -737,10 +710,6 @@ protected:
   void setElectroionizationRecoilPDF(
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_pdf );
-
-  //! Set the bremsstrahlung TwoDInterpPolicy
-  void setBremsstrahlungTwoDInterpPolicy(
-    const std::string& bremsstrahlung_two_d_interp );
 
   //! Set the bremsstrahlung energy grid for the secondary photon spectrum
   void setBremsstrahlungEnergyGrid(
@@ -903,12 +872,6 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_electron_tabular_evaluation_tol;
 
-  // The electron FullyTabularTwoDDistribution correlated sampling mode
-  bool d_electron_correlated_sampling_mode_on;
-
-  // The electron FullyTabularTwoDDistribution unit based interpolation mode
-  bool d_electron_unit_based_interpolation_mode_on;
-
   // The union energy grid convergence tolerance
   double d_grid_convergence_tol;
 
@@ -1048,8 +1011,11 @@ private:
 // ELECTRON DATA
 //---------------------------------------------------------------------------//
 
-  // The elastic TwoDInterpPolicy
-  std::string d_elastic_two_d_interp;
+  // The electron TwoDInterpPolicy
+  std::string d_electron_two_d_interp;
+
+  // The electron TwoDSamplingPolicy
+  std::string d_electron_two_d_sampling;
 
   // The elastic angular energy grid (MeV)
   std::vector<double> d_angular_energy_grid;
@@ -1063,12 +1029,6 @@ private:
   // The cutoff elastic scattering pdf
   std::map<double,std::vector<double> > d_cutoff_elastic_pdf;
 
-//  // The screened rutherford normalization constant for elastic scattering
-//  std::vector<double> d_screened_rutherford_normalization_constant;
-
-//  // Moliere's screening constant
-//  std::vector<double> d_moliere_screening_constant;
-
   // The moment preserving elastic discrete angles
   std::map<double,std::vector<double> > d_moment_preserving_elastic_discrete_angles;
 
@@ -1077,9 +1037,6 @@ private:
 
   // The moment preserving cross section reductions
   std::vector<double> d_moment_preserving_cross_section_reductions;
-
-  // The electroionization TwoDInterpPolicy
-  std::string d_electroionization_two_d_interp;
 
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_energy_grid;
@@ -1094,9 +1051,6 @@ private:
   // The electroionization recoil pdf for subshell and incoming energy
   std::map<unsigned,std::map<double,std::vector<double> > >
     d_electroionization_recoil_pdf;
-
-  // The bremsstrahlung TwoDInterpPolicy
-  std::string d_bremsstrahlung_two_d_interp;
 
   // The bremsstrahlung energy grid (MeV)
   std::vector<double> d_bremsstrahlung_energy_grid;

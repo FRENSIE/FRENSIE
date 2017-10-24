@@ -57,8 +57,7 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
     d_number_of_moment_preserving_angles( 0 ),
     d_tabular_evaluation_tol( 1e-7 ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_correlated_sampling_mode_on( true ),
-    d_unit_based_interpolation_mode_on( true )
+    d_two_d_sampling( MonteCarlo::CORRELATED_SAMPLING )
 { 
   // Make sure the ace data is valid
   testPrecondition( ace_epr_data.get() );
@@ -287,40 +286,17 @@ MonteCarlo::TwoDInterpolationType StandardElectronPhotonRelaxationDataGenerator:
   return d_two_d_interp;
 }
 
-// Set electron FullyTabularTwoDDistribution correlated sampling mode to off (on by default)
-void StandardElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSamplingModeOff()
+// Set the electron TwoDSamplingPolicy (Correlated by default)
+void StandardElectronPhotonRelaxationDataGenerator::setElectronTwoDSamplingPolicy(
+    MonteCarlo::TwoDSamplingType two_d_sampling )
 {
-  d_correlated_sampling_mode_on = false;
+  d_two_d_sampling = two_d_sampling;
 }
 
-// Set electron FullyTabularTwoDDistribution correlated sampling mode to on (on by default)
-void StandardElectronPhotonRelaxationDataGenerator::setElectronCorrelatedSamplingModeOn()
+// Return the electron TwoDSamplingPolicy
+MonteCarlo::TwoDSamplingType StandardElectronPhotonRelaxationDataGenerator::getElectronTwoDSamplingPolicy() const
 {
-  d_correlated_sampling_mode_on = true;
-}
-
-// Return if electron FullyTabularTwoDDistribution correlated sampling mode is on
-bool StandardElectronPhotonRelaxationDataGenerator::isElectronCorrelatedSamplingModeOn() const
-{
-  return d_correlated_sampling_mode_on;
-}
-
-// Set electron FullyTabularTwoDDistribution unit based interpolation mode to off (on by default)
-void StandardElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolationModeOff()
-{
-  d_unit_based_interpolation_mode_on = false;
-}
-
-// Set electron FullyTabularTwoDDistribution unit based interpolation mode to on (on by default)
-void StandardElectronPhotonRelaxationDataGenerator::setElectronUnitBasedInterpolationModeOn()
-{
-  d_unit_based_interpolation_mode_on = true;
-}
-
-// Return if electron FullyTabularTwoDDistribution unit based interpolation mode is on
-bool StandardElectronPhotonRelaxationDataGenerator::isElectronUnitBasedInterpolationModeOn() const
-{
-  return d_unit_based_interpolation_mode_on;
+  return d_two_d_sampling;
 }
 
 // Populate the electron-photon-relaxation data container
@@ -344,16 +320,15 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   {
   std::string interp =
     MonteCarlo::convertTwoDInterpolationTypeToString( d_two_d_interp );
-  data_container.setElasticTwoDInterpPolicy( interp );
-  data_container.setElectroionizationTwoDInterpPolicy( interp );
-  data_container.setBremsstrahlungTwoDInterpPolicy( interp );
+  data_container.setElectronTwoDInterpPolicy( interp );
+  }
+  {
+  std::string sampling_type =
+    MonteCarlo::convertTwoDSamplingTypeToString( d_two_d_sampling );
+  data_container.setElectronTwoDSamplingPolicy( sampling_type );
   }
   data_container.setElectronTabularEvaluationTolerance(
     d_tabular_evaluation_tol );
-  data_container.setElectronCorrelatedSamplingModeOnOff(
-    d_correlated_sampling_mode_on );
-  data_container.setElectronUnitBasedInterpolationModeOnOff(
-    d_unit_based_interpolation_mode_on );
 
   // Set the relaxation data
   (*d_os_log) << std::endl << Utility::Bold( "Setting the relaxation data" )
@@ -507,11 +482,7 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   data_container.setCutoffAngleCosine( cutoff_angle_cosine );
   data_container.setNumberOfMomentPreservingAngles(
     number_of_moment_preserving_angles );
-  data_container.setElasticTwoDInterpPolicy(
-    MonteCarlo::convertTwoDInterpolationTypeToString( two_d_interp ) );
-  data_container.setElectroionizationTwoDInterpPolicy(
-    MonteCarlo::convertTwoDInterpolationTypeToString( two_d_interp ) );
-  data_container.setBremsstrahlungTwoDInterpPolicy(
+  data_container.setElectronTwoDInterpPolicy(
     MonteCarlo::convertTwoDInterpolationTypeToString( two_d_interp ) );
 
   std::vector<double> angular_energy_grid(
@@ -1996,8 +1967,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_distribution;
 
-  bool correlated_sampling_mode_on = true;
-
   // Get the cutoff and total elastic cross sections and the energy grid
   Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
 
@@ -2013,7 +1982,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2023,12 +1992,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         data_container.getAtomicNumber(),
         MonteCarlo::SIMPLIFIED_UNION,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Exact>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2038,12 +2006,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         data_container.getAtomicNumber(),
         MonteCarlo::SIMPLIFIED_UNION,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2053,7 +2020,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         angular_energy_grid,
         data_container.getAtomicNumber(),
         MonteCarlo::SIMPLIFIED_UNION,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
 
@@ -2133,13 +2099,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             cross_section_reduction ) );
 
     // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         cutoff_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         Utility::ElasticElectronTraits::mu_peak,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
@@ -2151,13 +2116,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             cross_section_reduction ) );
 
     // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
         cutoff_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         Utility::ElasticElectronTraits::mu_peak,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
@@ -2169,13 +2133,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             cross_section_reduction ) );
 
     // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         cutoff_distribution,
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         Utility::ElasticElectronTraits::mu_peak,
-        correlated_sampling_mode_on,
         tabular_evaluation_tol );
   }
 
@@ -2885,35 +2848,32 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
     if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
             Utility::ElasticElectronTraits::mu_peak,
-            d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
             Utility::ElasticElectronTraits::mu_peak,
-            d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
             data_container.getElasticAngularEnergyGrid(),
             Utility::ElasticElectronTraits::mu_peak,
-            d_correlated_sampling_mode_on,
             d_tabular_evaluation_tol );
     }
 

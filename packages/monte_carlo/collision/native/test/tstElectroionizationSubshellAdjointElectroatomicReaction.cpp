@@ -199,18 +199,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
-    bool correlated_sampling_mode_on = true;
-    bool unit_based_interpolation_mode_on = true;
     double evaluation_tol = 1e-7;
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog>(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Correlated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
 
 
@@ -241,8 +237,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container->getAdjointElectroionizationCrossSection( *shell ).begin(),
         data_container->getAdjointElectroionizationCrossSection( *shell ).end() );
 
-    bool correlated_sampling_mode_on = true;
-    bool unit_based_interpolation_mode_on = true;
     double evaluation_tol = 1e-7;
 
     // Electroionization cross section threshold energy bin index
@@ -254,13 +248,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::Correlated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
-        correlated_sampling_mode_on,
-        unit_based_interpolation_mode_on,
         evaluation_tol );
 
     // Create the subshell electroelectric reaction

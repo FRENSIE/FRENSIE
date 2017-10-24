@@ -327,7 +327,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
             function_data ) );
 
   std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
@@ -336,16 +336,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the distributions
   dipole_scattering_distribution.reset(
    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-        scattering_function,
-        true,
-        false ) );
+        scattering_function ) );
 
   twobs_scattering_distribution.reset(
    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
         xss_data_extractor->extractAtomicNumber(),
-        scattering_function,
-        true,
-        false ) );
+        scattering_function ) );
 
 
   // Create the reactions

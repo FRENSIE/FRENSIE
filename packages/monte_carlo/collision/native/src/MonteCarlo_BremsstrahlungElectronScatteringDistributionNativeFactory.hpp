@@ -25,64 +25,54 @@ public:
   using ThisType = BremsstrahlungElectronScatteringDistributionNativeFactory;
 
   //! Create a simple dipole bremsstrahlung distribution
-  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplePolicy = Utility::Stochastic>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
   //! Create a simple dipole bremsstrahlung distribution
-  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
-  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
   //! Create a detailed 2BS bremsstrahlung distribution
-  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
     const std::vector<double>& bremsstrahlung_energy_grid,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
   //! Create the energy loss function
-  template <typename TwoDInterpPolicy = Utility::LogLogLog>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> bremsstrahlung_energy_grid,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
         energy_loss_function,
     const double evaluation_tol = 1e-7 );
-
-private:
-
-  //! Return if the TwoDInterpPolicy is compatible with the unit base sampling mode
-  template <typename TwoDInterpPolicy>
-  static bool isCompatibleWithUnitBaseSamplingMode(
-    const bool unit_based_interpolation_mode_on );
 
 };
 

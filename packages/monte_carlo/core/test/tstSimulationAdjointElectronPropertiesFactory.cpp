@@ -48,8 +48,6 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronPropertiesFactory,
   TEST_ASSERT( !properties.isAdjointElectroionizationModeOn() );
   TEST_ASSERT( !properties.isAdjointBremsstrahlungModeOn() );
   TEST_ASSERT( !properties.isAdjointAtomicExcitationModeOn() );
-  TEST_ASSERT( !properties.isAdjointCorrelatedSamplingModeOn() );
-  TEST_ASSERT( !properties.isAdjointUnitBasedInterpolationModeOn() );
   TEST_EQUALITY_CONST(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );

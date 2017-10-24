@@ -160,7 +160,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     MonteCarlo::CoupledElasticSamplingMethod sampling_method =
         MonteCarlo::SIMPLIFIED_UNION;
-    bool correlated_sampling_mode_on = true;
     double evaluation_tol = 1e-7;
 
     // Get electron energy grid
@@ -184,14 +183,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create coupled distribution
     std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         coupled_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
         total_cross_section,
         data_container,
         sampling_method,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
     // Create the reaction

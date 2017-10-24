@@ -37,17 +37,17 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   AdjointElectroatomCore::ReactionMap scattering_reactions;
   std::shared_ptr<ElectroatomicReaction> total_forward_reaction;
 
+  std::string electron_interp =
+            raw_adjoint_electroatom_data.getElectronTwoDInterpPolicy();
+
   // Create the elastic scattering reaction
   if ( properties.isAdjointElasticModeOn() )
   {
     std::shared_ptr<AdjointElectroatomicReaction> elastic_reaction;
 
-    std::string elastic_interp =
-            raw_adjoint_electroatom_data.getElasticTwoDInterpPolicy();
-
-    if( elastic_interp == "Log-Log-Log" )
+    if( electron_interp == "Log-Log-Log" )
     {
-      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog>(
+      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,Utility::Correlated>(
                                                 raw_adjoint_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
@@ -55,9 +55,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                                 elastic_reaction,
                                                 scattering_reactions );
     }
-    else if( elastic_interp == "Lin-Lin-Log" )
+    else if( electron_interp == "Lin-Lin-Log" )
     {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLog>(
+      ThisType::createElasticElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
                                                 raw_adjoint_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
@@ -65,9 +65,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                                 elastic_reaction,
                                                 scattering_reactions );
     }
-    else if( elastic_interp == "Lin-Lin-Lin" )
+    else if( electron_interp == "Lin-Lin-Lin" )
     {
-      ThisType::createElasticElectroatomCore<Utility::LinLinLin>(
+      ThisType::createElasticElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
                                                 raw_adjoint_electroatom_data,
                                                 energy_grid,
                                                 grid_searcher,
@@ -79,7 +79,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the 2D interpolation policy "
-                       << elastic_interp <<
+                       << electron_interp <<
                        " is not currently supported!" );
     }
 
@@ -98,47 +98,38 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
 
-    std::string brem_interp =
-        raw_adjoint_electroatom_data.getBremsstrahlungTwoDInterpPolicy();
-
-    if( brem_interp == "Log-Log-Log" )
+    if( electron_interp == "Log-Log-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog>(
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::Correlated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
-                        properties.isAdjointCorrelatedSamplingModeOn(),
-                        properties.isAdjointUnitBasedInterpolationModeOn(),
                         properties.getAdjointElectronEvaluationTolerance() );
     }
-    else if( brem_interp == "Lin-Lin-Log" )
+    else if( electron_interp == "Lin-Lin-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog>(
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::Correlated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
-                        properties.isAdjointCorrelatedSamplingModeOn(),
-                        properties.isAdjointUnitBasedInterpolationModeOn(),
                         properties.getAdjointElectronEvaluationTolerance() );
     }
-    else if( brem_interp == "Lin-Lin-Lin" )
+    else if( electron_interp == "Lin-Lin-Lin" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin>(
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::Correlated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
-                        properties.isAdjointCorrelatedSamplingModeOn(),
-                        properties.isAdjointUnitBasedInterpolationModeOn(),
                         properties.getAdjointElectronEvaluationTolerance() );
     }
     else
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the 2D interpolation policy "
-                       << brem_interp <<
+                       << electron_interp <<
                        " is not currently supported!" );
     }
   }
@@ -162,47 +153,38 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
         electroionization_reactions;
 
-    std::string ionization_interp =
-        raw_adjoint_electroatom_data.getElectroionizationTwoDInterpPolicy();
-
-    if( ionization_interp == "Log-Log-Log" )
+    if( electron_interp == "Log-Log-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog>(
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::Correlated>(
                                 raw_adjoint_electroatom_data,
                                 energy_grid,
                                 grid_searcher,
                                 electroionization_reactions,
-                                properties.isAdjointCorrelatedSamplingModeOn(),
-                                properties.isAdjointUnitBasedInterpolationModeOn(),
                                 properties.getAdjointElectronEvaluationTolerance() );
     }
-    else if( ionization_interp == "Lin-Lin-Log" )
+    else if( electron_interp == "Lin-Lin-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog>(
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::Correlated>(
                                 raw_adjoint_electroatom_data,
                                 energy_grid,
                                 grid_searcher,
                                 electroionization_reactions,
-                                properties.isAdjointCorrelatedSamplingModeOn(),
-                                properties.isAdjointUnitBasedInterpolationModeOn(),
                                 properties.getAdjointElectronEvaluationTolerance() );
     }
-    else if( ionization_interp == "Lin-Lin-Lin" )
+    else if( electron_interp == "Lin-Lin-Lin" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin>(
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::Correlated>(
                                 raw_adjoint_electroatom_data,
                                 energy_grid,
                                 grid_searcher,
                                 electroionization_reactions,
-                                properties.isAdjointCorrelatedSamplingModeOn(),
-                                properties.isAdjointUnitBasedInterpolationModeOn(),
                                 properties.getAdjointElectronEvaluationTolerance() );
     }
     else
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Error: the 2D interpolation policy "
-                       << ionization_interp <<
+                       << electron_interp <<
                        " is not currently supported!" );
     }
 

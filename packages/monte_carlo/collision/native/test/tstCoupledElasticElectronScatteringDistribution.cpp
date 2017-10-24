@@ -36,14 +36,12 @@ public:
         elastic_cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& cutoff_cross_section_ratios,
     const std::shared_ptr<const Utility::ElasticElectronTraits>& elastic_traits,
-    const MonteCarlo::CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on )
+    const MonteCarlo::CoupledElasticSamplingMethod& sampling_method )
     : MonteCarlo::CoupledElasticElectronScatteringDistribution(
         elastic_cutoff_distribution,
         cutoff_cross_section_ratios,
         elastic_traits,
-        sampling_method,
-        correlated_sampling_mode_on )
+        sampling_method )
   { /* ... */ }
 
   ~TestCoupledElasticElectronScatteringDistribution()
@@ -2379,14 +2377,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-        new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog>(
+        new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog,Utility::Exact>(
             function_data,
             1.0,
             1e-6,
             evaluation_tol,
             1e-12 ) );
-
-    bool correlated_sampling_mode_on = true;
 
     // Create the distribution
     log_distribution.reset(
@@ -2394,8 +2390,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method,
-                correlated_sampling_mode_on ) );
+                sampling_method ) );
 
     // Create the test distribution
     test_log_distribution.reset(
@@ -2403,22 +2398,19 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method,
-                correlated_sampling_mode_on ) );
+                sampling_method ) );
     }
 
     // Create the distributions unsing LinLinLog interpolation
     {
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-        new Utility::ElasticTwoDDistribution<Utility::LinLinLog>(
+        new Utility::ElasticTwoDDistribution<Utility::LinLinLog,Utility::Exact>(
             function_data,
             1.0,
             1e-6,
             evaluation_tol,
             1e-12 ) );
-
-    bool correlated_sampling_mode_on = true;
 
     // Create the distribution
     distribution.reset(
@@ -2426,8 +2418,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method,
-                correlated_sampling_mode_on ) );
+                sampling_method ) );
 
     // Create the test distribution
     test_distribution.reset(
@@ -2435,21 +2426,18 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method,
-                correlated_sampling_mode_on ) );
+                sampling_method ) );
     }
     // Create the distributions unsing LinLinLin interpolation
     {
     // Create the scattering distribution
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-        new Utility::ElasticTwoDDistribution<Utility::LinLinLin>(
+        new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
             function_data,
             1.0,
             1e-6,
             evaluation_tol,
             1e-12 ) );
-
-    bool correlated_sampling_mode_on = true;
 
     // Create the distribution
     lin_distribution.reset(
@@ -2457,8 +2445,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method,
-                correlated_sampling_mode_on ) );
+                sampling_method ) );
 
     // Create the test distribution
     test_lin_distribution.reset(
@@ -2466,8 +2453,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 scattering_function,
                 cross_section_ratios,
                 traits,
-                sampling_method,
-                correlated_sampling_mode_on ) );
+                sampling_method ) );
     }
   }
 

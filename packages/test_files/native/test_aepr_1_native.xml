@@ -2,7 +2,7 @@
 <!DOCTYPE boost_serialization>
 <boost_serialization signature="serialization::archive" version="14">
 <N4Data52AdjointElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
-	<notes>This table was generated on Tue Oct  3 18:19:17 CDT 2017. It is for testing only!</notes>
+	<notes>This table was generated on Tue Oct 24 11:33:13 CDT 2017. It is for testing only!</notes>
 	<atomic_number>1</atomic_number>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
@@ -27,8 +27,6 @@
 	<adjoint_electron_absolute_diff_tol>9.99999999999999979e-17</adjoint_electron_absolute_diff_tol>
 	<adjoint_electron_distance_tol>1.00000000000000006e-09</adjoint_electron_distance_tol>
 	<electron_tabular_evaluation_tol>1.00000000000000008e-05</electron_tabular_evaluation_tol>
-	<electron_correlated_sampling_mode_on>1</electron_correlated_sampling_mode_on>
-	<electron_unit_based_interpolation_mode_on>1</electron_unit_based_interpolation_mode_on>
 	<adjoint_bremsstrahlung_max_energy_nudge_value>2.00000000000000011e-01</adjoint_bremsstrahlung_max_energy_nudge_value>
 	<adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value>1.99999999999999991e-07</adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value>
 	<adjoint_bremsstrahlung_evaluation_tolerance>1.00000000000000002e-03</adjoint_bremsstrahlung_evaluation_tolerance>
@@ -82922,8 +82920,9 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</adjoint_bremsstrahlung_photon_cross_section>
-	<adjoint_bremsstrahlung_photon_cross_section_threshold_index>3448622640</adjoint_bremsstrahlung_photon_cross_section_threshold_index>
-	<elastic_two_d_interp>Log-Log-Log</elastic_two_d_interp>
+	<adjoint_bremsstrahlung_photon_cross_section_threshold_index>1</adjoint_bremsstrahlung_photon_cross_section_threshold_index>
+	<electron_two_d_interp>Log-Log-Log</electron_two_d_interp>
+	<electron_two_d_sampling>Correlated</electron_two_d_sampling>
 	<adjoint_angular_energy_grid>
 		<count>12</count>
 		<item_version>0</item_version>
@@ -84710,7 +84709,6 @@
 		<item>8.09099045747643033e-06</item>
 		<item>8.09030533699401619e-06</item>
 	</reduced_cutoff_cross_section_ratios>
-	<electroionization_two_d_interp>Log-Log-Log</electroionization_two_d_interp>
 	<adjoint_electroionization_energy_grid>
 		<count>0</count>
 		<item_version>0</item_version>
@@ -92791,7 +92789,6 @@
 			</second>
 		</item>
 	</adjoint_electroionization_recoil_pdf>
-	<bremsstrahlung_two_d_interp>Log-Log-Log</bremsstrahlung_two_d_interp>
 	<adjoint_electron_bremsstrahlung_energy_grid>
 		<count>0</count>
 		<item_version>0</item_version>

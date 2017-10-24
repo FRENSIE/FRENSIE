@@ -67,6 +67,9 @@ namespace Data{
   // Test if the TwoDInterpPolicy is valid
   bool isTwoDInterpPolicyValid( const std::string value );
 
+  // Test if the TwoDSamplingPolicy is valid
+  bool isTwoDSamplingPolicyValid( const std::string value );
+
   // Test if the InterpPolicy is valid
   bool isInterpPolicyValid( const std::string value );
 

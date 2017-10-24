@@ -404,22 +404,18 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::set<unsigned> subshells = data_container->getSubshells();
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog>(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::Correlated>(
     *data_container,
     *subshells.begin(),
     binding_energy,
-    native_distribution,
-    true,
-    true );
+    native_distribution );
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog>(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Exact>(
     *data_container,
     *subshells.begin(),
     binding_energy,
-    exact_native_distribution,
-    true,
-    false );
+    exact_native_distribution );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

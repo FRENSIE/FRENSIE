@@ -334,13 +334,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                                pdf ) );
   }
 
-  bool correlated_sampling_mode_on = true;
-  bool unit_based_interpolation_mode_on = true;
-  double evaluation_tol = 1e-7;
+  double evaluation_tol = 1e-10;
 
   { // Create the LinLinLog scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
             function_data,
             1e-6,
             evaluation_tol ) );
@@ -348,15 +346,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   linlinlog_native_distribution.reset(
      new MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy,
-            correlated_sampling_mode_on,
-            unit_based_interpolation_mode_on ) );
+            binding_energy ) );
 
   }
 
   { // Create the LogLogLog scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
             function_data,
             1e-6,
             evaluation_tol ) );
@@ -364,9 +360,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   native_distribution.reset(
      new MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution(
             subshell_distribution,
-            binding_energy,
-            correlated_sampling_mode_on,
-            unit_based_interpolation_mode_on ) );
+            binding_energy ) );
 
   }
 

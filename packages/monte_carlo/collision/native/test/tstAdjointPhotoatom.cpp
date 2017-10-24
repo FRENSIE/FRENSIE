@@ -651,6 +651,23 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atom can be relaxed
+TEUCHOS_UNIT_TEST( AdjointPhotoatom, relaxAtom )
+{
+  Teuchos::RCP<MonteCarlo::AdjointPhotonState> adjoint_photon(
+                                    new MonteCarlo::AdjointPhotonState( 0 ) );
+  adjoint_photon->setEnergy( exp( -1.214969212306E+01 ) );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
+  MonteCarlo::ParticleBank bank;
+
+  adjoint_photoatom->relaxAtom( vacancy, *adjoint_photon, bank );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();

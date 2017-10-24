@@ -20,38 +20,34 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create an coupled elastic scattering electroatomic reaction
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<ElectroatomicReaction>
 createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const std::string two_d_interp_policy_name,
     const std::string sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create a decoupled elastic scattering electroatomic reaction
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<ElectroatomicReaction>
 createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create a hybrid elastic scattering electroatomic reaction
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<ElectroatomicReaction>
 createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create an cutoff elastic scattering electroatomic reaction
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<ElectroatomicReaction>
 createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create a screened Rutherford elastic scattering electroatomic reaction
@@ -60,12 +56,11 @@ createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data );
 
 //! Create the moment preserving elastic scattering electroatomic reaction
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<ElectroatomicReaction>
 createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -82,22 +77,18 @@ createAtomicExcitationReaction(
 //----------------------------------------------------------------------------//
 
 //! Create the subshell electroionization electroatomic reaction
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<ElectroatomicReaction>
 createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const unsigned subshell,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
 //! Create the subshell electroionization electroatomic reactions
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::vector<std::shared_ptr<ElectroatomicReaction> >
 createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -105,16 +96,22 @@ createSubshellElectroionizationReactions(
 //----------------------------------------------------------------------------//
 
 //! Create the bremsstrahlung electroatomic reaction
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<ElectroatomicReaction>
 createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const bool dipole_distribution_mode_on,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol );
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ElectroatomicReactionNativeFactoryHelpers_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ELECTROATOMIC_REACTION_NATIVE_FACTORY_HELPERS_HPP
 

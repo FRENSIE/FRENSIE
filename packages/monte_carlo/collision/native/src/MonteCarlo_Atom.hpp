@@ -129,7 +129,7 @@ public:
   //! Relax the atom
   virtual void relaxAtom( const Data::SubshellType vacancy_shell,
                           const ParticleStateType& particle,
-                          ParticleBank& bank ) const;
+                          ParticleBank& bank ) const = 0;
 
 protected:
 
@@ -365,17 +365,6 @@ inline double Atom<AtomCore>::getAtomicAbsorptionCrossSection(
 
   return cross_section;
 }
-
-// Relax the atom
-/*! \details By default no atomic relaxation is performed. This is because there
- * currently is no adjoint atomic relaxation implementation. This function
- * should be overridden for forward electrons and photons
- */
-template<typename AtomCore>
-inline void Atom<AtomCore>::relaxAtom( const Data::SubshellType vacancy_shell,
-                                       const ParticleStateType& particle,
-                                       ParticleBank& bank ) const
-{ /* ... */ }
 
 } // end MonteCarlo namespace
 

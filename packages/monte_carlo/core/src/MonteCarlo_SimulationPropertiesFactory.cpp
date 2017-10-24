@@ -16,6 +16,7 @@
 #include "MonteCarlo_SimulationPhotonPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationAdjointPhotonPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
+#include "MonteCarlo_SimulationAdjointElectronPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -38,6 +39,7 @@ SimulationPropertiesFactory::createProperties(
   std::string photon_props_name = "Photon Properties";
   std::string adjoint_photon_props_name = "Adjoint Photon Properties";
   std::string electron_props_name = "Electron Properties";
+  std::string adjoint_electron_props_name = "Adjoint Electron Properties";
 
   // Get the general properties - required
   TEST_FOR_EXCEPTION( !properties.isParameter( general_props_name ),
@@ -137,6 +139,26 @@ SimulationPropertiesFactory::createProperties(
                                                      os_warn );
   }
 
+  // Get the adjoint photon properties - optional
+  if( properties.isParameter( adjoint_electron_props_name ) )
+  {
+    if( simulation_properties->getParticleMode() != ADJOINT_ELECTRON_MODE )
+    {
+      *os_warn << "Warning: the adjoint electron simulation properties "
+               << "specified are not required since adjoint electrons will not "
+               << "be simulated!"
+               << std::endl;
+    }
+
+    Teuchos::ParameterList adjoint_electron_properties =
+      properties.get<Teuchos::ParameterList>( adjoint_electron_props_name );
+
+    SimulationAdjointElectronPropertiesFactory::initializeProperties(
+                                                     adjoint_electron_properties,
+                                                     *simulation_properties,
+                                                     os_warn );
+  }
+
   properties.unused( *os_warn );
 
   // For some reason, unused parameter lists do not get printed by the
@@ -151,7 +173,8 @@ SimulationPropertiesFactory::createProperties(
         param_name != neutron_props_name &&
         param_name != photon_props_name &&
         param_name != adjoint_photon_props_name &&
-        param_name != electron_props_name )
+        param_name != electron_props_name &&
+        param_name != adjoint_electron_props_name )
     {
       *os_warn << "Warning: parameter list " << param_name
                << " is unused!" << std::endl;

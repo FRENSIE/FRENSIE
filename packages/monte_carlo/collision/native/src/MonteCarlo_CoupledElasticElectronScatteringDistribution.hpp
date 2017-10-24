@@ -46,8 +46,7 @@ public:
     const std::shared_ptr<const TwoDDist>& coupled_elastic_distribution,
     const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
-    const MonteCarlo::CoupledElasticSamplingMethod& sampling_method,
-    const bool correlated_sampling_mode_on );
+    const MonteCarlo::CoupledElasticSamplingMethod& sampling_method );
 
   //! Destructor
   virtual ~CoupledElasticElectronScatteringDistribution()
@@ -165,9 +164,6 @@ private:
 
   // Elastic electron traits
   std::shared_ptr<const ElasticTraits> d_elastic_traits;
-
-  // The sampling function pointer
-  std::function<double ( const double, const double )> d_sample_function;
 
   // The sampling method pointer
   std::function<double ( const double )> d_sample_method;

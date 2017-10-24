@@ -173,17 +173,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         hybrid_elastic_distribution;
 
     double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
-    bool correlated_sampling_mode_on = true;
     double evaluation_tol = 1e-7;
 
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Exact>(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
         mp_cross_section,
         data_container,
         cutoff_angle_cosine,
-        correlated_sampling_mode_on,
         evaluation_tol );
 
   // Calculate the hybrid cross section

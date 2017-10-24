@@ -168,7 +168,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
  * changed. The distrubition has units of barns/MeV.
  */
 template<typename ComptonProfilePolicy>
-double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateExact( 
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateExact(
 				   const double incoming_energy,
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine ) const

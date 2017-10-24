@@ -20,7 +20,6 @@ namespace MonteCarlo{
 HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>& hybrid_distribution,
     const double cutoff_angle_cosine,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol )
   : d_hybrid_distribution( hybrid_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
@@ -34,25 +33,6 @@ HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDist
   // Make sure the evaluation tolerance is valid
   testPrecondition( d_evaluation_tol > 0.0 );
   testPrecondition( d_evaluation_tol < 1.0 );
-
-  if( correlated_sampling_mode_on )
-  {
-    // Set the correlated unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalExactWithRandomNumber,
-         std::cref( *d_hybrid_distribution ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
-  }
-  else
-  {
-    // Set the stochastic unit based sample routine
-    d_sample_function = std::bind<double>(
-         &TwoDDist::sampleSecondaryConditionalWithRandomNumber,
-         std::cref( *d_hybrid_distribution ),
-         std::placeholders::_1,
-         std::placeholders::_2 );
-  }
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
@@ -71,7 +51,7 @@ double HybridElasticElectronScatteringDistribution::evaluate(
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
     return d_hybrid_distribution->evaluate(
-      incoming_energy, scattering_angle_cosine );
+              incoming_energy, scattering_angle_cosine, true );
   }
   else
     return 0.0;
@@ -92,8 +72,12 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
 
   if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
   {
-    return d_hybrid_distribution->correlatedEvaluateSecondaryConditionalPDFInBoundaries(
-      incoming_energy, scattering_angle_cosine, -1.0, d_cutoff_angle_cosine );
+    return d_hybrid_distribution->evaluateSecondaryConditionalPDF(
+              incoming_energy,
+              scattering_angle_cosine,
+              [](const double& x){return -1.0;},
+              [this](const double& x){return d_cutoff_angle_cosine;},
+              false );
   }
   else
     return 0.0;
@@ -112,8 +96,8 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return d_hybrid_distribution->evaluateSecondaryConditionalCDFExact(
-                                    incoming_energy, scattering_angle_cosine);
+  return d_hybrid_distribution->evaluateSecondaryConditionalCDF(
+            incoming_energy, scattering_angle_cosine, false );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -214,7 +198,9 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  scattering_angle_cosine = d_sample_function( incoming_energy, random_number );
+  scattering_angle_cosine =
+    d_hybrid_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy, random_number );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

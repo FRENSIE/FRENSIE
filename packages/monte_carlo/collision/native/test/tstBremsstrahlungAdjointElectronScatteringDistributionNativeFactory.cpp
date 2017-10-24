@@ -144,15 +144,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   else
     energy_grid = data_container->getAdjointElectronEnergyGrid();
 
-  bool correlated_sampling_mode_on = true;
-  bool unit_based_interpolation_mode_on = true;
-
-  BremFactory::createBremsstrahlungDistribution<Utility::LinLinLog>(
+  BremFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::Correlated>(
             *data_container,
             energy_grid,
-            brem_distribution,
-            correlated_sampling_mode_on,
-            unit_based_interpolation_mode_on );
+            brem_distribution );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

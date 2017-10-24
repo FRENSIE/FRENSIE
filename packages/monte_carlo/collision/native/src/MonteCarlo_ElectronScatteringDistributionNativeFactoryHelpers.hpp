@@ -24,27 +24,24 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const std::string two_d_interp_policy_name,
     const std::string sampling_method,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create a cutoff elastic distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //! Create a screened rutherford elastic distribution
@@ -52,11 +49,10 @@ std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDis
     const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
 //! Create a moment preserving elastic distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -64,20 +60,16 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //----------------------------------------------------------------------------//
 
 //! Create a simple dipole bremsstrahlung distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
 //! Create a detailed 2BS bremsstrahlung distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
@@ -85,13 +77,11 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> 
 //----------------------------------------------------------------------------//
 
 //! Create a electroionization subshell distribution
+template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
     const double binding_energy,
-    const std::string two_d_interp_policy_name,
-    const bool correlated_sampling_mode_on,
-    const bool unit_based_interpolation_mode_on,
     const double evaluation_tol = 1e-7 );
 
 //----------------------------------------------------------------------------//
@@ -103,6 +93,14 @@ std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution
     const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ElectronScatteringDistributionNativeFactoryHelpers_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HELPERS_HPP
 

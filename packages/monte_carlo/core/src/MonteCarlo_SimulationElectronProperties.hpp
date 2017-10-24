@@ -14,6 +14,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
 
 namespace MonteCarlo{
 
@@ -57,23 +58,17 @@ public:
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
   double getElectronEvaluationTolerance() const;
 
-  //! Set correlated sampling mode to off (on by default)
-  void setCorrelatedSamplingModeOff();
+  //! Set the electron 2D interpolation policy (LogLogLog by default)
+  void setElectronTwoDInterpPolicy( TwoDInterpolationType interp_type );
 
-  //! Set correlated sampling mode to on (on by default)
-  void setCorrelatedSamplingModeOn();
+  //! Return the electron 2D interpolation policy
+  TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Return if correlated sampling mode is on
-  bool isCorrelatedSamplingModeOn() const;
+  //! Set the electron 2D sampling policy (Correlated by default)
+  void setElectronTwoDSamplingPolicy( TwoDSamplingType sampling_type );
 
-  //! Set unit based interpolation mode to off (on by default)
-  void setUnitBasedInterpolationModeOff();
-
-  //! Set unit based interpolation mode to on (on by default)
-  void setUnitBasedInterpolationModeOn();
-
-  //! Return if unit based interpolation mode is on
-  bool isUnitBasedInterpolationModeOn() const;
+  //! Return the electron 2D sampling policy
+  TwoDSamplingType getElectronTwoDSamplingPolicy() const;
 
   //! Set the number of electron hash grid bins
   void setNumberOfElectronHashGridBins( const unsigned bins );
@@ -100,12 +95,6 @@ public:
 
   //! Return if elastic mode is on
   bool isElasticModeOn() const;
-
-  //! Set the elastic 2D interpolation policy (LogLogLog by default)
-  void setElasticTwoDInterpPolicy( TwoDInterpolationType interp_type );
-
-  //! Return the elastic 2D interpolation policy
-  TwoDInterpolationType getElasticTwoDInterpPolicy() const;
 
   //! Set the elastic distribution mode ( Decoupled by default )
   void setElasticElectronDistributionMode( ElasticElectronDistributionType distribution_mode );
@@ -136,12 +125,6 @@ public:
   //! Return if electroionization mode is on
   bool isElectroionizationModeOn() const;
 
-  //! Set the electroionization 2D interpolation policy (LogLogLog by default)
-  void setElectroionizationTwoDInterpPolicy( TwoDInterpolationType interp_type );
-
-  //! Return the electroionization 2D interpolation policy
-  TwoDInterpolationType getElectroionizationTwoDInterpPolicy() const;
-
   /* ------ Bremsstrahlung Properties ------ */
 
   //! Set bremsstrahlung mode to off (on by default)
@@ -152,12 +135,6 @@ public:
 
   //! Return if bremsstrahlung mode is on
   bool isBremsstrahlungModeOn() const;
-
-  //! Set the bremsstrahlung 2D interpolation policy (LogLogLog by default)
-  void setBremsstrahlungTwoDInterpPolicy( TwoDInterpolationType interp_type );
-
-  //! Return the bremsstrahlung 2D interpolation policy
-  TwoDInterpolationType getBremsstrahlungTwoDInterpPolicy() const;
 
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
   void setBremsstrahlungAngularDistributionFunction(
@@ -195,13 +172,11 @@ private:
   // The electron FullyTabularTwoDDistribution evaluation tolerance
   double d_evaluation_tol;
 
-  /* The correlated sampling mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_correlated_sampling_mode_on;
+  // The electron 2D interpolation type ( LogLogLog - default )
+  TwoDInterpolationType d_electron_interpolation_type;
 
-  /* The unit based interpolation mode for bremsstrahlung and electroionization
-   * (true = on - default, false = off) */
-  bool d_unit_based_interpolation_mode_on;
+  // The electron 2D sampling type ( Correlated - default )
+  TwoDSamplingType d_electron_sampling_type;
 
   // The number of electron hash grid bins
   unsigned d_num_electron_hash_grid_bins;
