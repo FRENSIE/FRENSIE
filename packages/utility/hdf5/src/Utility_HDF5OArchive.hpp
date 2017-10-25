@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <string>
+#include <sstream>
 
 // Boost Includes
 #include <boost/archive/detail/register_archive.hpp>
@@ -37,15 +38,22 @@ public:
     : HDF5OArchiveImpl<HDF5OArchive>( hdf5_filename, flags )
   { /* ... */ }
 
-  //! Constructor
+  //! Destructor
+  ~HDF5OArchive()
+  { /* ... */ }
+
+protected:
+
+  /*! Stream Constructor
+   *
+   * This constructor is provided so that this archive can be used with the
+   * boost::archive::detail::polymorphic_oarchive_route wrapper to construct
+   * polymorphic output archives
+   */
   template<class CharType, class CharTraits>
   HDF5OArchive( std::basic_ostream<CharType,CharTraits>& os,
                 unsigned flags = 0 )
     : HDF5OArchiveImpl<HDF5OArchive>( this->extractHDF5FileNameFromOStream(os), flags )
-  { /* ... */ }
-
-  //! Destructor
-  ~HDF5OArchive()
   { /* ... */ }
 
 private:
@@ -58,7 +66,8 @@ private:
 
     TEST_FOR_EXCEPTION( hdf5_file_name_oss == NULL,
                         Utility::HDF5ArchiveException,
-                        "Could not determine the HDF5 archive file name!" );
+                        "Could not determine the HDF5 output archive file "
+                        "name!" );
 
     return hdf5_file_name_oss->str();
   }

@@ -577,9 +577,13 @@ struct HDF5TypeTraits<std::pair<T1,T2>,typename std::enable_if<HDF5TypeTraits<T1
                                               const size_t size,
                                               ExternalType* converted_data )
   {
+    typedef typename std::remove_const<T1>::type NonConstT1;
+    
     for( size_t i = 0; i < size; ++i )
     {
-      HDF5TypeTraits<T1>::convertInternalDataToExternalData( &raw_data[i].first, 1, &converted_data[i].first );
+      // When loading map::value_type arrays the first pair element will be
+      // const qualified - we must remove this to set the data
+      HDF5TypeTraits<NonConstT1>::convertInternalDataToExternalData( &raw_data[i].first, 1, const_cast<NonConstT1*>(&converted_data[i].first) );
       HDF5TypeTraits<T2>::convertInternalDataToExternalData( &raw_data[i].second, 1, &converted_data[i].second );
     }
   }

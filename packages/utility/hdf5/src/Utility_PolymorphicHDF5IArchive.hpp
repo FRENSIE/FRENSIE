@@ -12,6 +12,7 @@
 // Boost Includes
 #include <boost/config.hpp>
 #include <boost/archive/detail/polymorphic_iarchive_route.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
 
 // FRENSIE Includes
 #include "Utility_HDF5IArchive.hpp"
@@ -21,7 +22,7 @@ namespace Utility{
 /*! The polymorphic HDF5 input archive
  * \ingroup hdf5
  */
-typedef public boost::archive::detail::polymorphic_iarchive_route<Utility::NakedHDF5IArchive> PolymorphicHDF5IArchive;
+typedef boost::archive::detail::polymorphic_iarchive_route<Utility::HDF5IArchive> PolymorphicHDF5IArchive;
 
 } // end Utility namespace
 

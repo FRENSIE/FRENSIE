@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <string>
+#include <sstream>
 
 // Boost Includes
 #include <boost/archive/detail/register_archive.hpp>
@@ -41,6 +42,36 @@ public:
   //! Destructor
   ~HDF5IArchive()
   { /* ... */ }
+
+protected:
+
+  /*! Constructor
+   *
+   * This constructor is provided so that this archive can be used with the
+   * boost::archive::detail::polymorphic_iarchive_route wrapper to construct
+   * polymorphic input archives
+   */
+  template<class CharType, class CharTraits>
+  HDF5IArchive( std::basic_istream<CharType,CharTraits>& is,
+                unsigned flags = 0 )
+    : HDF5IArchiveImpl<HDF5IArchive>( this->extractHDF5FileNameFromIStream(is), flags )
+  { /* ... */ }
+
+private:
+
+  template<class CharType, class CharTraits>
+  static inline std::string extractHDF5FileNameFromIStream( std::basic_istream<CharType,CharTraits>& is )
+  {
+    std::basic_istringstream<CharType,CharTraits>* hdf5_file_name_iss =
+      dynamic_cast<std::basic_istringstream<CharType,CharTraits>*>( &is );
+
+    TEST_FOR_EXCEPTION( hdf5_file_name_iss == NULL,
+                        Utility::HDF5ArchiveException,
+                        "Could not determine the HDF5 input archive file "
+                        "name!" );
+
+    return hdf5_file_name_iss->str();
+  }
 };
 
 extern template void HDF5IArchiveImpl<HDF5IArchive>::load( bool& );
