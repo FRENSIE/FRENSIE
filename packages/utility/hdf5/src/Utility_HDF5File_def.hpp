@@ -517,6 +517,7 @@ struct CopyContainerContentsToFromArrayHelper<Container<T>,typename std::enable_
   struct ArrayType : private boost::noncopyable
   {
     typedef bool value_type;
+    typedef bool* pointer;
     
     ArrayType()
       : d_data( NULL ), d_size( 0 )
