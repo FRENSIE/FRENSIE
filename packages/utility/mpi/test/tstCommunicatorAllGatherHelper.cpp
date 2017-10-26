@@ -103,6 +103,8 @@ struct MergeContainerLists<std::tuple<Types...> > : public MergeContainerLists<T
 
 typedef typename MergeContainerLists<BasicTypesSubset>::type ContainerTypes;
 
+typedef decltype(std::tuple_cat(BasicTypes(), ContainerTypes())) Types;
+
 //---------------------------------------------------------------------------//
 // Testing functions
 //---------------------------------------------------------------------------//
@@ -134,15 +136,19 @@ inline std::tuple<Types...> initializeValue( std::tuple<Types...>, int i )
 
 template<template<typename,typename...> class SequenceContainer,
          typename T>
-inline void fillContainer( SequenceContainer<T>& container, int seed = 0 )
+inline SequenceContainer<T> initializeValue( SequenceContainer<T>, int i )
 {
-  container.clear();
-  container.resize( 10, initializeValue( T(), seed ) );
+  return SequenceContainer<T>( 10, initializeValue( T(), i ) );
 }
 
 template<typename T, size_t N>
-inline void fillContainer( std::array<T,N>& container, int seed = 0 )
-{ container.fill( initializeValue( T(), seed ) ); }
+inline std::array<T,N> initializeValue( std::array<T,N>, int i )
+{
+  std::array<T,N> container;
+  container.fill( initializeValue( T(), i ) );
+
+  return container;
+}
 
 template<template<typename,typename...> class Set, typename T>
 inline void fillSet( Set<T>& container, const int seed )
@@ -154,12 +160,20 @@ inline void fillSet( Set<T>& container, const int seed )
 }
 
 template<typename T>
-inline void fillContainer( std::set<T>& container, int seed = 0 )
-{ fillSet( container, seed ); }
+inline std::set<T> initializeValue( std::set<T>, int i )
+{
+  std::set<T> container;
+  fillSet( container, i );
+  return container;
+}
 
 template<typename T>
-inline void fillContainer( std::unordered_set<T>& container, int seed = 0 )
-{ fillSet( container, seed ); }
+inline std::unordered_set<T> initializeValue( std::unordered_set<T>, int i )
+{
+  std::unordered_set<T> container;
+  fillSet( container, i );
+  return container;
+}
 
 template<template<typename,typename,typename...> class Map,
          typename Key, typename T>
@@ -172,26 +186,78 @@ inline void fillMap( Map<Key,T>& container, const int seed )
 }
 
 template<typename Key, typename T>
-inline void fillContainer( std::map<Key,T>& container, int seed = 0 )
-{ fillMap( container, seed ); }
+inline std::map<Key,T> initializeValue( std::map<Key,T>, int i )
+{
+  std::map<Key,T> container;
+  fillMap( container, i );
+  return container;
+}
 
 template<typename Key, typename T>
-inline void fillContainer( std::unordered_map<Key,T>& container, int seed = 0 )
-{ fillMap( container, seed ); }
-
-template<typename Container>
-inline void clearContainer( Container& container )
-{ container.clear(); }
-
-template<typename T, size_t N>
-inline void clearContainer( std::array<T,N>& container )
-{ container.fill( initializeValue( T(), 0 ) ); }
+inline std::unordered_map<Key,T> initializeValue( std::unordered_map<Key,T>, int i )
+{
+  std::unordered_map<Key,T> container;
+  fillMap( container, i );
+  return container;
+}
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that an all gather operation can be conducted with basic types
-FRENSIE_UNIT_TEST_TEMPLATE( Communicator, allGather_basic, BasicTypes )
+// Check that an all gather operation can be conducted with bools
+FRENSIE_UNIT_TEST( Communicator, allGather_bool )
+{
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  bool value = (comm->rank()%2 == 0 ? true : false);
+  
+  std::array<bool,10> data_to_send;
+  data_to_send.fill( value );
+  
+  Utility::ArrayView<const bool> view_of_data_to_send( data_to_send );
+
+  // Gather the first values only - store using pre-sized array view
+  bool data_to_receive[data_to_send.size()*comm->size()];
+
+  FRENSIE_REQUIRE_NO_THROW( Utility::allGather( *comm, data_to_send.front(), Utility::ArrayView<bool>(data_to_receive, data_to_receive+comm->size()) ) );
+
+  for( int i = 0; i < comm->size(); ++i )
+  {
+    bool expected_value = (i%2 == 0 ? true : false);
+    
+    FRENSIE_CHECK_EQUAL( data_to_receive[i], expected_value );
+  }
+
+  // Gather all values - store using pre-sized array view
+  FRENSIE_REQUIRE_NO_THROW( Utility::allGather( *comm, Utility::arrayView(data_to_send), Utility::ArrayView<bool>(data_to_receive, data_to_receive+data_to_send.size()*comm->size()) ) );
+
+  for( size_t i = 0; i < comm->size(); ++i )
+  {
+    std::array<bool,10> expected_values;
+    expected_values.fill( (i%2 == 0 ? true : false) );
+
+    FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>( data_to_receive+i*data_to_send.size(), data_to_receive+(i+1)*data_to_send.size() ),
+                         Utility::arrayView(expected_values) );
+  }
+
+  // Gather values sent using initializer list temporary - store using
+  // pre-sized array view
+  FRENSIE_REQUIRE_NO_THROW( Utility::allGather( *comm, {value, value, value, value, value}, Utility::ArrayView<bool>( data_to_receive, data_to_receive+5*comm->size() ) ) );
+
+  for( size_t i = 0; i < comm->size(); ++i )
+  {
+    std::array<bool,5> expected_values;
+    expected_values.fill( (i%2 == 0 ? true : false) );
+
+    FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>( data_to_receive+i*5, data_to_receive+(i+1)*5 ),
+                         Utility::arrayView(expected_values) );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that an all gather operation can be conducted
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, allGather, Types )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
