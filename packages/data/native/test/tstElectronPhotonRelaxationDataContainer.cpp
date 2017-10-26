@@ -1264,6 +1264,24 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the total electron electron cross section can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setTotalElectronCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setTotalElectronCrossSection(
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS(
+            epr_data_container.getTotalElectronCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cutoff elastic electron cross section can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setCutoffElasticCrossSection )
@@ -1656,6 +1674,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST(
+    epr_data_container_copy.getTotalElectronCrossSection().size(),
+                       3u );
+  TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffElasticCrossSection().size(),
                        3u );
   TEST_EQUALITY_CONST(
@@ -1883,6 +1904,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST(
+    epr_data_container_copy.getTotalElectronCrossSection().size(),
+                       3u );
+  TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffElasticCrossSection().size(),
                        3u );
   TEST_EQUALITY_CONST(
@@ -2106,6 +2130,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     3 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectronEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST(
+    epr_data_container_copy.getTotalElectronCrossSection().size(),
+                       3u );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getCutoffElasticCrossSection().size(),
                        3u );

@@ -115,6 +115,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyLoss;
   using ElectronPhotonRelaxationDataContainer::setElectronEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setElectronCrossSectionInterpPolicy;
+  using ElectronPhotonRelaxationDataContainer::setTotalElectronCrossSection;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticCrossSection;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordElasticCrossSection;

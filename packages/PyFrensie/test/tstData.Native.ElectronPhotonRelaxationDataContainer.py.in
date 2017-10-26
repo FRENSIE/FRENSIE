@@ -23,8 +23,6 @@ options,args = parser.parse_args()
 from testingHelpers import importPyFrensieModuleFromBuildDir
 Native = importPyFrensieModuleFromBuildDir('Data.Native')
 
-
-
 #-----------------------------------------------------------------------------#
 # end tstData.Native.ElectronPhotonRelaxationDataContainer.py
 #-----------------------------------------------------------------------------#

@@ -78,12 +78,15 @@ public:
   double getPhotonThresholdEnergyNudgeFactor() const;
 
   //! Set electron total elastic integrated cross section mode to off (off by default)
+  //! \todo Remove this option once the proper setting has been found.
   void setElectronTotalElasticIntegratedCrossSectionModeOff();
 
   //! Set electron total elastic integrated cross section mode to on (off by default)
+  //! \todo Remove this option once the proper setting has been found.
   void setElectronTotalElasticIntegratedCrossSectionModeOn();
 
   //! Return if electron total elastic integrated cross section mode to on (off by default)
+  //! \todo Remove this option once the proper setting has been found.
   bool isElectronTotalElasticIntegratedCrossSectionModeOn() const;
 
   //! Set the cutoff angle cosine
@@ -289,8 +292,12 @@ private:
            Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
            const bool use_waller_hartree_incoherent_cs ) const;
 
-  // Add cross section to photon total cross section
-  void addCrossSectionToPhotonTotalCrossSection(
+  // Calculate the electron total cross section
+  void calculateElectronTotalCrossSection(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  // Add cross section to electron/photon total cross section
+  void addCrossSectionToTotalCrossSection(
                               const std::vector<double>& energy_grid,
                               const std::vector<double>& cross_section,
                               std::vector<double>& total_cross_section ) const;

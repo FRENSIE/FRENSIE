@@ -109,6 +109,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_loss );
   DATA_MAKE_NVP_DEFAULT( ar, electron_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, electron_cross_section_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, total_electron_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section );
@@ -213,6 +214,7 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_loss );
   DATA_MAKE_NVP_DEFAULT( ar, electron_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, electron_cross_section_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, total_electron_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section );

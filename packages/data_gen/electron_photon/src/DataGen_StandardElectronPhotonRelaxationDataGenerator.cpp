@@ -1950,6 +1950,13 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                                     threshold );
     (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
   }
+
+  (*d_os_log) << "   Setting the " 
+              << Utility::Italicized( "Total Electron " )
+              << "cross section...";
+  d_os_log->flush();
+  this->calculateElectronTotalCrossSection( data_container );
+  (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 }
 
 // Set the moment preserving data
@@ -2699,39 +2706,39 @@ void StandardElectronPhotonRelaxationDataGenerator::calculatePhotonTotalCrossSec
   // Add the incoherent cs
   if( use_waller_hartree_incoherent_cs )
   {
-    this->addCrossSectionToPhotonTotalCrossSection(
+    this->addCrossSectionToTotalCrossSection(
                        energy_grid,
                        data_container.getWallerHartreeIncoherentCrossSection(),
                        total_cross_section );
   }
   else
   {
-    this->addCrossSectionToPhotonTotalCrossSection(
+    this->addCrossSectionToTotalCrossSection(
                        energy_grid,
                        data_container.getImpulseApproxIncoherentCrossSection(),
                        total_cross_section );
   }
 
   // Add the coherent cs
-  this->addCrossSectionToPhotonTotalCrossSection(
+  this->addCrossSectionToTotalCrossSection(
                        energy_grid,
                        data_container.getWallerHartreeCoherentCrossSection(),
                        total_cross_section );
 
   // Add the pair production cs
-  this->addCrossSectionToPhotonTotalCrossSection(
+  this->addCrossSectionToTotalCrossSection(
                        energy_grid,
                        data_container.getPairProductionCrossSection(),
                        total_cross_section );
 
   // Add the triplet production cs
-  this->addCrossSectionToPhotonTotalCrossSection(
+  this->addCrossSectionToTotalCrossSection(
                        energy_grid,
                        data_container.getTripletProductionCrossSection(),
                        total_cross_section );
   
   // Add the photoelectric cs
-  this->addCrossSectionToPhotonTotalCrossSection(
+  this->addCrossSectionToTotalCrossSection(
                        energy_grid,
                        data_container.getPhotoelectricCrossSection(),
                        total_cross_section );
@@ -2742,8 +2749,50 @@ void StandardElectronPhotonRelaxationDataGenerator::calculatePhotonTotalCrossSec
     data_container.setImpulseApproxTotalCrossSection( total_cross_section );
 }
 
-// Add cross section to photon total cross section
-void StandardElectronPhotonRelaxationDataGenerator::addCrossSectionToPhotonTotalCrossSection(
+// Calculate the electron total cross section
+void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalCrossSection(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{
+  const std::vector<double>& energy_grid =
+    data_container.getElectronEnergyGrid();
+
+  std::vector<double> total_cross_section( energy_grid.size(), 0.0 );
+
+  // Add the total elastic cs
+  this->addCrossSectionToTotalCrossSection(
+                       energy_grid,
+                       data_container.getTotalElasticCrossSection(),
+                       total_cross_section );
+
+  // Add the atomic excitation cs
+  this->addCrossSectionToTotalCrossSection(
+                       energy_grid,
+                       data_container.getAtomicExcitationCrossSection(),
+                       total_cross_section );
+
+  // Add the bremsstrhlung cs
+  this->addCrossSectionToTotalCrossSection(
+                       energy_grid,
+                       data_container.getBremsstrahlungCrossSection(),
+                       total_cross_section );
+
+  std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
+
+  // Loop through electroionization data for every subshell
+  for ( shell; shell != data_container.getSubshells().end(); ++shell )
+  {
+    // Add the electroionization subshell cs
+    this->addCrossSectionToTotalCrossSection(
+                        energy_grid,
+                        data_container.getElectroionizationCrossSection(*shell),
+                        total_cross_section );
+  }
+
+data_container.setTotalElectronCrossSection( total_cross_section );
+}
+
+// Add cross section to total cross section
+void StandardElectronPhotonRelaxationDataGenerator::addCrossSectionToTotalCrossSection(
                                const std::vector<double>& energy_grid,
                                const std::vector<double>& cross_section,
                                std::vector<double>& total_cross_section ) const
