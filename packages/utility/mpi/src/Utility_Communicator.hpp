@@ -337,7 +337,7 @@ template<typename T>
 void gatherv( const Communicator& comm,
               std::initializer_list<T> input_values,
               std::vector<T>& output_values,
-              const vector<int>& sizes,
+              const std::vector<int>& sizes,
               int root_process );
 
 //! Gather the values stored at every process into a vector at the root process

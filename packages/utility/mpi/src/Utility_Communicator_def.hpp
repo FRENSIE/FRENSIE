@@ -240,10 +240,10 @@ struct SingleValueReceiveHelper<Utility::ArrayView<T> >
   }
 
   //! Forward to the correct ireceive method based on type T
-  static inline Communicator::Status ireceive( const Communicator& comm,
-                                               int source_process,
-                                               int tag,
-                                               Utility::ArrayView<T>& value )
+  static inline Communicator::Request ireceive( const Communicator& comm,
+                                                int source_process,
+                                                int tag,
+                                                Utility::ArrayView<T>& value )
   {
     return Utility::ireceive( comm, source_process, tag, const_cast<const Utility::ArrayView<T>&>( value ) );
   }
@@ -1000,7 +1000,7 @@ inline void allGather( const Communicator& comm,
 template<typename T>
 inline void allGather( const Communicator& comm,
                        std::initializer_list<T> input_values,
-                       const std::vector<T>& output_values )
+                       std::vector<T>& output_values )
 {
   Utility::ArrayView<const T>
     input_values_view( input_values.begin(), input_values.size() );
@@ -1032,6 +1032,19 @@ inline void allGather( const Communicator& comm,
 
 // Gather the values stored at every process into an array of values 
 // from each process.
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */ 
+template<typename T>
+inline void allGather( const Communicator& comm,
+                       const Utility::ArrayView<T>& input_values,
+                       std::vector<T>& output_values )
+{
+  Utility::allGather( comm, input_values.toConst(), output_values );
+}
+
+// Gather the values stored at every process into an array of values 
+// from each process.
 /*! \details The input_values on every process of the communicator will be 
  * collected in the output_values vector on every process. The input_values
  * associated with a process will start at the index that is equal to the
@@ -1046,9 +1059,22 @@ inline void allGather( const Communicator& comm,
                        std::vector<T>& output_values )
 {
   // Resize the output values vector
-  output_values.resize( input_values.size()*comm->size() );
+  output_values.resize( input_values.size()*comm.size() );
 
   Utility::allGather( comm, input_values, Utility::arrayView(output_values) );
+}
+
+// Gather the values stored at every process into an array of values 
+// from each process.
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void allGather( const Communicator& comm,
+                       const Utility::ArrayView<T>& input_values,
+                       const Utility::ArrayView<T>& output_values )
+{
+  Utility::allGather( comm, input_values.toConst(), output_values );
 }
 
 // Gather the values stored at every process into an array of values 
@@ -1235,7 +1261,7 @@ inline void allToAll( const Communicator& comm,
   // Resize the output values
   output_values.resize( input_values.size() );
 
-  Utility::allToAll( comm, input_values, number_of_input_values, Utility::arrayView(output_values) );
+  Utility::allToAll( comm, input_values, input_values.size(), Utility::arrayView(output_values) );
 }
 
 // Send data from every process to every other process
@@ -1466,8 +1492,8 @@ inline void gather( const Communicator& comm,
                     int root_process )
 {
   // Resize the output values vector if we're on the root process
-  if( comm->rank() == root_process )
-    output_values.resize( input_values.size()*comm->size() );
+  if( comm.rank() == root_process )
+    output_values.resize( input_values.size()*comm.size() );
 
   Utility::gather( comm, input_values, Utility::arrayView(output_values), root_process );
 }
@@ -1535,7 +1561,7 @@ inline void gather( const Communicator& comm,
                     const Utility::ArrayView<const T>& input_values,
                     int root_process )
 {
-  TEST_FOR_EXCEPTION( comm->rank() == root_process,
+  TEST_FOR_EXCEPTION( comm.rank() == root_process,
                       CommunicationError,
                       "Root process " << root_process << " of " << comm <<
                       " attempted to call Utility::gather method reserved for "
@@ -1654,11 +1680,11 @@ inline void gatherv( const Communicator& comm,
                      const int root_process )
 {
   // Resize the output values vector
-  if( comm->rank() == root_process )
+  if( comm.rank() == root_process )
   {
     size_t max_offset_index = 0;
     size_t indices_to_check = std::min( sizes.size(), offsets.size() );
-    indices_to_check = std::min( indices_to_check, comm->size() );
+    indices_to_check = std::min( indices_to_check, (size_t)comm.size() );
 
     for( size_t i = 0; i < indices_to_check; ++i )
     {
@@ -1677,7 +1703,7 @@ inline void gatherv( const Communicator& comm,
     output_values.resize( size );
   }
 
-  Utility::gatherv( comm, input_values, Utility::arrayView(output_values), sizes, offset, root_process );
+  Utility::gatherv( comm, input_values, Utility::arrayView(output_values), sizes, offsets, root_process );
 }
 
 // Gather the values stored at every process into a vector at the root process
@@ -1697,15 +1723,15 @@ void gatherv( const Communicator& comm,
               const std::vector<int>& offsets,
               const int root_process )
 {
-  if( comm->rank() == root_process )
+  if( comm.rank() == root_process )
   {
-    TEST_FOR_EXCEPTION( sizes.size() < comm->size(),
+    TEST_FOR_EXCEPTION( sizes.size() < comm.size(),
                         CommunicationError,
                         comm << " is unable to conduct gatherv operation on "
                         "the root process because there aren't enough sizes "
                         "provided!" );
     
-    TEST_FOR_EXCEPTION( offsets.size() < comm->size(),
+    TEST_FOR_EXCEPTION( offsets.size() < comm.size(),
                         CommunicationError,
                         comm << " is unable to conduct gatherv operation on "
                         "the root process because there aren't enough offsets "
@@ -1871,7 +1897,7 @@ inline void gatherv( const Communicator& comm,
                      const int root_process )
 {
   // Resize the output values vector
-  if( comm->rank() == root_process )
+  if( comm.rank() == root_process )
   {
     int size = 0;
 
@@ -1907,9 +1933,9 @@ void gatherv( const Communicator& comm,
               const std::vector<int>& sizes,
               const int root_process )
 {
-  if( comm->rank() == root_process )
+  if( comm.rank() == root_process )
   {
-    TEST_FOR_EXCEPTION( sizes.size() < comm->size(),
+    TEST_FOR_EXCEPTION( sizes.size() < comm.size(),
                         CommunicationError,
                         comm << " is unable to conduct gatherv operation on "
                         "the root process because there aren't enough sizes "
@@ -2003,7 +2029,7 @@ inline void gatherv( const Communicator& comm,
                      const Utility::ArrayView<const T>& input_values,
                      const int root_process )
 {
-  TEST_FOR_EXCEPTION( comm->rank() == root_process,
+  TEST_FOR_EXCEPTION( comm.rank() == root_process,
                       CommunicationError,
                       "Root process " << root_process << " of " << comm <<
                       " attempted to call Utility::gatherv method reserved "
@@ -2069,7 +2095,7 @@ inline void scatter( const Communicator& comm,
  * receives from the root process will be from the input values array 
  * starting at the index that is equal to the process's rank multiplied by
  * number of values sent to each process 
- * (i.e. input_values.size()/comm->size()). This operation can be done with 
+ * (i.e. input_values.size()/comm.size()). This operation can be done with 
  * communicators of any size.
  * \ingroup mpi
  */
@@ -2079,9 +2105,9 @@ void scatter( const Communicator& comm,
               const Utility::ArrayView<T>& output_values,
               int root_process )
 {
-  if( comm->rank() == root_process )
+  if( comm.rank() == root_process )
   {
-    TEST_FOR_EXCEPTION( input_values.size() < comm->size(),
+    TEST_FOR_EXCEPTION( input_values.size() < comm.size(),
                         CommunicationError,
                         comm << " could not conduct scatter operation from "
                         "the root process because there were not enough input "
@@ -2098,7 +2124,7 @@ void scatter( const Communicator& comm,
                         "An unknown communicator type was encountered!" );
 
     try{
-      mpi_comm->scatter( input_values.data(), output_values.data(), input_values.size()/comm->size(), root_process );
+      mpi_comm->scatter( input_values.data(), output_values.data(), input_values.size()/comm.size(), root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -2130,7 +2156,7 @@ inline void scatter( const Communicator& comm,
                      const Utility::ArrayView<T>& output_values,
                      int root_process )
 {
-  TEST_FOR_EXCEPTION( comm->rank() == root_process,
+  TEST_FOR_EXCEPTION( comm.rank() == root_process,
                       CommunicationError,
                       "Root process " << root_process << " of " << comm <<
                       " attempted to call Utility::scatter method reserved "

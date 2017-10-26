@@ -28,4 +28,44 @@ IF(${FRENSIE_ENABLE_MPI})
   FRENSIE_ADD_TEST(Communicator MPI_PROCS 4)
 ENDIF()
 
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorSendRecvHelper DEPENDS tstCommunicatorSendRecvHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorSendRecvHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorSendRecvHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorSendRecvHelper MPI_PROCS 4)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorIsendIrecvHelper DEPENDS tstCommunicatorIsendIrecvHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorIsendIrecvHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorIsendIrecvHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorIsendIrecvHelper MPI_PROCS 4)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorProbeHelper DEPENDS tstCommunicatorProbeHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorProbeHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorProbeHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorProbeHelper MPI_PROCS 4)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorIprobeHelper DEPENDS tstCommunicatorIprobeHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorIprobeHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorIprobeHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorIprobeHelper MPI_PROCS 4)
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorAllGatherHelper DEPENDS tstCommunicatorAllGatherHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorAllGatherHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorAllGatherHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorAllGatherHelper MPI_PROCS 4)
+ENDIF()
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_mpi)
