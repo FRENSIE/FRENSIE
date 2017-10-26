@@ -197,7 +197,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::addCriticalValuesToPrimaryGrid(
 
 // Generate the primary grid in place
 /*! \details The container must have a push_back method defined. The
- * function must have the following signature: double (double,double). 
+ * function must have the following signature: double (double,double).
  * The first function parameter must correspond to the primary value.
  */
 template<typename TwoDInterpPolicy>

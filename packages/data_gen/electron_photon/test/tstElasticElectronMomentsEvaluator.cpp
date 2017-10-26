@@ -32,7 +32,7 @@ class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomen
 public:
   TestElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container )
-    : ElasticElectronMomentsEvaluator( data_container, -1.0, 1e-7, true )
+    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, -1.0, 1e-7 )
   { /* ... */ }
 
   ~TestElasticElectronMomentsEvaluator()
@@ -1124,9 +1124,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   full_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *pb_data,
+                                    MonteCarlo::LINLINLOG_INTERPOLATION,
                                     -1.0,
-                                    1e-7,
-                                    true ) );
+                                    1e-7 ) );
 
   std::vector<Utility::long_float> total_moments(n+1);
 
@@ -1260,23 +1260,19 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   pb_data.reset( new Data::ElectronPhotonRelaxationDataContainer(
                                     test_native_pb_file_name ) );
 
-  bool linlinlog_interpolation_mode_on = true;
-
   // Create the moment evaluator
   pb_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
+                                                  MonteCarlo::LINLINLOG_INTERPOLATION,
                                                   cutoff_angle_cosine,
-                                                  tabular_evaluation_tol,
-                                                  linlinlog_interpolation_mode_on ) );
-
-  linlinlog_interpolation_mode_on = false;
+                                                  tabular_evaluation_tol ) );
 
   // Create the moment evaluator
   pb_lin_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
+                                                  MonteCarlo::LINLINLIN_INTERPOLATION,
                                                   cutoff_angle_cosine,
-                                                  tabular_evaluation_tol,
-                                                  linlinlog_interpolation_mode_on ) );
+                                                  tabular_evaluation_tol ) );
   }
 }
 

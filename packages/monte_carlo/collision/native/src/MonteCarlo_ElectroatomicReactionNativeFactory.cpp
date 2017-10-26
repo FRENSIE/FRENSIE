@@ -47,7 +47,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 
 
   elastic_reaction.reset(
-    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
+    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,

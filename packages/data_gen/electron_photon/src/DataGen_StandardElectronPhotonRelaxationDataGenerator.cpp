@@ -16,6 +16,7 @@
 #include "DataGen_FormFactorEvaluator.hpp"
 #include "DataGen_ScatteringFunctionEvaluator.hpp"
 #include "DataGen_OccupationNumberEvaluator.hpp"
+#include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
@@ -696,7 +697,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
     optimized_momentum_grid[4] = 1.0;
 
     try{
-      this->getDefaultGridGenerator().generateAndEvaluateInPlace(
+      this->getDefaultPhotonGridGenerator().generateAndEvaluateInPlace(
                                                        optimized_momentum_grid,
                                                        evaluated_profile,
                                                        evaluation_wrapper );
@@ -757,7 +758,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
     occupation_number_momentum_grid[4] = 1.0;
 
     try{
-      this->getDefaultGridGenerator().generateAndEvaluateInPlace(
+      this->getDefaultPhotonGridGenerator().generateAndEvaluateInPlace(
                                                occupation_number_momentum_grid,
                                                occupation_number,
                                                evaluation_wrapper );
@@ -829,7 +830,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
   std::list<double> scattering_function;
   
   try{
-    this->getDefaultGridGenerator().generateAndEvaluateInPlace(
+    this->getDefaultPhotonGridGenerator().generateAndEvaluateInPlace(
                                                           recoil_momentum_grid,
                                                           scattering_function,
                                                           grid_function );
@@ -926,7 +927,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
   squared_recoil_momentum_grid[1] *= squared_recoil_momentum_grid[1];
 
   try{
-    this->getDefaultGridGenerator().generateAndEvaluateInPlace(
+    this->getDefaultPhotonGridGenerator().generateAndEvaluateInPlace(
                                                   squared_recoil_momentum_grid,
                                                   squared_form_factor,
                                                   evaluation_wrapper );
@@ -954,7 +955,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
   std::list<double> form_factor;
 
   try{
-    this->getDefaultGridGenerator().generateAndEvaluateInPlace(
+    this->getDefaultPhotonGridGenerator().generateAndEvaluateInPlace(
                                                           recoil_momentum_grid,
                                                           form_factor,
                                                           evaluation_wrapper );
@@ -1091,7 +1092,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                  _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+    this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                      grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -1106,7 +1107,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+    this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                      grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -1122,7 +1123,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+    this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                      grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -1138,7 +1139,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+    this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                      grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -1153,7 +1154,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                                _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+    this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                      grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -1173,7 +1174,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
                    _1 );
 
     try{
-      this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+      this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                        grid_function );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -1196,7 +1197,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
              d_subshell_incoherent_evaluation_tolerance );
 
     try{
-      this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
+      this->getDefaultPhotonGridGenerator().generateInPlace( union_energy_grid,
                                                        grid_function );
     }
     EXCEPTION_CATCH_RETHROW(
@@ -1687,24 +1688,23 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     d_endl_data_container->getBremsstrahlungCrossSectionEnergyGrid();
 
   bremsstrahlung_cross_section.reset(
-    new Utility::TabularDistribution<Utility::LinLin>(
+    new Utility::TabularDistribution<Utility::LogLog>(
     raw_energy_grid,
     d_endl_data_container->getBremsstrahlungCrossSection() ) );
 
   // merge raw energy grid with the union energy grid
   mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
 
-
 //---------------------------------------------------------------------------//
 // Get Atomic Excitation Data Cross Section Data
 //---------------------------------------------------------------------------//
 
   raw_energy_grid = d_endl_data_container->getAtomicExcitationEnergyGrid();
-
-  atomic_excitation_cross_section.reset(
-    new Utility::TabularDistribution<Utility::LinLin>(
-    raw_energy_grid,
-    d_endl_data_container->getAtomicExcitationCrossSection() ) );
+  double true_atomic_excitation_threshold_energy = raw_energy_grid[0];
+  this->extractElectronCrossSection<Utility::LogLog>(
+              raw_energy_grid,
+              d_endl_data_container->getAtomicExcitationCrossSection(),
+              atomic_excitation_cross_section );
 
   // merge raw energy grid with the union energy grid
   mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
@@ -1725,8 +1725,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                  _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
-                                                     grid_function );
+    this->getDefaultElectronGridGenerator().generateInPlace( union_energy_grid,
+                                                             grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Error: Could not generate an optimized electron "
@@ -1742,8 +1742,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
         _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
-                                                     grid_function );
+    this->getDefaultElectronGridGenerator().generateInPlace( union_energy_grid,
+                                                             grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Error: Could not generate an optimized electron "
@@ -1757,8 +1757,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                                _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
-                                                     grid_function );
+    this->getDefaultElectronGridGenerator().generateInPlace( union_energy_grid,
+                                                             grid_function );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Error: Could not generate an optimized electron "
@@ -1772,8 +1772,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                                _1 );
 
   try{
-    this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
-                                                     grid_function );
+    this->getDefaultElectronGridGenerator().refineInPlace(
+                union_energy_grid,
+                grid_function,
+                atomic_excitation_cross_section->getLowerBoundOfIndepVar(),
+                atomic_excitation_cross_section->getUpperBoundOfIndepVar() );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Error: Could not generate an optimized electron "
@@ -1791,8 +1794,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                    _1 );
 
     try{
-      this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
-                                                       grid_function );
+      this->getDefaultElectronGridGenerator().refineInPlace(
+        union_energy_grid,
+        grid_function,
+        electroionization_cross_section[i].second->getLowerBoundOfIndepVar(),
+        electroionization_cross_section[i].second->getUpperBoundOfIndepVar() );
     }
     EXCEPTION_CATCH_RETHROW(
                           std::runtime_error,
@@ -1816,7 +1822,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   data_container.setElectronEnergyGrid( energy_grid );
 
   // Set the electron cross section interpolation policy
-  data_container.setElectronCrossSectionInterpPolicy( "Lin-Lin" );
+  data_container.setElectronCrossSectionInterpPolicy( "Log-Log" );
 
   // Create and set the cross sections
   std::vector<double> cross_section;
@@ -1915,7 +1921,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                   atomic_excitation_cross_section,
                   cross_section,
                   threshold,
-                  atomic_excitation_cross_section->getLowerBoundOfIndepVar(),
+                  true_atomic_excitation_threshold_energy,
                   true );
 
   data_container.setAtomicExcitationCrossSection( cross_section );
@@ -1928,19 +1934,19 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   {
     (*d_os_log) << "   Setting " << Utility::Italicized( "subshell " )
                 << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum(
-                                   electroionization_cross_section[i].first ) )
+                    electroionization_cross_section[i].first ) )
                 << Utility::Italicized( " electroionization " )
                 << "cross section...";
     d_os_log->flush();
     
     this->createCrossSectionOnUnionEnergyGrid(
-                               union_energy_grid,
-                               electroionization_cross_section[i].second,
-                               cross_section,
-                               threshold,
-                               data_container.getSubshellBindingEnergy(
-                                    electroionization_cross_section[i].first ),
-                               true );
+                    union_energy_grid,
+                    electroionization_cross_section[i].second,
+                    cross_section,
+                    threshold,
+                    data_container.getSubshellBindingEnergy(
+                      electroionization_cross_section[i].first ),
+                    true );
 
     data_container.setElectroionizationCrossSection(
                                     electroionization_cross_section[i].first,
@@ -1998,7 +2004,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        MonteCarlo::SIMPLIFIED_UNION,
+        MonteCarlo::TWO_D_UNION,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
@@ -2012,7 +2018,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        MonteCarlo::SIMPLIFIED_UNION,
+        MonteCarlo::TWO_D_UNION,
         tabular_evaluation_tol );
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
@@ -2026,7 +2032,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
         data_container.getAtomicNumber(),
-        MonteCarlo::SIMPLIFIED_UNION,
+        MonteCarlo::TWO_D_UNION,
         tabular_evaluation_tol );
   }
 
@@ -2966,7 +2972,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
 // Calculate the elastic moment preserving cross section
 /*! \details The coupled elastic distributions and elastic cross sections are on
- *  different energy grids. To calculate the moment preserving cross sections
+ *  different energy grids. To calculate the moment preserving cross section's
  *  reduction values will have to be interpolated on the course coupled energy
  *  grid. The coupled distribution may be on a smaller energy grid, in which case
  *  the moment preserving cross section would be evaluated as zero outside the

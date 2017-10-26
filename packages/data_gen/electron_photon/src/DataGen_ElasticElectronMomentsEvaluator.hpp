@@ -21,6 +21,7 @@
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 
 
 namespace DataGen{
@@ -41,9 +42,9 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     const double cutoff_angle_cosine,
-    const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on );
+    const double tabular_evaluation_tol );
 
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(

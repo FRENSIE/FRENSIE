@@ -189,7 +189,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   double min_energy = 0.00001;
   double max_energy = 20.0;
   double tabular_evaluation_tol = 1e-7;
-  bool linlinlog_interpolation_mode_on = true;
 
   {
     // Create the native data file container
@@ -202,11 +201,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
            new DataGen::StandardMomentPreservingElectronDataGenerator(
                      native_h_data->getAtomicNumber(),
                      native_h_data,
+                     MonteCarlo::LINLINLOG_INTERPOLATION,
                      min_energy,
                      max_energy,
                      cutoff_angle_cosine,
-                     tabular_evaluation_tol,
-                     linlinlog_interpolation_mode_on ) );
+                     tabular_evaluation_tol ) );
   }
 
   {
@@ -220,11 +219,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
            new DataGen::StandardMomentPreservingElectronDataGenerator(
                      native_pb_data->getAtomicNumber(),
                      native_pb_data,
+                     MonteCarlo::LINLINLOG_INTERPOLATION,
                      min_energy,
                      max_energy,
                      cutoff_angle_cosine,
-                     tabular_evaluation_tol,
-                     linlinlog_interpolation_mode_on ) );
+                     tabular_evaluation_tol ) );
   }
 
   {
@@ -238,11 +237,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
            new DataGen::StandardMomentPreservingElectronDataGenerator(
                      native_al_data->getAtomicNumber(),
                      native_al_data,
+                     MonteCarlo::LINLINLOG_INTERPOLATION,
                      min_energy,
                      max_energy,
                      cutoff_angle_cosine,
-                     tabular_evaluation_tol,
-                     linlinlog_interpolation_mode_on ) );
+                     tabular_evaluation_tol ) );
   }
 }
 

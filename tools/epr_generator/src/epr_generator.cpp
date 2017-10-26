@@ -448,11 +448,16 @@ int main( int argc, char** argv )
         raw_generator->setCutoffAngleCosine( cutoff_angle_cosine );
         raw_generator->setNumberOfMomentPreservingAngles(
                                           number_of_moment_preserving_angles );
-        raw_generator->setDefaultGridConvergenceTolerance(
+        raw_generator->setDefaultPhotonGridConvergenceTolerance(
                                                         grid_convergence_tol );
-        raw_generator->setDefaultGridAbsoluteDifferenceTolerance(
+        raw_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance(
                                                       grid_absolute_diff_tol );
-        raw_generator->setDefaultGridDistanceTolerance( grid_distance_tol );
+        raw_generator->setDefaultPhotonGridDistanceTolerance( grid_distance_tol );
+        raw_generator->setDefaultElectronGridConvergenceTolerance(
+                                                        grid_convergence_tol );
+        raw_generator->setDefaultElectronGridAbsoluteDifferenceTolerance(
+                                                      grid_absolute_diff_tol );
+        raw_generator->setDefaultElectronGridDistanceTolerance( grid_distance_tol );
         raw_generator->setElectronTwoDInterpPolicy( electron_interp );
 
         epr_generator.reset( raw_generator );

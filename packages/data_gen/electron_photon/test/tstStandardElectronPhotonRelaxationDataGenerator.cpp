@@ -54,10 +54,14 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_FLOATING_EQUALITY( generator.getMaxPhotonEnergy(), 1e5, 1e-9 );
   TEST_EQUALITY_CONST( generator.getMinElectronEnergy(), 1e-5 );
   TEST_EQUALITY_CONST( generator.getMaxElectronEnergy(), 1e5 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridConvergenceTolerance(), 1e-3 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridAbsoluteDifferenceTolerance(),
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(),
                        1e-13 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridDistanceTolerance(), 1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridDistanceTolerance(), 1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                       1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
   TEST_EQUALITY_CONST( generator.getOccupationNumberEvaluationTolerance(),
                        1e-3 );
   TEST_EQUALITY_CONST( generator.getSubshellIncoherentEvaluationTolerance(),
@@ -91,10 +95,14 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
   TEST_EQUALITY_CONST( generator.getMaxPhotonEnergy(), 20.0 );
   TEST_EQUALITY_CONST( generator.getMinElectronEnergy(), 1e-5 );
   TEST_EQUALITY_CONST( generator.getMaxElectronEnergy(), 1e5 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridConvergenceTolerance(), 1e-3 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridAbsoluteDifferenceTolerance(),
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(),
                        1e-13 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridDistanceTolerance(), 1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridDistanceTolerance(), 1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridConvergenceTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                       1e-13 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 );
   TEST_EQUALITY_CONST( generator.getOccupationNumberEvaluationTolerance(),
                        1e-3 );
   TEST_EQUALITY_CONST( generator.getSubshellIncoherentEvaluationTolerance(),
@@ -114,42 +122,83 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
 //---------------------------------------------------------------------------//
 // Check that the default grid convergence tolerance can be set
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
-                   setDefaultGridConvergenceTolerance )
+                   setDefaultPhotonGridConvergenceTolerance )
 {
   DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
-  generator.setDefaultGridConvergenceTolerance( 1e-5 );
+  generator.setDefaultPhotonGridConvergenceTolerance( 1e-5 );
 
-  TEST_EQUALITY_CONST( generator.getDefaultGridConvergenceTolerance(), 1e-5 );
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the default grid absolute difference tolerance can be set
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
-                   setDefaultGridAbsoluteDifferenceTolerance )
+                   setDefaultPhotonGridAbsoluteDifferenceTolerance )
 {
   DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
-  generator.setDefaultGridAbsoluteDifferenceTolerance( 1e-40 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridAbsoluteDifferenceTolerance(),
+  generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-40 );
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(),
                        1e-40 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the default grid distance tolerance can be set
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
-                   setDefaultGridDistanceTolerance )
+                   setDefaultPhotonGridDistanceTolerance )
 {
   DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
                                                        h_xss_data_extractor,
                                                        h_endl_data_container );
 
-  generator.setDefaultGridDistanceTolerance( 1e-30 );
-  TEST_EQUALITY_CONST( generator.getDefaultGridDistanceTolerance(), 1e-30 );
+  generator.setDefaultPhotonGridDistanceTolerance( 1e-30 );
+  TEST_EQUALITY_CONST( generator.getDefaultPhotonGridDistanceTolerance(), 1e-30 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the default grid convergence tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setDefaultElectronGridConvergenceTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setDefaultElectronGridConvergenceTolerance( 1e-5 );
+
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridConvergenceTolerance(), 1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the default grid absolute difference tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setDefaultElectronGridAbsoluteDifferenceTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-40 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                       1e-40 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the default grid distance tolerance can be set
+TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
+                   setDefaultElectronGridDistanceTolerance )
+{
+  DataGen::StandardElectronPhotonRelaxationDataGenerator generator(
+                                                       h_xss_data_extractor,
+                                                       h_endl_data_container );
+
+  generator.setDefaultElectronGridDistanceTolerance( 1e-30 );
+  TEST_EQUALITY_CONST( generator.getDefaultElectronGridDistanceTolerance(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
@@ -318,9 +367,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
     raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
-    raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
-    raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-80 );
-    raw_data_generator->setDefaultGridDistanceTolerance( 1e-20 );
+    raw_data_generator->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
+    raw_data_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 );
+    raw_data_generator->setDefaultPhotonGridDistanceTolerance( 1e-20 );
+    raw_data_generator->setDefaultElectronGridConvergenceTolerance( 1e-3 );
+    raw_data_generator->setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-80 );
+    raw_data_generator->setDefaultElectronGridDistanceTolerance( 1e-20 );
 
     data_generator.reset( raw_data_generator );
   }
@@ -620,12 +672,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1e-15 );
 
   // Check the electron energy grid
-  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" );
 
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
-  TEST_EQUALITY_CONST( energy_grid.size(), 797 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 343 );
 
   // Check the elastic data
   unsigned threshold =
@@ -638,19 +690,19 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 86 );
+  TEST_EQUALITY_CONST( threshold, 15 );
 
   cross_section =
     data_container.getScreenedRutherfordElasticCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 1.54213098883628845e+02 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29045336560270462e+04);
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 
@@ -730,13 +782,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_FLOATING_EQUALITY( cross_section.front(), 1.03086051522408649325e+07, 1e-15 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.28281706991402224574e-07, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   // Check the electroionization data
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.361000000000E-05 );
 
@@ -745,7 +797,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> electroionization_energy_grid =
     data_container.getElectroionizationEnergyGrid( 1u );
@@ -795,7 +847,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
   TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   TEST_EQUALITY_CONST( data_container.getBremsstrahlungPhotonInterpPolicy(), "Lin-Lin" );
 
@@ -837,7 +889,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   // Check the atomic excitation data
   threshold = data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.36100e-5 );
 
@@ -845,7 +897,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> atomic_excitation_energy_grid =
     data_container.getAtomicExcitationEnergyGrid();
@@ -870,7 +922,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.back(), 1.77239524290144647e+05 );
 
-  TEST_EQUALITY_CONST( cross_section.size(), 797 );
+  TEST_EQUALITY_CONST( cross_section.size(), 343 );
 
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
@@ -903,9 +955,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
     raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
-    raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
-    raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-80 );
-    raw_data_generator->setDefaultGridDistanceTolerance( 1e-20 );
+    raw_data_generator->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
+    raw_data_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 );
+    raw_data_generator->setDefaultPhotonGridDistanceTolerance( 1e-20 );
+    raw_data_generator->setDefaultElectronGridConvergenceTolerance( 1e-3 );
+    raw_data_generator->setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-80 );
+    raw_data_generator->setDefaultElectronGridDistanceTolerance( 1e-20 );
+
 
     data_generator.reset( raw_data_generator );
   }
@@ -1205,12 +1261,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1e-15 );
 
   // Check the electron energy grid
-  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" );
 
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
-  TEST_EQUALITY_CONST( energy_grid.size(), 797 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 343 );
 
   // Check the elastic data
   unsigned threshold =
@@ -1223,12 +1279,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 332 );
+  TEST_EQUALITY_CONST( threshold, 179 );
 
   cross_section =
     data_container.getScreenedRutherfordElasticCrossSection();
@@ -1237,7 +1293,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //! \todo double check what the front cross section should be
   TEST_EQUALITY_CONST( cross_section.front(), 2.57455204707366647 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 
@@ -1317,13 +1373,13 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_FLOATING_EQUALITY( cross_section.front(), 1.03086051522409096360e+07, 1e-15 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.29316014091644480779e-07, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   // Check the electroionization data
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.361000000000E-05 );
 
@@ -1332,7 +1388,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> electroionization_energy_grid =
     data_container.getElectroionizationEnergyGrid( 1u );
@@ -1382,7 +1438,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
   TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> bremsstrahlung_energy_grid =
     data_container.getBremsstrahlungEnergyGrid();
@@ -1425,7 +1481,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.36100e-5 );
 
@@ -1434,7 +1490,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> atomic_excitation_energy_grid =
     data_container.getAtomicExcitationEnergyGrid();
@@ -1459,7 +1515,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.back(), 1.7732209062100001e+05 );
 
-  TEST_EQUALITY_CONST( cross_section.size(), 797 );
+  TEST_EQUALITY_CONST( cross_section.size(), 343 );
 
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
@@ -1790,13 +1846,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1e-15 );
 
   // Check the electron data
-  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
-
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" );
 
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
-  TEST_EQUALITY_CONST( energy_grid.size(), 797 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 343 );
 
   // Check the elastic data
 //  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
@@ -1840,7 +1895,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_FLOATING_EQUALITY( cross_section.front(), 1.22176061033364161849e+07, 1e-15 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 4.64056535497517578099e-07, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   threshold =
     data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
@@ -1852,12 +1907,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 332 );
+  TEST_EQUALITY_CONST( threshold, 179 );
 
   cross_section =
     data_container.getScreenedRutherfordElasticCrossSection();
@@ -1866,7 +1921,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //! \todo double check what the front cross section should be
   TEST_EQUALITY_CONST( cross_section.front(), 2.57455204707366647 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 
@@ -1909,7 +1964,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.361000000000E-05 );
 
@@ -1918,7 +1973,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
 
@@ -1968,7 +2023,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
   TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> bremsstrahlung_energy_grid =
     data_container.getBremsstrahlungEnergyGrid();
@@ -2011,7 +2066,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.36100e-5 );
 
@@ -2020,7 +2075,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> atomic_excitation_energy_grid =
     data_container.getAtomicExcitationEnergyGrid();
@@ -2045,7 +2100,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.back(), 1.7732209062100001e+05 );
 
-  TEST_EQUALITY_CONST( cross_section.size(), 797 );
+  TEST_EQUALITY_CONST( cross_section.size(), 343 );
 
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
@@ -2378,12 +2433,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 
   // Check the electron data
-  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Lin-Lin" );
+  TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" );
 
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
-  TEST_EQUALITY_CONST( energy_grid.size(), 797 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 343 );
 
   // Check the elastic data
 //  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
@@ -2426,7 +2481,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_FLOATING_EQUALITY( cross_section.front(), 1.22176061033364161849e+07, 1e-15 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   threshold = data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
@@ -2436,12 +2491,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 332 );
+  TEST_EQUALITY_CONST( threshold, 179 );
 
   cross_section =
     data_container.getScreenedRutherfordElasticCrossSection();
@@ -2450,7 +2505,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //! \todo double check what the front cross section should be
   TEST_EQUALITY_CONST( cross_section.front(), 2.57455204707366647 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 
@@ -2490,7 +2545,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.361e-5 );
 
@@ -2499,7 +2554,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> electroionization_energy_grid =
     data_container.getElectroionizationEnergyGrid( 1u );
@@ -2549,7 +2604,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
   TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> bremsstrahlung_energy_grid =
     data_container.getBremsstrahlungEnergyGrid();
@@ -2592,7 +2647,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 7 );
+  TEST_EQUALITY_CONST( threshold, 3 );
   TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
                        1.36100e-5 );
 
@@ -2601,7 +2656,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
-  TEST_EQUALITY_CONST( cross_section.size(), 797-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
   std::vector<double> atomic_excitation_energy_grid =
     data_container.getAtomicExcitationEnergyGrid();
@@ -2626,7 +2681,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.back(), 1.7732209062100001e+05 );
 
-  TEST_EQUALITY_CONST( cross_section.size(), 797 );
+  TEST_EQUALITY_CONST( cross_section.size(), 343 );
 
   data_container.exportData( "test_h_epr.xml",
                              Utility::ArchivableObject::XML_ARCHIVE );
@@ -2657,9 +2712,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //    raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
 //    raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
 //    raw_data_generator->setElectronTotalElasticIntegratedCrossSectionModeOff();
-//    raw_data_generator->setDefaultGridConvergenceTolerance( 1e-3 );
-//    raw_data_generator->setDefaultGridAbsoluteDifferenceTolerance( 1e-70 );
-//    raw_data_generator->setDefaultGridDistanceTolerance( 1e-16 );
+//    raw_data_generator->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
+//    raw_data_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-70 );
+//    raw_data_generator->setDefaultPhotonGridDistanceTolerance( 1e-16 );
+//    raw_data_generator->setDefaultElectronGridConvergenceTolerance( 1e-3 );
+//    raw_data_generator->setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-70 );
+//    raw_data_generator->setDefaultElectronGridDistanceTolerance( 1e-16 );
 
 //    data_generator.reset( raw_data_generator );
 //  }
@@ -3261,7 +3319,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  threshold =
 //    data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
 
-//  TEST_EQUALITY_CONST( threshold, 86 );
+//  TEST_EQUALITY_CONST( threshold, 15 );
 //  TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
 //                       2.9101e-4 );
 
@@ -3439,7 +3497,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   // TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
   // std::cout << std::setprecision(16) << std::scientific << "cross_section.back() = \t" << cross_section.back() << std::endl;
 
-  // TEST_EQUALITY_CONST( cross_section.size(), 797 );
+  // TEST_EQUALITY_CONST( cross_section.size(), 343 );
 
 //  data_container.exportData( "test_c_epr.xml",
 //                             Utility::ArchivableObject::XML_ARCHIVE );
@@ -3922,7 +3980,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //  threshold =
 //    data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
 
-//  TEST_EQUALITY_CONST( threshold, 86 );
+//  TEST_EQUALITY_CONST( threshold, 15 );
 //  TEST_EQUALITY_CONST( data_container.getElectronEnergyGrid()[threshold],
 //                       2.9101e-4 );
 
@@ -4100,7 +4158,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   // TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
   // std::cout << std::setprecision(16) << std::scientific << "cross_section.back() = \t" << cross_section.back() << std::endl;
 
-  // TEST_EQUALITY_CONST( cross_section.size(), 797 );
+  // TEST_EQUALITY_CONST( cross_section.size(), 343 );
 
 //  data_container.exportData( "test_c_epr.xml",
 //                             Utility::ArchivableObject::XML_ARCHIVE );

@@ -131,7 +131,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                                                absorption_reactions,
                                                atomic_relaxation_model,
                                                false,
-                                               Utility::LinLin() ) );
+                                               Utility::LogLog() ) );
 }
 
 // Create the elastic reaction for a electroatom core

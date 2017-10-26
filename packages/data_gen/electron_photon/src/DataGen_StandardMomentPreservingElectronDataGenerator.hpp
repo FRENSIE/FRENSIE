@@ -20,6 +20,7 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 
 namespace DataGen{
 
@@ -33,11 +34,11 @@ public:
   StandardMomentPreservingElectronDataGenerator(
     const unsigned atomic_number,
     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     const double min_electron_energy,
     const double max_electron_energy,
     const double cutoff_angle_cosine,
-    const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on );
+    const double tabular_evaluation_tol );
 
   //! Destructor
   ~StandardMomentPreservingElectronDataGenerator()
@@ -79,8 +80,8 @@ private:
   // The FullyTabularTwoDDistribution evaluation tolerance
   double d_tabular_evaluation_tol;
 
-  // The LinLinLog interplation mode
-  bool d_linlinlog_interpolation_mode_on;
+  // The 2D interplation type
+  MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
   // The moment evaluator of the elastic scattering distribution
   std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> d_moments_evaluator;

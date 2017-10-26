@@ -147,8 +147,8 @@ void GridGenerator<InterpPolicy>::setDistanceTolerance(
 template<typename InterpPolicy>
 template<typename STLCompliantContainer, typename Functor>
 void GridGenerator<InterpPolicy>::refineInPlace(
-			STLCompliantContainer& grid,
-			const Functor& function,
+            STLCompliantContainer& grid,
+            const Functor& function,
             const double min_value,
             const double max_value ) const
 {
@@ -161,12 +161,11 @@ void GridGenerator<InterpPolicy>::refineInPlace(
 
   STLCompliantContainer evaluated_function;
 
-  this->refineAndEvaluateInPlace(
-        grid,
-        evaluated_function,
-        function,
-        min_value,
-        max_value );
+  this->refineAndEvaluateInPlace( grid,
+                                  evaluated_function,
+                                  function,
+                                  min_value,
+                                  max_value );
 }
 
 // Get the distance tolerance

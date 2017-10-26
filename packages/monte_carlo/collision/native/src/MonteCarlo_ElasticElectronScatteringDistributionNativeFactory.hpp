@@ -291,8 +291,6 @@ public:
 protected:
 
   //! Create the cutoff to total preserving cross section ratios
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::Correlated>
   static void createCutoffCrossSectionRatios(
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,

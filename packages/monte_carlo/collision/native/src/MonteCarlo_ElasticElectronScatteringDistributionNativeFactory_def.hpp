@@ -588,29 +588,29 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 //      ****PRIVATE FUNCTIONS****
 //----------------------------------------------------------------------------//
 
-// Create the ratio of the cutoff to the total elastic cross section
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
-void ElasticElectronScatteringDistributionNativeFactory::createCutoffCrossSectionRatios(
-    const Teuchos::ArrayRCP<const double> raw_energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> total_cross_section,
-    std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios )
-{
-  // Calculate the ratio of the cutoff to the total cross section
-  std::vector<double> cross_section_ratio( raw_energy_grid.size() );
-  std::vector<double> energy_grid( raw_energy_grid.size() );
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
-  {
-    // Get the energy
-    energy_grid[n] = raw_energy_grid[n];
+// // Create the ratio of the cutoff to the total elastic cross section
+// template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+// void ElasticElectronScatteringDistributionNativeFactory::createCutoffCrossSectionRatios(
+//     const Teuchos::ArrayRCP<const double> raw_energy_grid,
+//     const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+//     const Teuchos::ArrayRCP<const double> total_cross_section,
+//     std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios )
+// {
+//   // Calculate the ratio of the cutoff to the total cross section
+//   std::vector<double> cross_section_ratio( raw_energy_grid.size() );
+//   std::vector<double> energy_grid( raw_energy_grid.size() );
+//   for( unsigned n = 0; n < energy_grid.size(); ++n )
+//   {
+//     // Get the energy
+//     energy_grid[n] = raw_energy_grid[n];
 
-    // Get the ratio of the cutoff to the total cross section
-    cross_section_ratio[n] = cutoff_cross_section[n]/total_cross_section[n];
-  }
-    // Create cross section ratios
-    cross_section_ratios.reset(
-      new const Utility::TabularDistribution<Utility::LogLog>( energy_grid, cross_section_ratio ) );
-}
+//     // Get the ratio of the cutoff to the total cross section
+//     cross_section_ratio[n] = cutoff_cross_section[n]/total_cross_section[n];
+//   }
+//     // Create cross section ratios
+//     cross_section_ratios.reset(
+//       new const Utility::TabularDistribution<Utility::LogLog>( energy_grid, cross_section_ratio ) );
+// }
 
 // Create the ratio of the cutoff to the moment preserving cross section
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>

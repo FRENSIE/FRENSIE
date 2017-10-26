@@ -25,9 +25,9 @@ namespace DataGen{
 // Constructor
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     const double cutoff_angle_cosine,
-    const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on )
+    const double tabular_evaluation_tol )
 
   : d_cutoff_elastic_angles( data_container.getCutoffElasticAngles() ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
@@ -46,20 +46,28 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
                                data_container.getElectronEnergyGrid().end() );
 
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
-  if ( linlinlog_interpolation_mode_on )
+  if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogLog,Utility::Exact>(
     d_coupled_distribution,
     data_container,
-    MonteCarlo::SIMPLIFIED_UNION,
+    MonteCarlo::TWO_D_UNION,
     tabular_evaluation_tol );
   }
-  else
+  else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Exact>(
     d_coupled_distribution,
     data_container,
-    MonteCarlo::SIMPLIFIED_UNION,
+    MonteCarlo::TWO_D_UNION,
+    tabular_evaluation_tol );
+  }
+  else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+  {
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+    d_coupled_distribution,
+    data_container,
+    MonteCarlo::TWO_D_UNION,
     tabular_evaluation_tol );
   }
 
@@ -77,7 +85,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the cutoff reaction
   d_cutoff_reaction.reset(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
       incoming_energy_grid,
       cutoff_cross_section,
       data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
@@ -91,7 +99,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the Screened Rutherford reaction
   d_screened_rutherford_reaction.reset(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
       incoming_energy_grid,
       screened_rutherford_cross_section,
       data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
@@ -126,7 +134,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the cutoff reaction
   d_cutoff_reaction.reset(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
       incoming_energy_grid,
       cutoff_cross_section,
       cutoff_threshold_energy_index,
@@ -134,7 +142,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   // Create the cutoff reaction
   d_screened_rutherford_reaction.reset(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin, false>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog, false>(
       incoming_energy_grid,
       screened_rutherford_cross_section,
       screened_rutherford_threshold_energy_index,
