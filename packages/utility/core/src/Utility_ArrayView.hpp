@@ -47,19 +47,19 @@ public:
   ArrayView( T* array_start, const typename ArrayView<T>::size_type array_size );
 
   //! Vector constructor
-  ArrayView( std::vector<T>& vector );
+  explicit ArrayView( std::vector<T>& vector );
 
   //! Const vector constructor
   template<typename U>
-  ArrayView( const std::vector<U>& vector );
+  explicit ArrayView( const std::vector<U>& vector );
 
   //! Array constructor
   template<size_t N>
-  ArrayView( std::array<T,N>& array );
+  explicit ArrayView( std::array<T,N>& array );
 
   //! Const array constructor
   template<typename U,size_t N>
-  ArrayView( const std::array<U,N>& array );
+  explicit ArrayView( const std::array<U,N>& array );
 
   //! Copy constructor
   ArrayView( ArrayView<T>& other_view );

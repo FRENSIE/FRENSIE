@@ -1240,20 +1240,15 @@ void allReduce( const Communicator& comm,
 }
 
 // Send data from every process to every other process
-/*! \details The input_values on every process of the communicator will 
- * be sent to every other process of the communicator. The input_values
- * associated with a process will start at the index that is equal to the
- * process's rank multiplied by the number of input values. The output_values
- * will be resized appropriately. This operation can be done with 
- * communicators of any size.
+/*! \details This method is provided to help with overload resolution
  * \ingroup mpi
  */
 template<typename T>
 inline void allToAll( const Communicator& comm,
-                      const std::vector<T>& input_values,
+                      const Utility::ArrayView<T>& input_values,
                       std::vector<T>& output_values )
 {
-  Utility::allToAll( comm, input_values, input_values.size(), output_values );
+  Utility::allToAll( comm, input_values.toConst(), output_values );
 }
 
 // Send data from every process to every other process
@@ -1273,7 +1268,19 @@ inline void allToAll( const Communicator& comm,
   // Resize the output values
   output_values.resize( input_values.size() );
 
-  Utility::allToAll( comm, input_values, input_values.size(), Utility::arrayView(output_values) );
+  Utility::allToAll( comm, input_values, Utility::arrayView(output_values) );
+}
+
+// Send data from every process to every other process
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void allToAll( const Communicator& comm,
+                      const Utility::ArrayView<T>& input_values,
+                      const Utility::ArrayView<T>& output_values )
+{
+  Utility::allToAll( comm, input_values.toConst(), output_values );
 }
 
 // Send data from every process to every other process
@@ -1300,7 +1307,14 @@ void allToAll( const Communicator& comm,
                         "An unknown communicator type was encountered!" );
 
     try{
-      mpi_comm->allToAll( input_values.data(), input_values.size(), output_values.data() );
+      int values_to_send_per_proc;
+
+      if( input_values.size() != 0 )
+        values_to_send_per_proc = input_values.size()/comm.size();
+      else
+        values_to_send_per_proc = 0;
+      
+      mpi_comm->allToAll( input_values.data(), values_to_send_per_proc, output_values.data() );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
