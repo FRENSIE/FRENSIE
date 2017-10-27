@@ -1155,6 +1155,18 @@ inline void allReduce( const Communicator& comm,
 
 // Combine the values stored by each process into a single value
 // available to all processes.
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T, typename ReduceOperation>
+inline void allReduce( const Communicator& comm,
+                       const Utility::ArrayView<T>& input_values,
+                       const Utility::ArrayView<T>& output_values,
+                       ReduceOperation op )
+{ Utility::allReduce( comm, input_values.toConst(), output_values, op ); }
+  
+// Combine the values stored by each process into a single value
+// available to all processes.
 /*! \details The input_values on every process of the communicator will be
  * reduced in the output_values array on every process. The output_values
  * array must be sized appropriately before passing it in to this method. This
@@ -1188,7 +1200,7 @@ void allReduce( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
 
-    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.data(), output_values.data() );
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
 }
 

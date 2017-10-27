@@ -68,4 +68,12 @@ IF(${FRENSIE_ENABLE_MPI})
   FRENSIE_ADD_TEST(CommunicatorAllGatherHelper MPI_PROCS 4)
 ENDIF()
 
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorAllReduceHelper DEPENDS tstCommunicatorAllReduceHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorAllReduceHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorAllReduceHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorAllReduceHelper MPI_PROCS 4)
+ENDIF()
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_mpi)

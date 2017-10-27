@@ -377,7 +377,7 @@ void MPICommunicator::allReduce(
                           int MPI_ENABLED_PARAMETER(number_of_values),
                           ReduceOperation MPI_ENABLED_PARAMETER(op) ) const
 {
-  MPI_ENABLED_LINE( boost::mpi::all_reduce( d_comm, input_output_values, number_of_values, Details::ReduceOpConversionHelper<ReduceOperation>::convertToBoostReduceOp(op) ) );
+  MPI_ENABLED_LINE( boost::mpi::all_reduce( d_comm, boost::mpi::inplace_t<T*>(input_output_values), number_of_values, Details::ReduceOpConversionHelper<ReduceOperation>::convertToBoostReduceOp(op) ) );
 }
 
 // Send data from every process to every other process
