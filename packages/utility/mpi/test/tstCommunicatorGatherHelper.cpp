@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCommunicatorBroadcastHelper.cpp
+//! \file   tstCommunicatorGatherHelper.cpp
 //! \author Alex Robinson
-//! \brief  Communicator broadcast helper function unit tests
+//! \brief  Communicator gather helper function unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -24,8 +24,7 @@
 //---------------------------------------------------------------------------//
 // Template Types
 //---------------------------------------------------------------------------//
-typedef std::tuple<bool,
-                   char, unsigned char,
+typedef std::tuple<char, unsigned char,
                    short, unsigned short,
                    int, unsigned int,
                    long, unsigned long,
@@ -205,105 +204,110 @@ inline std::unordered_map<Key,T> initializeValue( std::unordered_map<Key,T>, int
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that a broadcast operation can be conducted
-FRENSIE_UNIT_TEST_TEMPLATE( Communicator, broadcast, Types )
+// Check that a gather operation can be conducted
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather, Types )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
   std::shared_ptr<const Utility::Communicator> comm =
     Utility::Communicator::getDefault();
 
-  // Broadcast a single value
+  // Gather a single value from all procs and store in a vector
   {
-    T value;
+    const T value = initializeValue( T(), comm->rank() );
+
+    std::vector<T> gathered_values;
+
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 0 ) );
 
     if( comm->rank() == 0 )
-      value = initializeValue( T(), 1 );
-    else
-      value = initializeValue( T(), 0 );
+    {
+      FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
 
-    FRENSIE_REQUIRE_NO_THROW( Utility::broadcast( *comm, value, 0 ) );
-    FRENSIE_REQUIRE_EQUAL( value, initializeValue( T(), 1 ) );
+      std::vector<T> expected_gathered_values( comm->size() );
+
+      for( int i = 0; i < comm->size(); ++i )
+        expected_gathered_values[i] = initializeValue( T(), i );
+
+      FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+    }
+    else
+    {
+      FRENSIE_REQUIRE_EQUAL( gathered_values.size(), 0 );
+    }
 
     if( comm->size() > 1 )
     {
-      if( comm->rank() == 1 )
-        value = initializeValue( T(), 2 );
-      else
-        value = initializeValue( T(), 0 );
+      gathered_values.clear();
 
-      FRENSIE_REQUIRE_NO_THROW( Utility::broadcast( *comm, value, 1 ) );
-      FRENSIE_REQUIRE_EQUAL( value, initializeValue( T(), 2 ) );
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 1 ) );
+
+      if( comm->rank() == 1 )
+      {
+        FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
+
+        std::vector<T> expected_gathered_values( comm->size() );
+
+        for( int i = 0; i < comm->size(); ++i )
+          expected_gathered_values[i] = initializeValue( T(), i );
+
+        FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+      }
+      else
+      {
+        FRENSIE_REQUIRE_EQUAL( gathered_values.size(), 0 );
+      }
     }
   }
 
-  // Broadcast an array of values using an array view rvalue
+  // Gather a single value from all procs and store in a vector that only
+  // exists on the root process
   {
-    std::array<T,10> values;
+    const T value = initializeValue( T(), comm->rank() );
 
     if( comm->rank() == 0 )
-      values.fill( initializeValue( T(), 1 ) );
-    else
-      values.fill( initializeValue( T(), 0 ) );
-
-    FRENSIE_REQUIRE_NO_THROW( Utility::broadcast( *comm, Utility::arrayView(values), 0 ) );
-
-    std::array<T,10> expected_values;
-    expected_values.fill( initializeValue( T(), 1 ) );
-    
-    FRENSIE_REQUIRE_EQUAL( values, expected_values );
-
-    if( comm->size() > 1 )
     {
-      if( comm->rank() == 1 )
-        values.fill( initializeValue( T(), 2 ) );
-      else
-        values.fill( initializeValue( T(), 0 ) );
+      std::vector<T> gathered_values;
 
-      FRENSIE_REQUIRE_NO_THROW( Utility::broadcast( *comm, Utility::arrayView(values), 1 ) );
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 0 ) );
+      FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
 
-      std::array<T,10> expected_values;
-      expected_values.fill( initializeValue( T(), 2 ) );
-    
-      FRENSIE_REQUIRE_EQUAL( values, expected_values );
+      std::vector<T> expected_gathered_values( comm->size() );
+
+      for( int i = 0; i < comm->size(); ++i )
+        expected_gathered_values[i] = initializeValue( T(), i );
+
+      FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
     }
-  }
-
-  // Broadcast an array of values using an array view lvalue
-  {
-    std::array<T,10> values;
-
-    if( comm->rank() == 0 )
-      values.fill( initializeValue( T(), 1 ) );
     else
-      values.fill( initializeValue( T(), 0 ) );
-
-    Utility::ArrayView<T> view_of_values( values );
-
-    FRENSIE_REQUIRE_NO_THROW( Utility::broadcast( *comm, view_of_values, 0 ) );
-
-    std::array<T,10> expected_values;
-    expected_values.fill( initializeValue( T(), 1 ) );
-    
-    FRENSIE_REQUIRE_EQUAL( values, expected_values );
+    {
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 0 ) );
+    }
 
     if( comm->size() > 1 )
     {
       if( comm->rank() == 1 )
-        values.fill( initializeValue( T(), 2 ) );
+      {
+        std::vector<T> gathered_values;
+
+        FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 1 ) );
+        FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
+
+        std::vector<T> expected_gathered_values( comm->size() );
+
+        for( int i = 0; i < comm->size(); ++i )
+          expected_gathered_values[i] = initializeValue( T(), i );
+
+        FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+      }
       else
-        values.fill( initializeValue( T(), 0 ) );
-
-      FRENSIE_REQUIRE_NO_THROW( Utility::broadcast( *comm, view_of_values, 1 ) );
-
-      std::array<T,10> expected_values;
-      expected_values.fill( initializeValue( T(), 2 ) );
-    
-      FRENSIE_REQUIRE_EQUAL( values, expected_values );
+      {
+        FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 1 ) );
+      }
     }
   }
 }
 
 //---------------------------------------------------------------------------//
-// end tstCommunicatorBroadcastHelper.cpp
+// end tstCommunicatorGatherHelper.cpp
 //---------------------------------------------------------------------------//

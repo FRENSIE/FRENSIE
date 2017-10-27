@@ -1503,6 +1503,19 @@ inline void gather( const Communicator& comm,
 }
 
 // Gather the values stored at every process into a vector at the root process
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gather( const Communicator& comm,
+                    const Utility::ArrayView<T>& input_values,
+                    std::vector<T>& output_values,
+                    int root_process )
+{
+  Utility::gather( comm, input_values.toConst(), output_values, root_process );
+}
+  
+// Gather the values stored at every process into a vector at the root process
 /*! \details The values on every process of the communicator will be sent 
  * to root_process of the communicator. The output_values will be resized
  * appropriately. The values sent by a process will start at the index in 
@@ -1522,6 +1535,19 @@ inline void gather( const Communicator& comm,
     output_values.resize( input_values.size()*comm.size() );
 
   Utility::gather( comm, input_values, Utility::arrayView(output_values), root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+void gather( const Communicator& comm,
+             const Utility::ArrayView<T>& input_values,
+             const Utility::ArrayView<T>& output_values,
+             int root_process )
+{
+  Utility::gather( comm, input_values.toConst(), output_values, root_process );
 }
 
 // Gather the values stored at every process into a vector at the root process
@@ -1573,6 +1599,18 @@ void gather( const Communicator& comm,
   
     Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gather( const Communicator& comm,
+                    const Utility::ArrayView<T>& input_values,
+                    int root_process )
+{
+  Utility::gather( comm, input_values.toConst(), root_process );
 }
 
 // Gather the values stored at every process into a vector at the root process
