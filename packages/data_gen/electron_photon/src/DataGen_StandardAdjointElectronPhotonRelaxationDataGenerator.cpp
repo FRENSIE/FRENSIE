@@ -1798,7 +1798,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                  boost::cref( *total_elastic_reaction ),
                  _1 );
 
-
   // Generate total elastic
   union_energy_grid_generator.generateInPlace( union_energy_grid,
                                                total_elastic_grid_function );
@@ -2040,9 +2039,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
           forward_grid_searcher ) );
 
     boost::function<double (double pz)> moment_preserving_elastic_grid_function =
-      boost::bind( &MonteCarlo::ElectroatomicReaction::getCrossSection,
-                   boost::cref( *moment_preserving_elastic_reaction ),
-                   _1 );
+      [&moment_preserving_elastic_reaction, max_energy_cs = forward_moment_preserving_elastic_cs[forward_moment_preserving_elastic_cs.size()-1]]( const double energy ){
+
+        return moment_preserving_elastic_reaction->getCrossSection( energy );
+      };
+      // boost::bind( &MonteCarlo::ElectroatomicReaction::getCrossSection,
+      //              boost::cref( *moment_preserving_elastic_reaction ),
+      //              _1 );
 
     std::vector<double> moment_preserving_cross_section;
     this->createCrossSectionOnUnionEnergyGrid(

@@ -1114,7 +1114,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
      h_data_container.getAdjointMomentPreservingCrossSection();
 
    TEST_EQUALITY_CONST( cross_section.front(), 1.0308605152240909636E+07 );
-   TEST_EQUALITY_CONST( cross_section.back(), 6.94769517468835418e-01 );
+   TEST_EQUALITY_CONST( cross_section.back(), 6.94882467905769463e-01 );
    TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
    threshold =
@@ -1179,8 +1179,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    cross_section =
      h_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
-   TEST_EQUALITY_CONST( cross_section.front(), 5.06492584719077001e+01 );
-   TEST_EQUALITY_CONST( cross_section.back(), 8.10948384900376240e-01 );
+   TEST_EQUALITY_CONST( cross_section.front(), 5.08016788312764831e+01 );
+   TEST_EQUALITY_CONST( cross_section.back(), 8.10956655280601790e-01 );
    TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
    TEST_ASSERT( !h_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
@@ -1206,15 +1206,15 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    std::vector<double> electron_bremsstrahlung_pdf =
      h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 );
 
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 1.24774169051769888e+06 );
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 5.49832613129992118e-08 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 1.24456311409197771e+06 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 5.48268294837003155e-08 );
    TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 28 );
 
    electron_bremsstrahlung_pdf =
      h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 );
 
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 6.96201998877054546e+05 );
-   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 3.08239081179510543e-01 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 6.96194898854383733e+05 );
+   TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 3.08283926234083905e-01 );
    TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 21 );
 
   // Check the electroionization data
@@ -1254,7 +1254,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    std::vector<double> electroionization_recoil_pdf =
      h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 1e-5 );
 
-   TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.37890244400157121e+03 );
+   TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.37890244400157144e+03 );
    TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.62858468202532736e-02 );
    TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 23 );
 
