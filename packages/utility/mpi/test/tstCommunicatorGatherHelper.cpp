@@ -38,6 +38,7 @@ typedef std::tuple<char, unsigned char,
                    std::pair<short,int>, std::tuple<short,int> > BasicTypes;
 
 typedef std::tuple<bool,char,short,int,long,long long,double,std::string,std::pair<float,int>, std::tuple<float,int> > BasicTypesSubset;
+typedef std::tuple<char,int,double> BasicTypesMinSubset;
 
 template<typename T>
 struct SequenceContainerList
@@ -102,8 +103,10 @@ struct MergeContainerLists<std::tuple<Types...> > : public MergeContainerLists<T
 { /* ... */ };
 
 typedef typename MergeContainerLists<BasicTypesSubset>::type ContainerTypes;
+typedef typename MergeContainerLists<BasicTypesMinSubset>::type ContainerTypesSubset;
 
 typedef decltype(std::tuple_cat(BasicTypes(), ContainerTypes())) Types;
+typedef decltype(std::tuple_cat(BasicTypes(), ContainerTypesSubset())) TypesSubset;
 
 //---------------------------------------------------------------------------//
 // Testing functions
@@ -204,106 +207,835 @@ inline std::unordered_map<Key,T> initializeValue( std::unordered_map<Key,T>, int
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that a gather operation can be conducted
-FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather, Types )
+// Check that a gather operation can be conducted - single value, vector
+// of gathered values exists on all procs
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_single_value_vector, Types )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
 
   std::shared_ptr<const Utility::Communicator> comm =
     Utility::Communicator::getDefault();
 
-  // Gather a single value from all procs and store in a vector
+  const T value = initializeValue( T(), comm->rank() );
+
+  std::vector<T> gathered_values;
+  
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 0 ) );
+  
+  if( comm->rank() == 0 )
   {
-    const T value = initializeValue( T(), comm->rank() );
+    FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
+    
+    std::vector<T> expected_gathered_values( comm->size() );
+    
+    for( int i = 0; i < comm->size(); ++i )
+      expected_gathered_values[i] = initializeValue( T(), i );
+    
+    FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+  }
+  else
+  {
+    FRENSIE_REQUIRE_EQUAL( gathered_values.size(), 0 );
+  }
 
-    std::vector<T> gathered_values;
-
-    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 0 ) );
-
-    if( comm->rank() == 0 )
+  if( comm->size() > 1 )
+  {
+    gathered_values.clear();
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 1 ) );
+    
+    if( comm->rank() == 1 )
     {
       FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
-
+      
       std::vector<T> expected_gathered_values( comm->size() );
-
+      
       for( int i = 0; i < comm->size(); ++i )
         expected_gathered_values[i] = initializeValue( T(), i );
-
+      
       FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
     }
     else
     {
       FRENSIE_REQUIRE_EQUAL( gathered_values.size(), 0 );
     }
+  }
+}
 
-    if( comm->size() > 1 )
-    {
-      gathered_values.clear();
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - single value, vector of
+// gathered values exists on root proc only
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_single_value_root_vector, TypesSubset )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
 
-      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 1 ) );
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
 
-      if( comm->rank() == 1 )
-      {
-        FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
+  const T value = initializeValue( T(), comm->rank() );
+  
+  if( comm->rank() == 0 )
+  {
+    std::vector<T> gathered_values;
 
-        std::vector<T> expected_gathered_values( comm->size() );
-
-        for( int i = 0; i < comm->size(); ++i )
-          expected_gathered_values[i] = initializeValue( T(), i );
-
-        FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
-      }
-      else
-      {
-        FRENSIE_REQUIRE_EQUAL( gathered_values.size(), 0 );
-      }
-    }
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 0 ) );
+    FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
+    
+    std::vector<T> expected_gathered_values( comm->size() );
+    
+    for( int i = 0; i < comm->size(); ++i )
+      expected_gathered_values[i] = initializeValue( T(), i );
+    
+    FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+  }
+  else
+  {
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 0 ) );
   }
 
-  // Gather a single value from all procs and store in a vector that only
-  // exists on the root process
+  if( comm->size() > 1 )
   {
-    const T value = initializeValue( T(), comm->rank() );
-
-    if( comm->rank() == 0 )
+    if( comm->rank() == 1 )
     {
       std::vector<T> gathered_values;
-
-      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 0 ) );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 1 ) );
       FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
-
+      
       std::vector<T> expected_gathered_values( comm->size() );
-
+      
       for( int i = 0; i < comm->size(); ++i )
         expected_gathered_values[i] = initializeValue( T(), i );
-
+      
       FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
     }
     else
     {
-      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 0 ) );
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 1 ) );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - single bool value, view
+// of gathered bool values exists on all procs
+FRENSIE_UNIT_TEST( Communicator, gather_single_value_view_bool )
+{
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const bool value = (comm->rank()%2 == 0 ? true : false);
+
+  bool gathered_values[comm->size()];
+  
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, Utility::ArrayView<bool>( gathered_values, comm->size() ), 0 ) );
+  
+  if( comm->rank() == 0 )
+  {
+    bool expected_gathered_values[comm->size()];
+    
+    for( int i = 0; i < comm->size(); ++i )
+      expected_gathered_values[i] = (i%2 == 0 ? true : false);
+    
+    FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_values, comm->size() ),
+                         Utility::ArrayView<const bool>(expected_gathered_values, comm->size() ) );
+  }
+  
+  if( comm->size() > 1 )
+  {
+    Utility::ArrayView<bool> gathered_values_view( gathered_values, comm->size() );
+    gathered_values_view.fill( false );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values_view, 1 ) );
+    
+    if( comm->rank() == 1 )
+    {
+      bool expected_gathered_values[comm->size()];
+    
+      for( int i = 0; i < comm->size(); ++i )
+        expected_gathered_values[i] = (i%2 == 0 ? true : false);
+      
+      FRENSIE_CHECK_EQUAL( gathered_values_view,
+                           Utility::ArrayView<const bool>(expected_gathered_values, comm->size() ) );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - single value, view of
+// gathered values exists on all procs
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_single_value_view, Types )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const T value = initializeValue( T(), comm->rank() );
+
+  std::vector<T> gathered_values( comm->size() );
+  
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, Utility::arrayView(gathered_values), 0 ) );
+  
+  if( comm->rank() == 0 )
+  {
+    FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
+    
+    std::vector<T> expected_gathered_values( comm->size() );
+    
+    for( int i = 0; i < comm->size(); ++i )
+      expected_gathered_values[i] = initializeValue( T(), i );
+    
+    FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+  }
+
+  if( comm->size() > 1 )
+  {
+    gathered_values.clear();
+    gathered_values.resize( comm->size() );
+    Utility::ArrayView<T> gathered_values_view( gathered_values );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values_view, 1 ) );
+    
+    if( comm->rank() == 1 )
+    {
+      FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
+      
+      std::vector<T> expected_gathered_values( comm->size() );
+      
+      for( int i = 0; i < comm->size(); ++i )
+        expected_gathered_values[i] = initializeValue( T(), i );
+      
+      FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - single value, view of
+// gathered values exists on root proc only
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_single_value_root_view, TypesSubset )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const T value = initializeValue( T(), comm->rank() );
+
+  if( comm->rank() == 0 )
+  {
+    std::vector<T> gathered_values( comm->size() );
+
+    // Use a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, Utility::arrayView(gathered_values), 0 ) );
+        
+    std::vector<T> expected_gathered_values( comm->size() );
+    
+    for( int i = 0; i < comm->size(); ++i )
+      expected_gathered_values[i] = initializeValue( T(), i );
+    
+    FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+  }
+  else
+  {
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 0 ) );
+  }
+
+  if( comm->size() > 1 )
+  {
+    if( comm->rank() == 1 )
+    {
+      std::vector<T> gathered_values( comm->size() );
+
+      // Use a view lvalue
+      Utility::ArrayView<T> gathered_values_view( gathered_values );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values_view, 1 ) );
+      
+      std::vector<T> expected_gathered_values( comm->size() );
+      
+      for( int i = 0; i < comm->size(); ++i )
+        expected_gathered_values[i] = initializeValue( T(), i );
+      
+      FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+    }
+    else
+    {
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 1 ) );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - multiple values, vector
+// of gathered values exists on all procs
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_multiple_values_vector, Types )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const T value = initializeValue( T(), comm->rank() );
+  std::vector<T> input_values( 3, value );
+  Utility::ArrayView<const T> input_values_view( input_values );
+
+  // Gather an initializer list of values
+  std::vector<T> gathered_init_list_values;
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, gathered_init_list_values, 0 ) );
+
+  // Gather using an array view rvalue
+  std::vector<T> gathered_view_rvalue_values;
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), gathered_view_rvalue_values, 0 ) );
+
+  // Gather using an array view of const rvalue
+  std::vector<T> gathered_const_view_rvalue_values;
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), gathered_const_view_rvalue_values, 0 ) );
+
+  // Gather using an array view lvalue
+  std::vector<T> gathered_view_lvalue_values;
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, gathered_view_lvalue_values, 0 ) );
+  
+  if( comm->rank() == 0 )
+  {
+    FRENSIE_REQUIRE_EQUAL( gathered_init_list_values.size(), comm->size()*3 );
+    FRENSIE_REQUIRE_EQUAL( gathered_view_rvalue_values.size(), comm->size()*3 );
+    FRENSIE_REQUIRE_EQUAL( gathered_const_view_rvalue_values.size(), comm->size()*3 );
+    FRENSIE_REQUIRE_EQUAL( gathered_view_lvalue_values.size(), comm->size()*3 );
+    
+    std::vector<T> expected_gathered_values( comm->size()*3 );
+    
+    for( int i = 0; i < comm->size(); ++i )
+    {
+      for( int j = 0; j < 3; ++j )
+        expected_gathered_values[i*3+j] = initializeValue( T(), i );
+    }
+    
+    FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+  }
+  else
+  {
+    FRENSIE_REQUIRE_EQUAL( gathered_init_list_values.size(), 0 );
+    FRENSIE_REQUIRE_EQUAL( gathered_view_rvalue_values.size(), 0 );
+    FRENSIE_REQUIRE_EQUAL( gathered_const_view_rvalue_values.size(), 0 );
+    FRENSIE_REQUIRE_EQUAL( gathered_view_lvalue_values.size(), 0 );
+  }
+
+  if( comm->size() > 1 )
+  {
+    gathered_init_list_values.clear();
+    gathered_view_rvalue_values.clear();
+    gathered_const_view_rvalue_values.clear();
+    gathered_view_lvalue_values.clear();
+
+    // Gather an initializer list of values
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, gathered_init_list_values, 1 ) );
+
+    // Gather using an array view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), gathered_view_rvalue_values, 1 ) );
+
+    // Gather using an array view of const rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), gathered_const_view_rvalue_values, 1 ) );
+
+    // Gather using an array view lvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, gathered_view_lvalue_values, 1 ) );
+    
+    if( comm->rank() == 1 )
+    {
+      FRENSIE_REQUIRE_EQUAL( gathered_init_list_values.size(), comm->size()*3 );
+      FRENSIE_REQUIRE_EQUAL( gathered_view_rvalue_values.size(), comm->size()*3 );
+      FRENSIE_REQUIRE_EQUAL( gathered_const_view_rvalue_values.size(), comm->size()*3 );
+      FRENSIE_REQUIRE_EQUAL( gathered_view_lvalue_values.size(), comm->size()*3 );
+      
+      std::vector<T> expected_gathered_values( comm->size()*3 );
+      
+      for( int i = 0; i < comm->size(); ++i )
+      {
+        for( int j = 0; j < 3; ++j )
+          expected_gathered_values[i*3+j] = initializeValue( T(), i );
+      }
+    
+      FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+    }
+    else
+    {
+      FRENSIE_REQUIRE_EQUAL( gathered_init_list_values.size(), 0 );
+      FRENSIE_REQUIRE_EQUAL( gathered_view_rvalue_values.size(), 0 );
+      FRENSIE_REQUIRE_EQUAL( gathered_const_view_rvalue_values.size(), 0 );
+      FRENSIE_REQUIRE_EQUAL( gathered_view_lvalue_values.size(), 0 );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - multiple values, vector
+// of gathered values only exists on root proc
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_multiple_values_root_vector, TypesSubset )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const T value = initializeValue( T(), comm->rank() );
+  std::vector<T> input_values( 3, value );
+  Utility::ArrayView<const T> input_values_view( input_values );
+  
+  if( comm->rank() == 0 )
+  {
+    // Gather an initializer list of values
+    std::vector<T> gathered_init_list_values;
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, gathered_init_list_values, 0 ) );
+    
+    // Gather using an array view rvalue
+    std::vector<T> gathered_view_rvalue_values;
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), gathered_view_rvalue_values, 0 ) );
+    
+    // Gather using an array view of const rvalue
+    std::vector<T> gathered_const_view_rvalue_values;
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), gathered_const_view_rvalue_values, 0 ) );
+    
+    // Gather using an array view lvalue
+    std::vector<T> gathered_view_lvalue_values;
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, gathered_view_lvalue_values, 0 ) );
+    
+    FRENSIE_REQUIRE_EQUAL( gathered_init_list_values.size(), comm->size()*3 );
+    FRENSIE_REQUIRE_EQUAL( gathered_view_rvalue_values.size(), comm->size()*3 );
+    FRENSIE_REQUIRE_EQUAL( gathered_const_view_rvalue_values.size(), comm->size()*3 );
+    FRENSIE_REQUIRE_EQUAL( gathered_view_lvalue_values.size(), comm->size()*3 );
+    
+    std::vector<T> expected_gathered_values( comm->size()*3 );
+    
+    for( int i = 0; i < comm->size(); ++i )
+    {
+      for( int j = 0; j < 3; ++j )
+        expected_gathered_values[i*3+j] = initializeValue( T(), i );
+    }
+    
+    FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+  }
+  else
+  {
+    // Gather an initializer list of values
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, 0 ) );
+    
+    // Gather using an array view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), 0 ) );
+    
+    // Gather using an array view of const rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), 0 ) );
+    
+    // Gather using an array view lvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, 0 ) );
+  }
+
+  if( comm->size() > 1 )
+  {    
+    if( comm->rank() == 1 )
+    {
+      // Gather an initializer list of values
+      std::vector<T> gathered_init_list_values;
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, gathered_init_list_values, 1 ) );
+    
+      // Gather using an array view rvalue
+      std::vector<T> gathered_view_rvalue_values;
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), gathered_view_rvalue_values, 1 ) );
+    
+      // Gather using an array view of const rvalue
+      std::vector<T> gathered_const_view_rvalue_values;
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), gathered_const_view_rvalue_values, 1 ) );
+    
+      // Gather using an array view lvalue
+      std::vector<T> gathered_view_lvalue_values;
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, gathered_view_lvalue_values, 1 ) );
+    
+      FRENSIE_REQUIRE_EQUAL( gathered_init_list_values.size(), comm->size()*3 );
+      FRENSIE_REQUIRE_EQUAL( gathered_view_rvalue_values.size(), comm->size()*3 );
+      FRENSIE_REQUIRE_EQUAL( gathered_const_view_rvalue_values.size(), comm->size()*3 );
+      FRENSIE_REQUIRE_EQUAL( gathered_view_lvalue_values.size(), comm->size()*3 );
+      
+      std::vector<T> expected_gathered_values( comm->size()*3 );
+      
+      for( int i = 0; i < comm->size(); ++i )
+      {
+        for( int j = 0; j < 3; ++j )
+          expected_gathered_values[i*3+j] = initializeValue( T(), i );
+      }
+    
+      FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+    }
+    else
+    {
+      // Gather an initializer list of values
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, 1 ) );
+    
+      // Gather using an array view rvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), 1 ) );
+    
+      // Gather using an array view of const rvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), 1 ) );
+      
+      // Gather using an array view lvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, 1 ) );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - multiple values, view
+// of gathered values exists on all procs
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_multiple_values_view, Types )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const T value = initializeValue( T(), comm->rank() );
+  std::vector<T> input_values( 3, value );
+  Utility::ArrayView<const T> input_values_view( input_values );
+
+  // Gather an initializer list of values using a view rvalue
+  std::vector<T> gathered_init_list_values( comm->size()*3 );
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, Utility::arrayView(gathered_init_list_values), 0 ) );
+
+  // Gather using an array view rvalue using a view rvalue
+  std::vector<T> gathered_view_rvalue_values( comm->size()*3 );
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), Utility::arrayView(gathered_view_rvalue_values), 0 ) );
+
+  // Gather using an array view of const rvalue using a view rvalue
+  std::vector<T> gathered_const_view_rvalue_values( comm->size()*3 );
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), Utility::arrayView(gathered_const_view_rvalue_values), 0 ) );
+
+  // Gather using an array view lvalue using a view rvalue
+  std::vector<T> gathered_view_lvalue_values( comm->size()*3 );
+  FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, Utility::arrayView(gathered_view_lvalue_values), 0 ) );
+  
+  if( comm->rank() == 0 )
+  {
+    std::vector<T> expected_gathered_values( comm->size()*3 );
+    
+    for( int i = 0; i < comm->size(); ++i )
+    {
+      for( int j = 0; j < 3; ++j )
+        expected_gathered_values[i*3+j] = initializeValue( T(), i );
+    }
+    
+    FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+  }
+
+  if( comm->size() > 1 )
+  {
+    Utility::ArrayView<T> gathered_values_view;
+
+    // Gather an initializer list of values using a view lvalue
+    gathered_init_list_values.clear();
+    gathered_init_list_values.resize( comm->size()*3 );
+    gathered_values_view = Utility::arrayView( gathered_init_list_values );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, gathered_values_view, 1 ) );
+
+    // Gather using an array view rvalue
+    gathered_view_rvalue_values.clear();
+    gathered_view_rvalue_values.resize( comm->size()*3 );
+    gathered_values_view = Utility::arrayView( gathered_view_rvalue_values );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), gathered_values_view, 1 ) );
+
+    // Gather using an array view of const rvalue
+    gathered_const_view_rvalue_values.clear();
+    gathered_const_view_rvalue_values.resize( comm->size()*3 );
+    gathered_values_view = Utility::arrayView( gathered_const_view_rvalue_values );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), gathered_values_view, 1 ) );
+
+    // Gather using an array view lvalue
+    gathered_view_lvalue_values.clear();
+    gathered_view_lvalue_values.resize( comm->size()*3 );
+    gathered_values_view = Utility::arrayView( gathered_view_lvalue_values );
+    
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, gathered_values_view, 1 ) );
+    
+    if( comm->rank() == 1 )
+    {
+      std::vector<T> expected_gathered_values( comm->size()*3 );
+      
+      for( int i = 0; i < comm->size(); ++i )
+      {
+        for( int j = 0; j < 3; ++j )
+          expected_gathered_values[i*3+j] = initializeValue( T(), i );
+      }
+    
+      FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - multiple bool values, view
+// of gathered bool values exists on root proc only
+FRENSIE_UNIT_TEST( Communicator, gather_multiple_values_root_view_bool )
+{
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const bool value = (comm->rank()%2 == 0 ? true : false);
+  bool input_values[3] = {value, value, value};
+  Utility::ArrayView<const bool> input_values_view( input_values, 3 );
+  
+  if( comm->rank() == 0 )
+  {
+    // Gather an initializer list of values using a view rvalue
+    bool gathered_init_list_values[comm->size()*3];
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, Utility::ArrayView<bool>(gathered_init_list_values, comm->size()*3), 0 ) );
+
+    // Gather using an array view rvalue using a view rvalue
+    bool gathered_view_rvalue_values[comm->size()*3];
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<bool>(input_values, 3), Utility::ArrayView<bool>(gathered_view_rvalue_values, comm->size()*3), 0 ) );
+    
+    // Gather using an array view of const rvalue using a view rvalue
+    bool gathered_const_view_rvalue_values[comm->size()*3];
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<const bool>(input_values, 3), Utility::ArrayView<bool>(gathered_const_view_rvalue_values, comm->size()*3), 0 ) );
+    
+    // Gather using an array view lvalue using a view rvalue
+    bool gathered_view_lvalue_values[comm->size()*3];
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, Utility::ArrayView<bool>(gathered_view_lvalue_values, comm->size()*3), 0 ) );
+    
+    bool expected_gathered_values[comm->size()*3];
+    
+    for( int i = 0; i < comm->size(); ++i )
+    {
+      for( int j = 0; j < 3; ++j )
+        expected_gathered_values[i*3+j] = (i%2 == 0 ? true : false);
     }
 
-    if( comm->size() > 1 )
+    Utility::ArrayView<const bool> expected_gathered_values_view( expected_gathered_values, comm->size()*3 );
+    
+    FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_init_list_values, comm->size()*3),
+                         expected_gathered_values_view );
+    FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_view_rvalue_values, comm->size()*3),
+                         expected_gathered_values_view );
+    FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_const_view_rvalue_values, comm->size()*3),
+                         expected_gathered_values_view );
+    FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_view_lvalue_values, comm->size()*3),
+                         expected_gathered_values_view );
+  }
+  else
+  {
+    // Gather an initializer list of values using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, 0 ) );
+
+    // Gather using an array view rvalue using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<bool>(input_values, 3), 0 ) );
+
+    // Gather using an array view of const rvalue using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<const bool>(input_values, 3), 0 ) );
+
+    // Gather using an array view lvalue using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, 0 ) );
+  }
+
+  if( comm->size() > 1 )
+  {    
+    if( comm->rank() == 1 )
     {
-      if( comm->rank() == 1 )
+      Utility::ArrayView<bool> gathered_values_view;
+
+      // Gather an initializer list of values using a view lvalue
+      bool gathered_init_list_values[comm->size()*3];
+      gathered_values_view = Utility::ArrayView<bool>( gathered_init_list_values, comm->size()*3 );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, gathered_values_view, 1 ) );
+      
+      // Gather using an array view rvalue
+      bool gathered_view_rvalue_values[comm->size()*3];
+      gathered_values_view = Utility::ArrayView<bool>( gathered_view_rvalue_values, comm->size()*3 );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<bool>(input_values, 3), gathered_values_view, 1 ) );
+      
+      // Gather using an array view of const rvalue
+      bool gathered_const_view_rvalue_values[comm->size()*3];
+      gathered_values_view = Utility::ArrayView<bool>( gathered_const_view_rvalue_values, comm->size()*3 );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<const bool>(input_values, 3), gathered_values_view, 1 ) );
+      
+      // Gather using an array view lvalue
+      bool gathered_view_lvalue_values[comm->size()*3];
+      gathered_values_view = Utility::ArrayView<bool>( gathered_view_lvalue_values, comm->size()*3 );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, gathered_values_view, 1 ) );
+    
+      bool expected_gathered_values[comm->size()*3];
+    
+      for( int i = 0; i < comm->size(); ++i )
       {
-        std::vector<T> gathered_values;
-
-        FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, gathered_values, 1 ) );
-        FRENSIE_REQUIRE_EQUAL( gathered_values.size(), comm->size() );
-
-        std::vector<T> expected_gathered_values( comm->size() );
-
-        for( int i = 0; i < comm->size(); ++i )
-          expected_gathered_values[i] = initializeValue( T(), i );
-
-        FRENSIE_CHECK_EQUAL( gathered_values, expected_gathered_values );
+        for( int j = 0; j < 3; ++j )
+          expected_gathered_values[i*3+j] = (i%2 == 0 ? true : false);
       }
-      else
+      
+      Utility::ArrayView<const bool> expected_gathered_values_view( expected_gathered_values, comm->size()*3 );
+      
+      FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_init_list_values, comm->size()*3),
+                           expected_gathered_values_view );
+      FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_view_rvalue_values, comm->size()*3),
+                           expected_gathered_values_view );
+      FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_const_view_rvalue_values, comm->size()*3),
+                           expected_gathered_values_view );
+      FRENSIE_CHECK_EQUAL( Utility::ArrayView<const bool>(gathered_view_lvalue_values, comm->size()*3),
+                           expected_gathered_values_view );
+    }
+    else
+    {
+      // Gather an initializer list of values using a view lvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, 1 ) );
+      
+      // Gather using an array view rvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<bool>(input_values, 3), 1 ) );
+      
+      // Gather using an array view of const rvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::ArrayView<const bool>(input_values, 3), 1 ) );
+      
+      // Gather using an array view lvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, 1 ) );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a gather operation can be conducted - multiple values, view
+// of gathered values exists on root proc only
+FRENSIE_UNIT_TEST_TEMPLATE( Communicator, gather_multiple_values_root_view, TypesSubset )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  std::shared_ptr<const Utility::Communicator> comm =
+    Utility::Communicator::getDefault();
+
+  const T value = initializeValue( T(), comm->rank() );
+  std::vector<T> input_values( 3, value );
+  Utility::ArrayView<const T> input_values_view( input_values );
+  
+  if( comm->rank() == 0 )
+  {
+    // Gather an initializer list of values using a view rvalue
+    std::vector<T> gathered_init_list_values( comm->size()*3 );
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, Utility::arrayView(gathered_init_list_values), 0 ) );
+
+    // Gather using an array view rvalue using a view rvalue
+    std::vector<T> gathered_view_rvalue_values( comm->size()*3 );
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), Utility::arrayView(gathered_view_rvalue_values), 0 ) );
+    
+    // Gather using an array view of const rvalue using a view rvalue
+    std::vector<T> gathered_const_view_rvalue_values( comm->size()*3 );
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), Utility::arrayView(gathered_const_view_rvalue_values), 0 ) );
+    
+    // Gather using an array view lvalue using a view rvalue
+    std::vector<T> gathered_view_lvalue_values( comm->size()*3 );
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, Utility::arrayView(gathered_view_lvalue_values), 0 ) );
+    
+    std::vector<T> expected_gathered_values( comm->size()*3 );
+    
+    for( int i = 0; i < comm->size(); ++i )
+    {
+      for( int j = 0; j < 3; ++j )
+        expected_gathered_values[i*3+j] = initializeValue( T(), i );
+    }
+    
+    FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+    FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+  }
+  else
+  {
+    // Gather an initializer list of values using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, 0 ) );
+
+    // Gather using an array view rvalue using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), 0 ) );
+
+    // Gather using an array view of const rvalue using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), 0 ) );
+
+    // Gather using an array view lvalue using a view rvalue
+    FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, 0 ) );
+  }
+
+  if( comm->size() > 1 )
+  {    
+    if( comm->rank() == 1 )
+    {
+      Utility::ArrayView<T> gathered_values_view;
+
+      // Gather an initializer list of values using a view lvalue
+      std::vector<T> gathered_init_list_values( comm->size()*3 );
+      gathered_values_view = Utility::arrayView( gathered_init_list_values );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, gathered_values_view, 1 ) );
+      
+      // Gather using an array view rvalue
+      std::vector<T> gathered_view_rvalue_values( comm->size()*3 );
+      gathered_values_view = Utility::arrayView( gathered_view_rvalue_values );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), gathered_values_view, 1 ) );
+      
+      // Gather using an array view of const rvalue
+      std::vector<T> gathered_const_view_rvalue_values( comm->size()*3 );
+      gathered_values_view = Utility::arrayView( gathered_const_view_rvalue_values );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), gathered_values_view, 1 ) );
+      
+      // Gather using an array view lvalue
+      std::vector<T> gathered_view_lvalue_values( comm->size()*3 );
+      gathered_values_view = Utility::arrayView( gathered_view_lvalue_values );
+      
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, gathered_values_view, 1 ) );
+    
+      std::vector<T> expected_gathered_values( comm->size()*3 );
+      
+      for( int i = 0; i < comm->size(); ++i )
       {
-        FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, value, 1 ) );
+        for( int j = 0; j < 3; ++j )
+          expected_gathered_values[i*3+j] = initializeValue( T(), i );
       }
+    
+      FRENSIE_CHECK_EQUAL( gathered_init_list_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_const_view_rvalue_values, expected_gathered_values );
+      FRENSIE_CHECK_EQUAL( gathered_view_lvalue_values, expected_gathered_values );
+    }
+    else
+    {
+      // Gather an initializer list of values using a view lvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, {value, value, value}, 1 ) );
+      
+      // Gather using an array view rvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayView(input_values), 1 ) );
+      
+      // Gather using an array view of const rvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, Utility::arrayViewOfConst(input_values), 1 ) );
+      
+      // Gather using an array view lvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::gather( *comm, input_values_view, 1 ) );
     }
   }
 }
