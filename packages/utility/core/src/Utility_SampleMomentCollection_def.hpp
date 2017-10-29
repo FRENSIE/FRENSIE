@@ -9,12 +9,205 @@
 #ifndef UTILITY_SAMPLE_MOMENT_COLLECTION_DEF_HPP
 #define UTILITY_SAMPLE_MOMENT_COLLECTION_DEF_HPP
 
+// Boost Includes
+#include <boost/serialization/nvp.hpp>
+
 // FRENSIE Includes
 #include "Utility_ExponentiationAlgorithms.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+namespace Details{
+
+/*! \brief Specialization of the sample moment collection data extractor class
+ * for const types
+ */
+template<size_t N, typename T>
+struct SampleMomentCollectionDataExtractor<N,const T> : public SampleMomentCollectionDataExtractor<N,T>
+{ /* ... */ };
+
+/*! \brief Specialization of the sample moment collection data extractor class
+ * for volatile types
+ */
+template<size_t N, typename T>
+struct SampleMomentCollectionDataExtractor<N,volatile T> : public SampleMomentCollectionDataExtractor<N,T>
+{ /* ... */ };
+
+/*! \brief Specialization of the sample moment collection data extractor class
+ * for const volatile types
+ */
+template<size_t N, typename T>
+struct SampleMomentCollectionDataExtractor<N,const volatile T> : public SampleMomentCollectionDataExtractor<N,T>
+{ /* ... */ };
+
+/*! \brief Specialization of sample moment collection data extractor class
+ * for SampleMomentCollection types
+ */
+template<size_t N, typename T, size_t M, size_t... Ms>
+struct SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,typename std::enable_if<N==M>::type>
+{
+  //! The collection type
+  typedef Utility::SampleMomentCollection<T,M,Ms...> CollectionType;
+
+  //! The sample moment type
+  typedef Utility::SampleMoment<M,T> MomentType;
+
+  //! The value type
+  typedef typename MomentType::ValueType ValueType;
+  
+  //! Get the current scores
+  static inline const ValueType* getCurrentScores(
+                                             const CollectionType& collection )
+  { return &collection.d_current_scores[0]; }
+
+  //! Get the current scores
+  static inline ValueType* getCurrentScores( CollectionType& collection )
+  { return &collection.d_current_scores[0]; }
+
+  //! Get the current score
+  static inline const ValueType& getCurrentScore(
+                                              const CollectionType& collection,
+                                              const size_t i )
+  { return collection.d_current_scores[i]; }
+
+  //! Get the current score
+  static inline ValueType& getCurrentScore( CollectionType& collection,
+                                            const size_t i )
+  { return collection.d_current_scores[i]; }
+
+  //! Return the moment
+  static inline MomentType getMoment( const CollectionType& collection,
+                                      const size_t i )
+  { return MomentType( collection.d_current_scores[i] ); }
+};
+
+/*! \brief Specialization of sample moment collection data extractor class
+ * for SampleMomentCollection types
+ */
+template<size_t N, typename T, size_t M, size_t... Ms>
+struct SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,M,Ms...>,typename std::enable_if<N!=M>::type>
+{
+  //! The collection type
+  typedef Utility::SampleMomentCollection<T,M,Ms...> CollectionType;
+
+  //! The moment type
+  typedef SampleMoment<N,T> MomentType;
+
+  //! The value type
+  typedef typename MomentType::ValueType ValueType;
+
+  //! The base collection type
+  typedef Utility::SampleMomentCollection<T,Ms...> BaseCollectionType;
+  
+  //! Get the current scores
+  static inline const ValueType* getCurrentScores(
+                                             const CollectionType& collection )
+  { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getCurrentScores( collection ); }
+
+  //! Get the current scores
+  static inline ValueType* getCurrentScores( CollectionType& collection )
+  { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getCurrentScores( collection ); }
+
+  //! Get the current score
+  static inline const ValueType& getCurrentScore(
+                                              const CollectionType& collection,
+                                              const size_t i )
+  { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getCurrentScore( collection, i ); }
+
+  //! Get the current score
+  static inline ValueType& getCurrentScore( CollectionType& collection,
+                                            const size_t i )
+  { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getCurrentScore( collection, i ); }
+
+  //! Return the moment
+  static inline MomentType getMoment( const CollectionType& collection,
+                                      const size_t i )
+  { return SampleMomentCollectionDataExtractor<N,BaseCollectionType>::getMoment( collection, i ); }
+};
+
+} // end Details namespace
+
+// The sample moment collection
+template<typename T, size_t... Ns>
+class SampleMomentCollection
+{
+
+protected:
+
+  //! Default constructor
+  SampleMomentCollection()
+  { /* ... */ }
+
+  //! Constructor
+  SampleMomentCollection( const size_t i )
+  { /* ... */ }
+  
+  //! Constructor
+  template<typename InputValueType>
+  SampleMomentCollection( const size_t i,
+                          const InputValueType starting_scores )
+  { /* ... */ }
+
+  //! Copy constructor
+  SampleMomentCollection( const SampleMomentCollection& other_collection )
+  { /* ... */ }
+
+  //! Assignment operator
+  SampleMomentCollection& operator=( const SampleMomentCollection& other_collection )
+  { /* ... */ }
+
+  //! Destructor
+  virtual ~SampleMomentCollection()
+  { /* ... */ }
+
+  //! Clear the collection
+  void clear()
+  { /* ... */ }
+
+  //! Reset the collection (sets all scores to zero)
+  void reset()
+  { /* ... */ }
+
+  //! Resize the collection
+  void resize( const size_t i ) const
+  { /* ... */ }
+
+  //! Resize and set the collection
+  template<typename InputValueType>
+  void resize( const size_t i, const InputValueType& starting_scores )
+  { /* ... */ }
+
+  //! Add a raw score
+  void addRawScore( const size_t i, const T& raw_score )
+  { /* ... */ }
+
+  //! Add a raw score to all moments in the collection
+  void addRawScore( const T& raw_score )
+  { /* ... */ }
+
+private:
+
+  // Make all moment collections friend
+  template<typename U, size_t... Ms>
+  friend class SampleMomentCollection;
+
+  // Make the boost::serialization::access class a friend
+  friend class boost::serialization::access;
+
+  // Save the collection data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const
+  { /* ... */ }
+
+  // Load the collection data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+};
 
 // Default constructor
 template<typename T, size_t N, size_t... Ns>
@@ -133,6 +326,72 @@ void SampleMomentCollection<T,N,Ns...>::addRawScore( const T& raw_score )
   
   for( size_t i = 0; i < d_current_scores.size(); ++i )
     d_current_scores[i] += processed_score;
+}
+
+// Save the collection data to an archive
+template<typename T, size_t N, size_t... Ns>
+template<class Archive>
+void SampleMomentCollection<T,N,Ns...>::save( Archive & ar, const unsigned int version ) const
+{
+  SampleMomentCollection<T,Ns...>::save( ar, version );
+
+  std::string name = "moment_";
+  name += Utility::toString( N );
+  
+  ar & boost::serialization::make_nvp( name.c_str(), d_current_scores );
+}
+
+// Load the collection data to an archive
+template<typename T, size_t N, size_t... Ns>
+template<class Archive>
+void SampleMomentCollection<T,N,Ns...>::load( Archive & ar, const unsigned int version )
+{
+  SampleMomentCollection<T,Ns...>::load( ar, version );
+
+  std::string name = "moment_";
+  name += Utility::toString( N );
+  
+  ar & boost::serialization::make_nvp( name.c_str(), d_current_scores );
+}
+
+//! Get the scores from the collection
+template<size_t N, typename T, size_t... Ms>
+inline const typename SampleMoment<N,T>::ValueType*
+getCurrentScores( const SampleMomentCollection<T,Ms...>& collection )
+{
+  return Details::SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,Ms...> >::getCurrentScores( collection );
+}
+
+//! Get the scores from the collection
+template<size_t N, typename T, size_t... Ms>
+inline typename SampleMoment<N,T>::ValueType* getCurrentScores( SampleMomentCollection<T,Ms...>& collection )
+{
+  return Details::SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,Ms...> >::getCurrentScores( collection );
+}
+
+//! Get the desired score from the collection
+template<size_t N, typename T, size_t... Ms>
+inline const typename SampleMoment<N,T>::ValueType&
+getCurrentScore( const SampleMomentCollection<T,Ms...>& collection,
+                 const size_t i )
+{
+  return Details::SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,Ms...> >::getCurrentScore( collection, i );
+}
+
+//! Get the desired score from the collection
+template<size_t N, typename T, size_t... Ms>
+inline typename SampleMoment<N,T>::ValueType&
+getCurrentScore( SampleMomentCollection<T,Ms...>& collection, const size_t i )
+{
+  return Details::SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,Ms...> >::getCurrentScore( collection, i );
+}
+
+//! Get the desired moment from the collection
+template<size_t N, typename T, size_t... Ms>
+inline SampleMoment<N,T>
+getMoment( const SampleMomentCollection<T,Ms...>& collection, const size_t i )
+{
+  return Details::SampleMomentCollectionDataExtractor<N,SampleMomentCollection<T,Ms...> >::getMoment( collection, i );
 }
 
 // Explicit instantiation (extern declaration)

@@ -6,18 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <sstream>
+
 // Boost Includes
 #include <boost/units/quantity.hpp>
 #include <boost/units/systems/cgs/length.hpp>
 #include <boost/units/systems/si/length.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
 
 // FRENSIE Includes
 #include "Utility_SampleMomentCollection.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
-
-typedef boost::units::quantity<boost::units::cgs::length> q_cm_double;
-typedef boost::units::quantity<boost::units::si::length> q_m_double;
 
 //---------------------------------------------------------------------------//
 // Template Typedefs
@@ -583,7 +586,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollection, addRawScore, TestingTypes )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the current score can be returned using the stanalone helper func
+// Check that the current score can be returned using the standalone helper
+// function
 FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollection, getCurrentScore, TestingTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
@@ -800,6 +804,67 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollection, getCurrentScores, TestingTyp
                        Utility::QuantityTraits<ValueType4>::zero() );
   FRENSIE_CHECK_EQUAL( *(fourth_raw_scores+9),
                        Utility::QuantityTraits<ValueType4>::zero() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a moment collection can be archived
+FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollection, archive, TestingTypes )
+{
+  FETCH_TEMPLATE_PARAM( 0, T );
+
+  Utility::SampleMomentCollection<T,1,2,3,4> moment_collection( 3 );
+
+  // Add a raw score to the first element moments
+  moment_collection.addRawScore( 0, Utility::QuantityTraits<T>::one()*10. );
+
+  // Add a raw score to all elements
+  moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*10. );
+
+  std::string moment_collection_archive;
+
+  {
+    std::ostringstream oss;
+    
+    boost::archive::xml_oarchive archive( oss );
+
+    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "collection", moment_collection ) );
+
+    moment_collection_archive = oss.str();
+  }
+
+  Utility::SampleMomentCollection<T,1,2,3,4> extracted_moment_collection;
+
+  {
+    std::istringstream iss( moment_collection_archive );
+
+    boost::archive::xml_iarchive archive( iss );
+
+    FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "collection", extracted_moment_collection ) );
+  }
+
+  // Check that the first moments were archived successfully
+  Utility::ArrayView<const typename Utility::SampleMoment<1,T>::ValueType> first_moments( Utility::getCurrentScores<1>( moment_collection ), moment_collection.size() );
+  Utility::ArrayView<const typename Utility::SampleMoment<1,T>::ValueType> extracted_first_moments( Utility::getCurrentScores<1>( extracted_moment_collection ), extracted_moment_collection.size() );
+  
+  FRENSIE_CHECK_EQUAL( extracted_first_moments, first_moments );
+
+  // Check that the second moments were archived successfully
+  Utility::ArrayView<const typename Utility::SampleMoment<2,T>::ValueType> second_moments( Utility::getCurrentScores<2>( moment_collection ), moment_collection.size() );
+  Utility::ArrayView<const typename Utility::SampleMoment<2,T>::ValueType> extracted_second_moments( Utility::getCurrentScores<2>( extracted_moment_collection ), extracted_moment_collection.size() );
+  
+  FRENSIE_CHECK_EQUAL( extracted_second_moments, second_moments );
+
+  // Check that the third moments were archived successfully
+  Utility::ArrayView<const typename Utility::SampleMoment<3,T>::ValueType> third_moments( Utility::getCurrentScores<3>( moment_collection ), moment_collection.size() );
+  Utility::ArrayView<const typename Utility::SampleMoment<3,T>::ValueType> extracted_third_moments( Utility::getCurrentScores<3>( extracted_moment_collection ), extracted_moment_collection.size() );
+  
+  FRENSIE_CHECK_EQUAL( extracted_third_moments, third_moments );
+
+  // Check that the fourth moments were archived successfully
+  Utility::ArrayView<const typename Utility::SampleMoment<4,T>::ValueType> fourth_moments( Utility::getCurrentScores<4>( moment_collection ), moment_collection.size() );
+  Utility::ArrayView<const typename Utility::SampleMoment<4,T>::ValueType> extracted_fourth_moments( Utility::getCurrentScores<4>( extracted_moment_collection ), extracted_moment_collection.size() );
+  
+  FRENSIE_CHECK_EQUAL( extracted_fourth_moments, fourth_moments );
 }
 
 //---------------------------------------------------------------------------//

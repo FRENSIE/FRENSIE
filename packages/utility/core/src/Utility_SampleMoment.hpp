@@ -77,37 +77,34 @@ private:
 
 //! Calculate the mean
 template<typename T>
-typename SampleMoment<1,T>::ValueType calculateMean(
-                                         const SampleMoment<1,T>& first_moment,
-                                         const size_t number_of_samples );
+T calculateMean( const SampleMoment<1,T>& first_moment,
+                 const size_t number_of_samples );
   
 //! Calculate the variance of the population
 template<typename T>
-typename SampleMoment<2,T>::ValueType calculateVariance(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples );
+typename QuantityTraits<T>::template GetQuantityToPowerType<2>::type
+calculateVariance( const SampleMoment<1,T>& first_moment,
+                   const SampleMoment<2,T>& second_moment,
+                   const size_t number_of_samples );
 
 //! Calculate the standard deviation of the population
 template<typename T>
-typename SampleMoment<1,T>::ValueType calculateStdDev(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples );
+T calculateStdDev( const SampleMoment<1,T>& first_moment,
+                   const SampleMoment<2,T>& second_moment,
+                   const size_t number_of_samples );
 
 //! Calculate the variance of the mean
 template<typename T>
-typename SampleMoment<2,T>::ValueType calculateVarianceOfMean(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples );
+typename QuantityTraits<T>::template GetQuantityToPowerType<2>::type
+calculateVarianceOfMean( const SampleMoment<1,T>& first_moment,
+                         const SampleMoment<2,T>& second_moment,
+                         const size_t number_of_samples );
 
 //! Calculate the standard deviation of the mean
 template<typename T>
-typename SampleMoment<1,T>::ValueType calculateStdDevOfMean(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples );
+T calculateStdDevOfMean( const SampleMoment<1,T>& first_moment,
+                         const SampleMoment<2,T>& second_moment,
+                         const size_t number_of_samples );
 
 //! Calculate the relative error
 template<typename T>

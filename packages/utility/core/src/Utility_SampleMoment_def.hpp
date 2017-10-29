@@ -85,9 +85,8 @@ void SampleMoment<N,T,typename std::enable_if<(N>0) && std::is_floating_point<ty
 
 // Calculate the mean
 template<typename T>
-inline typename SampleMoment<1,T>::ValueType calculateMean(
-                                         const SampleMoment<1,T>& first_moment,
-                                         const size_t number_of_samples )
+inline T calculateMean( const SampleMoment<1,T>& first_moment,
+                        const size_t number_of_samples )
 {
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 0 );
@@ -97,10 +96,10 @@ inline typename SampleMoment<1,T>::ValueType calculateMean(
 
 // Calculate the variance of the population
 template<typename T>
-inline typename SampleMoment<2,T>::ValueType calculateVariance(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples )
+inline typename QuantityTraits<T>::template GetQuantityToPowerType<2>::type
+calculateVariance( const SampleMoment<1,T>& first_moment,
+                   const SampleMoment<2,T>& second_moment,
+                   const size_t number_of_samples )
 {
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 1 );
@@ -115,25 +114,24 @@ inline typename SampleMoment<2,T>::ValueType calculateVariance(
 
 // Calculate the standard deviation of the population
 template<typename T>
-inline typename SampleMoment<1,T>::ValueType calculateStdDev(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples )
+inline T calculateStdDev( const SampleMoment<1,T>& first_moment,
+                          const SampleMoment<2,T>& second_moment,
+                          const size_t number_of_samples )
 {
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 1 );
 
-  return Utility::sqrt( calculateVariance( first_moment,
-                                           second_moment,
-                                           number_of_samples ) );
+  return Utility::sqrt( Utility::calculateVariance( first_moment,
+                                                    second_moment,
+                                                    number_of_samples ) );
 }
 
 // Calculate the variance of the mean
 template<typename T>
-inline typename SampleMoment<2,T>::ValueType calculateVarianceOfMean(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples )
+inline typename QuantityTraits<T>::template GetQuantityToPowerType<2>::type
+calculateVarianceOfMean( const SampleMoment<1,T>& first_moment,
+                         const SampleMoment<2,T>& second_moment,
+                         const size_t number_of_samples )
 {
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 1 );
@@ -146,17 +144,16 @@ inline typename SampleMoment<2,T>::ValueType calculateVarianceOfMean(
 
 // Calculate the standard deviation of the mean
 template<typename T>
-inline typename SampleMoment<1,T>::ValueType calculateStdDevOfMean(
-                                        const SampleMoment<1,T>& first_moment,
-                                        const SampleMoment<2,T>& second_moment,
-                                        const size_t number_of_samples )
+inline T calculateStdDevOfMean( const SampleMoment<1,T>& first_moment,
+                                const SampleMoment<2,T>& second_moment,
+                                const size_t number_of_samples )
 {
   // Make sure that there is at least one sample
   testPrecondition( number_of_samples > 1 );
 
-  return Utility::sqrt( calculateVarianceOfMean( first_moment,
-                                                 second_moment,
-                                                 number_of_samples ) );
+  return Utility::sqrt( Utility::calculateVarianceOfMean( first_moment,
+                                                          second_moment,
+                                                          number_of_samples ) );
 }
 
 // Calculate the relative error
