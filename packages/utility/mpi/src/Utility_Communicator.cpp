@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_CommunicatorDecl.hpp"
+#include "Utility_Communicator.hpp"
 #include "Utility_SerialCommunicator.hpp"
 #include "Utility_MPICommunicator.hpp"
 #include "Utility_GlobalMPISession.hpp"
@@ -282,6 +282,17 @@ bool operator!=( const Communicator& comm_a, const Communicator& comm_b )
 { return !comm_a.isIdentical( comm_b ); }
 
 } // end Utility namespace
+
+// Explicit instantiations
+__EXPLICIT_COMM_SEND_RECV_HELPER_INST__;
+__EXPLICIT_COMM_ISEND_IRECV_HELPER_INST__;
+__EXPLICIT_COMM_PROBE_HELPER_INST__;
+__EXPLICIT_COMM_IPROBE_HELPER_INST__;
+__EXPLICIT_COMM_ALL_GATHER_HELPER_INST__;
+__EXPLICIT_COMM_ALL_REDUCE_HELPER_INST__;
+__EXPLICIT_COMM_ALL_TO_ALL_HELPER_INST__;
+__EXPLICIT_COMM_BROADCAST_HELPER_INST__;
+__EXPLICIT_COMM_GATHER_HELPER_INST__;
 
 //---------------------------------------------------------------------------//
 // end Utility_Communicator.cpp

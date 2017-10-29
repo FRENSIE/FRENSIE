@@ -9,12 +9,18 @@
 #ifndef UTILITY_COMMUNICATOR_DEF_HPP
 #define UTILITY_COMMUNICATOR_DEF_HPP
 
+// Std Lib Includes
+#include <string>
+#include <utility>
+
 // FRENSIE Includes
+#include "Utility_Tuple.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_TypeTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 #define __TEST_FOR_NULL_COMM__( comm )          \
   TEST_FOR_EXCEPTION( comm.size() == 0,         \
@@ -581,7 +587,7 @@ inline void send( const Communicator& comm,
                               << destination_process << " with tag " << tag <<
                               " successfully!" );
 }
-
+  
 // Receive data from another process
 /*! \details The value on the calling process of the communicator will be
  * received with tag from source_process of the communicator. This operation
@@ -2513,6 +2519,217 @@ void scan( const Communicator& comm,
   
 } // end Utility namespace
 
+// Explicit templateinstantiations for comm helpers
+#define __EXPLICIT_COMM_HELPER_BASIC_INST__( MACRO )     \
+  MACRO( bool );                                         \
+  MACRO( char );                                         \
+  MACRO( unsigned char );                                \
+  MACRO( int );                                          \
+  MACRO( unsigned int );                                 \
+  MACRO( long );                                         \
+  MACRO( unsigned long );                                \
+  MACRO( long long );                                    \
+  MACRO( unsigned long long );                           \
+  MACRO( float );                                        \
+  MACRO( double )
+
+#define __EXPLICIT_COMM_HELPER_INST__( MACRO )          \
+  __EXPLICIT_COMM_HELPER_BASIC_INST__( MACRO );         \
+  MACRO( std::string );                                 \
+  MACRO( std::pair<float,int> );                        \
+  MACRO( std::tuple<float,int> );                       \
+  MACRO( std::pair<double,int> );                       \
+  MACRO( std::tuple<double,int> );                      \
+  MACRO( std::pair<long,int> );                         \
+  MACRO( std::tuple<long,int> );                        \
+  MACRO( std::pair<int,int> );                          \
+  MACRO( std::tuple<int,int> );                         \
+  MACRO( std::pair<short,int> );                        \
+  MACRO( std::tuple<short,int> )
+
+// Explicit template instantiations for send/receive helpers
+#define __EXTERN_EXPLICIT_COMM_SEND_RECV_HELPER_TYPE_INST__( ... )  \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::send( const Utility::Communicator&, int, int, const Utility::ArrayView<const __VA_ARGS__>& ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Status Utility::receive( const Utility::Communicator&, int, int, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXPLICIT_COMM_SEND_RECV_HELPER_TYPE_INST__( ... )  \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::send( const Utility::Communicator&, int, int, const Utility::ArrayView<const __VA_ARGS__>& ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Status Utility::receive( const Utility::Communicator&, int, int, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXTERN_EXPLICIT_COMM_SEND_RECV_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_SEND_RECV_HELPER_TYPE_INST__ \
+                                 )                                
+
+#define __EXPLICIT_COMM_SEND_RECV_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_SEND_RECV_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_SEND_RECV_HELPER_INST__;
+
+// Explicit template instantiations for isend/ireceive helpers
+#define __EXTERN_EXPLICIT_COMM_ISEND_IRECV_HELPER_TYPE_INST__( ... )  \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Request Utility::isend( const Utility::Communicator&, int, int, const Utility::ArrayView<const __VA_ARGS__>& ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Request Utility::ireceive( const Utility::Communicator&, int, int, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXPLICIT_COMM_ISEND_IRECV_HELPER_TYPE_INST__( ... )  \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Request Utility::isend( const Utility::Communicator&, int, int, const Utility::ArrayView<const __VA_ARGS__>& ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Request Utility::ireceive( const Utility::Communicator&, int, int, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXTERN_EXPLICIT_COMM_ISEND_IRECV_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_ISEND_IRECV_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_ISEND_IRECV_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_ISEND_IRECV_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_ISEND_IRECV_HELPER_INST__;
+
+// Explicit template instantiations for probe helper
+#define __EXTERN_EXPLICIT_COMM_PROBE_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Status Utility::probe<__VA_ARGS__>( const Utility::Communicator&, int, int ) )
+
+#define __EXPLICIT_COMM_PROBE_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Status Utility::probe<__VA_ARGS__>( const Utility::Communicator&, int, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_PROBE_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_PROBE_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_PROBE_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_PROBE_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_PROBE_HELPER_INST__;
+
+// Explicit template instantiations for iprobe helper
+#define __EXTERN_EXPLICIT_COMM_IPROBE_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Status Utility::iprobe<__VA_ARGS__>( const Utility::Communicator&, int, int ) )
+
+#define __EXPLICIT_COMM_IPROBE_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( Utility::Communicator::Status Utility::iprobe<__VA_ARGS__>( const Utility::Communicator&, int, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_IPROBE_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_IPROBE_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_IPROBE_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_IPROBE_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_IPROBE_HELPER_INST__;
+
+// Explicit template instantiations for allGather helper
+#define __EXTERN_EXPLICIT_COMM_ALL_GATHER_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allGather( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXPLICIT_COMM_ALL_GATHER_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allGather( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXTERN_EXPLICIT_COMM_ALL_GATHER_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_ALL_GATHER_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_ALL_GATHER_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_ALL_GATHER_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_ALL_GATHER_HELPER_INST__;
+
+// Explicit template instantiations for allReduce helper
+#define __EXTERN_EXPLICIT_COMM_ALL_REDUCE_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::plus<__VA_ARGS__> ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::multiplies<__VA_ARGS__> ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::minimum<__VA_ARGS__> ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::maximum<__VA_ARGS__> ) )
+
+#define __EXPLICIT_COMM_ALL_REDUCE_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::plus<__VA_ARGS__> ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::multiplies<__VA_ARGS__> ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::minimum<__VA_ARGS__> ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allReduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::maximum<__VA_ARGS__> ) )
+
+#define __EXTERN_EXPLICIT_COMM_ALL_REDUCE_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_BASIC_INST__( \
+              __EXTERN_EXPLICIT_COMM_ALL_REDUCE_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_ALL_REDUCE_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_BASIC_INST__( \
+              __EXPLICIT_COMM_ALL_REDUCE_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_ALL_REDUCE_HELPER_INST__;
+
+// Explicit template instantiations for allToAll helper
+#define __EXTERN_EXPLICIT_COMM_ALL_TO_ALL_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allToAll( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXPLICIT_COMM_ALL_TO_ALL_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::allToAll( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>& ) )
+
+#define __EXTERN_EXPLICIT_COMM_ALL_TO_ALL_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_ALL_TO_ALL_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_ALL_TO_ALL_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_ALL_TO_ALL_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_ALL_TO_ALL_HELPER_INST__;
+
+// Explicit template instantiations for broadcast helper
+#define __EXTERN_EXPLICIT_COMM_BROADCAST_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::broadcast( const Utility::Communicator&, const Utility::ArrayView<__VA_ARGS__>&, int ) )
+
+#define __EXPLICIT_COMM_BROADCAST_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::broadcast( const Utility::Communicator&, const Utility::ArrayView<__VA_ARGS__>&, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_BROADCAST_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_BROADCAST_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_BROADCAST_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_BROADCAST_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_BROADCAST_HELPER_INST__;
+
+// Explicit template instantiations for gather helper
+#define __EXTERN_EXPLICIT_COMM_GATHER_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gather( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gather( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, int ) )
+
+#define __EXPLICIT_COMM_GATHER_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gather( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gather( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_GATHER_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_GATHER_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_GATHER_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_GATHER_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_GATHER_HELPER_INST__;
+  
 #endif // end UTILITY_COMMUNICATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
