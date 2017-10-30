@@ -513,7 +513,7 @@ void scatterv( const Communicator& comm,
                const Utility::ArrayView<T>& output_values,
                int root_process );
 
-//! Combine the values stored by each process into ka single value at the root
+//! Combine the values stored by each process into a single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
              const T& input_value,
@@ -521,18 +521,10 @@ void reduce( const Communicator& comm,
              ReduceOperation op,
              int root_process );
 
-//! Combine the values stored by each process intoa single value at the root
+//! Combine the values stored by each process into a single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
              std::initializer_list<T> input_values,
-             const Utility::ArrayView<T>& output_values,
-             ReduceOperation op,
-             int root_process );
-
-//! Combine the values stored by each process intoa single value at the root
-template<typename T, typename ReduceOperation>
-void reduce( const Communicator& comm,
-             const Utility::ArrayView<T>& input_values,
              const Utility::ArrayView<T>& output_values,
              ReduceOperation op,
              int root_process );
@@ -545,10 +537,17 @@ void reduce( const Communicator& comm,
              ReduceOperation op,
              int root_process );
 
+//! Combine the values stored by each process into a single value at the root
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const T& input_value,
+             ReduceOperation op,
+             int root_process );
+
 //! Combine the values stored by each process intoa single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
-             std::initializer_list<T>& input_values,
+             std::initializer_list<T> input_values,
              ReduceOperation op,
              int root_process );
 

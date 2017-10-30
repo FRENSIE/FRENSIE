@@ -294,6 +294,7 @@ __EXPLICIT_COMM_ALL_TO_ALL_HELPER_INST__;
 __EXPLICIT_COMM_BROADCAST_HELPER_INST__;
 __EXPLICIT_COMM_GATHER_HELPER_INST__;
 __EXPLICIT_COMM_SCATTER_HELPER_INST__;
+__EXPLICIT_COMM_REDUCE_HELPER_INST__;
 
 //---------------------------------------------------------------------------//
 // end Utility_Communicator.cpp

@@ -255,11 +255,11 @@ struct SingleValueReceiveHelper<Utility::ArrayView<T> >
   }
 };
 
-/*! The single value all reduce helper class
+/*! The single value reduce helper class
  * \ingroup mpi
  */
 template<typename T, typename Enabled = void>
-struct SingleValueAllReduceHelper
+struct SingleValueReduceHelper
 {
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
@@ -277,6 +277,24 @@ struct SingleValueAllReduceHelper
                         op );
   }
 
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const T& input_value,
+                             T& value,
+                             ReduceOperation op,
+                             int root_process )
+  {
+    Utility::ArrayView<const T> input_value_view( &input_value, 1 );
+    Utility::ArrayView<T> value_view( &value, 1 );
+
+    Utility::reduce( comm,
+                     const_cast<const Utility::ArrayView<const T>&>( input_value_view ),
+                     const_cast<const Utility::ArrayView<T>&>( value_view ),
+                     op,
+                     root_process );
+  }
+
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
   static inline void allReduce( const Communicator& comm,
@@ -289,13 +307,28 @@ struct SingleValueAllReduceHelper
                         const_cast<const Utility::ArrayView<T>&>( input_output_value_view ),
                         op );
   }
+
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const T& input_value,
+                             ReduceOperation op,
+                             int root_process )
+  {
+    Utility::ArrayView<const T> input_value_view( &input_value, 1 );
+    
+    Utility::reduce( comm,
+                     const_cast<const Utility::ArrayView<const T>&>( input_value_view ),
+                     op,
+                     root_process );
+  }
 };
 
-/*! Partial specialization of SingleValueAllReduceHelper for Utility::ArrayView
+/*! Partial specialization of SingleValueReduceHelper for Utility::ArrayView
  * \ingroup mpi
  */
 template<typename T>
-struct SingleValueAllReduceHelper<Utility::ArrayView<T>, typename std::enable_if<!std::is_const<T>::value>::type>
+struct SingleValueReduceHelper<Utility::ArrayView<T>, typename std::enable_if<!std::is_const<T>::value>::type>
 {
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
@@ -305,6 +338,21 @@ struct SingleValueAllReduceHelper<Utility::ArrayView<T>, typename std::enable_if
                                 ReduceOperation op )
   { Utility::allReduce( comm, input_value.toConst(), value, op ); }
 
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const Utility::ArrayView<T>& input_value,
+                             Utility::ArrayView<T>& value,
+                             ReduceOperation op,
+                             int root_process )
+  {
+    Utility::reduce( comm,
+                     input_value.toConst(),
+                     const_cast<const Utility::ArrayView<T>&>(value),
+                     op,
+                     root_process );
+  }
+
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
   static inline void allReduce( const Communicator& comm,
@@ -313,13 +361,21 @@ struct SingleValueAllReduceHelper<Utility::ArrayView<T>, typename std::enable_if
   {
     Utility::allReduce( comm, const_cast<const Utility::ArrayView<T>&>( input_output_value ), op );
   }
+
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const Utility::ArrayView<T>& input_values,
+                             ReduceOperation op,
+                             int root_process )
+  { Utility::reduce( comm, input_values.toConst(), op, root_process ); }
 };
 
-/*! Partial specialization of SingleValueAllReduceHelper for std::vector
+/*! Partial specialization of SingleValueReduceHelper for std::vector
  * \ingroup mpi
  */
 template<typename T>
-struct SingleValueAllReduceHelper<std::vector<T> >
+struct SingleValueReduceHelper<std::vector<T> >
 {
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
@@ -332,9 +388,29 @@ struct SingleValueAllReduceHelper<std::vector<T> >
     value.resize( input_value.size() );
     
     Utility::allReduce( comm,
-                        Utility::arrayView( input_value ),
+                        Utility::arrayViewOfConst( input_value ),
                         Utility::arrayView( value ),
-                        op ); }
+                        op );
+  }
+
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const std::vector<T>& input_value,
+                             std::vector<T>& value,
+                             ReduceOperation op,
+                             int root_process )
+  {
+    // Resize the output value if this is the root process
+    if( comm.rank() == root_process )
+      value.resize( input_value.size() );
+    
+    Utility::reduce( comm,
+                     Utility::arrayViewOfConst( input_value ),
+                     Utility::arrayView( value ),
+                     op,
+                     root_process );
+  }
 
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
@@ -342,13 +418,26 @@ struct SingleValueAllReduceHelper<std::vector<T> >
                                 std::vector<T>& input_output_value,
                                 ReduceOperation op )
   { Utility::allReduce( comm, Utility::arrayView( input_output_value ), op ); }
+
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const std::vector<T>& input_value,
+                             ReduceOperation op,
+                             int root_process )
+  {
+    Utility::reduce( comm,
+                     Utility::arrayViewOfConst( input_value ),
+                     op,
+                     root_process );
+  }
 };
 
-/*! Partial specialization of SingleValueAllReduceHelper for std::array
+/*! Partial specialization of SingleValueReduceHelper for std::array
  * \ingroup mpi
  */
 template<typename T, size_t N>
-struct SingleValueAllReduceHelper<std::array<T,N> >
+struct SingleValueReduceHelper<std::array<T,N> >
 {
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
@@ -358,9 +447,25 @@ struct SingleValueAllReduceHelper<std::array<T,N> >
                                 ReduceOperation op )
   {
     Utility::allReduce( comm,
-                        Utility::arrayView( input_value ),
+                        Utility::arrayViewOfConst( input_value ),
                         Utility::arrayView( value ),
-                        op ); }
+                        op );
+  }
+
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const std::array<T,N>& input_value,
+                             std::array<T,N>& value,
+                             ReduceOperation op,
+                             int root_process )
+  {
+    Utility::reduce( comm,
+                     Utility::arrayViewOfConst( input_value ),
+                     Utility::arrayView( value ),
+                     op,
+                     root_process );
+  }
 
   //! Forward to the correct allReduce method based on type T
   template<typename ReduceOperation>
@@ -368,6 +473,19 @@ struct SingleValueAllReduceHelper<std::array<T,N> >
                                 std::array<T,N>& input_output_value,
                                 ReduceOperation op )
   { Utility::allReduce( comm, Utility::arrayView( input_output_value ), op ); }
+
+  //! Forward to the correct reduce method based on type T
+  template<typename ReduceOperation>
+  static inline void reduce( const Communicator& comm,
+                             const std::array<T,N>& input_value,
+                             ReduceOperation op,
+                             int root_process )
+  {
+    Utility::reduce( comm,
+                     Utility::arrayViewOfConst( input_value ),
+                     op,
+                     root_process );
+  }
 };
 
 /*! The single value broadcast helper class
@@ -1139,7 +1257,7 @@ inline void allReduce( const Communicator& comm,
                        T& output_value,
                        ReduceOperation op )
 {
-  Details::SingleValueAllReduceHelper<T>::allReduce( comm, input_value, output_value, op );
+  Details::SingleValueReduceHelper<T>::allReduce( comm, input_value, output_value, op );
 }
 
 // Combine the values stored by each process into a single value
@@ -1156,7 +1274,7 @@ inline void allReduce( const Communicator& comm,
                        T& input_output_value,
                        ReduceOperation op )
 {
-  Details::SingleValueAllReduceHelper<T>::allReduce( comm, input_output_value, op );
+  Details::SingleValueReduceHelper<T>::allReduce( comm, input_output_value, op );
 }
 
 // Combine the values stored by each process into a single value
@@ -2488,7 +2606,7 @@ inline void reduce( const Communicator& comm,
                     ReduceOperation op,
                     int root_process )
 {
-  Utility::reduce( comm, &input_value, 1, &output_value, op );
+  Details::SingleValueReduceHelper<T>::reduce( comm, input_value, output_value, op, root_process );
 }
 
 // Combine the values stored by each process intoa single value at the root
@@ -2499,12 +2617,50 @@ inline void reduce( const Communicator& comm,
  */
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
-             const T* input_values,
-             int number_of_input_values,
-             T* output_values,
+             std::initializer_list<T> input_values,
+             const Utility::ArrayView<T>& output_values,
              ReduceOperation op,
              int root_process )
 {
+  Utility::reduce( comm, Utility::ArrayView<const T>( input_values.begin(), input_values.end() ), output_values, op, root_process );
+}
+
+// Combine the values stored by each process intoa single value at the root
+/*! \details This method is provided to help with overload resolution
+ * \ingroup mpi
+ */
+template<typename T, typename ReduceOperation>
+inline void reduce( const Communicator& comm,
+                    const Utility::ArrayView<T>& input_values,
+                    const Utility::ArrayView<T>& output_values,
+                    ReduceOperation op,
+                    int root_process )
+{
+  Utility::reduce( comm, input_values.toConst(), output_values, op, root_process );
+}
+
+// Combine the values stored by each process intoa single value at the root
+/*! \details The input_values on every process of the communicator will be
+ * reduced on root_process of the communicator. This operation can be done with
+ * communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const Utility::ArrayView<const T>& input_values,
+             const Utility::ArrayView<T>& output_values,
+             ReduceOperation op,
+             int root_process )
+{
+  if( comm.rank() == root_process )
+  {
+    TEST_FOR_EXCEPTION( output_values.size() < input_values.size(),
+                        CommunicationError,
+                        comm << " could not conduct reduce operation from "
+                        "the root process because the output values array is "
+                        "not large enough!" );
+  }
+  
   if( comm.size() > 1 )
   {
     const MPICommunicator* const mpi_comm =
@@ -2515,7 +2671,7 @@ void reduce( const Communicator& comm,
                         "An unknown communicator type was encountered!" );
 
     try{
-      mpi_comm->reduce( input_values, number_of_input_values, output_values, op, root_process );
+      mpi_comm->reduce( input_values.data(), input_values.size(), output_values.data(), op, root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -2537,8 +2693,56 @@ void reduce( const Communicator& comm,
                                   " will be ignored!" );
     }
 
-    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
+}
+
+// Combine the values stored by each process into a single value at the root
+/*! \details The input_value on every process of the communicator will be
+ * reduced on root_process of the communicator. This version of the reduce
+ * method can only be called by non-root processes (since the output value
+ * is not needed).
+ * \ingroup mpi
+ */
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const T& input_value,
+             ReduceOperation op,
+             int root_process )
+{
+  Details::SingleValueReduceHelper<T>::reduce( comm, input_value, op, root_process );
+}
+
+// Combine the values stored by each process intoa single value at the root
+/*! \details The input_values on every process of the communicator will be
+ * reduced on root_process of the communicator. This version of the reduce
+ * method can only be called by non-root processes (since the output values
+ * array is not needed).
+ * \ingroup mpi
+ */
+template<typename T, typename ReduceOperation>
+inline void reduce( const Communicator& comm,
+                    std::initializer_list<T> input_values,
+                    ReduceOperation op,
+                    int root_process )
+{
+  Utility::reduce( comm, Utility::ArrayView<const T>( input_values.begin(), input_values.end() ), op, root_process );
+}
+
+// Combine the values stored by each process into a single value at the root
+/*! \details The input_values on every process of the communicator will be
+ * reduced on root_process of the communicator. This version of the reduce
+ * method can only be called by non-root processes (since the output values
+ * array is not needed).
+ * \ingroup mpi
+ */
+template<typename T, typename ReduceOperation>
+void reduce( const Communicator& comm,
+             const Utility::ArrayView<const T>& input_values,
+             ReduceOperation op,
+             int root_process )
+{
+  Utility::reduce( comm, input_values, Utility::ArrayView<T>(), op, root_process );
 }
 
 // Compute a prefix reduction of values from all processes
@@ -2831,6 +3035,39 @@ __EXTERN_EXPLICIT_COMM_GATHER_HELPER_INST__;
                                  )
 
 __EXTERN_EXPLICIT_COMM_SCATTER_HELPER_INST__;
+
+// Explicit template instantiations for reduce helper
+#define __EXTERN_EXPLICIT_COMM_REDUCE_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::plus<__VA_ARGS__>, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::multiplies<__VA_ARGS__>, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::minimum<__VA_ARGS__>, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::maximum<__VA_ARGS__>, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, std::plus<__VA_ARGS__>, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, std::multiplies<__VA_ARGS__>, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, Utility::minimum<__VA_ARGS__>, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, Utility::maximum<__VA_ARGS__>, int ) )
+
+#define __EXPLICIT_COMM_REDUCE_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::plus<__VA_ARGS__>, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::multiplies<__VA_ARGS__>, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::minimum<__VA_ARGS__>, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::maximum<__VA_ARGS__>, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, std::plus<__VA_ARGS__>, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, std::multiplies<__VA_ARGS__>, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, Utility::minimum<__VA_ARGS__>, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::reduce( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, Utility::maximum<__VA_ARGS__>, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_REDUCE_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_BASIC_INST__( \
+              __EXTERN_EXPLICIT_COMM_REDUCE_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_REDUCE_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_BASIC_INST__( \
+              __EXPLICIT_COMM_REDUCE_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_REDUCE_HELPER_INST__;
   
 #endif // end UTILITY_COMMUNICATOR_DEF_HPP
 
