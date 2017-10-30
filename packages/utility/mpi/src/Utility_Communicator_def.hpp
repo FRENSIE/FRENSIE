@@ -2109,6 +2109,15 @@ inline void gatherv( const Communicator& comm,
 }
 
 // Scatter the values stored at the root process to all other processes
+/*! \details The input_values on root_process of the communicator will be
+ * sent to every other process in the communicator. The values that a process
+ * receives from the root process will be from the input values array 
+ * starting at the index that is equal to the process's rank multiplied by
+ * number of values sent to each process 
+ * (i.e. input_values.size()/comm.size()). This operation can be done with 
+ * communicators of any size.
+ * \ingroup mpi
+ */
 template<typename T>
 inline void scatter( const Communicator& comm,
                      std::initializer_list<T> input_values,
@@ -2124,6 +2133,29 @@ inline void scatter( const Communicator& comm,
 }
 
 // Scatter the values stored at the root process to all other processes
+/*! \details This method is provided to help with overload resolution.
+ */
+template<typename T>
+inline void scatter( const Communicator& comm,
+                     const Utility::ArrayView<T>& input_values,
+                     T& output_value,
+                     int root_process )
+{
+  Utility::ArrayView<T> output_value_view( &output_value, 1 );
+
+  Utility::scatter( comm, input_values.toConst(), output_value_view, root_process );
+} 
+
+// Scatter the values stored at the root process to all other processes
+/*! \details The input_values on root_process of the communicator will be
+ * sent to every other process in the communicator. The values that a process
+ * receives from the root process will be from the input values array 
+ * starting at the index that is equal to the process's rank multiplied by
+ * number of values sent to each process 
+ * (i.e. input_values.size()/comm.size()). This operation can be done with 
+ * communicators of any size.
+ * \ingroup mpi
+ */
 template<typename T>
 inline void scatter( const Communicator& comm,
                      const Utility::ArrayView<const T>& input_values,
@@ -2136,17 +2168,30 @@ inline void scatter( const Communicator& comm,
 }
 
 // Scatter the values stored at the root process to all other processes
+/*! \details The input_values on root_process of the communicator will be
+ * sent to every other process in the communicator. This version of the
+ * scatter method can only be called by non-root processes (since the 
+ * input values array is not needed).
+ * \ingroup mpi
+ */
 template<typename T>
-inline void scatter( const Communicator& comm,
-                     T& output_value,
-                     int root_process )
+void scatter( const Communicator& comm,
+              T& output_value,
+              int root_process )
 {
-  Utility::ArrayView<T> output_value_view( &output_value, 1 );
-
-  Utility::scatter( comm, output_value_view, root_process );
+  Details::SingleValueScatterHelper<T>::scatter( comm, output_value, root_process );
 }
   
 // Scatter the values stored at the root process to all other processes
+/*! \details The input_values on root_process of the communicator will be
+ * sent to every other process in the communicator. The values that a process
+ * receives from the root process will be from the input values array 
+ * starting at the index that is equal to the process's rank multiplied by
+ * number of values sent to each process 
+ * (i.e. input_values.size()/comm.size()). This operation can be done with 
+ * communicators of any size.
+ * \ingroup mpi
+ */
 template<typename T>
 inline void scatter( const Communicator& comm,
                      std::initializer_list<T> input_values,
@@ -2157,6 +2202,19 @@ inline void scatter( const Communicator& comm,
     input_values_view( input_values.begin(), input_values.size() );
 
   Utility::scatter( comm, input_values_view, output_values, root_process );
+}
+
+// Scatter the values stored at the root process to all other processes
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void scatter( const Communicator& comm,
+                     const Utility::ArrayView<T>& input_values,
+                     const Utility::ArrayView<T>& output_values,
+                     int root_process )
+{
+  Utility::scatter( comm, input_values.toConst(), output_values, root_process );
 }
 
 // Scatter the values stored at the root process to all other processes
@@ -2193,8 +2251,21 @@ void scatter( const Communicator& comm,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
 
+    // Determine the number of values that will be sent to each process
+    int number_of_values_per_proc = 0;
+
+    if( comm.rank() == root_process )
+      number_of_values_per_proc = input_values.size()/comm.size();
+
     try{
-      mpi_comm->scatter( input_values.data(), output_values.data(), input_values.size()/comm.size(), root_process );
+      mpi_comm->broadcast( &number_of_values_per_proc, 1, root_process );
+
+      TEST_FOR_EXCEPTION( output_values.size() < number_of_values_per_proc,
+                          CommunicationError,
+                          "The output values array does not have "
+                          "sufficient space to store the scattered values!" );
+      
+      mpi_comm->scatter( input_values.data(), output_values.data(), number_of_values_per_proc, root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -2215,16 +2286,22 @@ void scatter( const Communicator& comm,
                                   << root_process <<
                                   " will be ignored!" );
     }
-  
-    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values );
+
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
 }
 
 // Scatter the values stored at the root process to all other processes
+/*! \details The input_values on root_process of the communicator will be
+ * sent to every other process in the communicator. This version of the
+ * scatter method can only be called by non-root processes (since the 
+ * input values array is not needed).
+ * \ingroup mpi
+ */
 template<typename T>
-inline void scatter( const Communicator& comm,
-                     const Utility::ArrayView<T>& output_values,
-                     int root_process )
+void scatter( const Communicator& comm,
+              const Utility::ArrayView<T>& output_values,
+              int root_process )
 {
   TEST_FOR_EXCEPTION( comm.rank() == root_process,
                       CommunicationError,
@@ -2729,6 +2806,31 @@ __EXTERN_EXPLICIT_COMM_BROADCAST_HELPER_INST__;
                                  )
 
 __EXTERN_EXPLICIT_COMM_GATHER_HELPER_INST__;
+
+// Explicit template instantiations for scatter helper
+#define __EXTERN_EXPLICIT_COMM_SCATTER_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, __VA_ARGS__&, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, const Utility::ArrayView<__VA_ARGS__>&, int ) )
+
+#define __EXPLICIT_COMM_SCATTER_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, __VA_ARGS__&, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatter( const Utility::Communicator&, const Utility::ArrayView<__VA_ARGS__>&, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_SCATTER_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_SCATTER_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_SCATTER_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_SCATTER_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_SCATTER_HELPER_INST__;
   
 #endif // end UTILITY_COMMUNICATOR_DEF_HPP
 
