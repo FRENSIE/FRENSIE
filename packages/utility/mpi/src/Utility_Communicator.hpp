@@ -379,68 +379,29 @@ void scatter( const Communicator& comm,
               int root_process );
 
 //! Scatter the values stored at the root process to all other processes
-template<template<typename,typename...> class STLCompliantSequenceContainerA,
-         template<typename,typename...> class STLCompliantSequenceContainerB,
-         typename T>
-void scatterv( const Communicator& comm,
-               std::initializer_list<T> input_values,
-               const STLCompliantSequenceContainerA<int>& sizes,
-               const STLCompliantSequenceContainerB<int>& offsets,
-               const Utility::ArrayView<T>& output_values,
-               int root_process );
-
-//! Scatter the values stored at the root process to all other processes
-template<template<typename,typename...> class STLCompliantSequenceContainerA,
-         template<typename,typename...> class STLCompliantSequenceContainerB,
-         typename T>
-void scatterv( const Communicator& comm,
-               const Utility::ArrayView<T>& input_values,
-               const STLCompliantSequenceContainerA<int>& sizes,
-               const STLCompliantSequenceContainerB<int>& offsets,
-               const Utility::ArrayView<T>& output_values,
-               int root_process );
-
-//! Scatter the values stored at the root process to all other processes
-template<template<typename,typename...> class STLCompliantSequenceContainerA,
-         template<typename,typename...> class STLCompliantSequenceContainerB,
-         typename T>
+template<typename T>
 void scatterv( const Communicator& comm,
                const Utility::ArrayView<const T>& input_values,
-               const STLCompliantSequenceContainerA<int>& sizes,
-               const STLCompliantSequenceContainerB<int>& offsets,
-               const Utility::ArrayView<T>& output_values,
+               const std::vector<int>& sizes,
+               std::vector<T>& output_values,
                int root_process );
 
 //! Scatter the values stored at the root process to all other processes
-template<template<typename,typename...> class STLCompliantSequenceContainer,
-         typename T>
-void scatterv( const Communicator& comm,
-               std::initializer_list<T> input_values,
-               const STLCompliantSequenceContainer<int>& sizes,
-               const Utility::ArrayView<T>& output_values,
-               int root_process );
-
-//! Scatter the values stored at the root process to all other processes
-template<template<typename,typename...> class STLCompliantSequenceContainer,
-         typename T>
-void scatterv( const Communicator& comm,
-               const Utility::ArrayView<T>& input_values,
-               const STLCompliantSequenceContainer<int>& sizes,
-               const Utility::ArrayView<T>& output_values,
-               int root_process );
-
-//! Scatter the values stored at the root process to all other processes
-template<template<typename,typename...> class STLCompliantSequenceContainer,
-         typename T>
+template<typename T>
 void scatterv( const Communicator& comm,
                const Utility::ArrayView<const T>& input_values,
-               const STLCompliantSequenceContainer<int>& sizes,
+               const std::vector<int>& sizes,
                const Utility::ArrayView<T>& output_values,
                int root_process );
 
 //! Scatter the values stored at the root process to all other processes
-template<template<typename,typename...> class STLCompliantSequenceContainer,
-         typename T>
+template<typename T>
+void scatterv( const Communicator& comm,
+               std::vector<T>& output_values,
+               int root_process );
+  
+//! Scatter the values stored at the root process to all other processes
+template<typename T>
 void scatterv( const Communicator& comm,
                const Utility::ArrayView<T>& output_values,
                int root_process );

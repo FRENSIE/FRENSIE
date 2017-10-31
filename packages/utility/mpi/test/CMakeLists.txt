@@ -116,6 +116,14 @@ IF(${FRENSIE_ENABLE_MPI})
   FRENSIE_ADD_TEST(CommunicatorScatterHelper MPI_PROCS 4)
 ENDIF()
 
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorScattervHelper DEPENDS tstCommunicatorScattervHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorScattervHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorScattervHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorScattervHelper MPI_PROCS 4)
+ENDIF()
+
 FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorReduceHelper DEPENDS tstCommunicatorReduceHelper.cpp)
 FRENSIE_ADD_TEST(CommunicatorReduceHelper)
 

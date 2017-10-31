@@ -2264,42 +2264,39 @@ void scatter( const Communicator& comm,
   Utility::scatter( comm, Utility::ArrayView<const T>(), output_values, root_process );
 }
 
-// Scatter the values stored at the root process to all other processes
-/*! \details The input_values on root_process of the communicator will be
- * sent to every other process in the communicator. The range of values that a 
- * process receives from the root process will be determined by the sizes
- * and offsets arrays. This operation can be done with communicators of 
- * any size.
+namespace Details{
+
+/*! Get the number of values that will be sent to this process
  * \ingroup mpi
  */
-template<typename T>
-inline void scatterv( const Communicator& comm,
-                      const std::vector<T>& input_values,
-                      const std::vector<int>& sizes,
-                      const std::vector<int>& offsets,
-                      T* output_values,
-                      int number_of_output_values,
-                      int root_process )
+inline void scattervGetSizes( const Communicator& comm,
+                              std::vector<int>& sizes,
+                              int root_process )
 {
-  Utility::scatterv( comm, input_values.data(), sizes, offsets, output_values, number_of_output_values, root_process );
+  Utility::broadcast( comm, sizes, root_process );
+
+  TEST_FOR_EXCEPTION( sizes.size() < comm.size(),
+                      CommunicationError,
+                      comm << " could not conduct scatterv operation "
+                      "from root process " << root_process << " because the "
+                      "number of values to send to each process could not "
+                      "be determined!" );
 }
 
-// Scatter the values stored at the root process to all other processes
-/*! \details The input_values on root_process of the communicator will be
+/*! Scatter the values stored at the root process to all other processes
+ *
+ * The input_values on root_process of the communicator will be
  * sent to every other process in the communicator. The range of values that a 
  * process receives from the root process will be determined by the sizes
- * and offsets arrays. This operation can be done with communicators of 
- * any size.
+ * array. This operation can be done with communicators of any size.
  * \ingroup mpi
  */
 template<typename T>
-void scatterv( const Communicator& comm,
-               const T* input_values,
-               const std::vector<int>& sizes,
-               const std::vector<int>& offsets,
-               T* output_values,
-               int number_of_output_values,
-               int root_process )
+void scattervImpl( const Communicator& comm,
+                   const Utility::ArrayView<const T>& input_values,
+                   const std::vector<int>& sizes,
+                   const Utility::ArrayView<T>& output_values,
+                   int root_process )
 {
   if( comm.size() > 1 )
   {
@@ -2311,7 +2308,7 @@ void scatterv( const Communicator& comm,
                         "An unknown communicator type was encountered!" );
 
     try{
-      mpi_comm->scatterv( input_values, sizes, offsets, output_values, number_of_output_values, root_process );
+      mpi_comm->scatterv( input_values.data(), sizes, output_values.data(), output_values.size(), root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -2332,99 +2329,134 @@ void scatterv( const Communicator& comm,
                                   << root_process <<
                                   " will be ignored!" );
     }
-    
-    if( !sizes.empty() )
+
+    if( input_values.size() < output_values.size() )
     {
-      int offset = 0;
-      
-      if( !offsets.empty() )
-        offset = offsets.front();
-    
-      Details::serialScattervImpl( comm,
-                                   input_values,
-                                   sizes.front(),
-                                   offset,
-                                   output_values,
-                                   number_of_output_values );
+      Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
+    }
+    else
+    {
+      Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), output_values.size(), output_values.data() );
     }
   }
 }
-
-// Scatter the values stored at the root process to all other processes
-/*! \details The input_values on root_process of the communicator will be
- * sent to every other process in the communicator. The range of values that a 
- * process receives from the root process will be determined by the sizes
- * array. This operation can be done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void scatterv( const Communicator& comm,
-                      const std::vector<T>& input_values,
-                      const std::vector<int>& sizes,
-                      T* output_values,
-                      int number_of_output_values,
-                      int root_process )
-{
-  Utility::scatterv( comm, input_values.data(), sizes, output_values, number_of_output_values, root_process );
-}
-
-// Scatter the values stored at the root process to all other processes
-/*! \details The input_values on root_process of the communicator will be
- * sent to every other process in the communicator. The range of values that a 
- * process receives from the root process will be determined by the sizes
- * array. This operation can be done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-void scatterv( const Communicator& comm,
-               const T* input_values,
-               const std::vector<int>& sizes,
-               T* output_values,
-               int number_of_output_values,
-               int root_process )
-{
-  if( comm.size() > 1 )
-  {
-    const MPICommunicator* const mpi_comm =
-      dynamic_cast<const MPICommunicator* const>( &comm );
-
-    TEST_FOR_EXCEPTION( mpi_comm == NULL,
-                        InvalidCommunicator,
-                        "An unknown communicator type was encountered!" );
-
-    try{
-      mpi_comm->scatterv( input_values, sizes, output_values, number_of_output_values, root_process );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::exception,
-                                CommunicationError,
-                                comm << " did not conduct scatterv "
-                                "operation from root process "
-                                << root_process << " successfully!" );
-  }
-  else
-  {
-    __TEST_FOR_NULL_COMM__( comm );
-    
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
-                                  "The only process available for the "
-                                  "scatterv operation is " << comm.rank() <<
-                                  "! The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
   
-    if( !sizes.empty() )
-    {
-      Details::serialScattervImpl( comm,
-                                   input_values,
-                                   sizes.front(),
-                                   0,
-                                   output_values,
-                                   number_of_output_values );
-    }
+} // end Details namespace
+
+// Scatter the values stored at the root process to all other processes
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void scatterv( const Communicator& comm,
+                      const Utility::ArrayView<T>& input_values,
+                      const std::vector<int>& sizes,
+                      std::vector<T>& output_values,
+                      int root_process )
+{
+  Utility::scatterv( comm, input_values.toConst(), sizes, output_values, root_process );
+}
+
+// Scatter the values stored at the root process to all other processes
+/*! \details The input_values on root_process of the communicator will be
+ * sent to every other process in the communicator. The range of values that a 
+ * process receives from the root process will be determined by the sizes
+ * array. The output_values vector will be resize appropriately. This operation
+ * can be done with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+void scatterv( const Communicator& comm,
+               const Utility::ArrayView<const T>& input_values,
+               const std::vector<int>& sizes,
+               std::vector<T>& output_values,
+               int root_process )
+{
+  std::vector<int> sizes_copy = sizes;
+
+  Details::scattervGetSizes( comm, sizes_copy, root_process );
+
+  output_values.resize( sizes_copy[comm.rank()] );
+  
+  Details::scattervImpl( comm, input_values, sizes, Utility::arrayView(output_values), root_process );
+}
+
+// Scatter the values stored at the root process to all other processes
+/*! \details This method is provided to help with overload resolution
+ * \ingroup mpi
+ */
+template<typename T>
+inline void scatterv( const Communicator& comm,
+                      const Utility::ArrayView<T>& input_values,
+                      const std::vector<int>& sizes,
+                      const Utility::ArrayView<T>& output_values,
+                      int root_process )
+{
+  Utility::scatterv( comm, input_values.toConst(), sizes, output_values, root_process );
+}
+
+// Scatter the values stored at the root process to all other processes
+/*! \details The input_values on root_process of the communicator will be
+ * sent to every other process in the communicator. The range of values that a 
+ * process receives from the root process will be determined by the sizes
+ * array. This operation can be done with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+void scatterv( const Communicator& comm,
+               const Utility::ArrayView<const T>& input_values,
+               const std::vector<int>& sizes,
+               const Utility::ArrayView<T>& output_values,
+               int root_process )
+{
+  std::vector<int> sizes_copy = sizes;
+
+  Details::scattervGetSizes( comm, sizes_copy, root_process );
+
+  // Chop the array view so that is has the correct size
+  if( output_values.size() >= sizes_copy[comm.rank()] )
+  {
+    
+    Details::scattervImpl( comm, input_values, sizes_copy, output_values( 0, sizes_copy[comm.rank()] ), root_process );
   }
+  else
+  {
+    // Make sure that the output values array has the correct size
+    THROW_EXCEPTION( CommunicationError,
+                     comm << " could not conduct the scatterv operation "
+                     "because the output array is too small!" );
+  }
+}
+
+// Scatter the values stored at the root process to all other processes
+/*! \details The input values on root_process of the communicator will be
+ * sent to every other process in the communicator. The output_values vector 
+ * will be resize appropriately. This method can only be called by non-root
+ * processes (since the input values are not needed).
+ * \ingroup mpi
+ */
+template<typename T>
+inline void scatterv( const Communicator& comm,
+                      std::vector<T>& output_values,
+                      int root_process )
+{
+  Utility::scatterv( comm, Utility::ArrayView<const T>(), std::vector<int>(), output_values, root_process );
+}
+  
+// Scatter the values stored at the root process to all other processes
+/*! \details The input values on root_process of the communicator will be
+ * sent to every other process in the communicator. The output_values array
+ * must be sized appropriately before passing it to this method. This method
+ * can only be called by non-root processes (since the input values are not
+ * needed).
+ * \ingroup mpi
+ */
+template<typename T>
+void scatterv( const Communicator& comm,
+               const Utility::ArrayView<T>& output_values,
+               int root_process )
+{
+  Utility::scatterv( comm, Utility::ArrayView<const T>(), std::vector<int>(), output_values, root_process );
 }
 
 // Combine the values stored by each process intoa single value at the root
