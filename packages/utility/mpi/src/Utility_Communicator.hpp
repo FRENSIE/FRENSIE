@@ -283,8 +283,6 @@ template<typename T>
 void gatherv( const Communicator& comm,
               const T& input_value,
               std::vector<T>& output_values,
-              const std::vector<int>& sizes,
-              const std::vector<int>& offsets,
               int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
@@ -292,8 +290,6 @@ template<typename T>
 void gatherv( const Communicator& comm,
               const T& input_value,
               const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
-              const std::vector<int>& offsets,
               int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
@@ -301,8 +297,6 @@ template<typename T>
 void gatherv( const Communicator& comm,
               std::initializer_list<T> input_values,
               std::vector<T>& output_values,
-              const std::vector<int>& sizes,
-              const std::vector<int>& offsets,
               int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
@@ -310,8 +304,6 @@ template<typename T>
 void gatherv( const Communicator& comm,
               std::initializer_list<T> input_values,
               const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
-              const std::vector<int>& offsets,
               int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
@@ -319,8 +311,6 @@ template<typename T>
 void gatherv( const Communicator& comm,
               const Utility::ArrayView<const T>& input_values,
               std::vector<T>& output_values,
-              const std::vector<int>& sizes,
-              const std::vector<int>& offsets,
               int root_process );
 
 //! Gather the values stored at every process into a vector at the root process
@@ -328,64 +318,6 @@ template<typename T>
 void gatherv( const Communicator& comm,
               const Utility::ArrayView<const T>& input_values,
               const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
-              const std::vector<int>& offsets,
-              int root_process );
-
-//! Gather the values stored at every process into a vector at the root process
-template<typename T>
-void gatherv( const Communicator& comm,
-              std::initializer_list<T> input_values,
-              std::vector<T>& output_values,
-              const std::vector<int>& sizes,
-              int root_process );
-
-//! Gather the values stored at every process into a vector at the root process
-template<typename T>
-void gatherv( const Communicator& comm,
-              const T& input_value,
-              std::vector<T>& output_values,
-              const std::vector<int>& sizes,
-              int root_process );
-
-//! Gather the values stored at every process into a vector at the root process
-template<typename T>
-void gatherv( const Communicator& comm,
-              const T& input_value,
-              const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
-              int root_process );
-
-//! Gather the values stored at every process into a vector at the root process
-template<typename T>
-void gatherv( const Communicator& comm,
-              std::initializer_list<T> input_values,
-              std::vector<T>& output_values,
-              const std::vector<int>& sizes,
-              int root_process );
-
-//! Gather the values stored at every process into a vector at the root process
-template<typename T>
-void gatherv( const Communicator& comm,
-              std::initializer_list<T> input_values,
-              const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
-              int root_process );
-
-//! Gather the values stored at every process into a vector at the root process
-template<typename T>
-void gatherv( const Communicator& comm,
-              const Utility::ArrayView<const T>& input_values,
-              std::vector<T>& output_values,
-              const std::vector<int>& sizes,
-              int root_process );
-  
-//! Gather the values stored at every process into a vector at the root process
-template<typename T>
-void gatherv( const Communicator& comm,
-              const Utility::ArrayView<const T>& input_values,
-              const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
               int root_process );
 
 //! Gather the values stored at every process into a vector at the root process

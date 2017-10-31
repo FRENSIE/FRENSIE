@@ -100,6 +100,14 @@ IF(${FRENSIE_ENABLE_MPI})
   FRENSIE_ADD_TEST(CommunicatorGatherHelper MPI_PROCS 4)
 ENDIF()
 
+FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorGathervHelper DEPENDS tstCommunicatorGathervHelper.cpp)
+FRENSIE_ADD_TEST(CommunicatorGathervHelper)
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(CommunicatorGathervHelper MPI_PROCS 2)
+  FRENSIE_ADD_TEST(CommunicatorGathervHelper MPI_PROCS 4)
+ENDIF()
+
 FRENSIE_ADD_TEST_EXECUTABLE(CommunicatorScatterHelper DEPENDS tstCommunicatorScatterHelper.cpp)
 FRENSIE_ADD_TEST(CommunicatorScatterHelper)
 

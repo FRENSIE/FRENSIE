@@ -67,48 +67,6 @@ struct SerialCommunicatorArrayCopyHelper<T,typename std::enable_if<std::is_arith
   }
 };
 
-// The gatherv implementation
-template<typename T>
-void serialGathervImpl( const Communicator& comm,
-                        const T* input_values,
-                        int number_of_input_values,
-                        int requested_number_of_input_values_to_send,
-                        int input_values_offset,
-                        T* output_values )
-{
-  if( input_values_offset < number_of_input_values )
-  {
-    int number_to_send = requested_number_of_input_values_to_send;
-      
-    if( number_to_send + input_values_offset > number_of_input_values )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
-                                  "There are only "
-                                  << number_of_input_values << " input "
-                                  "values but elements in the range ["
-                                  << input_values_offset << ","
-                                  << number_to_send + input_values_offset <<
-                                  ") have been requested! Only elements "
-                                  "in the range ["
-                                  << input_values_offset << ","
-                                  << number_of_input_values <<
-                                  ") will be sent." );
-
-      number_to_send = number_of_input_values - input_values_offset;
-    }
-
-    SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values+input_values_offset, number_to_send, output_values );
-  }
-  else
-  {
-    FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
-                                "The requested offset of "
-                                << input_values_offset <<
-                                " is beyone the input array bounds! No "
-                                "elements will be sent." );
-  }
-}
-
 // The scatterv implementation
 template<typename T>
 void serialScattervImpl( const Communicator& comm,
@@ -1816,376 +1774,47 @@ inline void gather( const Communicator& comm,
   Utility::gather( comm, input_values, Utility::ArrayView<T>(), root_process );
 }
 
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_value on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The offsets determine the location
- * in the output_values array where each process's values will be stored.
- * The output_values will be resized appropriately. This operation can be done
- * with communicators of any size.
+namespace Details{
+
+/*! Determine the number of values that each process will send
  * \ingroup mpi
  */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     const T& input_value,
-                     std::vector<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const std::vector<int>& offsets,
-                     const int root_process )
+void gathervGetSizes( const Communicator& comm,
+                      const int local_size,
+                      std::vector<int>& sizes )
 {
-  Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-
-  Utility::gatherv( comm, input_value_view, output_values, sizes, offsets, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_value on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The offsets determine the location
- * in the output_values array where each process's values will be stored.
- * The output_values must be sized appropriately before passing it to this
- * method. This operation can be done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     const T& input_value,
-                     const Utility::ArrayView<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const std::vector<int>& offsets,
-                     const int root_process )
-{
-  Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-
-  Utility::gatherv( comm, input_value_view, output_values, sizes, offsets, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The input_values can be passed in as a
- * brace-initialized list (e.g. {1, 2, ..., 10}. The sizes determine the number
- * of input values on each process that will be sent. The offsets determine the
- * location in the output_values array where each process's values will be 
- * stored. The output_values will be resized appropriately. This operation 
- * can be done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     std::initializer_list<T> input_values,
-                     std::vector<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const std::vector<int>& offsets,
-                     const int root_process )
-{
-  Utility::ArrayView<const T>
-    input_values_view( input_values.begin(), input_values.size() );
-
-  Utility::gatherv( comm, input_values_view, output_values, sizes, offsets, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The input_values can be passed in as a
- * brace-initialized list (e.g. {1, 2, ..., 10}. The sizes determine the number
- * of input values on each process that will be sent. The offsets determine the
- * location in the output_values array where each process's values will be 
- * stored. The output_values must be sized appropriately before passing it to 
- * this method. This operation can be done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     std::initializer_list<T> input_values,
-                     const Utility::ArrayView<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const std::vector<int>& offsets,
-                     const int root_process )
-{
-  Utility::ArrayView<const T>
-    input_values_view( input_values.begin(), input_values.size() );
-
-  Utility::gatherv( comm, input_values_view, output_values, sizes, offsets, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The offsets determine the location
- * in the output_values array where each process's values will be stored.
- * The output_values will be resized appropriately. This operation can be done
- * with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     const Utility::ArrayView<const T>& input_values,
-                     std::vector<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const std::vector<int>& offsets,
-                     const int root_process )
-{
-  // Resize the output values vector
-  if( comm.rank() == root_process )
-  {
-    size_t max_offset_index = 0;
-    size_t indices_to_check = std::min( sizes.size(), offsets.size() );
-    indices_to_check = std::min( indices_to_check, (size_t)comm.size() );
-
-    for( size_t i = 0; i < indices_to_check; ++i )
-    {
-      if( offsets[i] > offsets[max_offset_index] )
-        max_offset_index = i;
-    }
-
-    int size = offsets[max_offset_index] + sizes[max_offset_index];
-
-    TEST_FOR_EXCEPTION( size <= 0,
-                        CommunicationError,
-                        comm << " could not resize the output values vector "
-                        "prior to conducting gatherv operation because an "
-                        "invalid size was calculated (" << size << ")!" );
-
-    output_values.resize( size );
+  try{
+    Utility::allGather( comm, local_size, sizes );
   }
-
-  Utility::gatherv( comm, input_values, Utility::arrayView(output_values), sizes, offsets, root_process );
+  EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                              CommunicationError,
+                              comm << " did could not conduct gatherv "
+                              "operation because the number of "
+                              "elements sent by each process could not be "
+                              "determined!" );
 }
 
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The offsets determine the location
- * in the output_values array where each process's values will be stored.
- * The output_values must be sized appropriately before passing it to this
- * method. This operation can be done with communicators of any size.
+/*! Gather the values stored at every process into a vector at the root process
  * \ingroup mpi
- */
+ */  
 template<typename T>
-void gatherv( const Communicator& comm,
-              const Utility::ArrayView<const T>& input_values,
-              const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
-              const std::vector<int>& offsets,
-              const int root_process )
+void gathervImpl( const Communicator& comm,
+                  const Utility::ArrayView<const T>& input_values,
+                  const Utility::ArrayView<T>& output_values,
+                  const std::vector<int>& sizes,
+                  const int root_process )
 {
   if( comm.rank() == root_process )
   {
-    TEST_FOR_EXCEPTION( sizes.size() < comm.size(),
-                        CommunicationError,
-                        comm << " is unable to conduct gatherv operation on "
-                        "the root process because there aren't enough sizes "
-                        "provided!" );
+    int total_size = 0;
     
-    TEST_FOR_EXCEPTION( offsets.size() < comm.size(),
-                        CommunicationError,
-                        comm << " is unable to conduct gatherv operation on "
-                        "the root process because there aren't enough offsets "
-                        "provided!" );
-  }
-  
-  if( comm.size() > 1 )
-  {
-    const MPICommunicator* const mpi_comm =
-      dynamic_cast<const MPICommunicator* const>( &comm );
-
-    TEST_FOR_EXCEPTION( mpi_comm == NULL,
-                        InvalidCommunicator,
-                        "An unknown communicator type was encountered!" );
-
-    try{
-      mpi_comm->gatherv( input_values.data(), input_values.size(), output_values.data(), sizes, offsets, root_process );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::exception,
-                                CommunicationError,
-                                comm << " did not conduct gatherv "
-                                "operation to root process "
-                                << root_process << " successfully!" );
-  }
-  else
-  {
-    __TEST_FOR_NULL_COMM__( comm );
-
-    if( root_process != comm.rank() )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
-                                  "The only process available for the "
-                                  "gatherv operation is " << comm.rank() << "!"
-                                  " The requested root process "
-                                  << root_process <<
-                                  " will be ignored!" );
-    }
-    
-    if( !sizes.empty() )
-    {
-      int offset = 0;
-    
-      if( !offsets.empty() )
-        offset = offsets.front();
-    
-      Details::serialGathervImpl( comm,
-                                  input_values.data(),
-                                  input_values.size(),
-                                  sizes.front(),
-                                  offset,
-                                  output_values.data() );
-    }
-  }
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_value on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The values sent by each process
- * will be placed in rank order in the output_values array (with no padding
- * between values from difference processes). The output_values array will be 
- * resized appropriately. This operation can be done with communicators of any
- * size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     const T& input_value,
-                     std::vector<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const int root_process )
-{
-  Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-
-  Utility::gatherv( comm, input_value_view, output_values, sizes, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_value on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The values sent by each process
- * will be placed in rank order in the output_values array (with no padding
- * between values from difference processes). The output_values array must be 
- * sized appropriately before passing it to this method. This operation can be
- * done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     const T& input_value,
-                     const Utility::ArrayView<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const int root_process )
-{
-  Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-
-  Utility::gatherv( comm, input_value_view, output_values, sizes, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The input_values can be passed in as a
- * brace-initialized list (e.g. {1, 2, ..., 10}). The sizes determine the 
- * number of input values on each process that will be sent. The values sent by
- * each process will be placed in rank order in the output_values array (with 
- * no padding between values from difference processes). The output_values 
- * array will be  resized appropriately. This operation can be done with 
- * communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     std::initializer_list<T> input_values,
-                     std::vector<T>& output_values,
-                     const std::vector<int>& sizes,
-                     int root_process )
-{
-  Utility::ArrayView<const T>
-    input_values_view( input_values.begin(), input_values.size() );
-
-  Utility::gatherv( comm, input_values_view, output_values, sizes, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The input_values can be passed in as a
- * brace-initialized list (e.g. {1, 2, ..., 10}). The sizes determine the 
- * number of input values on each process that will be sent. The values sent by
- * each process will be placed in rank order in the output_values array (with 
- * no padding between values from difference processes). The output_values 
- * array must be sized appropriately before passing it to this method. This 
- * operation can be done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     std::initializer_list<T> input_values,
-                     const Utility::ArrayView<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const int root_process )
-{
-  Utility::ArrayView<const T>
-    input_values_view( input_values.begin(), input_values.size() );
-
-  Utility::gatherv( comm, input_values_view, output_values, sizes, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The values sent by each process
- * will be placed in rank order in the output_values array (with no padding
- * between values from difference processes). The output_values array will be 
- * resized appropriately. This operation can be done with communicators of any
- * size.
- * \ingroup mpi
- */
-template<typename T>
-inline void gatherv( const Communicator& comm,
-                     const Utility::ArrayView<const T>& input_values,
-                     std::vector<T>& output_values,
-                     const std::vector<int>& sizes,
-                     const int root_process )
-{
-  // Resize the output values vector
-  if( comm.rank() == root_process )
-  {
-    int size = 0;
-
     for( size_t i = 0; i < sizes.size(); ++i )
-      size += sizes[i];
-
-    TEST_FOR_EXCEPTION( size <= 0,
+      total_size += sizes[i];
+    
+    TEST_FOR_EXCEPTION( output_values.size() < total_size,
                         CommunicationError,
-                        comm << " could not resize the output values vector "
-                        "prior to conducting gatherv operation because an "
-                        "invalid size was calculated (" << size << ")!" );
-
-    output_values.resize( size );
-  }
-
-  Utility::gatherv( comm, input_values, Utility::arrayView(output_values), sizes, root_process );
-}
-
-// Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. The sizes determine the number of input
- * values on each process that will be sent. The values sent by each process
- * will be placed in rank order in the output_values array (with no padding
- * between values from difference processes). The output_values array must be 
- * sized appropriately before passing it to this method. This operation can be
- * done with communicators of any size.
- * \ingroup mpi
- */
-template<typename T>
-void gatherv( const Communicator& comm,
-              const Utility::ArrayView<const T>& input_values,
-              const Utility::ArrayView<T>& output_values,
-              const std::vector<int>& sizes,
-              const int root_process )
-{
-  if( comm.rank() == root_process )
-  {
-    TEST_FOR_EXCEPTION( sizes.size() < comm.size(),
-                        CommunicationError,
-                        comm << " is unable to conduct gatherv operation on "
-                        "the root process because there aren't enough sizes "
-                        "provided!" );
+                        comm << " could not conduct gatherv operation because "
+                        "the output array is not large enough!" );
   }
   
   if( comm.size() > 1 )
@@ -2197,7 +1826,7 @@ void gatherv( const Communicator& comm,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
 
-    try{
+    try{            
       mpi_comm->gatherv( input_values.data(), input_values.size(), output_values.data(), sizes, root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
@@ -2209,7 +1838,7 @@ void gatherv( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    
+
     if( root_process != comm.rank() )
     {
       FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
@@ -2220,20 +1849,158 @@ void gatherv( const Communicator& comm,
                                   " will be ignored!" );
     }
 
-    Details::serialGathervImpl( comm,
-                                input_values.data(),
-                                input_values.size(),
-                                sizes.front(),
-                                0, 
-                                output_values.data() );
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
 }
 
+} // end Details namespace
+
 // Gather the values stored at every process into a vector at the root process
-/*! \details The input_value on every process of the communicator will be sent
+/*! \details The input_value on this process of the communicator will be sent
+ * to root_process of the communicator. The output_values will be resized 
+ * appropriately. This operation can be done with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gatherv( const Communicator& comm,
+                     const T& input_value,
+                     std::vector<T>& output_values,
+                     int root_process )
+{
+  Utility::gatherv( comm, Utility::ArrayView<const T>( &input_value, 1 ), output_values, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details The input_values on this process of the communicator will be sent
+ * to root_process of the communicator. The output_values must be sized 
+ * appropriately before passing it to this method. This operation can be done 
+ * with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gatherv( const Communicator& comm,
+                     const T& input_value,
+                     const Utility::ArrayView<T>& output_values,
+                     int root_process )
+{
+  Utility::gatherv( comm, Utility::ArrayView<const T>( &input_value, 1 ), output_values, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details The input_values on this process of the communicator will be sent
+ * to root_process of the communicator. The output_values will be resized 
+ * appropriately. This operation can be done with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gatherv( const Communicator& comm,
+                     std::initializer_list<T> input_values,
+                     std::vector<T>& output_values,
+                     int root_process )
+{
+  Utility::gatherv( comm, Utility::ArrayView<const T>( input_values.begin(), input_values.end() ), output_values, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details The input_values on this process of the communicator will be sent
+ * to root_process of the communicator. The output_values must be sized 
+ * appropriately before passing it to this method. This operation can be done 
+ * with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gatherv( const Communicator& comm,
+                     std::initializer_list<T> input_values,
+                     const Utility::ArrayView<T>& output_values,
+                     int root_process )
+{
+  Utility::gatherv( comm, Utility::ArrayView<const T>( input_values.begin(), input_values.end() ), output_values, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gatherv( const Communicator& comm,
+                     const Utility::ArrayView<T>& input_values,
+                     std::vector<T>& output_values,
+                     const int root_process )
+{
+  Utility::gatherv( comm, input_values.toConst(), output_values, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details The input_values on this process of the communicator will be sent
+ * to root_process of the communicator. The output_values will be resized 
+ * appropriately. This operation can be done with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+void gatherv( const Communicator& comm,
+                     const Utility::ArrayView<const T>& input_values,
+                     std::vector<T>& output_values,
+                     const int root_process )
+{
+  // Get the size of the gathered values on each process
+  std::vector<int> sizes;
+
+  Details::gathervGetSizes( comm, input_values.size(), sizes );
+
+  // Resize the output values vector
+  if( comm.rank() == root_process )
+  {
+    int total_size = 0;
+
+    for( size_t i = 0; i < sizes.size(); ++i )
+      total_size += sizes[i];
+
+    output_values.resize( total_size );
+  }
+
+  Details::gathervImpl( comm, input_values, Utility::arrayView(output_values), sizes, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details This method is provided to help with overload resolution.
+ * \ingroup mpi
+ */
+template<typename T>
+inline void gatherv( const Communicator& comm,
+                     const Utility::ArrayView<T>& input_values,
+                     const Utility::ArrayView<T>& output_values,
+                     int root_process )
+{
+  Utility::gatherv( comm, input_values.toConst(), output_values, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details The input_values on this process of the communicator will be sent
+ * to root_process of the communicator. The output_values must be sized 
+ * appropriately before passing it to this method. This operation can be done 
+ * with communicators of any size.
+ * \ingroup mpi
+ */
+template<typename T>
+void gatherv( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              const Utility::ArrayView<T>& output_values,
+              int root_process )
+{
+  // Get the size of the gathered values on each process
+  std::vector<int> sizes;
+
+  Details::gathervGetSizes( comm, input_values.size(), sizes );
+
+  // Gather the values on the root process
+  Details::gathervImpl( comm, input_values, output_values, sizes, root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details The input_value on this process of the communicator will be sent
  * to root_process of the communicator. This version of the gatherv method can
- * only be called by non-root processes (since the output values, sizes and
- * offsets arrays are not needed).
+ * only be called by non-root processes (since the output values are not 
+ * needed)
  * \ingroup mpi
  */
 template<typename T>
@@ -2245,11 +2012,11 @@ inline void gatherv( const Communicator& comm,
 }
 
 // Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
+/*! \details The input_values on this process of the communicator will be sent
  * to root_process of the communicator. The input_values can be passed in as
  * a brace-initialized list (e.g. {1, 2, ..., 10}). This version of the gatherv
- * method can only be called by non-root processes (since the output values, 
- * sizes and offsets arrays are not needed).
+ * method can only be called by non-root processes (since the output values 
+ * are not needed).
  * \ingroup mpi
  */
 template<typename T>
@@ -2257,23 +2024,32 @@ inline void gatherv( const Communicator& comm,
                      std::initializer_list<T> input_values,
                      const int root_process )
 {
-  Utility::ArrayView<const T>
-    input_values_view( input_values.begin(), input_values.size() );
-
-  Utility::gatherv( comm, input_values_view, root_process );
+  Utility::gatherv( comm, Utility::ArrayView<const T>( input_values.begin(), input_values.end() ), root_process );
 }
 
 // Gather the values stored at every process into a vector at the root process
-/*! \details The input_values on every process of the communicator will be sent
- * to root_process of the communicator. This version of the gatherv method can
- * only be called by non-root processes (since the output values, sizes and
- * offsets arrays are not needed).
+/*! \details This method is provided to help with overload resolution.
  * \ingroup mpi
  */
 template<typename T>
 inline void gatherv( const Communicator& comm,
-                     const Utility::ArrayView<const T>& input_values,
+                     const Utility::ArrayView<T>& input_values,
                      const int root_process )
+{
+  Utility::gatherv( comm, input_values.toConst(), root_process );
+}
+
+// Gather the values stored at every process into a vector at the root process
+/*! \details The input_values on this process of the communicator will be sent
+ * to root_process of the communicator. This version of the gatherv method can
+ * only be called by non-root processes (since the output values are not 
+ * needed).
+ * \ingroup mpi
+ */
+template<typename T>
+void gatherv( const Communicator& comm,
+              const Utility::ArrayView<const T>& input_values,
+              const int root_process )
 {
   TEST_FOR_EXCEPTION( comm.rank() == root_process,
                       CommunicationError,
@@ -2281,7 +2057,7 @@ inline void gatherv( const Communicator& comm,
                       " attempted to call Utility::gatherv method reserved "
                       "for non-root processes!" );
   
-  Utility::gatherv( comm, input_values, Utility::ArrayView<T>(), std::vector<int>(), root_process );
+  Utility::gatherv( comm, input_values, Utility::ArrayView<T>(), root_process );
 }
 
 // Scatter the values stored at the root process to all other processes
@@ -3085,6 +2861,27 @@ __EXTERN_EXPLICIT_COMM_BROADCAST_HELPER_INST__;
                                  )
 
 __EXTERN_EXPLICIT_COMM_GATHER_HELPER_INST__;
+
+// Explicit template instantiations for gatherv helper
+#define __EXTERN_EXPLICIT_COMM_GATHERV_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gatherv( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gatherv( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, int ) )
+
+#define __EXPLICIT_COMM_GATHERV_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gatherv( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::gatherv( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_GATHERV_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_GATHERV_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_GATHERV_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_GATHERV_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_GATHERV_HELPER_INST__;
 
 // Explicit template instantiations for scatter helper
 #define __EXTERN_EXPLICIT_COMM_SCATTER_HELPER_TYPE_INST__( ... ) \
