@@ -568,20 +568,6 @@ void scan( const Communicator& comm,
 //! Compute a prefix reduction of values from all processes
 template<typename T, typename ReduceOperation>
 void scan( const Communicator& comm,
-           std::initializer_list<T> input_values,
-           const Utility::ArrayView<T>& output_values,
-           ReduceOperation op );
-
-//! Compute a prefix reduction of values from all processes
-template<typename T, typename ReduceOperation>
-void scan( const Communicator& comm,
-           const Utility::ArrayView<T>& input_values,
-           const Utility::ArrayView<T>& output_values,
-           ReduceOperation op );
-
-//! Compute a prefix reduction of values from all processes
-template<typename T, typename ReduceOperation>
-void scan( const Communicator& comm,
            const Utility::ArrayView<const T>& input_values,
            const Utility::ArrayView<T>& output_values,
            ReduceOperation op );

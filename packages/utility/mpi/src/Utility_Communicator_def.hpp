@@ -277,6 +277,22 @@ struct SingleValueReduceHelper
                         op );
   }
 
+  //! Forwrd to the correct scan method based on type T
+  template<typename ReduceOperation>
+  static inline void scan( const Communicator& comm,
+                           const T& input_value,
+                           T& value,
+                           ReduceOperation op )
+  {
+    Utility::ArrayView<const T> input_value_view( &input_value, 1 );
+    Utility::ArrayView<T> value_view( &value, 1 );
+    
+    Utility::scan( comm,
+                   const_cast<const Utility::ArrayView<const T>&>( input_value_view ),
+                   const_cast<const Utility::ArrayView<T>&>( value_view ),
+                   op );
+  }
+
   //! Forward to the correct reduce method based on type T
   template<typename ReduceOperation>
   static inline void reduce( const Communicator& comm,
@@ -338,6 +354,14 @@ struct SingleValueReduceHelper<Utility::ArrayView<T>, typename std::enable_if<!s
                                 ReduceOperation op )
   { Utility::allReduce( comm, input_value.toConst(), value, op ); }
 
+  //! Forwrd to the correct scan method based on type T
+  template<typename ReduceOperation>
+  static inline void scan( const Communicator& comm,
+                           const Utility::ArrayView<T>& input_value,
+                           Utility::ArrayView<T>& value,
+                           ReduceOperation op )
+  { Utility::scan( comm, input_value.toConst(), value, op ); }
+
   //! Forward to the correct reduce method based on type T
   template<typename ReduceOperation>
   static inline void reduce( const Communicator& comm,
@@ -391,6 +415,22 @@ struct SingleValueReduceHelper<std::vector<T> >
                         Utility::arrayViewOfConst( input_value ),
                         Utility::arrayView( value ),
                         op );
+  }
+
+  //! Forward to the correct allReduce method based on type T
+  template<typename ReduceOperation>
+  static inline void scan( const Communicator& comm,
+                           const std::vector<T>& input_value,
+                           std::vector<T>& value,
+                           ReduceOperation op )
+  {
+    // Resize the output value
+    value.resize( input_value.size() );
+    
+    Utility::scan( comm,
+                   Utility::arrayViewOfConst( input_value ),
+                   Utility::arrayView( value ),
+                   op );
   }
 
   //! Forward to the correct reduce method based on type T
@@ -450,6 +490,19 @@ struct SingleValueReduceHelper<std::array<T,N> >
                         Utility::arrayViewOfConst( input_value ),
                         Utility::arrayView( value ),
                         op );
+  }
+
+  //! Forward to the correct allReduce method based on type T
+  template<typename ReduceOperation>
+  static inline void scan( const Communicator& comm,
+                           const std::array<T,N>& input_value,
+                           std::array<T,N>& value,
+                           ReduceOperation op )
+  {
+    Utility::scan( comm,
+                   Utility::arrayViewOfConst( input_value ),
+                   Utility::arrayView( value ),
+                   op );
   }
 
   //! Forward to the correct reduce method based on type T
@@ -1311,6 +1364,11 @@ void allReduce( const Communicator& comm,
     TEST_FOR_EXCEPTION( mpi_comm == NULL,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
+
+    TEST_FOR_EXCEPTION( output_values.size() < input_values.size(),
+                        CommunicationError,
+                        comm << " could not counduct allReduce operation "
+                        "because the output array is not large enough!" );
 
     try{
       mpi_comm->allReduce( input_values.data(), input_values.size(), output_values.data(), op );
@@ -2757,7 +2815,20 @@ inline void scan( const Communicator& comm,
                   T& output_value,
                   ReduceOperation op )
 {
-  Utility::scan( comm, &input_value, 1, &output_value, op );
+  Details::SingleValueReduceHelper<T>::scan( comm, input_value, output_value, op );
+}
+
+// Compute a prefix reduction of values from all processes
+/*! \details This method if provided to help with overload resolution
+ * \ingroup mpi
+ */
+template<typename T, typename ReduceOperation>
+inline void scan( const Communicator& comm,
+                  const Utility::ArrayView<T>& input_values,
+                  const Utility::ArrayView<T>& output_values,
+                  ReduceOperation op )
+{
+  Utility::scan( comm, input_values.toConst(), output_values, op );
 }
 
 // Compute a prefix reduction of values from all processes
@@ -2768,9 +2839,8 @@ inline void scan( const Communicator& comm,
  */
 template<typename T, typename ReduceOperation>
 void scan( const Communicator& comm,
-           const T* input_values,
-           int number_of_input_values,
-           T* output_values,
+           const Utility::ArrayView<const T>& input_values,
+           const Utility::ArrayView<T>& output_values,
            ReduceOperation op )
 {
   if( comm.size() > 1 )
@@ -2782,8 +2852,13 @@ void scan( const Communicator& comm,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
 
+    TEST_FOR_EXCEPTION( output_values.size() < input_values.size(),
+                        CommunicationError,
+                        comm << " could not conduct scan operation "
+                        "because the output array is not large enough!" );
+
     try{
-      mpi_comm->scan( input_values, number_of_input_values, output_values, op );
+      mpi_comm->scan( input_values.data(), input_values.size(), output_values.data(), op );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
                                 CommunicationError,
@@ -2794,7 +2869,7 @@ void scan( const Communicator& comm,
   {
     __TEST_FOR_NULL_COMM__( comm );
 
-    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values, number_of_input_values, output_values );
+    Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
 }
   
@@ -3068,6 +3143,31 @@ __EXTERN_EXPLICIT_COMM_SCATTER_HELPER_INST__;
                                  )
 
 __EXTERN_EXPLICIT_COMM_REDUCE_HELPER_INST__;
+
+// Explicit template instantiations for scan helper
+#define __EXTERN_EXPLICIT_COMM_SCAN_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::plus<__VA_ARGS__> ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::multiplies<__VA_ARGS__> ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::minimum<__VA_ARGS__> ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::maximum<__VA_ARGS__> ) )
+
+#define __EXPLICIT_COMM_SCAN_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::plus<__VA_ARGS__> ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, std::multiplies<__VA_ARGS__> ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::minimum<__VA_ARGS__> ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scan( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const Utility::ArrayView<__VA_ARGS__>&, Utility::maximum<__VA_ARGS__> ) )
+
+#define __EXTERN_EXPLICIT_COMM_SCAN_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_BASIC_INST__( \
+              __EXTERN_EXPLICIT_COMM_SCAN_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_SCAN_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_BASIC_INST__( \
+              __EXPLICIT_COMM_SCAN_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_SCAN_HELPER_INST__;
   
 #endif // end UTILITY_COMMUNICATOR_DEF_HPP
 
