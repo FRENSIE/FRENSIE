@@ -22,7 +22,7 @@
 // Template Types
 //---------------------------------------------------------------------------//
 typedef std::tuple<bool,
-                   char, unsigned char, signed char, wchar_t,
+                   char, unsigned char, signed char,
                    short, unsigned short,
                    int, unsigned int,
                    long, unsigned long,
@@ -218,8 +218,8 @@ FRENSIE_UNIT_TEST( HDF5Archive, archive_array_string )
   {
     Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
 
-    // Array optimization should not be done with strings
-    FRENSIE_REQUIRE( !Utility::HDF5OArchive::use_array_optimization::apply<std::string>::type::value );
+    // Array optimization should be done with strings
+    FRENSIE_REQUIRE( Utility::HDF5OArchive::use_array_optimization::apply<std::string>::type::value );
 
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "array_a", array_a ) );
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "array_b", array_b ) );
@@ -235,8 +235,8 @@ FRENSIE_UNIT_TEST( HDF5Archive, archive_array_string )
     std::array<std::pair<std::string,std::string>,10> extracted_array_c;
     std::array<std::tuple<std::string,std::string,std::string>,20> extracted_array_d;
 
-    // Array optimization should not be done with strings
-    FRENSIE_REQUIRE( !Utility::HDF5IArchive::use_array_optimization::apply<std::string>::type::value );
+    // Array optimization should be done with strings
+    FRENSIE_REQUIRE( Utility::HDF5IArchive::use_array_optimization::apply<std::string>::type::value );
 
     FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "array_a", extracted_array_a ) );
     FRENSIE_CHECK_EQUAL( extracted_array_a, array_a );
@@ -262,22 +262,22 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive,
 
   std::string archive_name( "test_array_advanced_types.h5a" );
   
-  std::array<std::pair<T,std::string>,10> array_a;
-  array_a.fill( std::make_pair( one(T()), std::string("Test message a-1") ) );
+  std::array<std::pair<T,std::array<T,3> >,10> array_a;
+  array_a.fill( std::make_pair( one(T()), std::array<T,3>({one(T()), one(T()), one(T())}) ) );
 
-  std::array<std::tuple<std::string,T>,10> array_b;
-  array_b.fill( std::make_tuple( std::string("Test message b-0"), one(T()) ) );
+  std::array<std::tuple<std::array<T,3> ,T>,10> array_b;
+  array_b.fill( std::make_tuple( std::array<T,3>({one(T()), one(T()), one(T())}), one(T()) ) );
 
-  std::array<std::tuple<T,std::string,T>,20> array_c;
-  array_c.fill( std::make_tuple( zero(T()), std::string("Test message c-1"), one(T()) ) );
+  std::array<std::tuple<T,std::array<T,3> ,T>,20> array_c;
+  array_c.fill( std::make_tuple( zero(T()), std::array<T,3>({one(T()), one(T()), one(T())}), one(T()) ) );
 
   {
     Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
 
     // Array optimization should not be used with these types
-    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::pair<T,std::string> >::type::value) );
-    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::tuple<std::string,T> >::type::value) );
-    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::tuple<T,std::string,T> >::type::value) );
+    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::pair<T,std::array<T,3> > >::type::value) );
+    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::tuple<std::array<T,3> ,T> >::type::value) );
+    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::tuple<T,std::array<T,3> ,T> >::type::value) );
 
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "array_a", array_a ) );
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "array_b", array_b ) );
@@ -287,14 +287,14 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive,
   {
     Utility::HDF5IArchive archive( archive_name );
 
-    std::array<std::pair<T,std::string>,10> extracted_array_a;
-    std::array<std::tuple<std::string,T>,10> extracted_array_b;
-    std::array<std::tuple<T,std::string,T>,20> extracted_array_c;
+    std::array<std::pair<T,std::array<T,3> >,10> extracted_array_a;
+    std::array<std::tuple<std::array<T,3> ,T>,10> extracted_array_b;
+    std::array<std::tuple<T,std::array<T,3> ,T>,20> extracted_array_c;
 
     // Array optimization should not be used with these types
-    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::pair<T,std::string> >::type::value) );
-    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::tuple<std::string,T> >::type::value) );
-    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::tuple<T,std::string,T> >::type::value) );
+    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::pair<T,std::array<T,3> > >::type::value) );
+    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::tuple<std::array<T,3> ,T> >::type::value) );
+    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::tuple<T,std::array<T,3> ,T> >::type::value) );
 
     FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "array_a", extracted_array_a ) );
     FRENSIE_CHECK_EQUAL( extracted_array_a, array_a );

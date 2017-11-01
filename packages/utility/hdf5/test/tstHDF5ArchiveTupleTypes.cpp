@@ -21,7 +21,7 @@
 // Template Types
 //---------------------------------------------------------------------------//
 typedef std::tuple<bool,
-                   char, unsigned char, signed char, wchar_t,
+                   char, unsigned char, signed char,
                    short, unsigned short,
                    int, unsigned int,
                    long, unsigned long,
@@ -271,9 +271,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive,
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "tuple_b", tuple_b ) );
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "tuple_c", tuple_c ) );
 
-    // Array optimization should not be used with these types
-    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::pair<T,std::string> >::type::value) );
-    FRENSIE_REQUIRE( !(Utility::HDF5OArchive::use_array_optimization::apply<std::tuple<std::string,T> >::type::value) );
+    // Array optimization should be used with these types
+    FRENSIE_REQUIRE( (Utility::HDF5OArchive::use_array_optimization::apply<std::pair<T,std::string> >::type::value) );
+    FRENSIE_REQUIRE( (Utility::HDF5OArchive::use_array_optimization::apply<std::tuple<std::string,T> >::type::value) );
   
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "array_a", array_a ) );
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "array_b", array_b ) );
@@ -313,8 +313,8 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive,
     FRENSIE_CHECK_EQUAL( extracted_tuple_c, tuple_c );
 
     // Array optimization should not be used with these types
-    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::pair<T,std::string> >::type::value) );
-    FRENSIE_REQUIRE( !(Utility::HDF5IArchive::use_array_optimization::apply<std::tuple<std::string,T> >::type::value) );
+    FRENSIE_REQUIRE( (Utility::HDF5IArchive::use_array_optimization::apply<std::pair<T,std::string> >::type::value) );
+    FRENSIE_REQUIRE( (Utility::HDF5IArchive::use_array_optimization::apply<std::tuple<std::string,T> >::type::value) );
   
     FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "array_a", extracted_array_a ) );
     FRENSIE_CHECK_EQUAL( (Utility::ArrayView<const std::pair<T,std::string> >( &array_a[0][0], &array_a[0][0]+6 )),

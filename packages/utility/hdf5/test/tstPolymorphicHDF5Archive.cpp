@@ -27,7 +27,7 @@
 // Template Types
 //---------------------------------------------------------------------------//
 typedef std::tuple<bool,
-                   char, unsigned char, signed char, wchar_t,
+                   char, unsigned char, signed char,
                    short, unsigned short,
                    int, unsigned int,
                    long, unsigned long,

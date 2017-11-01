@@ -24,12 +24,13 @@
 // Template Types
 //---------------------------------------------------------------------------//
 typedef std::tuple<bool,
-                   char, unsigned char, signed char, wchar_t,
+                   char, unsigned char, signed char,
                    short, unsigned short,
                    int, unsigned int,
                    long, unsigned long,
                    long long, unsigned long long,
-                   float, double, long double> BasicTestTypes;
+                   float, double, long double,
+                   std::string> BasicTestTypes;
 
 template<typename... Types>
 struct PairTypes;
@@ -128,8 +129,12 @@ typedef typename MergeTypeLists<BasicTestTypes,typename PairTypes<BasicTestTypes
 // Testing functions
 //---------------------------------------------------------------------------//
 template<typename T>
-inline T zero( T )
+inline typename std::enable_if<!std::is_same<T,std::string>::value,T>::type zero( T )
 { return T(0); }
+
+template<typename T>
+inline typename std::enable_if<std::is_same<T,std::string>::value,T>::type zero( T )
+{ return "Zero"; }
 
 template<typename T1, typename T2>
 inline std::pair<T1,T2> zero( std::pair<T1,T2> )
@@ -144,8 +149,12 @@ inline std::tuple<Types...> zero( std::tuple<Types...> )
 }
 
 template<typename T>
-inline T one( T )
+inline typename std::enable_if<!std::is_same<T,std::string>::value,T>::type one( T )
 { return T(1); }
+
+template<typename T>
+inline typename std::enable_if<std::is_same<T,std::string>::value,T>::type one( T )
+{ return "one"; }
 
 template<typename T1, typename T2>
 inline std::pair<T1,T2> one( std::pair<T1,T2> )

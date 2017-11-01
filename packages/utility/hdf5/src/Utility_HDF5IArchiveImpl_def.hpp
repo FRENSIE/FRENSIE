@@ -35,7 +35,7 @@ template<typename Archive>
 void HDF5IArchiveImpl<Archive>::init( unsigned flags )
 {
   // Check that the signature and version number in the archive are valid
-  if( 0 != (flags & boost::archive::no_header) )
+  if( !(flags & boost::archive::no_header) )
   {
     // Load the signature
     if( this->doesGroupAttributeExist( this->getPropertiesDir(), this->getSignatureAttributeName() ) )
@@ -43,10 +43,10 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
       std::string archive_signature;
       
       try{
-        Utility::readFromGroupAttribute( *this,
-                                         this->getPropertiesDir(),
-                                         this->getSignatureAttributeName(),
-                                         archive_signature );
+        this->readFromGroupAttribute( this->getPropertiesDir(),
+                                      this->getSignatureAttributeName(),
+                                      &archive_signature,
+                                      1 );
       }
       HDF5_FILE_EXCEPTION_CATCH_RETHROW( "The archive signature could not be "
                                          "retrieved from hdf5 archive "
@@ -243,18 +243,18 @@ inline void HDF5IArchiveImpl<Archive>::load( T& t )
   this->loadImpl( &t, 1 );
 }
 
-// Load a std::string
+// Load a wide char
 template<typename Archive>
-inline void HDF5IArchiveImpl<Archive>::load( std::string& t )
+inline void HDF5IArchiveImpl<Archive>::load( wchar_t& t )
 {
-  this->loadContainerImpl( t );
+  THROW_HDF5_ARCHIVE_EXCEPTION( "Wide chars are not currently supported!" );
 }
 
-// Load a std::wstring
+// Load a wide string
 template<typename Archive>
 inline void HDF5IArchiveImpl<Archive>::load( std::wstring& t )
 {
-  this->loadContainerImpl( t );
+  THROW_HDF5_ARCHIVE_EXCEPTION( "Wide strings are not currently supported!" );
 }
 
 // Load a bost::serialization::collection_size_type

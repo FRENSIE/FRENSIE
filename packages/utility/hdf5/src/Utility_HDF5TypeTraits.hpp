@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <utility>
 #include <type_traits>
+#include <string>
 
 // FRENSIE Includes
 #include "Utility_HDF5TypeTraitsDecl.hpp"
@@ -116,7 +117,7 @@ struct OpaqueHDF5TypeTraits
       std::memcpy( converted_data, raw_data, sizeof(ExternalType)*size );
   }
   
-  //! Covert inner type to outer type
+  //! Convert inner type to outer type
   static inline void convertInternalDataToExternalData(
                                            const InternalType* raw_data,
                                            const size_t size,
@@ -206,6 +207,60 @@ private:
   static std::unique_ptr<H5::EnumType> s_data_type;
 };
 
+/*! The specialization of Utility::HDF5TypeTraits for the std::string
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<std::string>
+{
+  //! Typedef for the type that will be used outside of HDF5 files
+  typedef std::string ExternalType;
+
+  //! Typedef for the type that will be stored in HDF5 files
+  typedef const char* InternalType;
+
+  //! Check if the type has a type traits specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Check if the type has an opaque data type
+  typedef std::false_type UsesOpaqueDataType;
+
+  //! Check if the type uses a custom internal type
+  typedef std::true_type UsesCustomInternalType;
+  
+  //! Returns the HDF5 data type object corresponding to std::string
+  static H5::StrType dataType();
+
+  //! Initialize internal data
+  static InternalType* initializeInternalData( const ExternalType*,
+                                               const size_t size );
+
+  //! Convert external type data to internal type data
+  static void convertExternalDataToInternalData(
+                                          const ExternalType* raw_data,
+                                          const size_t size,
+                                          InternalType* converted_data );
+  //! Covert inner type to outer type
+  static void convertInternalDataToExternalData(
+                                          const InternalType* raw_data,
+                                          const size_t size,
+                                          ExternalType* converted_data );
+
+  //! Calculate the size of an internal array of data
+  static size_t calculateInternalDataSize( const size_t external_size );
+
+  //! Calculate the size of an external array of data
+  static size_t calculateExternalDataSize( const size_t internal_size );
+  
+  //! Free the inner data created from outer data
+  static void freeInternalData( InternalType*& data );
+
+private:
+
+  // The data type
+  static std::unique_ptr<H5::StrType> s_data_type;
+};
+
 /*! \brief Specialization of Utility::HDF5TypeTraits for char
  * \ingroup hdf5_type_traits
  */
@@ -257,12 +312,12 @@ struct HDF5TypeTraits<unsigned char> : public Details::BasicHDF5TypeTraits<unsig
   { return H5::PredType::NATIVE_UCHAR; }
 };
 
-/*! \brief Specialization of Utility::HDF5TypeTraits for wchar_t
+/* \brief Specialization of Utility::HDF5TypeTraits for wchar_t
  * \ingroup hdf5_type_traits
  */
-template<>
-struct HDF5TypeTraits<wchar_t> : public Details::OpaqueHDF5TypeTraits<wchar_t>
-{ /* ... */ };
+// template<>
+// struct HDF5TypeTraits<wchar_t> : public Details::OpaqueHDF5TypeTraits<wchar_t>
+// { /* ... */ };
 
 /*! \brief Specialization of Utility::HDF5TypeTraits for short
  * \ingroup hdf5_type_traits
@@ -522,7 +577,7 @@ struct HDF5TypeTraits<std::pair<T1,T2>,typename std::enable_if<HDF5TypeTraits<T1
  private:
 
   // Internal T1
-  typedef typename std::conditional<HDF5TypeTraits<T1>::UsesCustomInternalType::value,typename HDF5TypeTraits<T1>::InternalType,T1>::type InternalT1;
+  typedef typename std::remove_const<typename std::conditional<HDF5TypeTraits<T1>::UsesCustomInternalType::value,typename HDF5TypeTraits<T1>::InternalType,T1>::type>::type InternalT1;
 
   // Internal T2
   typedef typename std::conditional<HDF5TypeTraits<T2>::UsesCustomInternalType::value,typename HDF5TypeTraits<T2>::InternalType,T2>::type InternalT2;

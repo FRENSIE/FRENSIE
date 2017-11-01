@@ -19,7 +19,7 @@ const std::string HDF5CommonArchive::s_properties_dir = "/";
 const std::string HDF5CommonArchive::s_data_dir = "/<data>";
 const std::string HDF5CommonArchive::s_tracked_objects_dir = "/<tracked_objects>";
 const std::string HDF5CommonArchive::s_tree_dir = "/<tree>";
-const std::string HDF5CommonArchive::s_signature_attribute_name = "attribute";
+const std::string HDF5CommonArchive::s_signature_attribute_name = "signature";
 const std::string HDF5CommonArchive::s_version_attribute_name = "version";
 
 // Constructor

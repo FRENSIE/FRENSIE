@@ -15,6 +15,8 @@
 #include <iterator>
 #include <stdexcept>
 #include <complex>
+#include <locale>
+#include <codecvt>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
@@ -39,6 +41,25 @@ struct ToStringTraits<std::string>
   //! Place the string in a stream
   static inline void toStream( std::ostream& os, const std::string& obj )
   { os << obj; }
+};
+
+/*! Specialization of ToStringTraits for std::wstring
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<std::wstring>
+{
+  //! Return the string
+  static inline std::string toString( const std::wstring& obj )
+  {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+
+    return converter.to_bytes( obj );
+  }
+
+  //! Place the string in a stream
+  static inline void toStream( std::ostream& os, const std::wstring& obj )
+  { os << ToStringTraits<std::wstring>::toString(obj); }
 };
 
 /*! Specialization of ToStringTraits for const char*

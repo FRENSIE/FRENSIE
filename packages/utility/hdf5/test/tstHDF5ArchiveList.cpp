@@ -21,7 +21,7 @@
 // Template Types
 //---------------------------------------------------------------------------//
 typedef std::tuple<bool,
-                   char, unsigned char, signed char, wchar_t,
+                   char, unsigned char, signed char,
                    short, unsigned short,
                    int, unsigned int,
                    long, unsigned long,
@@ -218,9 +218,6 @@ FRENSIE_UNIT_TEST( HDF5Archive, archive_list_string )
     std::list<std::tuple<std::string> > extracted_list_b;
     std::list<std::pair<std::string,std::string> > extracted_list_c;
     std::list<std::tuple<std::string,std::string,std::string> > extracted_list_d;
-
-    // Array optimization should not be done with strings
-    FRENSIE_REQUIRE( !Utility::HDF5IArchive::use_array_optimization::apply<std::string>::type::value );
 
     FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "list_a", extracted_list_a ) );
     FRENSIE_CHECK_EQUAL( extracted_list_a, list_a );

@@ -112,10 +112,10 @@ protected:
   template<typename T>
   void load( T& t );
 
-  //! Load a std::string
-  void load( std::string& t );
-
-  //! Load a std::wstring
+  //! Load a wide char
+  void load( wchar_t& t );
+  
+  //! Load a wide string
   void load( std::wstring& t );
 
   //! Load a bost::serialization::collection_size_type

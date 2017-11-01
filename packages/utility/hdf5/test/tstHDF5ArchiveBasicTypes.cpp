@@ -20,12 +20,14 @@
 // Template Types
 //---------------------------------------------------------------------------//
 typedef std::tuple<bool,
-                   char, unsigned char, signed char, wchar_t,
+                   char, unsigned char, signed char,
                    short, unsigned short,
                    int, unsigned int,
                    long, unsigned long,
                    long long, unsigned long long,
-                   float, double, long double> BasicTestTypes;
+                   float, double, long double> BasicTestTypesNoString;
+
+typedef decltype(std::tuple_cat(BasicTestTypesNoString(), std::tuple<std::string>())) BasicTestTypes;
 
 class TestClassNoSerializationInfo
 {
@@ -96,12 +98,20 @@ BOOST_CLASS_TRACKING(TestClass, boost::serialization::track_always)
 // Testing functions
 //---------------------------------------------------------------------------//
 template<typename T>
-inline T zero( T )
+inline typename std::enable_if<!std::is_same<T,std::string>::value,T>::type zero( T )
 { return T(0); }
 
 template<typename T>
-inline T one( T )
+inline typename std::enable_if<std::is_same<T,std::string>::value,T>::type zero( T )
+{ return "Zero"; }
+
+template<typename T>
+inline typename std::enable_if<!std::is_same<T,std::string>::value,T>::type one( T )
 { return T(1); }
+
+template<typename T>
+inline typename std::enable_if<std::is_same<T,std::string>::value,T>::type one( T )
+{ return "one"; }
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -179,7 +189,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive, archive_c_array, BasicTestTypes )
 
 //---------------------------------------------------------------------------//
 // Check that basic types can be archived
-FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive, archive_binary, BasicTestTypes )
+FRENSIE_UNIT_TEST_TEMPLATE( HDF5Archive, archive_binary, BasicTestTypesNoString )
 {
   FETCH_TEMPLATE_PARAM( 0, T );
   

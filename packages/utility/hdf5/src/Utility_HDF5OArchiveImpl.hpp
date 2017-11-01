@@ -121,10 +121,10 @@ protected:
   template<typename T>
   void save( const T& t );
 
-  //! Save a std::string
-  void save( const std::string& t );
-
-  //! Save a std::wstring
+  //! Save a wide char
+  void save( const wchar_t& t );
+  
+  //! Save a wide string
   void save( const std::wstring& t );
 
   //! Save a boost::serialization::collection_size_type

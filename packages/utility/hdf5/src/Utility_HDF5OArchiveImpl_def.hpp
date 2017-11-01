@@ -41,10 +41,9 @@ void HDF5OArchiveImpl<Archive>::init( unsigned flags )
   if( !(flags & boost::archive::no_header ) )
   {
     try{
-      Utility::writeToGroupAttribute( *this,
-                                      this->getPropertiesDir(),
-                                      this->getSignatureAttributeName(),
-                                      std::string(boost::archive::BOOST_ARCHIVE_SIGNATURE()) );
+      this->writeToGroupAttribute( this->getPropertiesDir(),
+                                   this->getSignatureAttributeName(),
+                                   std::string(boost::archive::BOOST_ARCHIVE_SIGNATURE()) );
     }
     HDF5_FILE_EXCEPTION_CATCH_RETHROW( "The archive signature could not be "
                                        "set in hdf5 archive "
@@ -223,19 +222,19 @@ void HDF5OArchiveImpl<Archive>::save( const T& t )
   this->saveImpl( &t, 1 );
 }
 
-// Save a std::string
+// Save a wide string
 template<typename Archive>
-void HDF5OArchiveImpl<Archive>::save( const std::string& t )
+void HDF5OArchiveImpl<Archive>::save( const wchar_t& t )
 {
-  this->saveContainerImpl( t );
-}
+  THROW_HDF5_ARCHIVE_EXCEPTION( "Wide chars are not currently supported!" );
+} 
 
-// Save a std::wstring
+// Save a wide string
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save( const std::wstring& t )
 {
-  this->saveContainerImpl( t );
-}
+  THROW_HDF5_ARCHIVE_EXCEPTION( "Wide strings are not currently supported!" );
+} 
 
 // Save a bost::serialization::collection_size_type
 template<typename Archive>

@@ -67,6 +67,17 @@ struct ZeroHelper<std::string>
   { return std::string(); }
 };
 
+/*! Specialization of the zero helper for std::wstring
+ * \ingroup comparison_traits
+ */
+template<>
+struct ZeroHelper<std::wstring>
+{
+  //! Return the zero object
+  static inline std::wstring zero( const std::wstring& )
+  { return std::wstring(); }
+};
+
 /*! STL compliant containre zero helper implementation 
  * 
  * A partial specialization of ZeroHelper must be made for the container type

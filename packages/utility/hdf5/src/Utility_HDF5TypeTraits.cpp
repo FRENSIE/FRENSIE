@@ -93,6 +93,64 @@ void HDF5TypeTraits<bool>::freeInternalData( InternalType*& data )
   data = NULL;
 }
 
+// Initialize static member data
+std::unique_ptr<H5::StrType> HDF5TypeTraits<std::string>::s_data_type;
+
+// Returns the HDF5 data type object corresponding to std::string
+H5::StrType HDF5TypeTraits<std::string>::dataType()
+{
+  if( !s_data_type )
+    s_data_type.reset( new H5::StrType( H5::PredType::C_S1, H5T_VARIABLE ) );
+
+  return *s_data_type;
+}
+
+// Initialize internal data
+auto HDF5TypeTraits<std::string>::initializeInternalData( const ExternalType*,
+                                                          const size_t size ) -> InternalType*
+{
+  return new InternalType[size];
+}
+
+// Convert external type data to internal type data
+void HDF5TypeTraits<std::string>::convertExternalDataToInternalData(
+                                          const ExternalType* raw_data,
+                                          const size_t size,
+                                          InternalType* converted_data )
+{
+  for( size_t i = 0; i < size; ++i )
+    converted_data[i] = raw_data[i].c_str();
+}
+  
+// Covert inner type to outer type
+void HDF5TypeTraits<std::string>::convertInternalDataToExternalData(
+                                          const InternalType* raw_data,
+                                          const size_t size,
+                                          ExternalType* converted_data )
+{
+  for( size_t i = 0; i < size; ++i )
+    converted_data[i] = std::string( raw_data[i] );
+}
+
+// Calculate the size of an internal array of data
+size_t HDF5TypeTraits<std::string>::calculateInternalDataSize( const size_t external_size )
+{
+  return external_size;
+}
+
+// Calculate the size of an external array of data
+size_t HDF5TypeTraits<std::string>::calculateExternalDataSize( const size_t internal_size )
+{
+  return internal_size;
+}
+  
+// Free the inner data created from outer data
+void HDF5TypeTraits<std::string>::freeInternalData( InternalType*& data )
+{
+  delete[] data;
+  data = NULL;
+}
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
