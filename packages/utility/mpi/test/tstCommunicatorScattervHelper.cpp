@@ -322,96 +322,127 @@ FRENSIE_UNIT_TEST_TEMPLATE( Communicator, scatterv_multiple_values, TypesNoBool 
   std::shared_ptr<const Utility::Communicator> comm =
     Utility::Communicator::getDefault();
 
-  std::vector<T> scattered_values( 
-  T scattered_values[4] = {initializeValue( T(), 0 ),
-                           initializeValue( T(), 0 ),
-                           initializeValue( T(), 0 ),
-                           initializeValue( T(), 0 )};
+  std::vector<T> scattered_values, values;
+  Utility::ArrayView<T> values_view;
+  Utility::ArrayView<const T> values_view_of_const;
+  
+  std::vector<int> sizes;
 
   if( comm->rank() == 0 )
   {
-    std::vector<int> sizes( comm->size(), 1 );
-    
-    T values[comm->size()];
+    for( int i = 0; i < comm->size(); ++i )
+      sizes.push_back( i+1 );
 
     for( int i = 0; i < comm->size(); ++i )
-      values[i] = initializeValue( T(), i );
+    {
+      for( int j = 0; j < i+1; ++j )
+        values.push_back( initializeValue( T(), i ) );
+    }
 
-    Utility::ArrayView<T> values_view( values, comm->size() );
-    Utility::ArrayView<const T> values_view_of_const = values_view.toConst();
-
-    // Scatter using a view lvalue
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view, sizes, Utility::ArrayView<T>(scattered_values, 1), 0 ) );
-    
-    // Scatter using a view-of-const lvalue
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view_of_const, sizes, Utility::ArrayView<T>(scattered_values+1, 1), 0 ) );
-
-    // Scatter using a view rvalue
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>( values, comm->size() ), sizes, Utility::ArrayView<T>(scattered_values+2, 1), 0 ) );
-
-    // Scatter using a view-of-const rvalues
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<const T>( values, comm->size() ), sizes, Utility::ArrayView<T>(scattered_values+3, 1), 0 ) );
-  }
-  else
-  {
-    Utility::ArrayView<T> dummy_view;
-    Utility::ArrayView<const T> dummy_view_of_const;
-    std::vector<int> dummy_sizes;
-    
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, dummy_view, dummy_sizes, Utility::ArrayView<T>(scattered_values, 1), 0 ) );
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, dummy_view_of_const, dummy_sizes, Utility::ArrayView<T>(scattered_values+1, 1), 0 ) );
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>(), dummy_sizes, Utility::ArrayView<T>(scattered_values+2, 1), 0 ) );
-    FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<const T>(), dummy_sizes, Utility::ArrayView<T>(scattered_values+3, 1), 0 ) );
+    values_view = Utility::arrayView( values );
+    values_view_of_const = values_view.toConst();
   }
 
-  const T expected_scattered_values[4] = {initializeValue( T(), comm->rank() ),
-                                          initializeValue( T(), comm->rank() ),
-                                          initializeValue( T(), comm->rank() ),
-                                          initializeValue( T(), comm->rank() )};
+  // Scatter using a view lvalue
+  FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view, sizes, scattered_values, 0 ) );
+  FRENSIE_CHECK_EQUAL( scattered_values,
+                       std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
 
-  Utility::ArrayView<const T> scattered_values_view( scattered_values, 4 );
-  Utility::ArrayView<const T> expected_scattered_values_view( expected_scattered_values, 4 );
-  FRENSIE_CHECK_EQUAL( scattered_values_view, expected_scattered_values_view );
+  scattered_values.clear();
+    
+  // Scatter using a view-of-const lvalue
+  FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view_of_const, sizes, scattered_values, 0 ) );
+  FRENSIE_CHECK_EQUAL( scattered_values,
+                       std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
+
+  scattered_values.clear();
+
+  // Scatter using a view rvalue
+  FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>( values ), sizes, scattered_values, 0 ) );
+  FRENSIE_CHECK_EQUAL( scattered_values,
+                       std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
+
+  scattered_values.clear();
+
+  // Scatter using a view-of-const rvalues
+  FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<const T>( values ), sizes, scattered_values, 0 ) );
+  FRENSIE_CHECK_EQUAL( scattered_values,
+                       std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
+
+  scattered_values.clear();
+  values.clear();
+  sizes.clear();
 
   if( comm->size() > 1 )
   {
-    scattered_values[0] = initializeValue( T(), 0 );
-    scattered_values[1] = initializeValue( T(), 0 );
-    scattered_values[2] = initializeValue( T(), 0 );
-    scattered_values[3] = initializeValue( T(), 0 );
-    
     if( comm->rank() == 1 )
     {
-      std::vector<int> sizes( comm->size(), 1 );
-      T values[comm->size()];
+      for( int i = 0; i < comm->size(); ++i )
+        sizes.push_back( i+1 );
 
       for( int i = 0; i < comm->size(); ++i )
-        values[i] = initializeValue( T(), i );
+      {
+        for( int j = 0; j < i+1; ++j )
+          values.push_back( initializeValue( T(), i ) );
+      }
 
-      Utility::ArrayView<T> values_view( values, comm->size() );
-      Utility::ArrayView<const T> values_view_of_const = values_view.toConst();
+      values_view = Utility::arrayView( values );
+      values_view_of_const = values_view.toConst();
 
       // Scatter using a view lvalue
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view, sizes, Utility::ArrayView<T>(scattered_values, 1), 1 ) );
-      
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view, sizes, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( 2, initializeValue(T(), 1) ) );
+
+      scattered_values.clear();
+    
       // Scatter using a view-of-const lvalue
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view_of_const, sizes, Utility::ArrayView<T>(scattered_values+1, 1), 1 ) );
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, values_view_of_const, sizes, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( 2, initializeValue(T(), 1) ) );
+
+      scattered_values.clear();
       
       // Scatter using a view rvalue
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>( values, comm->size() ), sizes, Utility::ArrayView<T>(scattered_values+2, 1), 1 ) );
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>( values ), sizes, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( 2, initializeValue(T(), 1) ) );
       
+      scattered_values.clear();
+
       // Scatter using a view-of-const rvalues
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<const T>( values, comm->size() ), sizes, Utility::ArrayView<T>(scattered_values+3, 1), 1 ) );
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<const T>( values ), sizes, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( 2, initializeValue(T(), 1) ) );
     }
     else
     {
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>(), std::vector<int>(), Utility::ArrayView<T>(scattered_values, 1), 1 ) );
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<const T>(), std::vector<int>(), Utility::ArrayView<T>(scattered_values+1, 1), 1 ) );
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>(scattered_values+2, 1), 1 ) );
-      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, Utility::ArrayView<T>(scattered_values+3, 1), 1 ) );
-    }
+      // Scatter using a view lvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
 
-    FRENSIE_CHECK_EQUAL( scattered_values_view, expected_scattered_values_view );
+      scattered_values.clear();
+    
+      // Scatter using a view-of-const lvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
+
+      scattered_values.clear();
+
+      // Scatter using a view rvalue
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
+
+      scattered_values.clear();
+
+      // Scatter using a view-of-const rvalues
+      FRENSIE_REQUIRE_NO_THROW( Utility::scatterv( *comm, scattered_values, 1 ) );
+      FRENSIE_CHECK_EQUAL( scattered_values,
+                           std::vector<T>( comm->rank()+1, initializeValue(T(), comm->rank()) ) );
+    }
   }
 }
 

@@ -67,48 +67,6 @@ struct SerialCommunicatorArrayCopyHelper<T,typename std::enable_if<std::is_arith
   }
 };
 
-// The scatterv implementation
-template<typename T>
-void serialScattervImpl( const Communicator& comm,
-                         const T* input_values,
-                         int requested_number_of_input_values_to_send,
-                         int input_values_offset,
-                         T* output_values,
-                         int output_values_size )
-{
-  int number_to_send = requested_number_of_input_values_to_send;
-    
-  if( requested_number_of_input_values_to_send > output_values_size )
-  {
-    FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
-                                requested_number_of_input_values_to_send <<
-                                " have been requested but the output array "
-                                "only has a size of " << output_values_size <<
-                                "! Only " << output_values_size <<
-                                " values will be sent." );
-    
-    number_to_send = output_values_size;
-  }
-
-  SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values+input_values_offset, number_to_send, output_values );
-}
-
-/*! \brief Check if a temporary value of this type is compatible with 
- * non-blocking send ops
- * \ingroup mpi
- */
-template<typename T>
-struct IsTemporaryCompatibleWithNonBlockingSendOps : public std::false_type
-{ /* ... */ };
-
-/*! \brief Partial specialization of 
- * IsTemporaryCompatibleWithNonBlockingSendOps for Utility::ArrayView
- * \ingroup mpi
- */
-template<typename T>
-struct IsTemporaryCompatibleWithNonBlockingSendOps<Utility::ArrayView<T> > : public std::true_type
-{ /* ... */ };
-
 /*! The single value send helper class
  * \ingroup mpi
  */
@@ -2378,7 +2336,7 @@ void scatterv( const Communicator& comm,
 
   output_values.resize( sizes_copy[comm.rank()] );
   
-  Details::scattervImpl( comm, input_values, sizes, Utility::arrayView(output_values), root_process );
+  Details::scattervImpl( comm, input_values, sizes_copy, Utility::arrayView(output_values), root_process );
 }
 
 // Scatter the values stored at the root process to all other processes
@@ -2419,9 +2377,9 @@ void scatterv( const Communicator& comm,
     
     Details::scattervImpl( comm, input_values, sizes_copy, output_values( 0, sizes_copy[comm.rank()] ), root_process );
   }
+  // The output values array does not have the correct size
   else
   {
-    // Make sure that the output values array has the correct size
     THROW_EXCEPTION( CommunicationError,
                      comm << " could not conduct the scatterv operation "
                      "because the output array is too small!" );
@@ -2939,6 +2897,27 @@ __EXTERN_EXPLICIT_COMM_GATHERV_HELPER_INST__;
                                  )
 
 __EXTERN_EXPLICIT_COMM_SCATTER_HELPER_INST__;
+
+// Explicit template instantiations for scatter helper
+#define __EXTERN_EXPLICIT_COMM_SCATTERV_HELPER_TYPE_INST__( ... ) \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatterv( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const std::vector<int>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatterv( const Utility::Communicator&, const Utility::ArrayView<__VA_ARGS__>&, int ) )
+
+#define __EXPLICIT_COMM_SCATTERV_HELPER_TYPE_INST__( ... ) \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatterv( const Utility::Communicator&, const Utility::ArrayView<const __VA_ARGS__>&, const std::vector<int>&, const Utility::ArrayView<__VA_ARGS__>&, int ) ); \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( void Utility::scatterv( const Utility::Communicator&, const Utility::ArrayView<__VA_ARGS__>&, int ) )
+
+#define __EXTERN_EXPLICIT_COMM_SCATTERV_HELPER_INST__  \
+  __EXPLICIT_COMM_HELPER_INST__( \
+              __EXTERN_EXPLICIT_COMM_SCATTERV_HELPER_TYPE_INST__ \
+                                 )
+
+#define __EXPLICIT_COMM_SCATTERV_HELPER_INST__  \
+ __EXPLICIT_COMM_HELPER_INST__( \
+              __EXPLICIT_COMM_SCATTERV_HELPER_TYPE_INST__ \
+                                 )
+
+__EXTERN_EXPLICIT_COMM_SCATTERV_HELPER_INST__;
 
 // Explicit template instantiations for reduce helper
 #define __EXTERN_EXPLICIT_COMM_REDUCE_HELPER_TYPE_INST__( ... ) \
