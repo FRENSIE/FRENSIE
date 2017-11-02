@@ -916,22 +916,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the moment preserving elastic discrete angles can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setMomentPreservingCrossSectionReduction )
-{
-  TEST_ASSERT( !epr_data_container.hasMomentPreservingData() );
-
-  std::vector<double> reductions( 1 );
-  reductions[0] = 0.90;
-
-  epr_data_container.setMomentPreservingCrossSectionReduction( reductions );
-
-  TEST_COMPARE_ARRAYS( epr_data_container.getMomentPreservingCrossSectionReduction(),
-                       reductions );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the moment preserving elastic discrete angles can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setMomentPreservingElasticDiscreteAngles )
 {
   TEST_ASSERT( !epr_data_container.hasMomentPreservingData() );
@@ -971,6 +955,22 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   TEST_COMPARE_ARRAYS( epr_data_container.getMomentPreservingElasticWeights(1.0),
                        weights );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the moment preserving elastic discrete angles can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setMomentPreservingCrossSectionReduction )
+{
+  TEST_ASSERT( epr_data_container.hasMomentPreservingData() );
+
+  std::vector<double> reductions( 1 );
+  reductions[0] = 0.90;
+
+  epr_data_container.setMomentPreservingCrossSectionReduction( reductions );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getMomentPreservingCrossSectionReduction(),
+                       reductions );
 }
 
 //---------------------------------------------------------------------------//
