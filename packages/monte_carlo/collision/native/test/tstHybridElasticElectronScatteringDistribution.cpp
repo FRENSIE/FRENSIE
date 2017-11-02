@@ -18,6 +18,7 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -1544,10 +1545,22 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     data_container.getCutoffElasticCrossSection().begin(),
     data_container.getCutoffElasticCrossSection().end() );
 
+  double evaluation_tol = 1e-14;
+
+  // Moment preserving elastic cross section
+  std::vector<double> moment_preserving_cross_sections;
+  unsigned mp_threshold_energy_index;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Exact>(
+                               moment_preserving_cross_sections,
+                               mp_threshold_energy_index,
+                               data_container,
+                               raw_energy_grid,
+                               evaluation_tol );
+
   Teuchos::ArrayRCP<double> mp_cross_section;
   mp_cross_section.assign(
-    data_container.getMomentPreservingCrossSection().begin(),
-    data_container.getMomentPreservingCrossSection().end() );
+    moment_preserving_cross_sections.begin(),
+    moment_preserving_cross_sections.end() );
 
   // Get the angular energy grid
   std::vector<double> angular_energy_grid =
@@ -1556,7 +1569,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Get the energy grid
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
 
-  double evaluation_tol = 1e-14;
   double cutoff_angle_cosine = 0.9;
 
     // LogLogLog

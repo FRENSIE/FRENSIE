@@ -72,13 +72,13 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalReaction_native )
     native_electroatom_core->getTotalReaction();
 
   double cross_section = total_reaction.getCrossSection( 2e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 9.269564087122480E+03 + 1.96517E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.2586614182549074e+03 + 1.96517E+08, 1e-12 );
 
   cross_section = total_reaction.getCrossSection( 4e-4 );
-  TEST_FLOATING_EQUALITY( cross_section, 8.908504720336720E+03 + 6.22682E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.9142349964387486e+03 + 6.22682E+08, 1e-12 );
 
   cross_section = total_reaction.getCrossSection( 9e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 7.247161196055280E+03 + 1.16042E+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.2499709668376108e+03 + 1.16042E+09, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -179,21 +179,21 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getScatteringReactions_native )
      b_reaction.getCrossSection( 2e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          9.269564087122480E+03 + 1.96517E+08,
+                          9.2586614182549074e+03 + 1.96517E+08,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 4e-4 ) +
                    b_reaction.getCrossSection( 4e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.908504720336720E+03 + 6.22682E+08,
+                          8.9142349964387486e+03 + 6.22682E+08,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 9e-5 ) +
                    b_reaction.getCrossSection( 9e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.247161196055280E+03 + 1.16042E+09,
+                          7.2499709668376108e+03 + 1.16042E+09,
                           1e-12 );
 }
 
@@ -461,7 +461,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
     // Create the energy loss distributions
     MonteCarlo::AtomicExcitationElectronScatteringDistribution::AtomicDistribution
         ae_energy_loss_function(
-            new Utility::TabularDistribution<Utility::LinLin>(
+            new Utility::TabularDistribution<Utility::LogLog>(
                 data_container.getAtomicExcitationEnergyGrid(),
                 data_container.getAtomicExcitationEnergyLoss() ) );
 
@@ -471,7 +471,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
                       ae_energy_loss_function ) );
 
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
-        new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             ae_cross_section,
             ae_threshold_index,
@@ -515,7 +515,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create the scattering function
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> b_energy_loss_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
             function_data ) );
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
@@ -527,7 +527,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
-            new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+            new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             b_cross_section,
             b_threshold_index,
@@ -553,7 +553,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
                                        absorption_reactions,
                                        relaxation_model,
                                        false,
-                                       Utility::LinLin() ) );
+                                       Utility::LogLog() ) );
   }
 }
 

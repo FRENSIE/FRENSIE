@@ -13,7 +13,7 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create an coupled elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<ElectroatomicReaction>
 createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
@@ -37,7 +37,7 @@ createCoupledElasticReaction(
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-  ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplingPolicy>(
+  ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -52,7 +52,7 @@ createCoupledElasticReaction(
 }
 
 //! Create a decoupled elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<ElectroatomicReaction>
 createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
@@ -71,7 +71,7 @@ createDecoupledElasticReaction(
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-  ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplingPolicy>(
+  ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -85,7 +85,7 @@ createDecoupledElasticReaction(
 }
 
 //! Create a hybrid elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<ElectroatomicReaction>
 createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
@@ -105,7 +105,7 @@ createHybridElasticReaction(
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-  ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplingPolicy>(
+  ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -120,7 +120,7 @@ createHybridElasticReaction(
 }
 
 //! Create an cutoff elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<ElectroatomicReaction>
 createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
@@ -140,7 +140,7 @@ createCutoffElasticReaction(
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-  ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplingPolicy>(
+  ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -155,7 +155,7 @@ createCutoffElasticReaction(
 }
 
 //! Create the moment preserving elastic scattering electroatomic reaction
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<ElectroatomicReaction>
 createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
@@ -175,7 +175,7 @@ createMomentPreservingElasticReaction(
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-  ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplingPolicy>(
+  ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -194,7 +194,7 @@ createMomentPreservingElasticReaction(
 //----------------------------------------------------------------------------//
 
 //! Create the subshell electroionization electroatomic reaction
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<ElectroatomicReaction>
 createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
@@ -229,7 +229,7 @@ createSubshellElectroionizationReaction(
 }
 
 //! Create the subshell electroionization electroatomic reactions
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::vector<std::shared_ptr<ElectroatomicReaction> >
 createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
@@ -263,7 +263,7 @@ createSubshellElectroionizationReactions(
 //----------------------------------------------------------------------------//
 
 //! Create the bremsstrahlung electroatomic reaction
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<ElectroatomicReaction>
 createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,

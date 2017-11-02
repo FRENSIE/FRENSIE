@@ -61,7 +61,7 @@ ua_lower_func, ua_upper_func;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the distribution
-template<typename TwoDSamplingPolicy,
+template<typename TwoDSamplePolicy,
          typename BaseTabDistribution,
          typename BaseDistribution>
 void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
@@ -106,7 +106,7 @@ void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
   Utility::setQuantity( primary_bins[3], 2.0 );
   secondary_dists[3] = secondary_dists[0];
 
-  tab_dist.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,TwoDSamplingPolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+  tab_dist.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,TwoDSamplePolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
       primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
   dist = tab_dist;

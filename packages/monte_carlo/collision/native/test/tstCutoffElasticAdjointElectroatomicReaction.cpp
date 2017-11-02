@@ -79,10 +79,10 @@ TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction, getCrossSection )
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
   cross_section = elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.8222590384670133e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06, 1e-12 );
 
   cross_section = elastic_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 3.04727623729037E+02, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.0472762372903748E+02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -97,7 +97,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction,
 
   ratio = 1.0895339416868782e-01;
   cross_section = cutoff_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.8222590384670133e+06*ratio, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06*ratio, 1e-12 );
 
   ratio = 8.0903053369940162e-06;
   cross_section = cutoff_elastic_reaction->getCrossSection( 20.0 );
@@ -170,7 +170,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-15;
 
     // Create the distribution
-    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
                 elastic_scattering_distribution,
                 *data_container,
                 cutoff_angle_cosine,
@@ -198,7 +198,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
-    NativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
                 cutoff_distribution,
                 *data_container,
                 cutoff_angle_cosine,

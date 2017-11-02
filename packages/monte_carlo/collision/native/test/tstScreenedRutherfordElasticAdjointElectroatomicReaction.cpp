@@ -81,25 +81,17 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
 
-  double cross_section =
-    rutherford_elastic_reaction->getCrossSection( 1.0E-05 );
-
+  double cross_section = rutherford_elastic_reaction->getCrossSection( 1.0E-05 );
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section =
-    rutherford_elastic_reaction->getCrossSection( 1.0E-03 );
-
+  cross_section = rutherford_elastic_reaction->getCrossSection( 1.0E-03 );
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section =
-    rutherford_elastic_reaction->getCrossSection( 0.312509629531249944 );
+  cross_section = rutherford_elastic_reaction->getCrossSection( 0.312509629531249944 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6966818153468921e+01, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.69347821609735E+01, 1e-12 );
-
-  cross_section =
-    rutherford_elastic_reaction->getCrossSection( 20.0 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.27173948912580E+04, 1e-12 );
+  cross_section = rutherford_elastic_reaction->getCrossSection( 20.0 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2717394891258004e+04, 1e-12 );
 }
 
 

@@ -122,8 +122,6 @@ public:
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSection;
   using ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSectionThresholdEnergyIndex;
-  using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection;
-  using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungCrossSection;

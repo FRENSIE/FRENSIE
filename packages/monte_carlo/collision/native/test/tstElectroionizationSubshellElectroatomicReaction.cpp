@@ -34,7 +34,7 @@
 std::shared_ptr<MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin> >
     ace_first_subshell_reaction, ace_last_subshell_reaction;
 
-std::shared_ptr<MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin> >
+std::shared_ptr<MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog> >
     native_first_subshell_reaction, native_last_subshell_reaction;
 
 double max_ionization_subshell_adjoint_energy;
@@ -47,202 +47,201 @@ bool notEqualZero( double value )
   return value != 0.0;
 }
 
-// //---------------------------------------------------------------------------//
-// // Tests
-// //---------------------------------------------------------------------------//
-// // Check that the reaction type can be returned
-// TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getReactionType_ace )
-// {
-//   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getReactionType(),
-//                        MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+//---------------------------------------------------------------------------//
+// Tests
+//---------------------------------------------------------------------------//
+// Check that the reaction type can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getReactionType_ace )
+{
+  TEST_EQUALITY_CONST( ace_first_subshell_reaction->getReactionType(),
+                       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-//   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getReactionType(),
-//                        MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-// }
+  TEST_EQUALITY_CONST( ace_last_subshell_reaction->getReactionType(),
+                       MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+}
 
-// //---------------------------------------------------------------------------//
-// // Check that the threshold energy can be returned
-// TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getThresholdEnergy_ace )
-// {
-//   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getThresholdEnergy(),
-//                        8.9754e-2 );
+//---------------------------------------------------------------------------//
+// Check that the threshold energy can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getThresholdEnergy_ace )
+{
+  TEST_EQUALITY_CONST( ace_first_subshell_reaction->getThresholdEnergy(),
+                       8.9754e-2 );
 
-//   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getThresholdEnergy(),
-//                        1e-5 );
-// }
+  TEST_EQUALITY_CONST( ace_last_subshell_reaction->getThresholdEnergy(),
+                       1e-5 );
+}
 
-// //---------------------------------------------------------------------------//
-// // Check that the number of electrons emitted from the rxn can be returned
-// TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getNumberOfEmittedElectrons_ace )
-// {
-//   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
-//                        0u );
+//---------------------------------------------------------------------------//
+// Check that the number of electrons emitted from the rxn can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getNumberOfEmittedElectrons_ace )
+{
+  TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
+                       0u );
 
-//   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedElectrons(20.0),
-//                        1u );
+  TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedElectrons(20.0),
+                       1u );
 
-//   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
-//                        1u );
+  TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
+                       1u );
 
-//   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedElectrons(20.0),
-//                        1u );
-// }
+  TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedElectrons(20.0),
+                       1u );
+}
 
-// //---------------------------------------------------------------------------//
-// // Check that the number of photons emitted from the rxn can be returned
-// TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getNumberOfEmittedPhotons_ace )
-// {
-//   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
-//                        0u );
+//---------------------------------------------------------------------------//
+// Check that the number of photons emitted from the rxn can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getNumberOfEmittedPhotons_ace )
+{
+  TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
+                       0u );
 
-//   TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedPhotons(20.0),
-//                        0u );
+  TEST_EQUALITY_CONST( ace_first_subshell_reaction->getNumberOfEmittedPhotons(20.0),
+                       0u );
 
-//   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
-//                        0u );
+  TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
+                       0u );
 
-//   TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedPhotons(20.0),
-//                        0u );
-// }
+  TEST_EQUALITY_CONST( ace_last_subshell_reaction->getNumberOfEmittedPhotons(20.0),
+                       0u );
+}
 
-// //---------------------------------------------------------------------------//
-// // Check that the cross section can be returned
-// TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getCrossSection_ace )
-// {
-//   // First Subshell
-//   double cross_section =
-//     ace_first_subshell_reaction->getCrossSection( 2e-1 );
+//---------------------------------------------------------------------------//
+// Check that the cross section can be returned
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, getCrossSection_ace )
+{
+  // First Subshell
+  double cross_section =
+    ace_first_subshell_reaction->getCrossSection( 2e-1 );
 
-//   TEST_FLOATING_EQUALITY( cross_section, 4.991897715052E+00, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.991897715052E+00, 1e-12 );
 
-//   cross_section =
-//     ace_first_subshell_reaction->getCrossSection( 1.5 );
+  cross_section =
+    ace_first_subshell_reaction->getCrossSection( 1.5 );
 
-//   TEST_FLOATING_EQUALITY( cross_section, 1.174906212079E+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.174906212079E+01, 1e-12 );
 
-//   cross_section =
-//     ace_first_subshell_reaction->getCrossSection( 6e1 );
+  cross_section =
+    ace_first_subshell_reaction->getCrossSection( 6e1 );
 
-//   TEST_FLOATING_EQUALITY( cross_section, 2.443293975497E+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.443293975497E+01, 1e-12 );
 
-//   // Last Subshell
-//   cross_section =
-//     ace_last_subshell_reaction->getCrossSection( 2e-1 );
+  // Last Subshell
+  cross_section =
+    ace_last_subshell_reaction->getCrossSection( 2e-1 );
 
-//   TEST_FLOATING_EQUALITY( cross_section, 3.567266284782E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.567266284782E+05, 1e-12 );
 
-//   cross_section =
-//     ace_last_subshell_reaction->getCrossSection( 1.5 );
+  cross_section =
+    ace_last_subshell_reaction->getCrossSection( 1.5 );
 
-//   TEST_FLOATING_EQUALITY( cross_section, 1.949916537107E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.949916537107E+05, 1e-12 );
 
-//   cross_section =
-//     ace_last_subshell_reaction->getCrossSection( 6e1 );
+  cross_section =
+    ace_last_subshell_reaction->getCrossSection( 6e1 );
 
-//   TEST_FLOATING_EQUALITY( cross_section, 1.870602125397E+05, 1e-12 );
-// }
+  TEST_FLOATING_EQUALITY( cross_section, 1.870602125397E+05, 1e-12 );
+}
 
-// //---------------------------------------------------------------------------//
-// // Check that the first_subshell reaction can be simulated
-// TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
-// {
-//   MonteCarlo::ElectronState electron( 0 );
-//   electron.setEnergy( 20.0 );
-//   electron.setDirection( 0.0, 0.0, 1.0 );
+//---------------------------------------------------------------------------//
+// Check that the first_subshell reaction can be simulated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
+{
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 20.0 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
 
-//   MonteCarlo::ParticleBank bank;
+  MonteCarlo::ParticleBank bank;
 
-//   Data::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
-//   ace_first_subshell_reaction->react( electron, bank, shell_of_interaction );
+  ace_first_subshell_reaction->react( electron, bank, shell_of_interaction );
 
-//   TEST_ASSERT( electron.getEnergy() < 20.0 );
-//   TEST_ASSERT( electron.getZDirection() < 1.0 );
-//   TEST_ASSERT( !bank.isEmpty() );
-//   TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
-// }
+  TEST_ASSERT( electron.getEnergy() < 20.0 );
+  TEST_ASSERT( electron.getZDirection() < 1.0 );
+  TEST_ASSERT( !bank.isEmpty() );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+}
 
-// //---------------------------------------------------------------------------//
-// // Check that the hydrogen differential cross section can be evaluated for the first subshell
-// TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
-//                    getDifferentialCrossSection_ace )
-// {
+//---------------------------------------------------------------------------//
+// Check that the hydrogen differential cross section can be evaluated for the first subshell
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
+                   getDifferentialCrossSection_ace )
+{
 
-//   double diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection( 8.829E-02, 1e-8 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  double diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 8.829E-02, 1e-8 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 9.7163E-02 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 9.7163E-02 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 8.145469e-1 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1.0, 8.145469e-1 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1.75297e2 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1.75297e2 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 9.982461471e4 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 9.982461471e4 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection(
-//       1.0E+05,
-//       max_ionization_subshell_adjoint_energy );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+      1.0E+05,
+      max_ionization_subshell_adjoint_energy );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 - 1e-10 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection( 1e5, 1e-7 - 1e-10 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
 
-//   diff_cross_section =
-//     ace_first_subshell_reaction->getDifferentialCrossSection(
-//       1.0E+05,
-//       max_ionization_subshell_adjoint_energy+1.0e-10 );
-//   TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
-// }
+  diff_cross_section =
+    ace_first_subshell_reaction->getDifferentialCrossSection(
+      1.0E+05,
+      max_ionization_subshell_adjoint_energy+1.0e-10 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the hydrogen differential cross section can be evaluated for the first subshell
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
                    getDifferentialCrossSection_native )
 {
-
   // First subshell
   double diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.70425200079801E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 8.3926280502064743e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 8.3901060351505814e+09, 1e-12 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.70425200079802E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 8.3926280502061348e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 8.3901060351502438e+09, 1e-12 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.98284583249127E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 3.7034957036345965e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 3.7030604178188080e+08, 1e-12 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         2.00191878322064E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 6.2463027890144534e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 6.2461923119910896e+07, 1e-12 );
 
 
   // Last subshell
@@ -251,35 +250,35 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         0.0025118800000459599528,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3290196909286316e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3290196570735972e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118800000459773,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3290196909201305e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section,2.3290196570650961e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.002511885,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3264934114083920e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3264933944920450e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118897153524992472,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3241109421799529e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3241109412175182e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118908794333669708,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239669226027716e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239668947055083e+07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -565,7 +564,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
 
     // Create the subshell electroelectric reaction
     native_first_subshell_reaction.reset(
-        new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 subshell_cross_section,
                 threshold_energy_index,
@@ -602,7 +601,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
 
     // Create the subshell electroelectric reaction
     native_last_subshell_reaction.reset(
-        new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 subshell_cross_section,
                 threshold_energy_index,

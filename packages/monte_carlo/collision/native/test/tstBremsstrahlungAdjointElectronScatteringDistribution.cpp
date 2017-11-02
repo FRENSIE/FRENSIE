@@ -60,15 +60,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = adjoint_brem_dist->evaluate( 1.0e-5, 20.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.0304868712453223e-08, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.0119541147150932e-08, 1e-12 );
 
   // Check inbetween bins
   pdf = adjoint_brem_dist->evaluate( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.2204058721960361e-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.2125244599126050e-06, 1e-12 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluate( 20.0, 20.000000201 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.6906111654728930e+05, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.6905715846855036e+05, 1e-12 );
 
   // Check above highest bin
   pdf = adjoint_brem_dist->evaluate( 21.0, 22.0 );
@@ -89,15 +89,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = adjoint_brem_dist->evaluatePDF( 1.0e-5, 20.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 5.2460964280768464e-08, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 5.2318646276165444e-08, 1e-12 );
 
   // Check inbetween bins
   pdf = adjoint_brem_dist->evaluatePDF( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.9343909245238045e-06, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.9279969463282479e-06, 1e-6 );
 
   // Check on highest bin
   pdf = adjoint_brem_dist->evaluatePDF( 20.0, 20.000000201 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.2815148160976853e+05, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 3.2814835265752673e+05, 1e-12 );
 
   // Check above highest bin
   pdf = adjoint_brem_dist->evaluatePDF( 21.0, 22.0 );
@@ -118,15 +118,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   cdf = adjoint_brem_dist->evaluateCDF( 1.0e-5, 10.1000050505 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999924241929028e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999924445401078e-01, 1e-12 );
 
   // Check inbetween bins
   cdf = adjoint_brem_dist->evaluateCDF( 1.1e-5, 1.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999626380824158e-01, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999627301158422e-01, 1e-6 );
 
   // Check on highest bin
   cdf = adjoint_brem_dist->evaluateCDF( 20.0, 20.1000000505 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.5489335170137102e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.5488914285117243e-01, 1e-12 );
 
   // Check above highest bin
   cdf = adjoint_brem_dist->evaluateCDF( 21.0, 22.0 );
@@ -141,7 +141,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 3.7392446346993542e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.7574591825266838e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.7653510258260282e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.7574591825266838e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
 }
 
@@ -165,7 +165,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 3.7392446346993542e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.7574591825266838e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -180,7 +180,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.7653510258260282e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.7574591825266838e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
   TEST_EQUALITY_CONST( trials, 1.0 );
 }
@@ -201,7 +201,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 3.7392446346993542e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.7574591825266838e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -211,7 +211,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.7653510258260282e-05, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.7574591825266838e-05, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
@@ -271,7 +271,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the energy gain function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_gain_function(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
             function_data,
             1e-6,
             evaluation_tol ) );

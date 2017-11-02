@@ -282,6 +282,9 @@ public:
   //! Return if there is moment preserving data
   bool hasMomentPreservingData() const;
 
+  //! Return the moment preserving cross section reductions
+  const std::vector<double>& getMomentPreservingCrossSectionReduction() const;
+
   //! Return the moment preserving elastic discrete angles
   const std::map<double,std::vector<double> >&
     getMomentPreservingElasticDiscreteAngles() const;
@@ -289,9 +292,6 @@ public:
   //! Return the moment preserving elastic weights
   const std::map<double,std::vector<double> >&
     getMomentPreservingElasticWeights() const;
-
-  //! Return the moment preserving cross section reductions
-  const std::vector<double>& getMomentPreservingCrossSectionReduction() const;
 
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
@@ -367,12 +367,6 @@ public:
 
   //! Return the total elastic cross section threshold energy bin index
   unsigned getTotalElasticCrossSectionThresholdEnergyIndex() const;
-
-  //! Return the Moment Preserving (MP) elastic electron cross section
-  const std::vector<double>& getMomentPreservingCrossSection() const;
-
-  //! Return the MP elastic cross section threshold energy bin index
-  unsigned getMomentPreservingCrossSectionThresholdEnergyIndex() const;
 
   //! Return the electroionization electron cross section for a subshell
   const std::vector<double>&
@@ -669,6 +663,10 @@ protected:
   //! Clear all the moment preserving data
   void clearMomentPreservingData();
 
+  //! Set the moment preserving cross section reduction
+  void setMomentPreservingCrossSectionReduction(
+    const std::vector<double>& cross_section_reduction );
+
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setMomentPreservingElasticDiscreteAngles(
     const double incoming_energy,
@@ -678,10 +676,6 @@ protected:
   void setMomentPreservingElasticWeights(
     const double incoming_energy,
     const std::vector<double>& moment_preserving_elastic_weights );
-
-  //! Set the moment preserving cross section reduction
-  void setMomentPreservingCrossSectionReduction(
-    const std::vector<double>& cross_section_reduction );
 
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setElectroionizationEnergyGrid(
@@ -783,14 +777,6 @@ protected:
 
   //! Set the total elastic cross section threshold energy bin index
   void setTotalElasticCrossSectionThresholdEnergyIndex( const unsigned index );
-
-  //! Set the moment preserving elastic electron cross section using Moment Preserving (MP) theory
-  void setMomentPreservingCrossSection(
-            const std::vector<double>& moment_preserving_elastic_cross_section );
-
-  //! Set the MP moment preserving elastic cross section threshold energy bin index
-  void setMomentPreservingCrossSectionThresholdEnergyIndex(
-            const unsigned index );
 
   //! Set the electroionization electron cross section for a subshell
   void setElectroionizationCrossSection( const unsigned subshell,
@@ -1106,12 +1092,6 @@ private:
 
   // The total elastic electron cross section threshold energy index
   unsigned d_total_elastic_cross_section_threshold_index;
-
-  // The Moment Preserving elastic electron cross section (b)
-  std::vector<double> d_moment_preserving_elastic_cross_section;
-
-  // The Moment Preserving elastic electron cross section threshold energy index
-  unsigned d_moment_preserving_elastic_cross_section_threshold_index;
 
   // The electroionization subshell electron cross section (b)
   std::map<unsigned,std::vector<double> >

@@ -97,6 +97,16 @@ public:
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
+  //! Calculate the moment preserving cross sections
+  template<typename TwoDInterpPolicy = Utility::LogLogCosLog,
+           typename TwoDSamplePolicy = Utility::Exact>
+  static void calculateMomentPreservingCrossSections(
+    std::vector<double>& cross_sections,
+    unsigned& threshold_energy_index,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const double evaluation_tol );
+
 //----------------------------------------------------------------------------//
 //      ****ADJOINT DATA PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
@@ -145,6 +155,16 @@ public:
         moment_preserving_elastic_distribution,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
+    const double evaluation_tol );
+
+  //! Calculate the moment preserving cross sections
+  template<typename TwoDInterpPolicy = Utility::LogLogCosLog,
+           typename TwoDSamplePolicy = Utility::Exact>
+  static void calculateMomentPreservingCrossSections(
+    std::vector<double>& cross_sections,
+    unsigned& threshold_energy_index,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -204,7 +224,7 @@ public:
 
   //! Create a moment preserving elastic distribution
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::Correlated>
+           typename TwoDSamplePolicy = Utility::Exact>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -214,9 +234,22 @@ public:
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
+  //! Calculate the moment preserving cross sections
+  static void calculateMomentPreservingCrossSections(
+    const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>&
+      cutoff_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::ArrayRCP<const double>& cutoff_cross_sections,
+    const Teuchos::ArrayRCP<const double>& total_cross_sections,
+    const double cutoff_angle_cosine,
+    std::vector<double>& cross_sections,
+    unsigned& threshold_energy_index,
+    const double evaluation_tol );
+
   //! Return angle cosine grid with the evaluated pdf for the given energy and cutoff angle
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::Correlated>
+           typename TwoDSamplePolicy = Utility::Exact>
   static void getAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
@@ -289,6 +322,13 @@ public:
     const double evaluation_tol );
 
 protected:
+
+  //! Calculate the moment preserving cross section
+  static double calculateMomentPreservingCrossSection(
+    const double& cutoff_cdf,
+    const double& cross_section_reduction,
+    const double& cutoff_cross_section,
+    const double& total_elastic_cross_Section );
 
   //! Create the cutoff to total preserving cross section ratios
   static void createCutoffCrossSectionRatios(

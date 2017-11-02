@@ -810,20 +810,6 @@ ElectronPhotonRelaxationDataContainer::getTotalElasticCrossSectionThresholdEnerg
   return d_total_elastic_cross_section_threshold_index;
 }
 
-// Return the Moment Preserving (MP) elastic electron cross section
-const std::vector<double>&
-ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSection() const
-{
-  return d_moment_preserving_elastic_cross_section;
-}
-
-// Return the MP elastic cross section threshold energy bin index
-unsigned
-ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSectionThresholdEnergyIndex() const
-{
-  return d_moment_preserving_elastic_cross_section_threshold_index;
-}
-
 // Return the electroionization electron cross section for a subshell
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectroionizationCrossSection(
@@ -1661,10 +1647,9 @@ void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF(
 // Clear all the moment preserving data
 void ElectronPhotonRelaxationDataContainer::clearMomentPreservingData()
 {
- d_moment_preserving_elastic_discrete_angles.clear();
- d_moment_preserving_elastic_weights.clear();
- d_moment_preserving_elastic_cross_section.clear();
- d_moment_preserving_elastic_cross_section_threshold_index = 0;
+  d_moment_preserving_elastic_discrete_angles.clear();
+  d_moment_preserving_elastic_weights.clear();
+  d_moment_preserving_cross_section_reductions.clear();
 }
 
 // Set the moment preserving elastic discrete angles for an incoming energy
@@ -2005,32 +1990,6 @@ void ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSectionThreshold
         d_electron_energy_grid.size() );
 
  d_total_elastic_cross_section_threshold_index = index;
-}
-
-// Set the elastic electron cross section using Moment Preserving (MP) theory
-void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection(
-             const std::vector<double>& moment_preserving_elastic_cross_section )
-{
-  // Make sure the moment preserving elastic cross section is valid
-  testPrecondition( moment_preserving_elastic_cross_section.size() <=
-                    d_electron_energy_grid.size() );
-  testPrecondition( ValuesGreaterThanOrEqualToZero(
-    moment_preserving_elastic_cross_section ) );
-
-  d_moment_preserving_elastic_cross_section =
-        moment_preserving_elastic_cross_section;
-}
-
-// Set the MP elastic cross section threshold energy bin index
-void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThresholdEnergyIndex(
-                                const unsigned index )
-{
-  // Make sure the threshold index is valid
-  testPrecondition(
-        d_moment_preserving_elastic_cross_section.size() + index ==
-        d_electron_energy_grid.size() );
-
- d_moment_preserving_elastic_cross_section_threshold_index = index;
 }
 
 // Set the electroionization electron cross section

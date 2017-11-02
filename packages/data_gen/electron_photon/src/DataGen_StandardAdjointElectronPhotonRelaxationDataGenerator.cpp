@@ -2025,40 +2025,15 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                 << " cross section and distribution...";
     d_os_log->flush();
 
-    // Extract the moment preserving elastic cross section data
-    Teuchos::ArrayRCP<double> forward_moment_preserving_elastic_cs;
-    forward_moment_preserving_elastic_cs.assign(
-      d_forward_epr_data->getMomentPreservingCrossSection().begin(),
-      d_forward_epr_data->getMomentPreservingCrossSection().end() );
+    // Set the cross sections reduction
+    data_container.setAdjointMomentPreservingCrossSectionReduction(
+        d_forward_epr_data->getMomentPreservingCrossSectionReduction() );
 
-    std::shared_ptr<MonteCarlo::ElectroatomicReaction> moment_preserving_elastic_reaction(
-      new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
-          forward_electron_energy_grid,
-          forward_moment_preserving_elastic_cs,
-          d_forward_epr_data->getMomentPreservingCrossSectionThresholdEnergyIndex(),
-          forward_grid_searcher ) );
-
-    boost::function<double (double pz)> moment_preserving_elastic_grid_function =
-      [&moment_preserving_elastic_reaction, max_energy_cs = forward_moment_preserving_elastic_cs[forward_moment_preserving_elastic_cs.size()-1]]( const double energy ){
-
-        return moment_preserving_elastic_reaction->getCrossSection( energy );
-      };
-      // boost::bind( &MonteCarlo::ElectroatomicReaction::getCrossSection,
-      //              boost::cref( *moment_preserving_elastic_reaction ),
-      //              _1 );
-
-    std::vector<double> moment_preserving_cross_section;
-    this->createCrossSectionOnUnionEnergyGrid(
-        union_energy_grid,
-        moment_preserving_elastic_grid_function,
-        moment_preserving_cross_section,
-        threshold );
-    data_container.setAdjointMomentPreservingCrossSection( moment_preserving_cross_section );
-    data_container.setAdjointMomentPreservingCrossSectionThresholdEnergyIndex( threshold );
-
+    // Set the discrete angles
     data_container.setAdjointMomentPreservingElasticDiscreteAngles(
         d_forward_epr_data->getMomentPreservingElasticDiscreteAngles() );
 
+    // Set the discrete weights
     data_container.setAdjointMomentPreservingElasticWeights(
         d_forward_epr_data->getMomentPreservingElasticWeights() );
 

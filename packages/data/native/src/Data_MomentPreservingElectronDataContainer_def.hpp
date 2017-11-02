@@ -32,9 +32,6 @@ void MomentPreservingElectronDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, number_of_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
-/*  DATA_MAKE_NVP_DEFAULT( ar, electron_energy_grid );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_moment_preserving_elastic_cross_section_threshold_index );*/
 }
 
 // Load the data from an archive
@@ -48,9 +45,6 @@ void MomentPreservingElectronDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, number_of_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
-/*  DATA_MAKE_NVP_DEFAULT( ar, electron_energy_grid );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_moment_preserving_elastic_cross_section_threshold_index );*/
 }
 
 } // end Data namespace

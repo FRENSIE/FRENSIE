@@ -39,6 +39,123 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
                 atomic_number ) );
 }
 
+// Calculate the moment preserving cross sections
+void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections(
+    const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>&
+      cutoff_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::ArrayRCP<const double>& cutoff_cross_sections,
+    const Teuchos::ArrayRCP<const double>& total_cross_sections,
+    const double cutoff_angle_cosine,
+    std::vector<double>& cross_sections,
+    unsigned& threshold_energy_index,
+    const double evaluation_tol )
+{
+  // Make sure the shared pointers are valid
+  testPrecondition( cutoff_distribution.use_count() > 0 );
+  testPrecondition( reduction_distribution.use_count() > 0 );
+  //Make sure the energy grid and cross sections are valid
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+  testPrecondition( cutoff_cross_sections.size() == energy_grid.size() );
+  testPrecondition( total_cross_sections.size() == energy_grid.size() );
+  //Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
+  // Get the max energy of the distributions
+  double max_energy = reduction_distribution->getUpperBoundOfIndepVar();
+
+  // Get the upper boundary of the max energy
+  unsigned upper_bound_index =
+      Utility::Search::binaryUpperBoundIndex( energy_grid.begin(),
+                                              energy_grid.end(),
+                                              max_energy );
+  testPostcondition( energy_grid[upper_bound_index] >= max_energy );
+
+  std::vector<double> raw_cross_sections( upper_bound_index+1 );
+
+  if( energy_grid[upper_bound_index] == max_energy )
+  {
+    ++upper_bound_index;
+  }
+  else // Calculate the cross section at the max energy if needed
+  {
+    double total_cross_section =
+      Utility::LogLog::interpolate(
+            energy_grid[upper_bound_index-1],
+            energy_grid[upper_bound_index],
+            max_energy,
+            total_cross_sections[upper_bound_index-1],
+            total_cross_sections[upper_bound_index] );
+
+    double cutoff_cross_section =
+      Utility::LogLog::interpolate(
+            energy_grid[upper_bound_index-1],
+            energy_grid[upper_bound_index],
+            max_energy,
+            cutoff_cross_sections[upper_bound_index-1],
+            cutoff_cross_sections[upper_bound_index] );
+
+    raw_cross_sections[upper_bound_index] =
+      ThisType::calculateMomentPreservingCrossSection(
+          cutoff_distribution->evaluateCDF( max_energy, cutoff_angle_cosine ),
+          reduction_distribution->evaluate( max_energy ),
+          cutoff_cross_section,
+          total_cross_section );
+  }
+
+  threshold_energy_index = 0;
+  for( unsigned i = 0; i < upper_bound_index; ++i )
+  {
+    raw_cross_sections[i] =
+      ThisType::calculateMomentPreservingCrossSection(
+        cutoff_distribution->evaluateCDF( energy_grid[i], cutoff_angle_cosine ),
+        reduction_distribution->evaluate( energy_grid[i] ),
+        cutoff_cross_sections[i],
+        total_cross_sections[i] );
+
+    if( raw_cross_sections[i] == 0.0 )
+    {
+      threshold_energy_index = i;
+    }
+  }
+
+  if( raw_cross_sections.back() == 0.0 )
+  {
+    threshold_energy_index = raw_cross_sections.size()-1;
+  }
+
+  std::vector<double>::iterator start = raw_cross_sections.begin();
+  std::advance( start, threshold_energy_index );
+  cross_sections.assign( start, raw_cross_sections.end());
+
+  testPrecondition( threshold_energy_index >= 0u );
+  testPostcondition( cross_sections.size() + threshold_energy_index ==
+                     energy_grid.size() );
+}
+
+// Calculate the moment preserving cross section
+double ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSection(
+    const double& cutoff_cdf,
+    const double& cross_section_reduction,
+    const double& cutoff_cross_section,
+    const double& total_elastic_cross_section )
+{
+  double rutherford_cross_section =
+    total_elastic_cross_section - cutoff_cross_section;
+
+  // Calcualte the relative difference between the total and cutoff cross sections
+  double relative_difference = rutherford_cross_section/total_elastic_cross_section;
+
+  // Check for roundoff error and reduce to zero if needed
+  if ( relative_difference < 1.0e-6 )
+    rutherford_cross_section = 0.0;
+
+  return cross_section_reduction*
+      (rutherford_cross_section + (1.0 - cutoff_cdf)*cutoff_cross_section);
+}
+
 // Return angle cosine grid with the evaluated pdf for the given energy
 void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     std::vector<double>& angular_grid,

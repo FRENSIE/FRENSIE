@@ -877,7 +877,7 @@ int main( int argc, char** argv )
       try{
         DataGen::StandardElectronPhotonRelaxationDataGenerator::repopulateElectronElasticData(
           temp_data_container,
-          temp_data_container.getMaxElectronEnergy(),
+          max_electron_energy,
           cutoff_angle_cosine,
           electron_tabular_evaluation_tol,
           number_of_moment_preserving_angles,

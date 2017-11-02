@@ -164,14 +164,19 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Moment preserving elastic cross section
+  std::vector<double> moment_preserving_cross_sections;
+  unsigned mp_threshold_energy_index;
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+                                moment_preserving_cross_sections,
+                                mp_threshold_energy_index,
+                                raw_electroatom_data,
+                                energy_grid,
+                                evaluation_tol );
+
   Teuchos::ArrayRCP<double> mp_cross_section;
   mp_cross_section.assign(
-    raw_electroatom_data.getMomentPreservingCrossSection().begin(),
-    raw_electroatom_data.getMomentPreservingCrossSection().end() );
-
-  // Moment preserving elastic cross section threshold energy bin index
-  unsigned mp_threshold_energy_index =
-    raw_electroatom_data.getMomentPreservingCrossSectionThresholdEnergyIndex();
+    moment_preserving_cross_sections.begin(),
+    moment_preserving_cross_sections.end() );
 
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
@@ -314,21 +319,25 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
     evaluation_tol );
 
   // Moment preserving elastic cross section
-  Teuchos::ArrayRCP<double> elastic_cross_section;
-  elastic_cross_section.assign(
-    raw_electroatom_data.getMomentPreservingCrossSection().begin(),
-    raw_electroatom_data.getMomentPreservingCrossSection().end() );
+  std::vector<double> moment_preserving_cross_sections;
+  unsigned mp_threshold_energy_index;
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+                                moment_preserving_cross_sections,
+                                mp_threshold_energy_index,
+                                raw_electroatom_data,
+                                energy_grid,
+                                evaluation_tol );
 
-  // Moment preserving elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
-    raw_electroatom_data.getMomentPreservingCrossSectionThresholdEnergyIndex();
-
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
+    moment_preserving_cross_sections.begin(),
+    moment_preserving_cross_sections.end() );
 
   elastic_reaction.reset(
     new MomentPreservingElasticElectroatomicReaction<Utility::LogLog>(
                           energy_grid,
-                          elastic_cross_section,
-                          threshold_energy_index,
+                          mp_cross_section,
+                          mp_threshold_energy_index,
                           grid_searcher,
                           distribution ) );
 }

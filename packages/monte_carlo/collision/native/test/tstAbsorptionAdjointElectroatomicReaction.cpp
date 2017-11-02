@@ -72,13 +72,13 @@ TEUCHOS_UNIT_TEST( AbsorptionAdjointElectroatomicReaction,
 TEUCHOS_UNIT_TEST( AbsorptionAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = absorption_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 4.6179711080200960e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.6329278793906738e+01, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 2e-2 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.8829854031749711, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.8802257008600090, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 7.7113286525737745e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.7114113565473230e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

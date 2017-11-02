@@ -324,19 +324,6 @@ private:
     std::shared_ptr<const Utility::OneDDistribution>& total_elastic_cross_section,
     const std::vector<double>& raw_energy_grid ) const;
 
-  // Calculate the  elastic moment preserving cross section
-  static void calculateMomentPreservingCrossSection(
-    const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_section,
-    const unsigned cutoff_threshold_energy_index,
-    const unsigned screened_rutherford_threshold_energy_index,
-    const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution,
-    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
-    const double cutoff_angle_cosine,
-    std::vector<double>& moment_preserving_cross_section );
-
   // The ACE data
   std::shared_ptr<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 

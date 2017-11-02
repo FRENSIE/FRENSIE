@@ -2042,12 +2042,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
              energy_grid,
              100u ) );
 
-  // Get the screened Rutherford cross section
-  Teuchos::ArrayRCP<double> rutherford_cross_section;
-  rutherford_cross_section.assign(
-    data_container.getScreenedRutherfordElasticCrossSection().begin(),
-    data_container.getScreenedRutherfordElasticCrossSection().end() );
-
   // Create the elastic traits
   std::shared_ptr<Utility::ElasticElectronTraits> elastic_traits(
     new Utility::ElasticElectronTraits( data_container.getAtomicNumber() ) );
@@ -2060,8 +2054,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         energy_grid,
         grid_searcher,
         cutoff_cross_section,
-        rutherford_cross_section,
-        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        total_cross_section,
         data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         coupled_distribution,
         elastic_traits,
@@ -2095,85 +2088,6 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   // Set the cross section reduction
   data_container.setMomentPreservingCrossSectionReduction(
     cross_section_reduction );
-
-  // Create the cutoff elastic distribution
-  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution;
-
-  // Generate a cross section reduction distribution
-  std::shared_ptr<const Utility::OneDDistribution> reduction_distribution;
-
-  if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
-  {
-    // Use LogLog interpoaltion between bins of coarse angular energy grid
-    reduction_distribution.reset(
-        new Utility::TabularDistribution<Utility::LogLog>(
-            angular_energy_grid,
-            cross_section_reduction ) );
-
-    // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
-        cutoff_distribution,
-        data_container.getCutoffElasticAngles(),
-        data_container.getCutoffElasticPDF(),
-        angular_energy_grid,
-        Utility::ElasticElectronTraits::mu_peak,
-        tabular_evaluation_tol );
-  }
-  else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
-  {
-    // Use LinLin interpoaltion between bins of coarse angular energy grid
-    reduction_distribution.reset(
-        new Utility::TabularDistribution<Utility::LinLin>(
-            angular_energy_grid,
-            cross_section_reduction ) );
-
-    // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
-        cutoff_distribution,
-        data_container.getCutoffElasticAngles(),
-        data_container.getCutoffElasticPDF(),
-        angular_energy_grid,
-        Utility::ElasticElectronTraits::mu_peak,
-        tabular_evaluation_tol );
-  }
-  else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
-  {
-    // Use LinLog interpoaltion between bins of coarse angular energy grid
-    reduction_distribution.reset(
-        new Utility::TabularDistribution<Utility::LinLog>(
-            angular_energy_grid,
-            cross_section_reduction ) );
-
-    // Create the cutoff elastic distribution
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
-        cutoff_distribution,
-        data_container.getCutoffElasticAngles(),
-        data_container.getCutoffElasticPDF(),
-        angular_energy_grid,
-        Utility::ElasticElectronTraits::mu_peak,
-        tabular_evaluation_tol );
-  }
-
-
-  // Calculate the moment preserving cross section
-  std::vector<double> moment_preserving_cross_section;
-  StandardElectronPhotonRelaxationDataGenerator::calculateMomentPreservingCrossSection(
-        energy_grid,
-        cutoff_cross_section,
-        rutherford_cross_section,
-        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-        cutoff_distribution,
-        reduction_distribution,
-        data_container.getCutoffAngleCosine(),
-        moment_preserving_cross_section );
-
-  data_container.setMomentPreservingCrossSection(
-    moment_preserving_cross_section );
-
-  data_container.setMomentPreservingCrossSectionThresholdEnergyIndex(
-    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() );
 }
 
 // Extract the half Compton profile from the ACE table
@@ -2968,64 +2882,6 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
         raw_elastic_cross_section ) );
   }
 }
-
-
-// Calculate the elastic moment preserving cross section
-/*! \details The coupled elastic distributions and elastic cross sections are on
- *  different energy grids. To calculate the moment preserving cross section's
- *  reduction values will have to be interpolated on the course coupled energy
- *  grid. The coupled distribution may be on a smaller energy grid, in which case
- *  the moment preserving cross section would be evaluated as zero outside the
- *  coupled energy grid range.
- */
-void StandardElectronPhotonRelaxationDataGenerator::calculateMomentPreservingCrossSection(
-    const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cutoff_cross_sections,
-    const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_sections,
-    const unsigned cutoff_threshold_energy_index,
-    const unsigned screened_rutherford_threshold_energy_index,
-    const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution,
-    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
-    const double cutoff_angle_cosine,
-    std::vector<double>& moment_preserving_cross_section )
-{
-  // Get the max energy of the distributions
-  double max_energy = reduction_distribution->getUpperBoundOfIndepVar();
-
-  moment_preserving_cross_section.resize( cutoff_cross_sections.size() );
-
-  unsigned begin = cutoff_threshold_energy_index;
-
-  for( unsigned i = begin; i < cutoff_cross_sections.size(); ++i )
-  {
-    double cutoff_cdf =
-                cutoff_distribution->evaluateCDF( electron_energy_grid[i],
-                                                  cutoff_angle_cosine );
-
-    double cross_section_reduction =
-        reduction_distribution->evaluate( electron_energy_grid[i] );
-
-    double rutherford_cross_section;
-    if ( i < screened_rutherford_threshold_energy_index )
-        rutherford_cross_section = 0.0;
-    else
-    {
-      rutherford_cross_section = screened_rutherford_cross_sections[
-                                  i-screened_rutherford_threshold_energy_index];
-    }
-
-    double cutoff_cross_section =
-        cutoff_cross_sections[i-cutoff_threshold_energy_index];
-
-    moment_preserving_cross_section[i] = cross_section_reduction*
-        (rutherford_cross_section + (1.0 - cutoff_cdf)*cutoff_cross_section);
-
-//    moment_preserving_cross_section[i] =
-//        cross_section_reduction*total_cross_section*(1.0 - cutoff_cdf);
-  }
-}
-
 
 } // end DataGen namespace
 

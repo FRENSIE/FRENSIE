@@ -771,18 +771,6 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
 
-  threshold =
-    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
-
-  TEST_EQUALITY_CONST( threshold, 0 );
-
-  cross_section =
-    data_container.getMomentPreservingCrossSection();
-
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.03086051522408649325e+07, 1e-15 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 1.28281706991402224574e-07, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
-
   // Check the electroionization data
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
@@ -1361,18 +1349,6 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
 
-  threshold =
-    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
-
-  TEST_EQUALITY_CONST( threshold, 0 );
-
-  cross_section =
-    data_container.getMomentPreservingCrossSection();
-
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.03086051522409096360e+07, 1e-15 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 1.29316014091644480779e-07, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
-
   // Check the electroionization data
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
@@ -1883,23 +1859,11 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold =
-    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
-
-  TEST_EQUALITY_CONST( threshold, 0 );
-
-  std::vector<double> cross_section =
-    data_container.getMomentPreservingCrossSection();
-
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.22176061033364161849e+07, 1e-15 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 4.64056535497517578099e-07, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
-
-  threshold =
     data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   TEST_EQUALITY_CONST( threshold, 0 );
 
-  cross_section =
+  std::vector<double> cross_section =
     data_container.getCutoffElasticCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
@@ -2467,23 +2431,11 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( discrete_weights.back(), 9.97626780182274131e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
-  unsigned threshold =
-    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
+  unsigned threshold = data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   TEST_EQUALITY_CONST( threshold, 0 );
 
-  std::vector<double> cross_section =
-    data_container.getMomentPreservingCrossSection();
-
-  TEST_FLOATING_EQUALITY( cross_section.front(), 1.22176061033364161849e+07, 1e-15 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
-
-  threshold = data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
-
-  TEST_EQUALITY_CONST( threshold, 0 );
-
-  cross_section = data_container.getCutoffElasticCrossSection();
+  std::vector<double> cross_section = data_container.getCutoffElasticCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
@@ -3894,19 +3846,6 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //   TEST_EQUALITY_CONST( discrete_weights.front(), 5.11428734827680011e-04 );
 //   TEST_EQUALITY_CONST( discrete_weights.back(), 9.99488571265172321e-01 );
 //   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
-
-//   unsigned threshold =
-//     data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
-
-//   TEST_EQUALITY_CONST( threshold, 0 );
-
-//   std::vector<double> cross_section =
-//     data_container.getMomentPreservingCrossSection();
-
-//   TEST_FLOATING_EQUALITY( cross_section.front(), 1.3615606801711243391e+08, 1e-15 );
-//   TEST_FLOATING_EQUALITY( cross_section.back(), 1.5258887288504258e-05, 1e-15 );
-//   TEST_EQUALITY_CONST( cross_section.size(), 354-threshold );
-//   std::cout << std::setprecision(16) << std::scientific << "cross_section.back() = \t" << cross_section.back() << std::endl;
 
 //   threshold =
 //     data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();

@@ -77,6 +77,11 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_values.front() == -1.0 );
   testPrecondition( independent_values.back() == 0.999999 );
+  // Make sure the Moliere screeneding constant is valid
+  testPrecondition( moliere_screening_constant > 0.0 );
+  // Make sure the cutoff cross section ratio is valid
+  testPrecondition( cutoff_cross_section_ratio > 0.0 );
+  testPrecondition( cutoff_cross_section_ratio <= 1.0 );
 
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
@@ -112,6 +117,11 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   // Make sure that the independent_values have the proper range
   testPrecondition( independent_values.front() == InputIndepQuantity(-1.0) );
   testPrecondition( independent_values.back() == InputIndepQuantity(0.999999) );
+  // Make sure the Moliere screeneding constant is valid
+  testPrecondition( moliere_screening_constant > 0.0 );
+  // Make sure the cutoff cross section ratio is valid
+  testPrecondition( cutoff_cross_section_ratio > 0.0 );
+  testPrecondition( cutoff_cross_section_ratio <= 1.0 );
 
   this->initializeDistribution( independent_values, dependent_values );
 }
@@ -400,6 +410,10 @@ typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumber(
                                              const double random_number ) const
 {
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+
   unsigned dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );

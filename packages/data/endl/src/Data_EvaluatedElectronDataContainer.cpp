@@ -137,29 +137,6 @@ ENDLDataContainer::getTotalElasticCrossSection() const
   return d_total_elastic_cross_section;
 }
 
-/*
-// Return the screened Rutherford elastic electron cross section
-const std::vector<double>&
-ENDLDataContainer::getScreenedRutherfordElasticCrossSection() const
-{
-  return d_screened_rutherford_elastic_cross_section;
-}
-
-// Return the screened Rutherford elastic normalization constant
-const std::vector<double>&
-ENDLDataContainer::getScreenedRutherfordNormalizationConstant() const
-{
-  return d_screened_rutherford_normalization_constant;
-}
-
-// Return Moliere's screening constant
-const std::vector<double>&
-ENDLDataContainer::getMoliereScreeningConstant() const
-{
-  return d_moliere_screening_constant;
-}
-*/
-
 //---------------------------------------------------------------------------//
 // GET ELECTROIONIZATION DATA
 //---------------------------------------------------------------------------//

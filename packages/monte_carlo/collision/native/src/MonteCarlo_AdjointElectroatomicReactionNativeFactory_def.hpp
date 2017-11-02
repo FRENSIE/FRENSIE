@@ -173,19 +173,20 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
   unsigned cutoff_threshold_energy_index =
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
 
-  // Reduced cutoff elastic cross section ratio
-  std::vector<double> reduced_cutoff_ratio =
-    raw_adjoint_electroatom_data.getReducedCutoffCrossSectionRatios();
-
   // Moment preserving elastic cross section
+  std::vector<double> moment_preserving_cross_sections;
+  unsigned mp_threshold_energy_index;
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+                                moment_preserving_cross_sections,
+                                mp_threshold_energy_index,
+                                raw_adjoint_electroatom_data,
+                                energy_grid,
+                                evaluation_tol );
+
   Teuchos::ArrayRCP<double> mp_cross_section;
   mp_cross_section.assign(
-    raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSection().begin(),
-    raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSection().end() );
-
-  // Moment preserving elastic cross section threshold energy bin index
-  unsigned mp_threshold_energy_index =
-    raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
+    moment_preserving_cross_sections.begin(),
+    moment_preserving_cross_sections.end() );
 
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
@@ -198,6 +199,14 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
     evaluation_tol );
+
+  // Create the cutoff elastic scattering distribution
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> cutoff_distribution;
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+            cutoff_distribution,
+            raw_adjoint_electroatom_data,
+            cutoff_angle_cosine,
+            evaluation_tol );
 
   // Calculate the hybrid cross section
   unsigned hybrid_threshold_energy_index =
@@ -214,10 +223,12 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
   for (unsigned i = 0; i < combined_cross_section.size(); ++i )
   {
     double energy = energy_grid[i + hybrid_threshold_energy_index];
+    double reduced_cutoff_ratio =
+                cutoff_distribution->evaluateCutoffCrossSectionRatio( energy );
 
     if ( i < mp_threshold_diff )
     {
-      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio;
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -226,7 +237,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     else
     {
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio +
         mp_cross_section[i-mp_threshold_diff];
     }
   }
@@ -324,15 +335,19 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
     evaluation_tol );
 
   // Moment preserving elastic cross section
+  std::vector<double> moment_preserving_cross_sections;
+  unsigned threshold_energy_index;
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+                                moment_preserving_cross_sections,
+                                threshold_energy_index,
+                                raw_adjoint_electroatom_data,
+                                energy_grid,
+                                evaluation_tol );
+
   Teuchos::ArrayRCP<double> elastic_cross_section;
   elastic_cross_section.assign(
-    raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSection().begin(),
-    raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSection().end() );
-
-  // Moment preserving elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
-    raw_adjoint_electroatom_data.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex();
-
+    moment_preserving_cross_sections.begin(),
+    moment_preserving_cross_sections.end() );
 
   elastic_reaction.reset(
     new MomentPreservingElasticAdjointElectroatomicReaction<Utility::LinLin>(
@@ -475,7 +490,7 @@ void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 }
 
 // Create the forward total reaction (only used to get the cross section)
-  template<typename ReactionType>
+template<typename ReactionType>
 void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,

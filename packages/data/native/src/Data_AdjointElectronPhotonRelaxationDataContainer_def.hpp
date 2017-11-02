@@ -119,6 +119,7 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_cross_section_reductions );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, reduced_cutoff_cross_section_ratios );
@@ -137,8 +138,6 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_screened_rutherford_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_total_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_total_elastic_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_electron_cross_section );
@@ -247,6 +246,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_cross_section_reductions );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, reduced_cutoff_cross_section_ratios );
@@ -265,8 +265,6 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_screened_rutherford_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_total_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_total_elastic_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, adjoint_moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_electroionization_subshell_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_electron_cross_section );

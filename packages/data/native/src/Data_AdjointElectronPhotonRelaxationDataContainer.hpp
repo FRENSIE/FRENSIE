@@ -354,6 +354,9 @@ public:
   //! Return if there is moment preserving data
   bool hasAdjointMomentPreservingData() const;
 
+  //! Return the moment preserving cross section reductions
+  const std::vector<double>& getAdjointMomentPreservingCrossSectionReduction() const;
+
   //! Return the moment preserving elastic discrete angles
   const std::map<double,std::vector<double> >
     getAdjointMomentPreservingElasticDiscreteAngles() const;
@@ -430,12 +433,6 @@ public:
 
   //! Return the total elastic cross section threshold energy bin index
   unsigned getAdjointTotalElasticCrossSectionThresholdEnergyIndex() const;
-
-  //! Return the Moment Preserving (MP) elastic electron cross section
-  const std::vector<double>& getAdjointMomentPreservingCrossSection() const;
-
-  //! Return the MP elastic cross section threshold energy bin index
-  unsigned getAdjointMomentPreservingCrossSectionThresholdEnergyIndex() const;
 
   //! Return the electroionization electron cross section for a subshell
   const std::vector<double>&
@@ -840,6 +837,10 @@ protected:
   void setAdjointCutoffElasticPDF(
     const std::map<double,std::vector<double> >& adjoint_cutoff_elastic_pdf );
 
+  //! Set the adjoint moment preserving cross section reduction
+  void setAdjointMomentPreservingCrossSectionReduction(
+    const std::vector<double>& adjoint_cross_section_reduction );
+
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setAdjointMomentPreservingElasticDiscreteAnglesAtEnergy(
     const double incoming_adjoint_energy,
@@ -950,14 +951,6 @@ protected:
   //! Set the total elastic cross section threshold energy bin index
   void setAdjointTotalElasticCrossSectionThresholdEnergyIndex(
     const unsigned index );
-
-  //! Set the moment preserving elastic electron cross section using Moment Preserving (MP) theory
-  void setAdjointMomentPreservingCrossSection(
-    const std::vector<double>& adjoint_moment_preserving_elastic_cross_section );
-
-  //! Set the MP moment preserving elastic cross section threshold energy bin index
-  void setAdjointMomentPreservingCrossSectionThresholdEnergyIndex(
-                                                        const unsigned index );
 
   //! Set the electroionization electron cross section for a subshell
   void setAdjointElectroionizationCrossSection( const unsigned subshell,
@@ -1287,6 +1280,9 @@ private:
   // The cutoff elastic scattering pdf
   std::map<double,std::vector<double> > d_adjoint_cutoff_elastic_pdf;
 
+  // The moment preserving cross section reductions
+  std::vector<double> d_adjoint_moment_preserving_cross_section_reductions;
+
   // The moment preserving elastic discrete angles
   std::map<double,std::vector<double> > d_adjoint_moment_preserving_elastic_discrete_angles;
 
@@ -1342,12 +1338,6 @@ private:
 
   // The total elastic electron cross section threshold energy index
   unsigned d_adjoint_total_elastic_cross_section_threshold_index;
-
-  // The Moment Preserving elastic electron cross section (b)
-  std::vector<double> d_adjoint_moment_preserving_elastic_cross_section;
-
-  // The Moment Preserving elastic electron cross section threshold energy index
-  unsigned d_adjoint_moment_preserving_elastic_cross_section_threshold_index;
 
   // The electroionization subshell electron cross section (b)
   std::map<unsigned,std::vector<double> >

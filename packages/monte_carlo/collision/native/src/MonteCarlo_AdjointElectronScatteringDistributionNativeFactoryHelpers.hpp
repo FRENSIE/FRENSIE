@@ -23,28 +23,28 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create an adjoint coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const std::string sampling_method,
     const double evaluation_tol );
 
 //! Create an adjoint hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
 //! Create an adjoint cutoff elastic distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
 //! Create an adjoint moment preserving elastic distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
@@ -55,7 +55,7 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //----------------------------------------------------------------------------//
 
 //! Create an adjoint bremsstrahlung distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double evaluation_tol = 1e-7 );
@@ -65,7 +65,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistrib
 //----------------------------------------------------------------------------//
 
 //! Create an adjoint electroionization subshell distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplingPolicy>
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,

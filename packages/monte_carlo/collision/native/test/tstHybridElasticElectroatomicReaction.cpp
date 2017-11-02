@@ -20,6 +20,7 @@
 #include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -35,7 +36,7 @@
   typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::TwoDDist
             TwoDDist;
 
-  Teuchos::RCP<MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLin> >
+  Teuchos::RCP<MonteCarlo::HybridElasticElectroatomicReaction<Utility::LogLog> >
     hybrid_elastic_reaction;
 
 //---------------------------------------------------------------------------//
@@ -97,9 +98,8 @@ TEUCHOS_UNIT_TEST( HybridElasticElectroatomicReaction,
   double cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-05 );
   TEST_FLOATING_EQUALITY( cross_section, 3.62586e+09*ratio + 1.611494138359356821e+08, 1e-12 );
 
-  ratio = 1.500499711874552500e-01;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.23678e+08*ratio + 5.730253976136980951e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.5860420097891897e+07, 1e-12 );
 
   ratio = 8.6868172466733646e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 1.0E+05 );
@@ -143,7 +143,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  double evaluation_tol = 1e-7;
+  double evaluation_tol = 1e-15;
 
   // Get native data container
   Data::ElectronPhotonRelaxationDataContainer data_container =
@@ -167,19 +167,28 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getCutoffElasticCrossSection().begin(),
         data_container.getCutoffElasticCrossSection().end() );
 
+  // Moment preserving elastic cross section
+  std::vector<double> moment_preserving_cross_sections;
+  unsigned mp_threshold_energy_index;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Exact>(
+                               moment_preserving_cross_sections,
+                               mp_threshold_energy_index,
+                               data_container,
+                               energy_grid,
+                               evaluation_tol );
+
   Teuchos::ArrayRCP<double> mp_cross_section;
   mp_cross_section.assign(
-        data_container.getMomentPreservingCrossSection().begin(),
-        data_container.getMomentPreservingCrossSection().end() );
+    moment_preserving_cross_sections.begin(),
+    moment_preserving_cross_sections.end() );
 
   // Calculate the hybrid cross section
   unsigned hybrid_threshold_energy_index =
-    std::min( data_container.getMomentPreservingCrossSectionThresholdEnergyIndex(),
+    std::min( mp_threshold_energy_index,
               data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() );
 
   unsigned mp_threshold_diff =
-    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex() -
-    hybrid_threshold_energy_index;
+    mp_threshold_energy_index - hybrid_threshold_energy_index;
   unsigned cutoff_threshold_diff =
     data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() -
     hybrid_threshold_energy_index;
@@ -190,7 +199,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         cutoff_elastic_distribution,
         data_container,
         data_container.getCutoffAngleCosine(),
@@ -226,7 +235,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
@@ -237,7 +246,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the reaction
   hybrid_elastic_reaction.reset(
-    new MonteCarlo::HybridElasticElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::HybridElasticElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,

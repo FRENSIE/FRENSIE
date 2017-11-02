@@ -144,6 +144,64 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
     evaluation_tol );
 }
 
+// Calculate the moment preserving cross section
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections(
+    std::vector<double>& cross_sections,
+    unsigned& threshold_energy_index,
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const double evaluation_tol )
+{
+  // Make sure there is moment preserving data
+  testPrecondition( data_container.hasMomentPreservingData() );
+  //Make sure the energy grid and cross sections are valid
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+  //Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> cutoff_distribution;
+  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+    cutoff_distribution,
+    data_container,
+    0.999999,
+    evaluation_tol );
+
+  // Create the elastic cross section reduction distribution
+  std::shared_ptr<const Utility::OneDDistribution> reduction_distribution(
+        new Utility::TabularDistribution<Utility::LogLog>(
+            data_container.getElasticAngularEnergyGrid(),
+            data_container.getMomentPreservingCrossSectionReduction() ) );
+
+  // Get the cutoff elastic cross sections
+  Teuchos::ArrayRCP<double> cutoff_cross_sections;
+  cutoff_cross_sections.assign(
+        data_container.getCutoffElasticCrossSection().begin(),
+        data_container.getCutoffElasticCrossSection().end() );
+
+  // Get the total elastic cross sections
+  Teuchos::ArrayRCP<double> total_cross_sections;
+  total_cross_sections.assign(
+        data_container.getTotalElasticCrossSection().begin(),
+        data_container.getTotalElasticCrossSection().end() );
+
+  ThisType::calculateMomentPreservingCrossSections(
+              cutoff_distribution,
+              reduction_distribution,
+              energy_grid,
+              cutoff_cross_sections,
+              total_cross_sections,
+              data_container.getCutoffAngleCosine(),
+              cross_sections,
+              threshold_energy_index,
+              evaluation_tol );
+
+  testPrecondition( threshold_energy_index >= 0u );
+  testPostcondition( cross_sections.size() + threshold_energy_index ==
+                     energy_grid.size() );
+}
+
 //----------------------------------------------------------------------------//
 //      ****ADJOINT DATA PUBLIC FUNCTIONS****
 //----------------------------------------------------------------------------//
@@ -237,6 +295,64 @@ ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSampleP
     data_container.getAdjointMomentPreservingElasticWeights(),
     cutoff_angle_cosine,
     evaluation_tol );
+}
+
+// Calculate the moment preserving cross section
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections(
+    std::vector<double>& cross_sections,
+    unsigned& threshold_energy_index,
+    const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const double evaluation_tol )
+{
+  // Make sure there is moment preserving data
+  testPrecondition( data_container.hasAdjointMomentPreservingData() );
+  //Make sure the energy grid and cross sections are valid
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+  //Make sure the evaluation tolerance is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> cutoff_distribution;
+  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+    cutoff_distribution,
+    data_container,
+    0.999999,
+    evaluation_tol );
+
+  // Create the elastic cross section reduction distribution
+  std::shared_ptr<const Utility::OneDDistribution> reduction_distribution(
+        new Utility::TabularDistribution<Utility::LogLog>(
+            data_container.getAdjointElasticAngularEnergyGrid(),
+            data_container.getAdjointMomentPreservingCrossSectionReduction() ) );
+
+  // Get the cutoff elastic cross sections
+  Teuchos::ArrayRCP<double> cutoff_cross_sections;
+  cutoff_cross_sections.assign(
+        data_container.getAdjointCutoffElasticCrossSection().begin(),
+        data_container.getAdjointCutoffElasticCrossSection().end() );
+
+  // Get the total elastic cross sections
+  Teuchos::ArrayRCP<double> total_cross_sections;
+  total_cross_sections.assign(
+        data_container.getAdjointTotalElasticCrossSection().begin(),
+        data_container.getAdjointTotalElasticCrossSection().end() );
+
+  ThisType::calculateMomentPreservingCrossSections(
+              cutoff_distribution,
+              reduction_distribution,
+              energy_grid,
+              cutoff_cross_sections,
+              total_cross_sections,
+              data_container.getCutoffAngleCosine(),
+              cross_sections,
+              threshold_energy_index,
+              evaluation_tol );
+
+  testPrecondition( threshold_energy_index >= 0u );
+  testPostcondition( cross_sections.size() + threshold_energy_index ==
+                     energy_grid.size() );
 }
 
 //----------------------------------------------------------------------------//
