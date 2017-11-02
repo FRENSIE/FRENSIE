@@ -61,6 +61,19 @@ public:
 
   //! Test if the distribution is tabular
   bool isTabular() const override;
+
+private:
+
+  // Archive the distribution
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 // Test if the distribution is tabular
@@ -98,6 +111,9 @@ struct translator_between<Utility::Variant,Utility::UnitAwareTabularOneDDistribu
 } // end property_tree namespace
 
 } // end boost namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( UnitAwareTabularOneDDistribution );
+BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareTabularOneDDistribution, 0 );
 
 #endif // end UTILITY_TABULAR_ONE_D_DISTRIBUTION_HPP
 

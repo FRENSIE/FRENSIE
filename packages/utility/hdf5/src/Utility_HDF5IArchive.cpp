@@ -6,6 +6,10 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/detail/archive_serializer_map.hpp>
+#include <boost/archive/impl/archive_serializer_map.ipp>
+
 // FRENSIE Includes
 #include "Utility_HDF5IArchive.hpp"
 
@@ -46,6 +50,16 @@ template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::
 template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<std::string>&, unsigned int );
   
 } // end Utility namespace
+
+namespace boost{
+namespace archive{
+namespace detail{
+
+template class archive_serializer_map<Utility::HDF5IArchive>;
+  
+} // end detail namespace
+} // end archive namespace
+} // end boost namespace
 
 //---------------------------------------------------------------------------//
 // end Utility_HDF5IArchive.cpp

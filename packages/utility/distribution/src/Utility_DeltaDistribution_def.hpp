@@ -18,15 +18,16 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace Utility{
+BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDeltaDistribution<void,void> );
+namespace Utility{
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution()
-{ /* ... */ }
+{ 
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
+}
 
 // Basic Constructor
 template<typename IndependentUnit, typename DependentUnit>
@@ -37,6 +38,8 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
 {
   // Make sure that the point is valid
   testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf(location) );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Advanced Constructor
@@ -53,6 +56,8 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   // Make sure the multiplier is valid
   testPrecondition( !QuantityTraits<InputDepQuantity>::isnaninf( multiplier ));
   testPrecondition( multiplier != QuantityTraits<InputDepQuantity>::zero() );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor
@@ -78,6 +83,8 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   // Make sure that the multiplier is valid
   testPrecondition( !InputDQT::isnaninf( dist_instance.d_multiplier ) );
   testPrecondition( dist_instance.d_multiplier != InputDQT::zero() );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -92,6 +99,8 @@ const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int )
   // Make sure that the multiplier is valid
   testPrecondition( !QT::isnaninf( unitless_dist_instance.d_multiplier ) );
   testPrecondition( unitless_dist_instance.d_multiplier != 0.0 );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -486,6 +495,38 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
   }
 }
 
+// Save the distribution to an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & boost::serialization::make_nvp( "d_location", Utility::getRawQuantity( d_location ) );
+  ar & boost::serialization::make_nvp( "d_multiplier", Utility::getRawQuantity( d_multiplier ) );
+}
+
+// Load the distribution from an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  double raw_location;
+  ar & boost::serialization::make_nvp( "d_location", raw_location );
+
+  double raw_multiplier;
+  ar & boost::serialization::make_nvp( "d_multiplier", raw_multiplier );
+
+  this->setLocationValue( raw_location );
+  this->setMultiplierValue( raw_multiplier );
+}
+
 // Verify the distribution type
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
@@ -501,13 +542,22 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyDistributi
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue( const Utility::Variant& location_data )
 {
+  double location;
   try{
-    Utility::setQuantity( d_location,
-                          Utility::variant_cast<double>( location_data ) );
+    location = Utility::variant_cast<double>( location_data );
   }
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                            "Could not extract the location value!" );
 
+  this->setLocationValue( location );
+}
+
+// Set the location value
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue( const double location )
+{
+  Utility::setQuantity( d_location, location );
+  
   // Verify that the location value is valid
   TEST_FOR_EXCEPTION( IQT::isnaninf( d_location ),
 		      Utility::StringConversionException,
@@ -520,13 +570,23 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierValue( const Utility::Variant& multiplier_data )
 {
+  double multiplier;
+  
   try{
-    Utility::setQuantity( d_multiplier,
-                          Utility::variant_cast<double>( multiplier_data ) );
+    multiplier = Utility::variant_cast<double>( multiplier_data );
   }
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                            "Could not extract the multiplier value!" );
 
+  this->setMultiplierValue( multiplier );
+}
+
+// Set the multiplier value
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierValue( const double multiplier )
+{
+  Utility::setQuantity( d_multiplier, multiplier );
+  
   TEST_FOR_EXCEPTION( DQT::isnaninf( d_multiplier ),
                       Utility::StringConversionException,
                       "The delta distribution cannot be constructed "
@@ -564,6 +624,9 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroI
 {
   return false;
 }
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDeltaDistribution<void,void> );
 
 } // end Utility namespace
 

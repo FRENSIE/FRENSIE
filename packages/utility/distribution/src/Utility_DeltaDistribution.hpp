@@ -176,8 +176,27 @@ private:
   // Set the location value
   void setLocationValue( const Utility::Variant& location_data );
 
+  // Set the location value
+  void setLocationValue( const double location );
+
   // Set the multiplier value
   void setMultiplierValue( const Utility::Variant& multiplier_data );
+
+  // Set the multiplier value
+  void setMultiplierValue( const double multiplier );
+
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The distribution type
   static const OneDDistributionType distribution_type = DELTA_DISTRIBUTION;
@@ -195,6 +214,9 @@ private:
 typedef UnitAwareDeltaDistribution<void,void> DeltaDistribution;
 
 } // end Utility namespace
+
+BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareDeltaDistribution, 0 );
+BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( DeltaDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

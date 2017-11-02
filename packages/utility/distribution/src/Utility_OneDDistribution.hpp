@@ -13,11 +13,15 @@
 #include <limits>
 #include <stdexcept>
 #include <iostream>
+#include <type_traits>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
 #include <boost/mpl/and.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
@@ -28,6 +32,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
+#include "Utility_ComparisonPolicy.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
@@ -158,6 +164,16 @@ protected:
   //! Test if the dependent variable is compatible with Log processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
+
+private:
+
+  // Archive the distribution
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 // Test if the distribution is tabular
@@ -257,12 +273,18 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBou
 	const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const
 {
   return
-    Utility::relError( getRawQuantity( this->getUpperBoundOfIndepVar() ),
-                       getRawQuantity( distribution.getUpperBoundOfIndepVar()))
-    < 1e-9 &&
-    Utility::relError( getRawQuantity( this->getLowerBoundOfIndepVar() ),
-                       getRawQuantity( distribution.getLowerBoundOfIndepVar()))
-    < 1e-9;
+    (RelativeErrorComparisonPolicy::compare( this->getUpperBoundOfIndepVar(),
+                                             distribution.getUpperBoundOfIndepVar(),
+                                             1e-9 ) ||
+     CloseComparisonPolicy::compare( this->getUpperBoundOfIndepVar(),
+                                     distribution.getUpperBoundOfIndepVar(),
+                                     1e-9 )) &&
+    (RelativeErrorComparisonPolicy::compare( this->getLowerBoundOfIndepVar(),
+                                             distribution.getLowerBoundOfIndepVar(),
+                                             1e-9 ) ||
+     CloseComparisonPolicy::compare( this->getLowerBoundOfIndepVar(),
+                                     distribution.getLowerBoundOfIndepVar(),
+                                     1e-9 ));
 }
 
 // Check if data is inlined by default when converting to a property tree
@@ -350,6 +372,97 @@ struct translator_between<Utility::Variant,Utility::UnitAwareOneDDistribution<In
 } // end property_tree namespace
 
 } // end boost namespace
+
+#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( FullName ) \
+namespace boost{                                                      \
+namespace serialization{                                            \
+                                                                        \
+  template<typename IndependentUnit, typename DependentUnit>            \
+  struct is_abstract<Utility::FullName<IndependentUnit,DependentUnit> > : boost::true_type \
+  { /* ... */ };                                                        \
+                                                                        \
+  template<typename IndependentUnit, typename DependentUnit>            \
+  struct is_abstract<const Utility::FullName<IndependentUnit,DependentUnit> > : boost::true_type \
+  { /* ... */ };                                                        \
+}                                                                       \
+}
+
+#define BOOST_DISTRIBUTION_CLASS_VERSION( FullName, N ) \
+namespace boost{                                      \
+namespace serialization{                            \
+                                                    \
+  template<typename IndependentUnit, typename DependentUnit>            \
+  struct version<Utility::FullName<IndependentUnit,DependentUnit> >     \
+  {                                                                     \
+    typedef mpl::int_<N> type;                                          \
+    typedef mpl::integral_c_tag tag;                                    \
+    BOOST_STATIC_CONSTANT(int, value = version::type::value);           \
+    BOOST_MPL_ASSERT((                                                  \
+        boost::mpl::less<                                              \
+            boost::mpl::int_<N>,                                       \
+            boost::mpl::int_<256>                                      \
+        >                                                              \
+    ));    \
+  };       \
+}          \
+}
+
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( BaseName )  \
+namespace boost{                                              \
+namespace serialization{                                    \
+                                                            \
+  template<typename IndependentUnit, typename DependentUnit> \
+  struct guid_defined<Utility::UnitAware##BaseName<IndependentUnit,DependentUnit> > : boost::mpl::true_ \
+  { /* ... */ };                                                        \
+                                                                        \
+namespace ext{                                                        \
+                                                                        \
+  template<typename IndependentUnit, typename DependentUnit>            \
+  struct guid_impl<Utility::UnitAware##BaseName<IndependentUnit,DependentUnit> > \
+  {                                                                     \
+    static inline const char* call()                                    \
+    {                                                                   \
+      std::string guid( "UnitAware"#BaseName"<" );                        \
+      guid += Utility::typeName<IndependentUnit,DependentUnit>();       \
+      guid += ">";                                                     \
+                                                                       \
+      return guid.c_str();                                              \
+    }                                                                   \
+  };                                                                    \
+}                                                                       \
+                                                                        \
+  template<>                                                            \
+  inline const char* guid<Utility::UnitAware##BaseName<void,void> >()   \
+  { return #BaseName; }                                                 \
+} \
+}
+
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( FullName )   \
+namespace boost{                                              \
+namespace archive{                                          \
+namespace detail{                                         \
+namespace extra_detail{ \
+                        \
+  template<typename IndependentUnit, typename DependentUnit>            \
+  struct init_guid<Utility::FullName<IndependentUnit,DependentUnit> >   \
+  {                                                                     \
+    static const guid_initializer<Utility::FullName<IndependentUnit,DependentUnit> >& g; \
+  };                                                                    \
+                                                                        \
+  template<typename IndependentUnit, typename DependentUnit>            \
+  const guid_initializer<Utility::FullName<IndependentUnit,DependentUnit> >& init_guid<Utility::FullName<IndependentUnit,DependentUnit> >::g =\
+    ::boost::serialization::singleton<guid_initializer<Utility::FullName<IndependentUnit,DependentUnit> > >::get_mutable_instance().export_guid(); \
+}                                                                       \
+}                                                                       \
+}                                                                       \
+}
+
+//! Call this macro from the constructor
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ... )  \
+  const auto& __guid_initializer__ = boost::archive::detail::extra_detail::init_guid<__VA_ARGS__>::g
+  
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( UnitAwareOneDDistribution );
+BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareOneDDistribution, 0 );
 
 #endif // end UTILITY_ONE_D_DISTRIBUTION_HPP
 

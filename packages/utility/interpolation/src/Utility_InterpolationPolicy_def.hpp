@@ -15,10 +15,8 @@
 // Boost Includes
 #include <boost/mpl/or.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -35,16 +33,16 @@ T InterpolationHelper<ParentInterpolationType>::interpolate(
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
   
   return ParentInterpolationType::recoverProcessedDepVar(
                processed_dep_var_0 + 
@@ -63,16 +61,16 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( 
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( processed_slope ) );
   
   return processed_dep_var_0 + 
     processed_slope*(processed_indep_var - processed_indep_var_0);

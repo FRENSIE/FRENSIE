@@ -14,23 +14,51 @@
 #include <boost/units/systems/si.hpp>
 #include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
+//---------------------------------------------------------------------------//
+// Testing types
+//---------------------------------------------------------------------------//
 using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
+  std::tuple<cgs::energy,si::amount,si::energy,si::amount>,
+  std::tuple<si::energy,si::length,cgs::energy,cgs::length>,
+  std::tuple<cgs::energy,cgs::length,si::energy,si::length>,
+  std::tuple<si::energy,si::mass,cgs::energy,cgs::mass>,
+  std::tuple<cgs::energy,cgs::mass,si::energy,si::mass>,
+  std::tuple<si::energy,si::dimensionless,cgs::energy,cgs::dimensionless>,
+  std::tuple<cgs::energy,cgs::dimensionless,si::energy,si::dimensionless>,
+  std::tuple<cgs::energy,void*,si::energy,void*>,
+  std::tuple<ElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<ElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<ElectronVolt,si::amount,KiloElectronVolt,si::amount>,
+  std::tuple<ElectronVolt,si::amount,MegaElectronVolt,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,ElectronVolt,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,MegaElectronVolt,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,ElectronVolt,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,KiloElectronVolt,si::amount>,
+  std::tuple<void*,MegaElectronVolt,void*,KiloElectronVolt>
+  > TestUnitTypeQuads;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -54,496 +82,496 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> >
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( DeltaDistribution, evaluate )
+FRENSIE_UNIT_TEST( DeltaDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0 ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, evaluate )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*si::seconds ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*si::seconds ),
 		       0.0*si::meters );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*si::seconds ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*si::seconds ),
 		       1.0*si::meters );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 6.0*si::seconds ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 6.0*si::seconds ),
 		       0.0*si::meters );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-TEUCHOS_UNIT_TEST( DeltaDistribution, evaluatePDF )
+FRENSIE_UNIT_TEST( DeltaDistribution, evaluatePDF )
 {
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 0.0 ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, evaluatePDF )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, evaluatePDF )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*si::seconds ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 0.0*si::seconds ),
 		       0.0/si::seconds );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 3.0*si::seconds ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 3.0*si::seconds ),
 		       1.0/si::seconds );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 6.0*si::seconds ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 6.0*si::seconds ),
 		       0.0/si::seconds );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated
-TEUCHOS_UNIT_TEST( DeltaDistribution, evaluateCDF )
+FRENSIE_UNIT_TEST( DeltaDistribution, evaluateCDF )
 {
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 1.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( tab_distribution->evaluateCDF( -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( tab_distribution->evaluateCDF( 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( tab_distribution->evaluateCDF( 1.0 ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware CDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, evaluateCDF )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, evaluateCDF )
 {
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		   unit_aware_tab_distribution->evaluateCDF( 0.0*si::seconds ),
 		   0.0 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		   unit_aware_tab_distribution->evaluateCDF( 3.0*si::seconds ),
 		   1.0 );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		   unit_aware_tab_distribution->evaluateCDF( 6.0*si::seconds ),
 		   1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DeltaDistribution, sample )
+FRENSIE_UNIT_TEST( DeltaDistribution, sample )
 {
-  TEST_EQUALITY_CONST( distribution->sample(), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->sample(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sample )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, sample )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->sample(), 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->sample(), 3.0*si::seconds );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordTrials )
+FRENSIE_UNIT_TEST( DeltaDistribution, sampleAndRecordTrials )
 {
   Utility::DistributionTraits::Counter trials = 0;
   double sample = distribution->sampleAndRecordTrials( trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 1 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordTrials )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordTrials )
 {
   Utility::DistributionTraits::Counter trials = 0;
 
   quantity<si::time> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
-  TEST_EQUALITY_CONST( trials, 1 );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( trials, 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordBinIndex )
+FRENSIE_UNIT_TEST( DeltaDistribution, sampleAndRecordBinIndex )
 {
   unsigned bin_index = 0;
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( bin_index, 0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( bin_index, 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordBinIndex )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordBinIndex )
 {
   unsigned bin_index = 0;
 
   quantity<si::time> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
-  TEST_EQUALITY_CONST( bin_index, 0 );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( bin_index, 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumber )
+FRENSIE_UNIT_TEST( DeltaDistribution, sampleWithRandomNumber )
 {
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = tab_distribution->sampleWithRandomNumber( 0.5 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleWithRandomNumber )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, sampleWithRandomNumber )
 {
   quantity<si::time> sample =
     unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.5 );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DeltaDistribution, sampleInSubrange )
+FRENSIE_UNIT_TEST( DeltaDistribution, sampleInSubrange )
 {
   double sample = tab_distribution->sampleInSubrange( 1.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = tab_distribution->sampleInSubrange( 0.1 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, sampleInSubrange )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, sampleInSubrange )
 {
   quantity<si::time> sample =
     unit_aware_tab_distribution->sampleInSubrange( 4.0*si::seconds );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
 
   sample = unit_aware_tab_distribution->sampleInSubrange( 3.1*si::seconds );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumberInSubrange )
+FRENSIE_UNIT_TEST( DeltaDistribution, sampleWithRandomNumberInSubrange )
 {
   double sample =
     tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.5, 2.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution,
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution,
 		   sampleWithRandomNumberInSubrange )
 {
   quantity<si::time> sample =
     unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 4.0*si::seconds );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
 
   sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.5, 3.1*si::seconds );
 
-  TEST_EQUALITY_CONST( sample, 3.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( sample, 3.0*si::seconds );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can
 // be returned
-TEUCHOS_UNIT_TEST( DeltaDistribution, getUpperBoundOfIndepVar )
+FRENSIE_UNIT_TEST( DeltaDistribution, getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfIndepVar(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getUpperBoundOfIndepVar )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       3.0*si::seconds );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the distribution independent variable can
 // be returned
-TEUCHOS_UNIT_TEST( DeltaDistribution, getLowerBoundOfIndepVar )
+FRENSIE_UNIT_TEST( DeltaDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfIndepVar(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getLowerBoundOfIndepVar )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       3.0*si::seconds );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
-TEUCHOS_UNIT_TEST( DeltaDistribution, getDistributionType )
+FRENSIE_UNIT_TEST( DeltaDistribution, getDistributionType )
 {
-  TEST_EQUALITY_CONST( distribution->getDistributionType(),
+  FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
 		       Utility::DELTA_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution type can be returned
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, getDistributionType )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, getDistributionType )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
 		       Utility::DELTA_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution type name can be returned
-TEUCHOS_UNIT_TEST( DeltaDistribution, getDistributionTypeName )
+FRENSIE_UNIT_TEST( DeltaDistribution, getDistributionTypeName )
 {
-  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName(),
+  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName(),
                        "Delta Distribution" );
-  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName( false ),
+  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName( false ),
                        "Delta" );
-  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName( true, true ),
+  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName( true, true ),
                        "delta distribution" );
-  TEST_EQUALITY_CONST( Utility::DeltaDistribution::getDistributionTypeName( false, true ),
+  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName( false, true ),
                        "delta" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution type name can be returned
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution,
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution,
                    getDistributionTypeName )
 {
-  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName()),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName()),
                        "Delta Distribution" );
-  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false )),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false )),
                        "Delta" );
-  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( true, true )),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( true, true )),
                        "delta distribution" );
-  TEST_EQUALITY_CONST( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false, true )),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false, true )),
                        "delta" );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the type name matches the distribution type name
-TEUCHOS_UNIT_TEST( DeltaDistribution, doesTypeNameMatch )
+FRENSIE_UNIT_TEST( DeltaDistribution, doesTypeNameMatch )
 {
-  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "Delta Distribution" ) );
-  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "Delta" ) );
-  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "delta" ) );
-  TEST_ASSERT( Utility::DeltaDistribution::doesTypeNameMatch( "DELTA" ) );
-  TEST_ASSERT( !Utility::DeltaDistribution::doesTypeNameMatch( "DELT" ) );
+  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "Delta Distribution" ) );
+  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "Delta" ) );
+  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "delta" ) );
+  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "DELTA" ) );
+  FRENSIE_CHECK( !Utility::DeltaDistribution::doesTypeNameMatch( "DELT" ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the type name matches the unit-aware distribution type name
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, doesTypeNameMatch )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, doesTypeNameMatch )
 {
-  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta Distribution" )) );
-  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta" )) );
-  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "delta" )) );
-  TEST_ASSERT( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELTA" )) );
-  TEST_ASSERT( !(Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELT" )) );
+  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta Distribution" )) );
+  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta" )) );
+  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "delta" )) );
+  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELTA" )) );
+  FRENSIE_CHECK( !(Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELT" )) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is tabular
-TEUCHOS_UNIT_TEST( DeltaDistribution, isTabular )
+FRENSIE_UNIT_TEST( DeltaDistribution, isTabular )
 {
-  TEST_ASSERT( distribution->isTabular() );
+  FRENSIE_CHECK( distribution->isTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is tabular
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, isTabular )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, isTabular )
 {
-  TEST_ASSERT( unit_aware_distribution->isTabular() );
+  FRENSIE_CHECK( unit_aware_distribution->isTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is continuous
-TEUCHOS_UNIT_TEST( DeltaDistribution, isContinuous )
+FRENSIE_UNIT_TEST( DeltaDistribution, isContinuous )
 {
-  TEST_ASSERT( !distribution->isContinuous() );
+  FRENSIE_CHECK( !distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is continuous
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, isContinuous )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, isContinuous )
 {
-  TEST_ASSERT( !unit_aware_distribution->isContinuous() );
+  FRENSIE_CHECK( !unit_aware_distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is compatible with the interpolation type
-TEUCHOS_UNIT_TEST( DeltaDistribution, isCompatibleWithInterpType )
+FRENSIE_UNIT_TEST( DeltaDistribution, isCompatibleWithInterpType )
 {
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is compatible with the interpolation type
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, isCompatibleWithInterpType )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, isCompatibleWithInterpType )
 {
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be converted to a string
-TEUCHOS_UNIT_TEST( DeltaDistribution, toString )
+FRENSIE_UNIT_TEST( DeltaDistribution, toString )
 {
   std::string dist_string = Utility::toString( *distribution );
 
-  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 0.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 0.000000000000000000e+00}" );
 
   dist_string = Utility::toString( Utility::DeltaDistribution( 1.0, 0.5 ) );
 
-  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be converted to a string
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toString )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toString )
 {
   std::string dist_string = Utility::toString( *unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 3.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 3.000000000000000000e+00}" );
   dist_string = Utility::toString( Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters ) );
 
-  TEST_EQUALITY_CONST( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
-TEUCHOS_UNIT_TEST( DeltaDistribution, toStream )
+FRENSIE_UNIT_TEST( DeltaDistribution, toStream )
 {
   std::ostringstream oss;
 
   Utility::toStream( oss, *distribution );
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, Utility::DeltaDistribution( 1.0, 0.5 ) );
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be placed in a stream
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toStream )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toStream )
 {
   std::ostringstream oss;
 
   Utility::toStream( oss, *unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters ) );
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
-TEUCHOS_UNIT_TEST( DeltaDistribution, ostream_operator )
+FRENSIE_UNIT_TEST( DeltaDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
   oss << *distribution;
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::DeltaDistribution( 1.0, 0.5 );
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be placed in a stream
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, ostream_operator )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
   oss << *unit_aware_distribution;
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters );
 
-  TEST_EQUALITY_CONST( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be initialized from a string
-TEUCHOS_UNIT_TEST( DeltaDistribution, fromString )
+FRENSIE_UNIT_TEST( DeltaDistribution, fromString )
 {
   Utility::DeltaDistribution test_dist =
     Utility::fromString<Utility::DeltaDistribution>( "{Delta Distribution, 0.000000000000000000e+00}" );
 
-  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   test_dist = Utility::fromString<Utility::DeltaDistribution>( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 
-  TEST_ASSERT( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
-  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0 );
-  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0 ), 0.5 );
+  FRENSIE_CHECK( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), 1.0 );
+  FRENSIE_CHECK_EQUAL( test_dist.evaluate( 1.0 ), 0.5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be initialize from a string
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromString )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, fromString )
 {
   Utility::UnitAwareDeltaDistribution<si::time,si::length> test_dist =
     Utility::fromString<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "{Delta Distribution, 3.000000000000000000e+00}" );
 
-  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
   test_dist = Utility::fromString<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
 
-  TEST_ASSERT( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
-  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
-  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
+  FRENSIE_CHECK( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be initialized from a stream
-TEUCHOS_UNIT_TEST( DeltaDistribution, fromStream )
+FRENSIE_UNIT_TEST( DeltaDistribution, fromStream )
 {
   std::istringstream iss( "{Delta Distribution, 0.000000000000000000e+00}" );
 
@@ -551,21 +579,21 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, fromStream )
 
   Utility::fromStream( iss, test_dist );
   
-  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
   iss.clear();
 
   Utility::fromStream( iss, test_dist );
 
-  TEST_ASSERT( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
-  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0 );
-  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0 ), 0.5 );
+  FRENSIE_CHECK( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), 1.0 );
+  FRENSIE_CHECK_EQUAL( test_dist.evaluate( 1.0 ), 0.5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be initialized from a stream
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromStream )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, fromStream )
 {
   std::istringstream iss( "{Delta Distribution, 3.000000000000000000e+00}" );
   
@@ -573,21 +601,21 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromStream )
 
   Utility::fromStream( iss, test_dist );
   
-  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
   iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
   iss.clear();
 
   Utility::fromStream( iss, test_dist );
 
-  TEST_ASSERT( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
-  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
-  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
+  FRENSIE_CHECK( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be initialized from a stream
-TEUCHOS_UNIT_TEST( DeltaDistribution, istream_operator )
+FRENSIE_UNIT_TEST( DeltaDistribution, istream_operator )
 {
   std::istringstream iss( "{Delta Distribution, 0.000000000000000000e+00}" );
 
@@ -595,21 +623,21 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, istream_operator )
 
   iss >> test_dist;
   
-  TEST_EQUALITY_CONST( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
   iss.clear();
 
   iss >> test_dist;
 
-  TEST_ASSERT( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
-  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0 );
-  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0 ), 0.5 );
+  FRENSIE_CHECK( test_dist != *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), 1.0 );
+  FRENSIE_CHECK_EQUAL( test_dist.evaluate( 1.0 ), 0.5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be initialized from a stream
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, istream_operator )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, istream_operator )
 {
   std::istringstream iss( "{Delta Distribution, 3.000000000000000000e+00}" );
   
@@ -617,21 +645,21 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, istream_operator )
 
   iss >> test_dist;
   
-  TEST_EQUALITY_CONST( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
   iss.str( "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
   iss.clear();
 
   iss >> test_dist;
 
-  TEST_ASSERT( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
-  TEST_EQUALITY_CONST( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
-  TEST_EQUALITY_CONST( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
+  FRENSIE_CHECK( test_dist != (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), 1.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( test_dist.evaluate( 1.0*si::seconds ), 0.5*si::meters );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be written to a property tree
-TEUCHOS_UNIT_TEST( DeltaDistribution, toPropertyTree )
+FRENSIE_UNIT_TEST( DeltaDistribution, toPropertyTree )
 {
   // Use the property tree interface directly
   Utility::PropertyTree ptree;
@@ -641,13 +669,13 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, toPropertyTree )
   Utility::DeltaDistribution copy_dist =
     ptree.get<Utility::DeltaDistribution>( "test distribution" );
 
-  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   ptree.put( "test distribution", *tab_distribution );
 
   copy_dist = ptree.get<Utility::DeltaDistribution>( "test distribution" );
 
-  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( tab_distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( tab_distribution.get() ) );
 
   ptree.clear();
 
@@ -656,14 +684,14 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, toPropertyTree )
 
   copy_dist = ptree.get_value<Utility::DeltaDistribution>();
 
-  TEST_EQUALITY_CONST( ptree.size(), 0 );
-  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   ptree = distribution->toPropertyTree( false );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
 
   Utility::DeltaDistribution test_dist( -1.0, 0.5 );
 
@@ -671,58 +699,58 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, toPropertyTree )
 
   copy_dist = ptree.get_value<Utility::DeltaDistribution>();
 
-  TEST_EQUALITY_CONST( copy_dist, test_dist );
+  FRENSIE_CHECK_EQUAL( copy_dist, test_dist );
 
   ptree = test_dist.toPropertyTree();
   
-  TEST_EQUALITY_CONST( ptree.size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), -1.0 );
-  TEST_EQUALITY_CONST( ptree.get<double>( "multiplier" ), 0.5 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), -1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 0.5 );
 
   // Use the PropertyTree helper methods
   ptree = Utility::toPropertyTree( *distribution, true );
 
   copy_dist = ptree.get_value<Utility::DeltaDistribution>();
 
-  TEST_EQUALITY_CONST( ptree.size(), 0 );
-  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   ptree = Utility::toPropertyTree( *tab_distribution, true );
 
   copy_dist = ptree.get_value<Utility::DeltaDistribution>();
 
-  TEST_EQUALITY_CONST( ptree.size(), 0 );
-  TEST_EQUALITY_CONST( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DeltaDistribution*>( distribution.get() ) );
 
   ptree = Utility::toPropertyTree( *distribution, false );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
 
   ptree = Utility::toPropertyTree( *tab_distribution, false );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
 
   ptree = Utility::toPropertyTree( *distribution );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
 
   ptree = Utility::toPropertyTree( *tab_distribution );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be written to a property tree node
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toNode )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toPropertyTree )
 {
   // Use the property tree interface directly
   Utility::PropertyTree ptree;
@@ -732,13 +760,13 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toNode )
   Utility::UnitAwareDeltaDistribution<si::time,si::length> copy_dist =
     ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
 
-  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
   ptree.put( "test distribution", *unit_aware_tab_distribution );
 
   copy_dist = ptree.get<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( "test distribution" );
 
-  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_tab_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_tab_distribution.get() )) );
 
   ptree.clear();
   
@@ -747,14 +775,14 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toNode )
 
   copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
 
-  TEST_EQUALITY_CONST( ptree.size(), 0 );
-  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
   ptree = unit_aware_distribution->toPropertyTree( false );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
 
   Utility::UnitAwareDeltaDistribution<si::time,si::length>
     test_dist( -1.0*si::seconds, 0.5*si::meters );
@@ -763,58 +791,58 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toNode )
 
   copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
 
-  TEST_EQUALITY_CONST( copy_dist, test_dist );
+  FRENSIE_CHECK_EQUAL( copy_dist, test_dist );
 
   ptree = test_dist.toPropertyTree();
   
-  TEST_EQUALITY_CONST( ptree.size(), 3 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), -1.0 );
-  TEST_EQUALITY_CONST( ptree.get<double>( "multiplier" ), 0.5 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), -1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 0.5 );
 
   // Use the PropertyTree helper methods
   ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
 
   copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
 
-  TEST_EQUALITY_CONST( ptree.size(), 0 );
-  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
   ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
 
   copy_dist = ptree.get_value<Utility::UnitAwareDeltaDistribution<si::time,si::length> >();
 
-  TEST_EQUALITY_CONST( ptree.size(), 0 );
-  TEST_EQUALITY_CONST( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDeltaDistribution<si::time,si::length>*>( unit_aware_distribution.get() )) );
 
   ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
 
   ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
 
   ptree = Utility::toPropertyTree( *unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
 
   ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
 
-  TEST_EQUALITY_CONST( ptree.size(), 2 );
-  TEST_EQUALITY_CONST( ptree.get<std::string>( "type" ), "Delta Distribution" );
-  TEST_EQUALITY_CONST( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be read from a property tree node
-TEUCHOS_UNIT_TEST( DeltaDistribution, fromPropertyTree )
+FRENSIE_UNIT_TEST( DeltaDistribution, fromPropertyTree )
 {
   Utility::DeltaDistribution dist;
 
@@ -823,42 +851,42 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, fromPropertyTree )
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution A" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0 ), 2.0 );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution B" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution C" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
-  TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution D" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        -2*Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
                        0.5 );
-  TEST_EQUALITY_CONST( unused_children.size(), 1 );
-  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
+  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
               std::runtime_error );
 
   unused_children.clear();
@@ -868,53 +896,53 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, fromPropertyTree )
                          test_dists_ptree->get_child( "Delta Distribution A" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( dist.evaluate( 0.0 ), 2.0 );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0 ), 2.0 );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
                          test_dists_ptree->get_child( "Delta Distribution B" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
                          test_dists_ptree->get_child( "Delta Distribution C" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0 );
-  TEST_EQUALITY_CONST( dist.evaluate( -1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
                          test_dists_ptree->get_child( "Delta Distribution D" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        -2*Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
                        0.5 );
-  TEST_EQUALITY_CONST( unused_children.size(), 1 );
-  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
+  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
 
-  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution E" ) ),
               std::runtime_error );
-  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution F" ) ),
               std::runtime_error );
-  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution G" ) ),
               std::runtime_error );
-  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution H" ) ),
               std::runtime_error );
-  TEST_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution I" ) ),
+  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution I" ) ),
               std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be read from a property tree node
-TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
 {
   Utility::UnitAwareDeltaDistribution<si::time,si::length> dist;
 
@@ -923,41 +951,41 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution A" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution B" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution C" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution D" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        -2*Utility::PhysicalConstants::pi*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 1 );
-  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
+  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
 
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
               std::runtime_error );
-  TEST_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
+  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
               std::runtime_error );
 
   unused_children.clear();
@@ -967,58 +995,140 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
                          test_dists_ptree->get_child( "Delta Distribution A" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
                          test_dists_ptree->get_child( "Delta Distribution B" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        Utility::PhysicalConstants::pi*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
                          test_dists_ptree->get_child( "Delta Distribution C" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 0 );
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
 
   dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
                          test_dists_ptree->get_child( "Delta Distribution D" ),
                          unused_children );
 
-  TEST_EQUALITY_CONST( dist.getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
                        -2*Utility::PhysicalConstants::pi*si::seconds );
-  TEST_EQUALITY_CONST( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
-  TEST_EQUALITY_CONST( unused_children.size(), 1 );
-  TEST_EQUALITY_CONST( unused_children.front(), "dummy" );
+  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
+  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
+  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
 
-  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution E" ) )),
+  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution E" ) )),
               std::runtime_error );
-  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution F" ) )),
+  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution F" ) )),
               std::runtime_error );
-  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution G" ) )),
+  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution G" ) )),
               std::runtime_error );
-  TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution H" ) )),
+  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution H" ) )),
               std::runtime_error );
-   TEST_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution I" ) )),
+   FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution I" ) )),
               std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be scaled
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
-				   explicit_conversion,
-				   IndepUnitA,
-				   DepUnitA,
-				   IndepUnitB,
-				   DepUnitB )
+// Check that a distribution can be archived
+FRENSIE_UNIT_TEST( DeltaDistribution, archive )
 {
+  std::string archive_name( "test_delta_dist.h5a" );
+  
+  // Create and archive some delta distributions
+  {
+    Utility::DeltaDistribution delta_dist_a( 0.0, 1.0 );
+
+    std::shared_ptr<Utility::OneDDistribution> delta_dist_b( new Utility::DeltaDistribution( 1.0, 2.0 ) );
+
+    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+
+    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+  }
+
+  // Load the archived distributions
+  Utility::HDF5IArchive archive( archive_name );
+  
+  Utility::DeltaDistribution delta_dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+  FRENSIE_CHECK_EQUAL( delta_dist_a.getUpperBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( delta_dist_a.getLowerBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( delta_dist_a.evaluate( 0.0 ), 1.0 );
+
+  std::shared_ptr<Utility::OneDDistribution> delta_dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+  FRENSIE_CHECK_EQUAL( delta_dist_b->getUpperBoundOfIndepVar(), 1.0 );
+  FRENSIE_CHECK_EQUAL( delta_dist_b->getLowerBoundOfIndepVar(), 1.0 );
+  FRENSIE_CHECK_EQUAL( delta_dist_b->evaluate( 1.0 ), 2.0 );  
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be archived
+FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, archive )
+{
+  std::string archive_name( "test_unit_aware_delta_dist.h5a" );
+  
+  // Create and archive some delta distributions
+  {
+    Utility::UnitAwareDeltaDistribution<si::time,si::length>
+      delta_dist_a( 0.0*si::seconds, 1.0*si::meters );
+
+    std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> > delta_dist_b( new Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 2.0*si::meters ) );
+
+    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+
+    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+  }
+
+  // Load the archived distributions
+  Utility::HDF5IArchive archive( archive_name );
+  
+  Utility::UnitAwareDeltaDistribution<si::time,si::length> delta_dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+  FRENSIE_CHECK_EQUAL( delta_dist_a.getUpperBoundOfIndepVar(), 0.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( delta_dist_a.getLowerBoundOfIndepVar(), 0.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( delta_dist_a.evaluate( 0.0*si::seconds ), 1.0*si::meters );
+
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> >
+    delta_dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+  FRENSIE_CHECK_EQUAL( delta_dist_b->getUpperBoundOfIndepVar(), 1.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( delta_dist_b->getLowerBoundOfIndepVar(), 1.0*si::seconds );
+  FRENSIE_CHECK_EQUAL( delta_dist_b->evaluate( 1.0*si::seconds ), 2.0*si::meters );  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be scaled
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareDeltaDistribution,
+				   explicit_conversion,
+                                   TestUnitTypeQuads )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawIndepUnitA );
+  FETCH_TEMPLATE_PARAM( 1, RawDepUnitA );
+  FETCH_TEMPLATE_PARAM( 2, RawIndepUnitB );
+  FETCH_TEMPLATE_PARAM( 3, RawDepUnitB );
+
+  typedef typename std::remove_pointer<RawIndepUnitA>::type IndepUnitA;
+  typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
+  typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
+  typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
+  
+  
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
 
@@ -1048,19 +1158,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
     Utility::QuantityTraits<InverseIndepQuantityB>::initializeQuantity( 1.0 );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -1073,188 +1183,39 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
   Utility::setQuantity( inv_indep_quantity_b, 0.0 );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-6 );
 }
 
-typedef si::energy si_energy;
-typedef cgs::energy cgs_energy;
-typedef si::amount si_amount;
-typedef si::length si_length;
-typedef cgs::length cgs_length;
-typedef si::mass si_mass;
-typedef cgs::mass cgs_mass;
-typedef si::dimensionless si_dimensionless;
-typedef cgs::dimensionless cgs_dimensionless;
-
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_length,
-				      cgs_energy,
-				      cgs_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_length,
-				      si_energy,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_mass,
-				      cgs_energy,
-				      cgs_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_mass,
-				      si_energy,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_dimensionless,
-				      cgs_energy,
-				      cgs_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_dimensionless,
-				      si_energy,
-				      si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      void,
-				      cgs_energy,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      void,
-				      si_energy,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      KiloElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      MegaElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      ElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      MegaElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      ElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      KiloElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
-				      explicit_conversion,
-				      void,
-				      MegaElectronVolt,
-				      void,
-				      KiloElectronVolt );
-
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_dists_json_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS() 
 {
-  clp().setOption( "test_dists_json_file",
-                   &test_dists_json_file_name,
-                   "Test distributions xml file name" );
+  ADD_OPTION( "test_dists_json_file",
+              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value( "" ),
+              "Test distributions json file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Load the property tree from the json file
   test_dists_ptree.reset( new Utility::PropertyTree );
@@ -1264,7 +1225,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   test_dists_json_file >> *test_dists_ptree;
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDeltaDistribution.cpp

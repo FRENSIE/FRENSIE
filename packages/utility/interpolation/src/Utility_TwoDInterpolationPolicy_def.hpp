@@ -206,9 +206,9 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
   // The z iterator must have T as the value type
   testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_x ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x_0 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x_1 ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x ) );
   testPrecondition( ThisType::isFirstIndepVarInValidRange( indep_var_x_0 ) );
   testPrecondition( indep_var_x_0 < indep_var_x_1 );
   testPrecondition( indep_var_x >= indep_var_x_0 );
@@ -720,11 +720,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   // The z iterator must have T as the value type
   testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
@@ -906,11 +906,11 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   // The z iterator must have T as the value type
   testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						     processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
@@ -1192,18 +1192,18 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIn
 					    const T grid_1_length )
 {
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						     processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
   testPrecondition( processed_indep_var_x <= processed_indep_var_x_1 );
   // Make sure the grid lengths are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( grid_0_length ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( grid_1_length ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( grid_0_length ) );
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf( grid_1_length ) );
   testPrecondition( grid_0_length >= 0.0 );
   testPrecondition( grid_1_length >= 0.0 );
   testPrecondition( grid_0_length + grid_1_length > 0.0 );
@@ -1228,19 +1228,19 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIn
 					    const T processed_grid_1_y_limit )
 {
   // Make sure the first independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						     processed_indep_var_x ) );
   testPrecondition( processed_indep_var_x_0 < processed_indep_var_x_1 );
   testPrecondition( processed_indep_var_x >= processed_indep_var_x_0 );
   testPrecondition( processed_indep_var_x <= processed_indep_var_x_1 );
   // Make sure the grid min values are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						  processed_grid_0_y_limit ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+  testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						  processed_grid_1_y_limit ) );
 
   T processed_slope = (processed_grid_1_y_limit - processed_grid_0_y_limit)/

@@ -259,54 +259,6 @@ typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
 } // end Utility namespace
 
-namespace Teuchos{
-
-/*! \brief Type name traits partial specialization for the
- * Utility::DiscreteDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files.
- */
-template<>
-class TypeNameTraits<Utility::DiscreteDistribution>
-{
-public:
-  static std::string name()
-  {
-    return "Discrete Distribution";
-  }
-  static std::string concreteName(
-		                const Utility::DiscreteDistribution& instance )
-  {
-    return name();
-  }
-};
-
-/*! \brief Type name traits partial specialization for the
- * Utility::UnitAwareDiscreteDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files.
- */
-template<typename U,typename V>
-class TypeNameTraits<Utility::UnitAwareDiscreteDistribution<U,V> >
-{
-public:
-  static std::string name()
-  {
-    return "Unit-Aware Discrete Distribution (" +
-      Utility::UnitTraits<U>::symbol() + "," +
-      Utility::UnitTraits<V>::symbol() + ")";
-  }
-  static std::string concreteName(
-		  const Utility::UnitAwareDiscreteDistribution<U,V>& instance )
-  {
-    return name();
-  }
-};
-
-} // end Teuchos namespace
-
 //---------------------------------------------------------------------------//
 // Template Includes
 //---------------------------------------------------------------------------//

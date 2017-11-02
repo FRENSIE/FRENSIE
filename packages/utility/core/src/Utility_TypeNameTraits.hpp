@@ -24,6 +24,8 @@
 
 namespace Utility{
 
+TYPE_NAME_TRAITS_QUICK_DECL( void );
+TYPE_NAME_TRAITS_QUICK_DECL( void* );
 TYPE_NAME_TRAITS_QUICK_DECL( float );
 TYPE_NAME_TRAITS_QUICK_DECL( double );
 TYPE_NAME_TRAITS_QUICK_DECL( long double );
@@ -60,8 +62,23 @@ struct TypeNameTraits<std::integral_constant<T,v> >
   { return Utility::toString( v ); }
 };
 
+/*! \brief Partial specialization of Utility::TypeNameTraits for
+ * boost::units::unit types
+ * \ingroup type_name_traits
+ */
+template<typename Dim, typename Sys>
+struct TypeNameTraits<boost::units::unit<Dim,Sys> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return Utility::UnitTraits<boost::units::unit<Dim,Sys> >::symbol(); }
+};
+
 /*! \brief Partial specialization of Utility::TypeNameTraits for 
- * boost::units::quanitty types
+ * boost::units::quantity types
  * \ingroup type_name_traits
  */
 template<typename Unit, typename T>
