@@ -238,6 +238,19 @@ private:
   static void verifyValidValues( const std::vector<double>& independent_values,
                                  const std::vector<double>& dependent_values );
 
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareDiscreteDistribution;
@@ -258,6 +271,9 @@ private:
 typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
 } // end Utility namespace
+
+BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareDiscreteDistribution, 0 );
+BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( DiscreteDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

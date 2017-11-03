@@ -22,15 +22,16 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace Utility{
+BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
+namespace Utility{
 
 // Default Constructor
 template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution()
-{ /* ... */ }
+{ 
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
+}
 
 // Basic Constructor (potentiall dangerous)
 /*! \details A precalculated CDF can be passed as the dependent values as
@@ -47,6 +48,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   this->initializeDistribution( independent_values,
 				dependent_values,
 				interpret_dependent_values_as_cdf );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
 }
 
 // CDF Constructor (potentially dangerous)
@@ -60,6 +63,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 {
   this->initializeDistributionFromCDF( independent_quantities,
 				       dependent_values );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Constructor
@@ -73,6 +78,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 {
   this->initializeDistribution( independent_quantities,
 				dependent_values );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor
@@ -104,6 +111,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 						 input_dep_quantities );
 
   this->initializeDistribution( input_indep_quantities, input_dep_quantities );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -123,6 +132,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 							  input_bin_values );
 
   this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -610,6 +621,32 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
   }
 }
 
+// Save the distribution to an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+}
+
+// Load the distribution from an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+}
+
 // Equality comparison operator
 template<typename IndependentUnit,typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator==( const UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>& other ) const
@@ -960,6 +997,9 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
                        << std::distance( dependent_values.begin(), bad_dependent_value ) <<
                        " (" << *bad_dependent_value << ") is not valid!" );
 }
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
 
 } // end Utility namespace
 

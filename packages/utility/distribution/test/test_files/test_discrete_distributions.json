@@ -11,7 +11,7 @@
 
     "Discrete Distribution D":
     {
-        "comment": "JSON arrays can also be used to specify values"
+        "comment": "JSON arrays can also be used to specify values",
         "dep vals": ["1.0", "1.0", "1.0", "1.0", "1.0"],
         "indep vals": ["pi/2", "5pi/8", "3pi/4", "7pi/8", "pi"],
         "type": "discrete-dist",

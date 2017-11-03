@@ -22,6 +22,8 @@
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/unique_ptr.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"

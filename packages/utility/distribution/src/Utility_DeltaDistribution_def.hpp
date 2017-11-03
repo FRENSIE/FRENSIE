@@ -504,8 +504,8 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::save( Archive& a
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Save the local member data
-  ar & boost::serialization::make_nvp( "d_location", Utility::getRawQuantity( d_location ) );
-  ar & boost::serialization::make_nvp( "d_multiplier", Utility::getRawQuantity( d_multiplier ) );
+  ar & BOOST_SERIALIZATION_NVP( d_location );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
 }
 
 // Load the distribution from an archive
@@ -517,14 +517,8 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::load( Archive& a
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
   // Load the local member data
-  double raw_location;
-  ar & boost::serialization::make_nvp( "d_location", raw_location );
-
-  double raw_multiplier;
-  ar & boost::serialization::make_nvp( "d_multiplier", raw_multiplier );
-
-  this->setLocationValue( raw_location );
-  this->setMultiplierValue( raw_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_location );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
 }
 
 // Verify the distribution type

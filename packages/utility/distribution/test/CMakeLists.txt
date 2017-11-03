@@ -4,14 +4,11 @@ FRENSIE_ADD_TEST_EXECUTABLE(DeltaDistribution DEPENDS tstDeltaDistribution.cpp)
 FRENSIE_ADD_TEST(DeltaDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_delta_distributions.json)
 
-FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
+FRENSIE_ADD_TEST_EXECUTABLE(DiscreteDistribution DEPENDS tstDiscreteDistribution.cpp)
+FRENSIE_ADD_TEST(DiscreteDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_discrete_distributions.json)
 
-# ADD_EXECUTABLE(tstDiscreteDistribution
-#   tstDiscreteDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstDiscreteDistribution utility_dist)
-# ADD_TEST(DiscreteDistribution_test tstDiscreteDistribution --test_dists_json_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_discrete_distributions.json")
-# SET_PROPERTY(TEST DiscreteDistribution_test PROPERTY LABELS utility_dist)
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
 # ADD_EXECUTABLE(tstUniformDistribution
 #   tstUniformDistribution.cpp
