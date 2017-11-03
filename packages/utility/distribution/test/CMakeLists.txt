@@ -8,6 +8,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(DiscreteDistribution DEPENDS tstDiscreteDistribution
 FRENSIE_ADD_TEST(DiscreteDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_discrete_distributions.json)
 
+FRENSIE_ADD_TEST_EXECUTABLE(EquiprobableBinDistribution DEPENDS tstEquiprobableBinDistribution.cpp)
+FRENSIE_ADD_TEST(EquiprobableBinDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_equiprobable_bin_distributions.json)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
 # ADD_EXECUTABLE(tstUniformDistribution
@@ -16,13 +20,6 @@ FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 # TARGET_LINK_LIBRARIES(tstUniformDistribution utility_dist)
 # ADD_TEST(UniformDistribution_test tstUniformDistribution --test_dists_json_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_uniform_distributions.json")
 # SET_PROPERTY(TEST UniformDistribution_test PROPERTY LABELS utility_dist)
-
-# ADD_EXECUTABLE(tstEquiprobableBinDistribution
-#   tstEquiprobableBinDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstEquiprobableBinDistribution utility_dist)
-# ADD_TEST(EquiprobableBinDistribution_test tstEquiprobableBinDistribution --test_dists_json_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_equiprobable_bin_distributions.json")
-# SET_PROPERTY(TEST EquiprobableBinDistribution_test PROPERTY LABELS utility_dist)
 
 # ADD_EXECUTABLE(tstHistogramDistribution
 #   tstHistogramDistribution.cpp

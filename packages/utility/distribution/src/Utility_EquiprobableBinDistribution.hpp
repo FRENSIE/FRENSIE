@@ -193,6 +193,19 @@ private:
   static void verifyValidBinBoundaries(
                                    const std::vector<double>& bin_boundaries );
 
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareEquiprobableBinDistribution;
@@ -211,6 +224,9 @@ private:
 typedef UnitAwareEquiprobableBinDistribution<void,void> EquiprobableBinDistribution;
 
 } // end Utility namespace
+
+BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareEquiprobableBinDistribution, 0 );
+BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( EquiprobableBinDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

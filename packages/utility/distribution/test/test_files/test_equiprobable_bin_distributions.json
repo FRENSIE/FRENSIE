@@ -18,7 +18,7 @@
     "Equiprobable Bin Distribution E":
     {
         "type": "equiprobable",
-        "bins": "{0.001, 100l, 20.0}",
+        "boundaries": "{0.001, 100l, 20.0}",
         "dummy": ""
     },
 
@@ -29,7 +29,7 @@
     {
         "comment": "This distribution is ill-formed (incorrect type)",
         "type": "dummy",
-        "bins": "{0, 1}"
+        "boundaries": "{0, 1}"
     },
 
     "Equiprobable Bin Distribution H":
@@ -50,27 +50,27 @@
     {
         "comment": "This distribution is ill-formed (bins not sorted)",
         "type": "equiprobable",
-        "bins": "{10, 9, 8, 7, 6}"
+        "boundaries": "{10, 9, 8, 7, 6}"
     },
 
     "Equiprobable Bin Distribution K":
     {
         "comment": "This distribution is ill-formed (repeated bin boundaries)",
         "type": "equiprobable",
-        "bins": "{0, 1r2, 2, 3}"
+        "boundaries": "{0, 1r2, 2, 3}"
     },
 
     "Equiprobable Bin Distribution L":
     {
         "comment": "This distribution is ill-formed (invalid boundary)",
         "type": "equiprobable",
-        "bins": "{-Inf, 0, 1}"
+        "boundaries": "{-Inf, 0, 1}"
     },
 
     "Equiprobable Bin Distribution M":
     {
         "comment": "This distribution is ill-formed (invalid boundary)",
         "type": "equiprobable",
-        "bins": "{-1, 0, Inf}"
+        "boundaries": "{-1, 0, Inf}"
     }
 }

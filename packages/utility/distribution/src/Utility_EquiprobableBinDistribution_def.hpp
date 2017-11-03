@@ -20,15 +20,16 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace Utility{
+BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareEquiprobableBinDistribution );
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEquiprobableBinDistribution<void,void> );
+namespace Utility{
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution()
-{ /* ... */ }
+{ 
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
+}
 
 // Basic constructor
 template<typename IndependentUnit, typename DependentUnit>
@@ -37,6 +38,8 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
   : d_bin_boundaries( bin_boundaries.size() )
 {
   this->initializeDistribution( bin_boundaries );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Constructor
@@ -47,6 +50,8 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
   : d_bin_boundaries( bin_boundaries.size() )
 {
   this->initializeDistribution( bin_boundaries );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor
@@ -63,6 +68,8 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
   : d_bin_boundaries()
 {
   this->initializeDistribution( dist_instance.d_bin_boundaries );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -72,6 +79,8 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
   : d_bin_boundaries()
 {
   this->initializeDistribution( unitless_dist_instance.d_bin_boundaries );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -521,6 +530,30 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPr
   }
 }
 
+// Save the distribution to an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_bin_boundaries );
+}
+
+// Load the distribution from an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_bin_boundaries );
+}
+
 // Equality comparison operator
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::operator==(
@@ -679,6 +712,9 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
                       << std::distance( bin_boundaries.begin(), repeat_bin_boundary ) <<
                       " (" << *repeat_bin_boundary << ")!" );
 }
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEquiprobableBinDistribution<void,void> );
 
 } // end Utility namespace
 

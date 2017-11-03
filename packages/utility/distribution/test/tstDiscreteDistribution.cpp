@@ -2219,7 +2219,7 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, archive )
 {
   std::string archive_name( "test_discrete_dist.h5a" );
 
-  // Createand archive some discrete distributions
+  // Create and archive some discrete distributions
   {
     std::vector<double> independent_values( 3 );
     independent_values[0] = -1.0;
