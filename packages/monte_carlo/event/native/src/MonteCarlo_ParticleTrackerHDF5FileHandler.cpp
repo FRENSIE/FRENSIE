@@ -134,17 +134,17 @@ void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
           std::vector< double > weight = particle_number->second[8];
 
           // Construct data set folders for data
-          std::string x_pos_dataset = individual_particle_location += "x_position";
-          std::string y_pos_dataset = individual_particle_location += "y_position";
-          std::string z_pos_dataset = individual_particle_location += "z_position";
+          std::string x_pos_dataset = individual_particle_location + "x_position";
+          std::string y_pos_dataset = individual_particle_location + "y_position";
+          std::string z_pos_dataset = individual_particle_location + "z_position";
 
-          std::string x_dir_dataset = individual_particle_location += "x_direction";
-          std::string y_dir_dataset = individual_particle_location += "y_direction";
-          std::string z_dir_dataset = individual_particle_location += "z_direction";
+          std::string x_dir_dataset = individual_particle_location + "x_direction";
+          std::string y_dir_dataset = individual_particle_location + "y_direction";
+          std::string z_dir_dataset = individual_particle_location + "z_direction";
 
-          std::string energy_dataset = individual_particle_location += "energy";
-          std::string col_num_dataset = individual_particle_location += "collision_number";
-          std::string weight_dataset = individual_particle_location += "weight";
+          std::string energy_dataset = individual_particle_location + "energy";
+          std::string col_num_dataset = individual_particle_location + "collision_number";
+          std::string weight_dataset = individual_particle_location + "weight";
 
           // Write the arrays to data sets
           try{
