@@ -19,11 +19,11 @@ namespace DataGen{
 std::shared_ptr<DataGen::StandardMomentPreservingElectronDataGenerator> createMomentPreservingDataGenerator(
     const unsigned atomic_number,
     const Data::ElectronPhotonRelaxationDataContainer& native_data,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     const double min_electron_energy,
     const double max_electron_energy,
     const double cutoff_angle_cosine,
-    const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on )
+    const double tabular_evaluation_tol )
 {
   auto ptr =
     std::make_shared<const Data::ElectronPhotonRelaxationDataContainer>( native_data );
@@ -35,11 +35,11 @@ std::shared_ptr<DataGen::StandardMomentPreservingElectronDataGenerator> createMo
     data_generator( new StandardMomentPreservingElectronDataGenerator(
                             atomic_number,
                             data_ptr,
+                            two_d_interp,
                             min_electron_energy,
                             max_electron_energy,
                             cutoff_angle_cosine,
-                            tabular_evaluation_tol,
-                            linlinlog_interpolation_mode_on ) );
+                            tabular_evaluation_tol ) );
 
   return data_generator;
 }

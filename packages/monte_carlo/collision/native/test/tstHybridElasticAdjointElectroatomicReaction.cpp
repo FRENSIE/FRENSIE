@@ -87,13 +87,13 @@ TEUCHOS_UNIT_TEST( HybridElasticAdjointElectroatomicReaction,
 
   cross_section = hybrid_elastic_reaction->getCrossSection( 1e-3 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.4966702099179528e+06,
+                          1.9778260462206174e+06,
                           1e-12 );
 
-  ratio = 8.090305336994016189e-06;
+  ratio = 8.0903053369940162e-06;
   cross_section = hybrid_elastic_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          3.047276237290374752e+02*ratio + 2.0498802209908908,
+                          3.0472762372903748e+02*ratio + 2.0498802209908908,
                           1e-12 );
 }
 
@@ -140,7 +140,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Data::AdjointElectronPhotonRelaxationDataContainer data_container =
         Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-  // Extract the energy grid and cross section
+    // Extract the energy grid and cross section
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.assign(
         data_container.getAdjointElectronEnergyGrid().begin(),
@@ -151,14 +151,32 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getAdjointCutoffElasticCrossSection().begin(),
         data_container.getAdjointCutoffElasticCrossSection().end() );
 
+    double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
+    double evaluation_tol = 1e-15;
+
+    // Moment preserving elastic cross section
+    std::vector<double> moment_preserving_cross_sections;
+    unsigned mp_threshold_energy_index;
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Exact>(
+                                  moment_preserving_cross_sections,
+                                  mp_threshold_energy_index,
+                                  data_container,
+                                  energy_grid,
+                                  evaluation_tol );
+
     Teuchos::ArrayRCP<double> mp_cross_section;
     mp_cross_section.assign(
-        data_container.getAdjointMomentPreservingCrossSection().begin(),
-        data_container.getAdjointMomentPreservingCrossSection().end() );
+      moment_preserving_cross_sections.begin(),
+      moment_preserving_cross_sections.end() );
 
-  // Reduced cutoff elastic cross section ratio
-  std::vector<double> reduced_cutoff_ratio =
-    data_container.getReducedCutoffCrossSectionRatios();
+    // Create the cutoff elastic scattering distribution
+    std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+          cutoff_distribution;
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
+              cutoff_distribution,
+              data_container,
+              cutoff_angle_cosine,
+              evaluation_tol );
 
     // Create the hash-based grid searcher
     Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
@@ -172,10 +190,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution>
         hybrid_elastic_distribution;
 
-    double cutoff_angle_cosine = data_container.getCutoffAngleCosine();
-    double evaluation_tol = 1e-7;
-
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         hybrid_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
@@ -186,12 +201,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Calculate the hybrid cross section
   unsigned hybrid_threshold_energy_index =
-    std::min( data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex(),
+    std::min( mp_threshold_energy_index,
               data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex() );
 
   unsigned mp_threshold_diff =
-    data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex() -
-    hybrid_threshold_energy_index;
+    mp_threshold_energy_index - hybrid_threshold_energy_index;
   unsigned cutoff_threshold_diff =
     data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex() - 
     hybrid_threshold_energy_index;
@@ -202,10 +216,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   for (unsigned i = 0; i < combined_cross_section.size(); ++i )
   {
     double energy = energy_grid[i + hybrid_threshold_energy_index];
+    double reduced_cutoff_ratio =
+                cutoff_distribution->evaluateCutoffCrossSectionRatio( energy );
 
     if ( i < mp_threshold_diff )
     {
-      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio[i];
+      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio;
     }
     else if ( i < cutoff_threshold_diff )
     {
@@ -214,7 +230,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     else
     {
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio[i] +
+        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio +
         mp_cross_section[i-mp_threshold_diff];
     }
   }

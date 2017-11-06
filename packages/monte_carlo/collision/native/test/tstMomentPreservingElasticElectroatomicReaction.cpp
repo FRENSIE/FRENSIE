@@ -19,6 +19,7 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DiscreteDistribution.hpp"
@@ -190,13 +191,20 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getElectronEnergyGrid().begin(),
         data_container.getElectronEnergyGrid().end() );
 
+    // Moment preserving elastic cross section
+    std::vector<double> moment_preserving_cross_sections;
+    unsigned threshold_index;
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Exact>(
+                               moment_preserving_cross_sections,
+                               threshold_index,
+                               data_container,
+                               energy_grid,
+                               1e-15 );
+
     Teuchos::ArrayRCP<double> cross_section;
     cross_section.assign(
-        data_container.getMomentPreservingCrossSection().begin(),
-        data_container.getMomentPreservingCrossSection().end() );
-
-    unsigned threshold_index(
-        data_container.getMomentPreservingCrossSectionThresholdEnergyIndex() );
+      moment_preserving_cross_sections.begin(),
+      moment_preserving_cross_sections.end() );
 
     // Create the reaction
     mp_elastic_reaction.reset(

@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( DecoupledElasticAdjointElectroatomicReaction,
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
   cross_section = decoupled_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.8222590384670133e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06, 1e-12 );
 
   cross_section = decoupled_elastic_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987041e+04, 1e-12 );
@@ -217,7 +217,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         cutoff_elastic_distribution,
         data_container,
         cutoff_angle_cosine,

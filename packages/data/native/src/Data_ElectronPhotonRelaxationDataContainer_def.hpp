@@ -116,8 +116,6 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_cross_section );
@@ -221,8 +219,6 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_cross_section );

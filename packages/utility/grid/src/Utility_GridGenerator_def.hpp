@@ -147,10 +147,10 @@ void GridGenerator<InterpPolicy>::setDistanceTolerance(
 template<typename InterpPolicy>
 template<typename STLCompliantContainer, typename Functor>
 void GridGenerator<InterpPolicy>::refineInPlace(
-			STLCompliantContainer& grid,
-			const Functor& function,
-            const double min_value,
-            const double max_value ) const
+            STLCompliantContainer& grid,
+            const Functor& function,
+            const double requested_min_value,
+            const double requested_max_value ) const
 {
   // Make sure the container value type is a floating point type
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainer::value_type>::value) );
@@ -158,15 +158,22 @@ void GridGenerator<InterpPolicy>::refineInPlace(
   testPrecondition( grid.size() >= 2 );
   // Make sure the intial grid points are sorted
   testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
+  // Make sure the min and max values are valid
+  testPrecondition( requested_min_value < requested_max_value );
 
   STLCompliantContainer evaluated_function;
 
-  this->refineAndEvaluateInPlace(
-        grid,
-        evaluated_function,
-        function,
-        min_value,
-        max_value );
+  // Don't let the min value be lower than the min grid value
+  double min_value = std::max( grid.front(), requested_min_value );
+
+  // Don't let the max value be greater than the max grid value
+  double max_value = std::min( grid.back(), requested_max_value );
+
+  this->refineAndEvaluateInPlace( grid,
+                                  evaluated_function,
+                                  function,
+                                  min_value,
+                                  max_value );
 }
 
 // Get the distance tolerance
@@ -241,6 +248,7 @@ void GridGenerator<InterpPolicy>::refineAndEvaluateInPlace(
   // Make sure the intial grid points are sorted
   testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
   // Make sure the min_value and max_value are valid
+  testPrecondition( min_value < max_value );
   testPrecondition( min_value >= grid.front() );
   testPrecondition( max_value <= grid.back() );
 

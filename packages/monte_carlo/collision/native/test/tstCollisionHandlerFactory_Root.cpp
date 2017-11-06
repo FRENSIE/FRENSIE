@@ -53,9 +53,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::NeutronCollisionHandler>
     neutron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::NeutronCollisionHandler>( collision_handler );
@@ -64,11 +64,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( neutron_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -102,9 +104,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::NeutronCollisionHandler>
     neutron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::NeutronCollisionHandler>( collision_handler );
@@ -113,11 +115,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( neutron_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -151,9 +155,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::PhotonCollisionHandler>
     photon_collision_handler = std::dynamic_pointer_cast<MonteCarlo::PhotonCollisionHandler>( collision_handler );
@@ -162,11 +166,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -200,9 +206,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::PhotonCollisionHandler>
     photon_collision_handler = std::dynamic_pointer_cast<MonteCarlo::PhotonCollisionHandler>( collision_handler );
@@ -211,11 +217,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -249,9 +257,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            adjoint_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::AdjointPhotonCollisionHandler>
     adjoint_photon_collision_handler = std::dynamic_pointer_cast<MonteCarlo::AdjointPhotonCollisionHandler>( collision_handler );
@@ -260,11 +268,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( adjoint_photon_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -299,9 +309,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            adjoint_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::AdjointPhotonCollisionHandler>
     adjoint_photon_collision_handler = std::dynamic_pointer_cast<MonteCarlo::AdjointPhotonCollisionHandler>( collision_handler );
@@ -310,11 +320,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( adjoint_photon_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -349,9 +361,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::ElectronCollisionHandler>
     electron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::ElectronCollisionHandler>( collision_handler );
@@ -360,11 +372,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( electron_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -385,6 +399,110 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
 //---------------------------------------------------------------------------//
 // Check that the collision handler can be initialized with Root
 TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
+                   createHandler_adjoint_electron_mode_analogue )
+{
+  MonteCarlo::SimulationProperties properties;
+  
+  // Set the particle mode to ADJOINT_ELECTRON_MODE
+  properties.setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
+
+  // Set the collision type to analogue
+  properties.setAnalogueCaptureModeOn();
+
+  std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
+    MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
+                                           adjoint_material_reps,
+                                           cross_section_table_info,
+                                           properties,
+                                           test_cross_sections_xml_directory );
+
+  std::shared_ptr<MonteCarlo::AdjointElectronCollisionHandler>
+    adjoint_electron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::AdjointElectronCollisionHandler>( collision_handler );
+
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_ELECTRON ) );
+  TEST_EQUALITY_CONST( adjoint_electron_collision_handler->getMaterial( 2 )->getId(),
+                       1 );
+
+  // Verify that collisions are analogue
+  MonteCarlo::AdjointElectronState adjoint_electron( 0ull );
+  adjoint_electron.setCell( 2 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
+  adjoint_electron.setEnergy( 1.0 );
+  adjoint_electron.setWeight( 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  collision_handler->collideWithCellMaterial( adjoint_electron, bank );
+
+  // The adjoint weight factor at 1.0 MeV will cause a weight greater than 1.0
+  TEST_ASSERT( adjoint_electron.getWeight() > 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the collision handler can be initialized with Root
+TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
+                   createHandler_adjoint_electron_mode_implicit_capture )
+{
+  MonteCarlo::SimulationProperties properties;
+  
+  // Set the particle mode to ADJOINT_PHOTON_MODE
+  properties.setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+
+  // Set the collision type to implicit capture
+  properties.setImplicitCaptureModeOn();
+
+  std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
+    MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
+                                           adjoint_material_reps,
+                                           cross_section_table_info,
+                                           properties,
+                                           test_cross_sections_xml_directory );
+
+  std::shared_ptr<MonteCarlo::AdjointElectronCollisionHandler>
+    adjoint_electron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::AdjointElectronCollisionHandler>( collision_handler );
+
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
+  TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_ELECTRON ) );
+  TEST_EQUALITY_CONST( adjoint_electron_collision_handler->getMaterial( 2 )->getId(),
+                       1 );
+
+  // Verify that collisions are analogue
+  MonteCarlo::AdjointElectronState adjoint_electron( 0ull );
+  adjoint_electron.setCell( 2 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
+  adjoint_electron.setEnergy( 1.0 );
+  adjoint_electron.setWeight( 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  collision_handler->collideWithCellMaterial( adjoint_electron, bank );
+
+  // The adjoint weight factor at 1.0 MeV will cause a weight greater than 1.0
+  TEST_ASSERT( adjoint_electron.getWeight() > 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the collision handler can be initialized with Root
+TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
                    createHandler_electron_mode_implicit_capture )
 {
   MonteCarlo::SimulationProperties properties;
@@ -398,9 +516,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::ElectronCollisionHandler>
     electron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::ElectronCollisionHandler>( collision_handler );
@@ -409,11 +527,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( electron_collision_handler->getMaterial( 2 )->getId(),
                        1 );
 
@@ -451,10 +571,10 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // interpolation regions, which cannot currently be parsed
   TEST_THROW( collision_handler = MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory ),
-              std::runtime_error );
+                                           test_cross_sections_xml_directory ),
+                                           std::runtime_error );
 
   // std::shared_ptr<MonteCarlo::NeutronCollisionHandler>
   //   neutron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::NeutronCollisionHandler>( collision_handler );
@@ -466,11 +586,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   // TEST_EQUALITY_CONST( neutron_collision_handler->getMaterial( 2 )->getId(),
   //                      1 );
   // TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
@@ -519,10 +641,10 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // interpolation regions, which cannot currently be parsed
   TEST_THROW( collision_handler = MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory ),
-              std::runtime_error );
+                                           test_cross_sections_xml_directory ),
+                                           std::runtime_error );
 
   // std::shared_ptr<MonteCarlo::NeutronCollisionHandler>
   //   neutron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::NeutronCollisionHandler>( collision_handler );
@@ -534,11 +656,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   // TEST_EQUALITY_CONST( neutron_collision_handler->getMaterial( 2 )->getId(),
   //                      1 );
   // TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
@@ -584,9 +708,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::PhotonCollisionHandler>
     photon_collision_handler = std::dynamic_pointer_cast<MonteCarlo::PhotonCollisionHandler>( collision_handler );
@@ -598,11 +722,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
                        1 );
   TEST_EQUALITY_CONST( electron_collision_handler->getMaterial( 2 )->getId(),
@@ -648,9 +774,9 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler =
     MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory );
+                                           test_cross_sections_xml_directory );
 
   std::shared_ptr<MonteCarlo::PhotonCollisionHandler>
     photon_collision_handler = std::dynamic_pointer_cast<MonteCarlo::PhotonCollisionHandler>( collision_handler );
@@ -662,11 +788,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
                        1 );
   TEST_EQUALITY_CONST( electron_collision_handler->getMaterial( 2 )->getId(),
@@ -715,10 +843,10 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // interpolation regions, which cannot currently be parsed
   TEST_THROW( collision_handler = MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory ),
-              std::runtime_error );
+                                           test_cross_sections_xml_directory ),
+                                           std::runtime_error );
 
   // std::shared_ptr<MonteCarlo::NeutronCollisionHandler>
   //   neutron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::NeutronCollisionHandler>( collision_handler );
@@ -733,11 +861,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   // TEST_EQUALITY_CONST( neutron_collision_handler->getMaterial( 2 )->getId(),
   //                      1 );
   // TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
@@ -798,10 +928,10 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // interpolation regions, which cannot currently be parsed
   TEST_THROW( collision_handler = MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>( &out )->createHandler(
                                            forward_material_reps,
-					   cross_section_table_info,
+                                           cross_section_table_info,
                                            properties,
-					   test_cross_sections_xml_directory ),
-              std::runtime_error );
+                                           test_cross_sections_xml_directory ),
+                                           std::runtime_error );
 
   // std::shared_ptr<MonteCarlo::NeutronCollisionHandler>
   //   neutron_collision_handler = std::dynamic_pointer_cast<MonteCarlo::NeutronCollisionHandler>( collision_handler );
@@ -816,11 +946,13 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
 
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::NEUTRON ) );
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::PHOTON ) );
   // TEST_ASSERT( collision_handler->isCellVoid( 2, MonteCarlo::ADJOINT_PHOTON ));
   // TEST_ASSERT( !collision_handler->isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  // TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
   // TEST_EQUALITY_CONST( neutron_collision_handler->getMaterial( 2 )->getId(),
   //                      1 );
   // TEST_EQUALITY_CONST( photon_collision_handler->getMaterial( 2 )->getId(),
@@ -903,7 +1035,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Read in the xml file storing the material specifications
   Teuchos::updateParametersFromXmlFile( test_forward_material_xml_file_name,
-					Teuchos::inoutArg(forward_material_reps) );
+                                        Teuchos::inoutArg(forward_material_reps) );
 
   Teuchos::updateParametersFromXmlFile( test_adjoint_material_xml_file_name,
                                         Teuchos::inoutArg(adjoint_material_reps) );

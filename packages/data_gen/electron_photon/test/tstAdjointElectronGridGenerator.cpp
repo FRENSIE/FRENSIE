@@ -181,22 +181,22 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  5.0649704580851839e+01,
+                                  5.0802122257288431e+01,
                                   1e-5 );
 
-                                  cross_section =
+  cross_section =
     grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  2.8063088780694180e+01,
+                                  2.7987603105003295e+01,
                                   1e-5 );
 
-                                  cross_section =
+  cross_section =
     grid_generator.evaluateAdjointCrossSection( 6.0e4, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  9.4841484904379048e-01,
+                                  9.4882896334965172e-01,
                                   1e-5 );
 
-                                  cross_section =
+  cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.0e5, precision );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
   }
@@ -259,13 +259,13 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.1758943972984730,
+                                  1.1768973008863717,
                                   1e-5 );
 
                                   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 6.0e4, 1.0e5, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  6.6614567743011725e-07,
+                                  6.6585493962017790e-07,
                                   1e-5 );
 
                                   diff_cross_section =
@@ -313,35 +313,35 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 561 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 564 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                   0.01 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf[0.01].size(), 561 );
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 564 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
-                                  1.52093743868442765e+06,
+                                  1.5161262343764289e+06,
                                   1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(),
-                                  3.2668315326086337e-06,
+                                  3.2673401383651226e-06,
                                   1e-6 );
 
   // Check the generated max energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 426 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 425 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                   1.0 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf[1.0].size(), 426 );
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 425 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
-                                  2.00226002762292570e+05,
+                                  2.0022600336684578e+05,
                                   1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
-                                  1.5668307823819044e-04,
+                                  1.5670747187916670e-04,
                                   1e-6 );
 }
 

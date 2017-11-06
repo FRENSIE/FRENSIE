@@ -137,6 +137,26 @@ ParticleSimulationManager<GeometryHandler,
                                              _2 );
     break;
   }
+  case ADJOINT_ELECTRON_MODE:
+  {
+    d_simulate_adjoint_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<AdjointElectronState>,
+                                             boost::cref( *this ),
+                                             _1,
+                                             _2 );
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
+                                             boost::cref( *this ),
+                                             _1,
+                                             _2 );
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
+                                             boost::cref( *this ),
+                                              _1,
+                                             _2 );
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PhotonState>,
+                                             boost::cref( *this ),
+                                             _1,
+                                             _2 );
+    break;
+  }
   default:
     THROW_EXCEPTION( std::runtime_error,
                      "Error: particle mode "
@@ -256,6 +276,10 @@ void ParticleSimulationManager<GeometryHandler,
             d_simulate_electron( dynamic_cast<ElectronState&>( bank.top() ),
                                      bank );
             break;
+          case ADJOINT_ELECTRON:
+            d_simulate_adjoint_electron( dynamic_cast<AdjointElectronState&>( bank.top() ),
+                                         bank );
+            break;
           default:
             THROW_EXCEPTION( std::logic_error,
                              "Error: particle type "
@@ -312,9 +336,14 @@ void ParticleSimulationManager<GeometryHandler,
   Geometry::ModuleTraits::InternalCellHandle cell_entering;
   double cell_total_macro_cross_section;
 
-  // Check if the particle energy is below the cutoff
+  // Check if the particle energy is below the cutoff (forward transport)
   if( particle.getEnergy() <
       d_properties->getMinParticleEnergy<ParticleStateType>() )
+    particle.setAsGone();
+
+  // Check if the particle energy is above the cutoff (adjoint transport)
+  if( particle.getEnergy() >
+      d_properties->getMaxParticleEnergy<ParticleStateType>() )
     particle.setAsGone();
 
   // Set the ray
@@ -488,9 +517,14 @@ void ParticleSimulationManager<GeometryHandler,
           ray_start_point[2] = particle.getZPosition();
         }
 
-        // Make sure the energy is above the cutoff
+        // Make sure the energy is above the cutoff (forward transport)
         if( particle.getEnergy() <
             d_properties->getMinParticleEnergy<ParticleStateType>() )
+          particle.setAsGone();
+
+        // Make sure the energy is below the cutoff (adjoint transport)
+        if( particle.getEnergy() >
+            d_properties->getMaxParticleEnergy<ParticleStateType>() )
           particle.setAsGone();
 
         // This subtrack is finished

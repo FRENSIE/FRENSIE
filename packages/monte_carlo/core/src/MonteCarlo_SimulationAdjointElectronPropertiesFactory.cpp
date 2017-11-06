@@ -173,19 +173,19 @@ void SimulationAdjointElectronPropertiesFactory::initializeProperties(
        *  when the elastic electron distribution type is set to coupled.
        *  Otherwise, this entry is ignored.
        */
-      if( properties.isParameter( "Coupled Elastic Sampling Method" ) )
+      if( properties.isParameter( "Adjoint Coupled Elastic Sampling Method" ) )
       {
         std::string raw_method =
-        properties.get<std::string>( "Coupled Elastic Sampling Method" );
-      
+        properties.get<std::string>( "Adjoint Coupled Elastic Sampling Method" );
+
         MonteCarlo::CoupledElasticSamplingMethod method;
 
         if( raw_method == "One D Union" || raw_method == "one d union" || raw_method == "ONE D UNION" )
-        method = MonteCarlo::ONE_D_UNION;
+          method = MonteCarlo::ONE_D_UNION;
         else if( raw_method == "Two D Union" || raw_method == "two d union" || raw_method == "TWO D UNION" )
-        method = MonteCarlo::TWO_D_UNION;
+          method = MonteCarlo::TWO_D_UNION;
         else if( raw_method == "Simplified Union" || raw_method == "simplified union" || raw_method == "SIMPLIFIED UNION" )
-        method = MonteCarlo::SIMPLIFIED_UNION;
+          method = MonteCarlo::SIMPLIFIED_UNION;
         else
         {
           THROW_EXCEPTION( std::runtime_error,

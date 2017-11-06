@@ -46,7 +46,7 @@ void AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLo
         data_container.getAtomicExcitationEnergyLoss() );
 
   energy_loss_function.reset(
-    new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
+    new Utility::TabularDistribution<Utility::LogLog>( excitation_energy_grid,
                                                        energy_loss ) );
 }
 

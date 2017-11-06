@@ -94,7 +94,7 @@ class HybridElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLinLinLogExactHybridElasticReaction( self.data, 0.9, 1e-14 )
+        self.reaction = Collision.createLogLogLogExactHybridElasticReaction( self.data, 0.9, 1e-14 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createHybridElasticReaction getThresholdEnergy method"
@@ -108,7 +108,7 @@ class HybridElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*2.4754121265454507e+09 )
         energy = 4e-4
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                5.2888196704079199e+08,
+                                3.2786275807901180e+08,
                                 delta=1e-12*3.2786275807901180e+08 )
         energy = 1e5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
@@ -178,7 +178,7 @@ class MomentPreservingElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLinLinLogExactMomentPreservingElasticReaction( self.data, 0.9, 1e-7 )
+        self.reaction = Collision.createLogLogLogExactMomentPreservingElasticReaction( self.data, 0.9, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createMomentPreservingElasticReaction getThresholdEnergy method"
@@ -192,8 +192,8 @@ class MomentPreservingElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*1.1063294415585944e+08 )
         energy = 4e-4
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.9356264227342713e+08,
-                                delta=1e-12*1.9356264227342713e+08 )
+                                1.9356261217028475e+08,
+                                delta=1e-12*1.9356261217028475e+08 )
         energy = 1e5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
                                 2.2037700886489448e-03,

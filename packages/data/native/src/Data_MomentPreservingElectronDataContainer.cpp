@@ -89,28 +89,7 @@ MomentPreservingElectronDataContainer::getMomentPreservingWeights(
 
   return d_moment_preserving_elastic_weights.find( angular_energy_bin )->second;
 }
-/*
-// Return the electron energy grid
-const std::vector<double>&
-MomentPreservingElectronDataContainer::getElectronEnergyGrid() const
-{
-  return d_electron_energy_grid;
-}
 
-// Return the Moment Preserving (MP) moment preserving electron cross section
-const std::vector<double>&
-MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossSection() const
-{
-  return d_moment_preserving_moment_preserving_elastic_cross_section;
-}
-
-// Return the MP moment preserving cross section threshold energy bin index
-unsigned
-MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex() const
-{
-  return d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index;
-}
-*/
 // Set the atomic number
 void MomentPreservingElectronDataContainer::setAtomicNumber(
 						 const unsigned atomic_number )

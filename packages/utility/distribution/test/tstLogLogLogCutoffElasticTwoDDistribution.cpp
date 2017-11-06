@@ -54,7 +54,7 @@ std::shared_ptr<Utility::FullyTabularTwoDDistribution> tab_distribution;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the distribution
-template<typename TwoDSamplingPolicy,
+template<typename TwoDSamplePolicy,
          typename BaseTabDistribution,
          typename BaseDistribution>
 void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
@@ -89,7 +89,7 @@ void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
   Utility::setQuantity( primary_bins[1], 2.0 );
   secondary_dists[1].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values ) );
 
-  tab_dist.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogCosLog,TwoDSamplingPolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+  tab_dist.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LogLogCosLog,TwoDSamplePolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
       primary_bins, secondary_dists, cutoff, 1e-3, 1e-7 ) );
 
   dist = tab_dist;

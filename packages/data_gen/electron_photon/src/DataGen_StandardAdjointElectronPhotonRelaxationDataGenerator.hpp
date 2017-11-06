@@ -20,7 +20,6 @@
 #include "DataGen_AdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "DataGen_AdjointElectronGridGenerator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
-#include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"

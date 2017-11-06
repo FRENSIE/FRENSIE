@@ -1759,7 +1759,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> cutoff_elastic_reaction(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
         forward_electron_energy_grid,
         forward_cutoff_elastic_cs,
         d_forward_epr_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
@@ -1786,7 +1786,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
   // Create the reaction
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_elastic_reaction(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
         forward_electron_energy_grid,
         forward_total_elastic_cs,
         d_forward_epr_data->getTotalElasticCrossSectionThresholdEnergyIndex(),
@@ -1797,7 +1797,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     boost::bind( &MonteCarlo::ElectroatomicReaction::getCrossSection,
                  boost::cref( *total_elastic_reaction ),
                  _1 );
-
 
   // Generate total elastic
   union_energy_grid_generator.generateInPlace( union_energy_grid,
@@ -2026,36 +2025,15 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
                 << " cross section and distribution...";
     d_os_log->flush();
 
-    // Extract the moment preserving elastic cross section data
-    Teuchos::ArrayRCP<double> forward_moment_preserving_elastic_cs;
-    forward_moment_preserving_elastic_cs.assign(
-      d_forward_epr_data->getMomentPreservingCrossSection().begin(),
-      d_forward_epr_data->getMomentPreservingCrossSection().end() );
+    // Set the cross sections reduction
+    data_container.setAdjointMomentPreservingCrossSectionReduction(
+        d_forward_epr_data->getMomentPreservingCrossSectionReduction() );
 
-    std::shared_ptr<MonteCarlo::ElectroatomicReaction> moment_preserving_elastic_reaction(
-      new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
-          forward_electron_energy_grid,
-          forward_moment_preserving_elastic_cs,
-          d_forward_epr_data->getMomentPreservingCrossSectionThresholdEnergyIndex(),
-          forward_grid_searcher ) );
-
-    boost::function<double (double pz)> moment_preserving_elastic_grid_function =
-      boost::bind( &MonteCarlo::ElectroatomicReaction::getCrossSection,
-                   boost::cref( *moment_preserving_elastic_reaction ),
-                   _1 );
-
-    std::vector<double> moment_preserving_cross_section;
-    this->createCrossSectionOnUnionEnergyGrid(
-        union_energy_grid,
-        moment_preserving_elastic_grid_function,
-        moment_preserving_cross_section,
-        threshold );
-    data_container.setAdjointMomentPreservingCrossSection( moment_preserving_cross_section );
-    data_container.setAdjointMomentPreservingCrossSectionThresholdEnergyIndex( threshold );
-
+    // Set the discrete angles
     data_container.setAdjointMomentPreservingElasticDiscreteAngles(
         d_forward_epr_data->getMomentPreservingElasticDiscreteAngles() );
 
+    // Set the discrete weights
     data_container.setAdjointMomentPreservingElasticWeights(
         d_forward_epr_data->getMomentPreservingElasticWeights() );
 
@@ -2085,7 +2063,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
     else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
@@ -2313,7 +2291,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::createForwardInelasticElec
 
   // Set the distribution
   forward_inelastic_electron_cross_section_distribution.reset(
-    new Utility::TabularDistribution<Utility::LinLin>(
+    new Utility::TabularDistribution<Utility::LogLog>(
       d_forward_epr_data->getElectronEnergyGrid(),
       forward_inelastic_electron_cross_section ) );
 }
@@ -2333,7 +2311,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
     d_forward_epr_data->getAtomicExcitationCrossSection().end() );
 
   std::shared_ptr<MonteCarlo::ElectroatomicReaction> atomic_excitation_reaction(
-    new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::VoidElectroatomicReaction<Utility::LogLog>(
         forward_electron_energy_grid,
         atomic_excitation_cross_section,
         d_forward_epr_data->getAtomicExcitationCrossSectionThresholdEnergyIndex(),
@@ -2432,7 +2410,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
   }
 
   adjoint_excitation_cross_section_distribution.reset(
-    new Utility::TabularDistribution<Utility::LinLin>(
+    new Utility::TabularDistribution<Utility::LogLog>(
       adjoint_excitation_energy_grid,
       adjoint_excitation_cross_section ) );
 

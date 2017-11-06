@@ -21,6 +21,7 @@
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
 
 
 namespace DataGen{
@@ -41,9 +42,9 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     const double cutoff_angle_cosine,
-    const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on );
+    const double tabular_evaluation_tol );
 
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
@@ -51,8 +52,7 @@ public:
     const Teuchos::ArrayRCP<double>& incoming_energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::ArrayRCP<double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<double>& screened_rutherford_cross_section,
-    const unsigned cutoff_threshold_energy_index,
+    const Teuchos::ArrayRCP<double>& total_elastic_cross_section,
     const unsigned screened_rutherford_threshold_energy_index,
     const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_distribution,
@@ -155,20 +155,9 @@ private:
         std::vector<double>& angular_integration_points,
         const double energy ) const;
 
-  // The electron energy grid
-  Teuchos::ArrayRCP<double> d_incoming_energy_grid;
 
   // Grid searcher for the energy grid
   Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
-
-  // The cutoff elastic cross section
-  Teuchos::ArrayRCP<double> d_cutoff_cross_section;
-
-  // The screened rutherford elastic cross section
-  Teuchos::ArrayRCP<double> d_screened_rutherford_cross_section;
-
-  // The cutoff elastic threshold_energy_index
-  unsigned d_cutoff_threshold_energy_index;
 
   // The screened rutherford elastic threshold_energy_index
   unsigned d_screened_rutherford_threshold_energy_index;
@@ -177,13 +166,13 @@ private:
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     d_coupled_distribution;
 
-  // The cutoff reaction
+  // The cutoff elastic reaction
   std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
     d_cutoff_reaction;
 
-  // The screened rutherford reaction
+  // The total elastic reaction
   std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
-    d_screened_rutherford_reaction;
+    d_total_reaction;
 
   // The map of the cutoff angles
   std::map<double,std::vector<double> > d_cutoff_elastic_angles;

@@ -31,9 +31,14 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
   TEST_ASSERT( properties.isAdjointElectroionizationModeOn() );
   TEST_ASSERT( properties.isAdjointBremsstrahlungModeOn() );
   TEST_ASSERT( properties.isAdjointAtomicExcitationModeOn() );
+  TEST_EQUALITY_CONST( properties.getAdjointElasticElectronDistributionMode(),
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getAdjointCoupledElasticSamplingMode(),
+                       MonteCarlo::TWO_D_UNION );
   TEST_EQUALITY_CONST(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );
+  TEST_EQUALITY( properties.getAdjointElectronEvaluationTolerance(), 1e-12 );
   TEST_EQUALITY_CONST( properties.getAdjointElasticCutoffAngleCosine(),
                        1.0 );
   TEST_EQUALITY_CONST( properties.getNumberOfAdjointElectronHashGridBins(),
@@ -135,7 +140,9 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
                    setAdjointElectronEvaluationTolerance )
 {
   MonteCarlo::SimulationAdjointElectronProperties properties;
-  
+
+  TEST_EQUALITY( properties.getAdjointElectronEvaluationTolerance(), 1e-12 );
+
   properties.setAdjointElectronEvaluationTolerance( 1e-4 );
 
   TEST_EQUALITY( properties.getAdjointElectronEvaluationTolerance(), 1e-4 );
@@ -156,6 +163,44 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
   TEST_EQUALITY_CONST(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the adjoint coupled elastic electron distribution mode can be set
+TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
+                   setAdjointElasticElectronDistributionMode )
+{
+  MonteCarlo::SimulationAdjointElectronProperties properties;
+
+  TEST_EQUALITY_CONST( properties.getAdjointElasticElectronDistributionMode(),
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+
+  MonteCarlo::ElasticElectronDistributionType mode;
+  mode = MonteCarlo::DECOUPLED_DISTRIBUTION;
+
+  properties.setAdjointElasticElectronDistributionMode( mode );
+
+  TEST_EQUALITY_CONST( properties.getAdjointElasticElectronDistributionMode(),
+                       mode );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the adjoint coupled elastic sampling mode can be set
+TEUCHOS_UNIT_TEST( SimulationAdjointElectronProperties,
+                   setAdjointCoupledElasticSamplingMode )
+{
+  MonteCarlo::SimulationAdjointElectronProperties properties;
+
+  TEST_EQUALITY_CONST( properties.getAdjointCoupledElasticSamplingMode(),
+                       MonteCarlo::TWO_D_UNION );
+
+  MonteCarlo::CoupledElasticSamplingMethod mode;
+  mode = MonteCarlo::SIMPLIFIED_UNION;
+
+  properties.setAdjointCoupledElasticSamplingMode( mode );
+
+  TEST_EQUALITY_CONST( properties.getAdjointCoupledElasticSamplingMode(),
+                       mode );
 }
 
 //---------------------------------------------------------------------------//

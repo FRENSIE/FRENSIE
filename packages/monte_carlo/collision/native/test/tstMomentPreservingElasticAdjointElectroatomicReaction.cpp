@@ -90,19 +90,13 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
 TEUCHOS_UNIT_TEST( MomentPreservingElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
-  double cross_section =
-    mp_elastic_reaction->getCrossSection( 1.0E-05 );
-
+  double cross_section = mp_elastic_reaction->getCrossSection( 1.0E-05 );
   TEST_FLOATING_EQUALITY( cross_section, 1.2217606103336416e+07, 1e-12 );
 
-  cross_section =
-    mp_elastic_reaction->getCrossSection( 1.0E-03 );
+  cross_section = mp_elastic_reaction->getCrossSection( 1.0E-03 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6718090775280627e+06, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.6728373491654180e+06, 1e-12 );
-
-  cross_section =
-    mp_elastic_reaction->getCrossSection( 20.0 );
-
+  cross_section = mp_elastic_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section, 2.0498802209908908, 1e-12 );
 }
 
@@ -154,16 +148,23 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getAdjointElectronEnergyGrid().begin(),
         data_container.getAdjointElectronEnergyGrid().end() );
 
+  double cutoff_angle_cosine = 0.9;
+  double evaluation_tol = 1e-15;
+
+  // Moment preserving elastic cross section
+  std::vector<double> moment_preserving_cross_sections;
+  unsigned threshold_index;
+  NativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Exact>(
+                                moment_preserving_cross_sections,
+                                threshold_index,
+                                data_container,
+                                energy_grid,
+                                evaluation_tol );
+
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.assign(
-        data_container.getAdjointMomentPreservingCrossSection().begin(),
-        data_container.getAdjointMomentPreservingCrossSection().end() );
-
-  unsigned threshold_index(
-    data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex() );
-
-  double cutoff_angle_cosine = 0.9;
-  double evaluation_tol = 1e-7;
+    moment_preserving_cross_sections.begin(),
+    moment_preserving_cross_sections.end() );
 
   // Create the distribution
   std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>

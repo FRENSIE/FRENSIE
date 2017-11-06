@@ -47,24 +47,43 @@ public:
   //! Return the max electron energy
   double getMaxElectronEnergy() const;
 
-  //! Set the default grid convergence tolerance
-  void setDefaultGridConvergenceTolerance( const double convergence_tol );
+  //! Set the default photon grid convergence tolerance
+  void setDefaultPhotonGridConvergenceTolerance( const double convergence_tol );
 
-  //! Get the default grid convergence tolerance
-  double getDefaultGridConvergenceTolerance() const;
+  //! Get the default photon grid convergence tolerance
+  double getDefaultPhotonGridConvergenceTolerance() const;
 
-  //! Set the default grid absolute difference tolerance
-  void setDefaultGridAbsoluteDifferenceTolerance(
+  //! Set the default photon grid absolute difference tolerance
+  void setDefaultPhotonGridAbsoluteDifferenceTolerance(
                                               const double absolute_diff_tol );
 
-  //! Get the default grid absolute difference tolerance
-  double getDefaultGridAbsoluteDifferenceTolerance() const;
+  //! Get the default photon grid absolute difference tolerance
+  double getDefaultPhotonGridAbsoluteDifferenceTolerance() const;
 
-  //! Set the default grid distance tolerance
-  void setDefaultGridDistanceTolerance( const double distance_tol );
+  //! Set the default photon grid distance tolerance
+  void setDefaultPhotonGridDistanceTolerance( const double distance_tol );
 
-  //! Get the default grid distance tolerance
-  double getDefaultGridDistanceTolerance() const;
+  //! Get the default photon grid distance tolerance
+  double getDefaultPhotonGridDistanceTolerance() const;
+
+  //! Set the default electron grid convergence tolerance
+  void setDefaultElectronGridConvergenceTolerance( const double convergence_tol );
+
+  //! Get the default electron grid convergence tolerance
+  double getDefaultElectronGridConvergenceTolerance() const;
+
+  //! Set the default electron grid absolute difference tolerance
+  void setDefaultElectronGridAbsoluteDifferenceTolerance(
+                                              const double absolute_diff_tol );
+
+  //! Get the default electron grid absolute difference tolerance
+  double getDefaultElectronGridAbsoluteDifferenceTolerance() const;
+
+  //! Set the default electron grid distance tolerance
+  void setDefaultElectronGridDistanceTolerance( const double distance_tol );
+
+  //! Get the default electron grid distance tolerance
+  double getDefaultElectronGridDistanceTolerance() const;
 
   //! Populate the electron-photon-relaxation data container
   virtual void populateEPRDataContainer(
@@ -93,9 +112,13 @@ protected:
   void setDefaultConvergenceParameters(
    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  //! Get a default grid generator (Lin-Lin grid)
+  //! Get a default photon grid generator (Lin-Lin grid)
   const Utility::GridGenerator<Utility::LinLin>&
-  getDefaultGridGenerator() const;
+  getDefaultPhotonGridGenerator() const;
+
+  //! Get a default electron grid generator (Log-Log grid)
+  const Utility::GridGenerator<Utility::LogLog>&
+  getDefaultElectronGridGenerator() const;
 
 private:
 
@@ -114,9 +137,13 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The default grid generator
+  // The default photon grid generator
   std::unique_ptr<Utility::GridGenerator<Utility::LinLin> >
-  d_default_grid_generator;
+  d_default_photon_grid_generator;
+
+  // The default electron grid generator
+  std::unique_ptr<Utility::GridGenerator<Utility::LogLog> >
+  d_default_electron_grid_generator;
 };
 
 } // end DataGen namespace

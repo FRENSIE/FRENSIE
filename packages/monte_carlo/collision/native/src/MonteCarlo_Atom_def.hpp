@@ -89,8 +89,7 @@ template<typename AtomCore>
 double Atom<AtomCore>::getAtomicTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
+  testPrecondition( d_core.getGridSearcher().isValueWithinGridBounds( energy ) );
 
   unsigned energy_grid_bin =
       d_core.getGridSearcher().findLowerBinIndex( energy );
@@ -118,8 +117,7 @@ template<typename AtomCore>
 double Atom<AtomCore>::getAtomicAbsorptionCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
+  testPrecondition( d_core.getGridSearcher().isValueWithinGridBounds( energy ) );
 
   unsigned energy_grid_bin =
     d_core.getGridSearcher().findLowerBinIndex( energy );

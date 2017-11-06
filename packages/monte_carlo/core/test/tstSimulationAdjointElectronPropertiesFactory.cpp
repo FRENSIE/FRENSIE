@@ -44,10 +44,14 @@ TEUCHOS_UNIT_TEST( SimulationAdjointElectronPropertiesFactory,
 
   TEST_EQUALITY_CONST( properties.getMinAdjointElectronEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( properties.getMaxAdjointElectronEnergy(), 10.0 );
-  TEST_ASSERT( !properties.isAdjointElasticModeOn() );
+  TEST_ASSERT( properties.isAdjointElasticModeOn() );
+  TEST_EQUALITY_CONST( properties.getAdjointElasticElectronDistributionMode(),
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getAdjointCoupledElasticSamplingMode(),
+                       MonteCarlo::ONE_D_UNION );
   TEST_ASSERT( !properties.isAdjointElectroionizationModeOn() );
-  TEST_ASSERT( !properties.isAdjointBremsstrahlungModeOn() );
   TEST_ASSERT( !properties.isAdjointAtomicExcitationModeOn() );
+  TEST_ASSERT( properties.isAdjointBremsstrahlungModeOn() );
   TEST_EQUALITY_CONST(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );

@@ -53,7 +53,7 @@ std::string convertCoupledElasticSamplingMethodToString(
     return "Simplified Union";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the Coupled Elastic "
+                     "Error: cannot convert the coupled elastic "
                      "electron sampling method to a string!" );
   }
 }

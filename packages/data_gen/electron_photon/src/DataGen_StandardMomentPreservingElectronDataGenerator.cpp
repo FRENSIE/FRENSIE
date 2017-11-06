@@ -23,18 +23,18 @@ namespace DataGen{
 StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronDataGenerator(
     const unsigned atomic_number,
     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
     const double min_electron_energy,
     const double max_electron_energy,
     const double cutoff_angle_cosine,
-    const double tabular_evaluation_tol,
-    const bool linlinlog_interpolation_mode_on )
+    const double tabular_evaluation_tol )
   : MomentPreservingElectronDataGenerator( atomic_number ),
     d_native_eedl_data( native_eedl_data ),
+    d_two_d_interp( two_d_interp ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
-    d_tabular_evaluation_tol( tabular_evaluation_tol ),
-    d_linlinlog_interpolation_mode_on( linlinlog_interpolation_mode_on )
+    d_tabular_evaluation_tol( tabular_evaluation_tol )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
@@ -55,9 +55,9 @@ StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronD
   d_moments_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator(
                                             *d_native_eedl_data,
+                                            d_two_d_interp,
                                             d_cutoff_angle_cosine,
-                                            d_tabular_evaluation_tol,
-                                            d_linlinlog_interpolation_mode_on ) );
+                                            d_tabular_evaluation_tol ) );
 
 }
 

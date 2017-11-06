@@ -81,10 +81,10 @@ TEUCHOS_UNIT_TEST( CoupledElasticAdjointElectroatomicReaction,
   TEST_FLOATING_EQUALITY( cross_section, 2.74896E+08, 1e-12 );
 
   cross_section = coupled_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.8222590384670133e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06, 1e-12 );
 
   cross_section = coupled_elastic_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987E+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3022122514987041e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

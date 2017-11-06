@@ -242,8 +242,11 @@ bool DagMC::isEstimatorTypeValid( const std::string& estimator_type )
 bool DagMC::isParticleTypeValid( const std::string& particle_type )
 {
   return particle_type.compare( "n" ) == 0 ||
-    particle_type.compare( "p" ) == 0 ||
-    particle_type.compare( "e" ) == 0;
+         particle_type.compare( "p" ) == 0 ||
+         particle_type.compare( "e" ) == 0 ||
+         particle_type.compare( "an" ) == 0 ||
+         particle_type.compare( "ap" ) == 0 ||
+         particle_type.compare( "ae" ) == 0;
 }
 
 // Get all of the properties
@@ -503,7 +506,8 @@ void DagMC::extractEstimatorPropertyValues( const std::string& prop_value,
                       InvalidDagMCGeometry,
                       "Error: estimator " << estimator_id <<
                       " has an invalid particle type (" << particle_type <<
-                      ") specified in the .sat file (choose n, p or e)!" );
+                      ") specified in the .sat file (choose n, p or e for" <<
+                      " forward or choose an, ap or ae for adjoint)!" );
 }
 
 // Check if a cell exists

@@ -94,52 +94,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
   TEST_COMPARE_ARRAYS( mp_data_container.getMomentPreservingWeights(0),
                        weights );
 }
-/*
-//---------------------------------------------------------------------------//
-// Check that the electron energy grid can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
-                   setElectronEnergyGrid )
-{
-  std::vector<double> electron_energy_grid( 3 );
-  electron_energy_grid[0] = 1e-3;
-  electron_energy_grid[1] = 1.0;
-  electron_energy_grid[2] = 20.0;
 
-  mp_data_container.setElectronEnergyGrid( electron_energy_grid );
-
-  TEST_COMPARE_ARRAYS( mp_data_container.getElectronEnergyGrid(),
-                       electron_energy_grid );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving (MP) moment preserving electron cross section can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
-                   setMomentPreservingMomentPreservingCrossSection )
-{
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
-
-  mp_data_container.setMomentPreservingMomentPreservingCrossSection(
-                        cross_section );
-
-  TEST_COMPARE_ARRAYS(
-            mp_data_container.getMomentPreservingMomentPreservingCrossSection(),
-            cross_section );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving moment preserving cs threshold index can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
-		        setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex )
-{
-  mp_data_container.setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex( 0 );
-
-  TEST_EQUALITY_CONST( mp_data_container.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-                       0 );
-}
-*/
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
@@ -165,14 +120,6 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -200,14 +147,6 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -235,14 +174,6 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -266,14 +197,6 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//

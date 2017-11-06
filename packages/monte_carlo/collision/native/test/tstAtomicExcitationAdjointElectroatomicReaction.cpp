@@ -80,14 +80,13 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getNumberOfEmit
 TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = excitation_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 6.12229969785753563e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
 
-  cross_section =
-    excitation_reaction->getCrossSection( 6.20350838928222553e-04 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.58264020015645381e+07, 1e-12 );
+  cross_section = excitation_reaction->getCrossSection( 1e-3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0551636170350602e+07, 1e-12 );
 
   cross_section = excitation_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 8.18292998537648382e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

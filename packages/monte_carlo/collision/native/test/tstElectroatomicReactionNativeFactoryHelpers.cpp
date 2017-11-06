@@ -30,8 +30,139 @@ double eval_tol = 1e-7;
 // LinLinLog Tests.
 //---------------------------------------------------------------------------//
 // Check that an coupled elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createCoupledElasticReaction_LogLogCosLog )
+{
+  reaction = MonteCarlo::createCoupledElasticReaction<Utility::LogLogCosLog,Utility::Exact>(
+                *data_container,
+                "Simplified Union",
+                eval_tol );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an decoupled elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createDecoupledElasticReaction_LogLogCosLog )
+{
+  reaction = MonteCarlo::createDecoupledElasticReaction<Utility::LogLogCosLog,Utility::Exact>(
+                *data_container,
+                eval_tol );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e+09, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.43663545845802366734e+08, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.11161e+06, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an hybrid elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createHybridElasticReaction_LogLogCosLog )
+{
+  double cutoff_angle_cosine = 0.9;
+
+  reaction = MonteCarlo::createHybridElasticReaction<Utility::LogLogCosLog,Utility::Exact>(
+                *data_container,
+                cutoff_angle_cosine,
+                1e-14 );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.4754121265454507e+09, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 3.2786275807901049e+08, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2050564844577009e-03, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an cutoff elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+                   createCutoffElasticReaction_LogLogCosLog )
+{
+  reaction = MonteCarlo::createCutoffElasticReaction<Utility::LogLogCosLog,Utility::Exact>(
+                *data_container,
+                1.0,
+                eval_tol );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+                       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.0e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.0e-5;
+  double cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 2.48924e9, 1e-12 );
+
+  energy = 4.0e-4;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e8, 1e-12 );
+
+  energy = 1.0e5;
+  cross_section = reaction->getCrossSection( energy );
+  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
+// LinLinLog Tests.
+//---------------------------------------------------------------------------//
+// Check that an coupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createCoupledElasticReaction )
+                   createCoupledElasticReaction_LinLinLog )
 {
   reaction = MonteCarlo::createCoupledElasticReaction<Utility::LinLinLog,Utility::Exact>(
                 *data_container,
@@ -63,7 +194,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that a decoupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createDecoupledElasticReaction )
+                   createDecoupledElasticReaction_LinLinLog )
 {
   reaction = MonteCarlo::createDecoupledElasticReaction<Utility::LinLinLog,Utility::Exact>(
                 *data_container,
@@ -94,7 +225,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that an hybrid elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
-                   createHybridElasticReaction )
+                   createHybridElasticReaction_LinLinLog )
 {
   double cutoff_angle_cosine = 0.9;
 
@@ -115,7 +246,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 5.2888196704079199e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.0310818301823217e+08, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
@@ -128,7 +259,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createCutoffElasticReaction )
+                   createCutoffElasticReaction_LinLinLog )
 {
   reaction = MonteCarlo::createCutoffElasticReaction<Utility::LinLinLog,Utility::Exact>(
                 *data_container,
@@ -168,7 +299,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
                        MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 6.654785 );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 7.0 );
 
   // Test that the stored cross section is correct
   double energy = 1e1;
@@ -190,7 +321,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that an moment preserving elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createMomentPreservingElasticReaction )
+                   createMomentPreservingElasticReaction_LinLinLog )
 {
   reaction = MonteCarlo::createMomentPreservingElasticReaction<Utility::LinLinLog,Utility::Exact>(
                 *data_container,
@@ -209,7 +340,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.9356264227342713e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.7788808128946811e+07, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
@@ -248,7 +379,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that the electroionization subshell reactions can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createSubshellElectroelectricReactions )
+                   createSubshellElectroelectricReactions_LinLinLog )
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> >
   reactions = MonteCarlo::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::Correlated>(
@@ -299,7 +430,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that a basic (dipole distribution) bremsstrahlung reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createBremsstrahlungReaction_dipole )
+                   createBremsstrahlungReaction_dipole_LinLinLog )
 {
   bool dipole_distribution_mode_on = true;
   reaction =
@@ -336,7 +467,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
  * data can be created
  */
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createBremsstrahlungReaction_2bs )
+                   createBremsstrahlungReaction_2bs_LinLinLog )
 {
   bool dipole_distribution_mode_on = false;
 
@@ -371,11 +502,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
 
 //---------------------------------------------------------------------------//
-// LinLinLog Tests.
+// LinLinLin Tests.
 //---------------------------------------------------------------------------//
 // Check that an coupled elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createCoupledElasticReaction_lin )
+                   createCoupledElasticReaction_LinLinLin )
 {
   reaction = MonteCarlo::createCoupledElasticReaction<Utility::LinLinLin,Utility::Exact>(
       *data_container,
@@ -407,7 +538,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createCutoffElasticReaction_lin )
+                   createCutoffElasticReaction_LinLinLin )
 {
   reaction = MonteCarlo::createCutoffElasticReaction<Utility::LinLinLin,Utility::Exact>(
                 *data_container,
@@ -439,7 +570,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that an moment preserving elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createMomentPreservingElasticReaction_lin )
+                   createMomentPreservingElasticReaction_LinLinLin )
 {
   reaction = MonteCarlo::createMomentPreservingElasticReaction<Utility::LinLinLin,Utility::Exact>(
                         *data_container,
@@ -458,7 +589,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 
   energy = 4.0e-4;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.9356264227342713e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.2813487936725482e+07, 1e-12 );
 
   energy = 1.0e5;
   cross_section = reaction->getCrossSection( energy );
@@ -471,7 +602,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that the electroionization subshell reactions can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createSubshellElectroionizationReactions_lin )
+                   createSubshellElectroionizationReactions_LinLinLin )
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> >
   reactions = MonteCarlo::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::Exact>(
@@ -522,7 +653,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
 //---------------------------------------------------------------------------//
 // Check that a basic (dipole distribution) bremsstrahlung reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createBremsstrahlungReaction_dipole_lin )
+                   createBremsstrahlungReaction_dipole_LinLinLin )
 {
   bool dipole_distribution_mode_on = true;
 
@@ -560,7 +691,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
  * data can be created
  */
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactoryHelpers,
-                   createBremsstrahlungReaction_2bs_lin )
+                   createBremsstrahlungReaction_2bs_LinLinLin )
 {
   bool dipole_distribution_mode_on = false;
 

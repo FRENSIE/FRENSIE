@@ -958,6 +958,22 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the moment preserving elastic discrete angles can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setMomentPreservingCrossSectionReduction )
+{
+  TEST_ASSERT( epr_data_container.hasMomentPreservingData() );
+
+  std::vector<double> reductions( 1 );
+  reductions[0] = 0.90;
+
+  epr_data_container.setMomentPreservingCrossSectionReduction( reductions );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getMomentPreservingCrossSectionReduction(),
+                       reductions );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the electroionization energy grid can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectroionizationEnergyGrid )
@@ -1370,35 +1386,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Moment Preserving (MP) elastic electron cross section can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setMomentPreservingCrossSection )
-{
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
-
-  epr_data_container.setMomentPreservingCrossSection(
-                        cross_section );
-
-  TEST_COMPARE_ARRAYS(
-            epr_data_container.getMomentPreservingCrossSection(),
-            cross_section );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving elastic cs threshold index can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                        setMomentPreservingCrossSectionThresholdEnergyIndex )
-{
-  epr_data_container.setMomentPreservingCrossSectionThresholdEnergyIndex( 0 );
-
-  TEST_EQUALITY_CONST( epr_data_container.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-                       0 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the electroionization electron cross section can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectroionizationCrossSection )
@@ -1632,6 +1619,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
   TEST_ASSERT( epr_data_container_copy.hasMomentPreservingData() );
   TEST_EQUALITY_CONST(
+    epr_data_container_copy.getMomentPreservingCrossSectionReduction().size(), 1 );
+  TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
@@ -1693,12 +1682,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-                       0 );
-  TEST_EQUALITY_CONST(
-    epr_data_container_copy.getMomentPreservingCrossSection().size(),
-                       3u );
-  TEST_EQUALITY_CONST(
-    epr_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
                        0 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectroionizationCrossSection(1u).size(),
@@ -1862,6 +1845,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
   TEST_ASSERT( epr_data_container_copy.hasMomentPreservingData() );
   TEST_EQUALITY_CONST(
+    epr_data_container_copy.getMomentPreservingCrossSectionReduction().size(), 1 );
+  TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
@@ -1923,12 +1908,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-                       0 );
-  TEST_EQUALITY_CONST(
-    epr_data_container_copy.getMomentPreservingCrossSection().size(),
-                       3u );
-  TEST_EQUALITY_CONST(
-    epr_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
                        0 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectroionizationCrossSection(1u).size(),
@@ -2089,6 +2068,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
   TEST_ASSERT( epr_data_container_copy.hasMomentPreservingData() );
   TEST_EQUALITY_CONST(
+    epr_data_container_copy.getMomentPreservingCrossSectionReduction().size(), 1 );
+  TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
@@ -2150,12 +2131,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        3u );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-                       0 );
-  TEST_EQUALITY_CONST(
-    epr_data_container_copy.getMomentPreservingCrossSection().size(),
-                       3u );
-  TEST_EQUALITY_CONST(
-    epr_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
                        0 );
   TEST_EQUALITY_CONST(
     epr_data_container_copy.getElectroionizationCrossSection(1u).size(),

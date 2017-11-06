@@ -21,8 +21,6 @@
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -32,7 +30,29 @@ class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomen
 public:
   TestElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container )
-    : ElasticElectronMomentsEvaluator( data_container, -1.0, 1e-7, true )
+    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, -1.0, 1e-7 )
+  { /* ... */ }
+
+  TestElasticElectronMomentsEvaluator(
+    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const Teuchos::ArrayRCP<double>& incoming_energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
+    const Teuchos::ArrayRCP<double>& total_elastic_cross_section,
+    const unsigned screened_rutherford_threshold_energy_index,
+    const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+        coupled_distribution,
+    const std::shared_ptr<const ElasticTraits>& elastic_traits,
+    const double cutoff_angle_cosine )
+    : ElasticElectronMomentsEvaluator( cutoff_elastic_angles,
+                                       incoming_energy_grid,
+                                       grid_searcher,
+                                       cutoff_cross_section,
+                                       total_elastic_cross_section,
+                                       screened_rutherford_threshold_energy_index,
+                                       coupled_distribution,
+                                       elastic_traits,
+                                       cutoff_angle_cosine )
   { /* ... */ }
 
   ~TestElasticElectronMomentsEvaluator()
@@ -923,7 +943,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   energy = 4.3750e1;
 
   tol = 1e-15;
-  cross_section = 3.7500648271852370817e5L;
+  cross_section = 3.7500648271852371e+05L;
   moments.clear();
   moments[0] = cross_section;
   moments[1] = 0.99999992222034858054L*cross_section;
@@ -1124,9 +1144,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   full_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *pb_data,
+                                    MonteCarlo::LINLINLOG_INTERPOLATION,
                                     -1.0,
-                                    1e-7,
-                                    true ) );
+                                    1e-7 ) );
 
   std::vector<Utility::long_float> total_moments(n+1);
 
@@ -1204,11 +1224,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     al_data->getCutoffElasticCrossSection().begin(),
     al_data->getCutoffElasticCrossSection().end() );
 
-  // Get the screened Rutherford cross section
-  Teuchos::ArrayRCP<double> rutherford_cross_section;
-  rutherford_cross_section.assign(
-    al_data->getScreenedRutherfordElasticCrossSection().begin(),
-    al_data->getScreenedRutherfordElasticCrossSection().end() );
+  // Get the total elastic cross section
+  Teuchos::ArrayRCP<double> total_elastic_cross_section;
+  total_elastic_cross_section.assign(
+    al_data->getTotalElasticCrossSection().begin(),
+    al_data->getTotalElasticCrossSection().end() );
 
   // Get the total cross section
   Teuchos::ArrayRCP<double> total_cross_section;
@@ -1233,7 +1253,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         al_data->getCutoffElasticPDF(),
         al_data->getElasticAngularEnergyGrid(),
         al_data->getAtomicNumber(),
-        MonteCarlo::SIMPLIFIED_UNION,
+        MonteCarlo::TWO_D_UNION,
         tabular_evaluation_tol );
 
   // Create the moment evaluator
@@ -1242,8 +1262,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         energy_grid,
         grid_searcher,
         cutoff_cross_section,
-        rutherford_cross_section,
-        al_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        total_elastic_cross_section,
         al_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         coupled_distribution,
         elastic_traits,
@@ -1251,8 +1270,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
 
   // Create the test moment evaluator
-  test_al_evaluator.reset( new TestElasticElectronMomentsEvaluator(
-                                    *al_data ) );
+  test_al_evaluator.reset( new TestElasticElectronMomentsEvaluator( *al_data ) );
   }
 
   {
@@ -1260,23 +1278,19 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   pb_data.reset( new Data::ElectronPhotonRelaxationDataContainer(
                                     test_native_pb_file_name ) );
 
-  bool linlinlog_interpolation_mode_on = true;
-
   // Create the moment evaluator
   pb_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
+                                                  MonteCarlo::LINLINLOG_INTERPOLATION,
                                                   cutoff_angle_cosine,
-                                                  tabular_evaluation_tol,
-                                                  linlinlog_interpolation_mode_on ) );
-
-  linlinlog_interpolation_mode_on = false;
+                                                  tabular_evaluation_tol ) );
 
   // Create the moment evaluator
   pb_lin_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
+                                                  MonteCarlo::LINLINLIN_INTERPOLATION,
                                                   cutoff_angle_cosine,
-                                                  tabular_evaluation_tol,
-                                                  linlinlog_interpolation_mode_on ) );
+                                                  tabular_evaluation_tol ) );
   }
 }
 

@@ -31,6 +31,7 @@
 
 Teuchos::RCP<const MonteCarlo::AdjointElectronMaterial> silicon;
 std::shared_ptr<MonteCarlo::AdjointElectronCollisionHandler> collision_handler;
+double num_density;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -91,14 +92,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   double cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.4536956488174889e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.4064379386004543e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.4089235576080624e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1234701452508359e+06*num_density, 1e-12 );
 
   adjoint_electron.setCell( 2 );
   adjoint_electron.setEnergy( 1e-3 );
@@ -106,14 +107,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.4536956488174889e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.4064379386004543e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.4089235576080624e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1234701452508359e+06*num_density, 1e-12 );
 
   adjoint_electron.setCell( 3 );
   adjoint_electron.setEnergy( 1e-3 );
@@ -121,14 +122,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.4536956488174889e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.4064379386004543e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.4089235576080624e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1234701452508359e+06*num_density, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -144,14 +145,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   double cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.9146320103346705e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.2242787392660552e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.7532174461977767e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2840414116627080e+06*num_density, 1e-12 );
 
   adjoint_electron.setCell( 2 );
   adjoint_electron.setEnergy( 1e-3 );
@@ -159,14 +160,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.9146320103346705e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.2242787392660552e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.7532174461977767e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2840414116627080e+06*num_density, 1e-12 );
 
   adjoint_electron.setCell( 3 );
   adjoint_electron.setEnergy( 1e-3 );
@@ -174,14 +175,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.9146320103346705e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.2242787392660552e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalForwardCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.7532174461977767e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2840414116627080e+06*num_density, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -199,7 +200,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
               adjoint_electron,
               MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.7101892039760258e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2614892538788208e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   
@@ -207,7 +208,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
               adjoint_electron,
               MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.5981878897787446e+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.0100099282810203e+05*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 1e-3 );
   
@@ -216,7 +217,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
               adjoint_electron,
               MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.5361079675577265e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6444791058286287e+03*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   
@@ -224,7 +225,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
               adjoint_electron,
               MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.4324253178342066e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.3991117383483171e+01*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 1e-3 );
   
@@ -233,7 +234,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
               adjoint_electron,
               MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.9013891393283429e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3530678412550578e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   
@@ -241,7 +242,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
               adjoint_electron,
               MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.1154536900056355e+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.2512515821171633e+05*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 1e-3 );
 
@@ -250,7 +251,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
       adjoint_electron,
       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.2172830213705037e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0340931206680346e+07*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   
@@ -258,7 +259,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
       adjoint_electron,
       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.1282725884687164e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4589590648244698e+03*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 1e-3 );
 
@@ -267,7 +268,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
       adjoint_electron,
       MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.1685379837973125e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.8096304592361987e+07*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   
@@ -275,7 +276,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
       adjoint_electron,
       MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.7076382828410715e+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2627842700083958e+05*num_density, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -287,9 +288,9 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.99; // choose the only electroatom
   if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 3.06e-01; // select elastic (for boost below version 1.60)
+    fake_stream[1] = 3.07e-01; // select elastic (for boost below version 1.60)
   else
-    fake_stream[1] = 6.94e-01; // select elastic (for boost above version 1.60)
+    fake_stream[1] = 6.93e-01; // select elastic (for boost above version 1.60)
   fake_stream[2] = 0.0; // sample cutoff distribution
   fake_stream[3] = 0.0; // sample mu = -1.0
 
@@ -310,7 +311,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1e-3, 1e-15 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(), -1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          1.3672015567405338,
+                          1.3666429905509643,
                           1e-12 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
 
@@ -318,10 +319,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   fake_stream.resize( 3 );
   fake_stream[0] = 0.99; // choose the only electroatom
   if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 4.0117e-01; // select brem (for boost below version 1.60)
+    fake_stream[1] = 0.4012; // select brem (for boost below version 1.60)
   else
-    fake_stream[1] = 5.9883e-01; // select brem (for boost above version 1.60)
-  fake_stream[2] = 1.00475965594E-03; // sample outgoing energy = 1.5500002045388603
+    fake_stream[1] = 0.5988; // select brem (for boost above version 1.60)
+  fake_stream[2] = 0.0; // sample outgoing energy = 1.5500002011844041
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   
@@ -334,11 +335,11 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
 
   TEST_ASSERT( !adjoint_electron.isGone() );
   TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(),
-                          1.5500002045388603,
+                          1.5500002011844041,
                           1e-15 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(), 1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          1.0007602501803055,
+                          1.0007620595574949,
                           1e-12 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
 
@@ -372,7 +373,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   collision_handler->collideWithCellMaterial( adjoint_electron, bank );
 
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          1.3672015567405338,
+                          1.3666429905509643,
                           1e-12 );
 
   adjoint_electron.setEnergy( 1.55 );
@@ -383,7 +384,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   collision_handler->collideWithCellMaterial( adjoint_electron, bank );
 
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          1.0007602501803055,
+                          1.0007620595574949,
                           1e-12 );
 }
 
@@ -418,12 +419,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::unordered_set<std::string> atom_aliases;
   atom_aliases.insert( "Si-Native" );
 
-  Teuchos::Array<double> atom_fractions( 1 );
-  Teuchos::Array<std::string> atom_names( 1 );
-
-  atom_fractions[0] = -1.0; // weight fraction
-  atom_names[0] = "Si-Native";
-
   // Create the atom factory
   MonteCarlo::SimulationProperties properties;
   properties.setMaxAdjointElectronEnergy( 20.0 );
@@ -440,12 +435,20 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   factory.createAdjointElectroatomMap( adjoint_electroatom_map );
 
+  Teuchos::Array<double> atom_fractions( 1 );
+  Teuchos::Array<std::string> atom_names( 1 );
+
+  atom_fractions[0] = -1.0; // weight fraction
+  atom_names[0] = "Si-Native";
+
   // Create silicon
   silicon.reset( new MonteCarlo::AdjointElectronMaterial( 0,
                                                           -1.0,
                                                           adjoint_electroatom_map,
                                                           atom_fractions,
                                                           atom_names ) );
+
+  num_density = silicon->getNumberDensity();
 
   // Initialize the collision handler
   collision_handler.reset( new MonteCarlo::AdjointElectronCollisionHandler );

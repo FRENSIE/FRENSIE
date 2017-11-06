@@ -59,7 +59,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
   TEST_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0506776686126012e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.0449492968423121e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
@@ -84,21 +84,21 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          4.6179711080200960e+01 + 6.1222996978575356e+07,
+                          4.6329278793906738e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.6646322139064758e+01 + 1.0611513335611556e+07,
+                          1.6620526718982738e+01 + 1.0551636170350602e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.7113286525737745e-01 + 8.1829299853764838e+04,
+                          7.7114113565473230e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 

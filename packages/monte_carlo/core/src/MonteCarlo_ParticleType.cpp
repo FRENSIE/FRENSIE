@@ -36,6 +36,12 @@ std::string convertShortParticleTypeNameToVerboseParticleTypeName(
     return "Photon";
   else if( short_particle_type_name == "e" )
     return "Electron";
+  else if( short_particle_type_name == "an" )
+    return "Adjoint Neutron";
+  else if( short_particle_type_name == "ap" )
+    return "Adjoint Photon";
+  else if( short_particle_type_name == "ae" )
+    return "Adjoint Electron";
   else
   {
     THROW_EXCEPTION( std::runtime_error,

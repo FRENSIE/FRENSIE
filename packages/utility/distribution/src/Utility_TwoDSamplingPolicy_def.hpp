@@ -514,6 +514,11 @@ ReturnType Exact::evaluateCosSampleBased(
       double bin_eval_1 =
         ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
 
+      testPrecondition( bin_eval_0 >= 0.0 );
+      testPrecondition( bin_eval_0 <= 1.0 );
+      testPrecondition( bin_eval_1 >= 0.0 );
+      testPrecondition( bin_eval_1 <= 1.0 );
+
       if ( bin_eval_0 <= bin_eval_1 )
       {
         lower_cdf_bound = bin_eval_0;
@@ -560,6 +565,8 @@ ReturnType Exact::evaluateCosSampleBased(
     {
       // Estimate the cdf as the midpoint of the lower and upper boundaries
       double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
+      testPrecondition( estimated_cdf >= 0.0 );
+      testPrecondition( estimated_cdf <= 1.0 );
 
       // Get the sampled values at the upper and lower bin for the estimated_cdf
       lower_bin_sample =
@@ -1744,13 +1751,20 @@ YIndepType Correlated::sampleDetailed(
                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
                         grid_length_1 );
 
-        // Interpolate between the lower and upper unit base variables
-        eta = TwoDInterpPolicy::YXInterpPolicy::interpolate(
+        // Take into account special case where both eta values equal zero
+        // (e.g. random number of zero)
+        if( eta_0 == eta_1)
+          eta = eta_0;
+        else
+        {
+          // Interpolate between the lower and upper unit base variables
+          eta = TwoDInterpPolicy::YXInterpPolicy::interpolate(
                                                   lower_bin_boundary->first,
                                                   upper_bin_boundary->first,
                                                   x_indep_value,
                                                   eta_0,
                                                   eta_1 );
+        }
       }
     // Scale the sample so that it preserves the intermediate limits.
     raw_sample = TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(

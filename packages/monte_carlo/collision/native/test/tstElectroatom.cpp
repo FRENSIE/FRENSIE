@@ -260,22 +260,22 @@ TEUCHOS_UNIT_TEST( Electroatom, getTemperature_native )
 TEUCHOS_UNIT_TEST( Electroatom, getTotalCrossSection_ace )
 {
   double cross_section =
-    ace_electroatom->getTotalCrossSection( 2.000000000000E-03 );
+    ace_electroatom->getTotalCrossSection( 2e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          9.258661418255E+03 + 1.965170000000E+08,
+                          9.258661418255E+03 + 1.96517E+08,
                           1e-12 );
   cross_section =
-    ace_electroatom->getTotalCrossSection( 4.000000000000E-04 );
+    ace_electroatom->getTotalCrossSection( 4e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.914234996439E+03 + 6.226820000000E+08,
+                          8.914234996439E+03 + 6.22682E+08,
                           1e-12 );
   cross_section =
     ace_electroatom->getTotalCrossSection( 9E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.249970966838E+03 + 1.160420000000E+09,
+                          7.249970966838E+03 + 1.16042E+09,
                           1e-12 );
 
 }
@@ -285,22 +285,22 @@ TEUCHOS_UNIT_TEST( Electroatom, getTotalCrossSection_ace )
 TEUCHOS_UNIT_TEST( Electroatom, getTotalCrossSection_native )
 {
   double cross_section =
-    native_electroatom->getTotalCrossSection( 2.000000000000E-03 );
+    native_electroatom->getTotalCrossSection( 2e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          9.269564087122480E+03 + 1.965170000000E+08,
+                          9.2586614182549074e+03 + 1.96517E+08,
                           1e-12 );
   cross_section =
-    native_electroatom->getTotalCrossSection( 4.000000000000E-04 );
+    native_electroatom->getTotalCrossSection( 4e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.908504720336720E+03 + 6.226820000000E+08,
+                          8.9142349964387486e+03 + 6.22682E+08,
                           1e-12 );
   cross_section =
-    native_electroatom->getTotalCrossSection( 9.000000000000E-05 );
+    native_electroatom->getTotalCrossSection( 9e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.247161196055280E+03 + 1.160420000000E+09,
+                          7.2499709668376108e+03 + 1.16042E+09,
                           1e-12 );
 
 }
@@ -347,17 +347,17 @@ TEUCHOS_UNIT_TEST( Electroatom, getAbsorptionCrossSection_ace )
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    ace_electroatom->getAbsorptionCrossSection( 2.000000000000E-03 );
+    ace_electroatom->getAbsorptionCrossSection( 2e-3 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    ace_electroatom->getAbsorptionCrossSection( 4.000000000000E-04 );
+    ace_electroatom->getAbsorptionCrossSection( 4e-4 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    ace_electroatom->getAbsorptionCrossSection( 9.000000000000E-05 );
+    ace_electroatom->getAbsorptionCrossSection( 9e-5 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
@@ -372,17 +372,17 @@ TEUCHOS_UNIT_TEST( Electroatom, getAbsorptionCrossSection_native )
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    native_electroatom->getAbsorptionCrossSection( 2.000000000000E-03 );
+    native_electroatom->getAbsorptionCrossSection( 2e-3 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    native_electroatom->getAbsorptionCrossSection( 4.000000000000E-04 );
+    native_electroatom->getAbsorptionCrossSection( 4e-4 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =
-    native_electroatom->getAbsorptionCrossSection( 9.000000000000E-05 );
+    native_electroatom->getAbsorptionCrossSection( 9e-5 );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
@@ -392,17 +392,17 @@ TEUCHOS_UNIT_TEST( Electroatom, getAbsorptionCrossSection_native )
 TEUCHOS_UNIT_TEST( Electroatom, getSurvivalProbability_ace )
 {
   double survival_prob =
-    ace_electroatom->getSurvivalProbability( 2.000000000000E-03 );
+    ace_electroatom->getSurvivalProbability( 2e-3 );
 
    TEST_EQUALITY_CONST( survival_prob, 1.0 );
 
   survival_prob =
-    ace_electroatom->getSurvivalProbability( 4.000000000000E-04 );
+    ace_electroatom->getSurvivalProbability( 4e-4 );
 
    TEST_EQUALITY_CONST( survival_prob, 1.0 );
 
   survival_prob =
-    ace_electroatom->getSurvivalProbability( 9.000000000000E-05 );
+    ace_electroatom->getSurvivalProbability( 9e-5 );
 
    TEST_EQUALITY_CONST( survival_prob, 1.0 );
 }
@@ -412,17 +412,17 @@ TEUCHOS_UNIT_TEST( Electroatom, getSurvivalProbability_ace )
 TEUCHOS_UNIT_TEST( Electroatom, getSurvivalProbability_native )
 {
   double survival_prob =
-    native_electroatom->getSurvivalProbability( 2.000000000000E-03 );
+    native_electroatom->getSurvivalProbability( 2e-3 );
 
    TEST_EQUALITY_CONST( survival_prob, 1.0 );
 
   survival_prob =
-    native_electroatom->getSurvivalProbability( 4.000000000000E-04 );
+    native_electroatom->getSurvivalProbability( 4e-4 );
 
    TEST_EQUALITY_CONST( survival_prob, 1.0 );
 
   survival_prob =
-    native_electroatom->getSurvivalProbability( 9.000000000000E-05 );
+    native_electroatom->getSurvivalProbability( 9e-5 );
 
    TEST_EQUALITY_CONST( survival_prob, 1.0 );
 }
@@ -439,122 +439,122 @@ TEUCHOS_UNIT_TEST( Electroatom, getReactionCrossSection_ace )
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                   2.000000000000E-03,
+                   2e-3,
                    MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                   4.000000000000E-04,
+                   4e-4,
                    MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                   9.000000000000E-05,
+                   9e-5,
                    MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Atomic Excitation
   cross_section = ace_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.965170000000E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.96517E+08, 1e-12 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.226820000000E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.22682E+08, 1e-12 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.160420000000E+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.16042E+09, 1e-12 );
 
   // Bremsstrahlung
   cross_section = ace_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                  MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03, 1e-12 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
   // Coupled Elastic
   cross_section = ace_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Cutoff Elastic
   cross_section = ace_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Total
   cross_section = ace_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          9.258661418255E+03 + 1.965170000000E+08,
+                          9.258661418255E+03 + 1.96517E+08,
                           1e-12 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.914234996439E+03 + 6.226820000000E+08,
+                          8.914234996439E+03 + 6.22682E+08,
                           1e-12 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.249970966838E+03 + 1.160420000000E+09,
+                          7.249970966838E+03 + 1.16042E+09,
                           1e-12 );
 
   // Absorption
@@ -565,19 +565,19 @@ TEUCHOS_UNIT_TEST( Electroatom, getReactionCrossSection_ace )
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =ace_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
@@ -595,103 +595,103 @@ TEUCHOS_UNIT_TEST( Electroatom, getReactionCrossSection_native )
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                   2.000000000000E-03,
+                   2e-3,
                    MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                   4.000000000000E-04,
+                   4e-4,
                    MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                   9.000000000000E-05,
+                   9e-5,
                    MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
    TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Atomic Excitation
   cross_section = native_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.965170000000E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.96517E+08, 1e-12 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.226820000000E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.22682E+08, 1e-12 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.160420000000E+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.16042E+09, 1e-12 );
 
   // Bremsstrahlung
   cross_section = native_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.269564087122480E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.2586614182549074e+03, 1e-12 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                  MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.908504720336720E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.9142349964387486e+03, 1e-12 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 7.247161196055280E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.2499709668376108e+03, 1e-12 );
 
   // Cutoff Elastic
   cross_section = native_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Total
   cross_section = native_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          9.269564087122480E+03 + 1.965170000000E+08,
+                          9.2586614182549074e+03 + 1.96517E+08,
                           1e-12 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          8.908504720336720E+03 + 6.226820000000E+08,
+                          8.9142349964387486e+03 + 6.22682E+08,
                           1e-12 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                     MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.247161196055280E+03 + 1.160420000000E+09,
+                          7.2499709668376108e+03 + 1.16042E+09,
                           1e-12 );
 
   // Absorption
@@ -702,19 +702,19 @@ TEUCHOS_UNIT_TEST( Electroatom, getReactionCrossSection_native )
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section =native_electroatom->getReactionCrossSection(
-                    2.000000000000E-03,
+                    2e-3,
                     MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    4.000000000000E-04,
+                    4e-4,
                     MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = native_electroatom->getReactionCrossSection(
-                    9.000000000000E-05,
+                    9e-5,
                MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
@@ -1019,7 +1019,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the energy loss distributions
     MonteCarlo::AtomicExcitationElectronScatteringDistribution::AtomicDistribution
         ae_energy_loss_function(
-            new Utility::TabularDistribution<Utility::LinLin>(
+            new Utility::TabularDistribution<Utility::LogLog>(
                 data_container.getAtomicExcitationEnergyGrid(),
                 data_container.getAtomicExcitationEnergyLoss() ) );
 
@@ -1029,7 +1029,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                       ae_energy_loss_function ) );
 
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> ae_reaction(
-        new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             ae_cross_section,
             ae_threshold_index,
@@ -1073,7 +1073,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering function
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> b_energy_loss_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
             function_data ) );
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
@@ -1085,7 +1085,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the bremsstrahlung scattering reaction
     std::shared_ptr<MonteCarlo::ElectroatomicReaction> b_reaction(
-        new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+        new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog>(
             energy_grid,
             b_cross_section,
             b_threshold_index,
@@ -1115,7 +1115,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                     absorption_reactions,
                     relaxation_model,
                     false,
-                    Utility::LinLin() ) );
+                    Utility::LogLog() ) );
   }
 
   {
