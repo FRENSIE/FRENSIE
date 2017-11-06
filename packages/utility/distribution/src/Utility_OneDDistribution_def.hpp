@@ -15,7 +15,62 @@
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
-namespace Utility{ 
+namespace Utility{
+
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::typeNameImpl(
+                                                const std::string base_name,
+                                                const bool verbose_name,
+                                                const bool use_template_params,
+                                                const std::string& delim )
+{
+  return ThisType::typeNameImpl( std::vector<std::string>( {base_name} ),
+                                 verbose_name,
+                                 use_template_params,
+                                 delim );
+}
+
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::typeNameImpl(
+                                     const std::vector<std::string>& base_name,
+                                     const bool verbose_name,
+                                     const bool use_template_params,
+                                     const std::string& delim )
+{
+  std::string name;
+
+  for( size_t i = 0; i < base_name.size(); ++i )
+  {
+    name += base_name[i];
+
+    if( i < base_name.size()-1 )
+      name += delim;
+  }
+
+  if( verbose_name )
+  {
+    name += delim;
+    name += "Distribution";
+
+    if( use_template_params )
+    {
+      std::string name_start( "Unit" );
+      name_start += delim + "Aware" + delim;
+      
+      name = name_start+name;
+
+      name += "<";
+      name += Utility::typeName<IndependentUnit>();
+      name += ",";
+      name += Utility::typeName<DependentUnit>();
+      name += ">";
+    }
+  }
+
+  return name;
+}
 
 // Check if the type name matches the distribution type name
 /*! \details The type name provided will be checked against the distribution 
@@ -270,7 +325,7 @@ struct ToPropertyTreeHelper<I,TupleType,typename std::enable_if<I==Utility::Tupl
 template<typename IndependentUnit, typename DependentUnit>
 template<typename... Types>
 Utility::PropertyTree UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::toPropertyTreeImpl(
-                   const std::tuple<std::string&,Types&>&... data ) const
+                   const std::tuple<const std::string&,Types&>&... data ) const
 {
   Utility::PropertyTree ptree;
 
@@ -313,9 +368,22 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromPropertyTreeImpl(
                                      const Utility::PropertyTree& node,
                                      std::vector<std::string>& unused_children,
-                                     DataExtractorList& data_extractors )
+                                     DataExtractorMap& data_extractors )
 {
   bool type_verified = false;
+
+  // Determine which data must be extracted
+  std::map<std::string,bool> required_data;
+
+  for( DataExtractorMap::const_iterator data_it = data_extractors.begin();
+       data_it != data_extractors.end();
+       ++data_it )
+  {
+    // Initialize the flag that indicates that the required data has been
+    // extracted
+    if( Utility::get<1>(data_it->second) )
+      required_data[data_it->first] = false;
+  }
 
   for( Utility::PropertyTree::const_iterator node_it = node.begin();
        node_it != node.end();
@@ -341,35 +409,53 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromPropertyTreeI
         continue;
       }
     }
-    // Extract data required by calling distribution
+    // Extract data used by calling distribution
     else
     {
-      DataExtractorList::iterator data_extractor_it = data_extractors.begin();
-      DataExtractorList::iterator data_extractor_end = data_extractors.end();
+      // Determine the best data key match
+      DataExtractorMap::iterator data_extractor_it = data_extractors.begin();
+      DataExtractorMap::iterator data_extractor_end = data_extractors.end();
 
-      bool data_extracted = false;
-
+      std::pair<size_t,DataExtractorMap::iterator> best_key_match = 
+        std::make_pair( child_node_key.size(), data_extractors.end() );
+      
       while( data_extractor_it != data_extractor_end )
       {
-        if( child_node_key.find( data_extractor_it->first ) <
-            child_node_key.size() )
+        size_t match_loc =
+          child_node_key.find( Utility::get<0>(data_extractor_it->second) );
+
+        if( match_loc < best_key_match.first )
         {
-          // Extract the data from the child node
-          data_extractor_it->second( node_it->second );
-          data_extracted = true;
-
-          // Remove the data extractor
-          data_extractors.erase( data_extractor_it );
-
-          break;
+          best_key_match.first = match_loc;
+          best_key_match.second = data_extractor_it;
         }
-          
+
         ++data_extractor_it;
       }
 
-      // Data has been extracted - go to the next child node
-      if( data_extracted )
+      if( best_key_match.second != data_extractors.end() )
+      {
+        // Extract the data from the child node
+        try{
+          Utility::get<2>(best_key_match.second->second)( node_it->second );
+        }
+        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                    Utility::PropertyTreeConversionException,
+                                    "Could not extract "
+                                    << best_key_match.second->first << " data "
+                                    "from property tree node "
+                                    << node_it->first << "!" );
+
+        // Check if this is required data
+        if( required_data.find( best_key_match.second->first ) !=
+            required_data.end() )
+          required_data[best_key_match.second->first] = true;
+          
+        // Remove the data extractor
+        data_extractors.erase( best_key_match.second );
+
         continue;
+      }
     }
 
     // If we get to this point the node is unused
@@ -385,8 +471,22 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromPropertyTreeI
                       Utility::PropertyTreeConversionException,
                       "The "
                       << this->getDistributionTypeName(true, true) <<
-                      "could not be constructed because the type could not be "
-                      "verified!" );
+                      " could not be constructed because the type could not be"
+                      " verified!" );
+
+  // Make sure that all required data was extracted
+  for( std::map<std::string,bool>::const_iterator required_data_it = required_data.begin();
+       required_data_it != required_data.end();
+       ++required_data_it )
+  {
+    TEST_FOR_EXCEPTION( !required_data_it->second,
+                        Utility::PropertyTreeConversionException,
+                        "The "
+                        << this->getDistributionTypeName(true, true) <<
+                        " could not be constructed because the "
+                        << required_data_it->first << " data was not "
+                        "specified!" );
+  }  
 }
 
 // Verify that the distribution type is correct

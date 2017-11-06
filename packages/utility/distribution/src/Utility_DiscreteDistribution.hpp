@@ -258,6 +258,18 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
 
+  // The independent values key (used in property trees)
+  static const std::string s_indep_values_key;
+
+  // The independent values min match string (used when reading property trees)
+  static const std::string s_indep_values_min_match_string;
+
+  // The dependent values key (used in property trees)
+  static const std::string s_dep_values_key;
+
+  // The dependent values min match string (used when reading property trees)
+  static const std::string s_dep_values_min_match_string;
+
   // The distribution (first = independent value, second = CDF)
   std::vector<std::pair<IndepQuantity,double> > d_distribution;
 

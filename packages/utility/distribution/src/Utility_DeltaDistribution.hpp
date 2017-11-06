@@ -119,11 +119,9 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
-
-  //! Check if the type name matches the distribution type name
-  using BaseType::doesTypeNameMatch;
+  static std::string typeName( const bool verbose_name,
+                               const bool use_template_params = false,
+                               const std::string& delim = std::string() );
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -161,6 +159,10 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int );
 
+  //! Return the distribution type name
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
+
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
 
@@ -170,15 +172,18 @@ private:
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareDeltaDistribution;
 
-  // Verify the distribution type
-  void verifyDistributionType( const Utility::Variant& type_data ) const;
-
+  // Set the location value using a node
+  void setLocationValueUsingNode( const Utility::PropertyTree& location_data );
+  
   // Set the location value
   void setLocationValue( const Utility::Variant& location_data );
 
   // Set the location value
   void setLocationValue( const double location );
 
+  // Set the multiplier value using a node
+  void setMultiplierValueUsingNode( const Utility::PropertyTree& multiplier_data );
+  
   // Set the multiplier value
   void setMultiplierValue( const Utility::Variant& multiplier_data );
 
@@ -201,6 +206,18 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = DELTA_DISTRIBUTION;
 
+  // The location value key (used in property trees)
+  static const std::string s_location_value_key;
+
+  // The location value min match string (used when reading property trees)
+  static const std::string s_location_value_min_match_string;
+
+  // The multiplier value key (used in property trees)
+  static const std::string s_multiplier_value_key;
+
+  // The multiplier value min match string (used when reading property trees)
+  static const std::string s_multiplier_value_min_match_string;
+
   // The location of the delta distribution
   IndepQuantity d_location;
 
@@ -212,6 +229,39 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareDeltaDistribution<void,void> DeltaDistribution;
+
+/*! Partial specialization of Utility::TypeNameTraits for unit aware
+ * delta distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<typename IndependentUnit,typename DependentUnit>
+struct TypeNameTraits<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  {
+    return UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
+  }
+};
+
+/*! Specialization of Utility::TypeNameTraits for delta distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<DeltaDistribution>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return DeltaDistribution::typeName( true, false ); }
+};
 
 } // end Utility namespace
 

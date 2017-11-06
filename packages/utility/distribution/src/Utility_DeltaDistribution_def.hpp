@@ -22,6 +22,19 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
 
 namespace Utility{
 
+// Initialize static member data
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_location_value_key( "location" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_location_value_min_match_string( "loc" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_key( "multiplier" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_min_match_string( "mult" );
+
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution()
@@ -270,14 +283,24 @@ OneDDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::typeName(
+                                                const bool verbose_name,
+                                                const bool use_template_params,
+                                                const std::string& delim )
+{
+  return BaseType::typeNameImpl( "Delta",
+                                 verbose_name,
+                                 use_template_params,
+                                 delim );
+}
+
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
 std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
                                                    const bool verbose_name,
                                                    const bool lowercase ) const
 {
-  std::string name = "Delta";
-
-  if( verbose_name )
-    name += " Distribution";
+  std::string name = this->typeName( verbose_name, false, " " );
 
   if( lowercase )
     boost::algorithm::to_lower( name );
@@ -300,20 +323,9 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isContinuous() c
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << Utility::container_start_char
-     << this->getDistributionTypeName( false, true )
-     << Utility::next_container_element_char << " ";
-
-  Utility::toStream( os, Utility::getRawQuantity( d_location ) );
-
-  if( d_multiplier != DQT::one() )
-  {
-    os << Utility::next_container_element_char << " ";
-    
-    Utility::toStream( os, Utility::getRawQuantity( d_multiplier ) );
-  }
-
-  os << Utility::container_end_char;
+  this->toStreamImpl( os,
+                      Utility::getRawQuantity( d_location ),
+                      Utility::getRawQuantity( d_multiplier ) );
 }
 
 // Method for initializing the object from an input stream
@@ -322,39 +334,33 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
                                                            std::istream& is,
                                                            const std::string& )
 {
-  // Read in the distribution representation
-  std::string dist_rep;
-  std::getline( is, dist_rep, Utility::container_end_char );
-  dist_rep += Utility::container_end_char;
+  VariantList distribution_data;
 
-  VariantVector distribution_data;
-
-  try{
-    distribution_data =
-      Utility::variant_cast<VariantVector>( Utility::Variant::fromValue( dist_rep ) );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "Could not extract the distribution data from "
-                           "the stream!" );
+  this->fromStreamImpl( is, distribution_data );
 
   // Verify that the correct amount of distribution data is present
-  TEST_FOR_EXCEPTION( distribution_data.size() < 2 ||
-                      distribution_data.size() > 3,
+  TEST_FOR_EXCEPTION( distribution_data.empty(),
 		      Utility::StringConversionException,
 		      "The delta distribution cannot be constructed "
 		      "because the string representation is not valid!" );
 
-  // Verify that the distribution type is delta
-  this->verifyDistributionType( distribution_data[0] );
-
   // Extract the location value
-  this->setLocationValue( distribution_data[1] );
+  this->setLocationValue( distribution_data.front() );
+
+  distribution_data.pop_front();
 
   // Extract the multiplier value
-  if( distribution_data.size() > 2 )
-    this->setMultiplierValue( distribution_data[2] );
+  if( !distribution_data.empty() )
+  {
+    this->setMultiplierValue( distribution_data.front() );
+
+    distribution_data.pop_front();
+  }
   else
     d_multiplier = DQT::one();
+
+  // Check if there is any superfluous data
+  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for placing the object in the desired property tree node
@@ -362,20 +368,14 @@ template<typename IndependentUnit, typename DependentUnit>
 Utility::PropertyTree UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
                                                  const bool inline_data ) const
 {
-  Utility::PropertyTree ptree;
-  
   if( inline_data )
-    ptree.put_value( *this );
+    return this->toInlinedPropertyTreeImpl();
   else
   {
-    ptree.put( "type", this->getDistributionTypeName( false, true ) );
-    ptree.put( "location", Utility::getRawQuantity( d_location ) );
-
-    if( d_multiplier != DQT::one() )
-      ptree.put( "multiplier", Utility::getRawQuantity( d_multiplier ) );
+    return this->toPropertyTreeImpl(
+     std::tie(s_location_value_key, Utility::getRawQuantity(d_location)),
+     std::tie(s_multiplier_value_key, Utility::getRawQuantity(d_multiplier)) );
   }
-
-  return ptree;
 }
 
 // Method for initializing the object from a property tree
@@ -386,99 +386,32 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
 {
   // Initialize from inline data
   if( node.size() == 0 )
-  {
-    std::istringstream iss( node.data().toString() );
-
-    try{
-      this->fromStream( iss );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PropertyTreeConversionException,
-                                "Could not create the delta "
-                                "distribution!" );
-  }
+    this->fromInlinedPropertyTreeImpl( node );
+  
   // Initialize from child nodes
   else
   {
-    Utility::PropertyTree::const_iterator node_it, node_end;
-    node_it = node.begin();
-    node_end = node.end();
+    typename BaseType::DataExtractorMap data_extractors;
 
-    bool type_verified = false;
-    bool location_set = false;
-    bool multiplier_set = false;
+    data_extractors.insert(
+     std::make_pair( s_location_value_key,
+        std::make_tuple( s_location_value_min_match_string,
+                         true,
+                         std::bind<void>( &ThisType::setLocationValueUsingNode,
+                                          std::ref(*this),
+                                          std::placeholders::_1 ) ) ) );
+    data_extractors.insert(
+     std::make_pair( s_multiplier_value_key,
+      std::make_tuple( s_multiplier_value_min_match_string,
+                       false,
+                       std::bind<void>( &ThisType::setMultiplierValueUsingNode,
+                                        std::ref(*this),
+                                        std::placeholders::_1 ) ) ) );
 
-    while( node_it != node_end )
-    {
-      std::string child_node_key =
-        boost::algorithm::to_lower_copy( node_it->first );
-
-      // Verify the distribution type
-      if( child_node_key.find( "type" ) < child_node_key.size() )
-      {
-        try{
-          this->verifyDistributionType( node_it->second.data() );
-        }
-        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PropertyTreeConversionException,
-                                    "Could not create the delta "
-                                    "distribution!" );
-
-        type_verified = true;
-      }
-
-      // Extract the location value
-      else if( child_node_key.find( "loc" ) < child_node_key.size() )
-      {
-        try{
-          this->setLocationValue( node_it->second.data() );
-        }
-        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PropertyTreeConversionException,
-                                    "Could not create the delta "
-                                    "distribution!" );
-
-        location_set = true;
-      }
-
-      // Extract the multiplier value
-      else if( child_node_key.find( "mult" ) < child_node_key.size() )
-      {
-        try{
-          this->setMultiplierValue( node_it->second.data() );
-        }
-        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PropertyTreeConversionException,
-                                    "Could not create the delta "
-                                    "distribution!" );
-
-        multiplier_set = true;
-      }
-
-      // This child node is unused (and is not a comment)
-      else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
-               child_node_key.size() )
-      {
-        unused_children.push_back( node_it->first );
-      }
-
-      ++node_it;
-    }
-
-    // Make sure that the distribution type was verified
-    TEST_FOR_EXCEPTION( !type_verified,
-                        Utility::PropertyTreeConversionException,
-                        "The delta distribution could not be constructed "
-                        "because the type could not be verified!" );
-
-    // Make sure that the location value was set
-    TEST_FOR_EXCEPTION( !location_set,
-                        Utility::PropertyTreeConversionException,
-                        "The delta distribution could not be constructed "
-                        "because the location value was not specified!" );
+    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
     
     // Check if the multiplier was set
-    if( !multiplier_set )
+    if( data_extractors.find(s_multiplier_value_key) != data_extractors.end() )
       d_multiplier = DQT::one();
   }
 }
@@ -509,15 +442,17 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::load( Archive& a
   ar & BOOST_SERIALIZATION_NVP( d_multiplier );
 }
 
-// Verify the distribution type
+// Set the location value using a node
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data ) const
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValueUsingNode(
+                                   const Utility::PropertyTree& location_data )
 {
-  TEST_FOR_EXCEPTION( !this->doesTypeNameMatch( type_data.toString() ),
-                      Utility::StringConversionException,
-                      "The delta distribution cannot be constructed "
-                      "because the distribution type ("
-                      << type_data.toString() << ") does not match!" );
+  // The data must be inlined in the node
+  TEST_FOR_EXCEPTION( location_data.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not extract the location value!" );
+
+  this->setLocationValue( location_data.data() );
 }
 
 // Set the location value
@@ -546,6 +481,19 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue
 		      "The delta distribution cannot be constructed "
 		      "because of an invalid location (" << d_location <<
 		      ")!" );
+}
+
+// Set the multiplier value using a node
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierValueUsingNode(
+                                   const Utility::PropertyTree& multiplier_data )
+{
+  // The data must be inlined in the node
+  TEST_FOR_EXCEPTION( multiplier_data.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not extract the multiplier value!" );
+
+  this->setMultiplierValue( multiplier_data.data() );
 }
 
 // Set the multiplier value

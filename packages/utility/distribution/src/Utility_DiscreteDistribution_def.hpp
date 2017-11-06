@@ -25,6 +25,19 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
 
 namespace Utility{
 
+// Initialize static member data
+template<typename IndependentUnit,typename DependentUnit>
+const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_indep_values_key( "independent values" );
+
+template<typename IndependentUnit,typename DependentUnit> 
+const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_indep_values_min_match_string( "indep" );
+
+template<typename IndependentUnit,typename DependentUnit> 
+const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_dep_values_key( "dependent values" );
+
+template<typename IndependentUnit,typename DependentUnit> 
+const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_dep_values_min_match_string( "dep" );
+
 // Default Constructor
 template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution()
@@ -387,31 +400,10 @@ std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::typeNa
                                                 const bool use_template_params,
                                                 const std::string& delim )
 {
-  std::string name = "Discrete";
-  
-  if( verbose_name )
-  {
-    name += delim;
-    name += "Distribution";
-
-    if( use_template_params )
-    {
-      std::string name_start( "Unit" );
-      name_start += delim;
-      name_start += "Aware";
-      name_start += delim;
-      
-      name = name_start+name;
-
-      name += "<";
-      name += Utility::typeName<IndependentUnit>();
-      name += ",";
-      name += Utility::typeName<DependentUnit>();
-      name += ">";
-    }
-  }
-
-  return name;
+  return BaseType::typeNameImpl( "Discrete",
+                                 verbose_name,
+                                 use_template_params,
+                                 delim );
 }
 
 // Return the distribution type name
@@ -502,12 +494,9 @@ Utility::PropertyTree UnitAwareDiscreteDistribution<IndependentUnit,DependentUni
     this->reconstructOriginalUnitlessDistribution( independent_values,
                                                    dependent_values );
 
-    std::string independent_values_key( "independent values" );
-    std::string dependent_values_key( "dependent values" );
-
     return this->toPropertyTreeImpl(
-                        std::tie( independent_values_key, independent_values ),
-                        std::tie( dependent_values_key, dependent_values ) );
+                            std::tie( s_indep_values_key, independent_values ),
+                            std::tie( s_dep_values_key, dependent_values ) );
   }
 }
 
@@ -524,42 +513,23 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
   else
   {
     std::vector<double> independent_values, dependent_values;
-    std::string independent_values_key = "indep";
-    std::string dependent_values_key = "dep";
     
-    typename BaseType::DataExtractorList data_extractors;
+    typename BaseType::DataExtractorMap data_extractors;
 
-    data_extractors.push_back( std::make_pair( independent_values_key,
+    data_extractors.insert(
+     std::make_pair( s_indep_values_key,
+       std::make_tuple( s_indep_values_min_match_string, true,
                   std::bind<void>( &ThisType::extractIndependentValuesFromNode,
                                    std::placeholders::_1,
-                                   std::ref(independent_values) ) ) );
-    data_extractors.push_back( std::make_pair( dependent_values_key,
+                                   std::ref(independent_values) ) ) ) );
+    data_extractors.insert(
+     std::make_pair( s_dep_values_key,
+       std::make_tuple( s_dep_values_min_match_string, true,
                   std::bind<void>( &ThisType::extractDependentValuesFromNode,
                                    std::placeholders::_1,
-                                   std::ref(dependent_values) ) ) );
+                                   std::ref(dependent_values) ) ) ) );
     
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    for( typename BaseType::DataExtractorList::const_iterator data_extractor_it =
-           data_extractors.begin();
-         data_extractor_it != data_extractors.end();
-         ++data_extractor_it )
-    {
-      // Make sure that the independent values were set
-      if( data_extractor_it->first == independent_values_key )
-      {
-        THROW_EXCEPTION( Utility::PropertyTreeConversionException,
-                        "The discrete distribution could not be constructed "
-                        "because the independent values were not specified!" );
-      }
-      // Make sure that the dependent values were set
-      else if( data_extractor_it->first == dependent_values_key )
-      {
-        THROW_EXCEPTION( Utility::PropertyTreeConversionException,
-                         "The discrete distribution could not be constructed "
-                         "because the dependent values were not specified!" );
-      }
-    }
 
     // Verify that the values are valid
     try{

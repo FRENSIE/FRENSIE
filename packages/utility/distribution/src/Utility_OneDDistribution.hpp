@@ -52,6 +52,11 @@ class UnitAwareOneDDistribution : public PropertyTreeCompatibleObject,
                                   public StreamableObject
 {
 
+private:
+
+  // Typedef for this type
+  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> ThisType;
+
 protected:
 
   //! The independent unit traits typedef
@@ -143,6 +148,18 @@ public:
 protected:
 
   //! Return the distribution type name
+  static std::string typeNameImpl( const std::string base_name,
+                                   const bool verbose_name,
+                                   const bool use_template_params,
+                                   const std::string& delim );
+
+  //! Return the distribution type name
+  static std::string typeNameImpl( const std::vector<std::string>& base_name,
+                                   const bool verbose_name,
+                                   const bool use_template_params,
+                                   const std::string& delim );
+
+  //! Return the distribution type name
   virtual std::string getDistributionTypeName( const bool verbose_name,
                                                const bool lowercase ) const
   { return ""; }// = 0;
@@ -185,17 +202,22 @@ protected:
   //! Add the data to a property tree
   template<typename... Types>
   Utility::PropertyTree toPropertyTreeImpl(
-                  const std::tuple<std::string&,Types&>&... data ) const;
+                  const std::tuple<const std::string&,Types&>&... data ) const;
 
   //! Extract froman inlined property tree
   void fromInlinedPropertyTreeImpl( const Utility::PropertyTree& node );
 
   //! Extract from a property tree
   typedef std::function<void(const Utility::PropertyTree&)> DataExtractor;
-  typedef std::list<std::pair<const std::string,DataExtractor> > DataExtractorList;
+
+  // Key = property tree node key
+  // Value0 = minimal match string used to identify node keys
+  // Value1 = must the data be extracted?
+  // Value2 = data extractor
+  typedef std::map<std::string,std::tuple<const std::string,const bool,DataExtractor> > DataExtractorMap;
   void fromPropertyTreeImpl( const Utility::PropertyTree& node,
                              std::vector<std::string>& unused_children,
-                             DataExtractorList& data_extractors );
+                             DataExtractorMap& data_extractors );
   
 private:
 
