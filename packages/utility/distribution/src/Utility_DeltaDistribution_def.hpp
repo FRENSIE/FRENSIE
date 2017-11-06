@@ -271,8 +271,8 @@ OneDDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
 std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                       const bool verbose_name,
-                                                       const bool lowercase )
+                                                   const bool verbose_name,
+                                                   const bool lowercase ) const
 {
   std::string name = "Delta";
 
@@ -283,18 +283,6 @@ std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistri
     boost::algorithm::to_lower( name );
 
   return name;
-}
-
-// Check if the type name matches the distribution type name
-/*! \detail The type name comparison is case-insensitive. A positive match
- * will be reported if the type name has a substring equal to "delta".
- */
-template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )
-{
-  std::string lower_type_name = boost::algorithm::to_lower_copy( type_name );
-  
-  return lower_type_name.find(ThisType::getDistributionTypeName( false, true )) < lower_type_name.size();
 }
 
 // Test if the distribution is continuous
@@ -313,7 +301,7 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
   os << Utility::container_start_char
-     << this->getDistributionTypeName()
+     << this->getDistributionTypeName( false, true )
      << Utility::next_container_element_char << " ";
 
   Utility::toStream( os, Utility::getRawQuantity( d_location ) );
@@ -380,7 +368,7 @@ Utility::PropertyTree UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>:
     ptree.put_value( *this );
   else
   {
-    ptree.put( "type", this->getDistributionTypeName() );
+    ptree.put( "type", this->getDistributionTypeName( false, true ) );
     ptree.put( "location", Utility::getRawQuantity( d_location ) );
 
     if( d_multiplier != DQT::one() )
@@ -523,9 +511,9 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::load( Archive& a
 
 // Verify the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data ) const
 {
-  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( type_data.toString() ),
+  TEST_FOR_EXCEPTION( !this->doesTypeNameMatch( type_data.toString() ),
                       Utility::StringConversionException,
                       "The delta distribution cannot be constructed "
                       "because the distribution type ("

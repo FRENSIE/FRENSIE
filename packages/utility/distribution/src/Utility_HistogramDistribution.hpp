@@ -137,11 +137,8 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  static std::string getDistributionTypeName( const bool verbose_name = true,
-                                              const bool lowercase = false );
-
-  //! Check if the type name matches the distribution type name
-  static bool doesTypeNameMatch( const std::string type_name );
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -222,7 +219,7 @@ private:
 				      unsigned& sampled_bin_index ) const;
 
   // Verify that the distribution type is discrete
-  static void verifyDistributionType( const Utility::Variant& type_data );
+  void verifyDistributionType( const Utility::Variant& type_data ) const;
 
   // Set the independent values
   static void extractIndependentValues( const Utility::Variant& indep_data,

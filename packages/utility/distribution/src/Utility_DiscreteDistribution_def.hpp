@@ -19,7 +19,6 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
@@ -383,31 +382,50 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionTyp
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                       const bool verbose_name,
-                                                       const bool lowercase )
+std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::typeName(
+                                                const bool verbose_name,
+                                                const bool use_template_params,
+                                                const std::string& delim )
 {
   std::string name = "Discrete";
-
+  
   if( verbose_name )
-    name += " Distribution";
+  {
+    name += delim;
+    name += "Distribution";
+
+    if( use_template_params )
+    {
+      std::string name_start( "Unit" );
+      name_start += delim;
+      name_start += "Aware";
+      name_start += delim;
+      
+      name = name_start+name;
+
+      name += "<";
+      name += Utility::typeName<IndependentUnit>();
+      name += ",";
+      name += Utility::typeName<DependentUnit>();
+      name += ">";
+    }
+  }
+
+  return name;
+}
+
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
+                                                   const bool verbose_name,
+                                                   const bool lowercase ) const
+{
+  std::string name = this->typeName( verbose_name, false, " " );
 
   if( lowercase )
     boost::algorithm::to_lower( name );
 
   return name;
-}
-
-// Check if the type name matches the distribution type name
-/*! \detail The type name comparison is case-insensitive. A positive match
- * will be reported if the type name has a substring equal to "discrete".
- */
-template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )
-{
-  std::string lower_type_name = boost::algorithm::to_lower_copy( type_name );
-  
-  return lower_type_name.find(ThisType::getDistributionTypeName( false, true )) < lower_type_name.size();
 }
 
 // Test if the distribution is continuous
@@ -426,13 +444,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toStream( std
   this->reconstructOriginalUnitlessDistribution( independent_values,
 						 dependent_values );
 
-  os << Utility::container_start_char
-     << this->getDistributionTypeName()
-     << Utility::next_container_element_char << " "
-     << independent_values
-     << Utility::next_container_element_char << " "
-     << dependent_values
-     << Utility::container_end_char;
+  this->toStreamImpl( os, independent_values, dependent_values );
 }
 
 // Method for initializing the object from an input stream
@@ -441,38 +453,39 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
                                                            std::istream& is,
                                                            const std::string& )
 {
-  VariantVector distribution_data;
+  VariantList distribution_data;
 
-  try{
-    Utility::fromStream( is, distribution_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "Could not extract the distribution data from "
-                           "the stream!" );
+  this->fromStreamImpl( is, distribution_data );
   
   // Verify that the correct amount of distribution data is present
-  TEST_FOR_EXCEPTION( distribution_data.size() != 3,
+  TEST_FOR_EXCEPTION( distribution_data.size() < 2,
                       Utility::StringConversionException,
                       "The discrete distribution cannot be constructed "
                       "because the string representation is not valid!" );
 
-  // Verify that the distribution type is discrete
-  this->verifyDistributionType( distribution_data[0] );
-
   // Extract the independent values
   std::vector<double> independent_values;
   
-  this->extractIndependentValues( distribution_data[1], independent_values );
+  this->extractIndependentValues( distribution_data.front(),
+                                  independent_values );
+
+  distribution_data.pop_front();
 
   // Extract the dependent values
   std::vector<double> dependent_values;
   
-  this->extractDependentValues( distribution_data[2], dependent_values );
+  this->extractDependentValues( distribution_data.front(),
+                                dependent_values );
+
+  distribution_data.pop_front();
 
   // Verify that the values are valid
   this->verifyValidValues( independent_values, dependent_values );        
 
   this->initializeDistribution( independent_values, dependent_values, false );
+
+  // Check if there is any superfluous data
+  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for converting the type to a property tree
@@ -480,24 +493,22 @@ template<typename IndependentUnit, typename DependentUnit>
 Utility::PropertyTree UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
                                                  const bool inline_data ) const
 {
-  Utility::PropertyTree ptree;
-  
   if( inline_data )
-    ptree.put_value( *this );
+    return this->toInlinedPropertyTreeImpl();
   else
   {
-    ptree.put( "type", this->getDistributionTypeName() );
-
     std::vector<double> independent_values, dependent_values;
 
     this->reconstructOriginalUnitlessDistribution( independent_values,
                                                    dependent_values );
-    
-    ptree.put( "independent values", independent_values );
-    ptree.put( "dependent values", dependent_values );
-  }
 
-  return ptree;
+    std::string independent_values_key( "independent values" );
+    std::string dependent_values_key( "dependent values" );
+
+    return this->toPropertyTreeImpl(
+                        std::tie( independent_values_key, independent_values ),
+                        std::tie( dependent_values_key, dependent_values ) );
+  }
 }
 
 // Method for initializing the object from a property tree node
@@ -508,105 +519,47 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
 {
   // Initialize from inline data
   if( node.size() == 0 )
-  {
-    std::istringstream iss( node.data().toString() );
-
-    try{
-      this->fromStream( iss );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PropertyTreeConversionException,
-                                "Could not create the discrete "
-                                "distribution!" );
-  }
+    this->fromInlinedPropertyTreeImpl( node );
   // Initialize from child nodes
   else
   {
-    Utility::PropertyTree::const_iterator node_it, node_end;
-    node_it = node.begin();
-    node_end = node.end();
-    
-    bool type_verified = false;
-    bool independent_vals_extracted = false;
-    bool dependent_vals_extracted = false;
-
     std::vector<double> independent_values, dependent_values;
+    std::string independent_values_key = "indep";
+    std::string dependent_values_key = "dep";
+    
+    typename BaseType::DataExtractorList data_extractors;
 
-    while( node_it != node_end )
+    data_extractors.push_back( std::make_pair( independent_values_key,
+                  std::bind<void>( &ThisType::extractIndependentValuesFromNode,
+                                   std::placeholders::_1,
+                                   std::ref(independent_values) ) ) );
+    data_extractors.push_back( std::make_pair( dependent_values_key,
+                  std::bind<void>( &ThisType::extractDependentValuesFromNode,
+                                   std::placeholders::_1,
+                                   std::ref(dependent_values) ) ) );
+    
+    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
+
+    for( typename BaseType::DataExtractorList::const_iterator data_extractor_it =
+           data_extractors.begin();
+         data_extractor_it != data_extractors.end();
+         ++data_extractor_it )
     {
-      std::string child_node_key =
-        boost::algorithm::to_lower_copy( node_it->first );
-
-      // Verify the distribution type
-      if( child_node_key.find( "type" ) < child_node_key.size() )
+      // Make sure that the independent values were set
+      if( data_extractor_it->first == independent_values_key )
       {
-        try{
-          this->verifyDistributionType( node_it->second.data() );
-        }
-        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PropertyTreeConversionException,
-                                    "Could not create the discrete "
-                                    "distribution!" );
-
-        type_verified = true;
-      }
-
-      // Extract the independent values
-      else if( child_node_key.find( "indep" ) < child_node_key.size() )
-      {
-        try{
-          this->extractIndependentValues( node_it->second,
-                                          independent_values );
-        }
-        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PropertyTreeConversionException,
-                                    "Could not create the discrete "
-                                    "distribution!" );
-
-        independent_vals_extracted = true;
-      }
-
-      // Extract the dependent values
-      else if( child_node_key.find( "dep" ) < child_node_key.size() )
-      {
-        try{
-          this->extractDependentValues( node_it->second, dependent_values );
-        }
-        EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                    Utility::PropertyTreeConversionException,
-                                    "Could not create the discrete "
-                                    "distribution!" );
-
-        dependent_vals_extracted = true;
-      }
-
-      // This child node is unused (and is not a comment)
-      else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
-               child_node_key.size() )
-      {
-        unused_children.push_back( node_it->first );
-      }
-      
-      ++node_it;
-    }
-
-    // Make sure that the distribution type was verified
-    TEST_FOR_EXCEPTION( !type_verified,
-                        Utility::PropertyTreeConversionException,
-                        "The discrete distribution could not be constructed "
-                        "because the type could not be verified!" );
-
-    // Make sure that the independent values were set
-    TEST_FOR_EXCEPTION( !independent_vals_extracted,
-                        Utility::PropertyTreeConversionException,
+        THROW_EXCEPTION( Utility::PropertyTreeConversionException,
                         "The discrete distribution could not be constructed "
                         "because the independent values were not specified!" );
-
-    // Make sure that the dependent values were set
-    TEST_FOR_EXCEPTION( !dependent_vals_extracted,
-                        Utility::PropertyTreeConversionException,
-                        "The discrete distribution could not be constructed "
-                        "because the dependent values were not specified!" );
+      }
+      // Make sure that the dependent values were set
+      else if( data_extractor_it->first == dependent_values_key )
+      {
+        THROW_EXCEPTION( Utility::PropertyTreeConversionException,
+                         "The discrete distribution could not be constructed "
+                         "because the dependent values were not specified!" );
+      }
+    }
 
     // Verify that the values are valid
     try{
@@ -856,17 +809,6 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZe
   return true;
 }
 
-// Verify that the distribution type is discrete
-template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
-{
-  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( type_data.toString() ),
-                      Utility::StringConversionException,
-                      "The discrete distribution cannot be constructed "
-                      "because the distribution type ("
-                      << type_data.toString() << ") does not match!" );
-}
-
 // Set the independent values
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndependentValues(
@@ -885,7 +827,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndepe
 
 // Set the independent values
 template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndependentValues(
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndependentValuesFromNode(
                                       const Utility::PropertyTree& indep_data,
                                       std::vector<double>& independent_values )
 {
@@ -927,7 +869,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDepend
 
 // Set the dependent values
 template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDependentValues(
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDependentValuesFromNode(
                                         const Utility::PropertyTree& dep_data,
                                         std::vector<double>& dependent_values )
 {
@@ -998,10 +940,9 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
                        " (" << *bad_dependent_value << ") is not valid!" );
 }
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
-
 } // end Utility namespace
+
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareDiscreteDistribution<void,void> );
 
 #endif // end UTILITY_DISCRETE_DISTRIBUTION_DEF_HPP
 

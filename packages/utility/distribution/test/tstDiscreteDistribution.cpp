@@ -1425,14 +1425,12 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, getDistributionType )
 // Check that the distribution type name can be returned
 FRENSIE_UNIT_TEST( DiscreteDistribution, getDistributionTypeName )
 {
-  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::getDistributionTypeName(),
+  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::typeName( true, false, " " ),
                        "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::getDistributionTypeName( false ),
+  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::typeName( false ),
                        "Discrete" );
-  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::getDistributionTypeName( true, true ),
-                       "discrete distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::getDistributionTypeName( false, true ),
-                       "discrete" );
+  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::DiscreteDistribution>(),
+                       "DiscreteDistribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -1440,36 +1438,12 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, getDistributionTypeName )
 FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution,
                    getDistributionTypeName )
 {
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName()),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::typeName( true, false, " " )),
                        "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName( false )),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::typeName( false )),
                        "Discrete" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName( true, true )),
-                       "discrete distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::getDistributionTypeName( false, true )),
-                       "discrete" );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the type name matches the distribution type name
-FRENSIE_UNIT_TEST( DiscreteDistribution, doesTypeNameMatch )
-{
-  FRENSIE_CHECK( Utility::DiscreteDistribution::doesTypeNameMatch( "Discrete Distribution" ) );
-  FRENSIE_CHECK( Utility::DiscreteDistribution::doesTypeNameMatch( "Discrete" ) );
-  FRENSIE_CHECK( Utility::DiscreteDistribution::doesTypeNameMatch( "discrete" ) );
-  FRENSIE_CHECK( Utility::DiscreteDistribution::doesTypeNameMatch( "DISCRETE" ) );
-  FRENSIE_CHECK( !Utility::DiscreteDistribution::doesTypeNameMatch( "DISC" ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the type name matches the unit-aware distribution type name
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, doesTypeNameMatch )
-{
-  FRENSIE_CHECK( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "Discrete Distribution" )) );
-  FRENSIE_CHECK( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "Discrete" )) );
-  FRENSIE_CHECK( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "discrete" )) );
-  FRENSIE_CHECK( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "DISCRETE" )) );
-  FRENSIE_CHECK( !(Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::doesTypeNameMatch( "DISC" )) );
+  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >()),
+                       std::string("UnitAwareDiscreteDistribution<")+Utility::typeName<ElectronVolt>()+","+Utility::typeName<si::amount>()+">" );
 }
 
 //---------------------------------------------------------------------------//

@@ -380,8 +380,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDistributionTy
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
 std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                       const bool verbose_name,
-                                                       const bool lowercase )
+                                                   const bool verbose_name,
+                                                   const bool lowercase ) const
 {
   std::string name = "Histogram";
 
@@ -392,18 +392,6 @@ std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDi
     boost::algorithm::to_lower( name );
 
   return name;
-}
-
-// Check if the type name matches the distribution type name
-/*! \detail The type name comparison is case-insensitive. A positive match
- * will be reported if the type name has a substring equal to "histogram".
- */
-template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )
-{
-  std::string lower_type_name = boost::algorithm::to_lower_copy( type_name );
-  
-  return lower_type_name.find(ThisType::getDistributionTypeName( false, true )) < lower_type_name.size();
 }
 
 //! Test if the distribution is continuous
@@ -424,7 +412,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::toStream(
 						 bin_values );
 
   os << Utility::container_start_char
-     << this->getDistributionTypeName()
+     << this->getDistributionTypeName( false, true )
      << Utility::next_container_element_char << " "
      << bin_boundaries
      << Utility::next_container_element_char << " "
@@ -491,7 +479,7 @@ Utility::PropertyTree UnitAwareHistogramDistribution<IndependentUnit,DependentUn
     ptree.put_value( *this );
   else
   {
-    ptree.put( "type", this->getDistributionTypeName() );
+    ptree.put( "type", this->getDistributionTypeName( false, true ) );
 
     std::vector<double> bin_boundaries, bin_values;
 
@@ -895,13 +883,13 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
 
 // Verify that the distribution type is discrete
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data ) const
 {
-  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( type_data.toString() ),
-                      Utility::StringConversionException,
-                      "The histogram distribution cannot be constructed "
-                      "because the distribution type ("
-                      << type_data.toString() << ") does not match!" );
+  // TEST_FOR_EXCEPTION( !this->doesTypeNameMatch( type_data.toString() ),
+  //                     Utility::StringConversionException,
+  //                     "The histogram distribution cannot be constructed "
+  //                     "because the distribution type ("
+  //                     << type_data.toString() << ") does not match!" );
 }
 
 // Set the independent values

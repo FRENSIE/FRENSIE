@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <type_traits>
+#include <functional>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
@@ -30,13 +31,9 @@
 #include "Utility_PropertyTreeCompatibleObject.hpp"
 #include "Utility_StreamableObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "Utility_ComparisonTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
-#include "Utility_TypeNameTraits.hpp"
-#include "Utility_ComparisonPolicy.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 /*! \defgroup one_d_distributions One-Dimensional Distributions
@@ -145,6 +142,11 @@ public:
 
 protected:
 
+  //! Return the distribution type name
+  virtual std::string getDistributionTypeName( const bool verbose_name,
+                                               const bool lowercase ) const
+  { return ""; }// = 0;
+
   //! Test if the dependent variable can be zero within the indep bounds
   virtual bool canDepVarBeZeroInIndepBounds() const = 0;
 
@@ -167,7 +169,41 @@ protected:
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
 
+  //! Add data to the stream
+  template<typename... Types>
+  void toStreamImpl( std::ostream& os, const Types&... data ) const;
+
+  //! Extract data from the stream
+  void fromStreamImpl( std::istream& is, VariantList& distribution_data );
+
+  //! Check for unused stream data
+  void checkForUnusedStreamData( const VariantList& distribution_data ) const;
+
+  //! Add the data to an inlined property tree
+  Utility::PropertyTree toInlinedPropertyTreeImpl() const;
+
+  //! Add the data to a property tree
+  template<typename... Types>
+  Utility::PropertyTree toPropertyTreeImpl(
+                  const std::tuple<std::string&,Types&>&... data ) const;
+
+  //! Extract froman inlined property tree
+  void fromInlinedPropertyTreeImpl( const Utility::PropertyTree& node );
+
+  //! Extract from a property tree
+  typedef std::function<void(const Utility::PropertyTree&)> DataExtractor;
+  typedef std::list<std::pair<const std::string,DataExtractor> > DataExtractorList;
+  void fromPropertyTreeImpl( const Utility::PropertyTree& node,
+                             std::vector<std::string>& unused_children,
+                             DataExtractorList& data_extractors );
+  
 private:
+
+  //! Verify that the distribution type is correct
+  void verifyDistributionType( const Utility::Variant& type_data ) const;
+
+  //! Check if the type name matches the distribution type name
+  bool doesTypeNameMatch( const std::string type_name ) const;
 
   // Archive the distribution
   template<typename Archive>
@@ -178,131 +214,12 @@ private:
   friend class boost::serialization::access;
 };
 
-// Test if the distribution is tabular
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isTabular() const
-{
-  return false;
-}
-
-// Test if the distribution is compatible with the interpolation type
-/*! \details Some higher-level classes use the output of the OneDDistribution
- * methods to do interpolations. This method can be used to check that the
- * requested interpolation policy can be safetly used with the distribution's
- * output.
- */
-template<typename IndependentUnit, typename DependentUnit>
-template<typename InterpPolicy>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isCompatibleWithInterpType() const
-{
-  // Check if interpolation can be used
-  if( this->canInterpolationBeUsed() )
-  {
-    return
-      this->isIndepVarCompatibleWithProcessingType(
-                               typename InterpPolicy::IndepVarProcessingTag() )
-         &&
-      this->isDepVarCompatibleWithProcessingType(
-                               typename InterpPolicy::DepVarProcessingTag() );
-  }
-  else
-    return false;
-}
-
-// Test if interpolation can ever be used
-/*! \details This can be used as an override if intepolation should never
- * be used with a particular distribution (e.g. Utility::DeltaDistribution).
- * In general, only continuous distributions should be used with an
- * interpolation scheme.
- */
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::canInterpolationBeUsed() const
-{
-  if( this->isContinuous() )
-    return true;
-  else
-    return false;
-}
-
-// Test if the independent variable is compatible with Lin processing
-/*! \details It may be necessary to override this default behavior
- * (e.g. Utility::TabularDistribution).
- */
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
-                                         const LinIndepVarProcessingTag ) const
-{
-  return true;
-}
-  
-// Test if the independent variable is compatible with Log processing
-/*! \details It may be necessary to override this default behavior
- * (e.g. Utility::TabularDistribution).
- */
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
-                                         const LogIndepVarProcessingTag ) const
-{
-  return LogLog::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
-    LogLog::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
-}
-
-// Test if the dependent variable is compatible with Lin processing
-/*! \details It may be necessary to override this default behavior
- * (e.g. Utility::TabularDistribution).
- */
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
-                                           const LinDepVarProcessingTag ) const
-{
-  return true;
-}
-
-// Test if the dependent variable is compatible with Log processing
-/*! \details It may be necessary to override this default behavior
- * (e.g. Utility::TabularDistribution).
- */
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
-                                           const LogDepVarProcessingTag ) const
-{
-  return !this->canDepVarBeZeroInIndepBounds();
-}
-
-// Test if the distribution has the same bounds
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBounds(
-	const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const
-{
-  return
-    (RelativeErrorComparisonPolicy::compare( this->getUpperBoundOfIndepVar(),
-                                             distribution.getUpperBoundOfIndepVar(),
-                                             1e-9 ) ||
-     CloseComparisonPolicy::compare( this->getUpperBoundOfIndepVar(),
-                                     distribution.getUpperBoundOfIndepVar(),
-                                     1e-9 )) &&
-    (RelativeErrorComparisonPolicy::compare( this->getLowerBoundOfIndepVar(),
-                                             distribution.getLowerBoundOfIndepVar(),
-                                             1e-9 ) ||
-     CloseComparisonPolicy::compare( this->getLowerBoundOfIndepVar(),
-                                     distribution.getLowerBoundOfIndepVar(),
-                                     1e-9 ));
-}
-
-// Check if data is inlined by default when converting to a property tree
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isDataInlinedByDefault() const
-{
-  return false;
-}
-
 /*! The one-dimensional distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
 typedef UnitAwareOneDDistribution<void,void> OneDDistribution;
-
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareOneDDistribution<void,void> );
+  
+} // end Utility namespace
 
 /*! Macro for restricting distribution units to a certain dimension
  *
@@ -321,7 +238,7 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareOneDDistribution<void,void> );
  * \ingroup one_d_distributions
  */
 #define RESTRICT_UNIT_TO_BOOST_DIMENSION( Unit, Dim )\
-typedef typename boost::enable_if<boost::mpl::or_<typename boost::is_same<typename UnitTraits<Unit>::Dimension,boost::units::Dim>::type,typename boost::is_same<typename UnitTraits<Unit>::Dimension,void>::type> >::type __unit_has_invalid_dimension_if_visible__
+typedef typename std::enable_if<std::is_same<typename Utility::UnitTraits<Unit>::Dimension,boost::units::Dim>::value || std::is_same<typename Utility::UnitTraits<Unit>::Dimension,void>::value>::type __unit_has_invalid_dimension_if_visible__
 
 /*! Macro for excluding a unit from a certain dimension
  *
@@ -333,14 +250,96 @@ typedef typename boost::enable_if<boost::mpl::or_<typename boost::is_same<typena
  * to use a unit with a restricted dimension was made, which should help remedy
  * the error faster (given that boost::units template errors can be
  * intimidating!). This macro can be used as many times as desired in a
- * distribution header file, but only once per dimension (obviously). It is
+ * distribution header file, but only once per dimension. It is
  * safe to place it anywhere in the distribution class declaration.
  * \ingroup one_d_distributions
  */
 #define RESTRICT_UNIT_FROM_BOOST_DIMENSION( Unit, Dim )\
-typedef typename boost::disable_if<typename boost::is_same<typename UnitTraits<Unit>::Dimension,boost::units::Dim>::type>,Unit>::type __unit_has_invalid_ ## Dim ## _if_visible__
+typedef typename std::enable_if<!std::is_same<typename Utility::UnitTraits<Unit>::Dimension,boost::units::Dim>::value>,Unit>::type __unit_has_invalid_ ## Dim ## _if_visible__
 
-} // end Utility namespace
+/*! Declare an external explicit instantiation of a OneDDistribution class
+ * \details This must be placed in the global namespace
+ */
+#define EXTERN_EXPLICIT_DISTRIBUTION_INST( ... ) \
+namespace boost{                               \
+namespace archive{                           \
+  class text_oarchive;                       \
+  class text_iarchive;                       \
+  class xml_oarchive;                        \
+  class xml_iarchive;                        \
+  class binary_oarchive;                     \
+  class binary_iarchive;                     \
+}                                            \
+}                                            \
+                                             \
+namespace Utility{                          \
+  EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( \
+                                      __VA_ARGS__\
+                                       );        \
+                                            \
+  class HDF5OArchive;                       \
+  class HDF5IArchive;                       \
+                                            \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) const \
+                                          );                            \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::save<boost::archive::xml_oarchive>( boost::archive::xml_oarchive& ar, const unsigned version ) const \
+                                          );                            \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::save<boost::archive::binary_oarchive>( boost::archive::binary_oarchive& ar, const unsigned version ) const \
+                                          );                            \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::save<Utility::HDF5OArchive>( Utility::HDF5OArchive& ar, const unsigned version ) const \
+                                          );                            \
+                                                                        \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::load<boost::archive::text_iarchive>( boost::archive::text_iarchive& ar, const unsigned version ) \
+                                          );                            \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::load<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) \
+                                          );                            \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) \
+                                          );                            \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                         void __VA_ARGS__::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) \
+                                          );                            \
+}
+
+/*! Declare an explicit instantiation of a OneDDistribution class
+ * \details This must be placed in the Utility namespace within a .cpp file
+ */
+#define EXPLICIT_DISTRIBUTION_INST( ... ) \
+  EXPLICIT_TEMPLATE_CLASS_INST(                                         \
+                               __VA_ARGS__                              \
+                                );                                      \
+                                                                        \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) const \
+                                   );                                   \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::save<boost::archive::xml_oarchive>( boost::archive::xml_oarchive& ar, const unsigned version ) const \
+                                   );                                   \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::save<boost::archive::binary_oarchive>( boost::archive::binary_oarchive& ar, const unsigned version ) const \
+                                   );                                   \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::save<Utility::HDF5OArchive>( Utility::HDF5OArchive& ar, const unsigned version ) const \
+                                   );                                   \
+                                                                        \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::load<boost::archive::text_iarchive>( boost::archive::text_iarchive& ar, const unsigned version ) \
+                                   );                                   \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::load<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) \
+                                   );                                   \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) \
+                                   );                                   \
+  EXPLICIT_TEMPLATE_FUNCTION_INST( \
+                                  void __VA_ARGS__::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) \
+                                   )
 
 namespace boost{
 
@@ -465,6 +464,14 @@ namespace extra_detail{ \
   
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( UnitAwareOneDDistribution );
 BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareOneDDistribution, 0 );
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_OneDDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_ONE_D_DISTRIBUTION_HPP
 

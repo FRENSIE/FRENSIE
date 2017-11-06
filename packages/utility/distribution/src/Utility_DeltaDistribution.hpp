@@ -119,11 +119,11 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  static std::string getDistributionTypeName( const bool verbose_name = true,
-                                              const bool lowercase = false );
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
 
   //! Check if the type name matches the distribution type name
-  static bool doesTypeNameMatch( const std::string type_name );
+  using BaseType::doesTypeNameMatch;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -171,7 +171,7 @@ private:
   friend class UnitAwareDeltaDistribution;
 
   // Verify the distribution type
-  static void verifyDistributionType( const Utility::Variant& type_data );
+  void verifyDistributionType( const Utility::Variant& type_data ) const;
 
   // Set the location value
   void setLocationValue( const Utility::Variant& location_data );

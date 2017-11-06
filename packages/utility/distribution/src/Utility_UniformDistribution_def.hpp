@@ -332,8 +332,8 @@ OneDDistributionType UnitAwareUniformDistribution<IndependentUnit,DependentUnit>
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
 std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                       const bool verbose_name,
-                                                       const bool lowercase )
+                                                   const bool verbose_name,
+                                                   const bool lowercase ) const
 {
   std::string name = "Uniform";
 
@@ -344,18 +344,6 @@ std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDist
     boost::algorithm::to_lower( name );
 
   return name;
-}
-
-// Check if the type name matches the distribution type name
-/*! \detail The type name comparison is case-insensitive. A positive match
- * will be reported if the type name has a substring equal to "uniform".
- */
-template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::doesTypeNameMatch( const std::string type_name )
-{
-  std::string lower_type_name = boost::algorithm::to_lower_copy( type_name );
-  
-  return lower_type_name.find(ThisType::getDistributionTypeName( false, true )) < lower_type_name.size();
 }
 
 // Test if the distribution is continuous
@@ -370,7 +358,7 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
   os << Utility::container_start_char
-     << this->getDistributionTypeName()
+     << this->getDistributionTypeName( false, true )
      << Utility::next_container_element_char << " ";
 
   Utility::toStream( os, Utility::getRawQuantity( d_min_independent_value ) );
@@ -446,7 +434,7 @@ Utility::PropertyTree UnitAwareUniformDistribution<IndependentUnit,DependentUnit
     ptree.put_value( *this );
   else
   {
-    ptree.put( "type", this->getDistributionTypeName() );
+    ptree.put( "type", this->getDistributionTypeName( false, true ) );
     ptree.put( "min indep value", Utility::getRawQuantity( d_min_independent_value ) );
     ptree.put( "max indep value", Utility::getRawQuantity( d_max_independent_value ) );
     ptree.put( "dep value", Utility::getRawQuantity( d_dependent_value ) );
@@ -597,13 +585,13 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromPropertyTr
 
 // Verify the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data )
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::verifyDistributionType( const Utility::Variant& type_data ) const
 {
-  TEST_FOR_EXCEPTION( !ThisType::doesTypeNameMatch( type_data.toString() ),
-                      Utility::StringConversionException,
-                      "The uniform distribution cannot be constructed "
-                      "because the distribution type ("
-                      << distribution_type << ") does not match!" );
+  // TEST_FOR_EXCEPTION( !this->doesTypeNameMatch( type_data.toString() ),
+  //                     Utility::StringConversionException,
+  //                     "The uniform distribution cannot be constructed "
+  //                     "because the distribution type ("
+  //                     << distribution_type << ") does not match!" );
 }
 
 // Set the min indep value

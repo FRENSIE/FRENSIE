@@ -13,6 +13,7 @@
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -130,11 +131,9 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  static std::string getDistributionTypeName( const bool verbose_name = true,
-                                              const bool lowercase = false );
-
-  //! Check if the type name matches the distribution type name
-  static bool doesTypeNameMatch( const std::string type_name );
+  static std::string typeName( const bool verbose_name,
+                               const bool use_template_params = false,
+                               const std::string& delim = std::string() );
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -171,6 +170,10 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int );
+
+  //! Return the distribution type name
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
 
   // Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
@@ -215,24 +218,21 @@ private:
 		                 const std::vector<double>& unitless_values,
 				 std::vector<Quantity>& quantities );
 
-  // Verify that the distribution type is discrete
-  static void verifyDistributionType( const Utility::Variant& type_data );
-
   // Set the independent values
   static void extractIndependentValues( const Utility::Variant& indep_data,
                                         std::vector<double>& independent_values );
 
   // Set the independent values
-  static void extractIndependentValues( const Utility::PropertyTree& indep_data,
-                                        std::vector<double>& independent_values );
+  static void extractIndependentValuesFromNode( const Utility::PropertyTree& indep_data,
+                                                std::vector<double>& independent_values );
 
   // Set the dependent values
   static void extractDependentValues( const Utility::Variant& dep_data,
                                       std::vector<double>& dependent_values );
 
   // Set the dependent values
-  static void extractDependentValues( const Utility::PropertyTree& dep_data,
-                                      std::vector<double>& dependent_values );
+  static void extractDependentValuesFromNode( const Utility::PropertyTree& dep_data,
+                                              std::vector<double>& dependent_values );
 
   // Verify that the values are valid
   static void verifyValidValues( const std::vector<double>& independent_values,
@@ -270,6 +270,39 @@ private:
  */
 typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
+/*! Partial specialization of Utility::TypeNameTraits for unit aware
+ * discrete distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<typename IndependentUnit,typename DependentUnit>
+struct TypeNameTraits<UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  {
+    return UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
+  }
+};
+
+/*! Specialization of Utility::TypeNameTraits for discrete distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<DiscreteDistribution>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return DiscreteDistribution::typeName( true, false ); }
+};
+  
 } // end Utility namespace
 
 BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareDiscreteDistribution, 0 );
