@@ -30,6 +30,10 @@ inline InterpolationType LogCosLog::getInterpolationType()
 }
 
 // Interpolate between two points
+/*! \details In the rare case that one or both of the dependent values are at
+ * exactly a cosine of one, The values will be shifted an additional 1e-7 to
+ * avoid asymptote at ln(0).
+ */
 template<typename IndepType, typename CosineType>
 inline CosineType LogCosLog::interpolate( const IndepType indep_var_0,
                                           const IndepType indep_var_1,
@@ -53,18 +57,45 @@ inline CosineType LogCosLog::interpolate( const IndepType indep_var_0,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
 
-  return convertCosineVar( dep_var_0*
-            pow((dep_var_1/dep_var_0),
-            log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0)) );
+  if( raw_dep_var_0 != QuantityTraits<CosineType>::one() &&
+      raw_dep_var_1 != QuantityTraits<CosineType>::one() )
+  {
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
+
+    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
+    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+
+    return convertCosineVar( dep_var_0*
+              pow((dep_var_1/dep_var_0),
+              log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0)) );
+  }
+  else // Special edge case for cosine of one
+  {
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) ||
+                      raw_dep_var_0 == QuantityTraits<CosineType>::one() );
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) ||
+                      raw_dep_var_1 == QuantityTraits<CosineType>::one() );
+
+    // Get a nudge value for the edge case
+    CosineType nudge_value = QuantityTraits<CosineType>::initializeQuantity(1e-7);
+
+    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0) + nudge_value;
+    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1) + nudge_value;
+
+    return nudge_value + convertCosineVar( dep_var_0*
+              pow((dep_var_1/dep_var_0),
+              log(indep_var/indep_var_0)/log(indep_var_1/indep_var_0)) );
+  }
 }
 
 // Interpolate between two points using the indep variable ratio (beta)
+/*! \details In the rare case that one or both of the dependent values are at
+ * exactly a cosine of one, The values will be shifted an additional 1e-7 to
+ * avoid asymptote at ln(0).
+ */
 template<typename T, typename CosineType>
 inline CosineType LogCosLog::interpolate( const T beta,
                                           const CosineType raw_dep_var_0,
@@ -79,13 +110,34 @@ inline CosineType LogCosLog::interpolate( const T beta,
   // Make sure the dependent variables are valid
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_0 ) );
   testPrecondition( !QuantityTraits<CosineType>::isnaninf( raw_dep_var_1 ) );
-  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
-  testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
-  CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+  if( raw_dep_var_0 != QuantityTraits<CosineType>::one() &&
+      raw_dep_var_1 != QuantityTraits<CosineType>::one() )
+  {
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) );
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) );
 
-  return convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
+    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
+    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
+
+    return convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
+  }
+  else // Special edge case for cosine of one
+  {
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_0 ) ||
+                      raw_dep_var_0 == QuantityTraits<CosineType>::one() );
+    testPrecondition( LogCosLog::isDepVarInValidRange( raw_dep_var_1 ) ||
+                      raw_dep_var_1 == QuantityTraits<CosineType>::one() );
+
+    // Get a nudge value for the edge case
+    CosineType nudge_value = QuantityTraits<CosineType>::initializeQuantity(1e-7);
+
+    CosineType dep_var_0 = convertCosineVar(raw_dep_var_0) + nudge_value;
+    CosineType dep_var_1 = convertCosineVar(raw_dep_var_1) + nudge_value;
+
+    return nudge_value +
+           convertCosineVar( dep_var_0*pow((dep_var_1/dep_var_0),beta) );
+  }
 }
 
 // Interpolate between two points and return the processed value
@@ -119,7 +171,7 @@ LogCosLog::interpolateAndProcess( const IndepType indep_var_0,
   CosineType dep_var_0 = convertCosineVar(raw_dep_var_0);
   CosineType dep_var_1 = convertCosineVar(raw_dep_var_1);
 
-  return log( getRawQuantity(dep_var_0) ) +  log ( dep_var_1/dep_var_0 )*
+  return log( getRawQuantity(dep_var_0) ) + log ( dep_var_1/dep_var_0 )*
          log( indep_var/indep_var_0 )/log( indep_var_1/indep_var_0 );
 }
 

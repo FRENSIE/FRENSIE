@@ -26,9 +26,10 @@ SimulationAdjointElectronProperties::SimulationAdjointElectronProperties()
     d_adjoint_bremsstrahlung_mode_on( true ),
     d_adjoint_electroionization_mode_on( true ),
     d_adjoint_atomic_excitation_mode_on( true ),
-    d_adjoint_evaluation_tol( 1e-7 ),
+    d_adjoint_evaluation_tol( 1e-12 ),
     d_adjoint_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
-    d_adjoint_elastic_distribution_mode( DECOUPLED_DISTRIBUTION ),
+    d_adjoint_elastic_distribution_mode( COUPLED_DISTRIBUTION ),
+    d_coupled_elastic_sampling_method( TWO_D_UNION ),
     d_adjoint_elastic_cutoff_angle_cosine( 1.0 ),
     d_num_adjoint_electron_hash_grid_bins( 500 )
 { /* ... */ }
@@ -149,7 +150,7 @@ bool SimulationAdjointElectronProperties::isAdjointAtomicExcitationModeOn() cons
   return d_adjoint_atomic_excitation_mode_on;
 }
 
-// Set the adjoint electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-7)
+// Set the adjoint electron FullyTabularTwoDDistribution evaluation tolerance (default = 1e-12)
 /*! \details The evaluation tolerance is used by the
  *  InterpolatedFullyTabularTwoDDistribution as the tolerance when performing
  *  evaluations.

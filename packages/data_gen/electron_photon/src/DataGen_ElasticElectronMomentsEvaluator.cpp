@@ -578,7 +578,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
             const int& n ) const
 {
   // Make sure the energy and order are valid
-  testPrecondition( energy > 0.0 );
+  testPrecondition( d_grid_searcher->isValueWithinGridBounds( energy ) );
   testPrecondition( n >= 0 );
 
   // Get the energy grid bin index

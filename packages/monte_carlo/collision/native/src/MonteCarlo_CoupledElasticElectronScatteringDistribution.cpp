@@ -57,6 +57,13 @@ void CoupledElasticElectronScatteringDistribution::setSamplingMethod(
       return this->sampleSimplifiedUnion(energy);
     };
   }
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+         "Error: The Coupled Elastic Sampling Method " <<
+         method <<
+         " is invalid or currently not supported!" );
+  }
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine

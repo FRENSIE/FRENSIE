@@ -225,10 +225,12 @@ template<typename AtomCore>
 inline double Atom<AtomCore>::getTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( energy > 0.0 );
+  testPrecondition( d_core.getGridSearcher().isValueWithinGridBounds( energy ) );
 
-  return this->getAtomicTotalCrossSection( energy ) +
-         this->getNuclearTotalCrossSection( energy );
+  unsigned energy_grid_bin =
+      d_core.getGridSearcher().findLowerBinIndex( energy );
+
+  return this->getTotalCrossSection( energy, energy_grid_bin );
 }
 
 // Return the total cross section at the desired energy
