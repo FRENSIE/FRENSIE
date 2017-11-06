@@ -260,11 +260,6 @@ double AdjointElectronMaterial::getAtomicWeight(
 // Sample the atom that is collided with
 unsigned AdjointElectronMaterial::sampleCollisionAtom( const double energy ) const
 {
-  if( energy >=20.0 || energy <= 1e-5 )
-  {
-    std::cout << std::setprecision(16) << std::scientific << "energy = \t" << energy << std::endl;
-    
-  }
   double scaled_random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     this->getMacroscopicTotalCrossSection( energy );
