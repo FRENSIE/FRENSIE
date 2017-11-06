@@ -318,9 +318,9 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   fake_stream.resize( 3 );
   fake_stream[0] = 0.99; // choose the only electroatom
   if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 5.9883e-01; // select elastic (for boost below version 1.60)
+    fake_stream[1] = 4.0117e-01; // select brem (for boost below version 1.60)
   else
-    fake_stream[1] = 5.9883e-01; // select elastic (for boost above version 1.60)
+    fake_stream[1] = 5.9883e-01; // select brem (for boost above version 1.60)
   fake_stream[2] = 1.00475965594E-03; // sample outgoing energy = 1.5500002045388603
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
