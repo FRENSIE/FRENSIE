@@ -2007,14 +2007,12 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 // Check that the distribution type name can be returned
 FRENSIE_UNIT_TEST( EquiprobableBinDistribution, getDistributionTypeName )
 {
-  FRENSIE_CHECK_EQUAL( distribution->getDistributionTypeName(),
+  FRENSIE_CHECK_EQUAL( Utility::EquiprobableBinDistribution::typeName( true, false, " " ),
                        "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( distribution->getDistributionTypeName( false ),
+  FRENSIE_CHECK_EQUAL( Utility::EquiprobableBinDistribution::typeName( false ),
                        "Equiprobable" );
-  FRENSIE_CHECK_EQUAL( distribution->getDistributionTypeName( true, true ),
-                       "equiprobable bin distribution" );
-  FRENSIE_CHECK_EQUAL( distribution->getDistributionTypeName( false, true ),
-                       "equiprobable" );
+  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::EquiprobableBinDistribution>(),
+                       "EquiprobableBinDistribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -2022,36 +2020,12 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, getDistributionTypeName )
 FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
                    getDistributionTypeName )
 {
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionTypeName(),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::typeName( true, false, " " )),
                        "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionTypeName( false ),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::typeName( false )),
                        "Equiprobable" );
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionTypeName( true, true ),
-                       "equiprobable bin distribution" );
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionTypeName( false, true ),
-                       "equiprobable" );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the type name matches the distribution type name
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, doesTypeNameMatch )
-{
-  FRENSIE_CHECK( distribution->doesTypeNameMatch( "Equiprobable Bin Distribution" ) );
-  FRENSIE_CHECK( distribution->doesTypeNameMatch( "Equiprobable" ) );
-  FRENSIE_CHECK( distribution->doesTypeNameMatch( "equiprobable" ) );
-  FRENSIE_CHECK( distribution->doesTypeNameMatch( "EQUIPROBABLE" ) );
-  FRENSIE_CHECK( !distribution->doesTypeNameMatch( "EQUI" ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the type name matches the unit-aware distribution type name
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, doesTypeNameMatch )
-{
-  FRENSIE_CHECK( unit_aware_distribution->doesTypeNameMatch( "Equiprobable Bin Distribution" ) );
-  FRENSIE_CHECK( unit_aware_distribution->doesTypeNameMatch( "Equiprobable" ) );
-  FRENSIE_CHECK( unit_aware_distribution->doesTypeNameMatch( "equiprobable" ) );
-  FRENSIE_CHECK( unit_aware_distribution->doesTypeNameMatch( "EQUIPROBABLE" ) );
-  FRENSIE_CHECK( !unit_aware_distribution->doesTypeNameMatch( "EQUI" ) );
+  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> >()),
+                       std::string("UnitAwareEquiprobableBinDistribution<")+Utility::typeName<MegaElectronVolt>()+","+Utility::typeName<si::amount>()+">" );
 }
 
 //---------------------------------------------------------------------------//

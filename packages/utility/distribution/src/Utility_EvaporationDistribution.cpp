@@ -22,17 +22,7 @@
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEvaporationDistribution<void,void> );
-
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) const );
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::save<boost::archive::xml_oarchive>( boost::archive::xml_oarchive& ar, const unsigned version ) const );
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::save<boost::archive::binary_oarchive>( boost::archive::binary_oarchive& ar, const unsigned version ) const );
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::save<Utility::HDF5OArchive>( Utility::HDF5OArchive& ar, const unsigned version ) const );
-  
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::load<boost::archive::text_iarchive>( boost::archive::text_iarchive& ar, const unsigned version ) );
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::load<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) );
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) );
-EXPLICIT_TEMPLATE_FUNCTION_INST( void UnitAwareEvaporationDistribution<void,void>::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareEvaporationDistribution<void,void> );
 
 } // end Utility namespace
 

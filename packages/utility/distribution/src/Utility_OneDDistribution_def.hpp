@@ -184,8 +184,8 @@ struct DataOStreamHelper
   static inline void placeElementInOStream( std::ostream& os,
                                             const TupleType& data )
   {
-    os << Utility::get<I>( data )
-       << Utility::next_container_element_char << " ";
+    Utility::toStream( os, Utility::get<I>( data ) );
+    os << Utility::next_container_element_char << " ";
 
     DataOStreamHelper<I+1,TupleType>::placeElementInOStream( os, data );
   }
@@ -197,7 +197,7 @@ struct DataOStreamHelper<I,TupleType,typename std::enable_if<I==Utility::TupleSi
 {
   static inline void placeElementInOStream( std::ostream& os,
                                             const TupleType& data )
-  { os << Utility::get<I>( data ); }
+  { Utility::toStream( os, Utility::get<I>( data ) ); }
 };
 
 //! Specialization of DataOStreamHelper for parameter packs of I = TupleSize
@@ -239,7 +239,7 @@ inline void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromStream
                            "Could not extract the distribution data from "
                            "the stream!" );
 
-  if( distribution_data.size() > 1 )
+  if( !distribution_data.empty() )
   {
     this->verifyDistributionType( distribution_data.front() );
 
@@ -250,7 +250,7 @@ inline void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromStream
     THROW_EXCEPTION( Utility::StringConversionException,
                      "The "
                      << this->getDistributionTypeName(true, true) <<
-                     "could not be constructed because the type could not be "
+                     " could not be constructed because the type could not be "
                      "verified!" );
   }
 }
@@ -417,17 +417,23 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromPropertyTreeI
       DataExtractorMap::iterator data_extractor_end = data_extractors.end();
 
       std::pair<size_t,DataExtractorMap::iterator> best_key_match = 
-        std::make_pair( child_node_key.size(), data_extractors.end() );
+        std::make_pair( 0, data_extractors.end() );
       
       while( data_extractor_it != data_extractor_end )
       {
-        size_t match_loc =
-          child_node_key.find( Utility::get<0>(data_extractor_it->second) );
-
-        if( match_loc < best_key_match.first )
+        if( child_node_key.find( Utility::get<0>(data_extractor_it->second) ) <
+            child_node_key.size() )
         {
-          best_key_match.first = match_loc;
-          best_key_match.second = data_extractor_it;
+          size_t match_length =
+            Utility::get<0>(data_extractor_it->second).size();
+
+          // If the match length is the same, default to the first match
+          // found
+          if( best_key_match.first < match_length )
+          {
+            best_key_match.first = match_length;
+            best_key_match.second = data_extractor_it;
+          }
         }
 
         ++data_extractor_it;

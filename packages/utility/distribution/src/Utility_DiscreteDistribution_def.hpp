@@ -509,6 +509,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
   // Initialize from inline data
   if( node.size() == 0 )
     this->fromInlinedPropertyTreeImpl( node );
+  
   // Initialize from child nodes
   else
   {

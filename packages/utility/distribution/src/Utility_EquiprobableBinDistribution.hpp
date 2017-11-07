@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -118,8 +119,9 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  static std::string typeName( const bool verbose_name,
+                               const bool use_template_params = false,
+                               const std::string& delim = std::string() );
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -162,6 +164,10 @@ protected:
 
 private:
 
+  //! Return the distribution type name
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
+
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
 				      unsigned& sampled_bin_index ) const;
@@ -175,13 +181,13 @@ private:
 		    const std::vector<InputIndepQuantity>& bin_boundaries );
 
   // Set the bin boundaries
-  static void extractBinBoundaries( const Utility::Variant& bin_boundary_data,
-                                    std::vector<double>& bin_boundaries );
-
-  // Set the bin boundaries
-  static void extractBinBoundaries(
+  static void extractBinBoundariesFromNode(
                                 const Utility::PropertyTree& bin_boundary_data,
                                 std::vector<double>& bin_boundaries );
+
+  // Set the bin boundaries
+  static void extractBinBoundaries( const Utility::Variant& bin_boundary_data,
+                                    std::vector<double>& bin_boundaries );
 
   // Verify that the bin boundaries are valid
   static void verifyValidBinBoundaries(
@@ -208,6 +214,12 @@ private:
   static const OneDDistributionType distribution_type =
     EQUIPROBABLE_BIN_DISTRIBUTION;
 
+  // The bin boundary values key (used in property trees)
+  static const std::string s_bin_boundary_values_key;
+
+  // The bin boundary values min match string (used when reading prop. trees)
+  static const std::string s_bin_boundary_min_match_string;
+
   // The distribution
   std::vector<IndepQuantity> d_bin_boundaries;
 };
@@ -216,6 +228,39 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareEquiprobableBinDistribution<void,void> EquiprobableBinDistribution;
+
+/*! Partial specialization of Utility::TypeNameTraits for unit aware
+ * equiprobable bin distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<typename IndependentUnit,typename DependentUnit>
+struct TypeNameTraits<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  {
+    return UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
+  }
+};
+
+/*! Specialization of Utility::TypeNameTraits for equiprobable bin distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<EquiprobableBinDistribution>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return EquiprobableBinDistribution::typeName( true, false ); }
+};
 
 } // end Utility namespace
 

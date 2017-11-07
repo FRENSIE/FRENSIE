@@ -12,6 +12,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(EquiprobableBinDistribution DEPENDS tstEquiprobableB
 FRENSIE_ADD_TEST(EquiprobableBinDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_equiprobable_bin_distributions.json)
 
+FRENSIE_ADD_TEST_EXECUTABLE(EvaporationDistribution DEPENDS tstEvaporationDistribution.cpp)
+FRENSIE_ADD_TEST(EvaporationDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_evaporation_distributions.json)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
 # ADD_EXECUTABLE(tstUniformDistribution
@@ -62,14 +66,6 @@ FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 # TARGET_LINK_LIBRARIES(tstNormalDistribution utility_dist)
 # ADD_TEST(NormalDistribution_test tstNormalDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_normal_distributions.xml")
 # SET_PROPERTY(TEST NormalDistribution_test PROPERTY LABELS utility_dist)
-
-# ADD_EXECUTABLE(tstEvaporationDistribution
-#   tstEvaporationDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstEvaporationDistribution utility_dist)
-# ADD_TEST(EvaporationDistribution_test tstEvaporationDistribution
-# --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_evaporation_distributions.xml")
-# SET_PROPERTY(TEST EvaporationDistribution_test PROPERTY LABELS utility_dist)
 
 # ADD_EXECUTABLE(tstMaxwellFissionDistribution
 #   tstMaxwellFissionDistribution.cpp

@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -135,8 +136,9 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  static std::string typeName( const bool verbose_name,
+                               const bool use_template_params = false,
+                               const std::string& delim = std::string() );
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -174,8 +176,12 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance, int );
 
+  //! Return the distribution type name
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
+
   //! Test if the dependent variable can be zero within the indep bounds
-  bool canDepVarBeZeroInIndepBounds() const;
+  bool canDepVarBeZeroInIndepBounds() const override;
 
   //! Get the default incident energy
   template<typename InputIndepQuantity>
@@ -190,7 +196,7 @@ protected:
   //! Get the default restriction energy
   template<typename InputIndepQuantity>
   static InputIndepQuantity getDefaultRestrictionEnergy()
-  { return QuantityTraits<InputIndepQuantity>::one(); }
+  { return QuantityTraits<InputIndepQuantity>::zero(); }
 
   //! Get the default constant multiplier
   static double getDefaultConstantMultiplier()
@@ -201,19 +207,17 @@ private:
   // Calculate the normalization constant of the distribution
   void calculateNormalizationConstant();
 
-  // Set the shape parameters
-  static void extractShapeParameters( const Utility::Variant& shape_parameter_data,
-                                      IndepQuantity& incident_energy,
-                                      IndepQuantity& nuclear_temp,
-                                      IndepQuantity& restriction_energy,
-                                      DistMultiplierQuantity& multiplier );
+  // Extract a shape parameter from a node
+  template<typename QuantityType>
+  static void extractShapeParameterFromNode(
+                             const Utility::PropertyTree& shape_parameter_data,
+                             QuantityType& shape_parameter );
 
   // Set the shape parameters
-  static void extractShapeParameters( const std::vector<double>& shape_parameter_data,
-                                      IndepQuantity& incident_energy,
-                                      IndepQuantity& nuclear_temp,
-                                      IndepQuantity& restriction_energy,
-                                      DistMultiplierQuantity& multiplier );
+  template<typename QuantityType>
+  static void extractShapeParameter(
+                                  const Utility::Variant& shape_parameter_data,
+                                  QuantityType& shape_parameter );
 
   // Verify that the shape parameters are valid
   static void verifyValidShapeParameters( IndepQuantity& incident_energy,
@@ -241,6 +245,30 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = EVAPORATION_DISTRIBUTION;
 
+  // The incident energy value key (used in property trees)
+  static const std::string s_incident_energy_value_key;
+
+  // The incident energy min match string (used when reading property trees)
+  static const std::string s_incident_energy_value_min_match_string;
+
+  // The nuclear temperature value key (used in property trees)
+  static const std::string s_nuclear_temp_value_key;
+
+  // The nuclear temperature min match string (used when reading prop. trees)
+  static const std::string s_nuclear_temp_value_min_match_string;
+
+  // The restriction energy value key (used in property trees)
+  static const std::string s_restriction_energy_value_key;
+
+  // The restriction energy min match string (used when reading prop. trees)
+  static const std::string s_restriction_energy_value_min_match_string;
+
+  // The distribution multiplier value key (used in property trees)
+  static const std::string s_multiplier_value_key;
+
+  // The distribution multiplier min match string (used when reading prop. trees)
+  static const std::string s_multiplier_value_min_match_string;
+
   // The incident neutron energy of the distribution
   IndepQuantity d_incident_energy;
 
@@ -261,6 +289,39 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareEvaporationDistribution<void,void> EvaporationDistribution;
+
+/*! Partial specialization of Utility::TypeNameTraits for unit aware
+ * evaporation distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<typename IndependentUnit,typename DependentUnit>
+struct TypeNameTraits<UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  {
+    return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
+  }
+};
+
+/*! Specialization of Utility::TypeNameTraits for evaporation distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<EvaporationDistribution>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return EvaporationDistribution::typeName( true, false ); }
+};
 
 } // end Utility namespace
 

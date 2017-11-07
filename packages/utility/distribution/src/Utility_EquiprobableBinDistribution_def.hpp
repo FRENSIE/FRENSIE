@@ -25,6 +25,13 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareEquiprobableBinDistribution 
 
 namespace Utility{
 
+// Iniitalize static member data
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::s_bin_boundary_values_key( "bin boundaries" );
+
+template<typename IndependentUnit, typename DependentUnit> 
+const std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::s_bin_boundary_min_match_string( "boundaries" );
+
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution()
@@ -317,14 +324,29 @@ OneDDistributionType UnitAwareEquiprobableBinDistribution<IndependentUnit,Depend
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::typeName(
+                                                const bool verbose_name,
+                                                const bool use_template_params,
+                                                const std::string& delim )
+{
+  std::vector<std::string> name_components( {"Equiprobable"} );
+  
+  if( verbose_name )
+    name_components.push_back( "Bin" );
+  
+  return BaseType::typeNameImpl( name_components,
+                                 verbose_name,
+                                 use_template_params,
+                                 delim );
+}
+
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
 std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
                                                    const bool verbose_name,
                                                    const bool lowercase ) const
 {
-  std::string name = "Equiprobable";
-
-  if( verbose_name )
-    name += " Bin Distribution";
+  std::string name = this->typeName( verbose_name, false, " " );
 
   if( lowercase )
     boost::algorithm::to_lower( name );
@@ -389,23 +411,18 @@ template<typename IndependentUnit, typename DependentUnit>
 Utility::PropertyTree UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
                                                  const bool inline_data ) const
 {
-  Utility::PropertyTree ptree;
-
   if( inline_data )
-    ptree.put_value( *this );
+    return this->toInlinedPropertyTreeImpl();
   else
   {
-    // this->addTypeNameToPropertyTree( ptree );
+    std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
 
-    // std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
+    for( size_t i = 0; i < d_bin_boundaries.size(); ++i )
+      raw_bin_boundaries[i] = Utility::getRawQuantity( d_bin_boundaries[i] );
 
-    // for( size_t i = 0; i < d_bin_boundaries.size(); ++i )
-    //   raw_bin_boundaries[i] = Utility::getRawQuantity( d_bin_boundaries[i] );
-
-    // ptree.put( "bin boundaries", raw_bin_boundaries );
+    return this->toPropertyTreeImpl(
+                   std::tie( s_bin_boundary_values_key, raw_bin_boundaries ) );
   }
-
-  return ptree;
 }
 
 // Method for initializing the object from a property tree
@@ -416,92 +433,37 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPr
 {
   // Initialize from inline data
   if( node.size() == 0 )
-  {
-    std::istringstream iss( node.data().toString() );
-
-    try{
-      this->fromStream( iss );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PropertyTreeConversionException,
-                                "Could not create the equiprobable bin "
-                                "distribution!" );
-  }
+    this->fromInlinedPropertyTreeImpl( node );
+  
   // Initialize from child nodes
   else
   {
-    Utility::PropertyTree::const_iterator node_it, node_end;
-    node_it = node.begin();
-    node_end = node.end();
-
-    bool type_verified = false;
-    bool bin_boundaries_extracted = false;
-
     std::vector<double> bin_boundaries;
 
-    // while( node_it != node_end )
-    // {
-      // if( !type_verified )
-    //     this->attemptToVerifyDistributionType( node_it, type_verified );
-    //   else
-    //   {
-    //     std::string child_node_key =
-    //       boost::algorithm::to_lower_copy( node_it->first );
+    typename BaseType::DataExtractorMap data_extractors;
 
-    //     // Extract the bin boundaries
-    //     if( child_node_key.find( "boundaries" ) < child_node_key.size() )
-    //     {
-    //       if( !bin_boundaries_extracted )
-    //       {
-    //         try{
-    //           this->extractBinBoundaries( node_it->second, bin_boundaries );
-    //         }
-    //         EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-    //                                     Utility::PropertyTreeConversionException,
-    //                                     "Could not create the equiprobable "
-    //                                     "bin distribution!" );
+    data_extractors.insert(
+     std::make_pair( s_bin_boundary_values_key,
+      std::make_tuple( s_bin_boundary_min_match_string, true,
+                       std::bind<void>(&ThisType::extractBinBoundariesFromNode,
+                                       std::placeholders::_1,
+                                       std::ref(bin_boundaries) ) ) ) );
 
-    //         bin_boundaries_extracted = true;
-    //       }
-    //       // Duplicate boundaries defined
-    //       else
-    //         unused_children.push_back( node_it->first );
-    //     }
+    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
-    //     // This child node is unused
-    //     else
-    //     {
-    //       this->checkForUnusedChildNode( child_node_key,
-    //                                      node_it->first,
-    //                                      unused_children );
-    //     }
-    //   }
-
-    //   ++node_it;
-    // }
-
-    // // Make sure that the distribution type was verified
-    // this->hasDistributionTypeBeenVerified( type_verified );
     
-    // // Make sure that the bin boundaries were set
-    // TEST_FOR_EXCEPTION( !bin_boundaries_extracted,
-    //                     Utility::PropertyTreeConversionException,
-    //                     "The equiprobable bin distribution could not be "
-    //                     "constructed because the bin boundaries were not "
-    //                     "specified!" );
+    // Verify that the bin boundaries are valid
+    try{
+      this->verifyValidBinBoundaries( bin_boundaries );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                Utility::PropertyTreeConversionException,
+                                "The equiprobable bin distribution could not "
+                                "be constructed because the bin boundaries "
+                                "are not valid!" );
 
-    // // Verify that the bin boundaries are valid
-    // try{
-    //   this->verifyValidBinBoundaries( bin_boundaries );
-    // }
-    // EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-    //                             Utility::PropertyTreeConversionException,
-    //                             "The equiprobable bin distribution could not "
-    //                             "be constructed because the bin boundaries "
-    //                             "are not valid!" );
-
-    // // Initialize the distribution
-    // this->initializeDistribution( bin_boundaries );
+    // Initialize the distribution
+    this->initializeDistribution( bin_boundaries );
   }
 }
 
@@ -591,25 +553,9 @@ bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::canDep
   return false;
 }
 
-// Set the bin boundaries
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extractBinBoundaries(
-                                     const Utility::Variant& bin_boundary_data,
-                                     std::vector<double>& bin_boundaries )
-{
-  try{
-    bin_boundaries =
-      Utility::variant_cast<std::vector<double> >( bin_boundary_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The equiprobable bin distribution cannot be "
-                           "constructed because the bin boundaries are not "
-                           "valid!" );                      
-}
-
 // Extract the bin boundaries
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extractBinBoundaries(
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extractBinBoundariesFromNode(
                                 const Utility::PropertyTree& bin_boundary_data,
                                 std::vector<double>& bin_boundaries )
 {
@@ -632,6 +578,22 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extrac
                              "constructed because the bin boundary data "
                              "is invalid!" );
   }
+}
+
+// Set the bin boundaries
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::extractBinBoundaries(
+                                     const Utility::Variant& bin_boundary_data,
+                                     std::vector<double>& bin_boundaries )
+{
+  try{
+    bin_boundaries =
+      Utility::variant_cast<std::vector<double> >( bin_boundary_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The equiprobable bin distribution cannot be "
+                           "constructed because the bin boundaries are not "
+                           "valid!" );                      
 }
 
 // Verify that the bin boundaries are valid

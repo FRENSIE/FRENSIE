@@ -345,14 +345,12 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, getDistributionType )
 // Check that the distribution type name can be returned
 FRENSIE_UNIT_TEST( DeltaDistribution, getDistributionTypeName )
 {
-  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName(),
+  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::typeName( true, false, " "),
                        "Delta Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName( false ),
+  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::typeName( false ),
                        "Delta" );
-  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName( true, true ),
-                       "delta distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::DeltaDistribution::getDistributionTypeName( false, true ),
-                       "delta" );
+  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::DeltaDistribution>(),
+                       "DeltaDistribution" );
 }
 
 //---------------------------------------------------------------------------//
@@ -360,36 +358,12 @@ FRENSIE_UNIT_TEST( DeltaDistribution, getDistributionTypeName )
 FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution,
                    getDistributionTypeName )
 {
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName()),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::typeName( true, false, " " )),
                        "Delta Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false )),
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::typeName( false )),
                        "Delta" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( true, true )),
-                       "delta distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::getDistributionTypeName( false, true )),
-                       "delta" );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the type name matches the distribution type name
-FRENSIE_UNIT_TEST( DeltaDistribution, doesTypeNameMatch )
-{
-  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "Delta Distribution" ) );
-  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "Delta" ) );
-  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "delta" ) );
-  FRENSIE_CHECK( Utility::DeltaDistribution::doesTypeNameMatch( "DELTA" ) );
-  FRENSIE_CHECK( !Utility::DeltaDistribution::doesTypeNameMatch( "DELT" ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the type name matches the unit-aware distribution type name
-FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, doesTypeNameMatch )
-{
-  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta Distribution" )) );
-  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "Delta" )) );
-  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "delta" )) );
-  FRENSIE_CHECK( (Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELTA" )) );
-  FRENSIE_CHECK( !(Utility::UnitAwareDeltaDistribution<si::time,si::length>::doesTypeNameMatch( "DELT" )) );
+  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareDeltaDistribution<si::time,si::length> >()),
+                       std::string("UnitAwareDeltaDistribution<")+Utility::typeName<si::time>()+","+Utility::typeName<si::length>()+">" );
 }
 
 //---------------------------------------------------------------------------//
@@ -446,7 +420,7 @@ FRENSIE_UNIT_TEST( DeltaDistribution, toString )
 {
   std::string dist_string = Utility::toString( *distribution );
 
-  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 0.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
 
   dist_string = Utility::toString( Utility::DeltaDistribution( 1.0, 0.5 ) );
 
@@ -459,7 +433,7 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toString )
 {
   std::string dist_string = Utility::toString( *unit_aware_distribution );
 
-  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 3.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00}" );
   dist_string = Utility::toString( Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters ) );
 
   FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
@@ -473,7 +447,7 @@ FRENSIE_UNIT_TEST( DeltaDistribution, toStream )
 
   Utility::toStream( oss, *distribution );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
@@ -491,7 +465,7 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toStream )
 
   Utility::toStream( oss, *unit_aware_distribution );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
@@ -509,7 +483,7 @@ FRENSIE_UNIT_TEST( DeltaDistribution, ostream_operator )
 
   oss << *distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 0.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
@@ -527,7 +501,7 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, ostream_operator )
 
   oss << *unit_aware_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 3.000000000000000000e+00}" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "{Delta Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
@@ -689,9 +663,10 @@ FRENSIE_UNIT_TEST( DeltaDistribution, toPropertyTree )
 
   ptree = distribution->toPropertyTree( false );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   Utility::DeltaDistribution test_dist( -1.0, 0.5 );
 
@@ -725,27 +700,31 @@ FRENSIE_UNIT_TEST( DeltaDistribution, toPropertyTree )
 
   ptree = Utility::toPropertyTree( *distribution, false );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   ptree = Utility::toPropertyTree( *tab_distribution, false );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   ptree = Utility::toPropertyTree( *distribution );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   ptree = Utility::toPropertyTree( *tab_distribution );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -780,9 +759,10 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toPropertyTree )
 
   ptree = unit_aware_distribution->toPropertyTree( false );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   Utility::UnitAwareDeltaDistribution<si::time,si::length>
     test_dist( -1.0*si::seconds, 0.5*si::meters );
@@ -817,27 +797,31 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toPropertyTree )
 
   ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   ptree = Utility::toPropertyTree( *unit_aware_distribution );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 
   ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
 
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
+  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
   FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Delta Distribution" );
   FRENSIE_CHECK_EQUAL( ptree.get<double>( "location" ), 3.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//

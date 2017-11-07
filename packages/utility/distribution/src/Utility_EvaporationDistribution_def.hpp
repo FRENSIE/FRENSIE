@@ -21,6 +21,31 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareEvaporationDistribution );
 
 namespace Utility{
 
+// Initialize static member data
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_incident_energy_value_key( "incident energy" );
+  
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_incident_energy_value_min_match_string( "energy" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_nuclear_temp_value_key( "nuclear temperature" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_nuclear_temp_value_min_match_string( "temp" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_restriction_energy_value_key( "restriction energy" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_restriction_energy_value_min_match_string( "restrict" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_key( "multiplier" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_min_match_string( "mult" );
+
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -305,6 +330,19 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getDistribution
 {
   return ThisType::distribution_type;
 }
+  
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::typeName(
+                                                const bool verbose_name,
+                                                const bool use_template_params,
+                                                const std::string& delim )
+{
+  return BaseType::typeNameImpl( "Evaporation",
+                                 verbose_name,
+                                 use_template_params,
+                                 delim );
+}
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
@@ -312,10 +350,7 @@ std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::get
                                                    const bool verbose_name,
                                                    const bool lowercase ) const
 {
-  std::string name = "Evaporation";
-
-  if( verbose_name )
-    name += " Distribution";
+  std::string name = this->typeName( verbose_name, false, " " );
 
   if( lowercase )
     boost::algorithm::to_lower( name );
@@ -348,19 +383,51 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   VariantList distribution_data;
 
   this->fromStreamImpl( is, distribution_data );
-  
-  // Extract the distribution shape parameters
-  this->extractShapeParameters( Utility::Variant(distribution_data),
-                                d_incident_energy,
-                                d_nuclear_temperature,
-                                d_restriction_energy,
-                                d_multiplier );
+
+  // Set the incident energy
+  if( !distribution_data.empty() )
+  {
+    this->extractShapeParameter(distribution_data.front(), d_incident_energy);
+    distribution_data.pop_front();
+  }
+  else
+    d_incident_energy = ThisType::getDefaultIncidentEnergy<IndepQuantity>();
+
+  // Set the nuclear_temperature
+  if( !distribution_data.empty() )
+  {
+    this->extractShapeParameter(distribution_data.front(), d_nuclear_temperature);
+    distribution_data.pop_front();
+  }
+  else
+    d_nuclear_temperature = ThisType::getDefaultNuclearTemperature<IndepQuantity>();
+
+  // Set the restriction energy
+  if( !distribution_data.empty() )
+  {
+    this->extractShapeParameter(distribution_data.front(), d_restriction_energy);
+    distribution_data.pop_front();
+  }
+  else
+    d_restriction_energy = ThisType::getDefaultRestrictionEnergy<IndepQuantity>();
+
+  // Set the constant multiplier
+  if( !distribution_data.empty() )
+  {
+    this->extractShapeParameter( distribution_data.front(), d_multiplier );
+    distribution_data.pop_front();
+  }
+  else
+    Utility::setQuantity( d_multiplier, ThisType::getDefaultConstantMultiplier() );
 
   // Verify that the shape parameters are valid
   this->verifyValidShapeParameters( d_incident_energy,
                                     d_nuclear_temperature,
                                     d_restriction_energy,
                                     d_multiplier );
+
+  // Check if there is any superfluous data
+  this->checkForUnusedStreamData( distribution_data );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
@@ -370,21 +437,16 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
 template<typename IndependentUnit, typename DependentUnit>
 Utility::PropertyTree UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
 {
-  Utility::PropertyTree ptree;
-
   if( inline_data )
-    ptree.put_value( *this );
+    return this->toInlinedPropertyTreeImpl();
   else
   {
-    // this->addTypeNameToPropertyTree( ptree );
-
-    // ptree.put( "indicent energy", Utility::getRawQuantity(d_incident_energy) );
-    // ptree.put( "nuclear temperature", Utility::getRawQuantity(d_nuclear_temperature) );
-    // ptree.put( "restriction energy", Utility::getRawQuantity(d_restriction_energy) );
-    // ptree.put( "multiplier", Utility::getRawQuantity(d_multiplier) );
+    return this->toPropertyTreeImpl(
+       std::tie(s_incident_energy_value_key, Utility::getRawQuantity(d_incident_energy)),
+       std::tie(s_nuclear_temp_value_key, Utility::getRawQuantity(d_nuclear_temperature)),
+       std::tie(s_restriction_energy_value_key, Utility::getRawQuantity(d_restriction_energy)),
+       std::tie(s_multiplier_value_key, Utility::getRawQuantity(d_multiplier)) );
   }
-
-  return ptree;
 }
 
 // Method for initializing the object from a property tree
@@ -395,122 +457,63 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromProper
 {
   // Initialize from inline data
   if( node.size() == 0 )
-  {
-    std::istringstream iss( node.data().toString() );
-
-    try{
-      this->fromStream( iss );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PropertyTreeConversionException,
-                                "Could not create the evaporation "
-                                "distribution!" );
-  }
+    this->fromInlinedPropertyTreeImpl( node );
+    
   // Initialize from child nodes
   else
   {
-    Utility::PropertyTree::const_iterator node_it, node_end;
-    node_it = node.begin();
-    node_end = node.end();
+    // Initialize the member data to default values
+    d_incident_energy =
+      ThisType::getDefaultIncidentEnergy<IndepQuantity>();
+    d_nuclear_temperature =
+      ThisType::getDefaultNuclearTemperature<IndepQuantity>();
+    d_restriction_energy =
+      ThisType::getDefaultRestrictionEnergy<IndepQuantity>();
+    Utility::setQuantity( d_multiplier,
+                          ThisType::getDefaultConstantMultiplier() );
 
-    bool type_verified = false;
-    bool incident_energy_set = false;
-    bool nuclear_temp_set = false;
-    bool restriction_energy_set = false;
-    bool multiplier_set = false;
+    // Create the data extractor map
+    typename BaseType::DataExtractorMap data_extractors;    
 
-    // Initialize the shape parameters
-    VariantVector shape_parameters;
-    shape_parameters[0] = Utility::Variant( ThisType::getDefaultIncidentEnergy<double>() );
-    shape_parameters[1] = Utility::Variant( ThisType::getDefaultNuclearTemperature<double>() );
-    shape_parameters[2] = Utility::Variant( ThisType::getDefaultRestrictionEnergy<double>() );
-    shape_parameters[3] = Utility::Variant( ThisType::getDefaultConstantMultiplier() );
+    data_extractors.insert(
+     std::make_pair( s_incident_energy_value_key,
+      std::make_tuple( s_incident_energy_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_incident_energy)) )));
+    
+    data_extractors.insert(
+     std::make_pair( s_nuclear_temp_value_key,
+      std::make_tuple( s_nuclear_temp_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_nuclear_temperature)) )));
+    
+    data_extractors.insert(
+     std::make_pair( s_restriction_energy_value_key,
+      std::make_tuple( s_restriction_energy_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_restriction_energy)) )));
 
-    // while( node_it != node_end )
-    // {
-    //   if( !type_verified )
-    //     this->attemptToVerifyDistributionType( node_it, type_verified );
-    //   else
-    //   {
-    //     std::string child_node_key =
-    //       boost::algorithm::to_lower_copy( node_it->first );
+    data_extractors.insert(
+     std::make_pair( s_multiplier_value_key,
+      std::make_tuple( s_multiplier_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<DistMultiplierQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_multiplier)) )));
 
-    //     // Extract the incident energy
-    //     if( child_node_key.find( "incident" ) < child_node_key.size() )
-    //     {
-    //       if( !incident_energy_set )
-    //       {
-    //         shape_parameters[0] = node_it->second.data();
-    //         incident_energy_set = true;
-    //       }
-    //       else
-    //         unused_children.push_back( node_it->first );
-    //     }
+    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
-    //     // Extract the nuclear temperature
-    //     else if( child_node_key.find( "nuclear" ) < child_node_key.size() )
-    //     {
-    //       if( !nuclear_temp_set )
-    //       {
-    //         shape_parameters[1] = node_it->second.data();
-    //         nuclear_temp_set = true;
-    //       }
-    //       else
-    //         unused_children.push_back( node_it->first );
-    //     }
+    
+    // Verify that the shape parameters are valid
+    this->verifyValidShapeParameters( d_incident_energy,
+                                      d_nuclear_temperature,
+                                      d_restriction_energy,
+                                      d_multiplier );
 
-    //     // Extract the restriction energy
-    //     else if( child_node_key.find( "restrict" ) < child_node_key.size() )
-    //     {
-    //       if( !restriction_energy_set )
-    //       {
-    //         shape_parameters[2] = node_it->second.data();
-    //         restriction_energy_set = true;
-    //       }
-    //       else
-    //         unused_children.push_back( node_it->first );
-    //     }
-
-    //     // Extract the multiplier
-    //     else if( child_node_key.find( "mult" ) < child_node_key.size() )
-    //     {
-    //       if( !multiplier_set )
-    //       {
-    //         shape_parameters[3] = node_it->second.data();
-    //         multiplier_set = true;
-    //       }
-    //       else
-    //         unused_children.push_back( node_it->first );
-    //     }
-
-    //     // This child node is unused (and is not a comment)
-    //     else if( child_node_key.find( PTREE_COMMENT_NODE_KEY ) >=
-    //              child_node_key.size() )
-    //     {
-    //       unused_children.push_back( node_it->first );
-    //     }
-    //   }
-    //   ++node_it;
-    // }
-
-    // // Check that the type has been verified
-    // this->hasDistributionTypeBeenVerified( type_verified );
-
-    // // Extract the shape parameters
-    // this->extractShapeParameters( Utility::Variant( shape_parameters ),
-    //                               d_incident_energy,
-    //                               d_nuclear_temperature,
-    //                               d_restriction_energy,
-    //                               d_multiplier );
-
-    // // Verify that the shape parameters are valid
-    // this->verifyValidShapeParameters( d_incident_energy,
-    //                                   d_nuclear_temperature,
-    //                                   d_restriction_energy,
-    //                                   d_multiplier );
-
-    // // Calculate the normalization constant
-    // this->calculateNormalizationConstant();
+    // Calculate the normalization constant
+    this->calculateNormalizationConstant();
   }
 }
 
@@ -575,72 +578,40 @@ bool UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::canDepVarB
   return true;
 }
 
-// Set the shape parameters
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::extractShapeParameters(
-                                  const Utility::Variant& shape_parameter_data,
-                                  IndepQuantity& incident_energy,
-                                  IndepQuantity& nuclear_temp,
-                                  IndepQuantity& restriction_energy,
-                                  DistMultiplierQuantity& multiplier )
+template<typename QuantityType>
+void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::extractShapeParameterFromNode(
+                             const Utility::PropertyTree& shape_parameter_data,
+                             QuantityType& shape_parameter )
 {
-  std::vector<double> shape_parameters;
+  // The data must be inlined in the node
+  TEST_FOR_EXCEPTION( shape_parameter_data.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not extract the shape parameter value!" );
 
-  try{
-    shape_parameters =
-      Utility::variant_cast<std::vector<double> >( shape_parameter_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The evaporation distribution cannot be "
-                           "constructed because the shape parameters are not "
-                           "valid!" );
-
-  ThisType::extractShapeParameters( shape_parameters,
-                                    incident_energy,
-                                    nuclear_temp,
-                                    restriction_energy,
-                                    multiplier );
+  ThisType::extractShapeParameter( shape_parameter_data.data(),
+                                   shape_parameter );
 }
 
 // Set the shape parameters
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::extractShapeParameters(
-                               const std::vector<double>& shape_parameter_data,
-                               IndepQuantity& incident_energy,
-                               IndepQuantity& nuclear_temp,
-                               IndepQuantity& restriction_energy,
-                               DistMultiplierQuantity& multiplier )
+template<typename QuantityType>
+void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::extractShapeParameter(
+                                  const Utility::Variant& shape_parameter_data,
+                                  QuantityType& shape_parameter )
 {
-  TEST_FOR_EXCEPTION( shape_parameter_data.size() > 4,
-                      Utility::StringConversionException,
-                     "The evaporation distribution cannot be constructed "
-                     "because the representation is not valid"
-                     "(there are only 4 shape parameters that can be "
-                      "specified)!" );
+  double raw_shape_parameter;
 
-  // Set the incident energy
-  if( shape_parameter_data.size() > 0 )
-    Utility::setQuantity( incident_energy, shape_parameter_data[0] );
-  else
-    incident_energy = ThisType::getDefaultIncidentEnergy<IndepQuantity>();
+  try{
+    raw_shape_parameter =
+      Utility::variant_cast<double>( shape_parameter_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The evaporation distribution cannot be "
+                           "constructed because a shape parameters is not "
+                           "valid!" );
 
-  // Set the nuclear_temperature
-  if( shape_parameter_data.size() > 1 )
-    Utility::setQuantity( nuclear_temp, shape_parameter_data[1] );
-  else
-    nuclear_temp = ThisType::getDefaultNuclearTemperature<IndepQuantity>();
-
-  // Set the restriction energy
-  if( shape_parameter_data.size() > 2 )
-    Utility::setQuantity( restriction_energy, shape_parameter_data[3] );
-  else
-    restriction_energy = ThisType::getDefaultRestrictionEnergy<IndepQuantity>();
-
-  // Set the constant multiplier
-  if( shape_parameter_data.size() > 3 )
-    Utility::setQuantity( multiplier, shape_parameter_data[4] );
-  else
-    multiplier = ThisType::getDefaultConstantMultiplier();
+  Utility::setQuantity( shape_parameter, raw_shape_parameter );
 }
 
 // Verify that the shape parameters are valid
@@ -656,7 +627,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::verifyVali
                       "The evaporation distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
-  TEST_FOR_EXCEPTION( incident_energy < IQT::zero(),
+  TEST_FOR_EXCEPTION( incident_energy <= IQT::zero(),
                       Utility::StringConversionException,
                       "The evaporation distribution cannot be constructed "
                       "because the incident energy is invalid!" );
@@ -675,6 +646,14 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::verifyVali
                       Utility::StringConversionException,
                       "The evaporation distribution cannot be constructed "
                       "because the restriction energy is invalid!" );
+
+  TEST_FOR_EXCEPTION( incident_energy <= restriction_energy,
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the incident energy ("
+                      << Utility::toString(incident_energy) << ")"
+                      " is not greater than the restriction energy ("
+                      << Utility::toString(restriction_energy) << ")!" );
 
   TEST_FOR_EXCEPTION( DMQT::isnaninf( multiplier ),
                       Utility::StringConversionException,
