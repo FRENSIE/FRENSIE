@@ -25,10 +25,15 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
+typedef boost::unordered_map<MonteCarlo::AdjointElectroatomicReactionType,
+                           std::shared_ptr<const MonteCarlo::AdjointElectroatomicReaction> >
+  ConstReactionMap;
+
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
+MonteCarlo::AdjointElectroatomCore silicon_core;
 Teuchos::RCP<const MonteCarlo::AdjointElectronMaterial> silicon;
 std::shared_ptr<MonteCarlo::AdjointElectronCollisionHandler> collision_handler;
 double num_density;
@@ -301,13 +306,35 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
 TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
                    collideWithCellMaterial_analogue )
 {
+  double energy = 1e-3;
+  double sampling_ratio = 0.0;
+  double partial_cross_section = 0.0;
+
+  ConstReactionMap::const_iterator start =
+    silicon_core.getScatteringReactions().begin();
+
+  while( start != silicon_core.getScatteringReactions().end() )
+  {
+    double reaction_cross_section = start->second->getCrossSection( energy );
+
+    if( start->first ==
+        MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION )
+    {
+      sampling_ratio = (partial_cross_section + 0.5*reaction_cross_section);
+    }
+
+    partial_cross_section += reaction_cross_section;
+    ++start;
+  }
+  sampling_ratio /= partial_cross_section;
+
   // Sample the elastic reaction
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.99; // choose the only electroatom
   if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 3.07e-01; // select elastic (for boost below version 1.60)
+    fake_stream[1] = sampling_ratio; // select elastic (for boost below version 1.60)
   else
-    fake_stream[1] = 6.93e-01; // select elastic (for boost above version 1.60)
+    fake_stream[1] = 1.0-sampling_ratio; // select elastic (for boost above version 1.60)
   fake_stream[2] = 0.0; // sample cutoff distribution
   fake_stream[3] = 0.0; // sample mu = -1.0
 
@@ -315,7 +342,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   
   MonteCarlo::AdjointElectronState adjoint_electron( 0 );
-  adjoint_electron.setEnergy( 1e-3 );
+  adjoint_electron.setEnergy( energy );
   adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
   adjoint_electron.setWeight( 1.0 );
   adjoint_electron.setCell( 1 );
@@ -332,13 +359,34 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
                           1e-12 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
 
+  energy = 1.55;
+  sampling_ratio = 0.0;
+  partial_cross_section = 0.0;
+
+  start = silicon_core.getScatteringReactions().begin();
+
+  while( start != silicon_core.getScatteringReactions().end() )
+  {
+    double reaction_cross_section = start->second->getCrossSection( energy );
+
+    if( start->first ==
+        MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+    {
+      sampling_ratio = (partial_cross_section + 0.5*reaction_cross_section);
+    }
+
+    partial_cross_section += reaction_cross_section;
+    ++start;
+  }
+  sampling_ratio /= partial_cross_section;
+
   // Sample the brem reaction
   fake_stream.resize( 3 );
   fake_stream[0] = 0.99; // choose the only electroatom
   if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 4.04125e-1; // select brem (for boost below version 1.60)
+    fake_stream[1] = sampling_ratio; // select brem (for boost below version 1.60)
   else
-    fake_stream[1] = 5.905875e-1; // select brem (for boost above version 1.60)
+    fake_stream[1] = 1.0-sampling_ratio; // select brem (for boost above version 1.60)
   fake_stream[2] = 0.0; // sample outgoing energy = 1.5500002011844041
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -447,10 +495,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                              atom_aliases,
                                              properties );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >
-    adjoint_electroatom_map;
+std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::AdjointElectroatom> >
+  adjoint_electroatom_map;
 
   factory.createAdjointElectroatomMap( adjoint_electroatom_map );
+
+  silicon_core = adjoint_electroatom_map["Si-Native"]->getCore();
 
   Teuchos::Array<double> atom_fractions( 1 );
   Teuchos::Array<std::string> atom_names( 1 );
