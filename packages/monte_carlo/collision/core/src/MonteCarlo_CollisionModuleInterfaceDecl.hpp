@@ -17,11 +17,13 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
+#include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
 
 /*! \defgroup collision_module Collision Module
  * \ingroup physics_simulation_modules

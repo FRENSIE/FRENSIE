@@ -228,11 +228,11 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   TEST_FLOATING_EQUALITY( cross_section, 4.3991117383483171e+01*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 1e-3 );
-  
+
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
               adjoint_electron,
-              MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+              MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.3530678412550578e+08*num_density, 1e-12 );
 
@@ -240,9 +240,26 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   
   cross_section = collision_handler->getMacroscopicReactionCrossSection(
               adjoint_electron,
-              MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+              MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.2512515821171633e+05*num_density, 1e-12 );
+
+  adjoint_electron.setEnergy( 1e-3 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+              adjoint_electron,
+              MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  adjoint_electron.setEnergy( 20.0 );
+  
+  cross_section = collision_handler->getMacroscopicReactionCrossSection(
+              adjoint_electron,
+              MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   adjoint_electron.setEnergy( 1e-3 );
 
@@ -319,13 +336,13 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   fake_stream.resize( 3 );
   fake_stream[0] = 0.99; // choose the only electroatom
   if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 0.4012; // select brem (for boost below version 1.60)
+    fake_stream[1] = 4.04125e-1; // select brem (for boost below version 1.60)
   else
-    fake_stream[1] = 0.5988; // select brem (for boost above version 1.60)
+    fake_stream[1] = 5.905875e-1; // select brem (for boost above version 1.60)
   fake_stream[2] = 0.0; // sample outgoing energy = 1.5500002011844041
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   adjoint_electron.setEnergy( 1.55 );
   adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
   adjoint_electron.setWeight( 1.0 );

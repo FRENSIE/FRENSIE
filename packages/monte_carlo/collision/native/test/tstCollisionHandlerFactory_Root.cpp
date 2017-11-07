@@ -455,8 +455,8 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot,
 {
   MonteCarlo::SimulationProperties properties;
   
-  // Set the particle mode to ADJOINT_PHOTON_MODE
-  properties.setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+  // Set the particle mode to ADJOINT_ELECTRON_MODE
+  properties.setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
 
   // Set the collision type to implicit capture
   properties.setImplicitCaptureModeOn();

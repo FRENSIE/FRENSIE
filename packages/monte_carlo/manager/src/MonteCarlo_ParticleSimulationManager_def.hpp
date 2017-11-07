@@ -22,17 +22,18 @@
 #include "MonteCarlo_CollisionModuleInterface.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
-#include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_DirectionHelpers.hpp"
-#include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-
+#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 
 
 namespace MonteCarlo{
