@@ -825,202 +825,131 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toPropertyTree )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a distribution can be read from a property tree node
-FRENSIE_UNIT_TEST( DeltaDistribution, fromPropertyTree )
-{
-  Utility::DeltaDistribution dist;
-
-  std::vector<std::string> unused_children;
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution A" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0 ), 2.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0 );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0 ), 1.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -2*Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
-                       0.5 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
-              std::runtime_error );
-
-  unused_children.clear();
-
-  // Use the property tree helper methods
-  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
-                         test_dists_ptree->get_child( "Delta Distribution A" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0 ), 2.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
-                         test_dists_ptree->get_child( "Delta Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
-                         test_dists_ptree->get_child( "Delta Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0 );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0 ), 1.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
-                         test_dists_ptree->get_child( "Delta Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -2*Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi ),
-                       0.5 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution E" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution F" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution G" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution H" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>( test_dists_ptree->get_child( "Delta Distribution I" ) ),
-              std::runtime_error );
+// Construct the data table that will be used by fromPropertyTree tests
+#define FROM_PROPERTY_TREE_TABLE_IMPL( GroupName )      \
+FRENSIE_DATA_UNIT_TEST_TABLE( GroupName, fromPropertyTree )   \
+{                                                             \
+  std::vector<std::string> no_unused_children;                \
+                                                              \
+  /* The data table will always use the basic distribution since they are */ \
+  /* serialized the same in the table */                                \
+  Utility::DeltaDistribution dummy_dist;                             \
+                                                                        \
+  double pi = Utility::PhysicalConstants::pi;                           \
+                                                                        \
+  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist"; \
+  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DeltaDistribution( 0, 2 ); \
+  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DeltaDistribution( pi ); \
+  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist; \
+                                                                        \
+  NEW_ROW( "default_mult" ) << "Distribution C" << true << no_unused_children << Utility::DeltaDistribution( -1.0 ); \
+  NEW_ROW( "extra_args" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DeltaDistribution( -2*pi, 0.5 ); \
+  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "bad_location" ) << "Distribution G" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "zero_multiplier" ) << "Distribution H" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "inf_multiplier" ) << "Distribution I" << false << no_unused_children << dummy_dist; \
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be read from a property tree node
-FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
+// Check that a distribution can be read from a property tree node
+FRENSIE_DATA_UNIT_TEST( DeltaDistribution, fromPropertyTree )
 {
-  Utility::UnitAwareDeltaDistribution<si::time,si::length> dist;
-
+  FETCH_FROM_TABLE( std::string, dist_name );
+  FETCH_FROM_TABLE( bool, valid_dist_rep );
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
+  
+  Utility::DeltaDistribution dist;
   std::vector<std::string> unused_children;
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution A" ),
-                         unused_children );
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( Utility::DeltaDistribution, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -2*Utility::PhysicalConstants::pi*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution E" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution F" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution G" ) ),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Delta Distribution H" ) ),
-              std::runtime_error );
-
-  unused_children.clear();
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
 
   // Use the property tree helper methods
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
-                         test_dists_ptree->get_child( "Delta Distribution A" ),
-                         unused_children );
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( Utility::DeltaDistribution, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( 0.0*si::seconds ), 2.0*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
-                         test_dists_ptree->get_child( "Delta Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( Utility::PhysicalConstants::pi*si::seconds ), 1.0*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
-                         test_dists_ptree->get_child( "Delta Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -1.0*si::seconds ), 1.0*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >(
-                         test_dists_ptree->get_child( "Delta Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -2*Utility::PhysicalConstants::pi*si::seconds );
-  FRENSIE_CHECK_EQUAL( dist.evaluate( -2*Utility::PhysicalConstants::pi*si::seconds ), 0.5*si::meters );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution E" ) )),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution F" ) )),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution G" ) )),
-              std::runtime_error );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution H" ) )),
-              std::runtime_error );
-   FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDeltaDistribution<si::time,si::length> >( test_dists_ptree->get_child( "Delta Distribution I" ) )),
-              std::runtime_error );
+    FRENSIE_CHECK_NO_THROW(
+                  dist = Utility::fromPropertyTree<Utility::DeltaDistribution>(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DeltaDistribution>(
+                                    test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
 }
+
+FROM_PROPERTY_TREE_TABLE_IMPL( DeltaDistribution );
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be read from a property tree node
+FRENSIE_DATA_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
+{
+  typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> DistributionType;
+  
+  FETCH_FROM_TABLE( std::string, dist_name );
+  FETCH_FROM_TABLE( bool, valid_dist_rep );
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
+  
+  DistributionType dist;
+  std::vector<std::string> unused_children;
+
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( DistributionType, expected_dist );
+
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
+
+  // Use the property tree helper methods
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( DistributionType, expected_dist );
+
+    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
+                                    test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
+}
+
+FROM_PROPERTY_TREE_TABLE_IMPL( UnitAwareDeltaDistribution );
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
