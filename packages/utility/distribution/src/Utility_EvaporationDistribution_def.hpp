@@ -507,10 +507,15 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromProper
 
     
     // Verify that the shape parameters are valid
-    this->verifyValidShapeParameters( d_incident_energy,
-                                      d_nuclear_temperature,
-                                      d_restriction_energy,
-                                      d_multiplier );
+    try{
+      this->verifyValidShapeParameters( d_incident_energy,
+                                        d_nuclear_temperature,
+                                        d_restriction_energy,
+                                        d_multiplier );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Invalid shape parameter detected!" );
 
     // Calculate the normalization constant
     this->calculateNormalizationConstant();

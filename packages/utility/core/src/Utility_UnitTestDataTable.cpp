@@ -106,7 +106,6 @@ const std::string& UnitTestDataTable::Row::getName() const
 void UnitTestDataTable::Row::addElement( const Utility::Variant& value )
 {
   d_row_elements.push_back( value );
-  d_row_elements.back().compactify();
 
   d_row_element_output_formats.push_back( std::shared_ptr<const OutputFormatterFactory>() );
 }

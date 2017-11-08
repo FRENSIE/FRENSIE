@@ -1,9 +1,9 @@
 {
-    "Distribution A": "{evaporation}",
-    "Distribution B": "{evaporation, 3.0}",
-    "Distribution C": "{Evaporation, 3.0, 2.0}",
-    "Distribution D": "{Evaporation, 3.0, 2.0, 1.0}",
-    "Distribution E": "{Evaporation Distribution, 3.0, 2.0, 1.0, 0.1}",
+    "Distribution A": "{Evaporation Distribution, 3.0, 2.0, 1.0, 0.1}",
+    "Distribution B": "{Evaporation,              3.0, 2.0, 1.0}",
+    "Distribution C": "{Evaporation,              3.0, 2.0}",
+    "Distribution D": "{evaporation distribution, 3.0}",
+    "Distribution E": "{evaporation}",
 
     "Distribution F":
     {
@@ -54,12 +54,12 @@
     {
         "comment": "The dummy argument should be reported as unused",
 
-        "dummy": ""
-        "mult": 10.0
+        "dummy": "",
+        "mult": 10.0,
         "restrict": 0.1,
         "temp": 1.0,
         "energy": 1.0,
-        "type": "Evaporation Dist",
+        "type": "Evaporation Dist"
     },
 
     "comment": "This distribution is ill-formed (bad type)",
