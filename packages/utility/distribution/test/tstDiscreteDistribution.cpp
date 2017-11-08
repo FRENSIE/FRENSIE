@@ -1914,278 +1914,136 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, toPropertyTree )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a distribution can be read from a property tree
-FRENSIE_UNIT_TEST( DiscreteDistribution, fromPropertyTree )
-{
-  Utility::DiscreteDistribution dist;
-
-  std::vector<std::string> unused_children;
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution A" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -Utility::PhysicalConstants::pi/2 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.1 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 0.1 ), 2.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 1.0 ), 6.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 10.0 ), 2.0, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi/2 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution I" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution J" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution K" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution L" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution M" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution N" ) ),
-              Utility::PropertyTreeConversionException );
-
-  unused_children.clear();
-  
-  // Use the property tree helper methods
-  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
-                      test_dists_ptree->get_child( "Discrete Distribution A" ),
-                      unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
-                      test_dists_ptree->get_child( "Discrete Distribution B" ),
-                      unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -Utility::PhysicalConstants::pi/2 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
-                      test_dists_ptree->get_child( "Discrete Distribution C" ),
-                      unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.1 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 0.1 ), 2.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 1.0 ), 6.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 10.0 ), 2.0, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
-                      test_dists_ptree->get_child( "Discrete Distribution D" ),
-                      unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi/2 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2 ), 1.0, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi ), 1.0, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution I" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution J" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution K" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution L" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution M" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::DiscreteDistribution>( test_dists_ptree->get_child( "Discrete Distribution N" ) ),
-              Utility::PropertyTreeConversionException );
+// Construct the data table that will be used by fromPropertyTree tests
+#define FROM_PROPERTY_TREE_TABLE_IMPL( GroupName )      \
+FRENSIE_DATA_UNIT_TEST_TABLE( GroupName, fromPropertyTree )   \
+{                                                             \
+  std::vector<std::string> no_unused_children;                \
+                                                              \
+  /* The data table will always use the basic distribution since they are */ \
+  /* serialized the same in the table */                                \
+  Utility::DiscreteDistribution dummy_dist;                             \
+                                                                        \
+  double pi = Utility::PhysicalConstants::pi;                           \
+                                                                        \
+  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist"; \
+  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} ); \
+  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {1.0, 1.0, 1.0, 1.0} ); \
+  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist; \
+                                                                        \
+  NEW_ROW( "inline_value_arrays" ) << "Distribution C" << true << no_unused_children << Utility::DiscreteDistribution( {0.1, 1.0, 10.0}, {2, 6, 2} ); \
+  NEW_ROW( "json_value_arrays" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} ); \
+  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "empty_value_arrays" ) << "Distribution G" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "too_few_dep_values" ) << "Distribution H" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "unsorted_indep_values" ) << "Distribution I" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "inf_lower_bound" ) << "Distribution J" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "inf_upper_bound" ) << "Distribution K" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "inf_dep_value" ) << "Distribution L" << false << no_unused_children << dummy_dist; \
+  NEW_ROW( "zero_dep_value" ) << "Distribution M" << false << no_unused_children << dummy_dist; \
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be read from a property tree
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, fromPropertyTree )
+// Check that a distribution can be read from a property tree
+FRENSIE_DATA_UNIT_TEST( DiscreteDistribution, fromPropertyTree )
 {
-  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> dist;
+  FETCH_FROM_TABLE( std::string, dist_name );
+  FETCH_FROM_TABLE( bool, valid_dist_rep );
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
 
+  Utility::DiscreteDistribution dist;
   std::vector<std::string> unused_children;
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution A" ),
-                         unused_children );
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( Utility::DiscreteDistribution, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 1.0*eV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -Utility::PhysicalConstants::pi/2*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*eV );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.1*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0*eV );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 0.1*eV ), 2.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 1.0*eV ), 6.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 10.0*eV ), 2.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi/2*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*eV );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution E" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution F" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution G" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution H" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution I" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution J" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution K" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution L" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution M" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Discrete Distribution N" ) ),
-              Utility::PropertyTreeConversionException );
-
-  unused_children.clear();
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
 
   // Use the property tree helper methods
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
-                      test_dists_ptree->get_child( "Discrete Distribution A" ),
-                      unused_children );
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( Utility::DiscreteDistribution, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 1.0*eV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
-                      test_dists_ptree->get_child( "Discrete Distribution B" ),
-                      unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       -Utility::PhysicalConstants::pi/2*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*eV );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( -Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
-                      test_dists_ptree->get_child( "Discrete Distribution C" ),
-                      unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.1*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0*eV );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 0.1*eV ), 2.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 1.0*eV ), 6.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( 10.0*eV ), 2.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >(
-                      test_dists_ptree->get_child( "Discrete Distribution D" ),
-                      unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi/2*eV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*eV );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi/2*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist.evaluate( Utility::PhysicalConstants::pi*eV ), 1.0*si::mole, 1e-15 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution E" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution F" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution G" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution H" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution I" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution J" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution K" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution L" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution M" ) )),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( test_dists_ptree->get_child( "Discrete Distribution N" ) )),
-              Utility::PropertyTreeConversionException );
+    FRENSIE_CHECK_NO_THROW(
+               dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW(
+                      Utility::fromPropertyTree<Utility::DiscreteDistribution>(
+                                    test_dists_ptree->get_child( dist_name ) ),
+                      Utility::PropertyTreeConversionException );
+  }
 }
+
+FROM_PROPERTY_TREE_TABLE_IMPL( DiscreteDistribution );
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be read from a property tree
+FRENSIE_DATA_UNIT_TEST( UnitAwareDiscreteDistribution, fromPropertyTree )
+{
+  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> DistributionType;
+  
+  FETCH_FROM_TABLE( std::string, dist_name );
+  FETCH_FROM_TABLE( bool, valid_dist_rep );
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
+
+  DistributionType dist;
+  std::vector<std::string> unused_children;
+
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( DistributionType, expected_dist );
+
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
+
+  // Use the property tree helper methods
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( DistributionType, expected_dist );
+
+    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
+                                    test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
+}
+
+FROM_PROPERTY_TREE_TABLE_IMPL( UnitAwareDiscreteDistribution );
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived

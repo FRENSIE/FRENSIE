@@ -1,15 +1,15 @@
 {
-    "Discrete Distribution A": "{discrete, {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0}}",
-    "Discrete Distribution B": "{Discrete, {-pi/2, 3i, pi}, {1.0, 1.0, 1.0, 1.0, 1.0}}",
+    "Distribution A": "{discrete, {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0}}",
+    "Distribution B": "{Discrete, {-pi/2, 2i, pi}, {1.0r4}}",
 
-    "Discrete Distribution C":
+    "Distribution C":
     {
         "type": "Discrete Distribution",
         "independent values": "{0.1, 1.0, 10.0}",
         "dependent values": "{2, 6, 2}"
     },
 
-    "Discrete Distribution D":
+    "Distribution D":
     {
         "comment": "JSON arrays can also be used to specify values",
         "dep vals": ["1.0", "1.0", "1.0", "1.0", "1.0"],
@@ -19,15 +19,15 @@
     },
 
     "comment": "This distribution is ill-formed (incorrect type)",
-    "Discrete Distribution E": "{dummy, {}, {}}",
+    "Distribution E": "{dummy, {}, {}}",
 
-    "Discrete Distribution F":
+    "Distribution F":
     {
         "comment": "This distribution is ill-formed (incorrect type)",
         "type": "dummy"
     },
 
-    "Discrete Distribution G":
+    "Distribution G":
     {
         "comment": "This distribution is ill-formed (bad indep and dep values)",
         "type": "discrete",
@@ -35,15 +35,15 @@
         "dependent values": "{}"
     },
 
-    "Discrete Distribution H":
+    "Distribution H":
     {
         "comment": "This distribution is ill-formed (bad indep and dep values)",
         "type": "Discrete",
         "independent values": "{0.0, 1.0, 2.0}",
-         "dependent values": "{1.0, 2.0}"
+        "dependent values": "{1.0, 2.0}"
     },
 
-    "Discrete Distribution I":
+    "Distribution I":
     {
         "comment": "This distribution is ill-formed (indep values not sorted)",
         "type": "Discrete",
@@ -51,15 +51,7 @@
         "dependent values": "{1.0, 2.0, 1.0}"
     },
 
-    "Discrete Distribution J":
-    {
-        "comment": "This distribution is ill-formed (indep values not sorted)",
-        "type": "Discrete",
-        "independent values": "{1.0, 0.0, 2.0}",
-        "dependent values": "{1.0, 2.0, 1.0}"
-    },
-
-    "Discrete Distribution K":
+    "Distribution J":
     {
         "comment": "This distribution is ill-formed (invalid indep values)",
         "type": "Discrete",
@@ -67,7 +59,7 @@
         "dependent values": "{1.0, 2.0, 1.0}"
     },
 
-    "Discrete Distribution L":
+    "Distribution K":
     {
         "comment": "This distribution is ill-formed (invalid indep values)",
         "type": "Discrete",
@@ -75,15 +67,15 @@
         "dependent values": "{1.0, 2.0, 1.0}"
     },
 
-    "Discrete Distribution M":
+    "Distribution L":
     {
         "comment": "This distribution is ill-formed (invalid dep values)",
         "type": "Discrete",
-        "independent values": "{0.0, 1.0, Inf}",
+        "independent values": "{0.0, 1.0, 2.0}",
         "dependent values": ["Inf", "2.0", "1.0"]
     },
 
-    "Discrete Distribution N":
+    "Distribution M":
     {
         "comment": "This distribution is ill-formed (invalid dep values)",
         "type": "Discrete",
