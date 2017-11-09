@@ -613,7 +613,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::extractSha
   }
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                            "The evaporation distribution cannot be "
-                           "constructed because a shape parameters is not "
+                           "constructed because a shape parameter is not "
                            "valid!" );
 
   Utility::setQuantity( shape_parameter, raw_shape_parameter );
