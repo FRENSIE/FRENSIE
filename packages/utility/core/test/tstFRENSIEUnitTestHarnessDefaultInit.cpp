@@ -1344,7 +1344,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness, Abort_fail )
 
 //---------------------------------------------------------------------------//
 // Check that a data unit test can be constructed
-FRENSIE_DATA_UNIT_TEST( UnitTestHarness, DataDrivenTest_pass )
+FRENSIE_DATA_UNIT_TEST_DECL( UnitTestHarness, DataDrivenTest_pass )
 {
   FETCH_FROM_TABLE( double, Input );
   FETCH_FROM_TABLE( double, abs_Input );
@@ -1353,7 +1353,7 @@ FRENSIE_DATA_UNIT_TEST( UnitTestHarness, DataDrivenTest_pass )
   FRENSIE_CHECK_FLOATING_EQUALITY( fabs(Input), abs_Input, Tolerance );
 }
 
-FRENSIE_DATA_UNIT_TEST_TABLE( UnitTestHarness, DataDrivenTest_pass )
+FRENSIE_DATA_UNIT_TEST_INST( UnitTestHarness, DataDrivenTest_pass )
 {
   COLUMNS()               << "Input" << "abs_Input" << "Tolerance";
   NEW_ROW( "neg_input" )  << -1.0    << 1.0         << 1e-15;
@@ -1363,7 +1363,7 @@ FRENSIE_DATA_UNIT_TEST_TABLE( UnitTestHarness, DataDrivenTest_pass )
 
 //---------------------------------------------------------------------------//
 // Check that a data unit test can be constructed
-FRENSIE_DATA_UNIT_TEST_TABLE( UnitTestHarness, DataDrivenTest_fail )
+FRENSIE_DATA_UNIT_TEST_INST( UnitTestHarness, DataDrivenTest_fail )
 {
   COLUMNS()                << "RawString"   << "StringChunk" << "ChunkStart" << "ChunkSize";
   NEW_ROW( "all_words" )   << "Hello World" << "Say What?"   << 0            << 11;
@@ -1372,7 +1372,7 @@ FRENSIE_DATA_UNIT_TEST_TABLE( UnitTestHarness, DataDrivenTest_fail )
   NEW_ROW( "nothing" )     << "Hello World" << "Oops"        << 0            << 0;
 }
 
-FRENSIE_DATA_UNIT_TEST( UnitTestHarness, DataDrivenTest_fail )
+FRENSIE_DATA_UNIT_TEST_DECL( UnitTestHarness, DataDrivenTest_fail )
 {
   FETCH_FROM_TABLE( std::string, RawString );
   FETCH_FROM_TABLE( std::string, StringChunk );
@@ -1382,6 +1382,77 @@ FRENSIE_DATA_UNIT_TEST( UnitTestHarness, DataDrivenTest_fail )
   std::string test_chunk = RawString.substr( ChunkStart, ChunkSize );
 
   FRENSIE_CHECK_EQUAL( test_chunk, StringChunk );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data unit test can be constructed
+FRENSIE_DATA_TABLE( FloatingPointCompTestTable )
+{
+  COLUMNS()               << "Input" << "abs_Input" << "Tolerance";
+  NEW_ROW( "neg_input" )  << -1.0    << 1.0         << 1e-15;
+  NEW_ROW( "zero_input" ) <<  0.0    << 0.0         << 0.0;
+  NEW_ROW( "pos_input" )  <<  1.0    << 1.0         << 1e-15;
+}
+
+FRENSIE_DATA_UNIT_TEST( UnitTestHarness,
+                        InlineDataDrivenTest_double_pass,
+                        FloatingPointCompTestTable )
+{
+  FETCH_FROM_TABLE( double, Input );
+  FETCH_FROM_TABLE( double, abs_Input );
+  FETCH_FROM_TABLE( double, Tolerance );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( fabs(Input), abs_Input, Tolerance );
+}
+
+FRENSIE_DATA_UNIT_TEST( UnitTestHarness,
+                        InlineDataDrivenTest_float_pass,
+                        FloatingPointCompTestTable )
+{
+  FETCH_FROM_TABLE( float, Input );
+  FETCH_FROM_TABLE( float, abs_Input );
+  FETCH_FROM_TABLE( float, Tolerance );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( fabs(Input), abs_Input, Tolerance );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a data unit test can be constructed
+FRENSIE_DATA_TABLE( StringChunkTestTable )
+{
+  COLUMNS()                << "RawString"   << "StringChunk" << "ChunkStart" << "ChunkSize";
+  NEW_ROW( "all_words" )   << "Hello World" << "Say What?"   << 0            << 11;
+  NEW_ROW( "first_word" )  << "Hello World" << "Hi"          << 0            << 5;
+  NEW_ROW( "second_word" ) << "Hello World" << "Universe"    << 6            << 5;
+  NEW_ROW( "nothing" )     << "Hello World" << "Oops"        << 0            << 0;
+}
+
+FRENSIE_DATA_UNIT_TEST( UnitTestHarness,
+                        InlineDataDrivenTest_string_fail,
+                        StringChunkTestTable )
+{
+  FETCH_FROM_TABLE( std::string, RawString );
+  FETCH_FROM_TABLE( std::string, StringChunk );
+  FETCH_FROM_TABLE( size_t, ChunkStart );
+  FETCH_FROM_TABLE( size_t, ChunkSize );
+
+  std::string test_chunk = RawString.substr( ChunkStart, ChunkSize );
+
+  FRENSIE_CHECK_EQUAL( test_chunk, StringChunk );
+}
+
+FRENSIE_DATA_UNIT_TEST( UnitTestHarness,
+                        InlineDataDrivenTest_string_pass,
+                        StringChunkTestTable )
+{
+  FETCH_FROM_TABLE( std::string, RawString );
+  FETCH_FROM_TABLE( std::string, StringChunk );
+  FETCH_FROM_TABLE( size_t, ChunkStart );
+  FETCH_FROM_TABLE( size_t, ChunkSize );
+
+  std::string test_chunk = RawString.substr( ChunkStart, ChunkSize );
+
+  FRENSIE_CHECK_DIFFERENT( test_chunk, StringChunk );
 }
 
 //---------------------------------------------------------------------------//
@@ -1535,31 +1606,31 @@ int main( int argc, char** argv )
   bool expected_number_of_tests =
     Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
                              number_of_tests, "number of tests",
-                             83*mpi_session.size(), "expected number of tests",
+                             97*mpi_session.size(), "expected number of tests",
                              std::cout, 0, report_details );
 
   bool expected_number_of_run_tests =
     Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
                          number_of_run_tests, "number of run tests",
-                         83*mpi_session.size(), "expected number of run tests",
+                         97*mpi_session.size(), "expected number of run tests",
                          std::cout, 0, report_details );
 
   bool expected_number_of_passed_tests =
     Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
                       number_of_passed_tests, "number of passed tests",
-                      53*mpi_session.size(), "expected number of passed tests",
+                      63*mpi_session.size(), "expected number of passed tests",
                       std::cout, 0, report_details );
 
   bool expected_number_of_checks =
     Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
                            number_of_checks, "number of checks",
-                           769*mpi_session.size(), "expected number of checks",
+                           783*mpi_session.size(), "expected number of checks",
                            std::cout, 0, report_details );
 
   bool expected_number_of_passed_checks =
     Utility::compare<Utility::EqualityComparisonPolicy,2,2>(
                     number_of_passed_checks, "number of passed checks",
-                    530*mpi_session.size(), "expected number of passed checks",
+                    540*mpi_session.size(), "expected number of passed checks",
                     std::cout, 0, report_details );
 
   bool expected_number_of_unexpected_exceptions =

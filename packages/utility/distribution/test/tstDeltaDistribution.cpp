@@ -79,6 +79,33 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> >
   unit_aware_distribution( unit_aware_tab_distribution );
 
 //---------------------------------------------------------------------------//
+// Testing Tables
+//---------------------------------------------------------------------------//
+// This table describes the data in the property tree
+FRENSIE_DATA_TABLE( TestPropertyTreeTable )
+{
+  std::vector<std::string> no_unused_children;
+
+  // The data table will always use the basic distribution since they are
+  // serialized the same in the table
+  Utility::DeltaDistribution dummy_dist;
+
+  double pi = Utility::PhysicalConstants::pi;
+
+  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
+  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DeltaDistribution( 0, 2 );
+  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DeltaDistribution( pi );
+  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
+
+  NEW_ROW( "default_mult" ) << "Distribution C" << true << no_unused_children << Utility::DeltaDistribution( -1.0 );
+  NEW_ROW( "extra_args" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DeltaDistribution( -2*pi, 0.5 );
+  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "bad_location" ) << "Distribution G" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "zero_multiplier" ) << "Distribution H" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_multiplier" ) << "Distribution I" << false << no_unused_children << dummy_dist;
+}
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
@@ -825,34 +852,10 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toPropertyTree )
 }
 
 //---------------------------------------------------------------------------//
-// Construct the data table that will be used by fromPropertyTree tests
-#define FROM_PROPERTY_TREE_TABLE_IMPL( GroupName )      \
-FRENSIE_DATA_UNIT_TEST_TABLE( GroupName, fromPropertyTree )   \
-{                                                             \
-  std::vector<std::string> no_unused_children;                \
-                                                              \
-  /* The data table will always use the basic distribution since they are */ \
-  /* serialized the same in the table */                                \
-  Utility::DeltaDistribution dummy_dist;                             \
-                                                                        \
-  double pi = Utility::PhysicalConstants::pi;                           \
-                                                                        \
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist"; \
-  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DeltaDistribution( 0, 2 ); \
-  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DeltaDistribution( pi ); \
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist; \
-                                                                        \
-  NEW_ROW( "default_mult" ) << "Distribution C" << true << no_unused_children << Utility::DeltaDistribution( -1.0 ); \
-  NEW_ROW( "extra_args" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DeltaDistribution( -2*pi, 0.5 ); \
-  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "bad_location" ) << "Distribution G" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "zero_multiplier" ) << "Distribution H" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_multiplier" ) << "Distribution I" << false << no_unused_children << dummy_dist; \
-}
-
-//---------------------------------------------------------------------------//
 // Check that a distribution can be read from a property tree node
-FRENSIE_DATA_UNIT_TEST( DeltaDistribution, fromPropertyTree )
+FRENSIE_DATA_UNIT_TEST( DeltaDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
 {
   FETCH_FROM_TABLE( std::string, dist_name );
   FETCH_FROM_TABLE( bool, valid_dist_rep );
@@ -898,11 +901,11 @@ FRENSIE_DATA_UNIT_TEST( DeltaDistribution, fromPropertyTree )
   }
 }
 
-FROM_PROPERTY_TREE_TABLE_IMPL( DeltaDistribution );
-
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be read from a property tree node
-FRENSIE_DATA_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
+FRENSIE_DATA_UNIT_TEST( UnitAwareDeltaDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
 {
   typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> DistributionType;
   
@@ -948,8 +951,6 @@ FRENSIE_DATA_UNIT_TEST( UnitAwareDeltaDistribution, fromPropertyTree )
                          Utility::PropertyTreeConversionException );
   }
 }
-
-FROM_PROPERTY_TREE_TABLE_IMPL( UnitAwareDeltaDistribution );
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived

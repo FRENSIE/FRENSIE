@@ -105,8 +105,8 @@
                                          size_t& __NUMBER_OF_PASSED_CHECKS__, \
                                          size_t& __CHECKPOINT__ ) const \
 
-//! Define a data unit test
-#define FRENSIE_DATA_UNIT_TEST( TEST_GROUP, TEST_NAME ) \
+//! Declare a data unit test class only
+#define __FRENSIE_DATA_UNIT_TEST_CLASS_DECL__( TEST_GROUP, TEST_NAME )  \
   class TEST_GROUP##_##TEST_NAME##_UnitTest : public Utility::DataUnitTest  \
   {                                                                     \
   public:                                                               \
@@ -123,25 +123,52 @@
                   size_t& number_of_checks,                             \
                   size_t& number_of_passed_checks,                      \
                   size_t& last_checkpoint_line_number ) const override; \
-  };                                                                    \
-                                                                        \
+  }
+
+//! Start the definition of the rumImpl data unit test method
+#define __FRENSIE_DATA_UNIT_TEST_RUN_IMPL_DEF_START__( TEST_GROUP, TEST_NAME )\
   void TEST_GROUP##_##TEST_NAME##_UnitTest::runImpl(                    \
                                          std::ostream& log,  \
                                          bool& __SUCCESS__,             \
                                          size_t& __NUMBER_OF_CHECKS__,  \
                                          size_t& __NUMBER_OF_PASSED_CHECKS__, \
                                          size_t& __CHECKPOINT__ ) const \
+  
+//! Declare a data unit test
+#define FRENSIE_DATA_UNIT_TEST_DECL( TEST_GROUP, TEST_NAME )            \
+  __FRENSIE_DATA_UNIT_TEST_CLASS_DECL__( TEST_GROUP, TEST_NAME );       \
+  __FRENSIE_DATA_UNIT_TEST_RUN_IMPL_DEF_START__( TEST_GROUP, TEST_NAME )   
 
-//! Define the data for a data unit test
-#define FRENSIE_DATA_UNIT_TEST_TABLE( TEST_GROUP, TEST_NAME )   \
+//! Create the data table name
+#define __FRENSIE_DATA_TABLE_NAME__( TABLE_NAME ) TABLE_NAME##_DataTableCreator
+  
+//! Define a generic data table
+#define FRENSIE_DATA_TABLE( TABLE_NAME )                                \
+  void __FRENSIE_DATA_TABLE_NAME__( TABLE_NAME )( Utility::UnitTestDataTable& data_table ) 
+
+//! Create a data unit test wrapper
+#define __FRENSIE_CREATE_DATA_UNIT_TEST_WRAPPER__( TEST_GROUP, TEST_NAME, TABLE_NAME ) \
+  FRENSIE_DATA_TABLE( TABLE_NAME );                       \
   class TEST_GROUP##_##TEST_NAME##_UnitTest;                            \
-  void TEST_GROUP##_##TEST_NAME##_DataTableCreator( Utility::UnitTestDataTable& data_table ); \
-  Utility::DataUnitTestWrapper<TEST_GROUP##_##TEST_NAME##_UnitTest>    \
-  s_##TEST_GROUP##_##TEST_NAME##_UnitTest_data_wrapper(                 \
-                   std::string(#TEST_GROUP)+ "_" + #TEST_NAME + "_DataTable", \
-                   &TEST_GROUP##_##TEST_NAME##_DataTableCreator );      \
-  \
-  void TEST_GROUP##_##TEST_NAME##_DataTableCreator( Utility::UnitTestDataTable& data_table ) \
+  Utility::DataUnitTestWrapper<TEST_GROUP##_##TEST_NAME##_UnitTest>     \
+  s_##TEST_GROUP##_##TEST_NAME##_UnitTest_data_wrapper(                   \
+                  std::string(#TEST_GROUP) + "_" + #TEST_NAME + "_DataTable", \
+                  &__FRENSIE_DATA_TABLE_NAME__( TABLE_NAME ) )
+  
+//! Instantiate a data unit test using the defined data table
+#define FRENSIE_DATA_UNIT_TEST_INST( TEST_GROUP, TEST_NAME )        \
+  __FRENSIE_CREATE_DATA_UNIT_TEST_WRAPPER__( TEST_GROUP, TEST_NAME, \
+                                             TEST_GROUP##_##TEST_NAME \
+                                             );                       \
+  FRENSIE_DATA_TABLE(                                                 \
+                     TEST_GROUP##_##TEST_NAME                         \
+                      )
+
+//! Define a data unit test
+#define FRENSIE_DATA_UNIT_TEST( TEST_GROUP, TEST_NAME, TABLE_NAME )     \
+  __FRENSIE_DATA_UNIT_TEST_CLASS_DECL__( TEST_GROUP, TEST_NAME );       \
+  __FRENSIE_CREATE_DATA_UNIT_TEST_WRAPPER__( TEST_GROUP, TEST_NAME, TABLE_NAME ); \
+  __FRENSIE_DATA_UNIT_TEST_RUN_IMPL_DEF_START__( TEST_GROUP, TEST_NAME ) 
 
 //! Create the data table columns (use the << operator to add column names)
 #define COLUMNS()                            \

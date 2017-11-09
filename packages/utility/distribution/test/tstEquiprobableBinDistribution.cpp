@@ -75,6 +75,37 @@ std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::a
   unit_aware_tab_distribution;
 
 //---------------------------------------------------------------------------//
+// Testing Tables
+//---------------------------------------------------------------------------//
+// This table describes the data in the property tree
+FRENSIE_DATA_TABLE( TestPropertyTreeTable )
+{
+  std::vector<std::string> no_unused_children;
+
+  // The data table will always use the basic distribution since they are
+  // serialized the same in the table
+  Utility::EquiprobableBinDistribution dummy_dist;
+
+  double pi = Utility::PhysicalConstants::pi;
+
+  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
+  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::EquiprobableBinDistribution( {0.0, pi, 2*pi} );
+  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::EquiprobableBinDistribution( Utility::fromString<std::vector<double> >( "{-1.0, 31i, 1.0}" ) );
+  NEW_ROW( "inline_bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist;
+  
+  NEW_ROW( "inline_boundaries" ) << "Distribution C" << true << no_unused_children << Utility::EquiprobableBinDistribution( {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0} );
+  NEW_ROW( "json_boundaries" ) << "Distribution D" << true << no_unused_children << Utility::EquiprobableBinDistribution( {0.0, pi/4, pi/2, 3*pi/4, pi} );
+  NEW_ROW( "extra_args" ) << "Distribution E" << true << std::vector<std::string>( {"dummy"} ) << Utility::EquiprobableBinDistribution( Utility::fromString<std::vector<double> >( "{0.001, 100l, 20.0}" ) );
+  NEW_ROW( "bad_type" ) << "Distribution G" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "empty_boundaries" ) << "Distribution H" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "single_boundary" ) << "Distribution I" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "unsorted_boundaries" ) << "Distribution J" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "repeated_boundary" ) << "Distribution K" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "neg_inf_boundary" ) << "Distribution L" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "pos_inf_boundary" ) << "Distribution M" << false << no_unused_children << dummy_dist;
+}
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
@@ -2522,256 +2553,105 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toPropertyTree )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be read from a property tree
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, fromPropertyTree )
+FRENSIE_DATA_UNIT_TEST( EquiprobableBinDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
 {
-  Utility::EquiprobableBinDistribution dist;
+  FETCH_FROM_TABLE( std::string, dist_name );
+  FETCH_FROM_TABLE( bool, valid_dist_rep );
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
 
+  Utility::EquiprobableBinDistribution dist;
   std::vector<std::string> unused_children;
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
-                         unused_children );
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( Utility::EquiprobableBinDistribution, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       2*Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 1.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.001 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 20.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
-              Utility::PropertyTreeConversionException );
-
-  unused_children.clear();
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW(
+             dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+             Utility::PropertyTreeConversionException );
+  }
 
   // Use the property tree helper methods
-  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
-              unused_children );
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( Utility::EquiprobableBinDistribution, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       2*Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 1.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.001 );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 20.0 );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
-              Utility::PropertyTreeConversionException );
+    FRENSIE_CHECK_NO_THROW(
+        dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW(
+               Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
+                                    test_dists_ptree->get_child( dist_name ) ),
+               Utility::PropertyTreeConversionException );
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be read from a property tree
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromPropertyTree )
+FRENSIE_DATA_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
 {
-  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> dist;
+  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> DistributionType;
+  
+  FETCH_FROM_TABLE( std::string, dist_name );
+  FETCH_FROM_TABLE( bool, valid_dist_rep );
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
 
+  DistributionType dist;
   std::vector<std::string> unused_children;
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
-                         unused_children );
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( DistributionType, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       2*Utility::PhysicalConstants::pi*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
 
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
-                         unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.001*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 20.0*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
-              Utility::PropertyTreeConversionException );
-
-  unused_children.clear();
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
 
   // Use the property tree helper methods
-  dist = Utility::fromPropertyTree<decltype(dist)>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution A" ),
-              unused_children );
+  if( valid_dist_rep )
+  {
+    FETCH_FROM_TABLE( DistributionType, expected_dist );
 
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       2*Utility::PhysicalConstants::pi*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<decltype(dist)>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution B" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), -1.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 1.0*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<decltype(dist)>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution C" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 10.0*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<decltype(dist)>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution D" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.0*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(),
-                       Utility::PhysicalConstants::pi*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
-
-  dist = Utility::fromPropertyTree<decltype(dist)>(
-              test_dists_ptree->get_child( "Equiprobable Bin Distribution E" ),
-              unused_children );
-
-  FRENSIE_CHECK_EQUAL( dist.getLowerBoundOfIndepVar(), 0.001*MeV );
-  FRENSIE_CHECK_EQUAL( dist.getUpperBoundOfIndepVar(), 20.0*MeV );
-  FRENSIE_CHECK_EQUAL( unused_children.size(), 1 );
-  FRENSIE_CHECK_EQUAL( unused_children.front(), "dummy" );
-
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution F" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution G" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution H" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution I" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution J" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution K" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution L" ) ),
-              Utility::PropertyTreeConversionException );
-  FRENSIE_CHECK_THROW( Utility::fromPropertyTree<decltype(dist)>( test_dists_ptree->get_child( "Equiprobable Bin Distribution M" ) ),
-              Utility::PropertyTreeConversionException );
+    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
+                                    test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
 }
 
 //---------------------------------------------------------------------------//

@@ -85,6 +85,36 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
 std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_cdf_cons_distribution;
 
+//---------------------------------------------------------------------------//
+// Testing Tables
+//---------------------------------------------------------------------------//
+// This table describes the data in the property tree
+FRENSIE_DATA_TABLE( TestPropertyTreeTable )
+{
+  std::vector<std::string> no_unused_children;
+
+  /* The data table will always use the basic distribution since they are */
+  /* serialized the same in the table */
+  Utility::DiscreteDistribution dummy_dist;
+
+  double pi = Utility::PhysicalConstants::pi;
+
+  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
+  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} );
+  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {1.0, 1.0, 1.0, 1.0} );
+  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
+
+  NEW_ROW( "inline_value_arrays" ) << "Distribution C" << true << no_unused_children << Utility::DiscreteDistribution( {0.1, 1.0, 10.0}, {2, 6, 2} );
+  NEW_ROW( "json_value_arrays" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
+  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "empty_value_arrays" ) << "Distribution G" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "too_few_dep_values" ) << "Distribution H" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "unsorted_indep_values" ) << "Distribution I" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_lower_bound" ) << "Distribution J" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_upper_bound" ) << "Distribution K" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_dep_value" ) << "Distribution L" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "zero_dep_value" ) << "Distribution M" << false << no_unused_children << dummy_dist;
+}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -1914,38 +1944,10 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, toPropertyTree )
 }
 
 //---------------------------------------------------------------------------//
-// Construct the data table that will be used by fromPropertyTree tests
-#define FROM_PROPERTY_TREE_TABLE_IMPL( GroupName )      \
-FRENSIE_DATA_UNIT_TEST_TABLE( GroupName, fromPropertyTree )   \
-{                                                             \
-  std::vector<std::string> no_unused_children;                \
-                                                              \
-  /* The data table will always use the basic distribution since they are */ \
-  /* serialized the same in the table */                                \
-  Utility::DiscreteDistribution dummy_dist;                             \
-                                                                        \
-  double pi = Utility::PhysicalConstants::pi;                           \
-                                                                        \
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist"; \
-  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} ); \
-  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {1.0, 1.0, 1.0, 1.0} ); \
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist; \
-                                                                        \
-  NEW_ROW( "inline_value_arrays" ) << "Distribution C" << true << no_unused_children << Utility::DiscreteDistribution( {0.1, 1.0, 10.0}, {2, 6, 2} ); \
-  NEW_ROW( "json_value_arrays" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} ); \
-  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "empty_value_arrays" ) << "Distribution G" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "too_few_dep_values" ) << "Distribution H" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "unsorted_indep_values" ) << "Distribution I" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_lower_bound" ) << "Distribution J" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_upper_bound" ) << "Distribution K" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_dep_value" ) << "Distribution L" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "zero_dep_value" ) << "Distribution M" << false << no_unused_children << dummy_dist; \
-}
-
-//---------------------------------------------------------------------------//
 // Check that a distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( DiscreteDistribution, fromPropertyTree )
+FRENSIE_DATA_UNIT_TEST( DiscreteDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
 {
   FETCH_FROM_TABLE( std::string, dist_name );
   FETCH_FROM_TABLE( bool, valid_dist_rep );
@@ -1992,11 +1994,11 @@ FRENSIE_DATA_UNIT_TEST( DiscreteDistribution, fromPropertyTree )
   }
 }
 
-FROM_PROPERTY_TREE_TABLE_IMPL( DiscreteDistribution );
-
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareDiscreteDistribution, fromPropertyTree )
+FRENSIE_DATA_UNIT_TEST( UnitAwareDiscreteDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
 {
   typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> DistributionType;
   
@@ -2042,8 +2044,6 @@ FRENSIE_DATA_UNIT_TEST( UnitAwareDiscreteDistribution, fromPropertyTree )
                          Utility::PropertyTreeConversionException );
   }
 }
-
-FROM_PROPERTY_TREE_TABLE_IMPL( UnitAwareDiscreteDistribution );
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived

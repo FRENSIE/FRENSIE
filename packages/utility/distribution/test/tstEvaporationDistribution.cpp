@@ -74,6 +74,45 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> 
   unit_aware_distribution( new Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 1e3*keV, 1e3*keV, 100.0*keV ) );
 
 //---------------------------------------------------------------------------//
+// Testing Tables
+//---------------------------------------------------------------------------//
+// This table describes the data in the property tree
+FRENSIE_DATA_TABLE( TestPropertyTreeTable )
+{
+  std::vector<std::string> no_unused_children;
+
+  // The data table will always use the basic distribution since they are
+  // serialized the same in the table
+  Utility::EvaporationDistribution dummy_dist;
+
+  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
+  NEW_ROW( "inline_5_args_valid" ) << "Distribution A" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 );
+  NEW_ROW( "inline_4_args_valid" ) << "Distribution B" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0 );
+  NEW_ROW( "inline_3_args_valid" ) << "Distribution C" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0 );
+  NEW_ROW( "inline_2_args_valid" ) << "Distribution D" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0 );
+  NEW_ROW( "inline_1_arg_valid" )  << "Distribution E" << true  << no_unused_children << Utility::EvaporationDistribution();
+  NEW_ROW( "inline_bad_type" )     << "Distribution M" << false << no_unused_children << dummy_dist;
+
+  NEW_ROW( "1_arg_valid" )         << "Distribution F" << true  << no_unused_children << Utility::EvaporationDistribution();
+  NEW_ROW( "2_args_valid" )        << "Distribution G" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0 );
+  NEW_ROW( "3_args_valid" )        << "Distribution H" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0 );
+  NEW_ROW( "4_args_valid" )        << "Distribution I" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0 );
+  NEW_ROW( "5_args_valid" )        << "Distribution J" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 );
+  NEW_ROW( "5_abrv_args_valid" )   << "Distribution K" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 );
+  NEW_ROW( "6_args_valid" )        << "Distribution L" << true  << std::vector<std::string>({"dummy"}) << Utility::EvaporationDistribution( 1.0, 1.0, 0.1, 10.0 );
+  NEW_ROW( "bad_type" )            << "Distribution N" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_energy" )          << "Distribution O" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "zero_energy" )         << "Distribution P" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "neg_energy" )          << "Distribution Q" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_restrict" )        << "Distribution R" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "high_restrict" )       << "Distribution S" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_temp" )            << "Distribution T" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "zero_temp" )           << "Distribution U" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "neg_temp" )            << "Distribution V" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_mult" )            << "Distribution W" << false << no_unused_children << dummy_dist;
+}
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
@@ -1322,46 +1361,10 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, toPropertyTree )
 }
 
 //---------------------------------------------------------------------------//
-// Construct the data table that will be used by fromPropertyTree tests
-#define FROM_PROPERTY_TREE_TEST_TABLE_IMPL( GroupName )             \
-FRENSIE_DATA_UNIT_TEST_TABLE( GroupName, fromPropertyTree )         \
-{                                                                      \
-  std::vector<std::string> no_unused_children;                         \
-                                                                        \
-  /* The data table will always use the basic distribution since they are */ \
-  /* serialized the same in the table */                                \
-  Utility::EvaporationDistribution dummy_dist;                         \
-                                                                        \
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist"; \
-  NEW_ROW( "inline_5_args_valid" ) << "Distribution A" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 ); \
-  NEW_ROW( "inline_4_args_valid" ) << "Distribution B" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ); \
-  NEW_ROW( "inline_3_args_valid" ) << "Distribution C" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0 ); \
-  NEW_ROW( "inline_2_args_valid" ) << "Distribution D" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0 ); \
-  NEW_ROW( "inline_1_arg_valid" )  << "Distribution E" << true  << no_unused_children << Utility::EvaporationDistribution(); \
-  NEW_ROW( "inline_bad_type" )     << "Distribution M" << false << no_unused_children << dummy_dist; \
-                                                                        \
-  NEW_ROW( "1_arg_valid" )         << "Distribution F" << true  << no_unused_children << Utility::EvaporationDistribution(); \
-  NEW_ROW( "2_args_valid" )        << "Distribution G" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0 ); \
-  NEW_ROW( "3_args_valid" )        << "Distribution H" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0 ); \
-  NEW_ROW( "4_args_valid" )        << "Distribution I" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ); \
-  NEW_ROW( "5_args_valid" )        << "Distribution J" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 ); \
-  NEW_ROW( "5_abrv_args_valid" )   << "Distribution K" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 ); \
-  NEW_ROW( "6_args_valid" )        << "Distribution L" << true  << std::vector<std::string>({"dummy"}) << Utility::EvaporationDistribution( 1.0, 1.0, 0.1, 10.0 ); \
-  NEW_ROW( "bad_type" )            << "Distribution N" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_energy" )          << "Distribution O" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "zero_energy" )         << "Distribution P" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "neg_energy" )          << "Distribution Q" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_restrict" )        << "Distribution R" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "high_restrict" )       << "Distribution S" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_temp" )            << "Distribution T" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "zero_temp" )           << "Distribution U" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "neg_temp" )            << "Distribution V" << false << no_unused_children << dummy_dist; \
-  NEW_ROW( "inf_mult" )            << "Distribution W" << false << no_unused_children << dummy_dist; \
-}
-
-//---------------------------------------------------------------------------//
 // Check that a distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( EvaporationDistribution, fromPropertyTree )  
+FRENSIE_DATA_UNIT_TEST( EvaporationDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
 {                                                                     
   FETCH_FROM_TABLE( std::string, dist_name );                           
   FETCH_FROM_TABLE( bool, valid_dist_rep );                             
@@ -1405,11 +1408,11 @@ FRENSIE_DATA_UNIT_TEST( EvaporationDistribution, fromPropertyTree )
   }                                                                     
 }
 
-FROM_PROPERTY_TREE_TEST_TABLE_IMPL( EvaporationDistribution );
-
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareEvaporationDistribution, fromPropertyTree )  
+FRENSIE_DATA_UNIT_TEST( UnitAwareEvaporationDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )  
 {
   typedef Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> DistributionType;
   
@@ -1452,8 +1455,6 @@ FRENSIE_DATA_UNIT_TEST( UnitAwareEvaporationDistribution, fromPropertyTree )
                          Utility::PropertyTreeConversionException );    
   }                                                                     
 }
-
-FROM_PROPERTY_TREE_TEST_TABLE_IMPL( UnitAwareEvaporationDistribution );
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
