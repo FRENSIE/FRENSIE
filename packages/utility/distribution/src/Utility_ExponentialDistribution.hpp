@@ -144,10 +144,10 @@ public:
   using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
-  bool operator==( const UnitAwareEvaporationDistribution& other ) const;
+  bool operator==( const UnitAwareExponentialDistribution& other ) const;
 
   //! Inequality comparison operator
-  bool operator!=( const UnitAwareEvaporationDistribution& other ) const;
+  bool operator!=( const UnitAwareExponentialDistribution& other ) const;
 
 protected:
 

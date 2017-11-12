@@ -488,7 +488,6 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution,
 // Check that the distribution can be converted to a string
 FRENSIE_UNIT_TEST( EvaporationDistribution, toString )
 {
-  //std::string dist_string = Utility::toString( *distribution );
   std::string dist_string =
     Utility::toString( Utility::EvaporationDistribution() );
 

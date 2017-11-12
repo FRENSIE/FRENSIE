@@ -86,6 +86,8 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
 
   // Initialize the distribution
   this->initialize();
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareExponentialDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor
@@ -118,6 +120,8 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
 
   // Initialize the distribution
   this->initialize();
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareExponentialDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -142,6 +146,8 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
 
   // Initialize the distribution
   this->initialize();
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareExponentialDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -422,8 +428,8 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStream
   // Verify that the shape parameters are valid
   this->verifyValidShapeParameters( d_constant_multiplier,
                                     d_exponent_multiplier,
-                                    d_upper_limit,
-                                    d_lower_limit );
+                                    d_lower_limit,
+                                    d_upper_limit );
 
   // Check if there is any superfluous data
   this->checkForUnusedStreamData( distribution_data );
@@ -472,27 +478,27 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromProper
     data_extractors.insert(
      std::make_pair( s_const_multiplier_value_key,
       std::make_tuple( s_const_multiplier_value_min_match_string, false,
-                 std::bind<void>(&ThisType::extractShapeParameter<DepQuantity>,
-                                 std::placeholders::_1,
-                                 std::ref(d_constant_multiplier)) )));
+         std::bind<void>(&ThisType::extractShapeParameterFromNode<DepQuantity>,
+                         std::placeholders::_1,
+                         std::ref(d_constant_multiplier)) )));
     data_extractors.insert(
      std::make_pair( s_exponent_multiplier_value_key,
       std::make_tuple( s_exponent_multiplier_value_min_match_string, false,
-        std::bind<void>(&ThisType::extractShapeParameter<InverseIndepQuantity>,
-                        std::placeholders::_1,
-                        std::ref(d_exponent_multiplier)) )));
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<InverseIndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_exponent_multiplier)) )));
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
       std::make_tuple( s_lower_limit_value_min_match_string, false,
-               std::bind<void>(&ThisType::extractShapeParameter<IndepQuantity>,
-                               std::placeholders::_1,
-                               std::ref(d_lower_limit)) )));
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_lower_limit)) )));
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
       std::make_tuple( s_upper_limit_value_min_match_string, false,
-               std::bind<void>(&ThisType::extractShapeParameter<IndepQuantity>,
-                               std::placeholders::_1,
-                               std::ref(d_upper_limit)) )));
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_upper_limit)) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
@@ -625,29 +631,34 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::verifyVali
                                const IndepQuantity& lower_limit,
                                const IndepQuantity& upper_limit )
 {
-  TEST_FOR_EXCEPTION( DQT::isnaninf( d_constant_multiplier ),
+  TEST_FOR_EXCEPTION( DQT::isnaninf( const_multiplier ),
+                      Utility::StringConversionException,
+                      "The exponential distribution cannot be "
+                      "constructed because the multiplier is invalid!" );
+
+  TEST_FOR_EXCEPTION( const_multiplier == DQT::zero(),
                       Utility::StringConversionException,
                       "The exponential distribution cannot be "
                       "constructed because the multiplier is invalid!" );
   
-  TEST_FOR_EXCEPTION( IIQT::isnaninf( d_exponent_multiplier ),
+  TEST_FOR_EXCEPTION( IIQT::isnaninf( exponent_multiplier ),
                       Utility::StringConversionException,
                       "The exponential distribution cannot be "
                       "constructed because the exponent multiplier is "
                       "invalid!" );
   
-  TEST_FOR_EXCEPTION( d_exponent_multiplier <= IIQT::zero(),
+  TEST_FOR_EXCEPTION( exponent_multiplier <= IIQT::zero(),
                       Utility::StringConversionException,
                       "The exponential distribution cannot be "
                       "constructed because the exponent multiplier is "
                       "invalid!" );
 
-  TEST_FOR_EXCEPTION( d_lower_limit < IQT::zero(),
+  TEST_FOR_EXCEPTION( lower_limit < IQT::zero(),
                       Utility::StringConversionException,
                       "The exponential distribution cannot be "
                       "constructed because the lower limit is invalid!" );
 
-  TEST_FOR_EXCEPTION( d_upper_limit <= d_lower_limit,
+  TEST_FOR_EXCEPTION( upper_limit <= lower_limit,
                       Utility::StringConversionException,
                       "The exponential distribution cannot be "
                       "constructed because the upper limit is invalid!" );
@@ -666,9 +677,9 @@ bool UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::canDepVarB
   return false;
 }
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareExponentialDistribution<void,void> );
-
 } // end Utility namespace
+
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareExponentialDistribution<void,void> );
 
 #endif // end UTILITY_EXPONENTIAL_DISTRIBUTION_DEF_HPP
 

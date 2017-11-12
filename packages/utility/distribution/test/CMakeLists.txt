@@ -16,6 +16,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(EvaporationDistribution DEPENDS tstEvaporationDistri
 FRENSIE_ADD_TEST(EvaporationDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_evaporation_distributions.json)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ExponentialDistribution DEPENDS tstExponentialDistribution.cpp)
+FRENSIE_ADD_TEST(ExponentialDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_exponential_distributions.json)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
 # ADD_EXECUTABLE(tstUniformDistribution
