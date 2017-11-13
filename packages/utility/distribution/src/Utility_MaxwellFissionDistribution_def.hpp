@@ -21,10 +21,34 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
+BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareMaxwellFissionDistribution );
+
 namespace Utility{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareMaxwellFissionDistribution<void,void> );
+// Initialize static member data
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_incident_energy_value_key( "incident energy" );
+  
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_incident_energy_value_min_match_string( "energy" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_nuclear_temp_value_key( "nuclear temperature" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_nuclear_temp_value_min_match_string( "temp" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_restriction_energy_value_key( "restriction energy" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_restriction_energy_value_min_match_string( "restrict" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_key( "multiplier" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_min_match_string( "mult" );
 
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
@@ -62,6 +86,8 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor
@@ -96,6 +122,8 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor
@@ -117,6 +145,8 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -311,6 +341,38 @@ OneDDistributionType UnitAwareMaxwellFissionDistribution<IndependentUnit,Depende
   return ThisType::distribution_type;
 }
 
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::typeName(
+                                                const bool verbose_name,
+                                                const bool use_template_params,
+                                                const std::string& delim )
+{
+  std::vector<std::string> name_components( {"Maxwell"} );
+  
+  if( verbose_name )
+    name_components.push_back( "Fission" );
+  
+  return BaseType::typeNameImpl( name_components,
+                                 verbose_name,
+                                 use_template_params,
+                                 delim );
+}
+
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
+                                                   const bool verbose_name,
+                                                   const bool lowercase ) const
+{
+  std::string name = this->typeName( verbose_name, false, " " );
+
+  if( lowercase )
+    boost::algorithm::to_lower( name );
+
+  return name;
+}
+
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::isContinuous() const
@@ -322,172 +384,211 @@ bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::isConti
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_incident_energy )
-     << "," << getRawQuantity( d_nuclear_temperature )
-     << "," << getRawQuantity( d_restriction_energy );
-
-  // Only print the multiplier when a scaling has been done
-  if( d_multiplier != DMQT::one() )
-    os << "," << getRawQuantity( d_multiplier ) << "}";
-  else
-    os << "}";
+  this->toStreamImpl( os,
+                      Utility::getRawQuantity( d_incident_energy ),
+                      Utility::getRawQuantity( d_nuclear_temperature ),
+                      Utility::getRawQuantity( d_restriction_energy ),
+                      Utility::getRawQuantity( d_multiplier ) );
 }
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
 {
-  // Read in the distribution representation
-  std::string dist_rep;
-  std::getline( is, dist_rep, '}' );
-  dist_rep += '}';
+  VariantList distribution_data;
 
-  Teuchos::Array<std::string> distribution;
-  try{
-    distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
-  }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  this->fromStreamImpl( is, distribution_data );
+
+  // Set the incident energy
+  if( !distribution_data.empty() )
   {
-    std::string message( "Error: the Maxwell Fission distribution cannot be "
-                        "constructed because the representation is not valid "
-                        "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
+    this->extractShapeParameter(distribution_data.front(), d_incident_energy);
+    distribution_data.pop_front();
   }
+  else
+    d_incident_energy = ThisType::getDefaultIncidentEnergy<IndepQuantity>();
 
-  TEST_FOR_EXCEPTION( distribution.size() > 4,
-                     InvalidDistributionStringRepresentation,
-                     "Error: the Maxwell Fission distribution cannot "
-                     "be constructed because the representation is "
-                     "not valid"
-                     "(only 4 values or fewer  may be specified)!" );
-
-  // Set the incient neutron energy
-  if( distribution.size() > 0 )
+  // Set the nuclear_temperature
+  if( !distribution_data.empty() )
   {
-    TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " 0123456789.e" ) <
-			distribution[0].size(),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid incident energy "
-			<< distribution[0] );
-    {
-      double incident_energy;
-
-      std::istringstream iss( distribution[0] );
-      Teuchos::extractDataFromISS( iss, incident_energy );
-
-      setQuantity( d_incident_energy, incident_energy );
-    }
-
-    TEST_FOR_EXCEPTION( IQT::isnaninf( d_incident_energy ),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid incident energy "
-			<< d_incident_energy );
-
-    TEST_FOR_EXCEPTION( d_incident_energy < IQT::zero(),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid incident energy "
-			<< d_incident_energy );
+    this->extractShapeParameter(distribution_data.front(), d_nuclear_temperature);
+    distribution_data.pop_front();
   }
-
-  // Set the nuclear temperature
-  if( distribution.size() > 1 )
-  {
-    TEST_FOR_EXCEPTION( distribution[1].find_first_not_of( " 0123456789.e" ) <
-			distribution[1].size(),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid nuclear temperature "
-			<< distribution[1] );
-    {
-      double nuclear_temperature;
-
-      std::istringstream iss( distribution[1] );
-      Teuchos::extractDataFromISS( iss, nuclear_temperature );
-
-      setQuantity( d_nuclear_temperature, nuclear_temperature );
-    }
-
-    TEST_FOR_EXCEPTION( IQT::isnaninf( d_nuclear_temperature ),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid nuclear temperature "
-			<< d_nuclear_temperature );
-
-    TEST_FOR_EXCEPTION( d_nuclear_temperature <= IQT::zero(),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid nuclear temperature "
-			<< d_nuclear_temperature );
-  }
+  else
+    d_nuclear_temperature = ThisType::getDefaultNuclearTemperature<IndepQuantity>();
 
   // Set the restriction energy
-  if( distribution.size() > 2 )
+  if( !distribution_data.empty() )
   {
-    TEST_FOR_EXCEPTION( distribution[2].find_first_not_of( " 0123456789.e" ) <
-			distribution[2].size(),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"construcqted because of an invalid restriction energy "
-			<< distribution[2] );
-    {
-      double restriction_energy;
-
-      std::istringstream iss( distribution[2] );
-      Teuchos::extractDataFromISS( iss, restriction_energy );
-
-      setQuantity( d_restriction_energy, restriction_energy );
-    }
-
-    TEST_FOR_EXCEPTION( IQT::isnaninf( d_restriction_energy ),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid restriction energy "
-			<< d_restriction_energy );
+    this->extractShapeParameter(distribution_data.front(), d_restriction_energy);
+    distribution_data.pop_front();
   }
+  else
+    d_restriction_energy = ThisType::getDefaultRestrictionEnergy<IndepQuantity>();
 
-  // Set the multiplier
-  if( distribution.size() > 3 )
+  // Set the constant multiplier
+  if( !distribution_data.empty() )
   {
-    TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " 0123456789.e" ) <
-			distribution[3].size(),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"construcqted because of an invalid multiplier "
-			<< distribution[3] );
-
-    {
-      double multiplier;
-
-      std::istringstream iss( distribution[3] );
-      Teuchos::extractDataFromISS( iss, multiplier );
-
-      setQuantity( d_multiplier, multiplier );
-    }
-
-    TEST_FOR_EXCEPTION( DMQT::isnaninf( d_multiplier ),
-			InvalidDistributionStringRepresentation,
-			"Error: the Maxwell Fission distribution cannot be "
-			"constructed because of an invalid multiplier "
-			<< getRawQuantity( d_multiplier ) );
+    this->extractShapeParameter( distribution_data.front(), d_multiplier );
+    distribution_data.pop_front();
   }
+  else
+    Utility::setQuantity( d_multiplier, ThisType::getDefaultConstantMultiplier() );
+
+  // Verify that the shape parameters are valid
+  this->verifyValidShapeParameters( d_incident_energy,
+                                    d_nuclear_temperature,
+                                    d_restriction_energy,
+                                    d_multiplier );
+
+  // Check if there is any superfluous data
+  this->checkForUnusedStreamData( distribution_data );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
 }
 
+// Method for converting the type to a property tree
+template<typename IndependentUnit, typename DependentUnit>
+Utility::PropertyTree UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
+{
+  if( inline_data )
+    return this->toInlinedPropertyTreeImpl();
+  else
+  {
+    return this->toPropertyTreeImpl(
+       std::tie(s_incident_energy_value_key, Utility::getRawQuantity(d_incident_energy)),
+       std::tie(s_nuclear_temp_value_key, Utility::getRawQuantity(d_nuclear_temperature)),
+       std::tie(s_restriction_energy_value_key, Utility::getRawQuantity(d_restriction_energy)),
+       std::tie(s_multiplier_value_key, Utility::getRawQuantity(d_multiplier)) );
+  }
+}
+
+// Method for initializing the object from a property tree
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
+                                    const Utility::PropertyTree& node,
+                                    std::vector<std::string>& unused_children )
+{
+  // Initialize from inline data
+  if( node.size() == 0 )
+    this->fromInlinedPropertyTreeImpl( node );
+    
+  // Initialize from child nodes
+  else
+  {
+    // Initialize the member data to default values
+    d_incident_energy =
+      ThisType::getDefaultIncidentEnergy<IndepQuantity>();
+    d_nuclear_temperature =
+      ThisType::getDefaultNuclearTemperature<IndepQuantity>();
+    d_restriction_energy =
+      ThisType::getDefaultRestrictionEnergy<IndepQuantity>();
+    Utility::setQuantity( d_multiplier,
+                          ThisType::getDefaultConstantMultiplier() );
+
+    // Create the data extractor map
+    typename BaseType::DataExtractorMap data_extractors;    
+
+    data_extractors.insert(
+     std::make_pair( s_incident_energy_value_key,
+      std::make_tuple( s_incident_energy_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_incident_energy)) )));
+    
+    data_extractors.insert(
+     std::make_pair( s_nuclear_temp_value_key,
+      std::make_tuple( s_nuclear_temp_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_nuclear_temperature)) )));
+    
+    data_extractors.insert(
+     std::make_pair( s_restriction_energy_value_key,
+      std::make_tuple( s_restriction_energy_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_restriction_energy)) )));
+
+    data_extractors.insert(
+     std::make_pair( s_multiplier_value_key,
+      std::make_tuple( s_multiplier_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<DistMultiplierQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_multiplier)) )));
+
+    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
+
+    
+    // Verify that the shape parameters are valid
+    try{
+      this->verifyValidShapeParameters( d_incident_energy,
+                                        d_nuclear_temperature,
+                                        d_restriction_energy,
+                                        d_multiplier );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Invalid shape parameter detected!" );
+
+    // Calculate the normalization constant
+    this->calculateNormalizationConstant();
+  }
+}
+
+// Save the distribution to an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_incident_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_nuclear_temperature );
+  ar & BOOST_SERIALIZATION_NVP( d_restriction_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+}
+
+// Load the distribution from an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_incident_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_nuclear_temperature );
+  ar & BOOST_SERIALIZATION_NVP( d_restriction_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+}
+
 // Method for testing if two objects are equivalent
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::isEqual( const UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>& other ) const
+bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::operator==(
+                       const UnitAwareMaxwellFissionDistribution& other ) const
 {
   return d_incident_energy == other.d_incident_energy &&
     d_nuclear_temperature == other.d_nuclear_temperature &&
     d_restriction_energy == other.d_restriction_energy &&
     d_multiplier == other.d_multiplier;
+}
+
+// Method for testing if two objects are equivalent
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::operator!=(
+                       const UnitAwareMaxwellFissionDistribution& other ) const
+{
+  return d_incident_energy != other.d_incident_energy ||
+    d_nuclear_temperature != other.d_nuclear_temperature ||
+    d_restriction_energy != other.d_restriction_energy ||
+    d_multiplier != other.d_multiplier;
 }
 
 // Test if the dependent variable can be zero within the indep bounds
@@ -497,7 +598,93 @@ bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::canDepV
   return true;
 }
 
+// Set the shape parameters
+template<typename IndependentUnit, typename DependentUnit>
+template<typename QuantityType>
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::extractShapeParameterFromNode(
+                             const Utility::PropertyTree& shape_parameter_data,
+                             QuantityType& shape_parameter )
+{
+  // The data must be inlined in the node
+  TEST_FOR_EXCEPTION( shape_parameter_data.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not extract the shape parameter value!" );
+
+  ThisType::extractShapeParameter( shape_parameter_data.data(),
+                                   shape_parameter );
+}
+
+// Set the shape parameters
+template<typename IndependentUnit, typename DependentUnit>
+template<typename QuantityType>
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::extractShapeParameter(
+                                  const Utility::Variant& shape_parameter_data,
+                                  QuantityType& shape_parameter )
+{
+  double raw_shape_parameter;
+
+  try{
+    raw_shape_parameter =
+      Utility::variant_cast<double>( shape_parameter_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The evaporation distribution cannot be "
+                           "constructed because a shape parameter is not "
+                           "valid!" );
+
+  Utility::setQuantity( shape_parameter, raw_shape_parameter );
+}
+
+// Verify that the shape parameters are valid
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::verifyValidShapeParameters(
+                                           IndepQuantity& incident_energy,
+                                           IndepQuantity& nuclear_temp,
+                                           IndepQuantity& restriction_energy,
+                                           DistMultiplierQuantity& multiplier )
+{
+  TEST_FOR_EXCEPTION( IQT::isnaninf( incident_energy ),
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the incident energy is invalid!" );
+
+  TEST_FOR_EXCEPTION( incident_energy <= IQT::zero(),
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the incident energy is invalid!" );
+
+  TEST_FOR_EXCEPTION( IQT::isnaninf( nuclear_temp ),
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the nuclear temperature is invalid!" );
+
+  TEST_FOR_EXCEPTION( nuclear_temp <= IQT::zero(),
+		      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the nuclear temperature is invalid!" );
+  
+  TEST_FOR_EXCEPTION( IQT::isnaninf( restriction_energy ),
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the restriction energy is invalid!" );
+
+  TEST_FOR_EXCEPTION( incident_energy <= restriction_energy,
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the incident energy ("
+                      << Utility::toString(incident_energy) << ")"
+                      " is not greater than the restriction energy ("
+                      << Utility::toString(restriction_energy) << ")!" );
+
+  TEST_FOR_EXCEPTION( DMQT::isnaninf( multiplier ),
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the multiplier is invalid!" );
+}
+
 } // end Utility namespace
+
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareMaxwellFissionDistribution<void,void> );
 
 #endif // end UTILITY_MAXWELL_FISSION_DISTRIBUTION_DEF_HPP
 

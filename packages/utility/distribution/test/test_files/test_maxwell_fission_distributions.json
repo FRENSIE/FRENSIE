@@ -1,0 +1,147 @@
+{
+    "Distribution A": "{Maxwell Fission Distribution, 3.0, 2.0, 1.0, 0.1}",
+    "Distribution B": "{Maxwell,              3.0, 2.0, 1.0}",
+    "Distribution C": "{Maxwell,              3.0, 2.0}",
+    "Distribution D": "{maxwell fission distribution, 3.0}",
+    "Distribution E": "{maxwell}",
+
+    "Distribution F":
+    {
+        "comment": "No values need to be specified other than the type",
+        "type": "Maxwell Fission Distribution"
+    },
+
+    "Distribution G":
+    {
+        "type": "Maxwell Fission Distribution",
+        "incident energy": 3.0
+    },
+
+    "Distribution H":
+    {
+        "type": "Maxwell",
+        "energy": 3.0,
+        "nuclear temperature": 2.0
+    },
+
+    "Distribution I":
+    {
+        "type": "maxwell",
+        "energy": 3.0,
+        "temp": 2.0,
+        "restriction energy": 1.0
+    },
+
+    "Distribution J":
+    {
+        "type": "maxwell fission distribution",
+        "energy": 3.0,
+        "temp": 2.0,
+        "restrict": 1.0,
+        "multiplier": 0.1
+    },
+
+    "Distribution K":
+    {
+        "type": "Maxwell Fission Distribution",
+        "energy": 3.0,
+        "temp": 2.0,
+        "restrict": 1.0,
+        "mult": 0.1
+    },
+
+    "Distribution L":
+    {
+        "comment": "The dummy argument should be reported as unused",
+
+        "dummy": "",
+        "mult": 10.0,
+        "restrict": 0.1,
+        "temp": 1.0,
+        "energy": 1.0,
+        "type": "Maxwell Fission Distribution"
+    },
+
+    "comment": "This distribution is ill-formed (bad type)",
+    "Distribution M": "{dummy}",
+
+    "Distribution N":
+    {
+        "comment": "The distribution is ill-formed (bad type)",
+
+        "type": "dummy"
+    },
+
+    "Distribution O":
+    {
+        "comment": "The distribution is ill-formed (bad incident energy)",
+
+        "type": "Maxwell",
+        "energy": "Inf"
+    },
+
+    "Distribution P":
+    {
+        "comment": "The distribution is ill-formed (bad incident energy)",
+
+        "type": "Maxwell",
+        "energy": 0.0
+    },
+
+    "Distribution Q":
+    {
+        "comment": "The distribution is ill-formed (bad incident energy)",
+
+        "type": "Maxwell",
+        "energy": -1.0
+    },
+
+    "Distribution R":
+    {
+        "comment": "The distribution is ill-formed (bad restriction energy)",
+
+        "type": "Maxwell",
+        "restrict": "Inf"
+    },
+
+    "Distribution S":
+    {
+        "comment": "The distribution is ill-formed (bad restriction energy)",
+
+        "type": "Maxwell",
+        "energy": 1.0,
+        "restrict": 1.0
+    },
+
+    "Distribution T":
+    {
+        "comment": "The distribution is ill-formed (bad temp)",
+
+        "type": "Maxwell",
+        "temp": "Inf"
+    },
+
+    "Distribution U":
+    {
+        "comment": "The distribution is ill-formed (bad temp)",
+
+        "type": "Maxwell",
+        "temp": 0.0
+    },
+
+    "Distribution V":
+    {
+        "comment": "The distribution is ill-formed (bad temp)",
+
+        "type": "Maxwell",
+        "temp": -1.0
+    },
+
+    "Distribution W":
+    {
+        "comment": "The distribution is ill-formed (bad multiplier)",
+
+        "type": "Maxwell",
+        "mult": "Inf"
+    }
+}
