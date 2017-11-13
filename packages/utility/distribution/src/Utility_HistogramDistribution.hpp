@@ -137,8 +137,9 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  static std::string typeName( const bool verbose_name,
+                               const bool use_template_params = false,
+                               const std::string& delim = std::string() );
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -179,6 +180,10 @@ protected:
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
 
+  //! Return the distribution type name
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
+
 private:
 
   // Initialize the distribution
@@ -218,33 +223,40 @@ private:
   IndepQuantity sampleImplementation( double random_number,
 				      unsigned& sampled_bin_index ) const;
 
-  // Verify that the distribution type is discrete
-  void verifyDistributionType( const Utility::Variant& type_data ) const;
+  // Extract the values from a property tree
+  static void extractValuesFromNode( const Utility::PropertyTree& values_data,
+                                     std::vector<double>& values );
 
-  // Set the independent values
-  static void extractIndependentValues( const Utility::Variant& indep_data,
-                                        std::vector<double>& independent_values );
-
-  // Set the independent values
-  static void extractIndependentValues( const Utility::PropertyTree& indep_data,
-                                        std::vector<double>& independent_values );
-
-  // Set the dependent values
-  static void extractDependentValues( const Utility::Variant& dep_data,
-                                      std::vector<double>& dependent_values );
-
-  // Set the dependent values
-  static void extractDependentValues( const Utility::PropertyTree& dep_data,
-                                      std::vector<double>& dependent_values );
+  // Extract the values
+  static void extractValues( const Utility::Variant& values_data,
+                             std::vector<double>& values );
 
   // Verify that the values are valid
   static void verifyValidValues( const std::vector<double>& independent_values,
                                  const std::vector<double>& dependent_values,
                                  const bool cdf_bin_values );
 
-  // Set the cdf boolean
+  // Extract the cdf boolean from a property tree
+  static void extractCDFBooleanFromNode(
+                                 const Utility::PropertyTree& cdf_boolean_data,
+                                 bool& cdf_specified );
+  
+  // Extract the cdf boolean
   static void extractCDFBoolean( const Utility::Variant& cdf_boolean_data,
-                                 bool& cdf_bin_values );
+                                 bool& cdf_specified );
+
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
@@ -252,6 +264,24 @@ private:
 
   // The distribution type
   static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
+
+  // The bin boundary values key (used in property trees)
+  static const std::string s_bin_boundary_values_key;
+
+  // The bin boundary values min match string (used when reading prop. trees)
+  static const std::string s_bin_boundary_values_min_match_string;
+
+  // The bin values key (used in property trees)
+  static const std::string s_bin_values_key;
+
+  // The bin values min match string (used when reading property trees)
+  static const std::string s_bin_values_min_match_string;
+
+  // The cdf specified value key (used in property trees)
+  static const std::string s_cdf_specified_value_key;
+
+  // The cdf specified value min match string (used when reading prop. trees)
+  static const std::string s_cdf_specified_value_min_match_string;
 
   // The distribution (first = bin_min, second = bin_PDF, third = bin_CDF)
   // Note: The bin_CDF value is the value of the CDF at the lower bin boundary
@@ -267,7 +297,43 @@ private:
  */
 typedef UnitAwareHistogramDistribution<void,void> HistogramDistribution;
 
+/*! Partial specialization of Utility::TypeNameTraits for unit aware
+ * equiprobable bin distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<typename IndependentUnit,typename DependentUnit>
+struct TypeNameTraits<UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  {
+    return UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
+  }
+};
+
+/*! Specialization of Utility::TypeNameTraits for equiprobable bin distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<HistogramDistribution>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return HistogramDistribution::typeName( true, false ); }
+};
+
 } // end Utility namespace
+
+BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareHistogramDistribution, 0 );
+BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( HistogramDistribution );
 
 //---------------------------------------------------------------------------//
 // Template includes.

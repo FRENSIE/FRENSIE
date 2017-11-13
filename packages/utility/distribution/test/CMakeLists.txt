@@ -20,6 +20,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(ExponentialDistribution DEPENDS tstExponentialDistri
 FRENSIE_ADD_TEST(ExponentialDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_exponential_distributions.json)
 
+FRENSIE_ADD_TEST_EXECUTABLE(HistogramDistribution DEPENDS tstHistogramDistribution.cpp)
+FRENSIE_ADD_TEST(HistogramDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_exponential_distributions.json)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
 # ADD_EXECUTABLE(tstUniformDistribution
@@ -28,13 +32,6 @@ FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 # TARGET_LINK_LIBRARIES(tstUniformDistribution utility_dist)
 # ADD_TEST(UniformDistribution_test tstUniformDistribution --test_dists_json_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_uniform_distributions.json")
 # SET_PROPERTY(TEST UniformDistribution_test PROPERTY LABELS utility_dist)
-
-# ADD_EXECUTABLE(tstHistogramDistribution
-#   tstHistogramDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_dist)
-# ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_json_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.json")
-# SET_PROPERTY(TEST HistogramDistribution_test PROPERTY LABELS utility_dist)
 
 # ADD_EXECUTABLE(tstTabularDistribution
 #   tstTabularDistribution.cpp
@@ -56,13 +53,6 @@ FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 # TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_dist)
 # ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.xml")
 # SET_PROPERTY(TEST PolynomialDistribution_test PROPERTY LABELS utility_dist)
-
-# ADD_EXECUTABLE(tstExponentialDistribution
-#   tstExponentialDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstExponentialDistribution utility_dist)
-# ADD_TEST(ExponentialDistribution_test tstExponentialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_exponential_distributions.xml")
-# SET_PROPERTY(TEST ExponentialDistribution_test PROPERTY LABELS utility_dist)
 
 # ADD_EXECUTABLE(tstNormalDistribution
 #   tstNormalDistribution.cpp

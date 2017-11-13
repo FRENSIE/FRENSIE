@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef TWO_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
-#define TWO_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
+#ifndef UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
+#define UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
@@ -275,7 +275,7 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( EquiprobableBinDistribution );
 
 //---------------------------------------------------------------------------//
 
-#endif // end EQUIPROBABLE_BIN_DISTRIBUTION_HPP
+#endif // end UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_EquiprobableBinDistribution.hpp
