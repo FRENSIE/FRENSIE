@@ -1,14 +1,26 @@
 {
     "Distribution A": "{delta, 0, 2}",
     "Distribution B": "{Delta, pi}",
+    "Distribution C": "{Delta Distribution}",
 
-    "Distribution C":
+    "comment": "The following inline distributions are ill-formed",
+    "Distribution D": "{dummy}",
+    "Distribution E": "{delta distribution, inf}",
+    "Distribution F": "{Delta, 0.0, 0.0}",
+    "Distribution G": "{delta, -1.0, inf}",
+
+    "Distribution H":
+    {
+        "type": "Delta Distribution"
+    },
+    
+    "Distribution I":
     {
         "type": "Delta Distribution",
         "location": -1.0
     },
 
-    "Distribution D":
+    "Distribution J":
     {
         "comment": "optional comment example",
         "mult": 0.5,
@@ -17,23 +29,20 @@
         "dummy": ""
     },
 
-    "comment": "This distribution is ill-formed (bad type)",
-    "Distribution E": "{dummy, 0}",
-
-    "Distribution F":
+    "Distribution K":
     {
         "comment": "This distribution is ill-formed (bad type)",
         "type": "dummy"
     },
 
-    "Distribution G":
+    "Distribution L":
     {
         "comment": "This distribution is ill-formed (invalid location)",
         "type": "Delta",
         "location": "-Inf"
     },
 
-    "Distribution H":
+    "Distribution M":
     {
         "comment": "This distribution is ill-formed (invalid multiplier)",
         "type": "Delta",
@@ -41,7 +50,7 @@
         "multiplier": 0.0
     },
 
-    "Distribution I":
+    "Distribution N":
     {
         "comment": "This distribution is ill-formed (invalid multiplier)",
         "type": "delta",

@@ -35,27 +35,7 @@ const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_m
 template<typename IndependentUnit, typename DependentUnit>
 const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_min_match_string( "mult" );
 
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution()
-{ 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
-}
-
-// Basic Constructor
-template<typename IndependentUnit, typename DependentUnit>
-template<typename InputIndepQuantity>
-UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution( const InputIndepQuantity location )
-  : d_location( location ),
-    d_multiplier( DQT::one() )
-{
-  // Make sure that the point is valid
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf(location) );
-
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
-}
-
-// Advanced Constructor
+// Constructor
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistribution(
@@ -338,16 +318,15 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   this->fromStreamImpl( is, distribution_data );
 
-  // Verify that the correct amount of distribution data is present
-  TEST_FOR_EXCEPTION( distribution_data.empty(),
-		      Utility::StringConversionException,
-		      "The delta distribution cannot be constructed "
-		      "because the string representation is not valid!" );
-
   // Extract the location value
-  this->setLocationValue( distribution_data.front() );
+  if( !distribution_data.empty() )
+  {
+    this->setLocationValue( distribution_data.front() );
 
-  distribution_data.pop_front();
+    distribution_data.pop_front();
+  }
+  else
+    d_location = ThisType::getDefaultLocation<IndepQuantity>();
 
   // Extract the multiplier value
   if( !distribution_data.empty() )
@@ -357,7 +336,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
     distribution_data.pop_front();
   }
   else
-    d_multiplier = DQT::one();
+    d_multiplier = ThisType::getDefaultMultiplier<DepQuantity>();
 
   // Check if there is any superfluous data
   this->checkForUnusedStreamData( distribution_data );
@@ -391,12 +370,17 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
   // Initialize from child nodes
   else
   {
+    // Initialize the member data to default values
+    d_location = ThisType::getDefaultLocation<IndepQuantity>();
+    d_multiplier = ThisType::getDefaultMultiplier<DepQuantity>();
+
+    // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
      std::make_pair( s_location_value_key,
         std::make_tuple( s_location_value_min_match_string,
-                         true,
+                         false,
                          std::bind<void>( &ThisType::setLocationValueUsingNode,
                                           std::ref(*this),
                                           std::placeholders::_1 ) ) ) );
@@ -409,10 +393,6 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
                                         std::placeholders::_1 ) ) ) );
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-    
-    // Check if the multiplier was set
-    if( data_extractors.find(s_multiplier_value_key) != data_extractors.end() )
-      d_multiplier = DQT::one();
   }
 }
 

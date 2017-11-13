@@ -54,17 +54,14 @@ public:
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
 
-  //! Default Constructor
-  UnitAwareDeltaDistribution();
-
-  //! Basic constructor
-  template<typename InputIndepQuantity>
-  explicit UnitAwareDeltaDistribution( const InputIndepQuantity location );
-
-  //! Advanced constructor
-  template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareDeltaDistribution( const InputIndepQuantity location,
-			      const InputDepQuantity multiplier );
+  //! Constructor
+  template<typename InputIndepQuantity = IndepQuantity,
+           typename InputDepQuantity = DepQuantity>
+  UnitAwareDeltaDistribution(
+                          const InputIndepQuantity location =
+                          ThisType::getDefaultLocation<InputIndepQuantity>(),
+                          const InputDepQuantity multiplier =
+                          ThisType::getDefaultMultiplier<InputDepQuantity>() );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit, typename Dummy=void>
@@ -165,6 +162,16 @@ protected:
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
+
+  //! Get the default location
+  template<typename InputIndepQuantity>
+  static InputIndepQuantity getDefaultLocation()
+  { return QuantityTraits<InputIndepQuantity>::zero(); }
+  
+  //! Get the default constant multiplier
+  template<typename InputDepQuantity>
+  static InputDepQuantity getDefaultMultiplier()
+  { return QuantityTraits<InputDepQuantity>::one(); }
 
 private:
 

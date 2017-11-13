@@ -67,7 +67,7 @@ typedef std::tuple<
 std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
 
 std::shared_ptr<Utility::TabularOneDDistribution>
-  tab_distribution( new Utility::DeltaDistribution( 0.0 ) );
+  tab_distribution( new Utility::DeltaDistribution );
 
 std::shared_ptr<Utility::OneDDistribution>
   distribution( tab_distribution );
@@ -93,16 +93,21 @@ FRENSIE_DATA_TABLE( TestPropertyTreeTable )
   double pi = Utility::PhysicalConstants::pi;
 
   COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DeltaDistribution( 0, 2 );
-  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DeltaDistribution( pi );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_2_args" ) << "Distribution A" << true << no_unused_children << Utility::DeltaDistribution( 0, 2 );
+  NEW_ROW( "inline_1_arg" ) << "Distribution B" << true << no_unused_children << Utility::DeltaDistribution( pi );
+  NEW_ROW( "inline_0_args" ) << "Distribution C" << true << no_unused_children << Utility::DeltaDistribution();
+  NEW_ROW( "inline_bad_type" ) << "Distribution D" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_bad_loc" ) << "Distribution E" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_zero_mult" ) << "Distribution F" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_inf_mult" ) << "Distribution G" << false << no_unused_children << dummy_dist;
 
-  NEW_ROW( "default_mult" ) << "Distribution C" << true << no_unused_children << Utility::DeltaDistribution( -1.0 );
-  NEW_ROW( "extra_args" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DeltaDistribution( -2*pi, 0.5 );
-  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "bad_location" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_multiplier" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_multiplier" ) << "Distribution I" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "0_args" ) << "Distribution H" << true << no_unused_children << Utility::DeltaDistribution();
+  NEW_ROW( "1_arg" ) << "Distribution I" << true << no_unused_children << Utility::DeltaDistribution( -1.0 );
+  NEW_ROW( "extra_args" ) << "Distribution J" << true << std::vector<std::string>( {"dummy"} ) << Utility::DeltaDistribution( -2*pi, 0.5 );
+  NEW_ROW( "bad_type" ) << "Distribution K" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "bad_loc" ) << "Distribution L" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "zero_mult" ) << "Distribution M" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_mult" ) << "Distribution N" << false << no_unused_children << dummy_dist;
 }
 
 //---------------------------------------------------------------------------//
@@ -449,6 +454,10 @@ FRENSIE_UNIT_TEST( DeltaDistribution, toString )
 
   FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
 
+  dist_string = Utility::toString( Utility::DeltaDistribution( 1.0 ) );
+
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+
   dist_string = Utility::toString( Utility::DeltaDistribution( 1.0, 0.5 ) );
 
   FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
@@ -461,6 +470,11 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, toString )
   std::string dist_string = Utility::toString( *unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00}" );
+
+  dist_string = Utility::toString( Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds ) );
+
+  FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+  
   dist_string = Utility::toString( Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 0.5*si::meters ) );
 
   FRENSIE_CHECK_EQUAL( dist_string, "{Delta Distribution, 1.000000000000000000e+00, 5.000000000000000000e-01}" );
