@@ -17,10 +17,40 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
+BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareNormalDistribution );
+
 namespace Utility{
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareNormalDistribution<void,void> );
+// Initialize property tree keys and match strings
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_key( "multiplier" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_min_match_string( "mult" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_mean_value_key( "mean" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_mean_value_min_match_string( "mean" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_standard_deviation_value_key( "standard deviation" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_standard_deviation_value_min_match_string( "dev" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_key( "lower boundary" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_min_match_string( "lower" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_key( "upper boundary" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_min_match_string( "upper" );
 
 // Initialize the constant norm factor
 template<typename IndependentUnit, typename DependentUnit>
@@ -60,6 +90,8 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
 		    QuantityTraits<InputIndepQuantityB>::zero() );
   // Make sure that the min indep value is < the max indep value
   testPrecondition( min_independent_value < max_independent_value );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareNormalDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor
@@ -88,6 +120,8 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
   testPrecondition( !InputIQT::isnaninf( dist_instance.d_standard_deviation ) );
   // Make sure that the standard deviation is positive
   testPrecondition( dist_instance.d_standard_deviation > InputIQT::zero() );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareNormalDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -106,6 +140,8 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
   testPrecondition( !QT::isnaninf( unitless_dist_instance.d_standard_deviation ) );
   // Make sure that the standard deviation is positive
   testPrecondition( unitless_dist_instance.d_standard_deviation > 0.0 );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareNormalDistribution<IndependentUnit,DependentUnit> );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -296,6 +332,33 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getDistributionType(
   return ThisType::distribution_type;
 }
 
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::typeName(
+                                                const bool verbose_name,
+                                                const bool use_template_params,
+                                                const std::string& delim )
+{
+  return BaseType::typeNameImpl( "Normal",
+                                 verbose_name,
+                                 use_template_params,
+                                 delim );
+}
+
+// Return the distribution type name
+template<typename IndependentUnit, typename DependentUnit>
+std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
+                                                   const bool verbose_name,
+                                                   const bool lowercase ) const
+{
+  std::string name = this->typeName( verbose_name, false, " " );
+
+  if( lowercase )
+    boost::algorithm::to_lower( name );
+
+  return name;
+}
+
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::isContinuous() const
@@ -307,187 +370,229 @@ bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::isContinuous() 
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_mean )
-     << "," << getRawQuantity( d_standard_deviation )
-     << "," << getRawQuantity( d_min_independent_value )
-     << "," << getRawQuantity( d_max_independent_value )
-     << "," << getRawQuantity( d_constant_multiplier ) << "}";
+  this->toStreamImpl( os,
+                      Utility::getRawQuantity( d_mean ),
+                      Utility::getRawQuantity( d_standard_deviation ),
+                      Utility::getRawQuantity( d_min_independent_value ),
+                      Utility::getRawQuantity( d_max_independent_value ),
+                      Utility::getRawQuantity( d_constant_multiplier ) );
 }
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
 {
-  // Read in the distribution representation
-  std::string dist_rep;
-  std::getline( is, dist_rep, '}' );
-  dist_rep += '}';
+  VariantList distribution_data;
 
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the normal distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
-
-  Teuchos::Array<std::string> distribution;
-  try{
-    distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-			      InvalidDistributionStringRepresentation,
-			      "Error: the normal distribution cannot be "
-			      "constructed because the representation is not "
-			      "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 5,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be constructed "
-		      "because the representation is not valid "
-		      "(only 2, 3, 4 or 5 values may be specified)!" );
+  this->fromStreamImpl( is, distribution_data );
 
   // Set the mean
-  TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " -0123456789.eE" ) <
-		      distribution[0].size(),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be "
-		      "constructed because of an invalid mean "
-		      << distribution[0] );
+  if( !distribution_data.empty() )
   {
-    std::istringstream iss( distribution[0] );
+    this->extractShapeParameter( distribution_data.front(), d_mean );
 
-    double raw_mean;
-    Teuchos::extractDataFromISS( iss, raw_mean );
-
-    setQuantity( d_mean, raw_mean );
+    distribution_data.pop_front();
   }
-
-  TEST_FOR_EXCEPTION( IQT::isnaninf( d_mean ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be constructed "
-		      "because of an invalid mean " << d_mean );
+  else
+    d_mean = ThisType::getDefaultMean<IndepQuantity>();
 
   // Set the standard deviation
-  TEST_FOR_EXCEPTION( distribution[1].find_first_not_of( " 0123456789.eE" ) <
-		      distribution[1].size(),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be "
-		      "constructed because of an invalid standard deviation "
-		      << distribution[1] );
+  if( !distribution_data.empty() )
   {
-    std::istringstream iss( distribution[1] );
+    this->extractShapeParameter( distribution_data.front(),
+                                 d_standard_deviation );
 
-    double raw_standard_deviation;
-    Teuchos::extractDataFromISS( iss, raw_standard_deviation );
-
-    setQuantity( d_standard_deviation, raw_standard_deviation );
+    distribution_data.pop_front();
+  }
+  else
+  {
+    d_standard_deviation =
+      ThisType::getDefaultStandardDeviation<IndepQuantity>();
   }
 
-  TEST_FOR_EXCEPTION( IQT::isnaninf( d_standard_deviation ),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be constructed "
-		      "because of an invalid standard deviation "
-		      << d_standard_deviation );
-
-  TEST_FOR_EXCEPTION( d_standard_deviation < IQT::zero(),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be constructed "
-		      "because of an invalid standard deviation "
-		      << d_standard_deviation );
-
-  TEST_FOR_EXCEPTION( d_constant_multiplier == DQT::zero(),
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be constructed "
-		      "because of an invalid multiplier "
-		      << d_constant_multiplier );
-
-  // Set the min independent value
-  if( distribution.size() > 2 )
+  // Set the lower boundary of the distribution
+  if( !distribution_data.empty() )
   {
-    if( distribution[2].compare( "-inf" ) == 0 )
-      d_min_independent_value = -IQT::inf();
-    else
-    {
-      TEST_FOR_EXCEPTION( distribution[2].find_first_not_of( " -0123456789.e")<
-			  distribution[2].size(),
-			  InvalidDistributionStringRepresentation,
-			  "Error: the normal distribution cannot be "
-			  "constructed because of an invalid min independent "
-			  "value " << distribution[2] );
-      std::istringstream entry_iss( distribution[2] );
+    this->extractShapeParameter( distribution_data.front(),
+                                 d_min_independent_value );
 
-      double raw_min_independent_value;
-      Teuchos::extractDataFromISS( entry_iss, raw_min_independent_value );
+    distribution_data.pop_front();
+  }
+  else
+    d_min_independent_value = ThisType::getDefaultLowerLimit<IndepQuantity>();
 
-      setQuantity( d_min_independent_value, raw_min_independent_value );
+  // Set the upper boundary of the distribution
+  if( !distribution_data.empty() )
+  {
+    this->extractShapeParameter( distribution_data.front(),
+                                 d_max_independent_value );
+
+    distribution_data.pop_front();
+  }
+  else
+    d_max_independent_value = ThisType::getDefaultUpperLimit<IndepQuantity>();
+
+  // Set the constant multiplier
+  if( !distribution_data.empty() )
+  {
+    this->extractShapeParameter( distribution_data.front(),
+                                 d_constant_multiplier );
+
+    distribution_data.pop_front();
+  }
+  else
+    d_constant_multiplier = ThisType::getDefaultConstMultiplier<DepQuantity>();
+
+  // Verify that the shape parameters are valid
+  this->verifyValidShapeParameters( d_constant_multiplier,
+                                    d_mean,
+                                    d_standard_deviation,
+                                    d_min_independent_value,
+                                    d_max_independent_value );
+  
+  // Check if there is any superfluous data
+  this->checkForUnusedStreamData( distribution_data );
+}
+
+// Method for converting the type to a property tree
+template<typename IndependentUnit, typename DependentUnit>
+Utility::PropertyTree UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
+{
+  if( inline_data )
+    return this->toInlinedPropertyTreeImpl();
+  else
+  {
+    return this->toPropertyTreeImpl(
+     std::tie(s_const_multiplier_value_key, Utility::getRawQuantity(d_constant_multiplier)),
+     std::tie(s_mean_value_key, Utility::getRawQuantity(d_mean)),
+     std::tie(s_standard_deviation_value_key, Utility::getRawQuantity(d_standard_deviation)),
+     std::tie(s_lower_limit_value_key, Utility::getRawQuantity(d_min_independent_value)),
+     std::tie(s_upper_limit_value_key, Utility::getRawQuantity(d_max_independent_value)) );
+  }
+}
+
+// Method for initializing the object from a property tree
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
+                                    const Utility::PropertyTree& node,
+                                    std::vector<std::string>& unused_children )
+{
+  if( node.size() == 0 )
+    this->fromInlinedPropertyTreeImpl( node );
+
+  // Initialize from child nodes
+  else
+  {
+    // Initialize the member data to default values
+    d_constant_multiplier = ThisType::getDefaultConstMultiplier<DepQuantity>();
+    d_mean = ThisType::getDefaultMean<IndepQuantity>();
+    d_standard_deviation =
+      ThisType::getDefaultStandardDeviation<IndepQuantity>();
+    d_min_independent_value = ThisType::getDefaultLowerLimit<IndepQuantity>();
+    d_max_independent_value = ThisType::getDefaultUpperLimit<IndepQuantity>();
+
+    // Create the data extractor map
+    typename BaseType::DataExtractorMap data_extractors;
+
+    data_extractors.insert(
+     std::make_pair( s_const_multiplier_value_key,
+      std::make_tuple( s_const_multiplier_value_min_match_string, false,
+         std::bind<void>(&ThisType::extractShapeParameterFromNode<DepQuantity>,
+                         std::placeholders::_1,
+                         std::ref(d_constant_multiplier)) )));
+    data_extractors.insert(
+     std::make_pair( s_mean_value_key,
+      std::make_tuple( s_mean_value_min_match_string, false,
+         std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                         std::placeholders::_1,
+                         std::ref(d_mean)) )));
+    data_extractors.insert(
+     std::make_pair( s_standard_deviation_value_key,
+      std::make_tuple( s_standard_deviation_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_standard_deviation)) )));
+    data_extractors.insert(
+     std::make_pair( s_lower_limit_value_key,
+      std::make_tuple( s_lower_limit_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_min_independent_value)) )));
+    data_extractors.insert(
+     std::make_pair( s_upper_limit_value_key,
+      std::make_tuple( s_upper_limit_value_min_match_string, false,
+       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+                       std::placeholders::_1,
+                       std::ref(d_max_independent_value)) )));
+
+    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
+
+    // Verify that the shape parameters are valid
+    try{
+      this->verifyValidShapeParameters( d_constant_multiplier,
+                                        d_mean,
+                                        d_standard_deviation,
+                                        d_min_independent_value,
+                                        d_max_independent_value );
     }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Invalid shape parameter detected!" );
   }
-  else
-    d_min_independent_value = -IQT::inf();
+}
 
-  // Set the max independent value
-  if( distribution.size() > 3 )
-  {
-    if( distribution[3].compare( "inf" ) == 0 )
-      d_max_independent_value = IQT::inf();
-    else
-    {
-      TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " -0123456789.e")<
-			  distribution[3].size(),
-			  InvalidDistributionStringRepresentation,
-			  "Error: the normal distribution cannot be "
-			  "constructed because of an invalid max independent "
-			  " value " << distribution[3] );
-      std::istringstream entry_iss( distribution[3] );
+// Save the distribution to an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
-      double raw_max_independent_value;
-      Teuchos::extractDataFromISS( entry_iss, raw_max_independent_value );
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_mean );
+  ar & BOOST_SERIALIZATION_NVP( d_standard_deviation );
+  ar & BOOST_SERIALIZATION_NVP( d_min_independent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_max_independent_value );
+}
 
-      setQuantity( d_max_independent_value, raw_max_independent_value );
-    }
-  }
-  else
-    d_max_independent_value = IQT::inf();
+// Load the distribution from an archive
+template<typename IndependentUnit, typename DependentUnit>
+template<typename Archive>
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 
-  TEST_FOR_EXCEPTION( d_max_independent_value <= d_min_independent_value,
-		      InvalidDistributionStringRepresentation,
-		      "Error: the normal distribution cannot be "
-		      "constructed because the max independent value is not "
-		      "greater than the min independent value!" );
-
-  // Set the distribution multiplier
-  if( distribution.size() > 4 )
-  {
-    TEST_FOR_EXCEPTION( distribution[4].find_first_not_of( " -0123456789.e") <
-			distribution[4].size(),
-			InvalidDistributionStringRepresentation,
-			"Error: the normal distribution cannot be "
-			"constructed because of an invalid multiplier "
-			<< distribution[4] );
-    std::istringstream entry_iss( distribution[4] );
-
-    double raw_constant_multiplier;
-    Teuchos::extractDataFromISS( entry_iss, raw_constant_multiplier );
-
-    setQuantity( d_constant_multiplier, raw_constant_multiplier );
-  }
-  else
-    d_constant_multiplier = DQT::one();
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
+  ar & BOOST_SERIALIZATION_NVP( d_mean );
+  ar & BOOST_SERIALIZATION_NVP( d_standard_deviation );
+  ar & BOOST_SERIALIZATION_NVP( d_min_independent_value );
+  ar & BOOST_SERIALIZATION_NVP( d_max_independent_value );
 }
 
 // Method for testing if two objects are equivalent
 template<typename IndependentUnit, typename DependentUnit>
-bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::isEqual( const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>& other ) const
+bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::operator==( const UnitAwareNormalDistribution& other ) const
 {
-  return
-    d_constant_multiplier == other.d_constant_multiplier &&
+  return d_constant_multiplier == other.d_constant_multiplier &&
     d_mean == other.d_mean &&
     d_standard_deviation == other.d_standard_deviation &&
     d_min_independent_value == other.d_min_independent_value &&
     d_max_independent_value == other.d_max_independent_value;
+}
+
+// Method for testing if two objects are different
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::operator!=( const UnitAwareNormalDistribution& other ) const
+{
+  return d_constant_multiplier != other.d_constant_multiplier ||
+    d_mean != other.d_mean ||
+    d_standard_deviation != other.d_standard_deviation ||
+    d_min_independent_value != other.d_min_independent_value ||
+    d_max_independent_value != other.d_max_independent_value;
 }
 
 // Test if the dependent variable can be zero within the indep bounds
@@ -503,7 +608,86 @@ bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::canDepVarBeZero
   return false;
 }
 
+// Extract a shape parameter from a node
+template<typename IndependentUnit, typename DependentUnit>
+template<typename QuantityType>
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::extractShapeParameterFromNode(
+                             const Utility::PropertyTree& shape_parameter_data,
+                             QuantityType& shape_parameter )
+{
+  // The data must be inlined in the node
+  TEST_FOR_EXCEPTION( shape_parameter_data.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not extract the shape parameter value!" );
+
+  ThisType::extractShapeParameter( shape_parameter_data.data(),
+                                   shape_parameter );
+}
+
+// Extract a shape parameter
+template<typename IndependentUnit, typename DependentUnit>
+template<typename QuantityType>
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::extractShapeParameter(
+                                  const Utility::Variant& shape_parameter_data,
+                                  QuantityType& shape_parameter )
+{
+  double raw_shape_parameter;
+
+  try{
+    raw_shape_parameter =
+      Utility::variant_cast<double>( shape_parameter_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The normal distribution cannot be "
+                           "constructed because a shape parameter is not "
+                           "valid!" );
+
+  Utility::setQuantity( shape_parameter, raw_shape_parameter );
+}
+
+// Verify that the shape parameters are valid
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::verifyValidShapeParameters(
+                                   const DepQuantity& const_multiplier,
+                                   const IndepQuantity& mean,
+                                   const IndepQuantity& standard_deviation,
+                                   const IndepQuantity& min_independent_value,
+                                   const IndepQuantity& max_independent_value )
+{
+  TEST_FOR_EXCEPTION( DQT::isnaninf( const_multiplier ),
+		      Utility::StringConversionException,
+		      "The normal distribution cannot be constructed "
+		      "because of the multiplier is invalid!" );
+  
+  TEST_FOR_EXCEPTION( const_multiplier == DQT::zero(),
+		      Utility::StringConversionException,
+		      "The normal distribution cannot be constructed "
+		      "because of the multiplier is invalid!" );
+  
+  TEST_FOR_EXCEPTION( IQT::isnaninf( mean ),
+		      Utility::StringConversionException,
+		      "The normal distribution cannot be constructed "
+		      "because the mean is invalid!" );
+
+  TEST_FOR_EXCEPTION( IQT::isnaninf( standard_deviation ),
+		      Utility::StringConversionException,
+		      "The normal distribution cannot be constructed "
+		      "because the standard deviation is invalid!" );
+
+  TEST_FOR_EXCEPTION( standard_deviation <= IQT::zero(),
+		      Utility::StringConversionException,
+		      "The normal distribution cannot be constructed "
+		      "because the standard deviation is invalid!" );
+
+  TEST_FOR_EXCEPTION( max_independent_value <= min_independent_value,
+		      Utility::StringConversionException,
+		      "The normal distribution cannot be constructed because "
+                      "the upper limit is invalid!" );
+}
+
 } // end Utility namespace
+
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareNormalDistribution<void,void> );
 
 #endif // end UTILITY_NORMAL_DISTRIBUTION_DEF_HPP
 

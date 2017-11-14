@@ -28,6 +28,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(MaxwellFissionDistribution DEPENDS tstMaxwellFission
 FRENSIE_ADD_TEST(MaxwellFissionDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_maxwell_fission_distributions.json)
 
+FRENSIE_ADD_TEST_EXECUTABLE(NormalDistribution DEPENDS tstNormalDistribution.cpp)
+FRENSIE_ADD_TEST(NormalDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_normal_distributions.json)
+
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
@@ -58,13 +62,6 @@ FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 # TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_dist)
 # ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.xml")
 # SET_PROPERTY(TEST PolynomialDistribution_test PROPERTY LABELS utility_dist)
-
-# ADD_EXECUTABLE(tstNormalDistribution
-#   tstNormalDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstNormalDistribution utility_dist)
-# ADD_TEST(NormalDistribution_test tstNormalDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_normal_distributions.xml")
-# SET_PROPERTY(TEST NormalDistribution_test PROPERTY LABELS utility_dist)
 
 # ADD_EXECUTABLE(tstWattDistribution
 #   tstWattDistribution.cpp
