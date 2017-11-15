@@ -988,10 +988,10 @@ inline void expandIntervalKeywordInSubstring( const std::string& left_element,
                                 "container element (" << right_element << ") "
                                 "to the desired type!" );
 
-    TEST_FOR_EXCEPTION( left_value > right_value,
-			std::runtime_error,
-			"the array elements must be in ascending order ("
-                        << left_value << " !<= " << right_value << ")!" );
+    // TEST_FOR_EXCEPTION( left_value > right_value,
+    //     		std::runtime_error,
+    //     		"the array elements must be in ascending order ("
+    //                     << left_value << " !<= " << right_value << ")!" );
 
     size_t intervals =
       Utility::fromString<size_t>( middle_element.substr( 0, op_pos ) );

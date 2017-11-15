@@ -1,0 +1,147 @@
+{
+    "Distribution A": "{Polynomial Distribution, {1.0, 2.0, 3.0}, 0, 1}",
+    "Distribution B": "{polynomial distribution, {1.0, 2.0, 3.0}, 1, 2}",
+    "Distribution C": "{Polynomial, {1r5}, 1, pi}",
+    "Distribution D": "{polynomial, {0.0, 1r3}, pi/2, 3*pi/2}",
+
+    "comment": "The following inline distributions are ill-formed",
+    "Distribution E": "{dummy, {1, 2}, 0, 1}",
+    "Distribution F": "{Polynomial Distribution}",
+    "Distribution G": "{Polynomial, {1, 2}}",
+    "Distribution H": "{Polynomial, {1, 2}, 0}",
+    "Distribution I": "{Polynomial, {}, 0, 1}",
+    "Distribution J": "{Polynomial, {0.0, 0.0}, 0, 1}",
+    "Distribution K": "{Polynomial, {1, -1}, 0, 1}",
+    "Distribution L": "{Polynomial, {1, inf}, 0, 1}",
+    "Distribution M": "{Polynomial, {1, 2}, -1, 1}",
+    "Distribution N": "{Polynomial, {1, 2}, 2, 1}",
+
+    "Distribution O":
+    {
+        "type": "Polynomial Distribution",
+        "coefficients": "{1.0, 2.0, 3.0}",
+        "lower boundary": 0,
+        "upper boundary": 1
+    },
+
+    "Distribution P":
+    {
+        "comment": "JSON arrays can also be used to specify the coefficients",
+        
+        "type": "polynomial distribution",
+        "coeffs": [1.0, 2.0, 3.0],
+        "lower": 1,
+        "upper": 2
+    },
+
+    "Distribution Q":
+    {
+        "type": "Polynomial",
+        "coefficients": "{1r5}",
+        "lower boundary": 1,
+        "upper boundary": 10,
+        "dummy": ""
+    },
+
+    "Distribution R":
+    {
+        "comment": "Multiple occurances of the same values will be reported as unused",
+        "upper": 10,
+        "lower": 1,
+        "coeffs": "{0r2, 1r2}",
+        "type": "polynomial",
+        
+        "coefficients": [0.0, 0.0, 0.0],
+        "upper boundary": 1,
+        "lower boundary": 2        
+    },
+
+    "Distribution S":
+    {
+        "comment": "This distribution is ill-formed (bad type)",
+        "type": "dummy"
+    },
+
+    "Distribution T":
+    {
+        "comment": "This distribution is ill-formed (no coeffs or limits)",
+        "type": "Polynomial Distribution"
+    },
+
+    "Distribution U":
+    {
+        "comment": "This distribution is ill-formed (no limits)",
+        "type": "Polynomial",
+        "coeffs": "{1, 2}"
+    },
+
+    "Distribution V":
+    {
+        "comment": "This distribution is ill-formed (no upper limit)",
+        "type": "Polynomial",
+        "coeffs": "{1, 2}",
+        "lower": 0
+    },
+
+    "Distribution W":
+    {
+        "comment": "This distribution is ill-formed (no upper limit)",
+        "type": "Polynomial",
+        "coeffs": "{1, 2}",
+        "upper": 1
+    },
+
+    "Distribution X":
+    {
+        "comment": "This distribution is ill-formed (empty coeffs array)",
+        "type": "Polynomial",
+        "coeffs": "{}",
+        "lower": 0,
+        "upper": 1
+    },
+
+    "Distribution Y":
+    {
+        "comment": "This distribution is ill-formed (only zero coeffs)",
+        "type": "Polynomial",
+        "coeffs": "{0r3}",
+        "lower": 0,
+        "upper": 1
+    },
+
+    "Distribution Z":
+    {
+        "comment": "This distribution is ill-formed (negative coeff)",
+        "type": "Polynomial",
+        "coeffs": [1, -1],
+        "lower": 0,
+        "upper": 1
+    },
+
+    "Distribution AA":
+    {
+        "comment": "This distribution is ill-formed (inf coeff)",
+        "type": "Polynomial",
+        "coeffs": "{1, inf}",
+        "lower": 0,
+        "upper": 1
+    },
+
+    "Distribution AB":
+    {
+        "comment": "This distribution is ill-formed (negative lower limit)",
+        "type": "Polynomial",
+        "coeffs": [1, 2],
+        "lower": -1,
+        "upper": 1
+    },
+
+    "Distribution AC":
+    {
+        "comment": "This distribution is ill-formed (bad limits)",
+        "type": "Polynomial",
+        "coeffs": [1, 2],
+        "lower": 2,
+        "upper": 1
+    }
+}

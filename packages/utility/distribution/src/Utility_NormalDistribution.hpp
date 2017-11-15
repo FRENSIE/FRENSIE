@@ -293,7 +293,7 @@ private:
 typedef UnitAwareNormalDistribution<void,void> NormalDistribution;
 
 /*! Partial specialization of Utility::TypeNameTraits for unit aware
- * evaporation distribution
+ * normal distribution
  * \ingroup one_d_distributions
  * \ingroup type_name_traits
  */
@@ -310,7 +310,7 @@ struct TypeNameTraits<UnitAwareNormalDistribution<IndependentUnit,DependentUnit>
   }
 };
 
-/*! Specialization of Utility::TypeNameTraits for evaporation distribution
+/*! Specialization of Utility::TypeNameTraits for normal distribution
  * \ingroup one_d_distributions
  * \ingroup type_name_traits
  */

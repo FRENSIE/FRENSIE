@@ -3,7 +3,7 @@
     "Distribution B": "{Histogram, {0.0, 3i, 1.0},{1.0r4}, false}",
     "Distribution C": "{histogram dist, {0.0, 3i, 1.0}, {0.25, 2i, 1.0}, true}",
     
-    "comment": "This following inline distributions are ill-formed",
+    "comment": "The following inline distributions are ill-formed",
     "Distribution D": "{dummy, {1, 2}, {1}}",
     "Distribution E": "{Histogram Distribution, {1}, {1}}",
     "Distribution F": "{Histogram, {3, 2, 1, 0}, {1r3}}",
