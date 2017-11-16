@@ -410,75 +410,120 @@ namespace serialization{                                            \
 }                                                                       \
 }
 
-#define BOOST_DISTRIBUTION_CLASS_VERSION( FullName, N ) \
+#define __BOOST_DISTRIBUTION_CLASS_VERSION_IMPL__( _N, ... )    \
 namespace boost{                                      \
 namespace serialization{                            \
                                                     \
-  template<typename IndependentUnit, typename DependentUnit>            \
-  struct version<Utility::FullName<IndependentUnit,DependentUnit> >     \
+  __VA_ARGS__                                                           \
   {                                                                     \
-    typedef mpl::int_<N> type;                                          \
+    typedef mpl::int_<_N> type;                                         \
     typedef mpl::integral_c_tag tag;                                    \
     BOOST_STATIC_CONSTANT(int, value = version::type::value);           \
     BOOST_MPL_ASSERT((                                                  \
-        boost::mpl::less<                                              \
-            boost::mpl::int_<N>,                                       \
-            boost::mpl::int_<256>                                      \
-        >                                                              \
-    ));    \
-  };       \
-}          \
-}
-
-#define BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( BaseName )  \
-namespace boost{                                              \
-namespace serialization{                                    \
-                                                            \
-  template<typename IndependentUnit, typename DependentUnit> \
-  struct guid_defined<Utility::UnitAware##BaseName<IndependentUnit,DependentUnit> > : boost::mpl::true_ \
-  { /* ... */ };                                                        \
-                                                                        \
-namespace ext{                                                        \
-                                                                        \
-  template<typename IndependentUnit, typename DependentUnit>            \
-  struct guid_impl<Utility::UnitAware##BaseName<IndependentUnit,DependentUnit> > \
-  {                                                                     \
-    static inline const char* call()                                    \
-    {                                                                   \
-      std::string guid( "UnitAware"#BaseName"<" );                        \
-      guid += Utility::typeName<IndependentUnit,DependentUnit>();       \
-      guid += ">";                                                     \
-                                                                       \
-      return guid.c_str();                                              \
-    }                                                                   \
+                      boost::mpl::less<                                 \
+                      boost::mpl::int_<_N>,                             \
+                      boost::mpl::int_<256> >                           \
+                    ));                                                 \
   };                                                                    \
 }                                                                       \
-                                                                        \
-  template<>                                                            \
-  inline const char* guid<Utility::UnitAware##BaseName<void,void> >()   \
-  { return #BaseName; }                                                 \
-} \
+} 
+
+#define BOOST_DISTRIBUTION_CLASS_VERSION( FullName, Version ) \
+  __BOOST_DISTRIBUTION_CLASS_VERSION_IMPL__( Version,                   \
+            template<typename IndependentUnit, typename DependentUnit> \
+            struct version<Utility::FullName<IndependentUnit,DependentUnit> > )
+
+#define BOOST_DISTRIBUTION_CLASS_VERSION_EXTRA( FullName, ExtraType, ExtraName, Version ) \
+  __BOOST_DISTRIBUTION_CLASS_VERSION_IMPL__( Version,                   \
+            template<ExtraType __##ExtraName##__, typename IndependentUnit, typename DependentUnit> \
+            struct version<Utility::FullName<__##ExtraName##__,IndependentUnit,DependentUnit> > )
+
+#define __BOOST_DISTRIBUTION_CLASS_DECL_GUID_DEFINED__( ... ) \
+namespace boost{                                              \
+namespace serialization{                                              \
+  __VA_ARGS__ : public boost::mpl::true_                                  \
+  { /* ... */ };                                                        \
+}                                                                       \
 }
 
-#define BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( FullName )   \
+#define __BOOST_DISTRIBUTION_CLASS_GUID_IMPL__( GUID, ... )     \
+namespace boost{                                              \
+namespace serialization{                                    \
+namespace ext{                                                        \
+  __VA_ARGS__                                                           \
+  {                                                                     \
+    static inline const char* call()                                    \
+    { return (GUID).c_str(); }                                          \
+  };                                                                    \
+}  \
+}  \
+}  
+  
+
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( BaseName )                \
+  __BOOST_DISTRIBUTION_CLASS_DECL_GUID_DEFINED__(                       \
+     template<typename IndependentUnit, typename DependentUnit> \
+     struct guid_defined<Utility::UnitAware##BaseName<IndependentUnit,DependentUnit> > ) \
+  __BOOST_DISTRIBUTION_CLASS_GUID_IMPL__( std::string( "UnitAware"#BaseName"<" )+Utility::typeName<IndependentUnit>()+","+Utility::typeName<DependentUnit>()+">", \
+                 template<typename IndependentUnit, typename DependentUnit> \
+                 struct guid_impl<Utility::UnitAware##BaseName<IndependentUnit,DependentUnit> > ) \
+  __BOOST_DISTRIBUTION_CLASS_GUID_IMPL__( std::string(#BaseName),       \
+                 template<>                    \
+                 struct guid_impl<Utility::UnitAware##BaseName<void,void> > )
+
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2_EXTRA( BaseName, ExtraType, ExtraName  ) \
+  __BOOST_DISTRIBUTION_CLASS_DECL_GUID_DEFINED__(                       \
+     template<ExtraType ExtraName, typename IndependentUnit, typename DependentUnit> \
+     struct guid_defined<Utility::UnitAware##BaseName<ExtraName,IndependentUnit,DependentUnit> > ) \
+  __BOOST_DISTRIBUTION_CLASS_GUID_IMPL__( std::string( "UnitAware"#BaseName"<" )+(Utility::typeName<ExtraName,IndependentUnit,DependentUnit>())+">", \
+     template<ExtraType ExtraName, typename IndependentUnit, typename DependentUnit> \
+     struct guid_impl<Utility::UnitAware##BaseName<ExtraName,IndependentUnit,DependentUnit> > ) \
+  __BOOST_DISTRIBUTION_CLASS_GUID_IMPL__( std::string(#BaseName"<")+Utility::typeName<ExtraName>()+">", \
+         template<ExtraType ExtraName>                    \
+         struct guid_impl<Utility::UnitAware##BaseName<ExtraName,void,void> > )
+
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2_EXTRA_INT( BaseName, ExtraIntType, ExtraIntName  ) \
+  __BOOST_DISTRIBUTION_CLASS_DECL_GUID_DEFINED__(                       \
+     template<ExtraIntType ExtraIntName, typename IndependentUnit, typename DependentUnit> \
+     struct guid_defined<Utility::UnitAware##BaseName<ExtraIntName,IndependentUnit,DependentUnit> > ) \
+  __BOOST_DISTRIBUTION_CLASS_GUID_IMPL__( std::string( "UnitAware"#BaseName"<" )+Utility::toString(ExtraIntName)+","+(Utility::typeName<IndependentUnit,DependentUnit>())+">", \
+     template<ExtraIntType ExtraIntName, typename IndependentUnit, typename DependentUnit> \
+     struct guid_impl<Utility::UnitAware##BaseName<ExtraIntName,IndependentUnit,DependentUnit> > ) \
+  __BOOST_DISTRIBUTION_CLASS_GUID_IMPL__( std::string(#BaseName"<")+Utility::toString(ExtraIntName)+">", \
+         template<ExtraIntType ExtraIntName>                    \
+         struct guid_impl<Utility::UnitAware##BaseName<ExtraIntName,void,void> > )
+
+
+#define __BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_IMPL__( DistributionType, ... ) \
 namespace boost{                                              \
 namespace archive{                                          \
 namespace detail{                                         \
 namespace extra_detail{ \
-                        \
-  template<typename IndependentUnit, typename DependentUnit>            \
-  struct init_guid<Utility::FullName<IndependentUnit,DependentUnit> >   \
+  __VA_ARGS__                                                           \
+  struct init_guid<DistributionType>                                    \
   {                                                                     \
-    static const guid_initializer<Utility::FullName<IndependentUnit,DependentUnit> >& g; \
+    static const guid_initializer<DistributionType>& g;                 \
   };                                                                    \
                                                                         \
-  template<typename IndependentUnit, typename DependentUnit>            \
-  const guid_initializer<Utility::FullName<IndependentUnit,DependentUnit> >& init_guid<Utility::FullName<IndependentUnit,DependentUnit> >::g =\
-    ::boost::serialization::singleton<guid_initializer<Utility::FullName<IndependentUnit,DependentUnit> > >::get_mutable_instance().export_guid(); \
+  __VA_ARGS__                                                           \
+  const guid_initializer<DistributionType>& init_guid<DistributionType>::g = \
+    ::boost::serialization::singleton<guid_initializer<DistributionType> >::get_mutable_instance().export_guid(); \
 }                                                                       \
 }                                                                       \
 }                                                                       \
 }
+
+#define __FORWARD_AS_SINGLE_ARG__( ... ) __VA_ARGS__        \
+
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( FullName )   \
+  __BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_IMPL__(               \
+  __FORWARD_AS_SINGLE_ARG__(Utility::FullName<IndependentUnit,DependentUnit>),\
+  template<typename IndependentUnit, typename DependentUnit> )
+
+#define BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_EXTRA( FullName, ExtraType, ExtraName  ) \
+  __BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_IMPL__(               \
+   __FORWARD_AS_SINGLE_ARG__(Utility::FullName<ExtraName,IndependentUnit,DependentUnit>), \
+   template<ExtraType ExtraName, typename IndependentUnit, typename DependentUnit> )
 
 //! Call this macro from the constructor
 #define BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ... )  \
