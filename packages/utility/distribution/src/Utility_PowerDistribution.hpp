@@ -178,7 +178,7 @@ protected:
   //! Get the default upper limit
   template<typename InputIndepQuantity>
   static InputIndepQuantity getDefaultUpperLimit()
-  { return QuantityTraits<InputIndepQuantity>::inf(); }
+  { return QuantityTraits<InputIndepQuantity>::one(); }
 
 private:
 
@@ -198,9 +198,10 @@ private:
                                   QuantityType& shape_parameter );
 
   // Verify that the shape parameters are valid
-  static void verifyValidShapeParameters( const DepQuantity& const_multiplier,
-                                          const IndepQuantity& lower_limit,
-                                          const IndepQuantity& upper_limit );
+  static void verifyValidShapeParameters(
+                                const DistMultiplierQuantity& const_multiplier,
+                                const IndepQuantity& lower_limit,
+                                const IndepQuantity& upper_limit );
 
   // Save the distribution to an archive
   template<typename Archive>

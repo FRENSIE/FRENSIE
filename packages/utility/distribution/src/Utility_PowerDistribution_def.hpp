@@ -418,9 +418,9 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream(
 						       std::ostream& os ) const
 {
   this->toStreamImpl( os,
-                      Utility::getRawQuantity( d_multiplier ),
                       Utility::getRawQuantity( d_min_indep_limit ),
-                      Utility::getRawQuantity( d_max_indep_limit ) );
+                      Utility::getRawQuantity( d_max_indep_limit ),
+                      Utility::getRawQuantity( d_multiplier ) );
 }
 
 // Method for initializing the object from an input stream
@@ -431,19 +431,6 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
   VariantList distribution_data;
 
   this->fromStreamImpl( is, distribution_data );
-
-  // Set the multiplier
-  if( !distribution_data.empty() )
-  {
-    this->extractShapeParameter( distribution_data.front(), d_multiplier );
-
-    distribution_data.pop_front();
-  }
-  else
-  {
-    d_multiplier =
-      ThisType::getDefaultConstMultiplier<DistMultiplierQuantity>();
-  }
 
   // Set the lower boundary of the distribution
   if( !distribution_data.empty() )
@@ -466,6 +453,19 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
   }
   else
     d_max_indep_limit = ThisType::getDefaultUpperLimit<IndepQuantity>();
+
+  // Set the multiplier
+  if( !distribution_data.empty() )
+  {
+    this->extractShapeParameter( distribution_data.front(), d_multiplier );
+
+    distribution_data.pop_front();
+  }
+  else
+  {
+    d_multiplier =
+      ThisType::getDefaultConstMultiplier<DistMultiplierQuantity>();
+  }
 
   // Verify that the shape parameters are valid
   this->verifyValidShapeParameters( d_multiplier,
@@ -670,9 +670,9 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::extractShapePa
 // Verify that the shape parameters are valid
 template<size_t N, typename IndependentUnit, typename DependentUnit>
 void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::verifyValidShapeParameters(
-                                           const DepQuantity& const_multiplier,
-                                           const IndepQuantity& lower_limit,
-                                           const IndepQuantity& upper_limit )
+                                const DistMultiplierQuantity& const_multiplier,
+                                const IndepQuantity& lower_limit,
+                                const IndepQuantity& upper_limit )
 {
   TEST_FOR_EXCEPTION( DMQT::isnaninf( const_multiplier ),
 		      Utility::StringConversionException,

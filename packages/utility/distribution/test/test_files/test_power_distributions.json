@@ -1,0 +1,121 @@
+{
+    "Distribution A": "{Power 1 Distribution}",
+    "Distribution B": "{power 1 distribution, 1, 2}",
+    "Distribution C": "{Power 1, 1, 2, 3}",
+    "Distribution D": "{power 1, pi/2, pi, 2}",
+
+    "comment": "The following inline distributions are ill-formed",
+    "Distribution E": "{dummy}",
+    "Distribution F": "{Power 1, 0, 1, inf}",
+    "Distribution G": "{power 1, 0, 1, 0}",
+    "Distribution H": "{power 1, inf, inf, 1}",
+    "Distribution I": "{power 1, -1, 1, 1}",
+    "Distribution J": "{power 1, 0, inf, 1}",
+    "Distribution K": "{power 1, 2, 1, 1}",
+
+    "Distribution L":
+    {
+        "comment": "No values need to be specified other than the type",
+        "type": "Power 1 Distribution"
+    },
+
+    "Distribution M":
+    {
+        "type": "Power 1",
+        "multiplier": 3
+    },
+
+    "Distribution N":
+    {
+        "type": "power 1 distribution",
+        "lower boundary": 1,
+        "upper boundary": 2
+    },
+
+    "Distribution O":
+    {
+        "type": "power 1",
+        "mult": 3,
+        "lower": 1,
+        "upper": 2
+    },
+
+    "Distribution P":
+    {
+        "comment": "The dummy argument should be reported as unused",
+        
+        "type": "Power 1",
+        "upper": 2,
+        "lower": 1,
+        "mult": 3,
+        "dummy": ""
+    },
+
+    "Distribution Q":
+    {
+        "comment": "Duplicate arguments should be reported as unused",
+
+        "type": "Power 1",
+        "upper": 2,
+        "lower": 1,
+        "mult": 3,
+
+        "multiplier": "inf",
+        "lower boundary": -1,
+        "upper boundary": "inf"
+    },
+
+    "Distribution R":
+    {
+        "comment": "Invalid distribution type",
+        "type": "dummy"
+    },
+
+    "Distribution S":
+    {
+        "comment": "Invalid multiplier",
+        "type": "Power 1",
+        "multiplier": "inf"
+    },
+
+    "Distribution T":
+    {
+        "comment": "Invalid multiplier",
+        "type": "Power 1",
+        "multiplier": 0
+    },
+
+    "Distribution U":
+    {
+        "comment": "Invalid lower limit",
+        "type": "Power 1",
+        "mult": 1,
+        "lower": "inf"
+    },
+
+    "Distribution V":
+    {
+        "comment": "Invalid lower limit",
+        "type": "Power 1",
+        "mult": 1,
+        "lower": -1
+    },
+
+    "Distribution W":
+    {
+        "comment": "Invalid upper limit",
+        "type": "Power 1",
+        "mult": 1,
+        "lower": 0,
+        "upper": "inf"
+    },
+
+    "Distribution X":
+    {
+        "comment": "Invalid limits",
+        "type": "Power 1",
+        "mult": 1,
+        "lower": 2,
+        "upper": 1
+    }
+}

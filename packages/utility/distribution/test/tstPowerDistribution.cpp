@@ -14,52 +14,106 @@
 #include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_OneDDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
 
 using boost::units::quantity;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
 
+typedef std::tuple<
+  std::integral_constant<size_t,1>,
+  std::integral_constant<size_t,2>,
+  std::integral_constant<size_t,3>,
+  std::integral_constant<size_t,4>,
+  std::integral_constant<size_t,5>,
+  std::integral_constant<size_t,6>,
+  std::integral_constant<size_t,7>,
+  std::integral_constant<size_t,8>,
+  std::integral_constant<size_t,9>,
+  std::integral_constant<size_t,10>
+ > TestInts;
+  
+
+typedef std::tuple<
+  std::tuple<si::length,si::amount,cgs::length,si::amount>,
+  std::tuple<cgs::length,si::amount,si::length,si::amount>,
+  std::tuple<cgs::length,cgs::mass,si::length,si::mass>,
+  std::tuple<si::length,si::mass,cgs::length,cgs::mass>,
+  std::tuple<cgs::length,cgs::dimensionless,si::length,si::dimensionless>,
+  std::tuple<si::length,si::dimensionless,cgs::length,cgs::dimensionless>,
+  std::tuple<cgs::length,void*,si::length,void*>,
+  std::tuple<si::length,void*,cgs::length,void*>,
+  std::tuple<void*,cgs::dimensionless,void*,si::dimensionless>,
+  std::tuple<void*,si::dimensionless,void*,cgs::dimensionless>,
+  std::tuple<si::length,si::amount,cgs::length,si::amount>,
+  std::tuple<cgs::length,si::amount,si::length,si::amount>,
+  std::tuple<cgs::length,cgs::mass,si::length,si::mass>,
+  std::tuple<si::length,si::mass,cgs::length,cgs::mass>,
+  std::tuple<cgs::length,cgs::dimensionless,si::length,si::dimensionless>
+ > TestUnitTypeQuads;
+
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
 
-Teuchos::RCP<Utility::OneDDistribution> distribution;
+std::shared_ptr<Utility::OneDDistribution> distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> >
+std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> >
   unit_aware_distribution;
 
 //---------------------------------------------------------------------------//
-// Instantiation Macros.
+// Testing Tables
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 1u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 2u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 3u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 4u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 5u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 6u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 7u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 8u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 9u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, 10u )
+// This table describes the data in the property tree
+FRENSIE_DATA_TABLE( TestPropertyTreeTable )
+{
+  std::vector<std::string> no_unused_children;
+  Utility::PowerDistribution<1> dummy_dist;
+
+  const double& pi = Utility::PhysicalConstants::pi;
+  const double inf = Utility::QuantityTraits<double>::inf();
+
+  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
+  NEW_ROW( "inline_0_args" ) << "Distribution A" << true << no_unused_children << Utility::PowerDistribution<1>();
+  NEW_ROW( "inline_2_args" ) << "Distribution B" << true << no_unused_children << Utility::PowerDistribution<1>( 1.0, 1.0, 2.0 );
+  NEW_ROW( "inline_3_args_ucase" ) << "Distribution C" << true << no_unused_children << Utility::PowerDistribution<1>( 3.0, 1.0, 2.0 );
+  NEW_ROW( "inline_3_args_lcase" ) << "Distribution D" << true << no_unused_children << Utility::PowerDistribution<1>( 2.0, pi/2, pi );
+  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_inf_mult" ) << "Distribution F" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_zero_mult" ) << "Distribution G" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_inf_lower_limit" ) << "Distribution H" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_neg_lower_limit" ) << "Distribution I" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_inf_upper_limit" ) << "Distribution J" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_bad_limits" ) << "Distribution K" << false << no_unused_children << dummy_dist;
+
+  NEW_ROW( "0_args" ) << "Distribution L" << true << no_unused_children << Utility::PowerDistribution<1>();
+  NEW_ROW( "1_arg" ) << "Distribution M" << true << no_unused_children << Utility::PowerDistribution<1>( 3.0 );
+  NEW_ROW( "2_args" ) << "Distribution N" << true << no_unused_children << Utility::PowerDistribution<1>( 1.0, 1.0, 2.0 );
+  NEW_ROW( "3_args" ) << "Distribution O" << true << no_unused_children << Utility::PowerDistribution<1>( 3.0, 1.0, 2.0 );
+  NEW_ROW( "extra_arg" ) << "Distribution P" << true << std::vector<std::string>( {"dummy"} ) << Utility::PowerDistribution<1>( 3.0, 1.0, 2.0 );
+  NEW_ROW( "duplicate_args" ) << "Distribution Q" << true << std::vector<std::string>( {"multiplier", "lower boundary", "upper boundary"} ) << Utility::PowerDistribution<1>( 3.0, 1.0, 2.0 );
+  NEW_ROW( "bad_type" ) << "Distribution R" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_mult" ) << "Distribution S" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "zero_mult" ) << "Distribution T" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_lower_limit" ) << "Distribution U" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "neg_lower_limit" ) << "Distribution V" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_upper_limit" ) << "Distribution W" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "bad_limits" ) << "Distribution X" << false << no_unused_children << dummy_dist;
+}
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -67,8 +121,8 @@ Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> >
 // Initialize the distribution
 template<unsigned N, typename IndepUnit, typename DepUnit>
 void initializeDistribution(
-	  Teuchos::RCP<Utility::UnitAwareOneDDistribution<IndepUnit,DepUnit> >&
-	  distribution )
+       std::shared_ptr<Utility::UnitAwareOneDDistribution<IndepUnit,DepUnit> >&
+       distribution )
 {
   typedef typename Utility::UnitAwareOneDDistribution<IndepUnit,DepUnit>::IndepQuantity IndepQuantity;
   distribution.reset(
@@ -82,81 +136,79 @@ void initializeDistribution(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, evaluate, N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, evaluate, TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), N + 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0 ), WrappedN::value + 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 2.0 ), 0.0 );
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, evaluate );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    evaluate,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, evaluate, TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate(-1.0*cgs::centimeter),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate(-1.0*cgs::centimeter),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*cgs::centimeter),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*cgs::centimeter),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*cgs::centimeter),
-		       (N + 1.0)*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*cgs::centimeter),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.0*cgs::centimeter),
+		       (WrappedN::value + 1.0)*si::mole );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 2.0*cgs::centimeter),
 		       0.0*si::mole );
 }
-
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, evaluate );
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, evaluatePDF, N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, evaluatePDF, TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), N+1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 0.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 1.0 ), WrappedN::value+1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 2.0 ), 0.0 );
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    evaluatePDF,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, evaluatePDF, TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 	          unit_aware_distribution->evaluatePDF( -1.0*cgs::centimeter ),
 		  0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		   unit_aware_distribution->evaluatePDF( 0.0*cgs::centimeter ),
 		   0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		   unit_aware_distribution->evaluatePDF( 1.0*cgs::centimeter ),
-		   (N+1.0)/cgs::centimeter );
-  TEST_EQUALITY_CONST(
+		   (WrappedN::value+1.0)/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL(
 		   unit_aware_distribution->evaluatePDF( 2.0*cgs::centimeter ),
 		   0.0/cgs::centimeter );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, evaluatePDF );
-
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, sample, N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, sample, TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -166,26 +218,24 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, sample, N )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u)) );
+  FRENSIE_CHECK_EQUAL( sample, pow(0.5, 1.0/(WrappedN::value+1u)) );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( PowerDistribution, sample );
-
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    sample,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, sample, TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -195,25 +245,23 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<cgs::length> sample = unit_aware_distribution->sample();
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sample();
-  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u))*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, pow(0.5, 1.0/(WrappedN::value+1u))*cgs::centimeter );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::centimeter, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 1.0*cgs::centimeter, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, sample );
-
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    sample_static,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, sample_static, TestInts )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
@@ -221,26 +269,26 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double sample = Utility::PowerDistribution<N>::sample( 0.0, 1.0 );
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  double sample = Utility::PowerDistribution<WrappedN::value>::sample( 0.0, 1.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
-  sample = Utility::PowerDistribution<N>::sample( 0.0, 1.0 );
-  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u)) );
+  sample = Utility::PowerDistribution<WrappedN::value>::sample( 0.0, 1.0 );
+  FRENSIE_CHECK_EQUAL( sample, pow(0.5, 1.0/(WrappedN::value+1u)) );
 
-  sample = Utility::PowerDistribution<N>::sample( 0.0, 1.0 );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
+  sample = Utility::PowerDistribution<WrappedN::value>::sample( 0.0, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( PowerDistribution, sample_static );
-
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    sample_static,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            sample_static,
+                            TestInts )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
@@ -249,35 +297,35 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<cgs::length> sample =
-    Utility::UnitAwarePowerDistribution<N,cgs::length>::sample(
+    Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length>::sample(
 							 0.0*cgs::centimeter,
 						         1.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample =
-    Utility::UnitAwarePowerDistribution<N,cgs::length>::sample(
+    Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length>::sample(
 							 0.0*cgs::centimeter,
 						         1.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u))*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, pow(0.5, 1.0/(WrappedN::value+1u))*cgs::centimeter );
 
   sample =
-    Utility::UnitAwarePowerDistribution<N,cgs::length>::sample(
+    Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length>::sample(
 							 0.0*cgs::centimeter,
 						         1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::centimeter, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 1.0*cgs::centimeter, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, sample_static );
-
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    sampleAndRecordTrials,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution,
+                            sampleAndRecordTrials,
+                            TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -289,29 +337,29 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
   Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u)) );
-  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( sample, pow(0.5, 1.0/(WrappedN::value+1u)) );
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
-  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( PowerDistribution, sampleAndRecordTrials );
-
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    sampleAndRecordTrials,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            sampleAndRecordTrials,
+                            TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -324,448 +372,1271 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
 
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u))*cgs::centimeter );
-  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( sample, pow(0.5, 1.0/(WrappedN::value+1u))*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::centimeter, 1e-15 );
-  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 1.0*cgs::centimeter, 1e-15 );
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, sampleAndRecordTrials );
-
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    getUpperBoundOfIndepVar,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution,
+                            getUpperBoundOfIndepVar,
+                            TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfIndepVar(), 1.0 );
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, getUpperBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    getUpperBoundOfIndepVar,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            getUpperBoundOfIndepVar,
+                            TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       1.0*cgs::centimeter );
 }
-
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, getUpperBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the distribution independent variable can be
 // returned
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    getLowerBoundOfIndepVar,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution,
+                            getLowerBoundOfIndepVar,
+                            TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfIndepVar(), 0.0 );
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, getLowerBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    getLowerBoundOfIndepVar,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            getLowerBoundOfIndepVar,
+                            TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       0.0*cgs::centimeter );
 }
-
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, getLowerBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    getDistributionType,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution,
+                            getDistributionType,
+                            TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  switch( N )
+  switch( WrappedN::value )
   {
   case 1u:
-    TEST_EQUALITY_CONST( distribution->getDistributionType(),
+    FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
 			 Utility::POWER_1_DISTRIBUTION );
     break;
   case 2u:
-    TEST_EQUALITY_CONST( distribution->getDistributionType(),
+    FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
 			 Utility::POWER_2_DISTRIBUTION );
     break;
   default:
-    TEST_EQUALITY_CONST( distribution->getDistributionType(),
+    FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
 			 Utility::POWER_N_DISTRIBUTION );
     break;
   }
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, getDistributionType );
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution type can be returned
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    getDistributionType,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            getDistributionType,
+                            TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  switch( N )
+  switch( WrappedN::value )
   {
   case 1u:
-    TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
+    FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
 			 Utility::POWER_1_DISTRIBUTION );
     break;
   case 2u:
-    TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
+    FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
 			 Utility::POWER_2_DISTRIBUTION );
     break;
   default:
-    TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
+    FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
 			 Utility::POWER_N_DISTRIBUTION );
     break;
   }
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, getDistributionType );
+//---------------------------------------------------------------------------//
+// Check that the distribution type name can be returned
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution,
+                            getDistributionTypeName,
+                            TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  FRENSIE_CHECK_EQUAL( Utility::PowerDistribution<WrappedN::value>::typeName( true, false, " " ),
+                       std::string( "Power " ) + Utility::toString(WrappedN::value) + " Distribution" );
+  FRENSIE_CHECK_EQUAL( Utility::PowerDistribution<WrappedN::value>::typeName( false ),
+                       std::string( "Power" ) + Utility::toString(WrappedN::value) );
+  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::PowerDistribution<WrappedN::value> >(),
+                       std::string( "Power" ) + Utility::toString(WrappedN::value) + "Distribution" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution type name can be returned
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            getDistributionTypeName,
+                            TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>::typeName( true, false, " " )),
+                       std::string( "Power " ) + Utility::toString(WrappedN::value) + " Distribution" );
+  FRENSIE_CHECK_EQUAL( (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>::typeName( false )),
+                       std::string( "Power" ) + Utility::toString(WrappedN::value) );
+  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >()),
+                       (std::string( "UnitAwarePower" ) + Utility::toString(WrappedN::value) + "Distribution<" + Utility::typeName<cgs::length,si::amount>()+">") );
+}
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is tabular
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    isTabular,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, isTabular, TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  TEST_ASSERT( !distribution->isTabular() );
+  FRENSIE_CHECK( !distribution->isTabular() );
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, isTabular );
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is tabular
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    isTabular,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, isTabular, TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  TEST_ASSERT( !unit_aware_distribution->isTabular() );
+  FRENSIE_CHECK( !unit_aware_distribution->isTabular() );
 }
-
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, isTabular );
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is continuous
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    isContinuous,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, isContinuous, TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  TEST_ASSERT( distribution->isContinuous() );
+  FRENSIE_CHECK( distribution->isContinuous() );
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, isContinuous );
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is continuous
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    isContinuous,
-					    N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            isContinuous,
+                            TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  TEST_ASSERT( unit_aware_distribution->isContinuous() );
+  FRENSIE_CHECK( unit_aware_distribution->isContinuous() );
 }
-
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, isContinuous );
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is compatible with an interpolation type
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-                                            isCompatibleWithInterpType,
-                                            N )
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution,
+                            isCompatibleWithInterpType,
+                            TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types
-  Utility::PowerDistribution<N> test_dist( 1.0, 1.0, 2.0 );
+  Utility::PowerDistribution<WrappedN::value> test_dist( 1.0, 1.0, 2.0 );
 
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LogLog>() );
 }
-
-UNIT_TEST_INSTANTIATION( PowerDistribution, isCompatibleWithInterpType );
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is compatible with the interp type
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-                                            isCompatibleWithInterpType,
-                                            N )
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            isCompatibleWithInterpType,
+                            TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types
-  Utility::UnitAwarePowerDistribution<N,cgs::length,si::amount>
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>
     test_dist( 1.0, 1.0*si::meter, 2.0*si::meter );
 
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( test_dist.template isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( test_dist.template isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution,
-                         isCompatibleWithInterpType );
-
-
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					    toParameterList,
-					    N )
+// Check that the distribution can be converted to a string
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, toString, TestInts )
 {
-  initializeDistribution<N,void,void>( distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
 
-  Teuchos::RCP<Utility::PowerDistribution<N> > true_distribution =
-    Teuchos::rcp_dynamic_cast<Utility::PowerDistribution<N> >( distribution );
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
 
-  Teuchos::ParameterList parameter_list;
+  std::string dist_string = Utility::toString( Utility::PowerDistribution<WrappedN::value>() );
 
-  parameter_list.set<Utility::PowerDistribution<N> >( "test distribution",
-						      *true_distribution );
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
 
-  std::ostringstream xml_file_name;
-  xml_file_name << "power_" << N << "_dist_test_list.xml";
+  dist_string = Utility::toString( Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
 
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					xml_file_name.str() );
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( xml_file_name.str() );
+  dist_string = Utility::toString( Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ) );
 
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 1.000000000000000000e+00, 2.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  Teuchos::RCP<Utility::PowerDistribution<N> >
-    copy_distribution( new Utility::PowerDistribution<N> );
+  initializeDistribution<WrappedN::value,void,void>( distribution );
 
-  *copy_distribution =
-    read_parameter_list->get<Utility::PowerDistribution<N> >(
-							  "test distribution");
+  dist_string = Utility::toString( *distribution );
 
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, "+Utility::toString<double>(WrappedN::value+1)+"}" );
 }
 
-UNIT_TEST_INSTANTIATION( PowerDistribution, toParameterList );
-
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
-					    toParameterList,
-					    N )
+// Check that the unit-aware distribution can be converted to a string
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, toString, TestInts )
 {
-  initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
 
-  typedef Utility::UnitAwarePowerDistribution<N,cgs::length,si::amount> UnitAwarePowerDistribution;
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
 
-  Teuchos::RCP<UnitAwarePowerDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<UnitAwarePowerDistribution>( unit_aware_distribution );
+  std::string dist_string = Utility::toString( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>() );
 
-  Teuchos::ParameterList parameter_list;
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
 
-  parameter_list.set<UnitAwarePowerDistribution>( "test unit-aware distribution",
-						  *true_distribution );
+  dist_string = Utility::toString( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 ) );
 
-  std::ostringstream xml_file_name;
-  xml_file_name << "unit_aware_power_" << N << "_dist_test_list.xml";
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					xml_file_name.str() );
+  dist_string = Utility::toString( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter ) );
 
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-    Teuchos::getParametersFromXmlFile( xml_file_name.str() );
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 1.000000000000000000e+00, 2.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-  Teuchos::RCP<UnitAwarePowerDistribution>
-    copy_distribution( new UnitAwarePowerDistribution );
+  dist_string = Utility::toString( *unit_aware_distribution );
 
-  *copy_distribution =
-    read_parameter_list->get<UnitAwarePowerDistribution>(
-					      "test unit-aware distribution" );
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, "+Utility::toString<double>(WrappedN::value+1)+"}" );
 }
 
-UNIT_TEST_INSTANTIATION( UnitAwarePowerDistribution, toParameterList );
-
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( PowerDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, toStream, TestInts )
 {
-  Utility::PowerDistribution<1u> distribution_1 =
-    test_dists_list->get<Utility::PowerDistribution<1u> >( "Power Distribution A" );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1 );
-  TEST_EQUALITY_CONST( distribution_1.evaluate( 1.0 ), 2.0 );
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
 
-  distribution_1 =
-    test_dists_list->get<Utility::PowerDistribution<1u> >( "Power Distribution B" );
+  std::ostringstream oss;
+  Utility::toStream( oss, Utility::PowerDistribution<WrappedN::value>() );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0 );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi/2 );
-  TEST_EQUALITY_CONST( distribution_1.evaluate( 1.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
 
-  Utility::PowerDistribution<2u> distribution_2 =
-    test_dists_list->get<Utility::PowerDistribution<2u> >( "Power Distribution C" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0 );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(),
-		       2*Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( distribution_2.evaluate( 1.0 ), 3.0 );
+  Utility::toStream( oss, Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
 
-  distribution_2 =
-    test_dists_list->get<Utility::PowerDistribution<2u> >( "Power Distribution D" );
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0 );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(),
-		       3*Utility::PhysicalConstants::pi/4 );
-  TEST_EQUALITY_CONST( distribution_2.evaluate( 0.5 ), 0.25 );
+  oss.str( "" );
+  oss.clear();
 
-  Utility::PowerDistribution<3u> distribution_3 =
-    test_dists_list->get<Utility::PowerDistribution<3u> >( "Power Distribution E" );
+  Utility::toStream( oss, Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ) );
 
-  TEST_EQUALITY_CONST( distribution_3.getLowerBoundOfIndepVar(), 0 );
-  TEST_EQUALITY_CONST( distribution_3.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( distribution_3.evaluate( 1.0 ), 4.0 );
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 1.000000000000000000e+00, 2.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  distribution_3 =
-    test_dists_list->get<Utility::PowerDistribution<3u> >( "Power Distribution F" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( distribution_3.getLowerBoundOfIndepVar(), 0 );
-  TEST_EQUALITY_CONST( distribution_3.getUpperBoundOfIndepVar(),
-		       5*Utility::PhysicalConstants::pi/4 );
-  TEST_EQUALITY_CONST( distribution_3.evaluate( 1.0 ), 1.0 );
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  Utility::toStream( oss, *distribution );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, "+Utility::toString<double>(WrappedN::value+1)+"}" );
 }
 
-template<unsigned N> using UnitAwarePowerDistribution =
-    Utility::UnitAwarePowerDistribution<N,cgs::length,si::amount>;
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be placed in a stream
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, toStream, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  std::ostringstream oss;
+  Utility::toStream( oss, Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>() );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 ) );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter ) );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 1.000000000000000000e+00, 2.000000000000000000e+00, 2.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  Utility::toStream( oss, *unit_aware_distribution );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, "+Utility::toString<double>(WrappedN::value+1)+"}" );
+}
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwarePowerDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, ostream_operator, TestInts )
 {
-  UnitAwarePowerDistribution<1u> distribution_1 =
-    test_dists_list->get<UnitAwarePowerDistribution<1u> >( "Unit-Aware Power Distribution A" );
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(),
-		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
-		       1.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_1.evaluate( 1.0*cgs::centimeter ),
-		       2.0*si::mole );
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
 
-  distribution_1 =
-    test_dists_list->get<UnitAwarePowerDistribution<1u> >( "Unit-Aware Power Distribution B" );
+  std::ostringstream oss;
+  oss << Utility::PowerDistribution<WrappedN::value>();
 
-  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(),
-		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(),
-  		       Utility::PhysicalConstants::pi/2*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_1.evaluate( 1.0*cgs::centimeter ),
-		       1.0*si::mole );
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
 
-  UnitAwarePowerDistribution<2u> distribution_2 =
-    test_dists_list->get<UnitAwarePowerDistribution<2u> >( "Unit-Aware Power Distribution C" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(),
-		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(),
-  		       2*Utility::PhysicalConstants::pi*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_2.evaluate( 1.0*cgs::centimeter ),
-		       3.0*si::mole );
+  oss << Utility::PowerDistribution<WrappedN::value>( 2.0 );
 
-  distribution_2 =
-    test_dists_list->get<UnitAwarePowerDistribution<2u> >( "Unit-Aware Power Distribution D" );
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(),
-		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(),
-  		       3*Utility::PhysicalConstants::pi/4*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_2.evaluate( 0.5*cgs::centimeter ),
-		       0.25*si::mole );
+  oss.str( "" );
+  oss.clear();
 
-  UnitAwarePowerDistribution<3u> distribution_3 =
-    test_dists_list->get<UnitAwarePowerDistribution<3u> >( "Unit-Aware Power Distribution E" );
+  oss << Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 );
 
-  TEST_EQUALITY_CONST( distribution_3.getLowerBoundOfIndepVar(),
-		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_3.getUpperBoundOfIndepVar(),
-  		       Utility::PhysicalConstants::pi*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_3.evaluate( 1.0*cgs::centimeter ),
-		       4.0*si::mole );
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 1.000000000000000000e+00, 2.000000000000000000e+00, 2.000000000000000000e+00}" );
 
-  distribution_3 =
-    test_dists_list->get<UnitAwarePowerDistribution<3u> >( "Unit-Aware Power Distribution F" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( distribution_3.getLowerBoundOfIndepVar(),
-		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_3.getUpperBoundOfIndepVar(),
-  		       5*Utility::PhysicalConstants::pi/4*cgs::centimeter );
-  TEST_EQUALITY_CONST( distribution_3.evaluate( 1.0*cgs::centimeter ),
-		       1.0*si::mole );
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  oss << *distribution;
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, "+Utility::toString<double>(WrappedN::value+1)+"}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be placed in a stream
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            ostream_operator,
+                            TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  std::ostringstream oss;
+  oss << Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>();
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter );
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 1.000000000000000000e+00, 2.000000000000000000e+00, 2.000000000000000000e+00}" );
+
+  oss.str( "" );
+  oss.clear();
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  oss << *unit_aware_distribution;
+
+  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+type_name+", 0.000000000000000000e+00, 1.000000000000000000e+00, "+Utility::toString<double>(WrappedN::value+1)+"}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a string
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, fromString, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  Utility::PowerDistribution<WrappedN::value> test_dist =
+    Utility::fromString<Utility::PowerDistribution<WrappedN::value> >( std::string("{")+type_name+"}" );
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>() );
+
+  test_dist = Utility::fromString<Utility::PowerDistribution<WrappedN::value> >( std::string("{")+type_name+", 1.0, 2.0}" );
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>( 1.0, 1.0, 2.0 ) );
+
+  test_dist = Utility::fromString<Utility::PowerDistribution<WrappedN::value> >( std::string("{")+type_name+", 1.0, 2.0, 3.0}" );
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>( 3.0, 1.0, 2.0 ) );
+
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  test_dist = Utility::fromString<Utility::PowerDistribution<WrappedN::value> >( Utility::toString( *distribution ) );
+
+  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a string
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, fromString, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> test_dist =
+    Utility::fromString<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( std::string("{")+type_name+"}" );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  test_dist = Utility::fromString<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( std::string("{")+type_name+", 1.0, 2.0}" );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 1.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  test_dist = Utility::fromString<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( std::string("{")+type_name+", 1.0, 2.0, 3.0}" );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  test_dist = Utility::fromString<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( Utility::toString( *unit_aware_distribution ) );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, fromStream, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  std::istringstream iss( std::string("{")+type_name+"}" );
+  
+  Utility::PowerDistribution<WrappedN::value> test_dist;
+
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>() );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>( 1.0, 1.0, 2.0 ) );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0, 3.0}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>( 3.0, 1.0, 2.0 ) );
+
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  iss.str( Utility::toString( *distribution ) );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, fromStream, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  std::istringstream iss( std::string("{")+type_name+"}" );
+  
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> test_dist;
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 1.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0, 3.0}" );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  iss.str( Utility::toString( *unit_aware_distribution ) );
+  iss.clear();
+
+  Utility::fromStream( iss, test_dist );
+
+  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be initialized from a stream
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, istream_operator, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  std::istringstream iss( std::string("{")+type_name+"}" );
+  
+  Utility::PowerDistribution<WrappedN::value> test_dist;
+
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>() );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>( 1.0, 1.0, 2.0 ) );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0, 3.0}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, Utility::PowerDistribution<WrappedN::value>( 3.0, 1.0, 2.0 ) );
+
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  iss.str( Utility::toString( *distribution ) );
+  iss.clear();
+
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be initialized from a stream
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            istream_operator,
+                            TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  std::istringstream iss( std::string("{")+type_name+"}" );
+  
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> test_dist;
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 1.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  iss.str( std::string("{")+type_name+", 1.0, 2.0, 3.0}" );
+  iss.clear();
+
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  iss.str( Utility::toString( *unit_aware_distribution ) );
+  iss.clear();
+
+  iss >> test_dist;
+
+  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be writted to a property tree
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, toPropertyTree, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", Utility::PowerDistribution<WrappedN::value>() );
+
+  Utility::PowerDistribution<WrappedN::value> copy_dist =
+    ptree.get<Utility::PowerDistribution<WrappedN::value> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>() );
+
+  ptree.put( "test distribution", Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
+
+  copy_dist = ptree.get<Utility::PowerDistribution<WrappedN::value> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
+
+  ptree.put( "test distribution", Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ) );
+
+  copy_dist = ptree.get<Utility::PowerDistribution<WrappedN::value> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ) );
+
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  ptree.put( "test distribution", *distribution );
+
+  copy_dist = ptree.get<Utility::PowerDistribution<WrappedN::value> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
+
+  // Use the PropertyTreeCompatibleObject interface
+  ptree = Utility::PowerDistribution<WrappedN::value>().toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>() );
+
+  ptree = Utility::PowerDistribution<WrappedN::value>().toPropertyTree( false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::PowerDistribution<WrappedN::value>( 2.0 ).toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
+
+  ptree = Utility::PowerDistribution<WrappedN::value>( 2.0 ).toPropertyTree( false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ).toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ) );
+
+  ptree = Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ).toPropertyTree( false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
+
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  ptree = distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
+
+  ptree = distribution->toPropertyTree( false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ),
+                       (double)(WrappedN::value+1) );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  // Use the property tree helper methods
+  ptree = Utility::toPropertyTree( Utility::PowerDistribution<WrappedN::value>(), true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>() );
+
+  ptree = Utility::toPropertyTree( Utility::PowerDistribution<WrappedN::value>(), false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::toPropertyTree( Utility::PowerDistribution<WrappedN::value>( 2.0 ), true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
+
+  ptree = Utility::toPropertyTree( Utility::PowerDistribution<WrappedN::value>( 2.0 ), false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::toPropertyTree( Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ), true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ) );
+
+  ptree = Utility::toPropertyTree( Utility::PowerDistribution<WrappedN::value>( 2.0, 1.0, 2.0 ), false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
+
+  initializeDistribution<WrappedN::value,void,void>( distribution );
+
+  ptree = Utility::toPropertyTree( *distribution, true );
+
+  copy_dist = ptree.get_value<Utility::PowerDistribution<WrappedN::value> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
+
+  ptree = Utility::toPropertyTree( *distribution, false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ),
+                       (double)(WrappedN::value+1) );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be writted to a property tree
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
+                            toPropertyTree,
+                            TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+
+  std::string type_name( "Power " );
+  type_name += Utility::toString( WrappedN::value );
+  type_name += " Distribution";
+
+  // Use the property tree interface directly
+  Utility::PropertyTree ptree;
+
+  ptree.put( "test distribution", (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> copy_dist =
+    ptree.get<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  ptree.put( "test distribution", Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 ) );
+
+  copy_dist = ptree.get<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 )) );
+
+  ptree.put( "test distribution", Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter ) );
+
+  copy_dist = ptree.get<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  ptree.put( "test distribution", *unit_aware_distribution );
+
+  copy_dist = ptree.get<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >( "test distribution" );
+
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
+
+  // Use the PropertyTreeCompatibleObject interface
+  ptree = Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>().toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  ptree = Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>().toPropertyTree( false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 ).toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 )) );
+
+  ptree = Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 ).toPropertyTree( false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter ).toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  ptree = Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter ).toPropertyTree( false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  ptree = unit_aware_distribution->toPropertyTree( true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
+
+  ptree = unit_aware_distribution->toPropertyTree( false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ),
+                       (double)(WrappedN::value+1) );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  // Use the property tree helper methods
+  ptree = Utility::toPropertyTree( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>(), true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  ptree = Utility::toPropertyTree( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>(), false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::toPropertyTree( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 ), true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 )) );
+
+  ptree = Utility::toPropertyTree( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 ), false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+
+  ptree = Utility::toPropertyTree( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter ), true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  ptree = Utility::toPropertyTree( Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter ), false );
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
+
+  initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
+
+  copy_dist = ptree.get_value<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> >();
+
+  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
+  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
+
+  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
+  
+  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
+  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), type_name );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ),
+                       (double)(WrappedN::value+1) );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
+  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be read from a property tree
+FRENSIE_DATA_UNIT_TEST( PowerDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
+{
+  FETCH_FROM_TABLE( std::string, dist_name );                           
+  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
+  FETCH_FROM_TABLE( Utility::PowerDistribution<1>, expected_dist );     
+                                                   
+  Utility::PowerDistribution<1> dist;                         
+  std::vector<std::string> unused_children;        
+
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
+
+  // Use the property tree helper methods
+  if( valid_dist_rep )
+  {
+    FRENSIE_CHECK_NO_THROW(
+              dist = Utility::fromPropertyTree<Utility::PowerDistribution<1> >(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW(
+                     Utility::fromPropertyTree<Utility::PowerDistribution<1> >(
+                                  test_dists_ptree->get_child( dist_name ) ), 
+                     Utility::PropertyTreeConversionException );    
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be read from a property tree
+FRENSIE_DATA_UNIT_TEST( UnitAwarePowerDistribution,
+                        fromPropertyTree,
+                        TestPropertyTreeTable )
+{
+  typedef Utility::UnitAwarePowerDistribution<1,cgs::length,si::amount> Distribution;
+  
+  FETCH_FROM_TABLE( std::string, dist_name );                           
+  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
+  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
+  FETCH_FROM_TABLE( Distribution, expected_dist );     
+                                                   
+  Distribution dist;                         
+  std::vector<std::string> unused_children;        
+
+  // Use the PropertyTreeCompatibleObject interface
+  if( valid_dist_rep )
+  {
+    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+
+    unused_children.clear();
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
+
+  // Use the property tree helper methods
+  if( valid_dist_rep )
+  {
+    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<Distribution>(
+                                      test_dists_ptree->get_child( dist_name ),
+                                      unused_children ) );
+    FRENSIE_CHECK_EQUAL( dist, expected_dist );
+    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
+  }
+  else
+  {
+    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Distribution>(
+                                    test_dists_ptree->get_child( dist_name ) ),
+                         Utility::PropertyTreeConversionException );
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, archive, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  std::string archive_name( "test_power_dist" );
+  archive_name += Utility::toString( WrappedN::value );
+  archive_name += ".h5a";
+
+  // Create and archive some power distributions
+  {
+    Utility::PowerDistribution<WrappedN::value> dist_a;
+    Utility::PowerDistribution<WrappedN::value> dist_b( 2.0 );
+    Utility::PowerDistribution<WrappedN::value> dist_c( 3.0, 1.0, 2.0 );
+    initializeDistribution<WrappedN::value,void,void>( distribution );
+
+    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                          archive << BOOST_SERIALIZATION_NVP( distribution ) );
+  }
+
+  // Load the archived distribution
+  Utility::HDF5IArchive archive( archive_name );
+
+  Utility::PowerDistribution<WrappedN::value> dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_CHECK_EQUAL( dist_a, Utility::PowerDistribution<WrappedN::value>() );
+
+  Utility::PowerDistribution<WrappedN::value> dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+  FRENSIE_CHECK_EQUAL( dist_b, Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
+
+  Utility::PowerDistribution<WrappedN::value> dist_c;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+  FRENSIE_CHECK_EQUAL( dist_c, Utility::PowerDistribution<WrappedN::value>( 3.0, 1.0, 2.0 ) );
+
+  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( shared_dist.get() ),
+                       *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, archive, TestInts )
+{
+  FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  
+  std::string archive_name( "test_unit_aware_power_dist" );
+  archive_name += Utility::toString( WrappedN::value );
+  archive_name += ".h5a";
+
+  // Create and archive some power distributions
+  {
+    Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_a;
+    Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_b( 2.0 );
+    Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_c( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter );
+    initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
+
+    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+    FRENSIE_REQUIRE_NO_THROW(
+               archive << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+  }
+
+  // Load the archived distribution
+  Utility::HDF5IArchive archive( archive_name );
+
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
+
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+  FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 )) );
+
+  Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_c;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+  FRENSIE_CHECK_EQUAL( dist_c, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
+
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( shared_dist.get() )),
+                       (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that distributions can be scaled
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePowerDistribution,
 				   explicit_conversion_1,
-				   IndepUnitA,
-				   DepUnitA,
-				   IndepUnitB,
-				   DepUnitB )
+                                   TestUnitTypeQuads )
 {
+  FETCH_TEMPLATE_PARAM( 0, RawIndepUnitA );
+  FETCH_TEMPLATE_PARAM( 1, RawDepUnitA );
+  FETCH_TEMPLATE_PARAM( 2, RawIndepUnitB );
+  FETCH_TEMPLATE_PARAM( 3, RawDepUnitB );
+
+  typedef typename std::remove_pointer<RawIndepUnitA>::type IndepUnitA;
+  typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
+  typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
+  typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
+  
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
 
@@ -779,7 +1650,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwarePowerDistribution<1,IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwarePowerDistribution<1,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::PowerDistribution<1> >( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwarePowerDistribution<1,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::PowerDistribution<1>*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwarePowerDistribution<1,IndepUnitB,DepUnitB>
@@ -796,19 +1667,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -821,19 +1692,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -841,13 +1712,20 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that distributions can be scaled
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePowerDistribution,
 				   explicit_conversion_2,
-				   IndepUnitA,
-				   DepUnitA,
-				   IndepUnitB,
-				   DepUnitB )
+                                   TestUnitTypeQuads )
 {
+  FETCH_TEMPLATE_PARAM( 0, RawIndepUnitA );
+  FETCH_TEMPLATE_PARAM( 1, RawDepUnitA );
+  FETCH_TEMPLATE_PARAM( 2, RawIndepUnitB );
+  FETCH_TEMPLATE_PARAM( 3, RawDepUnitB );
+
+  typedef typename std::remove_pointer<RawIndepUnitA>::type IndepUnitA;
+  typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
+  typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
+  typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
+  
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
 
@@ -861,7 +1739,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwarePowerDistribution<2,IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwarePowerDistribution<2,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::PowerDistribution<2> >( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwarePowerDistribution<2,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::PowerDistribution<2>*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwarePowerDistribution<2,IndepUnitB,DepUnitB>
@@ -878,19 +1756,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
@@ -903,187 +1781,51 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
 }
 
-typedef cgs::length cgs_length;
-typedef si::length si_length;
-typedef cgs::mass cgs_mass;
-typedef si::mass si_mass;
-typedef cgs::dimensionless cgs_dimensionless;
-typedef si::dimensionless si_dimensionless;
-typedef si::amount si_amount;
-
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      si_length,
-				      si_amount,
-				      cgs_length,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      cgs_length,
-				      si_amount,
-				      si_length,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      cgs_length,
-				      cgs_mass,
-				      si_length,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      si_length,
-				      si_mass,
-				      cgs_length,
-				      cgs_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      cgs_length,
-				      cgs_dimensionless,
-				      si_length,
-				      si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      si_length,
-				      si_dimensionless,
-				      cgs_length,
-				      cgs_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      cgs_length,
-				      void,
-				      si_length,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      si_length,
-				      void,
-				      cgs_length,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      void,
-				      cgs_dimensionless,
-				      void,
-				      si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_1,
-				      void,
-				      si_dimensionless,
-				      void,
-				      cgs_dimensionless );
-
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      si_length,
-				      si_amount,
-				      cgs_length,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      cgs_length,
-				      si_amount,
-				      si_length,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      cgs_length,
-				      cgs_mass,
-				      si_length,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      si_length,
-				      si_mass,
-				      cgs_length,
-				      cgs_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      cgs_length,
-				      cgs_dimensionless,
-				      si_length,
-				      si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      si_length,
-				      si_dimensionless,
-				      cgs_length,
-				      cgs_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      cgs_length,
-				      void,
-				      si_length,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      si_length,
-				      void,
-				      cgs_length,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      void,
-				      cgs_dimensionless,
-				      void,
-				      si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
-				      explicit_conversion_2,
-				      void,
-				      si_dimensionless,
-				      void,
-				      cgs_dimensionless );
-
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_xml_file;
+std::string test_dists_json_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_dists_xml_file",
-                   &test_dists_xml_file,
-                   "Test distributions xml file name" );
+  ADD_OPTION( "test_dists_json_file",
+              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
+              "Test distributions json file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<1u> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<2u> );
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<3u> );
-  typedef Utility::UnitAwarePowerDistribution<1u,cgs::length,si::amount> UnitAwarePowerDistribution1;
-  typedef Utility::UnitAwarePowerDistribution<2u,cgs::length,si::amount> UnitAwarePowerDistribution2;
-  typedef Utility::UnitAwarePowerDistribution<3u,cgs::length,si::amount> UnitAwarePowerDistribution3;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwarePowerDistribution1 );
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwarePowerDistribution2 );
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwarePowerDistribution3 );
+  // Load the property tree from the json file
+  test_dists_ptree.reset( new Utility::PropertyTree );
 
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-
+  std::ifstream test_dists_json_file( test_dists_json_file_name );
+  test_dists_json_file >> *test_dists_ptree;
+  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPowerDistribution.cpp

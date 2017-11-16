@@ -36,6 +36,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(PolynomialDistribution DEPENDS tstPolynomialDistribu
 FRENSIE_ADD_TEST(PolynomialDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.json)
 
+FRENSIE_ADD_TEST_EXECUTABLE(PowerDistribution DEPENDS tstPowerDistribution.cpp)
+FRENSIE_ADD_TEST(PowerDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_power_distributions.json)
+
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
@@ -60,12 +64,6 @@ FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 # ADD_TEST(PowerDistribution_test tstPowerDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_power_distributions.xml")
 # SET_PROPERTY(TEST PowerDistribution_test PROPERTY LABELS utility_dist)
 
-# ADD_EXECUTABLE(tstPolynomialDistribution
-#   tstPolynomialDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_dist)
-# ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.xml")
-# SET_PROPERTY(TEST PolynomialDistribution_test PROPERTY LABELS utility_dist)
 
 # ADD_EXECUTABLE(tstWattDistribution
 #   tstWattDistribution.cpp
