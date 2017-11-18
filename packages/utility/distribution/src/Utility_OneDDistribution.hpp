@@ -214,7 +214,8 @@ protected:
   // Value0 = minimal match string used to identify node keys
   // Value1 = must the data be extracted?
   // Value2 = data extractor
-  typedef std::map<std::string,std::tuple<const std::string,const bool,DataExtractor> > DataExtractorMap;
+  enum ExtractedDataType{ REQUIRED_DATA = true, OPTIONAL_DATA = false };
+  typedef std::map<std::string,std::tuple<const std::string,const ExtractedDataType,DataExtractor> > DataExtractorMap;
   void fromPropertyTreeImpl( const Utility::PropertyTree& node,
                              std::vector<std::string>& unused_children,
                              DataExtractorMap& data_extractors );

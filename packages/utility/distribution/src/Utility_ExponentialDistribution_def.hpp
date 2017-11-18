@@ -477,25 +477,25 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromProper
 
     data_extractors.insert(
      std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, false,
+      std::make_tuple( s_const_multiplier_value_min_match_string, OPTIONAL_DATA,
          std::bind<void>(&ThisType::extractShapeParameterFromNode<DepQuantity>,
                          std::placeholders::_1,
                          std::ref(d_constant_multiplier)) )));
     data_extractors.insert(
      std::make_pair( s_exponent_multiplier_value_key,
-      std::make_tuple( s_exponent_multiplier_value_min_match_string, false,
+      std::make_tuple( s_exponent_multiplier_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<InverseIndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_exponent_multiplier)) )));
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, false,
+      std::make_tuple( s_lower_limit_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_lower_limit)) )));
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, false,
+      std::make_tuple( s_upper_limit_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_upper_limit)) )));

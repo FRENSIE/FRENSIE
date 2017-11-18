@@ -83,7 +83,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -119,7 +119,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -142,7 +142,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -477,28 +477,28 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromProper
 
     data_extractors.insert(
      std::make_pair( s_incident_energy_value_key,
-      std::make_tuple( s_incident_energy_value_min_match_string, false,
+      std::make_tuple( s_incident_energy_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_incident_energy)) )));
     
     data_extractors.insert(
      std::make_pair( s_nuclear_temp_value_key,
-      std::make_tuple( s_nuclear_temp_value_min_match_string, false,
+      std::make_tuple( s_nuclear_temp_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_nuclear_temperature)) )));
     
     data_extractors.insert(
      std::make_pair( s_restriction_energy_value_key,
-      std::make_tuple( s_restriction_energy_value_min_match_string, false,
+      std::make_tuple( s_restriction_energy_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_restriction_energy)) )));
 
     data_extractors.insert(
      std::make_pair( s_multiplier_value_key,
-      std::make_tuple( s_multiplier_value_min_match_string, false,
+      std::make_tuple( s_multiplier_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<DistMultiplierQuantity>,
                        std::placeholders::_1,
                        std::ref(d_multiplier)) )));

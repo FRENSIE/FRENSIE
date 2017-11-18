@@ -42,7 +42,7 @@ const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::
 template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution()
 { 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Basic Constructor (potentiall dangerous)
@@ -61,7 +61,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 				dependent_values,
 				interpret_dependent_values_as_cdf );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // CDF Constructor (potentially dangerous)
@@ -76,7 +76,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   this->initializeDistributionFromCDF( independent_quantities,
 				       dependent_values );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Constructor
@@ -91,7 +91,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   this->initializeDistribution( independent_quantities,
 				dependent_values );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -124,7 +124,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 
   this->initializeDistribution( input_indep_quantities, input_dep_quantities );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -145,7 +145,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 
   this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -519,13 +519,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
 
     data_extractors.insert(
      std::make_pair( s_indep_values_key,
-       std::make_tuple( s_indep_values_min_match_string, true,
+       std::make_tuple( s_indep_values_min_match_string, REQUIRED_DATA,
                   std::bind<void>( &ThisType::extractIndependentValuesFromNode,
                                    std::placeholders::_1,
                                    std::ref(independent_values) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_dep_values_key,
-       std::make_tuple( s_dep_values_min_match_string, true,
+       std::make_tuple( s_dep_values_min_match_string, REQUIRED_DATA,
                   std::bind<void>( &ThisType::extractDependentValuesFromNode,
                                    std::placeholders::_1,
                                    std::ref(dependent_values) ) ) ) );

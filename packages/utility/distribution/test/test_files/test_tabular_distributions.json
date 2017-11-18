@@ -1,0 +1,638 @@
+{
+    "LinLin":
+    {
+        "Distribution A": "{Tabular LinLin Distribution, {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 1.0, 2.0}}",
+        "Distribution B": "{tabular linlin distribution, {-1.0, 3i, 1.0}, {-pi, 3i, pi}}"
+        "Distribution C": "{Tabular LinLin, {0.0, 1.0}, {1.0r2}}",
+        "Distribution D": "{tabular linlin, {-1.0, 1.0}, {-1.0r2}}",
+        
+        "comment": "The following inline distributions are ill-formed",
+        "Distribution E": "{dummy, {1, 2}, {2, 1}}",
+        "Distribution F": "{Tabular LinLin}",
+        "Distribution G": "{Tabular LinLin, {1, 2}}",
+        "Distribution H": "{Tabular LinLin, {1}, {1}}",
+        "Distribution I": "{Tabular LinLin, {2, 1}, {1, 2}}",
+        "Distribution J": "{Tabular LinLin, {inf, inf}, {1, 2}}",
+        "Distribution K": "{Tabular LinLin, {1, inf}, {1, 2}}",
+        "Distribution L": "{Tabular LinLin, {1, 2}, {2}}",
+        "Distribution M": "{Tabular LinLin, {1, 2, 3}, {1, inf, 1}}",
+        
+        "Distribution N":
+        {
+            "type": "Tabular LinLin Distribution",
+            "independent values": "{-2.0, 1.0, 1.0, 2.0}",
+            "dependent values": "{2.0, 1.0, 1.0, 2.0}"
+        },
+        
+        "Distribution O":
+        {
+            "comment": "JSON arrays can also be used to specify values",
+            
+            "type": "tabular linlin distribution",
+            "independent values": [-1.0, 0.5, 0.0, 0.5, 1.0],
+            "dependent values": "{-pi, 3i, pi}"
+        },
+        
+        "Distibution P":
+        {
+            "type": "Tabular LinLin",
+            "indep": "{-1.0, 3i, 1.0}",
+            "dep": ["-pi", "-pi/2", 0.0, "pi/2", "pi"]
+        },
+        
+        "Distribution Q":
+        {
+            "comment": "The dummy key should be reported as unused",
+        
+            "type": "tabular linlin",
+            "indep": [-1.0,  0.5,     0.0, 0.5,    1.0],
+            "dep":   ["-pi", "-pi/2", 0.0, "pi/2", "pi"],
+            "dummy": ""
+        },
+        
+        "Distribution R":
+        {
+            "comment": "repeated keys will be reported as unused"
+            "type": "Tabular LinLin",
+            "indep": "{-1.0, 3i, 1.0}",
+            "dep": "{-pi, 3i, pi}",
+            
+            "independent values": 1,
+            "dependent values": "{1, 2}"
+        },
+        
+        "Distribution S":
+        {
+            "comment": "This distribution is ill-formed (incorrect type)",
+            "type": "dummy"
+        },
+        
+        "Distribution T":
+        {
+            "comment": "This distribution is ill-formed (no values)",
+            "type": "Tabular LinLin"
+        },
+
+        "Distribution U":
+        {
+            "comment": "This distribution is ill-formed (no dep. values)",
+            "type": "Tabular LinLin",
+            "indep": "{1.0, 3i, 5.0}"
+        },
+
+        "Distribution V":
+        {
+            "comment": "This distribution is ill-formed (no indep. values)",
+            "type": "Tabular LinLin",
+            "dep": "{1.0r4}"
+        },
+        
+        "Distribution W":
+        {
+            "comment": "This distribution is ill-formed (too few indep. values)",
+            "type": "Tabular LinLin",
+            "indep": [1.0],
+            "dep": [1.0]
+        },
+        
+        "Distribution X":
+        {
+            "comment": "This distribution is ill-formed (unsorted indep. values)",
+            "type": "Tabular LinLin",
+            "indep": [2.0, 1.0],
+            "dep": [1.0, 2.0]
+        },
+        
+        "Distribution Y":
+        {
+            "comment": "This distribution is ill-formed (inf start indep. value)",
+            "type": "Tabular LinLin",
+            "indep": "{inf, inf}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution Z":
+        {
+            "comment": "This distribution is ill-formed (inf end indep. value)",
+            "type": "Tabular LinLin",
+            "indep": "{1, inf}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution AA":
+        {
+            "comment": "This distribution is ill-formed (too few dep. values)",
+            "type": "Tabular LinLin",
+            "indep": "{1, 2}",
+            "dep": "{2}"
+        },
+        
+        "Distribution AB":
+        {
+            "comment": "This distribution is ill-formed (inf dep value)",
+            "type": "Tabular LinLin",
+            "indep": "{1, 2, 3}",
+            "dep": "{1, inf, 1}"
+        },
+
+        "Distribution AC":
+        {
+            "comment": "This distribution is ill-formed (neg dep value)",
+            "type": "Tabular LinLin",
+            "indep": "{1, 2, 3}",
+            "dep": "{1, -1, 1}"
+        },
+    },
+
+    "LinLog":
+    {
+        "Distribution A": "{Tabular LinLog Distribution, {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 1.0, 2.0}}",
+        "Distribution B": "{tabular linlog distribution, {-1.0, 3i, 1.0}, {pi/2, 3i, 2pi}}"
+        "Distribution C": "{Tabular LinLog, {0.0, 1.0}, {1.0r2}}",
+        "Distribution D": "{tabular linlog, {-1.0, 1.0}, {1.0r2}}",
+        
+        "comment": "The following inline distributions are ill-formed",
+        "Distribution E": "{dummy, {1, 2}, {2, 1}}",
+        "Distribution F": "{Tabular LinLog}",
+        "Distribution G": "{Tabular LinLog, {1, 2}}",
+        "Distribution H": "{Tabular LinLog, {1}, {1}}",
+        "Distribution I": "{Tabular LinLog, {2, 1}, {1, 2}}",
+        "Distribution J": "{Tabular LinLog, {inf, inf}, {1, 2}}",
+        "Distribution K": "{Tabular LinLog, {1, inf}, {1, 2}}",
+        "Distribution L": "{Tabular LinLog, {1, 2}, {2}}",
+        "Distribution M": "{Tabular LinLog, {1, 2, 3}, {1, inf, 1}}",
+        "Distribution N": "{Tabular LinLog, {1, 2, 3}, {1, 0, 1}}",
+        "Distribution O": "{Tabular LinLog, {1, 2, 3}, {1, -1, 1}}",
+        
+        "Distribution N":
+        {
+            "type": "Tabular LinLog Distribution",
+            "independent values": "{-2.0, 1.0, 1.0, 2.0}",
+            "dependent values": "{2.0, 1.0, 1.0, 2.0}"
+        },
+        
+        "Distribution O":
+        {
+            "comment": "JSON arrays can also be used to specify values",
+            
+            "type": "tabular linlog distribution",
+            "independent values": [-1.0, 0.5, 0.0, 0.5, 1.0],
+            "dependent values": "{pi/2, 3i, 2pi}"
+        },
+        
+        "Distibution P":
+        {
+            "type": "Tabular LinLog",
+            "indep": "{-1.0, 2i, 1.0}",
+            "dep": ["pi/2", "pi", "3pi/2", "2pi"]
+        },
+        
+        "Distribution Q":
+        {
+            "comment": "The dummy key should be reported as unused",
+        
+            "type": "tabular linlog",
+            "indep": [-1.0,  0.5,    0.0,     0.5,     1.0],
+            "dep":   ["pi", "5pi/4", "3pi/2", "7pi/4", "2pi"],
+            "dummy": ""
+        },
+        
+        "Distribution R":
+        {
+            "comment": "repeated keys will be reported as unused"
+            "type": "Tabular LinLog",
+            "indep": "{-1.0, 3i, 1.0}",
+            "dep": "{pi/2, 3i, 2pi}",
+            
+            "independent values": 1,
+            "dependent values": "{1, 2}"
+        },
+        
+        "Distribution S":
+        {
+            "comment": "This distribution is ill-formed (incorrect type)",
+            "type": "dummy"
+        },
+        
+        "Distribution T":
+        {
+            "comment": "This distribution is ill-formed (no values)",
+            "type": "Tabular LinLog"
+        },
+
+        "Distribution U":
+        {
+            "comment": "This distribution is ill-formed (no dep. values)",
+            "type": "Tabular LinLog",
+            "indep": "{1.0, 3i, 5.0}"
+        },
+
+        "Distribution V":
+        {
+            "comment": "This distribution is ill-formed (no indep. values)",
+            "type": "Tabular LinLog",
+            "dep": "{1.0r4}"
+        },
+        
+        "Distribution W":
+        {
+            "comment": "This distribution is ill-formed (too few indep. values)",
+            "type": "Tabular LinLog",
+            "indep": [1.0],
+            "dep": [1.0]
+        },
+        
+        "Distribution X":
+        {
+            "comment": "This distribution is ill-formed (unsorted indep. values)",
+            "type": "Tabular LinLog",
+            "indep": [2.0, 1.0],
+            "dep": [1.0, 2.0]
+        },
+        
+        "Distribution Y":
+        {
+            "comment": "This distribution is ill-formed (inf start indep. value)",
+            "type": "Tabular LinLog",
+            "indep": "{inf, inf}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution Z":
+        {
+            "comment": "This distribution is ill-formed (inf end indep. value)",
+            "type": "Tabular LinLog",
+            "indep": "{1, inf}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution AA":
+        {
+            "comment": "This distribution is ill-formed (too few dep. values)",
+            "type": "Tabular LinLog",
+            "indep": "{1, 2}",
+            "dep": "{2}"
+        },
+        
+        "Distribution AB":
+        {
+            "comment": "This distribution is ill-formed (inf dep value)",
+            "type": "Tabular LinLog",
+            "indep": "{1, 2, 3}",
+            "dep": "{1, inf, 1}"
+        },
+
+        "Distribution AC":
+        {
+            "comment": "This distribution is ill-formed (zero dep value)",
+            "type": "Tabular LinLog",
+            "indep": "{1, 2, 3}",
+            "dep": "{1, 0, 1}"
+        },
+
+        "Distribution AD":
+        {
+            "comment": "This distribution is ill-formed (neg dep value)",
+            "type": "Tabular LinLog",
+            "indep": "{1, 2, 3}",
+            "dep": "{1, -1, 1}"
+        },
+    },
+
+    "LogLin":
+    {
+        "Distribution A": "{Tabular LogLin Distribution, {1e-4, 3l, 1.0}, {2.0, 1.0, 0.0, 2.0}}",
+        "Distribution B": "{tabular loglin distribution, {1e-4, 3l, 1.0}, {-pi, 3i, pi}}"
+        "Distribution C": "{Tabular LogLin, {1.0, 10.0}, {1.0r2}}",
+        "Distribution D": "{tabular loglin, {0.1, 1.0}, {-1.0r2}}",
+        
+        "comment": "The following inline distributions are ill-formed",
+        "Distribution E": "{dummy, {1, 10}, {2, 1}}",
+        "Distribution F": "{Tabular LogLin}",
+        "Distribution G": "{Tabular LogLin, {1, 10}}",
+        "Distribution H": "{Tabular LogLin, {1}, {1}}",
+        "Distribution I": "{Tabular LogLin, {10, 1}, {1, 2}}",
+        "Distribution J": "{Tabular LogLin, {-1.0, 1.0}, {1, 2}}",
+        "Distribution K": "{Tabular LogLin, {0.0, 1.0}, {1, 2}}",
+        "Distribution L": "{Tabular LogLin, {inf, inf}, {1, 2}}",
+        "Distribution M": "{Tabular LogLin, {1, inf}, {1, 2}}",
+        "Distribution N": "{Tabular LogLin, {1, 10}, {2}}",
+        "Distribution O": "{Tabular LogLin, {1, 10, 100}, {1, -1, 1}}",
+        "Distribution P": "{Tabular LogLin, {1, 10, 100}, {1, inf, 1}}",
+        
+        "Distribution Q":
+        {
+            "type": "Tabular LogLin Distribution",
+            "independent values": "{1e-4, 3l, 1.0}"
+            "dependent values": "{2.0, 1.0, 0.0, 2.0}"
+        },
+        
+        "Distribution R":
+        {
+            "comment": "JSON arrays can also be used to specify values",
+            
+            "type": "tabular loglin distribution",
+            "independent values": [1e-4, 1e-3, 1e-2, 1e-1, 1.0],
+            "dependent values": "{-pi, 3i, pi}"
+        },
+        
+        "Distibution S":
+        {
+            "type": "Tabular LogLin",
+            "indep": "{1e-4, 3l, 1.0}",
+            "dep": ["-pi", "-pi/2", 0.0, "pi/2", "pi"]
+        },
+        
+        "Distribution T":
+        {
+            "comment": "The dummy key should be reported as unused",
+        
+            "type": "tabular loglin",
+            "indep": [1e-4, 1e-3, 1e-2, 1e-1, 1.0],
+            "dep":   ["-pi", "-pi/2", 0.0, "pi/2", "pi"],
+            "dummy": ""
+        },
+        
+        "Distribution U":
+        {
+            "comment": "repeated keys will be reported as unused"
+            "type": "Tabular LogLin",
+            "indep": "{1e-4, 3l, 1.0}",
+            "dep": "{-pi, 3i, pi}",
+            
+            "independent values": 1,
+            "dependent values": "{1, 2}"
+        },
+        
+        "Distribution V":
+        {
+            "comment": "This distribution is ill-formed (incorrect type)",
+            "type": "dummy"
+        },
+        
+        "Distribution W":
+        {
+            "comment": "This distribution is ill-formed (no values)",
+            "type": "Tabular LogLin"
+        },
+
+        "Distribution X":
+        {
+            "comment": "This distribution is ill-formed (no dep. values)",
+            "type": "Tabular LogLin",
+            "indep": "{1.0, 3i, 5.0}"
+        },
+
+        "Distribution V":
+        {
+            "comment": "This distribution is ill-formed (no indep. values)",
+            "type": "Tabular LogLin",
+            "dep": "{1.0r4}"
+        },
+        
+        "Distribution W":
+        {
+            "comment": "This distribution is ill-formed (too few indep. values)",
+            "type": "Tabular LogLin",
+            "indep": [1.0],
+            "dep": [1.0]
+        },
+        
+        "Distribution X":
+        {
+            "comment": "This distribution is ill-formed (unsorted indep. values)",
+            "type": "Tabular LogLin",
+            "indep": [10.0, 1.0],
+            "dep": [1.0, 2.0]
+        },
+
+        "Distribution Y":
+        {
+            "comment": "This distribution is ill-formed (neg start indep. value)",
+            "type": "Tabular LogLin",
+            "indep": "{-1.0, 1.0}",
+            "dep": "{1, 2}"
+        },
+
+        "Distribution Z":
+        {
+            "comment": "This distribution is ill-formed (zero start indep. value)",
+            "type": "Tabular LogLin",
+            "indep": "{0.0, 1.0}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution AA":
+        {
+            "comment": "This distribution is ill-formed (inf start indep. value)",
+            "type": "Tabular LogLin",
+            "indep": "{inf, inf}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution AB":
+        {
+            "comment": "This distribution is ill-formed (inf end indep. value)",
+            "type": "Tabular LogLin",
+            "indep": "{1, inf}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution AC":
+        {
+            "comment": "This distribution is ill-formed (too few dep. values)",
+            "type": "Tabular LogLin",
+            "indep": "{1, 10}",
+            "dep": "{2}"
+        },
+
+        "Distribution AD":
+        {
+            "comment": "This distribution is ill-formed (neg dep value)",
+            "type": "Tabular LogLin",
+            "indep": "{1, 10, 100}",
+            "dep": "{1, -1, 1}"
+        },
+        
+        "Distribution AE":
+        {
+            "comment": "This distribution is ill-formed (inf dep value)",
+            "type": "Tabular LogLin",
+            "indep": "{1, 10, 100}",
+            "dep": "{1, inf, 1}"
+        }
+    },
+
+    "LogLog":
+    {
+        "Distribution A": "{Tabular LogLog Distribution, {1e-4, 3l, 1.0}, {1.0, 3l, 1e3}}",
+        "Distribution B": "{tabular loglog distribution, {1e-4, 3l, 1.0}, {pi/2, 3i, 2pi}}"
+        "Distribution C": "{Tabular LogLog, {1.0, 10.0}, {1.0r2}}",
+        "Distribution D": "{tabular loglog, {0.1, 1.0}, {1.0r2}}",
+        
+        "comment": "The following inline distributions are ill-formed",
+        "Distribution E": "{dummy, {1, 10}, {100, 10}}",
+        "Distribution F": "{Tabular LogLog}",
+        "Distribution G": "{Tabular LogLog, {1, 10}}",
+        "Distribution H": "{Tabular LogLog, {1}, {1}}",
+        "Distribution I": "{Tabular LogLog, {10, 1}, {1, 2}}",
+        "Distribution J": "{Tabular LogLog, {-1.0, 1.0}, {1, 2}}",
+        "Distribution K": "{Tabular LogLog, {0.0, 1.0}, {1, 2}}",
+        "Distribution L": "{Tabular LogLog, {inf, inf}, {1, 2}}",
+        "Distribution M": "{Tabular LogLog, {1, inf}, {1, 2}}",
+        "Distribution N": "{Tabular LogLog, {1, 10}, {2}}",
+        "Distribution O": "{Tabular LogLog, {1, 10, 100}, {1, -1, 1}}",
+        "Distribution P": "{Tabular LogLog, {1, 10, 100}, {1, 0, 1}}",
+        "Distribution Q": "{Tabular LogLog, {1, 10, 100}, {1, inf, 1}}",
+        
+        "Distribution R":
+        {
+            "type": "Tabular LogLog Distribution",
+            "independent values": "{1e-4, 3l, 1.0}"
+            "dependent values": "{2.0, 1.0, 0.0, 2.0}"
+        },
+        
+        "Distribution S":
+        {
+            "comment": "JSON arrays can also be used to specify values",
+            
+            "type": "tabular loglog distribution",
+            "independent values": [1e-4, 1e-3, 1e-2, 1e-1, 1.0],
+            "dependent values": "{pi/2, 3i, 2pi}"
+        },
+        
+        "Distibution T":
+        {
+            "type": "Tabular LogLog",
+            "indep": "{1e-4, 3l, 1.0}",
+            "dep": [1e-3, 1e-2, 1e-1, 1.0, 10.0]
+        },
+        
+        "Distribution U":
+        {
+            "comment": "The dummy key should be reported as unused",
+        
+            "type": "tabular loglog",
+            "indep": [1e-4, 1e-3, 1e-2, 1e-1, 1.0],
+            "dep":   [1e-3, 1e-2, 1e-1, 1.0, 10.0]
+            "dummy": ""
+        },
+        
+        "Distribution V":
+        {
+            "comment": "repeated keys will be reported as unused"
+            "type": "Tabular LogLog",
+            "indep": "{1e-4, 3l, 1.0}",
+            "dep": "{1e-3, 3l, 1e1}",
+            
+            "independent values": 1,
+            "dependent values": "{1, 2}"
+        },
+        
+        "Distribution W":
+        {
+            "comment": "This distribution is ill-formed (incorrect type)",
+            "type": "dummy"
+        },
+        
+        "Distribution X":
+        {
+            "comment": "This distribution is ill-formed (no values)",
+            "type": "Tabular LogLog"
+        },
+
+        "Distribution Y":
+        {
+            "comment": "This distribution is ill-formed (no dep. values)",
+            "type": "Tabular LogLog",
+            "indep": "{1.0, 3i, 5.0}"
+        },
+
+        "Distribution Z":
+        {
+            "comment": "This distribution is ill-formed (no indep. values)",
+            "type": "Tabular LogLog",
+            "dep": "{1.0r4}"
+        },
+        
+        "Distribution AA":
+        {
+            "comment": "This distribution is ill-formed (too few indep. values)",
+            "type": "Tabular LogLog",
+            "indep": [1.0],
+            "dep": [1.0]
+        },
+        
+        "Distribution AB":
+        {
+            "comment": "This distribution is ill-formed (unsorted indep. values)",
+            "type": "Tabular LogLog",
+            "indep": [10.0, 1.0],
+            "dep": [1.0, 2.0]
+        },
+
+        "Distribution AC":
+        {
+            "comment": "This distribution is ill-formed (neg start indep. value)",
+            "type": "Tabular LogLog",
+            "indep": "{-1.0, 1.0}",
+            "dep": "{1, 2}"
+        },
+
+        "Distribution AD":
+        {
+            "comment": "This distribution is ill-formed (zero start indep. value)",
+            "type": "Tabular LogLog",
+            "indep": "{0.0, 1.0}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution AE":
+        {
+            "comment": "This distribution is ill-formed (inf start indep. value)",
+            "type": "Tabular LogLog",
+            "indep": "{inf, inf}",
+            "dep": "{1, 2}"
+        },
+
+        "Distribution AF":
+        {
+            "comment": "This distribution is ill-formed (inf end indep. value)",
+            "type": "Tabular LogLog",
+            "indep": "{1, inf}",
+            "dep": "{1, 2}"
+        },
+        
+        "Distribution AG":
+        {
+            "comment": "This distribution is ill-formed (too few dep. values)",
+            "type": "Tabular LogLog",
+            "indep": "{1, 10}",
+            "dep": "{2}"
+        },
+
+        "Distribution AH":
+        {
+            "comment": "This distribution is ill-formed (neg dep value)",
+            "type": "Tabular LogLog",
+            "indep": "{1, 10, 100}",
+            "dep": "{1, -1, 1}"
+        },
+
+        "Distribution AI":
+        {
+            "comment": "This distribution is ill-formed (zero dep value)",
+            "type": "Tabular LogLog",
+            "indep": "{1, 10, 100}",
+            "dep": "{1, 0, 1}"
+        },
+        
+        "Distribution AJ":
+        {
+            "comment": "This distribution is ill-formed (inf dep value)",
+            "type": "Tabular LogLog",
+            "indep": "{1, 10, 100}",
+            "dep": "{1, inf, 1}"
+        }
+    }
+},
