@@ -91,7 +91,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
   // Make sure that the min indep value is < the max indep value
   testPrecondition( min_independent_value < max_independent_value );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareNormalDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -121,7 +121,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
   // Make sure that the standard deviation is positive
   testPrecondition( dist_instance.d_standard_deviation > InputIQT::zero() );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareNormalDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -141,7 +141,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
   // Make sure that the standard deviation is positive
   testPrecondition( unitless_dist_instance.d_standard_deviation > 0.0 );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareNormalDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -496,31 +496,31 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromPropertyTre
 
     data_extractors.insert(
      std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, false,
+      std::make_tuple( s_const_multiplier_value_min_match_string, OPTIONAL_DATA,
          std::bind<void>(&ThisType::extractShapeParameterFromNode<DepQuantity>,
                          std::placeholders::_1,
                          std::ref(d_constant_multiplier)) )));
     data_extractors.insert(
      std::make_pair( s_mean_value_key,
-      std::make_tuple( s_mean_value_min_match_string, false,
+      std::make_tuple( s_mean_value_min_match_string, OPTIONAL_DATA,
          std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                          std::placeholders::_1,
                          std::ref(d_mean)) )));
     data_extractors.insert(
      std::make_pair( s_standard_deviation_value_key,
-      std::make_tuple( s_standard_deviation_value_min_match_string, false,
+      std::make_tuple( s_standard_deviation_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_standard_deviation)) )));
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, false,
+      std::make_tuple( s_lower_limit_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_min_independent_value)) )));
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, false,
+      std::make_tuple( s_upper_limit_value_min_match_string, OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_max_independent_value)) )));

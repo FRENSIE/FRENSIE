@@ -50,7 +50,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   testPrecondition( !QuantityTraits<InputDepQuantity>::isnaninf( multiplier ));
   testPrecondition( multiplier != QuantityTraits<InputDepQuantity>::zero() );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -77,7 +77,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   testPrecondition( !InputDQT::isnaninf( dist_instance.d_multiplier ) );
   testPrecondition( dist_instance.d_multiplier != InputDQT::zero() );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -93,7 +93,7 @@ const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int )
   testPrecondition( !QT::isnaninf( unitless_dist_instance.d_multiplier ) );
   testPrecondition( unitless_dist_instance.d_multiplier != 0.0 );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -379,15 +379,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
 
     data_extractors.insert(
      std::make_pair( s_location_value_key,
-        std::make_tuple( s_location_value_min_match_string,
-                         false,
-                         std::bind<void>( &ThisType::setLocationValueUsingNode,
-                                          std::ref(*this),
-                                          std::placeholders::_1 ) ) ) );
+      std::make_tuple( s_location_value_min_match_string, OPTIONAL_DATA,
+                       std::bind<void>( &ThisType::setLocationValueUsingNode,
+                                        std::ref(*this),
+                                        std::placeholders::_1 ) ) ) );
     data_extractors.insert(
      std::make_pair( s_multiplier_value_key,
-      std::make_tuple( s_multiplier_value_min_match_string,
-                       false,
+      std::make_tuple( s_multiplier_value_min_match_string, OPTIONAL_DATA,
                        std::bind<void>( &ThisType::setMultiplierValueUsingNode,
                                         std::ref(*this),
                                         std::placeholders::_1 ) ) ) );

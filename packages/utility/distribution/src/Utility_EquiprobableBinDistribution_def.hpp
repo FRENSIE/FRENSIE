@@ -36,7 +36,7 @@ const std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,Dependent
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution()
 { 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Basic constructor
@@ -47,7 +47,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 {
   this->initializeDistribution( bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Constructor
@@ -59,7 +59,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 {
   this->initializeDistribution( bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -77,7 +77,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 {
   this->initializeDistribution( dist_instance.d_bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -88,7 +88,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 {
   this->initializeDistribution( unitless_dist_instance.d_bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -444,7 +444,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPr
 
     data_extractors.insert(
      std::make_pair( s_bin_boundary_values_key,
-      std::make_tuple( s_bin_boundary_min_match_string, true,
+      std::make_tuple( s_bin_boundary_min_match_string, REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractBinBoundariesFromNode,
                                        std::placeholders::_1,
                                        std::ref(bin_boundaries) ) ) ) );

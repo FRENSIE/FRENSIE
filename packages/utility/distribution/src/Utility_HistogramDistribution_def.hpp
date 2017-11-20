@@ -48,7 +48,7 @@ const std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>:
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution()
 { 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Basic constructor (potentially dangerous)
@@ -77,7 +77,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 				bin_values,
 				interpret_dependent_values_as_cdf );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // CDF constructor
@@ -106,7 +106,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 
   this->initializeDistributionFromCDF( bin_boundaries, cdf_values );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Constructor
@@ -128,7 +128,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 
   this->initializeDistribution( bin_boundaries, bin_values );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -161,7 +161,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 
   this->initializeDistribution( input_bin_boundaries, input_bin_values );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -181,7 +181,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 							  input_bin_values );
 
   this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> );
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -547,19 +547,19 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromProperty
 
     data_extractors.insert(
      std::make_pair( s_bin_boundary_values_key,
-      std::make_tuple( s_bin_boundary_values_min_match_string, true,
+      std::make_tuple( s_bin_boundary_values_min_match_string, REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractValuesFromNode,
                                        std::placeholders::_1,
                                        std::ref(bin_boundaries) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_bin_values_key,
-      std::make_tuple( s_bin_values_min_match_string, true,
+      std::make_tuple( s_bin_values_min_match_string, REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractValuesFromNode,
                                        std::placeholders::_1,
                                        std::ref(bin_values) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_cdf_specified_value_key,
-      std::make_tuple( s_cdf_specified_value_min_match_string, false,
+      std::make_tuple( s_cdf_specified_value_min_match_string, OPTIONAL_DATA,
                        std::bind<void>(&ThisType::extractCDFBooleanFromNode,
                                        std::placeholders::_1,
                                        std::ref(cdf_specified) ) ) ) );
