@@ -43,9 +43,9 @@ struct QuantityTypeList
 {
   typedef boost::mpl::list<boost::units::quantity<Unit,float>, boost::units::quantity<Unit,double> > BasicFloatingPointQuantityTypes;
   
-  typedef boost::mpl::list<boost::units::quantity<Unit,int>, boost::units::quantity<Unit,unsigned long>, boost::units::quantity<Unit,float>, boost::units::quantity<Unit,double> > BasicQuantityTypes;
+  typedef boost::mpl::list<boost::units::quantity<Unit,int>, boost::units::quantity<Unit,float>, boost::units::quantity<Unit,double> > BasicQuantityTypes;
 
-  typedef boost::mpl::list<boost::units::quantity<Unit,std::complex<int> >, boost::units::quantity<Unit,std::complex<unsigned long> >, boost::units::quantity<Unit,std::complex<float> >, boost::units::quantity<Unit,std::complex<double> > > ComplexQuantityTypes;
+  typedef boost::mpl::list<boost::units::quantity<Unit,std::complex<int> >, boost::units::quantity<Unit,std::complex<float> >, boost::units::quantity<Unit,std::complex<double> > > ComplexQuantityTypes;
 
   typedef typename boost::mpl::insert_range<BasicQuantityTypes, typename boost::mpl::end<BasicQuantityTypes>::type,ComplexQuantityTypes>::type type;
 };

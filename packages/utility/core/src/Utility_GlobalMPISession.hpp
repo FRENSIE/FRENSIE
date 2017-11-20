@@ -19,6 +19,7 @@
 
 // FRENSIE Includes
 #include "Utility_Timer.hpp"
+#include "Utility_Vector.hpp"
 
 /*! \defgroup mpi MPI
  * 

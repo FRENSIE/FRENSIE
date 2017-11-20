@@ -1097,30 +1097,52 @@ BOOST_AUTO_TEST_SUITE( UnorderedSet)
 // Check that a unordered_set can be converted to a string
 BOOST_AUTO_TEST_CASE( toString )
 {
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<short>( {-1, 2} ) ),
-                       "{2, -1}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<unsigned short>( {0, 10, 100} ) ),
-                       "{100, 0, 10}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<int>( {-11111, 0, 11111, 22222} ) ),
-                       "{22222, 11111, 0, -11111}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<unsigned int>( {0, 10, 100, 1000, 10000} ) ),
-                       "{0, 10000, 100, 10, 1000}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<long>( {-11111, 0, 11111, 22222} ) ),
-                       "{22222, 11111, 0, -11111}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<unsigned long>( {0, 10, 100, 1000, 10000} ) ),
-                       "{0, 10000, 100, 10, 1000}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<long long>( {-10000000000, 0, 10000000000} ) ),
-                       "{10000000000, -10000000000, 0}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<unsigned long long>( {0, 1000000000, 1000000000000} ) ),
-                       "{1000000000000, 0, 1000000000}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<float>( {-1.0f, 0.0f, 1.0f} ) ),
-                       "{1.000000000e+00, -1.000000000e+00, 0.000000000e+00}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<double>( {-1.0, 0.0, 1.0} ) ),
-                       "{1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<char>( {'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g' } ) ),
-                       "{n, g, r,  , i, t, s, e, T}" );
-  BOOST_CHECK_EQUAL( Utility::toString( std::unordered_set<std::string>( {"Test", "string"} ) ),
-                       "{string, Test}" );
+  std::string set_string =
+    Utility::toString( std::unordered_set<short>( {-1, 2} ) );
+  BOOST_CHECK( set_string == "{-1, 2}" || set_string == "{2, -1}" );
+
+  set_string = Utility::toString( std::unordered_set<unsigned short>( {0, 10, 100} ) );
+  BOOST_CHECK( set_string == "{0, 10, 100}" ||
+               set_string == "{100, 0, 10}" ||
+               set_string == "{10, 100, 0}" ||
+               set_string == "{0, 100, 10}" ||
+               set_string == "{100, 10, 0}" ||
+               set_string ==  "{10, 0, 100}" );
+
+  set_string = Utility::toString( std::unordered_set<int>( {-11111, 0} ) );
+  BOOST_CHECK( set_string == "{-11111, 0}" || set_string == "{0, -11111}" );
+
+  set_string = Utility::toString( std::unordered_set<unsigned int>( {1000, 10000} ) );
+  BOOST_CHECK( set_string == "{1000, 10000}" || "{10000, 1000}" );
+
+  set_string = Utility::toString( std::unordered_set<long>( {11111, 22222} ) );
+  BOOST_CHECK( set_string == "{11111, 22222}" ||
+               set_string == "{22222, 11111}" );
+
+  set_string = Utility::toString( std::unordered_set<unsigned long>( {10, 10000} ) );
+  BOOST_CHECK( set_string == "{10, 10000}" || set_string == "{10000, 10}" );
+
+  set_string = Utility::toString( std::unordered_set<long long>( {-10000000000, 10000000000} ) );
+  BOOST_CHECK( set_string == "{-10000000000, 10000000000}" ||
+               set_string == "{10000000000, -10000000000}" );
+
+  set_string = Utility::toString( std::unordered_set<unsigned long long>( {100, 1000000000000} ) );
+  BOOST_CHECK( set_string == "{100, 1000000000000}" ||
+               set_string == "{1000000000000, 100}" );
+
+  set_string = Utility::toString( std::unordered_set<float>( {-1.0f, 1.0f} ) );
+  BOOST_CHECK( set_string == "{-1.000000000e+00, 1.000000000e+00}" ||
+               set_string == "{1.000000000e+00, -1.000000000e+00}" );
+
+  set_string = Utility::toString( std::unordered_set<double>( {-1.0, 1.0} ) );
+  BOOST_CHECK( set_string == "{-1.000000000000000000e+00, 1.000000000000000000e+00}" ||
+               set_string == "{1.000000000000000000e+00, -1.000000000000000000e+00}" );
+
+  set_string = Utility::toString( std::unordered_set<char>( {'a', 'b'} ) );
+  BOOST_CHECK( set_string == "{a, b}" || set_string == "{b, a}" );
+
+  set_string = Utility::toString( std::unordered_set<std::string>( {"Test", "string"} ) );
+  BOOST_CHECK( set_string == "{Test, string}" || set_string == "{string, Test}" );
 }
 
 //---------------------------------------------------------------------------//
@@ -1131,86 +1153,83 @@ BOOST_AUTO_TEST_CASE( toStream )
 
   Utility::toStream( oss, std::unordered_set<short>( {-1, 2} ) );
   
-  BOOST_CHECK_EQUAL( oss.str(), "{2, -1}" );
+  BOOST_CHECK( oss.str() == "{-1, 2}" || oss.str() == "{2, -1}" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, std::unordered_set<unsigned short>( {0, 10, 100} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{100, 0, 10}" );
+  BOOST_CHECK( oss.str() == "{0, 10, 100}" ||
+               oss.str() == "{100, 0, 10}" ||
+               oss.str() == "{10, 100, 0}" ||
+               oss.str() == "{0, 100, 10}" ||
+               oss.str() == "{100, 10, 0}" ||
+               oss.str() ==  "{10, 0, 100}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<int>( {-11111, 0, 11111, 22222} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{22222, 11111, 0, -11111}" );
+  Utility::toStream( oss, std::unordered_set<int>( {-11111, 0} ) );
+  BOOST_CHECK( oss.str() == "{-11111, 0}" || oss.str() == "{0, -11111}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<unsigned int>( {0, 10, 100, 1000, 10000} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{0, 10000, 100, 10, 1000}" );
+  Utility::toStream( oss, std::unordered_set<unsigned int>( {1000, 10000} ) );
+  BOOST_CHECK( oss.str() == "{1000, 10000}" || "{10000, 1000}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<long>( {-11111, 0, 11111, 22222} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{22222, 11111, 0, -11111}" );
+  Utility::toStream( oss, std::unordered_set<long>( {11111, 22222} ) );
+  BOOST_CHECK( oss.str() == "{11111, 22222}" ||
+               oss.str() == "{22222, 11111}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<unsigned long>( {0, 10, 100, 1000, 10000} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{0, 10000, 100, 10, 1000}" );
+  Utility::toStream( oss, std::unordered_set<unsigned long>( {10, 10000} ) );
+  BOOST_CHECK( oss.str() == "{10, 10000}" || oss.str() == "{10000, 10}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<long long>( {-10000000000, 0, 10000000000} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{10000000000, -10000000000, 0}" );
+  Utility::toStream( oss, std::unordered_set<long long>( {-10000000000, 10000000000} ) );
+  BOOST_CHECK( oss.str() == "{-10000000000, 10000000000}" ||
+               oss.str() == "{10000000000, -10000000000}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<unsigned long long>( {0, 1000000000, 1000000000000} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{1000000000000, 0, 1000000000}" );
+  Utility::toStream( oss, std::unordered_set<unsigned long long>( {100, 1000000000000} ) );
+  BOOST_CHECK( oss.str() == "{100, 1000000000000}" ||
+               oss.str() == "{1000000000000, 100}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<float>( {-1.0f, 0.0f, 1.0f} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(),
-                       "{1.000000000e+00, -1.000000000e+00, 0.000000000e+00}" );
+  Utility::toStream( oss, std::unordered_set<float>( {-1.0f, 1.0f} ) );
+  BOOST_CHECK( oss.str() == "{-1.000000000e+00, 1.000000000e+00}" ||
+               oss.str() == "{1.000000000e+00, -1.000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<double>( {-1.0, 0.0, 1.0} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(),
-                       "{1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00}" );
+  Utility::toStream( oss, std::unordered_set<double>( {-1.0, 1.0} ) );
+  BOOST_CHECK( oss.str() == "{-1.000000000000000000e+00, 1.000000000000000000e+00}" ||
+               oss.str() == "{1.000000000000000000e+00, -1.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
-  Utility::toStream( oss, std::unordered_set<char>( {'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g' } ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{n, g, r,  , i, t, s, e, T}" );
+  Utility::toStream( oss, std::unordered_set<char>( {'a', 'b'} ) );
+  BOOST_CHECK( oss.str() == "{a, b}" || oss.str() == "{b, a}" );
 
   oss.str( "" );
   oss.clear();
 
   Utility::toStream( oss, std::unordered_set<std::string>( {"Test", "string"} ) );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{string, Test}" );
+  BOOST_CHECK( oss.str() == "{Test, string}" || oss.str() == "{string, Test}" );
 }
 
 //---------------------------------------------------------------------------//
@@ -1386,87 +1405,83 @@ BOOST_AUTO_TEST_CASE( ostream )
   std::ostringstream oss;
 
   oss << std::unordered_set<short>( {-1, 2} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{2, -1}" );
+  BOOST_CHECK( oss.str() == "{-1, 2}" || oss.str() == "{2, -1}" );
 
   oss.str( "" );
   oss.clear();
 
   oss << std::unordered_set<unsigned short>( {0, 10, 100} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{100, 0, 10}" );
+  BOOST_CHECK( oss.str() == "{0, 10, 100}" ||
+               oss.str() == "{100, 0, 10}" ||
+               oss.str() == "{10, 100, 0}" ||
+               oss.str() == "{0, 100, 10}" ||
+               oss.str() == "{100, 10, 0}" ||
+               oss.str() ==  "{10, 0, 100}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<int>( {-11111, 0, 11111, 22222} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{22222, 11111, 0, -11111}" );
+  oss << std::unordered_set<int>( {-11111, 0} );
+  BOOST_CHECK( oss.str() == "{-11111, 0}" || oss.str() == "{0, -11111}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<unsigned int>( {0, 10, 100, 1000, 10000} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{0, 10000, 100, 10, 1000}" );
+  oss << std::unordered_set<unsigned int>( {1000, 10000} );
+  BOOST_CHECK( oss.str() == "{1000, 10000}" || "{10000, 1000}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<long>( {-11111, 0, 11111, 22222} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{22222, 11111, 0, -11111}" );
+  oss << std::unordered_set<long>( {11111, 22222} );
+  BOOST_CHECK( oss.str() == "{11111, 22222}" ||
+               oss.str() == "{22222, 11111}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<unsigned long>( {0, 10, 100, 1000, 10000} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{0, 10000, 100, 10, 1000}" );
+  oss << std::unordered_set<unsigned long>( {10, 10000} );
+  BOOST_CHECK( oss.str() == "{10, 10000}" || oss.str() == "{10000, 10}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<long long>( {-10000000000, 0, 10000000000} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{10000000000, -10000000000, 0}" );
+  oss << std::unordered_set<long long>( {-10000000000, 10000000000} );
+  BOOST_CHECK( oss.str() == "{-10000000000, 10000000000}" ||
+               oss.str() == "{10000000000, -10000000000}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<unsigned long long>( {0, 1000000000, 1000000000000} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{1000000000000, 0, 1000000000}" );
+  oss << std::unordered_set<unsigned long long>( {100, 1000000000000} );
+  BOOST_CHECK( oss.str() == "{100, 1000000000000}" ||
+               oss.str() == "{1000000000000, 100}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<float>( {-1.0f, 0.0f, 1.0f} );
-  
-  BOOST_CHECK_EQUAL( oss.str(),
-                       "{1.000000000e+00, -1.000000000e+00, 0.000000000e+00}" );
+  oss << std::unordered_set<float>( {-1.0f, 1.0f} );
+  BOOST_CHECK( oss.str() == "{-1.000000000e+00, 1.000000000e+00}" ||
+               oss.str() == "{1.000000000e+00, -1.000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<double>( {-1.0, 0.0, 1.0} );
-  
-  BOOST_CHECK_EQUAL( oss.str(),
-                       "{1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00}" );
+  oss << std::unordered_set<double>( {-1.0, 1.0} );
+  BOOST_CHECK( oss.str() == "{-1.000000000000000000e+00, 1.000000000000000000e+00}" ||
+               oss.str() == "{1.000000000000000000e+00, -1.000000000000000000e+00}" );
 
   oss.str( "" );
   oss.clear();
 
-  oss << std::unordered_set<char>( {'T', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g' } );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{n, g, r,  , i, t, s, e, T}" );
+  oss << std::unordered_set<char>( {'a', 'b'} );
+  BOOST_CHECK( oss.str() == "{a, b}" || oss.str() == "{b, a}" );
 
   oss.str( "" );
   oss.clear();
 
   oss << std::unordered_set<std::string>( {"Test", "string"} );
-  
-  BOOST_CHECK_EQUAL( oss.str(), "{string, Test}" );
+  BOOST_CHECK( oss.str() == "{Test, string}" || oss.str() == "{string, Test}" );
 }
 
 //---------------------------------------------------------------------------//

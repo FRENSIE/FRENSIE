@@ -20,7 +20,6 @@ namespace Utility{
 
 // Constructor
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
 HDF5IArchiveImpl<Archive>::HDF5IArchiveImpl( const std::string& hdf5_filename,
                                              unsigned flags )
   : boost::archive::detail::common_iarchive<Archive>( flags ),
@@ -117,27 +116,26 @@ inline void HDF5IArchiveImpl<Archive>::load_array(
  */
 template<typename Archive>
 template<typename T>
-inline void HDF5IArchiveImpl<Archive>::load_override( T& t )
+inline void HDF5IArchiveImpl<Archive>::load_override( T& t, BOOST_PFTO int )
 {
   testStaticPrecondition((boost::serialization::is_wrapper<T>::type::value));
 
   // This should never be called
-  this->CommonIArchive::load_override( t );
+  this->CommonIArchive::load_override( t, 0 );
 }
 
 // Load a type that is wrapped in a boost::serialization::nvp
 template<typename Archive>
 template<typename T>
 inline void HDF5IArchiveImpl<Archive>::load_override(
-                                        const boost::serialization::nvp<T>& t )
+                        const boost::serialization::nvp<T>& t, BOOST_PFTO int )
 {
   this->loadIntercept( t.value(), typename std::conditional<IsTuple<T>::value && Utility::HDF5TypeTraits<T>::IsSpecialized::value,std::true_type,std::false_type>::type() );
 }
 
 // Load a boost::archive::object_id_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t, BOOST_PFTO int )
 {
   unsigned i;
   this->load(i);
@@ -147,8 +145,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t
 
 // Load a boost::archive::object_reference_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_type& t, BOOST_PFTO int )
 {
   unsigned i;
   this->load(i);
@@ -158,8 +155,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_
 
 // Load a boost::archive::version_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t, BOOST_PFTO int )
 {
   unsigned i;
   this->load(i);
@@ -169,8 +165,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t )
 
 // Load a boost::archive::class_id_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_type& t, BOOST_PFTO int )
 {
   size_t i;
   this->load(i);
@@ -180,8 +175,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_type& t 
 
 // Load a boost::archive::class_id_optional_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_optional_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_optional_type& t, BOOST_PFTO int )
 {
   // Ignore the reading of this type - it is not needed by this archive type
   // Note: this implementation of this method is similar to the implementation
@@ -196,8 +190,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_optional
 
 // Load a boost::archive::class_id_reference_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_reference_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_reference_type& t, BOOST_PFTO int )
 {
   size_t i;
   this->load(i);
@@ -207,8 +200,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_referenc
 
 // Load a boost::archive::class_name_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& t, BOOST_PFTO int )
 {
   std::string s;
   s.reserve(BOOST_SERIALIZATION_MAX_KEY_SIZE);
@@ -226,8 +218,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& 
 
 // Load a boost::archive::tracking_type attribute
 template<typename Archive>
-BOOST_ARCHIVE_OR_WARCHIVE_DECL
-void HDF5IArchiveImpl<Archive>::load_override( boost::archive::tracking_type& t )
+void HDF5IArchiveImpl<Archive>::load_override( boost::archive::tracking_type& t, BOOST_PFTO int )
 {
   bool i;
   this->load(i);
@@ -290,7 +281,7 @@ template<typename Archive>
 template<typename T>
 void HDF5IArchiveImpl<Archive>::loadIntercept( T& t, std::false_type is_fast_serializable_tuple )
 {
-  this->CommonIArchive::load_override(t);
+  this->CommonIArchive::load_override(t, 0);
 }
 
 // Load implementation

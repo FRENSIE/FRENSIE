@@ -32,7 +32,7 @@ MACRO(ENABLE_BOOST_SUPPORT)
     UNSET(Boost_INCLUDE_DIRS)
 
     # Find the Boost package and the required components
-    SET(BOOST_COMPONENTS_LIST log program_options serialization)
+    SET(BOOST_COMPONENTS_LIST log program_options serialization system thread)
 
     IF(FRENSIE_ENABLE_MPI)
       SET(BOOST_COMPONENTS_LIST ${BOOST_COMPONENTS_LIST} mpi)

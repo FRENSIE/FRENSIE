@@ -98,7 +98,7 @@ struct OpaqueHDF5TypeTraits
   typedef std::false_type UsesCustomInternalType;
 
   //! Returns the HDF5 data type object corresponding to opaque type T
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_OPAQUE; }
 
   //! Initialize internal data
@@ -175,7 +175,7 @@ struct HDF5TypeTraits<bool>
   typedef std::true_type UsesCustomInternalType;
   
   //! Returns the HDF5 data type object corresponding to bool
-  static H5::EnumType dataType();
+  static const H5::EnumType& dataType();
 
   //! Initialize internal data
   static InternalType* initializeInternalData( const ExternalType*,
@@ -229,7 +229,7 @@ struct HDF5TypeTraits<std::string>
   typedef std::true_type UsesCustomInternalType;
   
   //! Returns the HDF5 data type object corresponding to std::string
-  static H5::StrType dataType();
+  static const H5::StrType& dataType();
 
   //! Initialize internal data
   static InternalType* initializeInternalData( const ExternalType*,
@@ -274,7 +274,7 @@ struct HDF5TypeTraits<char> : public Details::BasicHDF5TypeTraits<char>
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding tochar
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_CHAR; }
 };
 
@@ -291,7 +291,7 @@ struct HDF5TypeTraits<signed char> : public Details::BasicHDF5TypeTraits<signed 
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to signed char
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_SCHAR; }
 };
 
@@ -308,7 +308,7 @@ struct HDF5TypeTraits<unsigned char> : public Details::BasicHDF5TypeTraits<unsig
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to unsigned char
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_UCHAR; }
 };
 
@@ -332,7 +332,7 @@ struct HDF5TypeTraits<short> : public Details::BasicHDF5TypeTraits<short>
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to int
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_SHORT; }
 };
   
@@ -349,7 +349,7 @@ struct HDF5TypeTraits<unsigned short> : public Details::BasicHDF5TypeTraits<unsi
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to int
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_USHORT; }
 };
 
@@ -366,7 +366,7 @@ struct HDF5TypeTraits<int> : public Details::BasicHDF5TypeTraits<int>
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to int
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_INT; }
 };
 
@@ -383,7 +383,7 @@ struct HDF5TypeTraits<unsigned int> : public Details::BasicHDF5TypeTraits<unsign
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to unsigned int
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_UINT; }
 };
 
@@ -400,7 +400,7 @@ struct HDF5TypeTraits<long> : public Details::BasicHDF5TypeTraits<long>
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to long
-  static inline H5::PredType dataType() 
+  static inline const H5::PredType& dataType() 
   { return H5::PredType::NATIVE_LONG; }
 };
 
@@ -417,7 +417,7 @@ struct HDF5TypeTraits<unsigned long> : public Details::BasicHDF5TypeTraits<unsig
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to unsigned long int
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_ULONG; }
 };
 
@@ -434,7 +434,7 @@ struct HDF5TypeTraits<long long> : public Details::BasicHDF5TypeTraits<long long
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to long long int
-  static inline H5::PredType dataType() 
+  static inline const H5::PredType& dataType() 
   { return H5::PredType::NATIVE_LLONG; }
 };
 
@@ -452,7 +452,7 @@ struct HDF5TypeTraits<unsigned long long> : public Details::BasicHDF5TypeTraits<
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to unsigned long long int
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_ULLONG; }
 };
 
@@ -469,7 +469,7 @@ struct HDF5TypeTraits<float> : public Details::BasicHDF5TypeTraits<float>
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to float
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_FLOAT; }
 };
 
@@ -486,7 +486,7 @@ struct HDF5TypeTraits<double> : public Details::BasicHDF5TypeTraits<double>
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to double
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_DOUBLE; }
 };
 
@@ -503,7 +503,7 @@ struct HDF5TypeTraits<long double> : public Details::BasicHDF5TypeTraits<long do
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to long double
-  static inline H5::PredType dataType()
+  static inline const H5::PredType& dataType()
   { return H5::PredType::NATIVE_LDOUBLE; }
 };
 
@@ -516,7 +516,7 @@ namespace Details{
 struct HDF5TypeTraitsPairHelper
 {
   //! Returns the HDF5 data type object
-  static inline H5::CompType dataType()
+  static inline const H5::CompType& dataType()
   {
     if( !s_data_type )
     {
@@ -561,7 +561,7 @@ struct HDF5TypeTraits<std::pair<T1,T2>,typename std::enable_if<!HDF5TypeTraits<T
   typedef std::false_type UsesOpaqueDataType;
   
   //! Returns the HDF5 data type object corresponding to std::pair<T1,T2>
-  static inline H5::CompType dataType()
+  static inline const H5::CompType& dataType()
   { return Details::HDF5TypeTraitsPairHelper<T1,T2>::dataType(); }
 };
 
@@ -602,7 +602,7 @@ struct HDF5TypeTraits<std::pair<T1,T2>,typename std::enable_if<HDF5TypeTraits<T1
   typedef std::true_type UsesCustomInternalType;
   
   //! Returns the HDF5 data type object corresponding to bool
-  static inline H5::CompType dataType()
+  static inline const H5::CompType& dataType()
   {
     return Details::HDF5TypeTraitsPairHelper<T1,T2,InternalT1,InternalT2>::dataType();
   }
@@ -721,7 +721,7 @@ struct HDF5TupleSerializerDataTypeHelper
     const size_t offset =
       HDF5TupleSerializerElementOffsetHelper<I,ExternalTuple>::offset();
 
-    H5::DataType element_type =
+    const H5::DataType& element_type =
       HDF5TypeTraits<typename TupleElement<I,ExternalTuple>::type>::dataType();
     
     type.insertMember( oss.str(), offset, element_type );
@@ -868,7 +868,7 @@ public:
   { /* ... */ }
 
   //! Return the HDF5 data type
-  static inline H5::CompType getDataType()
+  static inline const H5::CompType& getDataType()
   {
     if( !s_data_type )
     {
@@ -963,7 +963,7 @@ struct HDF5TypeTraits<std::tuple<Types...> >
   typedef std::true_type UsesCustomInternalType;
   
   //! Returns the HDF5 data type object corresponding to Utility::Tuple
-  static inline H5::CompType dataType()
+  static inline const H5::CompType& dataType()
   { return Details::HDF5TupleSerializer<ExternalType>::getDataType(); }
 
   //! Initialize internal data

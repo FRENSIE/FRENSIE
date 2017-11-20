@@ -21,6 +21,7 @@
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
 #include "Utility_ContractException.hpp"
 

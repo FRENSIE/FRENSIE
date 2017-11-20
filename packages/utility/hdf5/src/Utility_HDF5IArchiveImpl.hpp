@@ -62,7 +62,6 @@ protected:
   typedef boost::archive::detail::common_iarchive<Archive> CommonIArchive;
 
   //! Constructor
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
   HDF5IArchiveImpl( const std::string& hdf5_filename, unsigned flags );
 
   //! Initialize the archive
@@ -70,43 +69,35 @@ protected:
 
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
-  void load_override( T& t );
+  void load_override( T& t, BOOST_PFTO int );
 
   //! Load a type that is wrapped in a boost::serialization::nvp
   template<typename T>
-  void load_override( const boost::serialization::nvp<T>& t );
+  void load_override( const boost::serialization::nvp<T>& t, BOOST_PFTO int );
 
   //! Load a boost::archive::object_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::object_id_type& t );
+  void load_override( boost::archive::object_id_type& t, BOOST_PFTO int );
 
   //! Load a boost::archive::object_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::object_reference_type& t );
+  void load_override( boost::archive::object_reference_type& t, BOOST_PFTO int );
 
   //! Load a boost::archive::version_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::version_type& t );
+  void load_override( boost::archive::version_type& t, BOOST_PFTO int );
 
   //! Load a boost::archive::class_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::class_id_type& t );
+  void load_override( boost::archive::class_id_type& t, BOOST_PFTO int );
 
   //! Load a boost::archive::class_id_optional_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::class_id_optional_type& t );
+  void load_override( boost::archive::class_id_optional_type& t, BOOST_PFTO int );
 
   //! Load a boost::archive::class_id_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::class_id_reference_type& t );
+  void load_override( boost::archive::class_id_reference_type& t, BOOST_PFTO int );
 
   //! Load a boost::archive::class_name_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::class_name_type& t );
+  void load_override( boost::archive::class_name_type& t, BOOST_PFTO int );
 
   //! Load a boost::archive::tracking_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void load_override( boost::archive::tracking_type& t );
+  void load_override( boost::archive::tracking_type& t, BOOST_PFTO int );
 
   //! Load any type with a Utility::HDF5TypeTraits specialization
   template<typename T>

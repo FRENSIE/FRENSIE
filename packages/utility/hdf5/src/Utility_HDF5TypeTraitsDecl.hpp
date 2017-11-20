@@ -63,8 +63,8 @@ struct HDF5TypeTraits
   typedef std::false_type UsesCustomInternalType;
   
   //! Returns the HDF5 data type object corresponding to the type
-  static inline H5::DataType dataType()
-  { (void)UndefinedTraits<T>::notDefined(); return 0; }
+  static inline const H5::DataType& dataType()
+  { return UndefinedTraits<T>::notDefined(); }
 
   /*! Initialize internal data
    *

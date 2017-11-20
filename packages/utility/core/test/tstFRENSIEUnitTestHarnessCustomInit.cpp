@@ -222,7 +222,7 @@ FRENSIE_UNIT_TEST( UnitTestHarness_REQUIRE, REQUIRE_THROW )
 
 //---------------------------------------------------------------------------//
 // Check that a data unit test can be constructed
-FRENSIE_DATA_UNIT_TEST( UnitTestHarness_CHECK, DataDrivenTest )
+FRENSIE_DATA_UNIT_TEST_DECL( UnitTestHarness_CHECK, DataDrivenTest )
 {
   FETCH_FROM_TABLE( double, Input );
   FETCH_FROM_TABLE( double, abs_Input );
@@ -231,7 +231,7 @@ FRENSIE_DATA_UNIT_TEST( UnitTestHarness_CHECK, DataDrivenTest )
   FRENSIE_CHECK_FLOATING_EQUALITY( fabs(Input), abs_Input, Tolerance );
 }
 
-FRENSIE_DATA_UNIT_TEST_TABLE( UnitTestHarness_CHECK, DataDrivenTest )
+FRENSIE_DATA_UNIT_TEST_INST( UnitTestHarness_CHECK, DataDrivenTest )
 {
   COLUMNS()               << "Input" << "abs_Input" << "Tolerance";
   NEW_ROW( "neg_input" )  << -1.0    << 1.0         << 1e-15;

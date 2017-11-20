@@ -71,7 +71,6 @@ protected:
   typedef boost::archive::detail::common_oarchive<Archive> CommonOArchive;
 
   //! Constructor
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
   HDF5OArchiveImpl( const std::string& hdf5_filename, unsigned flags );
 
   //! Initialize the archive
@@ -79,43 +78,35 @@ protected:
 
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
-  void save_override( const T& t );
+  void save_override( const T& t, BOOST_PFTO int );
 
   //! Save a type that is wrapped in a boost::serialization::nvp
   template<typename T>
-  void save_override( const boost::serialization::nvp<T>& t );
+  void save_override( const boost::serialization::nvp<T>& t, BOOST_PFTO int );
 
   //! Save a boost::archive::object_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::object_id_type& t );
+  void save_override( const boost::archive::object_id_type& t, BOOST_PFTO int );
 
   //! Save a boost::archive::object_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::object_reference_type& t );
+  void save_override( const boost::archive::object_reference_type& t, BOOST_PFTO int );
 
   //! Save a boost::archive::version_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::version_type& t );
+  void save_override( const boost::archive::version_type& t, BOOST_PFTO int );
 
   //! Save a boost::archive::class_id_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::class_id_type& t );
+  void save_override( const boost::archive::class_id_type& t, BOOST_PFTO int );
 
   //! Save a boost::archive::class_id_optional_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::class_id_optional_type& t );
+  void save_override( const boost::archive::class_id_optional_type& t, BOOST_PFTO int );
 
   //! Save a boost::archive::class_id_reference_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::class_id_reference_type& t );
+  void save_override( const boost::archive::class_id_reference_type& t, BOOST_PFTO int );
 
   //! Save a boost::archive::class_name_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::class_name_type& t );
+  void save_override( const boost::archive::class_name_type& t, BOOST_PFTO int );
 
   //! Save a boost::archive::tracking_type attribute
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL
-  void save_override( const boost::archive::tracking_type& t );
+  void save_override( const boost::archive::tracking_type& t, BOOST_PFTO int );
 
   //! Save any type with a Utility::HDF5TypeTraits specialization
   template<typename T>
@@ -173,20 +164,19 @@ private:
   void endHDF5Group();
 
   // Get the tree object path
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL std::string getTreeObjectPath() const;
+  std::string getTreeObjectPath() const;
 
   // Link the data object
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL void linkDataObject();
+  void linkDataObject();
 
   // Link the tracked object
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL void linkTrackedObject( unsigned object );
+  void linkTrackedObject( unsigned object );
 
   // Link the tracked object reference
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL void
-  linkTrackedObjectReference( unsigned object_reference );
+  void linkTrackedObjectReference( unsigned object_reference );
 
   // Link the data and update the object count
-  BOOST_ARCHIVE_OR_WARCHIVE_DECL void linkDataAndUpdateObjectCount();
+  void linkDataAndUpdateObjectCount();
 
   // The object count
   std::size_t d_object_count;

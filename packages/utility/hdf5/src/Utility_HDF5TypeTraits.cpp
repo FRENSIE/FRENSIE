@@ -15,7 +15,7 @@ namespace Utility{
 std::unique_ptr<H5::EnumType> HDF5TypeTraits<bool>::s_data_type;
 
 // Returns the HDF5 data type object corresponding to bool
-H5::EnumType HDF5TypeTraits<bool>::dataType()
+const H5::EnumType& HDF5TypeTraits<bool>::dataType()
 {
   if( !s_data_type )
   {
@@ -97,7 +97,7 @@ void HDF5TypeTraits<bool>::freeInternalData( InternalType*& data )
 std::unique_ptr<H5::StrType> HDF5TypeTraits<std::string>::s_data_type;
 
 // Returns the HDF5 data type object corresponding to std::string
-H5::StrType HDF5TypeTraits<std::string>::dataType()
+const H5::StrType& HDF5TypeTraits<std::string>::dataType()
 {
   if( !s_data_type )
     s_data_type.reset( new H5::StrType( H5::PredType::C_S1, H5T_VARIABLE ) );

@@ -155,61 +155,61 @@ ENDIF()
 
 FRENSIE_ADD_TEST(GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=default
+  EXTRA_ARGS constructor_type=default
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionAdvancedInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=advanced
+  EXTRA_ARGS constructor_type=advanced
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionBasicSingleThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=basic_single
+  EXTRA_ARGS constructor_type=basic_single
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionAdvancedSingleThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=advanced_single
+  EXTRA_ARGS constructor_type=advanced_single
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionBasicFunneledThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=basic_funneled
+  EXTRA_ARGS constructor_type=basic_funneled
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionAdvancedFunneledThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=advanced_funneled
+  EXTRA_ARGS constructor_type=advanced_funneled
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionBasicSerializedThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=basic_serialized
+  EXTRA_ARGS constructor_type=basic_serialized
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionAdvancedSerializedThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=advanced_serialized
+  EXTRA_ARGS constructor_type=advanced_serialized
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionBasicMultipleThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=basic_multiple
+  EXTRA_ARGS constructor_type=basic_multiple
   VERBOSE_TEST_OUTPUT)
 
 FRENSIE_ADD_TEST(GlobalMPISessionAdvancedMultipleThreadingInit
   TEST_EXEC_NAME_ROOT GlobalMPISessionInit
   MPI_PROCS ${GlobalMPISessionInitProcs}
-  EXTRA_ARGS --constructor_type=advanced_multiple
+  EXTRA_ARGS constructor_type=advanced_multiple
   VERBOSE_TEST_OUTPUT)
 
 UNSET(GlobalMPISessionInitProcs)

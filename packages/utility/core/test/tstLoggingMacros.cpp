@@ -612,7 +612,7 @@ BOOST_AUTO_TEST_CASE( setup_all_logs )
 #if HAVE_FRENSIE_DETAILED_LOGGING
   BOOST_CHECK( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
 #else
-  BOOST_CHECK( os_ptr.str().size() == 0 );
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif
 
   os_ptr->str( "" );
@@ -774,7 +774,7 @@ BOOST_AUTO_TEST_CASE( set_global_filter )
   BOOST_CHECK( os_ptr->str().find( "Important:" ) < os_ptr->str().size() );
   BOOST_CHECK( os_ptr->str().find( "testing details" ) < os_ptr->str().size() );
 #else
-  BOOST_CHECK( os_ptr->str().size() == 0 )
+  BOOST_CHECK( os_ptr->str().size() == 0 );
 #endif
     
   os_ptr->str( "" );
