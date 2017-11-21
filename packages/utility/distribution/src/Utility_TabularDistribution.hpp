@@ -231,14 +231,6 @@ private:
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
 				      unsigned& sampled_bin_index ) const;
-  
-  // Extract the values from a property tree
-  static void extractValuesFromNode( const Utility::PropertyTree& values_data,
-                                     std::vector<double>& values );
-
-  // Extract the values
-  static void extractValues( const Utility::Variant& values_data,
-                             std::vector<double>& values );
 
   // Verify that the values are valid
   static void verifyValidValues( const std::vector<double>& independent_values,

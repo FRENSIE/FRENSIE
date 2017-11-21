@@ -369,7 +369,7 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::extractArrayFromN
   if( array_data.size() == 0 )
   {
     try{
-      array = Utility::variant_cast<Container<double> >( array_data.data() );
+      ThisType::extractArray( array_data.data(), array, dist_name );
     }
     EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
                                 Utility::PropertyTreeConversionException,
@@ -409,6 +409,22 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::extractValueFromN
                               Utility::PropertyTreeConversionException,
                               "Could not create the " << dist_name <<
                               " because a value is invalid!" );
+}
+
+// Extract an array
+template<typename IndependentUnit, typename DependentUnit>
+template<template<typename,typename...> class Container>
+void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::extractArray(
+                                            const Utility::Variant& array_data,
+                                            Container<double>& array,
+                                            const std::string& dist_name )
+{
+  try{
+    array = Utility::variant_cast<Container<double> >( array_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not create the " << dist_name << 
+                           " because the array values are invalid!" );
 }
 
 // Extract a shape parameter

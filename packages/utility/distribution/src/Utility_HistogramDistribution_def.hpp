@@ -471,7 +471,9 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
                       "are not specified!" );
   
   std::vector<double> bin_boundaries;
-  this->extractValues( distribution_data.front(), bin_boundaries );
+  this->extractArray( distribution_data.front(),
+                      bin_boundaries,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -483,7 +485,9 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
                       "are not specified!" );
   
   std::vector<double> bin_values;
-  this->extractValues( distribution_data.front(), bin_values );
+  this->extractArray( distribution_data.front(),
+                      bin_values,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -492,7 +496,9 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   if( !distribution_data.empty() )
   {
-    this->extractCDFBoolean( distribution_data.front(), cdf_specified );
+    this->extractValue( distribution_data.front(),
+                        cdf_specified,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -543,26 +549,33 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromProperty
     std::vector<double> bin_boundaries, bin_values;
     bool cdf_specified = false;
 
+    std::string type_name = this->getDistributionTypeName( true, true );
+
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
      std::make_pair( s_bin_boundary_values_key,
       std::make_tuple( s_bin_boundary_values_min_match_string, BaseType::REQUIRED_DATA,
-                       std::bind<void>(&ThisType::extractValuesFromNode,
-                                       std::placeholders::_1,
-                                       std::ref(bin_boundaries) ) ) ) );
+         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
+                         std::placeholders::_1,
+                         std::ref(bin_boundaries),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_bin_values_key,
       std::make_tuple( s_bin_values_min_match_string, BaseType::REQUIRED_DATA,
-                       std::bind<void>(&ThisType::extractValuesFromNode,
-                                       std::placeholders::_1,
-                                       std::ref(bin_values) ) ) ) );
+         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
+                         std::placeholders::_1,
+                         std::ref(bin_values),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_cdf_specified_value_key,
       std::make_tuple( s_cdf_specified_value_min_match_string, BaseType::OPTIONAL_DATA,
-                       std::bind<void>(&ThisType::extractCDFBooleanFromNode,
-                                       std::placeholders::_1,
-                                       std::ref(cdf_specified) ) ) ) );
+                std::bind<void>(&BaseType::template extractValueFromNode<bool>,
+                                std::placeholders::_1,
+                                std::ref(cdf_specified),
+                                std::cref(type_name)) )));
                            
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
     
@@ -846,72 +859,6 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
   }
 
   return possible_zero;
-}
-
-// Extract the values from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractValuesFromNode(
-                                      const Utility::PropertyTree& data,
-                                      std::vector<double>& values )
-{
-  // Inline array
-  if( data.size() == 0 )
-    ThisType::extractValues( data.data(), values );
-
-  // JSON array
-  else
-  {
-    try{
-      values = Utility::fromPropertyTree<std::vector<double> >( data );
-    }
-    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
-                             "The histogram distribution cannot be "
-                             "constructed because the values are not valid!" );
-  }
-}
-
-// Extract the values 
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractValues(
-                                            const Utility::Variant& data,
-                                            std::vector<double>& values )
-{
-  try{
-    values = Utility::variant_cast<std::vector<double> >( data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The histogram distribution cannot be "
-                           "constructed because the values are "
-                           "not valid!" );
-}
-
-// Extract the cdf boolean from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractCDFBooleanFromNode(
-                                 const Utility::PropertyTree& cdf_boolean_data,
-                                 bool& cdf_specified )
-{
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( cdf_boolean_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the cdf boolean value!" );
-
-  ThisType::extractCDFBoolean( cdf_boolean_data.data(), cdf_specified );
-}
-
-// Extract the cdf boolean
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::extractCDFBoolean(
-                                      const Utility::Variant& cdf_boolean_data,
-                                      bool& cdf_specified )
-{
-  try{
-    cdf_specified = Utility::variant_cast<bool>( cdf_boolean_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The histogram distribution cannot be "
-                           "constructed because the cdf boolean value is "
-                           "not valid!" );
 }
 
 // Verify that the values are valid

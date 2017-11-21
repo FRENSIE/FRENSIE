@@ -361,7 +361,9 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
                       " could not be constructed because no coefficients "
                       "are specified!" );
 
-  this->extractCoefficients( distribution_data.front(), d_coefficients );
+  this->extractArray( distribution_data.front(),
+                      d_coefficients,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
   
@@ -373,7 +375,9 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
                       "was not specified!" );
 
   IndepQuantity lower_limit;
-  this->extractLimit( distribution_data.front(), lower_limit );
+  this->extractValue( distribution_data.front(),
+                      lower_limit,
+                      this->getDistributionTypeName( true, true ) );
   
   distribution_data.pop_front();
 
@@ -385,7 +389,9 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
                       "was not specified!" );
 
   IndepQuantity upper_limit;
-  this->extractLimit( distribution_data.front(), upper_limit );
+  this->extractValue( distribution_data.front(),
+                      upper_limit,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -429,27 +435,34 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromPropert
   else
   {
     IndepQuantity lower_limit, upper_limit;
+
+    std::string type_name = this->getDistributionTypeName( true, true );
     
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
      std::make_pair( s_coefficient_values_key,
       std::make_tuple( s_coefficient_values_min_match_string, BaseType::REQUIRED_DATA,
-                       std::bind<void>(&ThisType::extractCoefficientsFromNode,
-                                       std::placeholders::_1,
-                                       std::ref(d_coefficients) ) ) ) );
+         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
+                         std::placeholders::_1,
+                         std::ref(d_coefficients),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
       std::make_tuple( s_lower_limit_value_min_match_string, BaseType::REQUIRED_DATA,
-       std::bind<void>(&ThisType::extractLimitFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(lower_limit) ) ) ) );
+                       std::ref(lower_limit),
+                       std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
       std::make_tuple( s_upper_limit_value_min_match_string, BaseType::REQUIRED_DATA,
-       std::bind<void>(&ThisType::extractLimitFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(upper_limit) ) ) ) );
+                       std::ref(upper_limit),
+                       std::cref(type_name)) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
@@ -585,79 +598,6 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::canDepVarBe
   }
   else
     return false;
-}
-
-// Extract coefficients from a node
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::extractCoefficientsFromNode(
-                                 const Utility::PropertyTree& coefficient_data,
-                                 std::vector<double>& coefficients )
-{
-  // Inline array
-  if( coefficient_data.size() == 0 )
-    ThisType::extractCoefficients( coefficient_data.data(), coefficients );
-
-  // JSON array
-  else
-  {
-    try{
-      coefficients = Utility::fromPropertyTree<std::vector<double> >( coefficient_data );
-    }
-    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
-                             "The polynomial distribution cannot be "
-                             "constructed because the coefficients are not "
-                             "valid!" );
-  }
-}
-
-// Extract coefficients
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::extractCoefficients(
-                                      const Utility::Variant& coefficient_data,
-                                      std::vector<double>& coefficients )
-{
-  try{
-    coefficients = Utility::variant_cast<std::vector<double> >( coefficient_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The polynomial distribution cannot be "
-                           "constructed because the coefficients are "
-                           "not valid!" );
-}
-
-// Extract a limit from a node
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::extractLimitFromNode(
-                                       const Utility::PropertyTree& limit_data,
-                                       QuantityType& limit )
-{
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( limit_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the limit value!" );
-
-  ThisType::extractLimit( limit_data.data(), limit );
-}
-
-// Extract a limit
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::extractLimit(
-                                            const Utility::Variant& limit_data,
-                                            QuantityType& limit )
-{
-  double raw_limit;
-  
-  try{
-    raw_limit = Utility::variant_cast<double>( limit_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The polynomial distribution cannot be "
-                           "constructed because a limit is not "
-                           "valid!" );
-
-  Utility::setQuantity( limit, raw_limit );
 }
 
 // Verify that the distribution data is valid

@@ -543,7 +543,9 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                       "values are specified!" );
 
   std::vector<double> independent_values;
-  this->extractValues( distribution_data.front(), independent_values );
+  this->extractArray( distribution_data.front(),
+                      independent_values,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -555,7 +557,9 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                       "values are specified!" );
 
   std::vector<double> dependent_values;
-  this->extractValues( distribution_data.front(), dependent_values );
+  this->extractArray( distribution_data.front(),
+                      dependent_values,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -608,20 +612,25 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   {
     std::vector<double> independent_values, dependent_values;
 
+    std::string type_name = this->getDistributionTypeName( true, true );
+
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
      std::make_pair( s_independent_values_key,
       std::make_tuple( s_independent_values_min_match_string, BaseType::REQUIRED_DATA,
-                       std::bind<void>(&ThisType::extractValuesFromNode,
-                                       std::placeholders::_1,
-                                       std::ref(independent_values) ) ) ) );
+         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
+                         std::placeholders::_1,
+                         std::ref(independent_values),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_dependent_values_key,
       std::make_tuple( s_dependent_values_min_match_string, BaseType::REQUIRED_DATA,
-                       std::bind<void>(&ThisType::extractValuesFromNode,
-                                       std::placeholders::_1,
-                                       std::ref(dependent_values) ) ) ) );
+         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
+                         std::placeholders::_1,
+                         std::ref(dependent_values),
+                         std::cref(type_name)) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
@@ -872,47 +881,6 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                                            const LogDepVarProcessingTag ) const
 {
   return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
-}
-
-// Extract the values from a property tree
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::extractValuesFromNode(
-                                      const Utility::PropertyTree& values_data,
-                                      std::vector<double>& values )
-{
-  // Inline array
-  if( values_data.size() == 0 )
-    ThisType::extractValues( values_data.data(), values );
-
-  // JSON array
-  else
-  {
-    try{
-      values = Utility::fromPropertyTree<std::vector<double> >( values_data );
-    }
-    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
-                             "The tabular distribution cannot be "
-                             "constructed because the values are not valid!" );
-  }
-}
-
-// Extract the values
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::extractValues(
-                                           const Utility::Variant& values_data,
-                                           std::vector<double>& values )
-{
-  try{
-    values = Utility::variant_cast<std::vector<double> >( values_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The tabular distribution cannot be "
-                           "constructed because the values are "
-                           "not valid!" );
 }
 
 // Verify that the values are valid

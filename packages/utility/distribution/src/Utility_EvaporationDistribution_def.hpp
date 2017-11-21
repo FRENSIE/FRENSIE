@@ -387,7 +387,10 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   // Set the incident energy
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter(distribution_data.front(), d_incident_energy);
+    this->extractValue( distribution_data.front(),
+                        d_incident_energy,
+                        this->getDistributionTypeName( true, true ) );
+    
     distribution_data.pop_front();
   }
   else
@@ -396,7 +399,10 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   // Set the nuclear_temperature
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter(distribution_data.front(), d_nuclear_temperature);
+    this->extractValue( distribution_data.front(),
+                        d_nuclear_temperature,
+                        this->getDistributionTypeName( true, true ) );
+    
     distribution_data.pop_front();
   }
   else
@@ -405,7 +411,10 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   // Set the restriction energy
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter(distribution_data.front(), d_restriction_energy);
+    this->extractValue( distribution_data.front(),
+                        d_restriction_energy,
+                        this->getDistributionTypeName( true, true ) );
+    
     distribution_data.pop_front();
   }
   else
@@ -414,7 +423,10 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   // Set the constant multiplier
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter( distribution_data.front(), d_multiplier );
+    this->extractValue( distribution_data.front(),
+                        d_multiplier,
+                        this->getDistributionTypeName( true, true ) );
+    
     distribution_data.pop_front();
   }
   else
@@ -472,36 +484,42 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromProper
     Utility::setQuantity( d_multiplier,
                           ThisType::getDefaultConstantMultiplier() );
 
+    std::string type_name = this->getDistributionTypeName( true, true );
+
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;    
 
     data_extractors.insert(
      std::make_pair( s_incident_energy_value_key,
       std::make_tuple( s_incident_energy_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_incident_energy)) )));
+                       std::ref(d_incident_energy),
+                       std::cref(type_name)) )));
     
     data_extractors.insert(
      std::make_pair( s_nuclear_temp_value_key,
       std::make_tuple( s_nuclear_temp_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_nuclear_temperature)) )));
+                       std::ref(d_nuclear_temperature),
+                       std::cref(type_name)) )));
     
     data_extractors.insert(
      std::make_pair( s_restriction_energy_value_key,
       std::make_tuple( s_restriction_energy_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_restriction_energy)) )));
+                       std::ref(d_restriction_energy),
+                       std::cref(type_name)) )));
 
     data_extractors.insert(
      std::make_pair( s_multiplier_value_key,
       std::make_tuple( s_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<DistMultiplierQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<DistMultiplierQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_multiplier)) )));
+                       std::ref(d_multiplier),
+                       std::cref(type_name)) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
@@ -581,42 +599,6 @@ template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
 {
   return true;
-}
-
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::extractShapeParameterFromNode(
-                             const Utility::PropertyTree& shape_parameter_data,
-                             QuantityType& shape_parameter )
-{
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( shape_parameter_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the shape parameter value!" );
-
-  ThisType::extractShapeParameter( shape_parameter_data.data(),
-                                   shape_parameter );
-}
-
-// Set the shape parameters
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::extractShapeParameter(
-                                  const Utility::Variant& shape_parameter_data,
-                                  QuantityType& shape_parameter )
-{
-  double raw_shape_parameter;
-
-  try{
-    raw_shape_parameter =
-      Utility::variant_cast<double>( shape_parameter_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The evaporation distribution cannot be "
-                           "constructed because a shape parameter is not "
-                           "valid!" );
-
-  Utility::setQuantity( shape_parameter, raw_shape_parameter );
 }
 
 // Verify that the shape parameters are valid

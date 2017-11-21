@@ -157,25 +157,6 @@ private:
   void initializeDistribution( const IndepQuantity min_indep_limit,
 			       const IndepQuantity max_indep_limit );
 
-  // Extract coefficients from a node
-  static void extractCoefficientsFromNode(
-                             const Utility::PropertyTree& coefficient_data,
-                             std::vector<double>& coefficients );
-
-  // Extract coefficients
-  static void extractCoefficients( const Utility::Variant& coefficient_data,
-                                   std::vector<double>& coefficients );
-
-  // Extract a limit from a node
-  template<typename QuantityType>
-  static void extractLimitFromNode( const Utility::PropertyTree& limit_data,
-                                    QuantityType& limit );
-
-  // Extract a limit
-  template<typename QuantityType>
-  static void extractLimit( const Utility::Variant& limit_data,
-                            QuantityType& limit );
-
   // Test if the distribution can be used for sampling (each term must be a
   // positive function
   static bool isValidSamplingDistribution(

@@ -389,7 +389,9 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   // Set the mean
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter( distribution_data.front(), d_mean );
+    this->extractValue( distribution_data.front(),
+                        d_mean,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -399,8 +401,9 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   // Set the standard deviation
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_standard_deviation );
+    this->extractValue( distribution_data.front(),
+                        d_standard_deviation,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -413,8 +416,9 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   // Set the lower boundary of the distribution
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_min_independent_value );
+    this->extractValue( distribution_data.front(),
+                        d_min_independent_value,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -424,8 +428,9 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   // Set the upper boundary of the distribution
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_max_independent_value );
+    this->extractValue( distribution_data.front(),
+                        d_max_independent_value,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -435,8 +440,9 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   // Set the constant multiplier
   if( !distribution_data.empty() )
   {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_constant_multiplier );
+    this->extractValue( distribution_data.front(),
+                        d_constant_multiplier,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -491,39 +497,50 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromPropertyTre
     d_min_independent_value = ThisType::getDefaultLowerLimit<IndepQuantity>();
     d_max_independent_value = ThisType::getDefaultUpperLimit<IndepQuantity>();
 
+    std::string type_name = this->getDistributionTypeName( true, true );
+
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
      std::make_pair( s_const_multiplier_value_key,
       std::make_tuple( s_const_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-         std::bind<void>(&ThisType::extractShapeParameterFromNode<DepQuantity>,
+         std::bind<void>(&BaseType::template extractValueFromNode<DepQuantity>,
                          std::placeholders::_1,
-                         std::ref(d_constant_multiplier)) )));
+                         std::ref(d_constant_multiplier),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_mean_value_key,
       std::make_tuple( s_mean_value_min_match_string, BaseType::OPTIONAL_DATA,
-         std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+         std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                          std::placeholders::_1,
-                         std::ref(d_mean)) )));
+                         std::ref(d_mean),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_standard_deviation_value_key,
       std::make_tuple( s_standard_deviation_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_standard_deviation)) )));
+                       std::ref(d_standard_deviation),
+                       std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
       std::make_tuple( s_lower_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_min_independent_value)) )));
+                       std::ref(d_min_independent_value),
+                       std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
       std::make_tuple( s_upper_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_max_independent_value)) )));
+                       std::ref(d_max_independent_value),
+                       std::cref(type_name)) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
@@ -606,43 +623,6 @@ template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
 {
   return false;
-}
-
-// Extract a shape parameter from a node
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::extractShapeParameterFromNode(
-                             const Utility::PropertyTree& shape_parameter_data,
-                             QuantityType& shape_parameter )
-{
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( shape_parameter_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the shape parameter value!" );
-
-  ThisType::extractShapeParameter( shape_parameter_data.data(),
-                                   shape_parameter );
-}
-
-// Extract a shape parameter
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::extractShapeParameter(
-                                  const Utility::Variant& shape_parameter_data,
-                                  QuantityType& shape_parameter )
-{
-  double raw_shape_parameter;
-
-  try{
-    raw_shape_parameter =
-      Utility::variant_cast<double>( shape_parameter_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The normal distribution cannot be "
-                           "constructed because a shape parameter is not "
-                           "valid!" );
-
-  Utility::setQuantity( shape_parameter, raw_shape_parameter );
 }
 
 // Verify that the shape parameters are valid

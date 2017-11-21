@@ -463,17 +463,19 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   // Extract the independent values
   std::vector<double> independent_values;
-  
-  this->extractIndependentValues( distribution_data.front(),
-                                  independent_values );
+
+  this->extractArray( distribution_data.front(),
+                      independent_values,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
 
   // Extract the dependent values
   std::vector<double> dependent_values;
-  
-  this->extractDependentValues( distribution_data.front(),
-                                dependent_values );
+
+  this->extractArray( distribution_data.front(),
+                      dependent_values,
+                      this->getDistributionTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -482,7 +484,9 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   if( !distribution_data.empty() )
   {
-    this->extractCDFBoolean( distribution_data.front(), cdf_specified );
+    this->extractValue( distribution_data.front(),
+                        cdf_specified,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -531,27 +535,34 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
   {
     std::vector<double> independent_values, dependent_values;
     bool cdf_specified = false;
+
+    std::string type_name = this->getDistributionTypeName( true, true );
     
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
      std::make_pair( s_indep_values_key,
       std::make_tuple( s_indep_values_min_match_string, BaseType::REQUIRED_DATA,
-                  std::bind<void>( &ThisType::extractIndependentValuesFromNode,
-                                   std::placeholders::_1,
-                                   std::ref(independent_values) ) ) ) );
+        std::bind<void>( &BaseType::template extractArrayFromNode<std::vector>,
+                         std::placeholders::_1,
+                         std::ref(independent_values),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_dep_values_key,
       std::make_tuple( s_dep_values_min_match_string, BaseType::REQUIRED_DATA,
-                  std::bind<void>( &ThisType::extractDependentValuesFromNode,
-                                   std::placeholders::_1,
-                                   std::ref(dependent_values) ) ) ) );
+        std::bind<void>( &BaseType::template extractArrayFromNode<std::vector>,
+                         std::placeholders::_1,
+                         std::ref(dependent_values),
+                         std::cref(type_name)) )));
+    
     data_extractors.insert(
      std::make_pair( s_cdf_specified_value_key,
       std::make_tuple( s_cdf_specified_value_min_match_string, BaseType::OPTIONAL_DATA,
-                       std::bind<void>(&ThisType::extractCDFBooleanFromNode,
-                                       std::placeholders::_1,
-                                       std::ref(cdf_specified) ) ) ) );
+                std::bind<void>(&BaseType::template extractValueFromNode<bool>,
+                                std::placeholders::_1,
+                                std::ref(cdf_specified),
+                                std::cref(type_name)) )));
     
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
@@ -801,117 +812,6 @@ template<typename IndependentUnit,typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
 {
   return true;
-}
-
-// Set the independent values
-template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndependentValues(
-                                      const Utility::Variant& indep_data,
-                                      std::vector<double>& independent_values )
-{
-  try{
-    independent_values =
-      Utility::variant_cast<std::vector<double> >( indep_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The discrete distribution cannot be "
-                           "constructed because the independent values are "
-                           "not valid!" );
-}
-
-// Set the independent values
-template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractIndependentValuesFromNode(
-                                      const Utility::PropertyTree& indep_data,
-                                      std::vector<double>& independent_values )
-{
-  // Inline array
-  if( indep_data.size() == 0 )
-  {
-    ThisType::extractIndependentValues( indep_data.data(),
-                                        independent_values );
-  }
-
-  // JSON array
-  else
-  {
-    try{
-      independent_values =
-        Utility::fromPropertyTree<std::vector<double> >( indep_data );
-    }
-    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
-                             "The discrete distribution cannot be "
-                             "constructed because the independent data "
-                             "is invalid!" );
-  }
-}
-
-// Set the dependent values
-template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDependentValues(
-                                        const Utility::Variant& dep_data,
-                                        std::vector<double>& dependent_values )
-{
-  try{
-    dependent_values = Utility::variant_cast<std::vector<double> >( dep_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The discrete distribution cannot be "
-                           "constructed because the dependent values are "
-                           "not valid!" );
-}
-
-// Set the dependent values
-template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDependentValuesFromNode(
-                                        const Utility::PropertyTree& dep_data,
-                                        std::vector<double>& dependent_values )
-{
-  // Inline array
-  if( dep_data.size() == 0 )
-    ThisType::extractDependentValues( dep_data.data(), dependent_values );
-
-  // JSON array
-  else
-  {
-    try{
-      dependent_values =
-        Utility::fromPropertyTree<std::vector<double> >( dep_data );
-    }
-    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
-                             "The discrete distribution cannot be "
-                             "constructed because the dependent data "
-                             "is invalid!" );
-  }
-}
-
-// Extract the cdf boolean from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractCDFBooleanFromNode(
-                                 const Utility::PropertyTree& cdf_boolean_data,
-                                 bool& cdf_specified )
-{
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( cdf_boolean_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the cdf boolean value!" );
-
-  ThisType::extractCDFBoolean( cdf_boolean_data.data(), cdf_specified );
-}
-
-// Extract the cdf boolean
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractCDFBoolean(
-                                      const Utility::Variant& cdf_boolean_data,
-                                      bool& cdf_specified )
-{
-  try{
-    cdf_specified = Utility::variant_cast<bool>( cdf_boolean_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The histogram distribution cannot be "
-                           "constructed because the cdf boolean value is "
-                           "not valid!" );
 }
 
 // Verify that the values are valid

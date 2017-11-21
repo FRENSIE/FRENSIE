@@ -29,11 +29,8 @@ namespace Utility{
 template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareMaxwellFissionDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
-
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
-
-private:
 
   // Typedef for base type
   typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -208,18 +205,6 @@ private:
 
   // Calculate the normalization constant of the distribution
   void calculateNormalizationConstant();
-
-  // Extract a shape parameter from a node
-  template<typename QuantityType>
-  static void extractShapeParameterFromNode(
-                             const Utility::PropertyTree& shape_parameter_data,
-                             QuantityType& shape_parameter );
-
-  // Set the shape parameters
-  template<typename QuantityType>
-  static void extractShapeParameter(
-                                  const Utility::Variant& shape_parameter_data,
-                                  QuantityType& shape_parameter );
 
   // Verify that the shape parameters are valid
   static void verifyValidShapeParameters( IndepQuantity& incident_energy,

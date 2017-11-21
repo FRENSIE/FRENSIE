@@ -22,9 +22,6 @@ namespace Utility{
 template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
-
-private:
-
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
 
@@ -175,24 +172,10 @@ protected:
 
 private:
 
-  // Set the location value using a node
-  void setLocationValueUsingNode( const Utility::PropertyTree& location_data );
+  // Verify that the shape parameters are valid
+  static void verifyValidShapeParameters( const IndepQuantity& location,
+                                          const DepQuantity& multiplier );
   
-  // Set the location value
-  void setLocationValue( const Utility::Variant& location_data );
-
-  // Set the location value
-  void setLocationValue( const double location );
-
-  // Set the multiplier value using a node
-  void setMultiplierValueUsingNode( const Utility::PropertyTree& multiplier_data );
-  
-  // Set the multiplier value
-  void setMultiplierValue( const Utility::Variant& multiplier_data );
-
-  // Set the multiplier value
-  void setMultiplierValue( const double multiplier );
-
   // Save the distribution to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;

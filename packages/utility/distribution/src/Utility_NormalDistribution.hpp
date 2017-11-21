@@ -197,18 +197,6 @@ protected:
   { return QuantityTraits<InputIndepQuantity>::inf(); }
 
 private:
-
-  // Extract a shape parameter from a node
-  template<typename QuantityType>
-  static void extractShapeParameterFromNode(
-                             const Utility::PropertyTree& shape_parameter_data,
-                             QuantityType& shape_parameter );
-
-  // Extract a shape parameter
-  template<typename QuantityType>
-  static void extractShapeParameter(
-                                  const Utility::Variant& shape_parameter_data,
-                                  QuantityType& shape_parameter );
   
   // Verify that the shape parameters are valid
   static void verifyValidShapeParameters(

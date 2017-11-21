@@ -161,8 +161,7 @@ protected:
 
   //! Return the distribution type name
   virtual std::string getDistributionTypeName( const bool verbose_name,
-                                               const bool lowercase ) const
-  { return ""; }// = 0;
+                                               const bool lowercase ) const = 0;
 
   //! Test if the dependent variable can be zero within the indep bounds
   virtual bool canDepVarBeZeroInIndepBounds() const = 0;
@@ -219,6 +218,12 @@ protected:
                                     QuantityType& value,
                                     const std::string& dist_name );
 
+  //! Extract an array
+  template<template<typename,typename...> class Container>
+  static void extractArray( const Utility::Variant& array_data,
+                            Container<double>& array,
+                            const std::string& dist_name );
+  
   //! Extract a value
   template<typename QuantityType>
   static void extractValue( const Utility::Variant& value_data,

@@ -22,9 +22,6 @@ namespace Utility{
 template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
-
-private:
-
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
 
@@ -179,15 +176,6 @@ private:
   template<typename InputIndepQuantity>
   void initializeDistribution(
 		    const std::vector<InputIndepQuantity>& bin_boundaries );
-
-  // Set the bin boundaries
-  static void extractBinBoundariesFromNode(
-                                const Utility::PropertyTree& bin_boundary_data,
-                                std::vector<double>& bin_boundaries );
-
-  // Set the bin boundaries
-  static void extractBinBoundaries( const Utility::Variant& bin_boundary_data,
-                                    std::vector<double>& bin_boundaries );
 
   // Verify that the bin boundaries are valid
   static void verifyValidBinBoundaries(

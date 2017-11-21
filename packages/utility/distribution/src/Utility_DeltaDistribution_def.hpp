@@ -321,7 +321,9 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
   // Extract the location value
   if( !distribution_data.empty() )
   {
-    this->setLocationValue( distribution_data.front() );
+    this->extractValue( distribution_data.front(),
+                        d_location,
+                        this->getDistributionTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -331,12 +333,17 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
   // Extract the multiplier value
   if( !distribution_data.empty() )
   {
-    this->setMultiplierValue( distribution_data.front() );
-
+    this->extractValue( distribution_data.front(),
+                        d_multiplier,
+                        this->getDistributionTypeName( true, true ) );
+    
     distribution_data.pop_front();
   }
   else
     d_multiplier = ThisType::getDefaultMultiplier<DepQuantity>();
+
+  // Verify that shape parameters are valid
+  this->verifyValidShapeParameters( d_location, d_multiplier );
 
   // Check if there is any superfluous data
   this->checkForUnusedStreamData( distribution_data );
@@ -374,23 +381,35 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
     d_location = ThisType::getDefaultLocation<IndepQuantity>();
     d_multiplier = ThisType::getDefaultMultiplier<DepQuantity>();
 
+    std::string type_name = this->getDistributionTypeName( true, true );
+
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
      std::make_pair( s_location_value_key,
       std::make_tuple( s_location_value_min_match_string, BaseType::OPTIONAL_DATA,
-                       std::bind<void>( &ThisType::setLocationValueUsingNode,
-                                        std::ref(*this),
-                                        std::placeholders::_1 ) ) ) );
+                       std::bind<void>( &BaseType::template extractValueFromNode<IndepQuantity>,
+                                        std::placeholders::_1,
+                                        std::ref(d_location),
+                                        std::cref(type_name)) )));
     data_extractors.insert(
      std::make_pair( s_multiplier_value_key,
       std::make_tuple( s_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-                       std::bind<void>( &ThisType::setMultiplierValueUsingNode,
-                                        std::ref(*this),
-                                        std::placeholders::_1 ) ) ) );
+                       std::bind<void>( &BaseType::template extractValueFromNode<DepQuantity>,
+                                        std::placeholders::_1,
+                                        std::ref(d_multiplier),
+                                        std::cref(type_name)) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
+
+    // Verify that shape parameters are valid
+    try{
+      this->verifyValidShapeParameters( d_location, d_multiplier );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Invalid shape parameter detected!" );
   }
 }
 
@@ -420,92 +439,26 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::load( Archive& a
   ar & BOOST_SERIALIZATION_NVP( d_multiplier );
 }
 
-// Set the location value using a node
+// Verify that the shape parameters are valid
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValueUsingNode(
-                                   const Utility::PropertyTree& location_data )
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyValidShapeParameters(
+                                                const IndepQuantity& location,
+                                                const DepQuantity& multiplier )
 {
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( location_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the location value!" );
-
-  this->setLocationValue( location_data.data() );
-}
-
-// Set the location value
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue( const Utility::Variant& location_data )
-{
-  double location;
-  try{
-    location = Utility::variant_cast<double>( location_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "Could not extract the location value!" );
-
-  this->setLocationValue( location );
-}
-
-// Set the location value
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setLocationValue( const double location )
-{
-  Utility::setQuantity( d_location, location );
-  
-  // Verify that the location value is valid
-  TEST_FOR_EXCEPTION( IQT::isnaninf( d_location ),
+  TEST_FOR_EXCEPTION( IQT::isnaninf( location ),
 		      Utility::StringConversionException,
 		      "The delta distribution cannot be constructed "
-		      "because of an invalid location (" << d_location <<
-		      ")!" );
-}
-
-// Set the multiplier value using a node
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierValueUsingNode(
-                                   const Utility::PropertyTree& multiplier_data )
-{
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( multiplier_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the multiplier value!" );
-
-  this->setMultiplierValue( multiplier_data.data() );
-}
-
-// Set the multiplier value
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierValue( const Utility::Variant& multiplier_data )
-{
-  double multiplier;
+		      "because of an invalid location!" );
   
-  try{
-    multiplier = Utility::variant_cast<double>( multiplier_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "Could not extract the multiplier value!" );
-
-  this->setMultiplierValue( multiplier );
-}
-
-// Set the multiplier value
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::setMultiplierValue( const double multiplier )
-{
-  Utility::setQuantity( d_multiplier, multiplier );
-  
-  TEST_FOR_EXCEPTION( DQT::isnaninf( d_multiplier ),
+  TEST_FOR_EXCEPTION( DQT::isnaninf( multiplier ),
                       Utility::StringConversionException,
                       "The delta distribution cannot be constructed "
-                      "because of an invalid multiplier ("
-                      << d_multiplier << ")!" );
+                      "because of an invalid multiplier!" );
 
-  TEST_FOR_EXCEPTION( d_multiplier == DQT::zero(),
+  TEST_FOR_EXCEPTION( multiplier == DQT::zero(),
                       Utility::StringConversionException,
                       "The delta distribution cannot be constructed "
-                      "because of an invalid multiplier ("
-                      << d_multiplier << ")!" );
+                      "because of an invalid multiplier!" );
 }
 
 // Equality comparison operator

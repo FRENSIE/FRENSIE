@@ -14,7 +14,6 @@
 #include <boost/units/systems/si.hpp>
 #include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"

@@ -23,9 +23,6 @@ namespace Utility{
 template<typename IndependentUnit,typename DependentUnit>
 class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
-
-private:
-
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
 
@@ -217,31 +214,6 @@ private:
   static void convertUnitlessValues(
 		                 const std::vector<double>& unitless_values,
 				 std::vector<Quantity>& quantities );
-
-  // Set the independent values
-  static void extractIndependentValues( const Utility::Variant& indep_data,
-                                        std::vector<double>& independent_values );
-
-  // Set the independent values
-  static void extractIndependentValuesFromNode( const Utility::PropertyTree& indep_data,
-                                                std::vector<double>& independent_values );
-
-  // Set the dependent values
-  static void extractDependentValues( const Utility::Variant& dep_data,
-                                      std::vector<double>& dependent_values );
-
-  // Set the dependent values
-  static void extractDependentValuesFromNode( const Utility::PropertyTree& dep_data,
-                                              std::vector<double>& dependent_values );
-
-  // Extract the cdf boolean from a property tree
-  static void extractCDFBooleanFromNode(
-                                 const Utility::PropertyTree& cdf_boolean_data,
-                                 bool& cdf_specified );
-  
-  // Extract the cdf boolean
-  static void extractCDFBoolean( const Utility::Variant& cdf_boolean_data,
-                                 bool& cdf_specified );
 
   // Verify that the values are valid
   static void verifyValidValues( const std::vector<double>& independent_values,
