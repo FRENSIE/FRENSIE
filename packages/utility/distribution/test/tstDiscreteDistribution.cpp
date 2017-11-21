@@ -100,20 +100,43 @@ FRENSIE_DATA_TABLE( TestPropertyTreeTable )
   double pi = Utility::PhysicalConstants::pi;
 
   COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} );
-  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {1.0, 1.0, 1.0, 1.0} );
+  NEW_ROW( "inline_full_ucase_type" ) << "Distribution A" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} );
+  NEW_ROW( "inline_full_lcase_type" ) << "Distribution B" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {1.0, 1.0, 1.0, 1.0} );
+  NEW_ROW( "inline_short_ucase_type" ) << "Distribution C" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} );
+  NEW_ROW( "inline_short_lcase_type" ) << "Distribution D" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {0.25, 0.5, 0.75, 1.0}, true );
   NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_too_few_indep_vals" ) << "Distribution H" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_unsorted_indep_vals" ) << "Distribution I" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_inf_start_indep_val" ) << "Distribution J" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_inf_end_indep_val" ) << "Distribution K" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_too_few_dep_vals" ) << "Distribution L" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_inf_dep_val" ) << "Distribution M" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_zero_dep_val" ) << "Distribution N" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_neg_dep_val" ) << "Distribution O" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_unsorted_cdf_vals" ) << "Distribution P" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inline_repeated_cdf_vals" ) << "Distribution Q" << false << no_unused_children << dummy_dist;
 
-  NEW_ROW( "inline_value_arrays" ) << "Distribution C" << true << no_unused_children << Utility::DiscreteDistribution( {0.1, 1.0, 10.0}, {2, 6, 2} );
-  NEW_ROW( "json_value_arrays" ) << "Distribution D" << true << std::vector<std::string>( {"dummy"} ) << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "empty_value_arrays" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_dep_values" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_indep_values" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_lower_bound" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_upper_bound" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_dep_value" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_dep_value" ) << "Distribution M" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "full_ucase_type" ) << "Distribution R" << true << no_unused_children << Utility::DiscreteDistribution( {0.1, 1.0, 10.0}, {2.0, 6.0, 2.0} );
+  NEW_ROW( "full_lcase_type" ) << "Distribution S" << true << std::vector<std::string>( {"dummy"} ) << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
+  NEW_ROW( "short_ucase_type" ) << "Distribution T" << true << no_unused_children << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
+  NEW_ROW( "short_lcase_name" ) << "Distribution U" << true << no_unused_children << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
+  NEW_ROW( "repeated_keys" ) << "Distribution V" << true << std::vector<std::string>( {"independent values", "dependent values", "cdf"} ) << Utility::DiscreteDistribution( {0.0, 1.0, 2.0, 3.0, 4.0}, {0.2, 0.4, 0.6, 0.8, 1.0}, true );
+  NEW_ROW( "bad_type" ) << "Distribution W" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "0_args" ) << "Distribution X" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "no_dep_vals" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "no_indep_vals" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "too_few_indep_vals" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "unsorted_indep_vals" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_start_idep_val" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_end_indep_val" ) << "Distribution AD" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "too_few_dep_vals" ) << "Distribution AE" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "inf_dep_val" ) << "Distribution AF" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "zero_dep_val" ) << "Distribution AG" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "neg_dep_val" ) << "Distribution AH" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "unsorted_cdf_vals" ) << "Distribution AI" << false << no_unused_children << dummy_dist;
+  NEW_ROW( "repeated_cdf_vals" ) << "Distribution AJ" << false << no_unused_children << dummy_dist;
 }
 
 //---------------------------------------------------------------------------//

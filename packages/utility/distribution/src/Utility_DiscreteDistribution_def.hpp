@@ -38,6 +38,12 @@ const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::
 template<typename IndependentUnit,typename DependentUnit> 
 const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_dep_values_min_match_string( "dep" );
 
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_cdf_specified_value_key( "cdf specified" );
+
+template<typename IndependentUnit, typename DependentUnit>
+const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_cdf_specified_value_min_match_string( "cdf" );
+
 // Default Constructor
 template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution()
@@ -471,10 +477,20 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   distribution_data.pop_front();
 
-  // Verify that the values are valid
-  this->verifyValidValues( independent_values, dependent_values );        
+  // Extract the cdf boolean
+  bool cdf_specified = false;
 
-  this->initializeDistribution( independent_values, dependent_values, false );
+  if( !distribution_data.empty() )
+  {
+    this->extractCDFBoolean( distribution_data.front(), cdf_specified );
+
+    distribution_data.pop_front();
+  }
+
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values, cdf_specified );        
+
+  this->initializeDistribution( independent_values, dependent_values, cdf_specified );
 
   // Check if there is any superfluous data
   this->checkForUnusedStreamData( distribution_data );
@@ -514,6 +530,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
   else
   {
     std::vector<double> independent_values, dependent_values;
+    bool cdf_specified = false;
     
     typename BaseType::DataExtractorMap data_extractors;
 
@@ -529,19 +546,25 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
                   std::bind<void>( &ThisType::extractDependentValuesFromNode,
                                    std::placeholders::_1,
                                    std::ref(dependent_values) ) ) ) );
+    data_extractors.insert(
+     std::make_pair( s_cdf_specified_value_key,
+      std::make_tuple( s_cdf_specified_value_min_match_string, BaseType::OPTIONAL_DATA,
+                       std::bind<void>(&ThisType::extractCDFBooleanFromNode,
+                                       std::placeholders::_1,
+                                       std::ref(cdf_specified) ) ) ) );
     
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
     // Verify that the values are valid
     try{
-      this->verifyValidValues( independent_values, dependent_values );
+      this->verifyValidValues( independent_values, dependent_values, cdf_specified );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::PropertyTreeConversionException,
                                 "Could not create the discrete "
                                 "distribution!" );
 
-    this->initializeDistribution(independent_values, dependent_values, false);
+    this->initializeDistribution(independent_values, dependent_values, cdf_specified );
   }
 }
 
@@ -862,11 +885,41 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractDepend
   }
 }
 
+// Extract the cdf boolean from a property tree
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractCDFBooleanFromNode(
+                                 const Utility::PropertyTree& cdf_boolean_data,
+                                 bool& cdf_specified )
+{
+  // The data must be inlined in the node
+  TEST_FOR_EXCEPTION( cdf_boolean_data.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not extract the cdf boolean value!" );
+
+  ThisType::extractCDFBoolean( cdf_boolean_data.data(), cdf_specified );
+}
+
+// Extract the cdf boolean
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::extractCDFBoolean(
+                                      const Utility::Variant& cdf_boolean_data,
+                                      bool& cdf_specified )
+{
+  try{
+    cdf_specified = Utility::variant_cast<bool>( cdf_boolean_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "The histogram distribution cannot be "
+                           "constructed because the cdf boolean value is "
+                           "not valid!" );
+}
+
 // Verify that the values are valid
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidValues(
                                  const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values )
+                                 const std::vector<double>& dependent_values,
+                                 const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( independent_values.size() == 0,
                       Utility::StringConversionException,
@@ -909,6 +962,27 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
                       "because the dependent value at index "
                        << std::distance( dependent_values.begin(), bad_dependent_value ) <<
                        " (" << *bad_dependent_value << ") is not valid!" );
+
+  if( cdf_bin_values )
+  {
+    TEST_FOR_EXCEPTION( !Sort::isSortedAscending( dependent_values.begin(),
+                                                  dependent_values.end() ),
+                        Utility::StringConversionException,
+                        "The discrete distribution cannot be constructed "
+                        "because the dependent cdf values  are not "
+                        "sorted!" );
+
+    std::vector<double>::const_iterator repeat_cdf_value =
+      std::adjacent_find( dependent_values.begin(), dependent_values.end() );
+    
+    TEST_FOR_EXCEPTION( repeat_cdf_value != dependent_values.end(),
+                        Utility::StringConversionException,
+                        "The discrete distribution cannot be "
+                        "constructed because there is a repeated dependent cdf"
+                        " value at index "
+                        << std::distance( dependent_values.begin(), repeat_cdf_value ) <<
+                        " (" << *repeat_cdf_value << ")!" );
+  }
 }
 
 } // end Utility namespace

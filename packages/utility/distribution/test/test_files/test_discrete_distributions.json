@@ -1,85 +1,176 @@
 {
-    "Distribution A": "{discrete, {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0}}",
-    "Distribution B": "{Discrete, {-pi/2, 2i, pi}, {1.0r4}}",
+    "Distribution A": "{Discrete Distribution, {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0}}",
+    "Distribution B": "{discrete distribution, {-pi/2, 2i, pi}, {1.0r4}, false}",
+    "Distribution C": "{Discrete, {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0}, false}",
+    "Distribution D": "{discrete, {-pi/2, 2i, pi}, {0.25, 0.5, 0.75, 1.0}, true}",
 
-    "Distribution C":
+    "comment": "The following inline distributions are ill-formed",
+    "Distribution E": "{dummy, {-1.0, 1.0}, {1.0, 2.0}}",
+    "Distribution F": "{Discrete}",
+    "Distribution G": "{Discrete, {-1.0, 1.0}}",
+    "Distribution H": "{Discrete, {}, {}}",
+    "Distribution I": "{Discrete, {1.0, -1.0}, {1.0r2}}",
+    "Distribution J": "{Discrete, {inf, inf}, {1.0r2}}",
+    "Distribution K": "{Discrete, {-1.0, inf}, {1.0r2}}",
+    "Distribution L": "{Discrete, {-1.0, 1.0}, {1.0}}",
+    "Distribution M": "{Discrete, {-1.0, 0.0, 1.0}, {1.0, inf, 1.0}}",
+    "Distribution N": "{Discrete, {-1.0, 0.0, 1.0}, {1.0, 0.0, 1.0}}",
+    "Distribution O": "{Discrete, {-1.0, 0.0, 1.0}, {1.0, -1.0, 1.0}}",
+    "Distribution P": "{Discrete, {-1.0, 1.0}, {1.0, 0.5}, true}",
+    "Distribution Q": "{Discrete, {-1.0, 1.0}, {1.0, 1.0}, true}",
+
+    "Distribution R":
     {
         "type": "Discrete Distribution",
         "independent values": "{0.1, 1.0, 10.0}",
         "dependent values": "{2, 6, 2}"
     },
 
-    "Distribution D":
+    "Distribution S":
     {
-        "comment": "JSON arrays can also be used to specify values",
-        "dep vals": ["1.0", "1.0", "1.0", "1.0", "1.0"],
-        "indep vals": ["pi/2", "5pi/8", "3pi/4", "7pi/8", "pi"],
-        "type": "discrete-dist",
+        "comment": "JSON arrays can also be used to specify dep values",
+        "dep vals": [1.0, 1.0, 1.0, 1.0, 1.0],
+        "indep vals": "{pi/2, 3i, pi}",
+        "cdf specified": false,
+        "type": "discrete distribution",
         "dummy": ""
     },
 
-    "comment": "This distribution is ill-formed (incorrect type)",
-    "Distribution E": "{dummy, {}, {}}",
+    "Distribution T":
+    {
+        "comment": "JSON arrays can also be used to specify indep values",
+        "type": "Discrete",
+        "indep": ["pi/2", "5pi/8", "3pi/4", "7pi/8", "pi"],
+        "dep": "{1.0r5}"        
+    },
 
-    "Distribution F":
+    "Distribution U":
+    {
+        "type": "discrete",
+        "indep": ["pi/2", "5pi/8", "3pi/4", "7pi/8", "pi"],
+        "dep": [1.0, 1.0, 1.0, 1.0, 1.0]
+    },
+
+    "Distribution V":
+    {
+        "comment": "Repeated keys will be reported as unused",
+        
+        "indep vals": [0.0, 1.0, 2.0, 3.0, 4.0],
+        "dep vals": [0.2, 0.4, 0.6, 0.8, 1.0],
+        "cdf specified": true,
+        "type": "Discrete",
+
+        "independent values": "{1.0, -1.0}",
+        "dependent values": "{0.0, 0.0}",
+        "cdf": false
+    },
+
+    "Distribution W":
     {
         "comment": "This distribution is ill-formed (incorrect type)",
         "type": "dummy"
     },
 
-    "Distribution G":
+    "Distribution X":
     {
-        "comment": "This distribution is ill-formed (bad indep and dep values)",
-        "type": "discrete",
+        "comment": "This distribution is ill-formed (no indep/dep vals)",
+        "type": "Discrete"
+    },
+
+    "Distribution Y":
+    {
+        "comment": "This distribution is ill-formed (no dep vals)",
+        "type": "Discrete",
+        "indep": [1.0, 2.0]
+    },
+
+    "Distribution Z":
+    {
+        "comment": "This distribution is ill-formed (no indep vals)",
+        "type": "Discrete",
+        "dep": [1.0, 2.0]
+    },
+
+    "Distribution AA":
+    {
+        "comment": "This distribution is ill-formed (too few indep vals)",
+        "type": "Discrete",
         "independent values": "{}",
         "dependent values": "{}"
     },
 
-    "Distribution H":
+    "Distribution AB":
     {
-        "comment": "This distribution is ill-formed (bad indep and dep values)",
+        "comment": "This distribution is ill-formed (unsorted indep vals)",
         "type": "Discrete",
-        "independent values": "{0.0, 1.0, 2.0}",
-        "dependent values": "{1.0, 2.0}"
+        "indep": [1.0, -1.0],
+        "dep": "{1.0r2}"
     },
 
-    "Distribution I":
+    "Distribution AC":
     {
-        "comment": "This distribution is ill-formed (indep values not sorted)",
+        "comment": "This distribution is ill-formed (inf start indep val)",
         "type": "Discrete",
-        "independent values": "{1.0, 0.0, 2.0}",
-        "dependent values": "{1.0, 2.0, 1.0}"
+        "indep": "{inf, inf}",
+        "dep": "{1.0r2}"
     },
 
-    "Distribution J":
+    "Distribution AD":
     {
-        "comment": "This distribution is ill-formed (invalid indep values)",
+        "comment": "This distribution is ill-formed (inf end indep val)",
         "type": "Discrete",
-        "independent values": "{-Inf, 1.0, 2.0}",
-        "dependent values": "{1.0, 2.0, 1.0}"
+        "indep": "{-1.0, inf}",
+        "dep": "{1.0r2}"
     },
 
-    "Distribution K":
+    "Distribution AE":
     {
-        "comment": "This distribution is ill-formed (invalid indep values)",
+        "comment": "This distribution is ill-formed (too few dep vals)",
         "type": "Discrete",
-        "independent values": ["0.0", "1.0", "Inf"],
-        "dependent values": "{1.0, 2.0, 1.0}"
+        "indep": "{-1.0, 1.0}",
+        "dep": "{1.0}"
     },
 
-    "Distribution L":
+    "Distribution AF":
     {
-        "comment": "This distribution is ill-formed (invalid dep values)",
+        "comment": "This distribution is ill-formed (inf dep val)",
         "type": "Discrete",
-        "independent values": "{0.0, 1.0, 2.0}",
-        "dependent values": ["Inf", "2.0", "1.0"]
+        "indep": [-1.0, 0.0, 1.0],
+        "dep": [1.0, "inf", 1.0]
     },
 
-    "Distribution M":
+    "Distribution AG":
     {
-        "comment": "This distribution is ill-formed (invalid dep values)",
+        "comment": "This distribution is ill-formed (zero dep val)",
         "type": "Discrete",
-        "independent values": "{0.0, 1.0, Inf}",
-        "dependent values": "{1.0, 0.0, 1.0}"
+        "indep": [-1.0, 0.0, 1.0],
+        "dep": [1.0, 0.0, 1.0]
+    },
+
+    
+    "Distribution AH":
+    {
+        "comment": "This distribution is ill-formed (neg dep val)",
+        "type": "Discrete",
+        "indep": [-1.0, 0.0, 1.0],
+        "dep": [1.0, -1.0, 1.0]
+    },
+
+    "Distribution AI":
+    {
+        "comment": "This distribution is ill-formed (unsorted cdf)",
+        "type": "Discrete",
+        "indep": [-1.0, 1.0],
+        "dep": [1.0, 0.5],
+        "cdf": true
+    },
+
+    "Distribution AJ":
+    {
+        "comment": "This distribution is ill-formed (repeated cdf values)",
+        "type": "Discrete",
+        "indep": [-1.0, 1.0],
+        "dep": [1.0, 1.0],
+        "cdf": true
     }
 }

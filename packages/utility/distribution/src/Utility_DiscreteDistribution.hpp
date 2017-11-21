@@ -234,9 +234,19 @@ private:
   static void extractDependentValuesFromNode( const Utility::PropertyTree& dep_data,
                                               std::vector<double>& dependent_values );
 
+  // Extract the cdf boolean from a property tree
+  static void extractCDFBooleanFromNode(
+                                 const Utility::PropertyTree& cdf_boolean_data,
+                                 bool& cdf_specified );
+  
+  // Extract the cdf boolean
+  static void extractCDFBoolean( const Utility::Variant& cdf_boolean_data,
+                                 bool& cdf_specified );
+
   // Verify that the values are valid
   static void verifyValidValues( const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values );
+                                 const std::vector<double>& dependent_values,
+                                 const bool cdf_bin_values );
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -269,6 +279,12 @@ private:
 
   // The dependent values min match string (used when reading property trees)
   static const std::string s_dep_values_min_match_string;
+
+  // The cdf specified value key (used in property trees)
+  static const std::string s_cdf_specified_value_key;
+
+  // The cdf specified value min match string (used when reading prop. trees)
+  static const std::string s_cdf_specified_value_min_match_string;
 
   // The distribution (first = independent value, second = CDF)
   std::vector<std::pair<IndepQuantity,double> > d_distribution;
