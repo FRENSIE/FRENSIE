@@ -17,7 +17,7 @@
 
 namespace Utility{
 
-/*! The unit-aware inteprolated fully tabular two-dimensional distribution
+/*! The unit-aware interpolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
 template<typename TwoDInterpPolicy,
@@ -191,7 +191,8 @@ public:
 private:
 
     //! Evaluate the distribution using the desired evaluation method
-  template<typename ReturnType,
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
                     const PrimaryIndepQuantity incoming_energy,
@@ -200,7 +201,8 @@ private:
                     const bool use_direct_eval_method = true ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename ReturnType,
+  template<typename LocalTwoDInterpPolicy,
+           typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
     const PrimaryIndepQuantity incoming_energy,

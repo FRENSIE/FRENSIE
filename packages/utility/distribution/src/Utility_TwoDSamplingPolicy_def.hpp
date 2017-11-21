@@ -726,7 +726,7 @@ ReturnType Exact::evaluateSampleBased(
     YIndepType min_y_indep_var = min_y_indep_functor( x_indep_value);
     YIndepType max_y_indep_var = max_y_indep_functor( x_indep_value);
 
-    // Check for a seconday indep value outside of the secondary indep grid limits
+    // Check for a secondary indep value outside of the secondary indep grid limits
     if ( y_indep_value < lower_sec_indep_var_bound )
       return below_lower_bound_return;
     else if ( y_indep_value > upper_sec_indep_var_bound )

@@ -147,13 +147,26 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSa
             const SecondaryIndepQuantity secondary_indep_var_value,
             const bool use_direct_eval_method ) const
 {
-  return this->template evaluateImpl<TwoDInterpPolicy,double>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF,
-                                      use_direct_eval_method,
-                                      0.0,
-                                      1.0 );
+  if ( TwoDSamplePolicy::name() == "Exact" )
+  {
+    return this->template evaluateImpl<TwoDInterpPolicy,double>(
+                                        primary_indep_var_value,
+                                        secondary_indep_var_value,
+                                        &BaseOneDDistributionType::evaluateCDF,
+                                        use_direct_eval_method,
+                                        0.0,
+                                        1.0 );
+  }
+  else
+  {
+    return this->template evaluateImpl<CDFInterpPolicy,double>(
+                                        primary_indep_var_value,
+                                        secondary_indep_var_value,
+                                        &BaseOneDDistributionType::evaluateCDF,
+                                        use_direct_eval_method,
+                                        0.0,
+                                        1.0 );
+  }
 }
 
 // Evaluate the secondary conditional CDF
@@ -172,15 +185,30 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSa
               max_secondary_indep_var_functor,
             const bool use_direct_eval_method ) const
 {
-  return this->template evaluateImpl<TwoDInterpPolicy,double>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      min_secondary_indep_var_functor,
-                                      max_secondary_indep_var_functor,
-                                      &BaseOneDDistributionType::evaluateCDF,
-                                      use_direct_eval_method,
-                                      0.0,
-                                      1.0 );
+  if ( TwoDSamplePolicy::name() == "Exact" )
+  {
+    return this->template evaluateImpl<TwoDInterpPolicy,double>(
+                                        primary_indep_var_value,
+                                        secondary_indep_var_value,
+                                        min_secondary_indep_var_functor,
+                                        max_secondary_indep_var_functor,
+                                        &BaseOneDDistributionType::evaluateCDF,
+                                        use_direct_eval_method,
+                                        0.0,
+                                        1.0 );
+  }
+  else
+  {
+        return this->template evaluateImpl<CDFInterpPolicy,double>(
+                                        primary_indep_var_value,
+                                        secondary_indep_var_value,
+                                        min_secondary_indep_var_functor,
+                                        max_secondary_indep_var_functor,
+                                        &BaseOneDDistributionType::evaluateCDF,
+                                        use_direct_eval_method,
+                                        0.0,
+                                        1.0 );
+  }
 }
 
 //---------------------------------------------------------------------------//

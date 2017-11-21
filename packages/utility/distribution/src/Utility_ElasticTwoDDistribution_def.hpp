@@ -84,7 +84,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
                 const bool use_direct_eval_method ) const
   -> DepQuantity
 {
-  return this->template evaluateImpl<DepQuantity>(
+  return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluate,
@@ -103,7 +103,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
                 const bool use_direct_eval_method ) const
   -> InverseSecondaryIndepQuantity
 {
-  return this->template evaluateImpl<InverseSecondaryIndepQuantity>(
+  return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluatePDF,
@@ -126,7 +126,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
             const bool use_direct_eval_method ) const
   -> InverseSecondaryIndepQuantity
 {
-  return this->evaluateImpl<InverseSecondaryIndepQuantity>(
+  return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       min_secondary_indep_var_functor,
@@ -146,11 +146,22 @@ double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,Primar
                 const SecondaryIndepQuantity secondary_indep_var_value,
                 const bool use_direct_eval_method ) const
 {
-  return this->template evaluateImpl<double>(
+  if ( TwoDSamplePolicy::name() == "Exact" )
+  {
+    return this->evaluateImpl<TwoDInterpPolicy,double>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluateCDF,
                                       use_direct_eval_method );
+  }
+  else
+  {
+    return this->evaluateImpl<CDFInterpPolicy,double>(
+                                      primary_indep_var_value,
+                                      secondary_indep_var_value,
+                                      &BaseOneDDistributionType::evaluateCDF,
+                                      use_direct_eval_method );
+  }
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -159,7 +170,8 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-template<typename ReturnType,
+template<typename LocalTwoDInterpPolicy,
+         typename ReturnType,
          typename EvaluationMethod>
 inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
                         const PrimaryIndepQuantity incoming_energy,
@@ -266,7 +278,8 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-template<typename ReturnType,
+template<typename LocalTwoDInterpPolicy,
+         typename ReturnType,
          typename EvaluationMethod>
 inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
             const PrimaryIndepQuantity incoming_energy,
