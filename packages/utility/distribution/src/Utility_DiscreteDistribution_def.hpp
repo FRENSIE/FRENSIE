@@ -519,13 +519,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
 
     data_extractors.insert(
      std::make_pair( s_indep_values_key,
-       std::make_tuple( s_indep_values_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_indep_values_min_match_string, BaseType::REQUIRED_DATA,
                   std::bind<void>( &ThisType::extractIndependentValuesFromNode,
                                    std::placeholders::_1,
                                    std::ref(independent_values) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_dep_values_key,
-       std::make_tuple( s_dep_values_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_dep_values_min_match_string, BaseType::REQUIRED_DATA,
                   std::bind<void>( &ThisType::extractDependentValuesFromNode,
                                    std::placeholders::_1,
                                    std::ref(dependent_values) ) ) ) );

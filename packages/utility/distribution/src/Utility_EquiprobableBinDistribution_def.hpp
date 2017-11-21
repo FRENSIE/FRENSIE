@@ -444,7 +444,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPr
 
     data_extractors.insert(
      std::make_pair( s_bin_boundary_values_key,
-      std::make_tuple( s_bin_boundary_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_bin_boundary_min_match_string, BaseType::REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractBinBoundariesFromNode,
                                        std::placeholders::_1,
                                        std::ref(bin_boundaries) ) ) ) );

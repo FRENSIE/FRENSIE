@@ -375,7 +375,7 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromPropertyTreeI
   // Determine which data must be extracted
   std::map<std::string,bool> required_data;
 
-  for( DataExtractorMap::const_iterator data_it = data_extractors.begin();
+  for( typename DataExtractorMap::const_iterator data_it = data_extractors.begin();
        data_it != data_extractors.end();
        ++data_it )
   {
@@ -413,10 +413,10 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromPropertyTreeI
     else
     {
       // Determine the best data key match
-      DataExtractorMap::iterator data_extractor_it = data_extractors.begin();
-      DataExtractorMap::iterator data_extractor_end = data_extractors.end();
+      typename DataExtractorMap::iterator data_extractor_it = data_extractors.begin();
+      typename DataExtractorMap::iterator data_extractor_end = data_extractors.end();
 
-      std::pair<size_t,DataExtractorMap::iterator> best_key_match = 
+      std::pair<size_t,typename DataExtractorMap::iterator> best_key_match = 
         std::make_pair( 0, data_extractors.end() );
       
       while( data_extractor_it != data_extractor_end )
@@ -502,7 +502,7 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::verifyDistributio
   TEST_FOR_EXCEPTION( !this->doesTypeNameMatch( type_data.toString() ),
                       Utility::StringConversionException,
                       "The " << this->getDistributionTypeName(true, true) <<
-                      "cannot be constructed because the distribution type ("
+                      " cannot be constructed because the distribution type ("
                       << type_data.toString() << ") does not match!" );
 }
 

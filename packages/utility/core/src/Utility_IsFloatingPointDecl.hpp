@@ -19,7 +19,7 @@ namespace Utility{
  * class. Specializations can be made for special (e.g. extented precision)
  * floating point types.
  */
-template<typename T>
+template<typename T, typename Enabled = void>
 struct IsFloatingPoint : public boost::is_floating_point<T> {};
   
 } // end Utility namespace

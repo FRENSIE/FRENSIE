@@ -379,13 +379,13 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
 
     data_extractors.insert(
      std::make_pair( s_location_value_key,
-      std::make_tuple( s_location_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_location_value_min_match_string, BaseType::OPTIONAL_DATA,
                        std::bind<void>( &ThisType::setLocationValueUsingNode,
                                         std::ref(*this),
                                         std::placeholders::_1 ) ) ) );
     data_extractors.insert(
      std::make_pair( s_multiplier_value_key,
-      std::make_tuple( s_multiplier_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
                        std::bind<void>( &ThisType::setMultiplierValueUsingNode,
                                         std::ref(*this),
                                         std::placeholders::_1 ) ) ) );

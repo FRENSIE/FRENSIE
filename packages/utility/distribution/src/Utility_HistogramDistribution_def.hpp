@@ -547,19 +547,19 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromProperty
 
     data_extractors.insert(
      std::make_pair( s_bin_boundary_values_key,
-      std::make_tuple( s_bin_boundary_values_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_bin_boundary_values_min_match_string, BaseType::REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractValuesFromNode,
                                        std::placeholders::_1,
                                        std::ref(bin_boundaries) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_bin_values_key,
-      std::make_tuple( s_bin_values_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_bin_values_min_match_string, BaseType::REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractValuesFromNode,
                                        std::placeholders::_1,
                                        std::ref(bin_values) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_cdf_specified_value_key,
-      std::make_tuple( s_cdf_specified_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_cdf_specified_value_min_match_string, BaseType::OPTIONAL_DATA,
                        std::bind<void>(&ThisType::extractCDFBooleanFromNode,
                                        std::placeholders::_1,
                                        std::ref(cdf_specified) ) ) ) );

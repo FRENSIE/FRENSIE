@@ -141,10 +141,10 @@ public:
                                const std::string& delim = std::string() );
 
   //! Test if the distribution is continuous
-  bool isContinuous() const override
+  bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
-  void toStream( std::ostream& os ) const override
+  void toStream( std::ostream& os ) const override;
 
   //! Method for initializing the object from an input stream
   void fromStream( std::istream& is, const std::string& delims ) override;
@@ -331,8 +331,8 @@ struct TypeNameTraits<TabularDistribution<InterpolationPolicy> >
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION_CLASS_VERSION_EXTRA( UnitAwareHistogramDistribution, typename, InterpolationPolicy, 0 );
-BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2_EXTRA( HistogramDistribution, typename, InterpolationPolicy );
+BOOST_DISTRIBUTION_CLASS_VERSION_EXTRA( UnitAwareTabularDistribution, typename, InterpolationPolicy, 0 );
+BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2_EXTRA( TabularDistribution, typename, InterpolationPolicy );
 
 //---------------------------------------------------------------------------//
 // Template inludes.

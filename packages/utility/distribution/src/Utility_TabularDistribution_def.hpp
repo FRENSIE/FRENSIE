@@ -18,7 +18,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_EXTRA( UnitAwarePowerDistribution, typename, InterpolationPolicy );
+BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_EXTRA( UnitAwareTabularDistribution, typename, InterpolationPolicy );
 
 namespace Utility{
 
@@ -479,7 +479,7 @@ std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,Dep
                                                 const bool use_template_params,
                                                 const std::string& delim )
 {
-  return BaseType::typeNameImpl( {"Tabular", InterpolationPolicy::name()}
+  return BaseType::typeNameImpl( {"Tabular", InterpolationPolicy::name()},
                                  verbose_name,
                                  use_template_params,
                                  delim );
@@ -611,14 +611,14 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
     typename BaseType::DataExtractorMap data_extractors;
 
     data_extractors.insert(
-     std::make_pair( s_independent_values_values_key,
-      std::make_tuple( s_independent_values_values_min_match_string, REQUIRED_DATA,
+     std::make_pair( s_independent_values_key,
+      std::make_tuple( s_independent_values_min_match_string, BaseType::REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractValuesFromNode,
                                        std::placeholders::_1,
                                        std::ref(independent_values) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_dependent_values_key,
-      std::make_tuple( s_dependent_values_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_dependent_values_min_match_string, BaseType::REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractValuesFromNode,
                                        std::placeholders::_1,
                                        std::ref(dependent_values) ) ) ) );
@@ -883,14 +883,14 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                                       std::vector<double>& values )
 {
   // Inline array
-  if( data.size() == 0 )
-    ThisType::extractValues( data.data(), values );
+  if( values_data.size() == 0 )
+    ThisType::extractValues( values_data.data(), values );
 
   // JSON array
   else
   {
     try{
-      values = Utility::fromPropertyTree<std::vector<double> >( data );
+      values = Utility::fromPropertyTree<std::vector<double> >( values_data );
     }
     EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
                              "The tabular distribution cannot be "
@@ -907,7 +907,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                                            std::vector<double>& values )
 {
   try{
-    values = Utility::variant_cast<std::vector<double> >( data );
+    values = Utility::variant_cast<std::vector<double> >( values_data );
   }
   EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                            "The tabular distribution cannot be "

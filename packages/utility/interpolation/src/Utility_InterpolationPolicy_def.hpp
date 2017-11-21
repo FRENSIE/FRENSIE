@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_IsFloatingPoint.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -319,8 +320,8 @@ inline DepType LogLog::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -352,8 +353,8 @@ LogLog::interpolateAndProcess( const IndepType indep_var_0,
 			       const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -448,8 +449,8 @@ inline DepType LogLin::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -479,8 +480,8 @@ LogLin::interpolateAndProcess( const IndepType indep_var_0,
 			       const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -575,8 +576,8 @@ inline DepType LinLog::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );
@@ -689,8 +690,8 @@ inline DepType LinLin::interpolate( const IndepType indep_var_0,
 				    const DepType dep_var_1 )
 {
   // T must be a floating point type
-  testStaticPrecondition( (QuantityTraits<IndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<IndepType>::value) );
+  testStaticPrecondition( (Utility::IsFloatingPoint<DepType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_0 ) );
   testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_1 ) );

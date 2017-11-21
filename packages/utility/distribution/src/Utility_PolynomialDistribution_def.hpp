@@ -434,19 +434,19 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromPropert
 
     data_extractors.insert(
      std::make_pair( s_coefficient_values_key,
-      std::make_tuple( s_coefficient_values_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_coefficient_values_min_match_string, BaseType::REQUIRED_DATA,
                        std::bind<void>(&ThisType::extractCoefficientsFromNode,
                                        std::placeholders::_1,
                                        std::ref(d_coefficients) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_lower_limit_value_min_match_string, BaseType::REQUIRED_DATA,
        std::bind<void>(&ThisType::extractLimitFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(lower_limit) ) ) ) );
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, REQUIRED_DATA,
+      std::make_tuple( s_upper_limit_value_min_match_string, BaseType::REQUIRED_DATA,
        std::bind<void>(&ThisType::extractLimitFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(upper_limit) ) ) ) );

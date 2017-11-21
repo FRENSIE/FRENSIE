@@ -496,31 +496,31 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromPropertyTre
 
     data_extractors.insert(
      std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_const_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
          std::bind<void>(&ThisType::extractShapeParameterFromNode<DepQuantity>,
                          std::placeholders::_1,
                          std::ref(d_constant_multiplier)) )));
     data_extractors.insert(
      std::make_pair( s_mean_value_key,
-      std::make_tuple( s_mean_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_mean_value_min_match_string, BaseType::OPTIONAL_DATA,
          std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                          std::placeholders::_1,
                          std::ref(d_mean)) )));
     data_extractors.insert(
      std::make_pair( s_standard_deviation_value_key,
-      std::make_tuple( s_standard_deviation_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_standard_deviation_value_min_match_string, BaseType::OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_standard_deviation)) )));
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_lower_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_min_independent_value)) )));
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_upper_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_max_independent_value)) )));

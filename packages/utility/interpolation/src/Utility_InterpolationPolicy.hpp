@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_InterpolationType.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -385,6 +386,11 @@ struct LinLin : public InterpolationHelper<LinLin>
   //! The name of the policy
   static const std::string name();
 };
+
+TYPE_NAME_TRAITS_QUICK_DECL( LinLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLog );
 
 } // end Utility namespace
 

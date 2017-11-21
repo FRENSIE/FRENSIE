@@ -517,19 +517,19 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromPropertyTr
 
     data_extractors.insert(
      std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_const_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<DistMultiplierQuantity>,
                        std::placeholders::_1,
                        std::ref(d_multiplier)) )));
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_lower_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_min_indep_limit)) )));
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, OPTIONAL_DATA,
+      std::make_tuple( s_upper_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
        std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
                        std::placeholders::_1,
                        std::ref(d_max_indep_limit)) )));
