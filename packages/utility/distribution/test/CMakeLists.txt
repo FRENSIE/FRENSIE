@@ -44,6 +44,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(TabularDistribution DEPENDS tstTabularDistribution.c
 FRENSIE_ADD_TEST(TabularDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.json)
 
+FRENSIE_ADD_TEST_EXECUTABLE(UniformDistribution DEPENDS tstUniformDistribution.cpp)
+FRENSIE_ADD_TEST(UniformDistribution
+  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_uniform_distributions.json)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
 # ADD_EXECUTABLE(tstUniformDistribution

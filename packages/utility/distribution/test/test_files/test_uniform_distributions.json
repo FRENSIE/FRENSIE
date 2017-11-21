@@ -1,89 +1,150 @@
 {
-    "Uniform Distribution A": "{uniform, -1.0, 1.0, 2}",
-    "Uniform Distribution B": "{Uniform,0,2pi}",
+    "Distribution A": "{Uniform distribution, -1.0, 1.0, 2}",
+    "Distribution B": "{uniform distribution, 0, 2pi, 3.0}",
+    "Distribution C": "{Uniform, -1.0, 1.0}",
+    "Distribution D": "{uniform, 0, 2pi}",
 
-    "Uniform Distribution C":
+    "comment": "The following inline distributions are ill-formed",
+    "Distribution E": "{dummy, 0, 1}",
+    "Distribution F": "{Uniform}",
+    "Distribution G": "{Uniform, 0}",
+    "Distribution H": "{Uniform, -inf, 0}",
+    "Distribution I": "{Uniform, 0, inf}",
+    "Distribution J": "{Uniform, 0, 0}",
+    "Distribution K": "{Uniform, 1, 0}",
+    "Distribution L": "{Uniform, 0, 1, -1}",
+    "Distribution M": "{Uniform, 0, 1, 0}",
+    "Distribution N": "{Uniform, 0, 1, inf}",
+
+    "Distribution O":
     {
         "type": "Uniform Distribution",
-        "min indep value": 0.0,
-        "max indep value": 10.0,
-        "dep value": 3.0
+        "lower boundary": -1.0,
+        "upper boundary": 1.0,
+        "multiplier": 2.0
     },
 
-    "Uniform Distribution D":
+    "Distribution P":
     {
-        "comment": "optional comment example",
-        "max": "Pi",
-        "min": 0.0,
-        "type": "uniform-distribution",
+        "type": "uniform distribution",
+        "lower": 0,
+        "upper": "2pi",
+        "mult": 3.0
+    },
+
+    "Distribution Q":
+    {
+        "comment": "The dummy key will be reported as unused",
+        
+        "type": "Uniform",
+        "lower": -1.0,
+        "upper": 1.0,
         "dummy": ""
     },
 
-    "comment": "This distribution is ill-formed (invalid type)",
-    "Uniform Distribution E": "{dummy, 0, 1}",
-
-    "Uniform Distribution F":
+    "Distribution R":
     {
-        "comment": "This distribution is ill-formed (invalid type)",
+        "type": "uniform",
+        "lower": 0,
+        "upper": "2pi"
+    },
+
+    "Distribution T":
+    {
+        "comment": "Repeated keys will be reported as unused",
+
+        "mult": 0.5,
+        "lower": -1.0,
+        "upper": 1.0,
+        "type": "Uniform",
+
+        "upper bound": "inf",
+        "lower bound": "-inf",
+        "multiplier": "inf"
+    },
+
+    "Distribution U":
+    {
+        "comment": "This distribution is ill-formed (incorrect type)",
         "type": "dummy"
     },
 
-    "Uniform Distribution G":
+    "Distribution V":
     {
-        "comment": "This distribution is ill-formed (invalid min indep value)",
-        "type": "uniform",
-        "min": "-Inf",
-        "max": 0.0
+        "comment": "This distribution is ill-formed (no args specified)",
+        "type": "Uniform"
     },
 
-    "Uniform Distribution H":
+    "Distribution W":
     {
-        "comment": "This distribution is ill-formed (invalid max indep value)",
-        "type": "uniform",
-        "min": 0.0,
-        "max": "Inf"
+        "comment": "This distribution is ill-formed (no upper limit)",
+        "type": "Uniform",
+        "lower": -1.0
     },
 
-    "Uniform Distribution I":
+    "Distribution X":
     {
-        "comment": "This distribution is ill-formed (invalid indep values)",
-        "type": "uniform",
-        "min": 0.0,
-        "max": -1.0
+        "comment": "This distribution is ill-formed (no lower limit)",
+        "type": "Uniform",
+        "upper": 1.0
     },
 
-    "Uniform Distribution J":
+    "Distribution Y":
     {
-        "comment": "This distribution is ill-formed (invalid indep values)",
-        "type": "uniform",
-        "min": 0.0,
-        "max": 0.0
+        "comment": "This distribution is ill-formed (inf lower limit)",
+        "type": "Uniform",
+        "lower": "-inf",
+        "upper": 1.0
     },
 
-    "Uniform Distribution K":
+    "Distribution Z":
     {
-        "comment": "This distribution is ill-formed (invalid dep value)",
-        "type": "uniform",
-        "min": 0.0,
-        "max": 1.0,
-        "dep value": 0.0
+        "comment": "This distribution is ill-formed (inf upper limit)",
+        "type": "Uniform",
+        "lower": 0.0,
+        "upper": "inf"
     },
 
-    "Uniform Distribution L":
+    "Distribution AA":
     {
-        "comment": "This distribution is ill-formed (invalid dep value)",
-        "type": "uniform",
-        "min": 0.0,
-        "max": 1.0,
-        "dep value": -1.0
+        "comment": "This distribution is ill-formed (bad limits)",
+        "type": "Uniform",
+        "lower": 0.0,
+        "upper": 0.0
     },
 
-    "Uniform Distribution M":
+    "Distribution AB":
     {
-        "comment": "This distribution is ill-formed (invalid dep value)",
-        "type": "uniform",
-        "min": 0.0,
-        "max": 1.0,
-        "dep value": "Inf"
+        "comment": "This distribution is ill-formed (bad limits)",
+        "type": "Uniform",
+        "lower": 1.0,
+        "upper": 0.0
+    },
+
+    "Distribution AC":
+    {
+        "comment": "This distribution is ill-formed (neg multiplier)",
+        "type": "Uniform",
+        "lower": 0.0,
+        "upper": 1.0,
+        "mult": -1.0
+    },
+
+    "Distribution AD":
+    {
+        "comment": "This distribution is ill-formed (zero multiplier)",
+        "type": "Uniform",
+        "lower": 0.0,
+        "upper": 1.0,
+        "mult": 0.0
+    },
+
+    "Distribution AE":
+    {
+        "comment": "This distribution is ill-formed (inf multiplier)",
+        "type": "Uniform",
+        "lower": 0.0,
+        "upper": 1.0,
+        "mult": "inf"
     }
 }

@@ -1863,6 +1863,92 @@ FRENSIE_DATA_UNIT_TEST( UnitAwareTabularDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
+                            archive,
+                            TestInterpPolicies )
+{
+  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
+  
+  std::string archive_name( "test_tabular_" );
+  archive_name += InterpolationPolicy::name();
+  archive_name += "_dist.h5a";
+
+  // Create and archive some tabular distributions
+  {
+    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+
+    Utility::TabularDistribution<InterpolationPolicy> dist_a( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} );
+
+    initialize<InterpolationPolicy>( distribution );
+
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                          archive << BOOST_SERIALIZATION_NVP( distribution ) );
+  }
+
+  // Load the archived distributions
+  Utility::HDF5IArchive archive( archive_name );
+
+  Utility::TabularDistribution<InterpolationPolicy> dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_CHECK_EQUAL( dist_a, Utility::TabularDistribution<InterpolationPolicy>( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} ) );
+
+  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW(
+    archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::TabularDistribution<InterpolationPolicy>*>( shared_dist.get() ),
+                       *dynamic_cast<Utility::TabularDistribution<InterpolationPolicy>*>( distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
+                            archive,
+                            TestInterpPolicies )
+{
+  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
+  
+  std::string archive_name( "test_tabular_" );
+  archive_name += InterpolationPolicy::name();
+  archive_name += "_dist.h5a";
+
+  // Create and archive some tabular distributions
+  {
+    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+
+    Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> dist_a( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} );
+
+    initialize<InterpolationPolicy>( unit_aware_distribution );
+
+    FRENSIE_REQUIRE_NO_THROW(
+                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW(
+               archive << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+  }
+
+  // Load the archived distributions
+  Utility::HDF5IArchive archive( archive_name );
+
+  Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} )) );
+
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW(
+    archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>*>( shared_dist.get() )),
+                       (*dynamic_cast<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() ) ));
+}
+
+//---------------------------------------------------------------------------//
 // Check that distributions can be scaled
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareTabularDistribution,
 				   explicit_conversion,

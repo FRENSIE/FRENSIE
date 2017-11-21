@@ -357,6 +357,80 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::fromInlinedProper
                               "!" );
 }
 
+// Extract an array from a node
+template<typename IndependentUnit, typename DependentUnit>
+template<template<typename,typename...> class Container>
+void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::extractArrayFromNode(
+                                       const Utility::PropertyTree& array_data,
+                                       Container<double>& array,
+                                       const std::string& dist_name )
+{
+  // Inline array
+  if( array_data.size() == 0 )
+  {
+    try{
+      array = Utility::variant_cast<Container<double> >( array_data.data() );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                                Utility::PropertyTreeConversionException,
+                                "Could not create the " << dist_name << 
+                                " because the array values are invalid!" );
+  }
+
+  // JSON array
+  else
+  {
+    try{
+      array = Utility::fromPropertyTree<Container<double> >( array_data );
+    }
+    EXCEPTION_CATCH_RETHROW( Utility::PropertyTreeConversionException,
+                             "Could not create the " << dist_name << 
+                              " because the JSON array values are invalid!" );
+  }
+}
+
+// Extract a shape parameter from a node
+template<typename IndependentUnit, typename DependentUnit>
+template<typename QuantityType>
+void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::extractValueFromNode(
+                                       const Utility::PropertyTree& value_data,
+                                       QuantityType& value,
+                                       const std::string& dist_name )
+{
+  // The data must be inlined in the node
+  TEST_FOR_EXCEPTION( value_data.size() != 0,
+                      Utility::PropertyTreeConversionException,
+                      "Could not extract the shape parameter value!" );
+
+  try{
+    ThisType::extractValue( value_data.data(), value, dist_name );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
+                              Utility::PropertyTreeConversionException,
+                              "Could not create the " << dist_name <<
+                              " because a value is invalid!" );
+}
+
+// Extract a shape parameter
+template<typename IndependentUnit, typename DependentUnit>
+template<typename QuantityType>
+void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::extractValue(
+                                            const Utility::Variant& value_data,
+                                            QuantityType& value,
+                                            const std::string& dist_name )
+{
+  typename Utility::QuantityTraits<QuantityType>::RawType raw_value;
+
+  try{
+    raw_value = Utility::variant_cast<typename Utility::QuantityTraits<QuantityType>::RawType>( value_data );
+  }
+  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
+                           "Could not create the " << dist_name <<
+                           " because a value is invalid!" );
+
+  Utility::setQuantity( value, raw_value );
+}
+
 // Extract from a property tree
 /*! \details The distribution data in the property tree node cannot be inlined
  * (i.e. node.size() != 0 ). Once distribution data is encountered and 

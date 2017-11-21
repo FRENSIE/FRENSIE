@@ -132,8 +132,9 @@ public:
   OneDDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  static std::string typeName( const bool verbose_name,
+                               const bool use_template_params = false,
+                               const std::string& delim = std::string() );
 
   // Test if the distribution is continuous
   bool isContinuous() const override;
@@ -171,28 +172,36 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareUniformDistribution( const UnitAwareUniformDistribution<void,void>& unitless_dist_instance, int );
 
+  //! Return the distribution type name
+  std::string getDistributionTypeName( const bool verbose_name,
+                                       const bool lowercase ) const override;
+
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
 
 private:
 
-  // Verify the distribution type
-  void verifyDistributionType( const Utility::Variant& type_data ) const;
-
-  // Set the min indep value
-  void setMinIndependentValue( const Utility::Variant& min_indep_data );
-
-  // Set the max indep value
-  void setMaxIndependentValue( const Utility::Variant& max_indep_data );
-
-  // Verify that the distribution values are valid
-  void verifyValidValues();
-
-  // Set the dependent indep value
-  void setDependentValue( const Utility::Variant& dep_data );
+  // Verify that the shape parameters are valid
+  static void verifyValidShapeParameters(
+                                         const IndepQuantity& min_indep_value,
+                                         const IndepQuantity& max_indep_value,
+                                         const DepQuantity& multiplier );
 
   // Calculate the PDF value
   void calculatePDFValue();
+
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
@@ -200,6 +209,24 @@ private:
 
   // The distribution type
   static const OneDDistributionType distribution_type = UNIFORM_DISTRIBUTION;
+
+  // The constant multiplier value key (used in property trees)
+  static const std::string s_const_multiplier_value_key;
+
+  // The constant multiplier min match string (used in property trees)
+  static const std::string s_const_multiplier_value_min_match_string;
+
+  // The lower limit value key (used in property trees)
+  static const std::string s_lower_limit_value_key;
+
+  // The lower limit min match string (used in property trees)
+  static const std::string s_lower_limit_value_min_match_string;
+
+  // The upper limit value key (used in property trees)
+  static const std::string s_upper_limit_value_key;
+
+  // The upper limit min match string (used in property trees)
+  static const std::string s_upper_limit_value_min_match_string;
 
   // The min independent value
   IndepQuantity d_min_independent_value;
@@ -219,7 +246,43 @@ private:
  */
 typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
 
+/*! Partial specialization of Utility::TypeNameTraits for unit aware
+ * uniform distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<typename IndependentUnit,typename DependentUnit>
+struct TypeNameTraits<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  {
+    return UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
+  }
+};
+
+/*! Specialization of Utility::TypeNameTraits for uniform distribution
+ * \ingroup one_d_distributions
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<UniformDistribution>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return UniformDistribution::typeName( true, false ); }
+};
+
 } // end Utility namespace
+
+BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareUniformDistribution, 0 );
+BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( UniformDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

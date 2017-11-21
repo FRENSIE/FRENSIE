@@ -207,6 +207,24 @@ protected:
   //! Extract froman inlined property tree
   void fromInlinedPropertyTreeImpl( const Utility::PropertyTree& node );
 
+  //! Extract an array from a node
+  template<template<typename,typename...> class Container>
+  static void extractArrayFromNode( const Utility::PropertyTree& array_data,
+                                    Container<double>& array,
+                                    const std::string& dist_name );
+  
+  //! Extract a value from a node
+  template<typename QuantityType>
+  static void extractValueFromNode( const Utility::PropertyTree& value_data,
+                                    QuantityType& value,
+                                    const std::string& dist_name );
+
+  //! Extract a value
+  template<typename QuantityType>
+  static void extractValue( const Utility::Variant& value_data,
+                            QuantityType& value,
+                            const std::string& dist_name );
+
   //! Extract from a property tree
   typedef std::function<void(const Utility::PropertyTree&)> DataExtractor;
 

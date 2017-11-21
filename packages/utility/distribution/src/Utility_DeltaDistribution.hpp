@@ -175,10 +175,6 @@ protected:
 
 private:
 
-  // All possible instantiations are friends
-  template<typename FriendIndepUnit, typename FriendDepUnit>
-  friend class UnitAwareDeltaDistribution;
-
   // Set the location value using a node
   void setLocationValueUsingNode( const Utility::PropertyTree& location_data );
   
@@ -209,6 +205,10 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
+
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareDeltaDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = DELTA_DISTRIBUTION;

@@ -275,7 +275,7 @@ private:
 typedef UnitAwareExponentialDistribution<void,void> ExponentialDistribution;
 
 /*! Partial specialization of Utility::TypeNameTraits for unit aware
- * evaporation distribution
+ * exponential distribution
  * \ingroup one_d_distributions
  * \ingroup type_name_traits
  */
@@ -292,7 +292,7 @@ struct TypeNameTraits<UnitAwareExponentialDistribution<IndependentUnit,Dependent
   }
 };
 
-/*! Specialization of Utility::TypeNameTraits for evaporation distribution
+/*! Specialization of Utility::TypeNameTraits for exponential distribution
  * \ingroup one_d_distributions
  * \ingroup type_name_traits
  */
