@@ -646,6 +646,11 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::verifyVali
                       Utility::StringConversionException,
                       "The evaporation distribution cannot be constructed "
                       "because the multiplier is invalid!" );
+
+  TEST_FOR_EXCEPTION( multiplier == DMQT::zero(),
+                      Utility::StringConversionException,
+                      "The evaporation distribution cannot be constructed "
+                      "because the multiplier is invalid!" );
 }
 
 } // end Utility namespace

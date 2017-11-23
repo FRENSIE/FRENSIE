@@ -278,7 +278,7 @@ private:
 typedef UnitAwareMaxwellFissionDistribution<void,void> MaxwellFissionDistribution;
 
 /*! Partial specialization of Utility::TypeNameTraits for unit aware
- * evaporation distribution
+ * maxwell fission distribution
  * \ingroup one_d_distributions
  * \ingroup type_name_traits
  */
@@ -295,7 +295,7 @@ struct TypeNameTraits<UnitAwareMaxwellFissionDistribution<IndependentUnit,Depend
   }
 };
 
-/*! Specialization of Utility::TypeNameTraits for evaporation distribution
+/*! Specialization of Utility::TypeNameTraits for maxwell fission distribution
  * \ingroup one_d_distributions
  * \ingroup type_name_traits
  */

@@ -626,32 +626,32 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::verifyV
 {
   TEST_FOR_EXCEPTION( IQT::isnaninf( incident_energy ),
                       Utility::StringConversionException,
-                      "The evaporation distribution cannot be constructed "
+                      "The maxwell fission distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= IQT::zero(),
                       Utility::StringConversionException,
-                      "The evaporation distribution cannot be constructed "
+                      "The maxwell fission distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( nuclear_temp ),
                       Utility::StringConversionException,
-                      "The evaporation distribution cannot be constructed "
+                      "The maxwell fission distribution cannot be constructed "
                       "because the nuclear temperature is invalid!" );
 
   TEST_FOR_EXCEPTION( nuclear_temp <= IQT::zero(),
 		      Utility::StringConversionException,
-                      "The evaporation distribution cannot be constructed "
+                      "The maxwell fission distribution cannot be constructed "
                       "because the nuclear temperature is invalid!" );
   
   TEST_FOR_EXCEPTION( IQT::isnaninf( restriction_energy ),
                       Utility::StringConversionException,
-                      "The evaporation distribution cannot be constructed "
+                      "The maxwell fission distribution cannot be constructed "
                       "because the restriction energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= restriction_energy,
                       Utility::StringConversionException,
-                      "The evaporation distribution cannot be constructed "
+                      "The maxwell fission distribution cannot be constructed "
                       "because the incident energy ("
                       << Utility::toString(incident_energy) << ")"
                       " is not greater than the restriction energy ("
@@ -659,8 +659,13 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::verifyV
 
   TEST_FOR_EXCEPTION( DMQT::isnaninf( multiplier ),
                       Utility::StringConversionException,
-                      "The evaporation distribution cannot be constructed "
+                      "The maxwell fission distribution cannot be constructed "
                       "because the multiplier is invalid!" );
+
+  TEST_FOR_EXCEPTION( multiplier == DMQT::zero(),
+                      Utility::StringConversionException,
+                      "The maxwell fission distribution cannot be constructed "
+                      "because the multiplier is invalid!" );  
 }
 
 } // end Utility namespace
