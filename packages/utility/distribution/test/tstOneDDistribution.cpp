@@ -9,10 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
@@ -21,38 +18,37 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the bounds of two distributions can be tested
-TEUCHOS_UNIT_TEST( OneDDistribution, hasSameBounds )
+FRENSIE_UNIT_TEST( OneDDistribution, hasSameBounds )
 {
-  Teuchos::RCP<Utility::OneDDistribution> delta_dist(
+  std::shared_ptr<Utility::OneDDistribution> delta_dist(
 					new Utility::DeltaDistribution( 1. ) );
-  Teuchos::RCP<Utility::OneDDistribution> discrete_dist(
-	new Utility::DiscreteDistribution( Teuchos::tuple( -1.0, 0.0, 1.0 ),
-					   Teuchos::tuple( 1.0, 1.0, 1.0 ) ) );
-  Teuchos::RCP<Utility::OneDDistribution> histogram_dist(
-       new Utility::HistogramDistribution( Teuchos::tuple( -1.0, 0.0, 1.0 ),
-					   Teuchos::tuple( 1.0, 1.0 ) ) );
+  std::shared_ptr<Utility::OneDDistribution> discrete_dist(
+      new Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 1.0, 1.0} ) );
+  std::shared_ptr<Utility::OneDDistribution> histogram_dist(
+          new Utility::HistogramDistribution( {-1.0, 0.0, 1.0}, {1.0, 1.0} ) );
 
-  Teuchos::RCP<Utility::OneDDistribution> exponential_dist(
+  std::shared_ptr<Utility::OneDDistribution> exponential_dist(
 			    new Utility::ExponentialDistribution( 1.0, 1.0 ) );
 
-  Teuchos::RCP<Utility::OneDDistribution> uniform_dist(
+  std::shared_ptr<Utility::OneDDistribution> uniform_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
-  TEST_ASSERT( !delta_dist->hasSameBounds( *discrete_dist ) );
-  TEST_ASSERT( !delta_dist->hasSameBounds( *histogram_dist ) );
-  TEST_ASSERT( !delta_dist->hasSameBounds( *exponential_dist ) );
-  TEST_ASSERT( !delta_dist->hasSameBounds( *uniform_dist ) );
-  TEST_ASSERT( discrete_dist->hasSameBounds( *histogram_dist ) );
-  TEST_ASSERT( !discrete_dist->hasSameBounds( *exponential_dist ) );
-  TEST_ASSERT( discrete_dist->hasSameBounds( *uniform_dist ) );
-  TEST_ASSERT( !histogram_dist->hasSameBounds( *exponential_dist ) );
-  TEST_ASSERT( histogram_dist->hasSameBounds( *uniform_dist ) );
-  TEST_ASSERT( !exponential_dist->hasSameBounds( *uniform_dist ) );
+  FRENSIE_CHECK( !delta_dist->hasSameBounds( *discrete_dist ) );
+  FRENSIE_CHECK( !delta_dist->hasSameBounds( *histogram_dist ) );
+  FRENSIE_CHECK( !delta_dist->hasSameBounds( *exponential_dist ) );
+  FRENSIE_CHECK( !delta_dist->hasSameBounds( *uniform_dist ) );
+  FRENSIE_CHECK( discrete_dist->hasSameBounds( *histogram_dist ) );
+  FRENSIE_CHECK( !discrete_dist->hasSameBounds( *exponential_dist ) );
+  FRENSIE_CHECK( discrete_dist->hasSameBounds( *uniform_dist ) );
+  FRENSIE_CHECK( !histogram_dist->hasSameBounds( *exponential_dist ) );
+  FRENSIE_CHECK( histogram_dist->hasSameBounds( *uniform_dist ) );
+  FRENSIE_CHECK( !exponential_dist->hasSameBounds( *uniform_dist ) );
 }
 
 //---------------------------------------------------------------------------//

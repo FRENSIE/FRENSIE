@@ -41,7 +41,7 @@ public:
   //! Method for initializing the object from an input stream
   virtual void fromStream( std::istream& is, const std::string& delims ) = 0;
 
-  //! Method for initialize the object from an input stream
+  //! Method for initializing the object from an input stream
   void fromStream( std::istream& is )
   { this->fromStream( is, std::string() ); }
 };

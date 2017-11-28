@@ -52,14 +52,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(WattDistribution DEPENDS tstWattDistribution.cpp)
 FRENSIE_ADD_TEST(WattDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_uniform_distributions.json)
 
-FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
+FRENSIE_ADD_TEST_EXECUTABLE(OneDDistribution DEPENDS tstOneDDistribution.cpp)
+FRENSIE_ADD_TEST(OneDDistribution)
 
-# ADD_EXECUTABLE(tstOneDDistribution
-#   tstOneDDistribution.cpp
-#   ${FRENSIE_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstOneDDistribution utility_dist)
-# ADD_TEST(OneDDistribution_test tstOneDDistribution)
-# SET_PROPERTY(TEST OneDDistribution_test PROPERTY LABELS utility_dist)
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_dist)
 
 # ADD_EXECUTABLE(tstHistogramPartiallyTabularTwoDDistribution
 #   tstHistogramPartiallyTabularTwoDDistribution.cpp

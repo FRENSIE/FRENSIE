@@ -28,8 +28,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
-#include "Utility_PropertyTreeCompatibleObject.hpp"
-#include "Utility_StreamableObject.hpp"
+#include "Utility_InlinablePropertyTreeCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -48,12 +47,8 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareOneDDistribution : public PropertyTreeCompatibleObject,
-                                  public StreamableObject
+class UnitAwareOneDDistribution : public InlinablePropertyTreeCompatibleObject
 {
-
-private:
-
   // Typedef for this type
   typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> ThisType;
 
@@ -117,9 +112,6 @@ public:
   //! Return the lower bound of the distribution independent variable
   virtual IndepQuantity getLowerBoundOfIndepVar() const = 0;
 
-  //! Return the distribution type
-  virtual OneDDistributionType getDistributionType() const = 0;
-
   //! Test if the distribution is tabular
   virtual bool isTabular() const;
 
@@ -132,9 +124,6 @@ public:
 
   //! Test if the distribution has the same bounds
   bool hasSameBounds( const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const;
-
-  //! Check if data is inlined by default when converting to a property tree
-  bool isDataInlinedByDefault() const override;
 
   //! Method for initializing the object from an input stream
   using IStreamableObject::fromStream;
@@ -159,10 +148,6 @@ protected:
                                    const bool use_template_params,
                                    const std::string& delim );
 
-  //! Return the distribution type name
-  virtual std::string getDistributionTypeName( const bool verbose_name,
-                                               const bool lowercase ) const = 0;
-
   //! Test if the dependent variable can be zero within the indep bounds
   virtual bool canDepVarBeZeroInIndepBounds() const = 0;
 
@@ -184,72 +169,8 @@ protected:
   //! Test if the dependent variable is compatible with Log processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
-
-  //! Add data to the stream
-  template<typename... Types>
-  void toStreamImpl( std::ostream& os, const Types&... data ) const;
-
-  //! Extract data from the stream
-  void fromStreamImpl( std::istream& is, VariantList& distribution_data );
-
-  //! Check for unused stream data
-  void checkForUnusedStreamData( const VariantList& distribution_data ) const;
-
-  //! Add the data to an inlined property tree
-  Utility::PropertyTree toInlinedPropertyTreeImpl() const;
-
-  //! Add the data to a property tree
-  template<typename... Types>
-  Utility::PropertyTree toPropertyTreeImpl(
-                  const std::tuple<const std::string&,Types&>&... data ) const;
-
-  //! Extract froman inlined property tree
-  void fromInlinedPropertyTreeImpl( const Utility::PropertyTree& node );
-
-  //! Extract an array from a node
-  template<template<typename,typename...> class Container>
-  static void extractArrayFromNode( const Utility::PropertyTree& array_data,
-                                    Container<double>& array,
-                                    const std::string& dist_name );
-  
-  //! Extract a value from a node
-  template<typename QuantityType>
-  static void extractValueFromNode( const Utility::PropertyTree& value_data,
-                                    QuantityType& value,
-                                    const std::string& dist_name );
-
-  //! Extract an array
-  template<template<typename,typename...> class Container>
-  static void extractArray( const Utility::Variant& array_data,
-                            Container<double>& array,
-                            const std::string& dist_name );
-  
-  //! Extract a value
-  template<typename QuantityType>
-  static void extractValue( const Utility::Variant& value_data,
-                            QuantityType& value,
-                            const std::string& dist_name );
-
-  //! Extract from a property tree
-  typedef std::function<void(const Utility::PropertyTree&)> DataExtractor;
-
-  // Key = property tree node key
-  // Value0 = minimal match string used to identify node keys
-  // Value1 = must the data be extracted?
-  // Value2 = data extractor
-  enum ExtractedDataType{ REQUIRED_DATA = true, OPTIONAL_DATA = false };
-  typedef std::map<std::string,std::tuple<const std::string,const ExtractedDataType,DataExtractor> > DataExtractorMap;
-  void fromPropertyTreeImpl( const Utility::PropertyTree& node,
-                             std::vector<std::string>& unused_children,
-                             DataExtractorMap& data_extractors );
   
 private:
-
-  //! Verify that the distribution type is correct
-  void verifyDistributionType( const Utility::Variant& type_data ) const;
-
-  //! Check if the type name matches the distribution type name
-  bool doesTypeNameMatch( const std::string type_name ) const;
 
   // Archive the distribution
   template<typename Archive>

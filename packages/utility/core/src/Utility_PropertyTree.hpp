@@ -75,6 +75,13 @@ public:
  */
 #define PTREE_COMMENT_NODE_KEY "comment"
 
+/*! The type node key
+ *
+ * This is the default key for specifying a type name
+ * \ingroup ptree
+ */
+#define PTREE_TYPE_KEY "type"
+
 /*! Check if the property tree stores a JSON array
  * \ingroup ptree
  */
