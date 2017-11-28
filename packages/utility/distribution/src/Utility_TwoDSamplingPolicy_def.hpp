@@ -20,7 +20,8 @@
 
 namespace Utility{
 
-// Evaluate between bin boundaries using the desired evaluation method
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+//! \details The EvaluationMethod must evalute using a Cosine variable.
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
          typename XIndepType,
@@ -29,7 +30,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Stochastic::evaluateCosSampleBased(
+ReturnType Direct::evaluatePDFCos(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -37,6 +38,49 @@ ReturnType Stochastic::evaluateCosSampleBased(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  return Direct::evaluatePDF<TwoDInterpPolicy, BaseOneDDistributionType,
+                             XIndepType, YIndepType,
+                             ReturnType, YZIterator, EvaluationMethod,
+                             YBoundsFunctor>(
+                                    x_indep_value,
+                                    y_indep_value,
+                                    min_y_indep_functor,
+                                    max_y_indep_functor,
+                                    evaluate,
+                                    lower_bin_boundary,
+                                    upper_bin_boundary,
+                                    fuzzy_boundary_tol,
+                                    rel_error_tol,
+                                    error_tol,
+                                    max_number_of_iterations );
+}
+
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+/*! \details Direct interpolation is used to evaluate the probability density
+ *  function.
+ */
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType Direct::evaluatePDF(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
                                   const double rel_error_tol,
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
@@ -70,10 +114,48 @@ ReturnType Stochastic::evaluateCosSampleBased(
   }
 }
 
-// Evaluate between bin boundaries using the desired evaluation method
-/*! \details Because stochastic sampling does not sample on the true
- *  intermediate grid a sample base evaluation scheme would give the incorrect
- *  evaluation. Therefore, the direct evaluation scheme will always be used.
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+//! \details The EvaluationMethod must evalute using a Cosine variable.
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType Direct::evaluateCDFCos(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  return Direct::evaluatePDFCos<TwoDInterpPolicy, BaseOneDDistributionType,
+                                  XIndepType, YIndepType,
+                                  ReturnType, YZIterator,
+                                  EvaluationMethod, YBoundsFunctor>(
+                                              x_indep_value,
+                                              y_indep_value,
+                                              min_y_indep_functor,
+                                              max_y_indep_functor,
+                                              evaluate,
+                                              lower_bin_boundary,
+                                              upper_bin_boundary,
+                                              fuzzy_boundary_tol,
+                                              rel_error_tol,
+                                              error_tol,
+                                              max_number_of_iterations );
+}
+
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+/*! \details The CDF is evaluated from a direct interpolation of the PDF.
  */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
@@ -83,7 +165,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Stochastic::evaluateSampleBased(
+ReturnType Direct::evaluateCDF(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -91,83 +173,55 @@ ReturnType Stochastic::evaluateSampleBased(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
-                                  const ReturnType& below_lower_bound_return,
-                                  const ReturnType& above_upper_bound_return,
                                   const double fuzzy_boundary_tol,
                                   const double rel_error_tol,
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Stochastic::evaluateDirect<TwoDInterpPolicy,
-                                    BaseOneDDistributionType,
-                                    XIndepType,
-                                    YIndepType,
-                                    ReturnType,
-                                    YZIterator,
-                                    EvaluationMethod,
-                                    YBoundsFunctor>(
-                                        x_indep_value,
-                                        y_indep_value,
-                                        min_y_indep_functor,
-                                        max_y_indep_functor,
-                                        evaluate,
-                                        lower_bin_boundary,
-                                        upper_bin_boundary,
-                                        below_lower_bound_return,
-                                        above_upper_bound_return,
-                                        fuzzy_boundary_tol );
-}
+  if( lower_bin_boundary->first == x_indep_value )
+  {
+    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else if( upper_bin_boundary->first == x_indep_value )
+  {
+    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else
+  {
+    // Get the evaluation at the lower and upper bin boundaries
+    ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+    ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
 
-// Evaluate between bin boundaries using the desired evaluation method
-template<typename TwoDInterpPolicy,
-         typename BaseOneDDistributionType,
-         typename XIndepType,
-         typename YIndepType,
-         typename ReturnType,
-         typename YZIterator,
-         typename EvaluationMethod,
-         typename YBoundsFunctor>
-ReturnType Stochastic::evaluateDirect(
-                                  const XIndepType& x_indep_value,
-                                  const YIndepType& y_indep_value,
-                                  const YBoundsFunctor& min_y_indep_functor,
-                                  const YBoundsFunctor& max_y_indep_functor,
-                                  const EvaluationMethod& evaluate,
-                                  const YZIterator& lower_bin_boundary,
-                                  const YZIterator& upper_bin_boundary,
-                                  const ReturnType& below_lower_bound_return,
-                                  const ReturnType& above_upper_bound_return,
-                                  const double fuzzy_boundary_tol )
-{
-  return Correlated::evaluateDirect<TwoDInterpPolicy,
-                                    BaseOneDDistributionType,
-                                    XIndepType,
-                                    YIndepType,
-                                    ReturnType,
-                                    YZIterator,
-                                    EvaluationMethod,
-                                    YBoundsFunctor>(
-                                        x_indep_value,
-                                        y_indep_value,
-                                        min_y_indep_functor,
-                                        max_y_indep_functor,
-                                        evaluate,
-                                        lower_bin_boundary,
-                                        upper_bin_boundary,
-                                        below_lower_bound_return,
-                                        above_upper_bound_return,
-                                        fuzzy_boundary_tol );
+    if ( min_eval_0 == min_eval_1 )
+      return min_eval_0;
+    else
+    {
+      // Return the interpolated evaluation
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+              lower_bin_boundary->first,
+              upper_bin_boundary->first,
+              x_indep_value,
+              min_eval_0,
+              min_eval_1 );
+    }
+  }
 }
 
 // Sample between bin boundaries using the desired sampling functor
-//! \details A correlated stochastic sampling procedure is used.
+/*! \details A direct statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the direct evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Stochastic::sample(
+YIndepType Direct::sample(
           const SampleFunctor& sample_functor,
           const YBoundsFunctor& min_y_indep_functor,
           const YBoundsFunctor& max_y_indep_functor,
@@ -179,7 +233,7 @@ YIndepType Stochastic::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Stochastic::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Direct::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -191,21 +245,29 @@ YIndepType Stochastic::sample(
 }
 
 //! Sample between bin boundaries using the desired sampling functor
+/* \details The SampleFunctor must sample a Cosine variable.
+ * A direct statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the direct evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor>
-YIndepType Stochastic::sampleCos( const SampleFunctor& sample_functor,
-                             const XIndepType& x_indep_value,
-                             const YZIterator& lower_bin_boundary,
-                             const YZIterator& upper_bin_boundary )
+YIndepType Direct::sampleCos( const SampleFunctor& sample_functor,
+                                   const XIndepType& x_indep_value,
+                                   const YZIterator& lower_bin_boundary,
+                                   const YZIterator& upper_bin_boundary )
 {
   // Dummy variables
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Stochastic::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Direct::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -217,14 +279,20 @@ YIndepType Stochastic::sampleCos( const SampleFunctor& sample_functor,
 // Sample between bin boundaries using the desired subrange sampling functor
 /* \details The SampleFunctor must be of the form that it takes a subrange
  * sampling function from a OneDDistribution and the max indep variable.
- */
+ * A direct statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the direct evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Stochastic::sampleInSubrange(
+YIndepType Direct::sampleInSubrange(
           const SampleFunctor& subrange_sample_functor,
           const YBoundsFunctor& min_y_indep_functor,
           const YBoundsFunctor& max_y_indep_functor,
@@ -243,7 +311,527 @@ YIndepType Stochastic::sampleInSubrange(
 
   // Get the sampled bin boundary
   YZIterator sampled_bin_boundary =
-    Stochastic::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
+    Direct::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
+                              x_indep_value,
+                              lower_bin_boundary,
+                              upper_bin_boundary );
+
+  // Make sure subrange max value is below the max value of the sampled bin
+  YIndepType max_y_indep_value_bin_bound =
+        std::min( subrange_max_y_indep_value,
+                  sampled_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+  // Sample in the bin's subrange
+  YIndepType raw_sample =
+    subrange_sample_functor( *sampled_bin_boundary->second,
+                              max_y_indep_value_bin_bound );
+
+  return raw_sample;
+}
+
+// Sample between bin boundaries using the desired sampling functor
+/*! \details A direct statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the direct evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
+template<typename TwoDInterpPolicy,
+         typename XIndepType,
+         typename YIndepType,
+         typename YZIterator,
+         typename SampleFunctor,
+         typename YBoundsFunctor>
+YIndepType Direct::sampleDetailed(
+            const SampleFunctor& sample_functor,
+            const YBoundsFunctor& min_y_indep_functor,
+            const YBoundsFunctor& max_y_indep_functor,
+            const XIndepType& x_indep_value,
+            const YZIterator& lower_bin_boundary,
+            const YZIterator& upper_bin_boundary,
+            YZIterator& sampled_bin_boundary,
+            YIndepType& raw_sample )
+{
+  // Get the sampled bin boundary
+  sampled_bin_boundary =
+    Direct::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
+                            x_indep_value,
+                            lower_bin_boundary,
+                            upper_bin_boundary );
+
+  // Create the raw sample
+  raw_sample = sample_functor( *sampled_bin_boundary->second );
+
+  // Note: This is a stochastic procedure. The intermediate distribution that
+  //       has been sampled is not the true distribution. The expected value
+  //       of a sample will be a sample from the true distribution though.
+  return raw_sample;
+}
+
+// Sample between bin boundaries using the desired sampling functor
+template<typename TwoDInterpPolicy,
+         typename XIndepType,
+         typename YIndepType,
+         typename YZIterator,
+         typename SampleFunctor>
+YIndepType Direct::sampleCosDetailed(
+            const SampleFunctor& sample_functor,
+            const XIndepType& x_indep_value,
+            const YZIterator& lower_bin_boundary,
+            const YZIterator& upper_bin_boundary,
+            YZIterator& sampled_bin_boundary,
+            YIndepType& raw_sample )
+{
+
+  std::function<YIndepType(const XIndepType)> dummy_functor =
+    [](XIndepType x){return QuantityTraits<YIndepType>::zero();};
+
+  return Direct::sampleDetailed<TwoDInterpPolicy, XIndepType, YIndepType, YZIterator, SampleFunctor>(
+              sample_functor,
+              dummy_functor,
+              dummy_functor,
+              x_indep_value,
+              lower_bin_boundary,
+              upper_bin_boundary,
+              sampled_bin_boundary,
+              raw_sample );
+}
+
+// Sample the bin boundary that will be used for statistical sampling
+/*! \details This method will throw an exception if the primary independent
+ * value is outside of the primary grid limits and the primary grid has not
+ * been extended.
+ */
+template<typename TwoDInterpPolicy,
+         typename XIndepType,
+         typename YZIterator>
+YZIterator Direct::sampleBinBoundary(
+    const XIndepType& x_indep_value,
+    const YZIterator& lower_bin_boundary,
+    const YZIterator& upper_bin_boundary )
+{
+  // Calculate the interpolation fraction
+  double interpolation_fraction;
+
+  {
+    const double processed_lower_bin_boundary = 
+      TwoDInterpPolicy::processFirstIndepVar( lower_bin_boundary->first );
+
+    interpolation_fraction =
+      (TwoDInterpPolicy::processFirstIndepVar( x_indep_value ) -
+        processed_lower_bin_boundary)/
+      (TwoDInterpPolicy::processFirstIndepVar( upper_bin_boundary->first ) -
+        processed_lower_bin_boundary );
+  }
+
+  // Sample to determine the distribution that will be used
+  double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  if( random_number < interpolation_fraction )
+    return upper_bin_boundary;
+  else
+    return lower_bin_boundary;
+}
+
+// The name of the policy
+inline const std::string Direct::name()
+{
+  return "Direct";
+}
+
+
+
+
+
+
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+//! \details The EvaluationMethod must evalute using a Cosine variable.
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType UnitBase::evaluatePDFCos(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  if( lower_bin_boundary->first == x_indep_value )
+  {
+    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else if( upper_bin_boundary->first == x_indep_value )
+  {
+    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else
+  {
+    // Get the evaluation at the lower and upper bin boundaries
+    ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+    ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+
+    if ( min_eval_0 == min_eval_1 )
+      return min_eval_0;
+    else
+    {
+      // Return the interpolated evaluation
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+              lower_bin_boundary->first,
+              upper_bin_boundary->first,
+              x_indep_value,
+              min_eval_0,
+              min_eval_1 );
+    }
+  }
+}
+
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+/*! \details Unit-base interpolation is used to evaluate the probability density
+ *  function.
+ */
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType UnitBase::evaluatePDF(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  // Create the grid evaluation functors
+  std::function<ReturnType(const YIndepType)>
+    evaluate_grid_0_functor =
+    std::bind<ReturnType>( evaluate,
+                           std::cref( *lower_bin_boundary->second ),
+                           std::placeholders::_1 );
+
+  std::function<ReturnType(const YIndepType)>
+    evaluate_grid_1_functor =
+    std::bind<ReturnType>( evaluate,
+                           std::cref( *upper_bin_boundary->second ),
+                           std::placeholders::_1 );
+
+  return TwoDInterpPolicy::interpolateUnitBase(
+                        lower_bin_boundary->first,
+                        upper_bin_boundary->first,
+                        x_indep_value,
+                        y_indep_value,
+                        lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                        lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+                        upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                        upper_bin_boundary->second->getUpperBoundOfIndepVar(),
+                        evaluate_grid_0_functor,
+                        evaluate_grid_1_functor,
+                        QuantityTraits<ReturnType>::zero(),
+                        QuantityTraits<ReturnType>::zero(),
+                        fuzzy_boundary_tol );
+}
+
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+//! \details The EvaluationMethod must evalute using a Cosine variable.
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType UnitBase::evaluateCDFCos(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  return UnitBase::evaluatePDFCos<TwoDInterpPolicy, BaseOneDDistributionType,
+                                  XIndepType, YIndepType,
+                                  ReturnType, YZIterator,
+                                  EvaluationMethod, YBoundsFunctor>(
+                                              x_indep_value,
+                                              y_indep_value,
+                                              min_y_indep_functor,
+                                              max_y_indep_functor,
+                                              evaluate,
+                                              lower_bin_boundary,
+                                              upper_bin_boundary,
+                                              fuzzy_boundary_tol,
+                                              rel_error_tol,
+                                              error_tol,
+                                              max_number_of_iterations );
+}
+
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+/*! \details The CDF is evaluated from a unit-base interpolation of the PDF.
+ */
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType UnitBase::evaluateCDF(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  if( lower_bin_boundary->first == x_indep_value )
+  {
+    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else if( upper_bin_boundary->first == x_indep_value )
+  {
+    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else
+  {
+    // Calculate the lower bin grid length
+    typename QuantityTraits<YIndepType>::RawType
+      grid_length_0 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+            lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+            lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+    // Calculate the upper bin grid length
+    typename QuantityTraits<YIndepType>::RawType
+      grid_length_1 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+            upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+            upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+    // Calculate the intermediate grid limits
+    YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
+    YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
+
+    typename QuantityTraits<YIndepType>::RawType
+      intermediate_grid_length =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                min_y_indep_value,
+                max_y_indep_value );
+
+    // Calculate the tol to the intermediate grid limits
+    YIndepType min_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+                                                      min_y_indep_value,
+                                                      fuzzy_boundary_tol );
+    YIndepType max_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+                                                      max_y_indep_value,
+                                                      fuzzy_boundary_tol );
+
+    // Check if the secondary indep value is in the intermediate grid
+    if( y_indep_value >= min_y_indep_value_with_tol &&
+        y_indep_value <= max_y_indep_value_with_tol )
+    {
+      // Calculate the unit base independent variable
+      typename QuantityTraits<YIndepType>::RawType eta;
+
+      if( y_indep_value > min_y_indep_value && y_indep_value < max_y_indep_value )
+      {
+        eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+                                          y_indep_value,
+                                          min_y_indep_value,
+                                          intermediate_grid_length );
+      }
+      else if( y_indep_value <= min_y_indep_value &&
+               y_indep_value >= min_y_indep_value_with_tol )
+        eta = 0.0;
+      else // y_indep_value >= max_y_indep_value && y_indep_value <= max_y_indep_value_with_tol
+        eta = 1.0;
+
+      // Scale eta to the lower bin grid length
+      YIndepType y_indep_value_0 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+                          eta,
+                          lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                          grid_length_0 );
+
+      // Scale eta to the upper bin grid length
+      YIndepType y_indep_value_1 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+                          eta,
+                          upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                          grid_length_1 );
+
+      // Get the evaluation at the lower and upper bin boundaries
+      ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value_0);
+      ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value_1);
+
+      if ( min_eval_0 == min_eval_1 )
+        return min_eval_0;
+      else
+      {
+        // Return the interpolated evaluation
+        return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                lower_bin_boundary->first,
+                upper_bin_boundary->first,
+                x_indep_value,
+                min_eval_0,
+                min_eval_1 );
+      }
+    }
+    else // y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value
+    {
+      if( y_indep_value < min_y_indep_value_with_tol )
+        return 0.0;
+      else // y_indep_value > max_y_indep_value_with_tol
+        return 1.0;
+    }
+  }
+}
+
+// Sample between bin boundaries using the desired sampling functor
+/*! \details A unit-base statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries and then scales the
+ * sample so that it preserves intermediate grid limits. Certain methods require
+ * the unscaled (or raw) sample, which can be acquired with this method.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the unit-base evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
+template<typename TwoDInterpPolicy,
+         typename XIndepType,
+         typename YIndepType,
+         typename YZIterator,
+         typename SampleFunctor,
+         typename YBoundsFunctor>
+YIndepType UnitBase::sample(
+          const SampleFunctor& sample_functor,
+          const YBoundsFunctor& min_y_indep_functor,
+          const YBoundsFunctor& max_y_indep_functor,
+          const XIndepType& x_indep_value,
+          const YZIterator& lower_bin_boundary,
+          const YZIterator& upper_bin_boundary )
+{
+  // Dummy variables
+  YIndepType dummy_raw_sample;
+  YZIterator dummy_sampled_bin_boundary;
+
+  return UnitBase::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+            sample_functor,
+            min_y_indep_functor,
+            max_y_indep_functor,
+            x_indep_value,
+            lower_bin_boundary,
+            upper_bin_boundary,
+            dummy_sampled_bin_boundary,
+            dummy_raw_sample );
+}
+
+//! Sample between bin boundaries using the desired sampling functor
+/* \details The SampleFunctor must sample a Cosine variable.
+ * A unit-base statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries and then scales the
+ * sample so that it preserves intermediate grid limits. Certain methods require
+ * the unscaled (or raw) sample, which can be acquired with this method.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the unit-base evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
+template<typename TwoDInterpPolicy,
+         typename XIndepType,
+         typename YIndepType,
+         typename YZIterator,
+         typename SampleFunctor>
+YIndepType UnitBase::sampleCos( const SampleFunctor& sample_functor,
+                                   const XIndepType& x_indep_value,
+                                   const YZIterator& lower_bin_boundary,
+                                   const YZIterator& upper_bin_boundary )
+{
+  // Dummy variables
+  YIndepType dummy_raw_sample;
+  YZIterator dummy_sampled_bin_boundary;
+
+  return UnitBase::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+            sample_functor,
+            x_indep_value,
+            lower_bin_boundary,
+            upper_bin_boundary,
+            dummy_sampled_bin_boundary,
+            dummy_raw_sample );
+}
+
+// Sample between bin boundaries using the desired subrange sampling functor
+/* \details The SampleFunctor must be of the form that it takes a subrange
+ * sampling function from a OneDDistribution and the max indep variable.
+ * A unit-base statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries and then scales the
+ * sample so that it preserves intermediate grid limits. Certain methods require
+ * the unscaled (or raw) sample, which can be acquired with this method.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the unit-base evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
+template<typename TwoDInterpPolicy,
+         typename XIndepType,
+         typename YIndepType,
+         typename YZIterator,
+         typename SampleFunctor,
+         typename YBoundsFunctor>
+YIndepType UnitBase::sampleInSubrange(
+          const SampleFunctor& subrange_sample_functor,
+          const YBoundsFunctor& min_y_indep_functor,
+          const YBoundsFunctor& max_y_indep_functor,
+          const XIndepType& x_indep_value,
+          const YZIterator& lower_bin_boundary,
+          const YZIterator& upper_bin_boundary,
+          const YIndepType& subrange_max_y_indep_value )
+{
+  YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
+  YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
+
+  // Make sure the y subrange limit is valid
+  testPrecondition( subrange_max_y_indep_value >= min_y_indep_value )
+  // Make sure the y limits is valid
+  testPrecondition( max_y_indep_value >= min_y_indep_value );
+
+  // Get the sampled bin boundary
+  YZIterator sampled_bin_boundary =
+    UnitBase::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
                               x_indep_value,
                               lower_bin_boundary,
                               upper_bin_boundary );
@@ -306,13 +894,22 @@ YIndepType Stochastic::sampleInSubrange(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details A unit-base statistical sampling procedure is used which samples
+ * from one of the distributions on the bin boundaries and then scales the
+ * sample so that it preserves intermediate grid limits. Certain methods require
+ * the unscaled (or raw) sample, which can be acquired with this method.
+ * Statistical sampling does not sample the true intermediate distribution and
+ * will not match the unit-base evaluated PDF and CDF distributions. The
+ * expected value of a sample, however, will be a sample from the true
+ * distribution.
+ */ 
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Stochastic::sampleDetailed(
+YIndepType UnitBase::sampleDetailed(
             const SampleFunctor& sample_functor,
             const YBoundsFunctor& min_y_indep_functor,
             const YBoundsFunctor& max_y_indep_functor,
@@ -330,7 +927,7 @@ YIndepType Stochastic::sampleDetailed(
 
   // Get the sampled bin boundary
   sampled_bin_boundary =
-    Stochastic::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
+    UnitBase::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
                             x_indep_value,
                             lower_bin_boundary,
                             upper_bin_boundary );
@@ -374,7 +971,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor>
-YIndepType Stochastic::sampleCosDetailed(
+YIndepType UnitBase::sampleCosDetailed(
             const SampleFunctor& sample_functor,
             const XIndepType& x_indep_value,
             const YZIterator& lower_bin_boundary,
@@ -384,7 +981,7 @@ YIndepType Stochastic::sampleCosDetailed(
 {
   // Get the sampled bin boundary
   sampled_bin_boundary =
-    Stochastic::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
+    UnitBase::sampleBinBoundary<TwoDInterpPolicy,XIndepType,YZIterator>(
                             x_indep_value,
                             lower_bin_boundary,
                             upper_bin_boundary );
@@ -395,7 +992,7 @@ YIndepType Stochastic::sampleCosDetailed(
   return raw_sample;
 }
 
-// Sample the bin boundary that will be used for stochastic sampling
+// Sample the bin boundary that will be used for statistical sampling
 /*! \details This method will throw an exception if the primary independent
  * value is outside of the primary grid limits and the primary grid has not
  * been extended.
@@ -403,7 +1000,7 @@ YIndepType Stochastic::sampleCosDetailed(
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YZIterator>
-YZIterator Stochastic::sampleBinBoundary(
+YZIterator UnitBase::sampleBinBoundary(
     const XIndepType& x_indep_value,
     const YZIterator& lower_bin_boundary,
     const YZIterator& upper_bin_boundary )
@@ -433,16 +1030,16 @@ YZIterator Stochastic::sampleBinBoundary(
 }
 
 // The name of the policy
-inline const std::string Stochastic::name()
+inline const std::string UnitBase::name()
 {
-  return "Stochastic";
+  return "Unit Base";
 }
 
-// Evaluate between bin boundaries using the desired evaluation method
-/*! \details This method performs a type of binary search using an exact
- *  correlated sampling to estimate the CDF to a relative error tolerance in
- *  order to find the proper interpolation. The result is consistent with the
- *  exact sampling methods.
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+/*! \details The EvaluationMethod must evalute using a Cosine variable. This
+ *  method uses an iterative method to estimate the CDF for correlated sampling
+ *  to a relative error tolerance in order to get the proper interpolation
+ *  parameters.
  */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
@@ -452,7 +1049,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Exact::evaluateCosSampleBased(
+ReturnType Correlated::evaluatePDFCos(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -460,6 +1057,7 @@ ReturnType Exact::evaluateCosSampleBased(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
                                   const double rel_error_tol,
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
@@ -649,18 +1247,33 @@ ReturnType Exact::evaluateCosSampleBased(
       return lower_eval;
     else
     {
-      // Return the interpolated evaluation
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                beta, lower_eval, upper_eval );
+      if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LinLin" )
+      {
+        /* The PDF for lin-lin interpolation is defined as:
+         * f(x,y) = ( f_0( y_0 ) * f_1( y_1 ) )/
+         *          ( f_1(y_1) + ( f_0(y_0) - f_1(y_1) )* beta )
+         */
+        return (lower_eval*upper_eval)/LinLin::interpolate( beta, upper_eval, lower_eval );
+      }
+      else if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LogLog" )
+      {
+        /* The PDF for log-log interpolation is defined as:
+         * f(x,y) = ( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
+         *          ( y_1*f_1(y_1)*( (y_0*f_0(y_0))/(y_1*f_1(y_1)) )^beta )
+         */
+        auto lower_product = lower_eval*lower_bin_sample;
+        auto upper_product = upper_eval*lower_bin_sample;
+
+        return (lower_eval*upper_eval)/(LogLog::interpolate( beta, upper_product, lower_product )*y_indep_value);
+      }
     }
   }
 }
 
-// Evaluate between bin boundaries using the desired evaluation method
-/*! \details This method performs a type of binary search using an exact
- *  correlated sampling to estimate the CDF to a relative error tolerance in
- *  order to find the proper interpolation. The result is consistent with the
- *  exact sampling methods.
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+/*! \details This function uses an iterative method to estimate the CDF for
+ *  correlated sampling to a relative error tolerance in order to get the proper
+ *  interpolation parameters.
  */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
@@ -670,7 +1283,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Exact::evaluateSampleBased(
+ReturnType Correlated::evaluatePDF(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -678,8 +1291,6 @@ ReturnType Exact::evaluateSampleBased(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
-                                  const ReturnType& below_lower_bound_return,
-                                  const ReturnType& above_upper_bound_return,
                                   const double fuzzy_boundary_tol,
                                   const double rel_error_tol,
                                   const double error_tol,
@@ -728,9 +1339,9 @@ ReturnType Exact::evaluateSampleBased(
 
     // Check for a secondary indep value outside of the secondary indep grid limits
     if ( y_indep_value < lower_sec_indep_var_bound )
-      return below_lower_bound_return;
+      return QuantityTraits<ReturnType>::zero();
     else if ( y_indep_value > upper_sec_indep_var_bound )
-      return above_upper_bound_return;
+      return QuantityTraits<ReturnType>::zero();
     else if ( y_indep_value == lower_sec_indep_var_bound )
     {
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
@@ -768,94 +1379,23 @@ ReturnType Exact::evaluateSampleBased(
         }
       }
 
-      unsigned number_of_iterations = 0;
       YIndepType lower_bin_sample, upper_bin_sample;
-      double rel_error = 1.0;
-      YIndepType error_norm_constant = y_indep_value;
-      double tolerance = rel_error_tol;
-
-      /*! \detials If the secondary indep var value is zero the relative error
-        *  will always zero or inf. When this is the case the error tolerance will
-        *  be used instead of the relative error tolerance.
-        */
-        if ( y_indep_value == QuantityTraits<YIndepType>::zero() )
-        {
-          error_norm_constant = QuantityTraits<YIndepType>::one();
-          tolerance = error_tol;
-        }
-
-      // Refine the estimated cdf value until it meet the tolerance
-      while ( rel_error > tolerance )
-      {
-        // Estimate the cdf as the midpoint of the lower and upper boundaries
-        double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
-
-        // Get the sampled values at the upper and lower bin for the estimated_cdf
-        lower_bin_sample =
-          ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
-        upper_bin_sample =
-          ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
-
-        // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
-        YIndepType est_y_indep_value =
-          TwoDInterpPolicy::YXInterpPolicy::interpolate( beta,
-                                                         lower_bin_sample,
-                                                         upper_bin_sample );
-
-        if ( y_indep_value == est_y_indep_value )
-          break;
-
-        // Calculate the relative error between the y_indep_value and the estimate
-        rel_error = (y_indep_value - est_y_indep_value )/
-                                                            error_norm_constant;
-
-        // Make sure the relative error is positive
-        rel_error = rel_error < 0 ? -rel_error : rel_error;
-
-        // Update the number of iterations
-        ++number_of_iterations;
-
-        // If tolerance is met exit loop
-        if ( rel_error <= tolerance )
-          break;
-
-        // Update the estimated_cdf estimate
-        if ( est_y_indep_value < y_indep_value )
-        {
-          // Old estimated_cdf estimate is new lower cdf boundary
-          lower_cdf_bound = estimated_cdf;
-        }
-        else
-        {
-          // Old estimated_cdf estimate is new upper cdf boundary
-          upper_cdf_bound = estimated_cdf;
-        }
-
-        // Check for the max number of iterations
-        if ( number_of_iterations > max_number_of_iterations )
-        {
-          // Get error in estimate
-          double error =
-            (y_indep_value - est_y_indep_value )/QuantityTraits<YIndepType>::one();
-          error = error < 0 ? -error : error;
-
-          // If error meets error tolerance accept estimate
-          if ( error < error_tol )
-              break;
-          else
-          {
-            THROW_EXCEPTION( std::logic_error,
-                              "Error: The evaluation could not be completed. "
-                              "The max number of iterations ("
-                              << max_number_of_iterations
-                              << ") was reached before the relative error ("
-                              << rel_error
-                              << ") reached the evaluation tolerance ("
-                              << rel_error_tol
-                              << ")." );
-          }
-        }
-      }
+      double est_cdf =
+        Correlated::estimateCDF<TwoDInterpPolicy, BaseOneDDistributionType,
+                                XIndepType, YIndepType,
+                                ReturnType, YZIterator,
+                                EvaluationMethod, YBoundsFunctor>(
+                                        lower_cdf_bound,
+                                        upper_cdf_bound,
+                                        lower_bin_sample,
+                                        upper_bin_sample,
+                                        beta,
+                                        y_indep_value,
+                                        lower_bin_boundary,
+                                        upper_bin_boundary,
+                                        rel_error_tol,
+                                        error_tol,
+                                        max_number_of_iterations );
 
       ReturnType lower_eval =
                   ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample);
@@ -864,19 +1404,38 @@ ReturnType Exact::evaluateSampleBased(
 
       if( lower_eval == upper_eval )
         return lower_eval;
+      else
+      {
+        if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LinLin" )
+        {
+          /* The PDF for lin-lin interpolation is defined as:
+          * f(x,y) = ( f_0( y_0 ) * f_1( y_1 ) )/
+          *          ( f_1(y_1) + ( f_0(y_0) - f_1(y_1) )* beta )
+          */
+          return (lower_eval*upper_eval)/LinLin::interpolate( beta, upper_eval, lower_eval );
+        }
+        else if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LogLog" )
+        {
+          /* The PDF for log-log interpolation is defined as:
+          * f(x,y) = ( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
+          *          ( y_1*f_1(y_1)*( (y_0*f_0(y_0))/(y_1*f_1(y_1)) )^beta )
+          */
+          auto lower_product = lower_eval*lower_bin_sample;
+          auto upper_product = upper_eval*lower_bin_sample;
 
-      // Return the interpolated evaluation
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                  lower_bin_boundary->first,
-                  upper_bin_boundary->first,
-                  x_indep_value,
-                  lower_eval,
-                  upper_eval );
+          return (lower_product*upper_product)/(LogLog::interpolate( beta, upper_product, lower_product )*y_indep_value);
+        }
+      }
     }
   }
 }
 
-// Evaluate between bin boundaries using the desired evaluation method
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+/*! \details The EvaluationMethod must evalute using a Cosine variable. This
+ *  function uses an iterative method to estimate the CDF for correlated sampling
+ *  to a relative error tolerance in order to get the proper interpolation
+ *  parameters.
+ */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
          typename XIndepType,
@@ -885,7 +1444,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Exact::evaluateDirect(
+ReturnType Correlated::evaluateCDFCos(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -893,9 +1452,216 @@ ReturnType Exact::evaluateDirect(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
-                                  const ReturnType& below_lower_bound_return,
-                                  const ReturnType& above_upper_bound_return,
-                                  const double fuzzy_boundary_tol )
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
+  YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
+
+  if( lower_bin_boundary->first == x_indep_value )
+  {
+    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else if( upper_bin_boundary->first == x_indep_value )
+  {
+    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else if ( y_indep_value == min_y_indep_value )
+  {
+    ReturnType min_eval_0 =
+      ((*lower_bin_boundary->second).*evaluate)(min_y_indep_value);
+    ReturnType min_eval_1 =
+      ((*upper_bin_boundary->second).*evaluate)(min_y_indep_value);
+
+    if ( min_eval_0 == min_eval_1 )
+      return min_eval_0;
+    else
+    {
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                lower_bin_boundary->first,
+                upper_bin_boundary->first,
+                x_indep_value,
+                min_eval_0,
+                min_eval_1 );
+    }
+  }
+  else if ( y_indep_value == max_y_indep_value )
+  {
+    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                lower_bin_boundary->first,
+                upper_bin_boundary->first,
+                x_indep_value,
+                ((*lower_bin_boundary->second).*evaluate)(max_y_indep_value),
+                ((*upper_bin_boundary->second).*evaluate)(max_y_indep_value) );
+  }
+  else
+  {
+    // Get the lower and upper boundaries of the evaluated cdf
+    double lower_cdf_bound, upper_cdf_bound;
+    {
+      // Evaluate the cdf at the upper and lower bin boundaries
+      double bin_eval_0 =
+        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+      double bin_eval_1 =
+        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+
+      testPrecondition( bin_eval_0 >= 0.0 );
+      testPrecondition( bin_eval_0 <= 1.0 );
+      testPrecondition( bin_eval_1 >= 0.0 );
+      testPrecondition( bin_eval_1 <= 1.0 );
+
+      if ( bin_eval_0 <= bin_eval_1 )
+      {
+        lower_cdf_bound = bin_eval_0;
+        upper_cdf_bound = bin_eval_1;
+      }
+      else
+      {
+        lower_cdf_bound = bin_eval_1;
+        upper_cdf_bound = bin_eval_0;
+      }
+    }
+
+    unsigned number_of_iterations = 0;
+    YIndepType lower_bin_sample, upper_bin_sample;
+    double rel_error = 1.0;
+    YIndepType error_norm_constant = y_indep_value;
+    double tolerance = rel_error_tol;
+
+    /*! \detials If the secondary indep var value is zero the relative error
+     *  will always zero or inf. When this is the case the error tolerance will
+     *  be used instead of the relative error tolerance.
+     */
+    if ( y_indep_value == QuantityTraits<YIndepType>::zero() )
+    {
+      error_norm_constant = QuantityTraits<YIndepType>::one();
+      tolerance = error_tol;
+    }
+
+    // Calculate the bin length of the first indep variable
+    const typename QuantityTraits<XIndepType>::RawType x_bin_length =
+      TwoDInterpPolicy::ZXInterpPolicy::calculateUnitBaseGridLength(
+                                                    lower_bin_boundary->first,
+                                                    upper_bin_boundary->first );
+
+    // Calculate the first indep variable bin ratio (beta)
+    const typename QuantityTraits<XIndepType>::RawType beta =
+      TwoDInterpPolicy::ZXInterpPolicy::calculateUnitBaseIndepVar(
+                                                    x_indep_value,
+                                                    lower_bin_boundary->first,
+                                                    x_bin_length );
+
+    // Refine the estimated cdf value until it meet the tolerance
+    double estimated_cdf = 0.0;
+    while ( rel_error > tolerance )
+    {
+      // Estimate the cdf as the midpoint of the lower and upper boundaries
+      estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
+      testPrecondition( estimated_cdf >= 0.0 );
+      testPrecondition( estimated_cdf <= 1.0 );
+
+      // Get the sampled values at the upper and lower bin for the estimated_cdf
+      lower_bin_sample =
+        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+      upper_bin_sample =
+        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+
+      // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
+      YIndepType est_y_indep_value =
+       TwoDInterpPolicy::YXInterpPolicy::interpolate(
+            beta,
+            lower_bin_sample,
+            upper_bin_sample );
+
+      if ( y_indep_value == est_y_indep_value )
+        break;
+
+      // Calculate the relative error between the y_indep_value and the estimate
+      rel_error = (y_indep_value - est_y_indep_value )/error_norm_constant;
+
+      // Make sure the relative error is positive
+      rel_error = rel_error < 0 ? -rel_error : rel_error;
+
+      // Update the number of iterations
+      ++number_of_iterations;
+
+      // If tolerance is met exit loop
+      if ( rel_error <= tolerance )
+        break;
+
+      // Update the estimated_cdf estimate
+      if ( est_y_indep_value < y_indep_value )
+      {
+        // Old estimated_cdf estimate is new lower cdf boundary
+        lower_cdf_bound = estimated_cdf;
+      }
+      else
+      {
+        // Old estimated_cdf estimate is new upper cdf boundary
+        upper_cdf_bound = estimated_cdf;
+      }
+
+      // Check for the max number of iterations
+      if ( number_of_iterations > max_number_of_iterations )
+      {
+        // Get error in estimate
+        double error =
+            (y_indep_value - est_y_indep_value )/QuantityTraits<YIndepType>::one();
+        error = error < 0 ? -error : error;
+
+        // If error meets error tolerance accept estimate
+        if ( error < error_tol )
+          break;
+        else
+        {
+          THROW_EXCEPTION( std::logic_error,
+                           "Error: The evaluation could not be completed. "
+                           "The max number of iterations ("
+                           << max_number_of_iterations
+                           << ") was reached before the relative error ("
+                           << rel_error
+                           << ") reached the evaluation tolerance ("
+                           << tolerance
+                           << ")"
+                           << " or the error ("
+                           << error
+                           << ") reached the error tolerance ("
+                           << error_tol
+                           << ")." );
+        }
+      }
+    }
+    return estimated_cdf;
+  }
+}
+
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+/*! \details This function uses an iterative method to estimate the CDF for
+ *  correlated sampling to a relative error tolerance in order to get the proper
+ *  interpolation parameters.
+ */
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType Correlated::evaluateCDF(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
 {
   if( lower_bin_boundary->first == x_indep_value )
   {
@@ -907,33 +1673,272 @@ ReturnType Exact::evaluateDirect(
   }
   else
   {
-    // Get the evaluation at the lower and upper bin boundaries
-    ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-    ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+    // Calculate the bin length of the first indep variable
+    const typename QuantityTraits<XIndepType>::RawType x_bin_length =
+      TwoDInterpPolicy::ZXInterpPolicy::calculateUnitBaseGridLength(
+                                                    lower_bin_boundary->first,
+                                                    upper_bin_boundary->first );
 
-    if ( min_eval_0 == min_eval_1 )
-      return min_eval_0;
+    // Calculate the first indep variable bin ratio (beta)
+    const typename QuantityTraits<XIndepType>::RawType beta =
+      TwoDInterpPolicy::ZXInterpPolicy::calculateUnitBaseIndepVar(
+                                                    x_indep_value,
+                                                    lower_bin_boundary->first,
+                                                    x_bin_length );
+
+    // Get the lower secondary indep grid limits at the primary value
+    YIndepType lower_sec_indep_var_bound =
+      TwoDInterpPolicy::YXInterpPolicy::interpolate(
+                      beta,
+                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                      upper_bin_boundary->second->getLowerBoundOfIndepVar() );
+
+    // Get the upper secondary indep grid limits at the primary value
+    YIndepType upper_sec_indep_var_bound =
+      TwoDInterpPolicy::YXInterpPolicy::interpolate(
+                      beta,
+                      lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+                      upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+    // Get the min and max y indep values
+    YIndepType min_y_indep_var = min_y_indep_functor( x_indep_value);
+    YIndepType max_y_indep_var = max_y_indep_functor( x_indep_value);
+
+    // Check for a secondary indep value outside of the secondary indep grid limits
+    if ( y_indep_value < lower_sec_indep_var_bound )
+      return QuantityTraits<ReturnType>::zero();
+    else if ( y_indep_value > upper_sec_indep_var_bound )
+      return QuantityTraits<ReturnType>::one();
+    else if ( y_indep_value == lower_sec_indep_var_bound )
+    {
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                beta,
+                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar()),
+                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) );
+    }
+    else if ( y_indep_value == upper_sec_indep_var_bound )
+    {
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                beta,
+                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar()),
+                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) );
+    }
     else
     {
-      // Return the interpolated evaluation
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-              lower_bin_boundary->first,
-              upper_bin_boundary->first,
-              x_indep_value,
-              min_eval_0,
-              min_eval_1 );
+      // Get the lower and upper boundaries of the evaluated cdf
+      double lower_cdf_bound, upper_cdf_bound;
+      {
+        // Evaluate the cdf at the upper and lower bin boundaries
+        double bin_eval_0 =
+          ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+        double bin_eval_1 =
+          ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+
+        if ( bin_eval_0 <= bin_eval_1 )
+        {
+          lower_cdf_bound = bin_eval_0;
+          upper_cdf_bound = bin_eval_1;
+        }
+        else
+        {
+          lower_cdf_bound = bin_eval_1;
+          upper_cdf_bound = bin_eval_0;
+        }
+      }
+
+      YIndepType lower_bin_sample, upper_bin_sample;
+      double est_cdf =
+        Correlated::estimateCDF<TwoDInterpPolicy, BaseOneDDistributionType,
+                                XIndepType, YIndepType,
+                                ReturnType, YZIterator,
+                                EvaluationMethod, YBoundsFunctor>(
+                                        lower_cdf_bound,
+                                        upper_cdf_bound,
+                                        lower_bin_sample,
+                                        upper_bin_sample,
+                                        beta,
+                                        y_indep_value,
+                                        lower_bin_boundary,
+                                        upper_bin_boundary,
+                                        rel_error_tol,
+                                        error_tol,
+                                        max_number_of_iterations );
+
+      return est_cdf;
     }
   }
 }
 
+// // Evaluate between bin boundaries using the desired evaluation method
+// template<typename TwoDInterpPolicy,
+//          typename BaseOneDDistributionType,
+//          typename XIndepType,
+//          typename YIndepType,
+//          typename ReturnType,
+//          typename YZIterator,
+//          typename EvaluationMethod,
+//          typename YBoundsFunctor>
+// ReturnType Correlated::evaluate(
+//                                   const XIndepType& x_indep_value,
+//                                   const YIndepType& y_indep_value,
+//                                   const YBoundsFunctor& min_y_indep_functor,
+//                                   const YBoundsFunctor& max_y_indep_functor,
+//                                   const EvaluationMethod& evaluate,
+//                                   const YZIterator& lower_bin_boundary,
+//                                   const YZIterator& upper_bin_boundary,
+//                                   const double fuzzy_boundary_tol )
+// {
+//   if( lower_bin_boundary->first == x_indep_value )
+//   {
+//     return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+//   }
+//   else if( upper_bin_boundary->first == x_indep_value )
+//   {
+//     return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+//   }
+//   else
+//   {
+//     // Get the evaluation at the lower and upper bin boundaries
+//     ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+//     ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+
+//     if ( min_eval_0 == min_eval_1 )
+//       return min_eval_0;
+//     else
+//     {
+//       // Return the interpolated evaluation
+//       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+//               lower_bin_boundary->first,
+//               upper_bin_boundary->first,
+//               x_indep_value,
+//               min_eval_0,
+//               min_eval_1 );
+//     }
+//   }
+// }
+
+// Estimate the interpolated CDF and the corresponding lower and upper y indep values
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor,
+         typename T>
+double Correlated::estimateCDF(
+                          double& lower_cdf_est,
+                          double& upper_cdf_est,
+                          YIndepType& y_indep_value_0,
+                          YIndepType& y_indep_value_1,
+                          const T& beta,
+                          const YIndepType& y_indep_value,
+                          const YZIterator& lower_bin_boundary,
+                          const YZIterator& upper_bin_boundary,
+                          const double rel_error_tol,
+                          const double error_tol,
+                          unsigned max_number_of_iterations )
+{
+  unsigned number_of_iterations = 0;
+  double rel_error = 1.0;
+  YIndepType error_norm_constant = y_indep_value;
+  double tolerance = rel_error_tol;
+
+  /*! \detials If the secondary indep var value is zero the relative error
+    *  will always zero or inf. When this is the case the error tolerance will
+   *  be used instead of the relative error tolerance.
+   */
+  if ( y_indep_value == QuantityTraits<YIndepType>::zero() )
+  {
+    error_norm_constant = QuantityTraits<YIndepType>::one();
+    tolerance = error_tol;
+  }
+
+  // Refine the estimated cdf value until it meet the tolerance
+  double estimated_cdf = 0.0;
+  while ( rel_error > tolerance )
+  {
+    // Estimate the cdf as the midpoint of the lower and upper boundaries
+    estimated_cdf = 0.5*( lower_cdf_est + upper_cdf_est );
+
+    // Get the sampled values at the upper and lower bin for the estimated_cdf
+    y_indep_value_0 =
+      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+    y_indep_value_1 =
+      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+
+    // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
+    YIndepType est_y_indep_value =
+      TwoDInterpPolicy::YXInterpPolicy::interpolate( beta,
+                                                     y_indep_value_0,
+                                                     y_indep_value_1 );
+
+    if ( y_indep_value == est_y_indep_value )
+      break;
+
+    // Calculate the relative error between the y_indep_value and the estimate
+    rel_error = (y_indep_value - est_y_indep_value )/ error_norm_constant;
+
+    // Make sure the relative error is positive
+    rel_error = rel_error < 0 ? -rel_error : rel_error;
+
+    // Update the number of iterations
+    ++number_of_iterations;
+
+    // If tolerance is met exit loop
+    if ( rel_error <= tolerance )
+      break;
+
+    // Update the estimated_cdf estimate
+    if ( est_y_indep_value < y_indep_value )
+    {
+      // Old estimated_cdf estimate is new lower cdf boundary
+      lower_cdf_est = estimated_cdf;
+    }
+    else
+    {
+      // Old estimated_cdf estimate is new upper cdf boundary
+      upper_cdf_est = estimated_cdf;
+    }
+
+    // Check for the max number of iterations
+    if ( number_of_iterations > max_number_of_iterations )
+    {
+      // Get error in estimate
+      double error =
+        (y_indep_value - est_y_indep_value )/QuantityTraits<YIndepType>::one();
+      error = error < 0 ? -error : error;
+
+      // If error meets error tolerance accept estimate
+      if ( error < error_tol )
+          break;
+      else
+      {
+        THROW_EXCEPTION( std::logic_error,
+                          "Error: The evaluation could not be completed. "
+                          "The max number of iterations ("
+                          << max_number_of_iterations
+                          << ") was reached before the relative error ("
+                          << rel_error
+                          << ") reached the evaluation tolerance ("
+                          << rel_error_tol
+                          << ")." );
+      }
+    }
+  }
+  return estimated_cdf;
+}
+
 // Sample between bin boundaries using the desired sampling functor
+//! \details A direct correlated routine is used to sample the distribution.
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Exact::sample(
+YIndepType Correlated::sample(
           const SampleFunctor& sample_functor,
           const YBoundsFunctor& min_y_indep_functor,
           const YBoundsFunctor& max_y_indep_functor,
@@ -945,7 +1950,7 @@ YIndepType Exact::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Exact::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -956,13 +1961,16 @@ YIndepType Exact::sample(
             dummy_raw_sample );
 }
 
-//! Sample between bin boundaries using the desired sampling functor
+// Sample between bin boundaries using the desired sampling functor 
+/*! \details The SampleFunctor must return a Cosine variable.
+ * A direct correlated routine is used to sample the distribution.
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor>
-YIndepType Exact::sampleCos( const SampleFunctor& sample_functor,
+YIndepType Correlated::sampleCos( const SampleFunctor& sample_functor,
                              const XIndepType& x_indep_value,
                              const YZIterator& lower_bin_boundary,
                              const YZIterator& upper_bin_boundary )
@@ -971,7 +1979,7 @@ YIndepType Exact::sampleCos( const SampleFunctor& sample_functor,
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Exact::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -982,7 +1990,8 @@ YIndepType Exact::sampleCos( const SampleFunctor& sample_functor,
 
 // Sample between bin boundaries using the desired subrange sampling functor
 /* \details The SampleFunctor must be of the form that it takes a subrange
- * sampling function from a OneDDistribution and the max indep variable.
+ * sampling function from a OneDDistribution and the max indep variable. A
+ * direct correlated routine is used to sample the distribution.
  */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
@@ -990,7 +1999,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Exact::sampleInSubrange(
+YIndepType Correlated::sampleInSubrange(
           const SampleFunctor& subrange_sample_functor,
           const YBoundsFunctor& min_y_indep_functor,
           const YBoundsFunctor& max_y_indep_functor,
@@ -1062,13 +2071,14 @@ YIndepType Exact::sampleInSubrange(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+//! \details A direct correlated routine is used to sample the distribution.
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Exact::sampleDetailed(
+YIndepType Correlated::sampleDetailed(
             const SampleFunctor& sample_functor,
             const YBoundsFunctor& min_y_indep_functor,
             const YBoundsFunctor& max_y_indep_functor,
@@ -1121,12 +2131,15 @@ YIndepType Exact::sampleDetailed(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details The SampleFunctor must return a Cosine variable.
+ * A direct correlated routine is used to sample the distribution.
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor>
-YIndepType Exact::sampleCosDetailed(
+YIndepType Correlated::sampleCosDetailed(
             const SampleFunctor& sample_functor,
             const XIndepType& x_indep_value,
             const YZIterator& lower_bin_boundary,
@@ -1137,7 +2150,7 @@ YIndepType Exact::sampleCosDetailed(
   // Dummy variables
   double dummy_functor;
 
-  return Exact::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             dummy_functor,
             dummy_functor,
@@ -1149,17 +2162,19 @@ YIndepType Exact::sampleCosDetailed(
 }
 
 // The name of the policy
-inline const std::string Exact::name()
+inline const std::string Correlated::name()
 {
-  return "Exact";
+  return "Correlated";
 }
 
-// Evaluate between bin boundaries using the desired evaluation method
-/*! \details This method performs a type of binary search using sampling to
- *  estimate the CDF to a relative error tolerance to find the interpolation.
- *  The lower and upper bounds of the secondary independent variable
- *  (cosine) are fixed (-1 <= cosine <= 1). Therefore a unit base method is not
- *  necessary and an exact method is used to evaluate instead.
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+/*! \details The EvaluationMethod must evalute using a Cosine variable. This
+ *  method uses an iterative method to estimate the CDF for unit-base correlated
+ *  sampling to a relative error tolerance in order to get the proper
+ *  interpolation parameters. The lower and upper bounds of the secondary
+ *  independent variable (cosine) are fixed (-1 <= cosine <= 1). Therefore a
+ *  unit base method is not necessary and the direct correlated method is used
+ *  to evaluate instead.
  */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
@@ -1169,7 +2184,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Correlated::evaluateCosSampleBased(
+ReturnType UnitBaseCorrelated::evaluatePDFCos(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -1177,11 +2192,12 @@ ReturnType Correlated::evaluateCosSampleBased(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
                                   const double rel_error_tol,
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Exact::evaluateCosSampleBased<TwoDInterpPolicy,
+  return Correlated::evaluatePDFCos<TwoDInterpPolicy,
                                        BaseOneDDistributionType,
                                        XIndepType,
                                        YIndepType,
@@ -1196,16 +2212,16 @@ ReturnType Correlated::evaluateCosSampleBased(
                                                     evaluate,
                                                     lower_bin_boundary,
                                                     upper_bin_boundary,
+                                                    fuzzy_boundary_tol,
                                                     rel_error_tol,
                                                     error_tol,
                                                     max_number_of_iterations );
 }
 
-// Evaluate between bin boundaries using the desired evaluation method
-/*! \details This method performs a type of binary search using a unit base
- *  correlated sampling to estimate the CDF to a relative error tolerance in
- *  order to find the proper interpolation. The result is consistent with the
- *  correlated sampling methods.
+// Evaluate the PDF between bin boundaries using the desired evaluation method
+/*! \details This method uses an iterative method to estimate the CDF for
+ *  unit-base correlated sampling to a relative error tolerance in order to get
+ *  the proper interpolation parameters.
  */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
@@ -1215,7 +2231,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Correlated::evaluateSampleBased(
+ReturnType UnitBaseCorrelated::evaluatePDF(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -1223,8 +2239,6 @@ ReturnType Correlated::evaluateSampleBased(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
-                                  const ReturnType& below_lower_bound_return,
-                                  const ReturnType& above_upper_bound_return,
                                   const double fuzzy_boundary_tol,
                                   const double rel_error_tol,
                                   const double error_tol,
@@ -1259,9 +2273,9 @@ ReturnType Correlated::evaluateSampleBased(
 
     // Check for a y indep value outside of the y indep grid limits
     if ( y_indep_value < min_y_indep_var )
-      return below_lower_bound_return;
+      return QuantityTraits<ReturnType>::zero();
     else if ( y_indep_value > max_y_indep_var )
-      return above_upper_bound_return;
+      return QuantityTraits<ReturnType>::zero();
     else if ( y_indep_value == min_y_indep_var )
     {
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
@@ -1297,6 +2311,7 @@ ReturnType Correlated::evaluateSampleBased(
 
       // Get the lower and upper boundaries of the evaluated cdf
       double lower_cdf_bound, upper_cdf_bound;
+      typename QuantityTraits<YIndepType>::RawType eta;
       {
 
         YIndepType min_y_indep_var_with_tol =
@@ -1308,8 +2323,7 @@ ReturnType Correlated::evaluateSampleBased(
                         max_y_indep_var );
 
         // Calculate the unit base variable on the intermediate grid
-        typename QuantityTraits<YIndepType>::RawType eta =
-            TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+        eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
                 y_indep_value,
                 min_y_indep_var,
                 intermediate_grid_length );
@@ -1345,129 +2359,73 @@ ReturnType Correlated::evaluateSampleBased(
         }
       }
 
-    unsigned number_of_iterations = 0;
-    YIndepType lower_bin_sample, upper_bin_sample;
-    double rel_error = 1.0;
-    YIndepType error_norm_constant = y_indep_value;
-    double tolerance = rel_error_tol;
+      YIndepType lower_bin_sample, upper_bin_sample;
+      UnitBaseCorrelated::estimateCDF<TwoDInterpPolicy, BaseOneDDistributionType,
+                                      XIndepType, YIndepType,
+                                      ReturnType, YZIterator,
+                                      EvaluationMethod, YBoundsFunctor>(
+                                          lower_cdf_bound,
+                                          upper_cdf_bound,
+                                          lower_bin_sample,
+                                          upper_bin_sample,
+                                          beta,
+                                          grid_length_0,
+                                          grid_length_1,
+                                          eta,
+                                          lower_bin_boundary,
+                                          upper_bin_boundary,
+                                          rel_error_tol,
+                                          error_tol,
+                                          max_number_of_iterations );
 
-    /*! \detials If the y indep var value is zero the relative error
-     *  will always zero or inf. When this is the case the error tolerance will
-     *  be used instead of the relative error tolerance.
-     */
-     if ( y_indep_value == QuantityTraits<YIndepType>::zero() )
-     {
-        error_norm_constant = QuantityTraits<YIndepType>::one();
-        tolerance = error_tol;
-     }
+      ReturnType lower_eval =
+                  ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample);
+      ReturnType upper_eval =
+                  ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample);
 
-    // Refine the estimated cdf value until it meet the tolerance
-    while ( rel_error > tolerance )
-    {
-      // Estimate the cdf as the midpoint of the lower and upper boundaries
-      double estimated_cdf = 0.5*( lower_cdf_bound + upper_cdf_bound );
-
-      // Get the sampled values at the upper and lower bin for the estimated_cdf
-      lower_bin_sample =
-        ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
-      upper_bin_sample =
-        ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
-
-      // Calculate the unit base variable on the intermediate grid corresponding to the
-      // raw samples on the lower and upper boundaries
-      typename QuantityTraits<YIndepType>::RawType
-        eta_estimate, eta_0, eta_1;
-
-      eta_0 =
-        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
-            lower_bin_sample,
-            lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-            grid_length_0 );
-
-      eta_1 =
-        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
-            upper_bin_sample,
-            upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-            grid_length_1 );
-
-      // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
-      eta_estimate =
-        TwoDInterpPolicy::YXInterpPolicy::interpolate( beta, eta_0, eta_1 );
-
-      // Scale the sample so that it preserves the intermediate limits.
-      YIndepType est_y_indep_value =
-        TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
-            eta_estimate,
-            min_y_indep_var,
-            intermediate_grid_length );
-
-      // Update the number of iterations
-      ++number_of_iterations;
-
-      if ( y_indep_value == est_y_indep_value )
-        break;
-
-      // Calculate the relative error between the y_indep_value and the estimate
-      rel_error = (y_indep_value - est_y_indep_value )/error_norm_constant;
-
-      // Make sure the relative error is positive
-      rel_error = rel_error < 0 ? -rel_error : rel_error;
-
-      // If tolerance is met exit loop
-      if ( rel_error <= tolerance )
-        break;
-
-      // Update the estimated_cdf estimate
-      if ( est_y_indep_value < y_indep_value )
-      {
-        // Old estimated_cdf estimate is new lower cdf boundary
-        lower_cdf_bound = estimated_cdf;
-      }
+      if( lower_eval == upper_eval )
+        return lower_eval;
       else
       {
-        // Old estimated_cdf estimate is new upper cdf boundary
-        upper_cdf_bound = estimated_cdf;
-      }
-
-      // Check for the max number of iterations
-      if ( number_of_iterations > max_number_of_iterations )
-      {
-        // Get error in estimate
-        double error =
-            (y_indep_value - est_y_indep_value )/
-                                QuantityTraits<YIndepType>::one();
-        error = error < 0 ? -error : error;
-
-        // If error meets error tolerance accept estimate
-        if ( error < error_tol )
-            break;
-        else
+        if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LinLin" )
         {
-        THROW_EXCEPTION( std::logic_error,
-                       "Error: The evaluation could not be completed. "
-                       "The max number of iterations ("
-                       << max_number_of_iterations
-                       << ") was reached before the relative error ("
-                       << rel_error
-                       << ") reached the evaluation tolerance ("
-                       << rel_error_tol
-                       << ")." );
+          /* The PDF for lin-lin interpolation is defined as:
+          * f(x,y) = 1/L * ( L_0f_0( y_0 ) * L_1f_1( y_1 ) )/
+          *          ( L_1f_1(y_1) + ( L_0f_0(y_0) - L_1f_1(y_1) )* beta )
+          */
+          auto lower_product = lower_eval*grid_length_0;
+          auto upper_product = upper_eval*grid_length_1;
+
+          return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/intermediate_grid_length;
+        }
+        else if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LogLog" )
+        {
+          /* The PDF for log-log interpolation is defined as:
+          * f(x,y) = 1/(eta*L)*( eta_0*L_0*f_0( y_0 ) * eta_1*L_1*f_1( y_1 ) )/
+          * ( eta_1*L_1*f_1(y_1)*( (eta_0*L_0*f_0(y_0))/(eta_1*L_1*f_1(y_1)) )^beta )
+          */
+          auto lower_product =
+            lower_eval*( lower_bin_sample - lower_bin_boundary->second->getLowerBoundOfIndepVar() );
+          auto upper_product = 
+            upper_eval*( upper_bin_sample - upper_bin_boundary->second->getLowerBoundOfIndepVar() );
+          auto product = eta*intermediate_grid_length;
+
+          return (lower_product*upper_product)/(LogLog::interpolate( beta, upper_product, lower_product )*y_indep_value)/product;
         }
       }
-    }
-
-    // Return the interpolated evaluation
-    return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-                lower_bin_boundary->first,
-                upper_bin_boundary->first,
-                x_indep_value,
-                ((*lower_bin_boundary->second).*evaluate)(lower_bin_sample),
-                ((*upper_bin_boundary->second).*evaluate)(upper_bin_sample) );
     }
   }
 }
 
-// Evaluate between bin boundaries using the desired evaluation method
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+/*! \details The EvaluationMethod must evalute using a Cosine variable. This
+ *  method uses an iterative method to estimate the CDF for unit-base correlated
+ *  sampling to a relative error tolerance in order to get the proper
+ *  interpolation parameters. The lower and upper bounds of the secondary
+ *  independent variable (cosine) are fixed (-1 <= cosine <= 1). Therefore a
+ *  unit base method is not necessary and the direct correlated method is used
+ *  to evaluate instead.
+ */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
          typename XIndepType,
@@ -1476,7 +2434,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename YBoundsFunctor>
-ReturnType Correlated::evaluateDirect(
+ReturnType UnitBaseCorrelated::evaluateCDFCos(
                                   const XIndepType& x_indep_value,
                                   const YIndepType& y_indep_value,
                                   const YBoundsFunctor& min_y_indep_functor,
@@ -1484,37 +2442,369 @@ ReturnType Correlated::evaluateDirect(
                                   const EvaluationMethod& evaluate,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary,
-                                  const ReturnType& below_lower_bound_return,
-                                  const ReturnType& above_upper_bound_return,
-                                  const double fuzzy_boundary_tol )
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
 {
-  // Create the grid evaluation functors
-  std::function<ReturnType(const YIndepType)>
-    evaluate_grid_0_functor =
-    std::bind<ReturnType>( evaluate,
-                           std::cref( *lower_bin_boundary->second ),
-                           std::placeholders::_1 );
+  return Correlated::evaluateCDFCos<TwoDInterpPolicy,
+                                       BaseOneDDistributionType,
+                                       XIndepType,
+                                       YIndepType,
+                                       ReturnType,
+                                       YZIterator,
+                                       EvaluationMethod,
+                                       YBoundsFunctor>(
+                                                    x_indep_value,
+                                                    y_indep_value,
+                                                    min_y_indep_functor,
+                                                    max_y_indep_functor,
+                                                    evaluate,
+                                                    lower_bin_boundary,
+                                                    upper_bin_boundary,
+                                                    fuzzy_boundary_tol,
+                                                    rel_error_tol,
+                                                    error_tol,
+                                                    max_number_of_iterations );
+}
 
-  std::function<ReturnType(const YIndepType)>
-    evaluate_grid_1_functor =
-    std::bind<ReturnType>( evaluate,
-                           std::cref( *upper_bin_boundary->second ),
-                           std::placeholders::_1 );
+// Evaluate the CDF between bin boundaries using the desired evaluation method
+/*! \details This method uses an iterative method to estimate the CDF for
+ *  unit-base correlated sampling to a relative error tolerance in order to get
+ *  the proper interpolation parameters.
+ */
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor>
+ReturnType UnitBaseCorrelated::evaluateCDF(
+                                  const XIndepType& x_indep_value,
+                                  const YIndepType& y_indep_value,
+                                  const YBoundsFunctor& min_y_indep_functor,
+                                  const YBoundsFunctor& max_y_indep_functor,
+                                  const EvaluationMethod& evaluate,
+                                  const YZIterator& lower_bin_boundary,
+                                  const YZIterator& upper_bin_boundary,
+                                  const double fuzzy_boundary_tol,
+                                  const double rel_error_tol,
+                                  const double error_tol,
+                                  unsigned max_number_of_iterations )
+{
+  if( lower_bin_boundary->first == x_indep_value )
+  {
+    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else if( upper_bin_boundary->first == x_indep_value )
+  {
+    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+  }
+  else
+  {
+    // Calculate the bin length of the x variable
+    const typename QuantityTraits<XIndepType>::RawType x_bin_length =
+      TwoDInterpPolicy::ZXInterpPolicy::calculateUnitBaseGridLength(
+                                                    lower_bin_boundary->first,
+                                                    upper_bin_boundary->first );
 
-  return TwoDInterpPolicy::interpolateUnitBase(
-                        lower_bin_boundary->first,
-                        upper_bin_boundary->first,
-                        x_indep_value,
-                        y_indep_value,
+    // Calculate the x variable bin ratio (beta)
+    const typename QuantityTraits<XIndepType>::RawType beta =
+      TwoDInterpPolicy::ZXInterpPolicy::calculateUnitBaseIndepVar(
+                                                    x_indep_value,
+                                                    lower_bin_boundary->first,
+                                                    x_bin_length );
+
+    // Get the min and max y indep values
+    YIndepType min_y_indep_var = min_y_indep_functor( x_indep_value );
+    YIndepType max_y_indep_var = max_y_indep_functor( x_indep_value );
+
+    // Check for a y indep value outside of the y indep grid limits
+    if ( y_indep_value < min_y_indep_var )
+      return QuantityTraits<ReturnType>::zero();
+    else if ( y_indep_value > max_y_indep_var )
+      return QuantityTraits<ReturnType>::one();
+    else if ( y_indep_value == min_y_indep_var )
+    {
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                beta,
+                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getLowerBoundOfIndepVar()),
+                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getLowerBoundOfIndepVar()) );
+    }
+    else if ( y_indep_value == max_y_indep_var )
+    {
+      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
+                beta,
+                ((*lower_bin_boundary->second).*evaluate)(lower_bin_boundary->second->getUpperBoundOfIndepVar()),
+                ((*upper_bin_boundary->second).*evaluate)(upper_bin_boundary->second->getUpperBoundOfIndepVar()) );
+    }
+    else
+    {
+      // Get the intermediate grid lengths for the indep value and the upper and lower bin boundary
+      typename QuantityTraits<YIndepType>::RawType grid_length_0 =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+                        lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+      typename QuantityTraits<YIndepType>::RawType grid_length_1 =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        upper_bin_boundary->second->getUpperBoundOfIndepVar(),
-                        evaluate_grid_0_functor,
-                        evaluate_grid_1_functor,
-                        below_lower_bound_return,
-                        above_upper_bound_return,
-                        fuzzy_boundary_tol );
+                        upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+      typename QuantityTraits<YIndepType>::RawType
+      intermediate_grid_length =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                        min_y_indep_var,
+                        max_y_indep_var );
+
+      // Get the lower and upper boundaries of the evaluated cdf
+      double lower_cdf_bound, upper_cdf_bound;
+      typename QuantityTraits<YIndepType>::RawType eta;
+      {
+
+        YIndepType min_y_indep_var_with_tol =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+                        min_y_indep_var );
+
+        YIndepType max_y_indep_var_with_tol =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+                        max_y_indep_var );
+
+        // Calculate the unit base variable on the intermediate grid
+        eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+                y_indep_value,
+                min_y_indep_var,
+                intermediate_grid_length );
+
+        // Get the y indep var value for the upper and lower bin boundaries
+        YIndepType y_indep_value_0 =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+                        eta,
+                        lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                        grid_length_0 );
+
+        YIndepType y_indep_value_1 =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+                        eta,
+                        upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                        grid_length_1 );
+
+        // Evaluate the cdf at the upper and lower bin boundaries
+        double bin_eval_0 =
+          ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value_0 );
+        double bin_eval_1 =
+          ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value_1 );
+
+        if ( bin_eval_0 <= bin_eval_1 )
+        {
+          lower_cdf_bound = bin_eval_0;
+          upper_cdf_bound = bin_eval_1;
+        }
+        else
+        {
+          lower_cdf_bound = bin_eval_1;
+          upper_cdf_bound = bin_eval_0;
+        }
+      }
+
+      YIndepType lower_bin_sample, upper_bin_sample;
+      return UnitBaseCorrelated::estimateCDF<TwoDInterpPolicy,
+                                             BaseOneDDistributionType,
+                                             XIndepType, YIndepType,
+                                             ReturnType, YZIterator,
+                                             EvaluationMethod, YBoundsFunctor>(
+                                          lower_cdf_bound,
+                                          upper_cdf_bound,
+                                          lower_bin_sample,
+                                          upper_bin_sample,
+                                          beta,
+                                          grid_length_0,
+                                          grid_length_1,
+                                          eta,
+                                          lower_bin_boundary,
+                                          upper_bin_boundary,
+                                          rel_error_tol,
+                                          error_tol,
+                                          max_number_of_iterations );
+    }
+  }
+}
+
+// // Evaluate between bin boundaries using the desired evaluation method
+// template<typename TwoDInterpPolicy,
+//          typename BaseOneDDistributionType,
+//          typename XIndepType,
+//          typename YIndepType,
+//          typename ReturnType,
+//          typename YZIterator,
+//          typename EvaluationMethod,
+//          typename YBoundsFunctor>
+// ReturnType UnitBaseCorrelated::evaluateDirect(
+//                                   const XIndepType& x_indep_value,
+//                                   const YIndepType& y_indep_value,
+//                                   const YBoundsFunctor& min_y_indep_functor,
+//                                   const YBoundsFunctor& max_y_indep_functor,
+//                                   const EvaluationMethod& evaluate,
+//                                   const YZIterator& lower_bin_boundary,
+//                                   const YZIterator& upper_bin_boundary,
+//                                   const double fuzzy_boundary_tol )
+// {
+//   // Create the grid evaluation functors
+//   std::function<ReturnType(const YIndepType)>
+//     evaluate_grid_0_functor =
+//     std::bind<ReturnType>( evaluate,
+//                            std::cref( *lower_bin_boundary->second ),
+//                            std::placeholders::_1 );
+
+//   std::function<ReturnType(const YIndepType)>
+//     evaluate_grid_1_functor =
+//     std::bind<ReturnType>( evaluate,
+//                            std::cref( *upper_bin_boundary->second ),
+//                            std::placeholders::_1 );
+
+//   return TwoDInterpPolicy::interpolateUnitBase(
+//                         lower_bin_boundary->first,
+//                         upper_bin_boundary->first,
+//                         x_indep_value,
+//                         y_indep_value,
+//                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+//                         lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+//                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+//                         upper_bin_boundary->second->getUpperBoundOfIndepVar(),
+//                         evaluate_grid_0_functor,
+//                         evaluate_grid_1_functor,
+//                         fuzzy_boundary_tol );
+// }
+
+// Estimate the interpolated CDF and the corresponding lower and upper y indep values
+template<typename TwoDInterpPolicy,
+         typename BaseOneDDistributionType,
+         typename XIndepType,
+         typename YIndepType,
+         typename ReturnType,
+         typename YZIterator,
+         typename EvaluationMethod,
+         typename YBoundsFunctor,
+         typename T>
+double UnitBaseCorrelated::estimateCDF(
+        double& lower_cdf_est,
+        double& upper_cdf_est,
+        YIndepType& y_indep_value_0,
+        YIndepType& y_indep_value_1,
+        const T& beta,
+        const typename QuantityTraits<YIndepType>::RawType& grid_length_0,
+        const typename QuantityTraits<YIndepType>::RawType& grid_length_1,
+        const typename QuantityTraits<YIndepType>::RawType& eta,
+        const YZIterator& lower_bin_boundary,
+        const YZIterator& upper_bin_boundary,
+        const double rel_error_tol,
+        const double error_tol,
+        unsigned max_number_of_iterations )
+{
+  unsigned number_of_iterations = 0;
+  double rel_error = 1.0;
+  typename QuantityTraits<YIndepType>::RawType error_norm_constant = eta;
+  double tolerance = rel_error_tol;
+
+  /*! \detials If the y indep var value is zero the relative error
+    *  will always zero or inf. When this is the case the error tolerance will
+    *  be used instead of the relative error tolerance.
+    */
+    if ( eta == 0.0 )
+    {
+      error_norm_constant = 1.0;
+      tolerance = error_tol;
+    }
+
+  // Refine the estimated cdf value until it meet the tolerance
+  double estimated_cdf = 0.0;
+  while ( rel_error > tolerance )
+  {
+    // Estimate the cdf as the midpoint of the lower and upper boundaries
+    estimated_cdf = 0.5*( lower_cdf_est + upper_cdf_est );
+
+    // Get the sampled values at the upper and lower bin for the estimated_cdf
+    y_indep_value_0 =
+      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+    y_indep_value_1 =
+      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+
+    // Calculate the unit base variable on the intermediate grid corresponding to the
+    // raw samples on the lower and upper boundaries
+    typename QuantityTraits<YIndepType>::RawType
+      eta_estimate, eta_0, eta_1;
+
+    eta_0 =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+          y_indep_value_0,
+          lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+          grid_length_0 );
+
+    eta_1 =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+          y_indep_value_1,
+          upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+          grid_length_1 );
+
+    // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
+    eta_estimate =
+      TwoDInterpPolicy::YXInterpPolicy::interpolate( beta, eta_0, eta_1 );
+
+    // Update the number of iterations
+    ++number_of_iterations;
+
+    if ( eta == eta_estimate )
+      break;
+
+    // Calculate the relative error between eta and the estimate
+    rel_error = ( eta - eta_estimate )/error_norm_constant;
+
+    // Make sure the relative error is positive
+    rel_error = rel_error < 0 ? -rel_error : rel_error;
+
+    // If tolerance is met exit loop
+    if ( rel_error <= tolerance )
+      break;
+
+    // Update the estimated_cdf estimate
+    if ( eta_estimate < eta )
+    {
+      // Old estimated_cdf estimate is new lower cdf boundary
+      lower_cdf_est = estimated_cdf;
+    }
+    else
+    {
+      // Old estimated_cdf estimate is new upper cdf boundary
+      upper_cdf_est = estimated_cdf;
+    }
+
+    // Check for the max number of iterations
+    if ( number_of_iterations > max_number_of_iterations )
+    {
+      // Get error in estimate
+      double error = ( eta - eta_estimate );
+      error = error < 0 ? -error : error;
+
+      // If error meets error tolerance accept estimate
+      if ( error < error_tol )
+          break;
+      else
+      {
+      THROW_EXCEPTION( std::logic_error,
+                      "Error: The evaluation could not be completed. "
+                      "The max number of iterations ("
+                      << max_number_of_iterations
+                      << ") was reached before the relative error ("
+                      << rel_error
+                      << ") reached the evaluation tolerance ("
+                      << rel_error_tol
+                      << ")." );
+      }
+    }
+  }
+  return estimated_cdf;
 }
 
 // Sample between bin boundaries using the desired sampling functor
@@ -1524,7 +2814,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Correlated::sample(
+YIndepType UnitBaseCorrelated::sample(
           const SampleFunctor& sample_functor,
           const YBoundsFunctor& min_y_indep_functor,
           const YBoundsFunctor& max_y_indep_functor,
@@ -1536,7 +2826,7 @@ YIndepType Correlated::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Correlated::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return UnitBaseCorrelated::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -1553,7 +2843,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor>
-YIndepType Correlated::sampleCos( const SampleFunctor& sample_functor,
+YIndepType UnitBaseCorrelated::sampleCos( const SampleFunctor& sample_functor,
                                   const XIndepType& x_indep_value,
                                   const YZIterator& lower_bin_boundary,
                                   const YZIterator& upper_bin_boundary )
@@ -1562,7 +2852,7 @@ YIndepType Correlated::sampleCos( const SampleFunctor& sample_functor,
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Correlated::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return UnitBaseCorrelated::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -1581,7 +2871,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Correlated::sampleInSubrange(
+YIndepType UnitBaseCorrelated::sampleInSubrange(
           const SampleFunctor& subrange_sample_functor,
           const YBoundsFunctor& min_y_indep_functor,
           const YBoundsFunctor& max_y_indep_functor,
@@ -1680,7 +2970,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename SampleFunctor,
          typename YBoundsFunctor>
-YIndepType Correlated::sampleDetailed(
+YIndepType UnitBaseCorrelated::sampleDetailed(
             const SampleFunctor& sample_functor,
             const YBoundsFunctor& min_y_indep_functor,
             const YBoundsFunctor& max_y_indep_functor,
@@ -1781,7 +3071,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename SampleFunctor>
-YIndepType Correlated::sampleCosDetailed(
+YIndepType UnitBaseCorrelated::sampleCosDetailed(
             const SampleFunctor& sample_functor,
             const XIndepType& x_indep_value,
             const YZIterator& lower_bin_boundary,
@@ -1789,7 +3079,7 @@ YIndepType Correlated::sampleCosDetailed(
             YZIterator& sampled_bin_boundary,
             YIndepType& raw_sample )
 {
-  return Exact::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -1799,9 +3089,9 @@ YIndepType Correlated::sampleCosDetailed(
 }
 
 // The name of the policy
-inline const std::string Correlated::name()
+inline const std::string UnitBaseCorrelated::name()
 {
-  return "Correlated";
+  return "Unit-base Correlated";
 }
 
 } // end Utility namespace

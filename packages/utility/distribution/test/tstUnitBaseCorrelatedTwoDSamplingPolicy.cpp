@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstExactTwoDSamplingPolicy.cpp
-//! \author Luke Kerting
-//! \brief  The Exact two-dimensional sampling policy unit tests
+//! \file   tstCorrelatedTwoDSamplingPolicy.cpp
+//! \author Luke Kersting
+//! \brief  The Unit-base Correlated two-dimensional sampling policy unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -58,8 +58,8 @@ std::shared_ptr<Utility::UnitAwareFullyTabularTwoDDistribution<MegaElectronVolt,
 std::function<double(const Utility::TabularOneDDistribution&)> functor;
 std::function<YIndepType(const Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>&)> ua_functor;
 
-std::function<double (double)> func;
-std::function<YIndepType(const XIndepType)> ua_func;
+std::function<double (double)> min_func, max_func;
+std::function<YIndepType(const XIndepType)> ua_min_func, ua_max_func;
 
 Utility::FullyTabularTwoDDistribution::DistributionType::const_iterator
   lower_bin, upper_bin, sampled_bin, start_bin;
@@ -73,7 +73,7 @@ Utility::UnitAwareFullyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn
 // Return the sampling functor
 std::function<double(const Utility::TabularOneDDistribution&)> getFunctor()
 {
-  // Use this random number to do create the Exact sampling functor
+  // Use this random number to do create the correlated sampling functor
   const double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
@@ -86,7 +86,7 @@ std::function<double(const Utility::TabularOneDDistribution&)> getFunctor()
 // Return the sampling functor
 std::function<YIndepType(const Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>&)> getUnitAwareFunctor()
 {
-  // Use this random number to do create the Exact sampling functor
+  // Use this random number to do create the correlated sampling functor
   const double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
@@ -101,23 +101,23 @@ std::function<YIndepType(const Utility::UnitAwareTabularOneDDistribution<cgs::le
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution is tabular in the primary dimension
-TEUCHOS_UNIT_TEST( Exact,
+TEUCHOS_UNIT_TEST( Correlated,
                    name )
 {
-  std::string name = Utility::Exact::name();
+  std::string name = Utility::UnitBaseCorrelated::name();
 
-  TEST_ASSERT( name == "Exact" );
+  TEST_ASSERT( name == "Unit-base Correlated" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( Exact, evaluateDirect )
+TEUCHOS_UNIT_TEST( Correlated, evaluatePDF )
 {
   std::function<double(double,double)> evaluate =
-  [&func, &lower_bin, &upper_bin](double x_value, double y_value)
+  [&min_func, &max_func, &lower_bin, &upper_bin](double x_value, double y_value)
   {
-    return Utility::Exact::evaluateDirect<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
-      x_value, y_value, func, func, &Utility::TabularOneDDistribution::evaluate, lower_bin, upper_bin );
+    return Utility::UnitBaseCorrelated::evaluatePDF<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
+      x_value, y_value, min_func, max_func, &Utility::TabularOneDDistribution::evaluate, lower_bin, upper_bin, 1e-3, 1e-15 );
   };
 
   lower_bin = distribution->begin();
@@ -125,7 +125,7 @@ TEUCHOS_UNIT_TEST( Exact, evaluateDirect )
   ++upper_bin;
 
   double x_value = 0.0;
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
 
   // On the first bin boundary
   TEST_EQUALITY_CONST( evaluate( 0.0, -1.0 ), 0.0 );
@@ -135,159 +135,17 @@ TEUCHOS_UNIT_TEST( Exact, evaluateDirect )
   TEST_EQUALITY_CONST( evaluate( 0.0, 11.0 ), 0.0 );
 
   // In the first bin
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.5 );
-  TEST_FLOATING_EQUALITY( evaluate( 0.5, 1.25 ), 0.5, 1e-15 );
-  TEST_FLOATING_EQUALITY( evaluate( 0.5, 5.0 ), 1.0, 1e-6 );
-  TEST_FLOATING_EQUALITY( evaluate( 0.5, 8.75 ), 0.5, 1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 0.5 );
-
-  // On the second bin boundary
-  ++lower_bin; ++upper_bin;
-  func = [](double x){return 2.5;}; func = [](double x){return 7.5;};
-
-  TEST_EQUALITY_CONST( evaluate( 1.0, 2.0 ), 0.0 );
-  TEST_EQUALITY_CONST( evaluate( 1.0, 2.5 ), 0.1 );
-  TEST_EQUALITY_CONST( evaluate( 1.0, 5.0 ), 1.0 );
-  TEST_EQUALITY_CONST( evaluate( 1.0, 7.5 ), 0.5 );
-  TEST_EQUALITY_CONST( evaluate( 1.0, 8.0 ), 0.0 );
-
-  // In the second bin
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.05 );
-  TEST_FLOATING_EQUALITY( evaluate( 1.5, 1.25 ), 0.05, 1e-15 );
-  TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 0.55, 1e-6 );
-  TEST_FLOATING_EQUALITY( evaluate( 1.5, 8.75 ), 0.05, 1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 0.05 );
-
-  // On the upper bin boundary
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};
-
-  TEST_EQUALITY_CONST( evaluate( 2.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( evaluate( 2.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( evaluate( 2.0, 5.0 ), 0.1 );
-  TEST_EQUALITY_CONST( evaluate( 2.0, 10.0 ), 0.1 );
-  TEST_EQUALITY_CONST( evaluate( 2.0, 11.0 ), 0.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateDirect )
-{
-  std::function<ZDepType(XIndepType,YIndepType)> evaluate = 
-  [&ua_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
-  {
-    return Utility::Exact::evaluateDirect<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,ZDepType>(
-      x_value, y_value, ua_func, ua_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluate, ua_lower_bin, ua_upper_bin );
-  };
-
-  ua_lower_bin = unit_aware_distribution->begin();
-  ua_upper_bin = ua_lower_bin;
-  ++ua_upper_bin;
-
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
-
-  // On the first bin boundary
-  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 10.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
-
-  // In the first bin
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.5*barn );
-  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
-                                  0.5*barn,
-                                  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
-                                  1.0*barn,
-                                  1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
-                                  0.5*barn,
-                                  1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.5*barn );
-
-  // On the second bin boundary
-  ++ua_lower_bin; ++ua_upper_bin;
-  ua_func = [](XIndepType x){return 2.5*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 7.5*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.1*barn );
-  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 0.5*barn );
-  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
-
-  // In the second bin
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.05*barn );
-  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
-                                  0.05*barn,
-                                  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
-                                  0.55*barn,
-                                  1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
-                                  0.05*barn,
-                                  1e-15 );
-  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.05*barn );
-
-  // On the upper bin boundary
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
-  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
-  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
-  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( Exact, evaluateSampleBased )
-{
-  std::function<double(double,double)> evaluate = 
-  [&func, &lower_bin, &upper_bin](double x_value, double y_value)
-  {
-    return Utility::Exact::evaluateSampleBased<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
-      x_value, y_value, func, func, &Utility::TabularOneDDistribution::evaluate, lower_bin, upper_bin );
-  };
-
-  lower_bin = distribution->begin();
-  upper_bin = lower_bin;
-  ++upper_bin;
-
-  double x_value = 0.0;
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};;
-
-  // On the first bin boundary
-  TEST_EQUALITY_CONST( evaluate( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( evaluate( 0.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( evaluate( 0.0, 5.0 ), 1.0 );
-  TEST_EQUALITY_CONST( evaluate( 0.0, 10.0 ), 1.0 );
-  TEST_EQUALITY_CONST( evaluate( 0.0, 11.0 ), 0.0 );
-
-  // In the first bin
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
 
   TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( evaluate( 0.5, 1.25 ), 0.55, 1e-15 );
-  TEST_FLOATING_EQUALITY( evaluate( 0.5, 5.0 ), 9.8085544810795022e-01, 1e-6 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 5.0 ), 8.7057683953223552e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( evaluate( 0.5, 8.75 ), 0.75, 1e-15 );
   TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 0.0 );
 
   // On the second bin boundary
   ++lower_bin; ++upper_bin;
-  func = [](double x){return 2.5;}; func = [](double x){return 7.5;};
+  min_func = [](double x){return 2.5;}; max_func = [](double x){return 7.5;};
 
   TEST_EQUALITY_CONST( evaluate( 1.0, 2.0 ), 0.0 );
   TEST_EQUALITY_CONST( evaluate( 1.0, 2.5 ), 0.1 );
@@ -296,16 +154,16 @@ TEUCHOS_UNIT_TEST( Exact, evaluateSampleBased )
   TEST_EQUALITY_CONST( evaluate( 1.0, 8.0 ), 0.0 );
 
   // In the second bin
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
 
   TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( evaluate( 1.5, 1.25 ), 0.1, 1e-15 );
-  TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 5.3085544810795016e-01, 1e-6 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 2.2105975814721399e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( evaluate( 1.5, 8.75 ), 0.3, 1e-15 );
   TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 0.0 );
 
   // On the upper bin boundary
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
 
   TEST_EQUALITY_CONST( evaluate( 2.0, -1.0 ), 0.0 );
   TEST_EQUALITY_CONST( evaluate( 2.0, 0.0 ), 0.1 );
@@ -316,21 +174,21 @@ TEUCHOS_UNIT_TEST( Exact, evaluateSampleBased )
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateSampleBased )
+TEUCHOS_UNIT_TEST( UnitAwareCorrelated, evaluatePDF )
 {
   std::function<ZDepType(XIndepType,YIndepType)> evaluate = 
-  [&ua_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
+  [&ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
   {
-    return Utility::Exact::evaluateSampleBased<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,ZDepType>(
-      x_value, y_value, ua_func, ua_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluate, ua_lower_bin, ua_upper_bin );
+    return Utility::UnitBaseCorrelated::evaluatePDF<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,ZDepType>(
+      x_value, y_value, ua_min_func, ua_max_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluate, ua_lower_bin, ua_upper_bin, 1e-3, 1e-15 );
   };
 
   ua_lower_bin = unit_aware_distribution->begin();
   ua_upper_bin = ua_lower_bin;
   ++ua_upper_bin;
 
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
 
   // On the first bin boundary
   TEST_EQUALITY_CONST( evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
@@ -340,17 +198,16 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateSampleBased )
   TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   // In the first bin
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
   TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
                                   0.55*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
-                                  9.8085544810795022e-01*barn,
-                                  1e-6 );
-
+                                  8.7057683953223552e-01*barn,
+                                  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
                                   0.75*barn,
                                   1e-15 );
@@ -358,8 +215,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateSampleBased )
 
   // On the second bin boundary
   ++ua_lower_bin; ++ua_upper_bin;
-  ua_func = [](XIndepType x){return 2.5*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 7.5*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 2.5*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 7.5*cgs::centimeter;};
 
   TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
   TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.1*barn );
@@ -368,25 +225,24 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateSampleBased )
   TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
 
   // In the second bin
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
   TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
                                   0.1*barn,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
-                                  5.3085544810795016e-01*barn,
-                                  1e-6 );
-
+                                  2.2105975814721399e-01*barn,
+                                  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
                                   0.3*barn,
                                   1e-15 );
   TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
 
   // On the upper bin boundary
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
 
   TEST_EQUALITY_CONST( evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
   TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
@@ -396,8 +252,145 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, evaluateSampleBased )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( Correlated, evaluateCDF )
+{
+  std::function<double(double,double)> evaluate = 
+  [&min_func, &max_func, &lower_bin, &upper_bin](double x_value, double y_value)
+  {
+    return Utility::UnitBaseCorrelated::evaluateCDF<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
+      x_value, y_value, min_func, max_func, &Utility::TabularOneDDistribution::evaluateCDF, lower_bin, upper_bin, 1e-3, 1e-15 );
+  };
+
+  lower_bin = distribution->begin();
+  upper_bin = lower_bin;
+  ++upper_bin;
+
+  double x_value = 0.0;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
+
+  // On the first bin boundary
+  TEST_EQUALITY_CONST( evaluate( 0.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 5.0 ), 0.5 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0, 11.0 ), 1.0 );
+
+  // In the first bin
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
+
+  TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 1.25 ), 0.0 );
+  TEST_FLOATING_EQUALITY( evaluate( 0.5, 4.7115384615384617 ), 0.4230769230769231, 1e-12 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 8.75 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 1.0 );
+
+  // On the second bin boundary
+  ++lower_bin; ++upper_bin;
+  min_func = [](double x){return 2.5;}; max_func = [](double x){return 7.5;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.0, 2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 2.5 ), 0.0 );
+  TEST_FLOATING_EQUALITY( evaluate( 1.0, 5.0 ), 0.4230769230769231, 1e-15 );
+
+  TEST_EQUALITY_CONST( evaluate( 1.0, 7.5 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0, 8.0 ), 1.0 );
+
+  // In the second bin
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.5, 1.25 ), 0.0);
+  TEST_FLOATING_EQUALITY( evaluate( 1.5, 4.7115384615384617 ), 0.4230769230769231, 1e-12 );
+  TEST_EQUALITY_CONST( evaluate( 1.5, 8.75 ), 1.0);
+  TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 1.0 );
+
+  // On the upper bin boundary
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
+
+  TEST_EQUALITY_CONST( evaluate( 2.0, -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 0.0 ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 5.0 ), 0.5 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 10.0 ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0, 11.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareCorrelated, evaluateCDF )
+{
+  std::function<double(XIndepType,YIndepType)> evaluate = 
+  [&ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
+  {
+    return Utility::UnitBaseCorrelated::evaluateCDF<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,double>(
+      x_value, y_value, ua_min_func, ua_max_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluateCDF, ua_lower_bin, ua_upper_bin, 1e-3, 1e-15 );
+  };
+
+  ua_lower_bin = unit_aware_distribution->begin();
+  ua_upper_bin = ua_lower_bin;
+  ++ua_upper_bin;
+
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+
+  // On the first bin boundary
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 5.0*cgs::centimeter ), 0.5 );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 10.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 1.0 );
+
+  // In the first bin
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.25*cgs::centimeter ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 4.7115384615384617*cgs::centimeter ),
+                                  0.4230769230769231,
+                                  1e-6 );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 8.75*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 1.0 );
+
+  // On the second bin boundary
+  ++ua_lower_bin; ++ua_upper_bin;
+  ua_min_func = [](XIndepType x){return 2.5*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 7.5*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.0*MeV, 5.0*cgs::centimeter ),
+                                  0.4230769230769231,
+                                  1e-15 );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 1.0 );
+
+  // In the second bin
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 1.25*cgs::centimeter ), 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 4.7115384615384617*cgs::centimeter ),
+                                  0.4230769230769231,
+                                  1e-6 );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 8.75*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 1.0 );
+
+  // On the upper bin boundary
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.5 );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( Exact, sample )
+TEUCHOS_UNIT_TEST( Correlated, sample )
 {
   // On the first bin
   std::vector<double> fake_stream( 3 );
@@ -407,10 +400,10 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   std::function<double(double)> sample_function =
-  [&functor, &func, &lower_bin, &upper_bin](double x_value)
+  [&functor, &min_func, &max_func, &lower_bin, &upper_bin](double x_value)
   {
-    return Utility::Exact::sample<Utility::LinLinLin,double,double>(
-      functor, func, func, x_value, lower_bin, upper_bin );
+    return Utility::UnitBaseCorrelated::sample<Utility::LinLinLin,double,double>(
+      functor, min_func, max_func, x_value, lower_bin, upper_bin );
   };
 
   lower_bin = distribution->begin();
@@ -418,7 +411,7 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   ++upper_bin;
 
   double x_value = 0.0;
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
   functor = getFunctor();
 
   double sample = sample_function( x_value );
@@ -438,7 +431,7 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 0.5;
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
 
   functor = getFunctor();
   sample = sample_function( x_value );
@@ -446,7 +439,7 @@ TEUCHOS_UNIT_TEST( Exact, sample )
 
   functor = getFunctor();
   sample = sample_function( x_value );
-  TEST_EQUALITY_CONST( sample, 4.615384615384615 );
+  TEST_EQUALITY_CONST( sample, 4.7115384615384617 );
 
   functor = getFunctor();
   sample = sample_function( x_value );
@@ -455,7 +448,7 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 1.0;
-  func = [](double x){return 2.5;}; func = [](double x){return 7.5;};
+  min_func = [](double x){return 2.5;}; max_func = [](double x){return 7.5;};
 
   functor = getFunctor();
   sample = sample_function( x_value );
@@ -473,7 +466,7 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   ++lower_bin; ++upper_bin;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 1.5;
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
 
   functor = getFunctor();
   sample = sample_function( x_value );
@@ -481,7 +474,7 @@ TEUCHOS_UNIT_TEST( Exact, sample )
 
   functor = getFunctor();
   sample = sample_function( x_value );
-  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 4.7115384615384617, 1e-15 );
 
   functor = getFunctor();
   sample = sample_function( x_value );
@@ -494,7 +487,7 @@ TEUCHOS_UNIT_TEST( Exact, sample )
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 2.0;
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
 
   functor = getFunctor();
   sample = sample_function( x_value );
@@ -513,13 +506,13 @@ TEUCHOS_UNIT_TEST( Exact, sample )
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
+TEUCHOS_UNIT_TEST( UnitAwareCorrelated, sample )
 {
   std::function<YIndepType(XIndepType)> sample_function =
-  [&ua_functor, &ua_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value)
+  [&ua_functor, &ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value)
   {
-    return Utility::Exact::sample<Utility::LinLinLin,XIndepType,YIndepType>(
-      ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin );
+    return Utility::UnitBaseCorrelated::sample<Utility::LinLinLin,XIndepType,YIndepType>(
+      ua_functor, ua_min_func, ua_max_func, x_value, ua_lower_bin, ua_upper_bin );
   };
 
   // On the first bin
@@ -533,8 +526,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   ua_upper_bin = ua_lower_bin;
   ++ua_upper_bin;
   XIndepType x_value = 0.0*MeV;
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   quantity<cgs::length> sample = sample_function( x_value );
@@ -554,8 +547,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 0.5*MeV;
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
@@ -563,7 +556,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
-  TEST_EQUALITY_CONST( sample, 4.615384615384615*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 4.7115384615384617*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
@@ -572,8 +565,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 1.0*MeV;
-  ua_func = [](XIndepType x){return 2.5*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 7.5*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 2.5*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 7.5*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
@@ -591,8 +584,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   ++ua_lower_bin; ++ua_upper_bin;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 1.5*MeV;
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
@@ -600,7 +593,7 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.7115384615384617*cgs::centimeter, 1e-15 );
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
@@ -612,8 +605,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   x_value = 2.0*MeV;
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample = sample_function( x_value);
@@ -632,14 +625,14 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sample )
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
+TEUCHOS_UNIT_TEST( Correlated, sampleDetailed )
 {
   double raw_sample;
   std::function<double(double)> sample_function =
-  [&functor, &func, &lower_bin, &upper_bin, &sampled_bin, &raw_sample](double x_value)
+  [&functor, &min_func, &max_func, &lower_bin, &upper_bin, &sampled_bin, &raw_sample](double x_value)
   {
-    return Utility::Exact::sampleDetailed<Utility::LinLinLin,double,double>(
-      functor, func, func, x_value, lower_bin, upper_bin, sampled_bin, raw_sample );
+    return Utility::UnitBaseCorrelated::sampleDetailed<Utility::LinLinLin,double,double>(
+      functor, min_func, max_func, x_value, lower_bin, upper_bin, sampled_bin, raw_sample );
   };
 
   // On the first bin
@@ -655,7 +648,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
   lower_bin = start_bin;
   upper_bin = lower_bin;
   ++upper_bin;
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
 
   functor = getFunctor();
   double sample = sample_function( 0.0 );
@@ -686,7 +679,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};;
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
 
   functor = getFunctor();
   sample = sample_function( 0.5 );
@@ -701,8 +694,8 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  TEST_EQUALITY_CONST( sample, 4.615384615384615 );
-  TEST_EQUALITY_CONST( raw_sample, 4.615384615384615 );
+  TEST_EQUALITY_CONST( sample, 4.7115384615384617 );
+  TEST_EQUALITY_CONST( raw_sample, 4.7115384615384617 );
 
   functor = getFunctor();
   sample = sample_function( 0.5 );
@@ -714,7 +707,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  func = [](double x){return 2.5;}; func = [](double x){return 7.5;};;
+  min_func = [](double x){return 2.5;}; max_func = [](double x){return 7.5;};
 
   functor = getFunctor();
   sample = sample_function( 1.0 );
@@ -743,7 +736,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
   // In the second bin
   ++lower_bin; ++upper_bin;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  func = [](double x){return 1.25;}; func = [](double x){return 8.75;};;
+  min_func = [](double x){return 1.25;}; max_func = [](double x){return 8.75;};
 
   functor = getFunctor();
   sample = sample_function( 1.5 );
@@ -758,8 +751,8 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
   bin_index = std::distance( start_bin, sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
-  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
-  TEST_FLOATING_EQUALITY( raw_sample, 4.615384615384615, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 4.7115384615384617, 1e-15 );
+  TEST_FLOATING_EQUALITY( raw_sample, 4.7115384615384617, 1e-15 );
 
   functor = getFunctor();
   sample = sample_function( 1.5 );
@@ -774,7 +767,7 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
   fake_stream[1] = 0.5;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  func = [](double x){return 0.0;}; func = [](double x){return 10.0;};;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
 
   functor = getFunctor();
   sample = sample_function( 2.0 );
@@ -805,14 +798,14 @@ TEUCHOS_UNIT_TEST( Exact, sampleDetailed )
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
+TEUCHOS_UNIT_TEST( UnitAwareCorrelated, sampleDetailed )
 {
   quantity<cgs::length> raw_sample;
   std::function<YIndepType(XIndepType)> sample_function =
-  [&ua_functor, &ua_func, &ua_lower_bin, &ua_upper_bin, &ua_sampled_bin, &raw_sample](XIndepType x_value)
+  [&ua_functor, &ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin, &ua_sampled_bin, &raw_sample](XIndepType x_value)
   {
-    return Utility::Exact::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
-      ua_functor, ua_func, ua_func, x_value, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
+    return Utility::UnitBaseCorrelated::sampleDetailed<Utility::LinLinLin,XIndepType,YIndepType>(
+      ua_functor, ua_min_func, ua_max_func, x_value, ua_lower_bin, ua_upper_bin, ua_sampled_bin, raw_sample );
   };
 
   // On the first bin
@@ -827,8 +820,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
   ua_lower_bin = ua_start_bin;
   ua_upper_bin = ua_lower_bin;
   ++ua_upper_bin;
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   quantity<cgs::length> sample = sample_function( 0.0*MeV );
@@ -859,8 +852,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample =  sample_function( 0.5*MeV );
@@ -875,8 +868,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 0u );
-  TEST_EQUALITY_CONST( sample, 4.615384615384615*cgs::centimeter );
-  TEST_EQUALITY_CONST( raw_sample, 4.615384615384615*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 4.7115384615384617*cgs::centimeter );
+  TEST_EQUALITY_CONST( raw_sample, 4.7115384615384617*cgs::centimeter );
 
   ua_functor = getUnitAwareFunctor();
   sample =  sample_function( 0.5*MeV );
@@ -888,8 +881,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_func = [](XIndepType x){return 2.5*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 7.5*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 2.5*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 7.5*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample =  sample_function( 1.0*MeV );
@@ -904,8 +897,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 5.0*cgs::centimeter, 1e-15 );
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 5.0*cgs::centimeter, 1e-16 );
 
   ua_functor = getUnitAwareFunctor();
   sample =  sample_function( 1.0*MeV );
@@ -918,8 +911,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
   // In the second bin
   ++ua_lower_bin; ++ua_upper_bin;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_func = [](XIndepType x){return 1.25*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 1.25*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample =  sample_function( 1.5*MeV );
@@ -934,8 +927,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
 
   bin_index = std::distance( ua_start_bin, ua_sampled_bin );
   TEST_EQUALITY_CONST( bin_index, 1u );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 4.615384615384615*cgs::centimeter, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.7115384615384617*cgs::centimeter, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 4.7115384615384617*cgs::centimeter, 1e-15 );
 
   ua_functor = getUnitAwareFunctor();
   sample =  sample_function( 1.5*MeV );
@@ -950,8 +943,8 @@ TEUCHOS_UNIT_TEST( UnitAwareExact, sampleDetailed )
   fake_stream[1] = 0.5;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_func = [](XIndepType x){return 0.0*cgs::centimeter;};
-  ua_func = [](XIndepType x){return 10.0*cgs::centimeter;};
+  ua_min_func = [](XIndepType x){return 0.0*cgs::centimeter;};
+  ua_max_func = [](XIndepType x){return 10.0*cgs::centimeter;};
 
   ua_functor = getUnitAwareFunctor();
   sample =  sample_function( 2.0*MeV );
@@ -1036,7 +1029,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     distribution_data[2].first = 2.0*MeV;
     distribution_data[2].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
 
-
     unit_aware_distribution.reset(
         new Utility::UnitAwareFullyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType(
                                                         distribution_data ) );
@@ -1049,5 +1041,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstExactTwoDSamplingPolicy.cpp
+// end tstCorrelatedTwoDSamplingPolicy.cpp
 //---------------------------------------------------------------------------//

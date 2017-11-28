@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLinLinLinCorrelatedInterpolatedFullyTabularTwoDDistribution.cpp
+//! \file   tstLinLinLinExactInterpolatedFullyTabularTwoDDistribution.cpp
 //! \author Alex Robinson, Luke Kersting
 //! \brief  The interpolated fully tabular two-dimensional dist. unit tests
-//!         (LinLinLin Correlated interpolation)
+//!         (LinLinLin Exact interpolation)
 //!
 //---------------------------------------------------------------------------//
 
@@ -351,7 +351,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 1.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
                                                          distribution_data ) );
   }
 
@@ -370,7 +370,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
                                                          distribution_data ) );
   }
 
@@ -401,7 +401,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -412,98 +412,88 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, correlatedEvaluate )
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, evaluateExact )
 {
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 5.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 10.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 5.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 10.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 11.0, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 0.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 5.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 10.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 0.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 5.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 10.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( -1.0, 11.0, false ), 0.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 5.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 10.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 0.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 5.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 10.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.0, 11.0, false ), 0.0 );
 
   // In the second bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.5, 1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.5, 1.25, lower_func, upper_func, false ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.5, 1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.5, 1.25, false ),
                           0.55,
-                          1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.5, 5.0, lower_func, upper_func, false ),
-                          0.98470673703508238006,
+                          1e-16 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.5, 5.0, false ),
+                          0.98085546162288850258,
                           1e-6 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.5, 8.75, lower_func, upper_func, false ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 0.5, 8.75, false ),
                           0.75,
-                          1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.5, 9.0, lower_func, upper_func, false ), 0.0 );
+                          1e-16 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 0.5, 9.0, false ), 0.0 );
 
   // On the third bin boundary
-  lower_func = [](double x){return 2.5;}; upper_func = [](double x){return 7.5;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 2.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 2.5, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 5.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 7.5, lower_func, upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 8.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 2.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 2.5, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 5.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 7.5, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.0, 8.0, false ), 0.0 );
 
   // In the third bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.5, 1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 1.25, lower_func, upper_func, false ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.5, 1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 1.25, false ),
                           0.1,
-                          1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 5.0, lower_func, upper_func, false ),
-                          0.53470673703508242447,
+                          1e-16 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 5.0, false ),
+                          0.53085546162288843597,
                           1e-6 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 8.75, lower_func, upper_func, false ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluate( 1.5, 8.75, false ),
                           0.3,
-                          1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.5, 9.0, lower_func, upper_func, false ), 0.0 );
+                          1e-16 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 1.5, 9.0, false ), 0.0 );
 
   // On the upper bin boundary
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 0.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 5.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 10.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 0.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 5.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 10.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 2.0, 11.0, false ), 0.0 );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 5.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 10.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 5.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 10.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 11.0, false ), 0.0 );
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 5.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 10.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 0.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 5.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 10.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluate( 3.0, 11.0, false ), 0.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -511,103 +501,88 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, correlatedEvaluate 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedEvaluate )
+                   evaluateExact )
 {
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter, false ), 0.0*barn );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter, false ), 0.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, -1.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 0.0*cgs::centimeter, false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 5.0*cgs::centimeter, false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 10.0*cgs::centimeter, false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.0*MeV, 11.0*cgs::centimeter, false ), 0.0*barn );
 
   // In the second bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.5*MeV, 1.25*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter, false ), 0.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.5*MeV, 1.25*cgs::centimeter, false ),
                                   0.55*barn,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.5*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  0.98470673703508238006*barn,
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.5*MeV, 5.0*cgs::centimeter, false ),
+                                  0.98085546162288850258*barn,
                                   1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.5*MeV, 8.75*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 0.5*MeV, 8.75*cgs::centimeter, false ),
                                   0.75*barn,
                                   1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.5*MeV, 9.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 0.5*MeV, 9.0*cgs::centimeter, false ), 0.0*barn );
 
   // On the third bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.5*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 7.5*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 2.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 2.5*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 7.5*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.5*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 8.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 2.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 2.5*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 5.0*cgs::centimeter, false ), 1.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 7.5*cgs::centimeter, false ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.0*MeV, 8.0*cgs::centimeter, false ), 0.0*barn );
 
   // In the third bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 1.25*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter, false ), 0.0*barn );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 1.25*cgs::centimeter, false ),
                                   0.1*barn,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  0.53470673703508242447*barn,
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 5.0*cgs::centimeter, false ),
+                                  0.53085546162288843597*barn,
                                   1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 8.75*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluate( 1.5*MeV, 8.75*cgs::centimeter, false ),
                                   0.3*barn,
                                   1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.5*MeV, 9.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 1.5*MeV, 9.0*cgs::centimeter, false ), 0.0*barn );
 
   // On the upper bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, -1.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 0.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 5.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 10.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 2.0*MeV, 11.0*cgs::centimeter, false ), 0.0*barn );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter, false ), 0.0*barn );
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1*barn );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter, false ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter, false ), 0.1*barn );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter, false ), 0.0*barn );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -615,104 +590,94 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional PDF can be evaluated
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
-                   correlatedEvaluateSecondaryConditionalPDF )
+                   evaluateSecondaryConditionalPDFExact )
 {
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0, false ), 0.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 5.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 10.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 5.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 10.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.0, 11.0, false ), 0.0 );
 
   // In the second bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 1.25, lower_func, upper_func, false ),
-                          6.53846153846154E-02,
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 1.25, false ),
+                          6.53846153846153882e-02,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 5.0, lower_func, upper_func, false ),
-                          0.19914053447233304173,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 5.0, false ),
+                          0.19795552665319648966,
                           1e-6 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 8.75, lower_func, upper_func, false ),
-                          1.26923076923077E-01,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 8.75, false ),
+                          1.26923076923076916e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 9.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 9.0, false ), 0.0 );
 
   // On the third bin boundary
-  lower_func = [](double x){return 2.5;}; upper_func = [](double x){return 7.5;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 2.0, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 2.5, lower_func, upper_func, false ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 2.0, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 2.5, false ),
                           0.03076923076923077,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 5.0, lower_func, upper_func, false ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 5.0, false ),
                           0.3076923076923077,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 7.5, lower_func, upper_func, false ),
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 7.5, false ),
                           0.15384615384615385,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 8.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.0, 8.0, false ), 0.0 );
 
   // In the third bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 1.25, lower_func, upper_func, false ),
-                          6.53846153846154E-02,
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0, false ), 0.00 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 1.25, false ),
+                          6.53846153846153882e-02,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 5.0, lower_func, upper_func, false ),
-                          0.19914053447233304173,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 5.0, false ),
+                          0.19795552665319648966,
                           1e-6 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 8.75, lower_func, upper_func, false ),
-                          1.26923076923077E-01,
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalPDF( 0.5, 8.75, false ),
+                          1.26923076923076916e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 9.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 1.5, 9.0, false ), 0.0 );
 
   // On the upper bin boundary
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 5.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 10.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 5.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 10.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 2.0, 11.0, false ), 0.0 );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0, false ), 0.0 );
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0, lower_func, upper_func, false ), 0.1 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0, false ), 0.1 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0, false ), 0.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -720,109 +685,94 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional PDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedEvaluateSecondaryConditionalPDF )
+                   evaluateSecondaryConditionalPDFExact )
 {
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 5.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 10.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 11.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   // In the second bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.25*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  6.53846153846154E-02/cgs::centimeter,
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.25*cgs::centimeter, false ),
+                                  6.53846153846153882e-02/cgs::centimeter,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  0.19914053447233304173/cgs::centimeter,
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 5.0*cgs::centimeter, false ),
+                                  0.19795552665319648966/cgs::centimeter,
                                   1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 8.75*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  1.26923076923077E-01/cgs::centimeter,
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 8.75*cgs::centimeter, false ),
+                                  1.26923076923076916e-01/cgs::centimeter,
                                   1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 9.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 9.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   // On the third bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.5*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 7.5*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.5*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.5*cgs::centimeter, false ),
                                   0.03076923076923077/cgs::centimeter,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 5.0*cgs::centimeter, false ),
                                   0.3076923076923077/cgs::centimeter,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 7.5*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 7.5*cgs::centimeter, false ),
                                   0.15384615384615385/cgs::centimeter,
                                   1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 8.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 8.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   // In the third bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.25*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  6.53846153846154E-02/cgs::centimeter,
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.25*cgs::centimeter, false ),
+                                  6.53846153846153882e-02/cgs::centimeter,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  0.19914053447233304173/cgs::centimeter,
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 5.0*cgs::centimeter, false ),
+                                  0.19795552665319648966/cgs::centimeter,
                                   1e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 8.75*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                                  1.26923076923077E-01/cgs::centimeter,
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 8.75*cgs::centimeter, false ),
+                                  1.26923076923076916e-01/cgs::centimeter,
                                   1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 9.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 9.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   // On the upper bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 5.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 10.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 11.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter, false ), 0.1/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter, false ), 0.0/cgs::centimeter );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -830,92 +780,82 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional CDF can be evaluated
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
-                   correlatedEvaluateSecondaryConditionalCDF )
+                   evaluateSecondaryConditionalCDFExact )
 {
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 5.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 10.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 5.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 10.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 11.0, false ), 0.0 );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 5.0, lower_func, upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 10.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 11.0, lower_func, upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 5.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 10.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 11.0, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 5.0, lower_func, upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 10.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 11.0, lower_func, upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 5.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 10.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 11.0, false ), 1.0 );
 
   // In the second bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.25, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 5.0, lower_func, upper_func, false ),
-                          0.4694134740701646491,
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.25, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 5.0, false ),
+                          0.48085546162288905769,
                           1e-6 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 8.75, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 9.0, lower_func, upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 8.75, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 9.0, false ), 1.0 );
 
   // On the third bin boundary
-  lower_func = [](double x){return 2.5;}; upper_func = [](double x){return 7.5;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 2.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 2.5, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 5.0, lower_func, upper_func, false ),
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 2.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 2.5, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 5.0, false ),
                           0.4230769230769231,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 7.5, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 8.0, lower_func, upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 7.5, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 8.0, false ), 1.0 );
 
   // In the third bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.25, lower_func, upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 5.0, lower_func, upper_func, false ),
-                          0.4694134740701646491,
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.25, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 5.0, false ),
+                          0.48085546162288905769,
                           1e-6 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 8.75, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 9.0, lower_func, upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 8.75, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 9.0, false ), 1.0 );
 
   // On the upper bin boundary
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 5.0, lower_func, upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 10.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 11.0, lower_func, upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 5.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 10.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, 11.0, false ), 1.0 );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 5.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 10.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 11.0, lower_func, upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 5.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 10.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 11.0, false ), 0.0 );
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, lower_func, upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 5.0, lower_func, upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 10.0, lower_func, upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 11.0, lower_func, upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0, false ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 5.0, false ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 10.0, false ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 11.0, false ), 1.0 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -923,106 +863,82 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional CDF can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedEvaluateSecondaryConditionalCDF )
+                   evaluateSecondaryConditionalCDFExact )
 {
-  // With irregular upper and lower bounds
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 5.0*cgs::centimeter;};
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 5.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 10.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 11.0*cgs::centimeter, false ), 0.0 );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
   
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 5.0*cgs::centimeter, false ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 10.0*cgs::centimeter, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 11.0*cgs::centimeter, false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, -1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 0.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 5.0*cgs::centimeter, false ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 10.0*cgs::centimeter, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 11.0*cgs::centimeter, false ), 1.0 );
 
   // In the second bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.25*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                          0.4694134740701646491,
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.25*cgs::centimeter, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 5.0*cgs::centimeter, false ),
+                          0.48085546162288905769,
                           1e-6 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 8.75*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 9.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 8.75*cgs::centimeter, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 9.0*cgs::centimeter, false ), 1.0 );
 
   // On the third bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.5*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 7.5*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 2.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 2.5*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 2.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 2.5*cgs::centimeter, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 5.0*cgs::centimeter, false ),
                           0.4230769230769231,
                           1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 7.5*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 8.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 7.5*cgs::centimeter, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 8.0*cgs::centimeter, false ), 1.0 );
 
   // In the third bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.25*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ),
-                          0.4694134740701646491,
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.25*cgs::centimeter, false ), 0.0 );
+  TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 5.0*cgs::centimeter, false ),
+                          0.48085546162288905769,
                           1e-6 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 8.75*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 9.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 8.75*cgs::centimeter, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 9.0*cgs::centimeter, false ), 1.0 );
 
   // On the upper bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 0.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 5.0*cgs::centimeter, false ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 10.0*cgs::centimeter, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, 11.0*cgs::centimeter, false ), 1.0 );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 5.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 10.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 11.0*cgs::centimeter, false ), 0.0 );
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 5.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 0.5 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 10.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 11.0*cgs::centimeter, ua_lower_func, ua_upper_func, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::centimeter, false ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 5.0*cgs::centimeter, false ), 0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 10.0*cgs::centimeter, false ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 11.0*cgs::centimeter, false ), 1.0 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -1030,10 +946,10 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditional )
+                   sampleSecondaryConditionalExact )
 {
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditional( -1.0, lower_func, upper_func ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditional( -1.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -1045,110 +961,120 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-  double sample = tab_distribution->sampleSecondaryConditional( -1.0, lower_func, upper_func );
+  double sample = tab_distribution->sampleSecondaryConditional( -1.0 );
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( -1.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( -1.0 );
+
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( -1.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( -1.0 );
+
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
-
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditional( 0.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 0.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
+
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 0.0, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.0 );
 
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   // In the second bin
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
 
-  sample = tab_distribution->sampleSecondaryConditional( 0.5, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 0.5 );
+
   TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 0.5, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 4.711538461538, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditional( 0.5 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 0.5, lower_func, upper_func );
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditional( 0.5 );
+
   TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
 
-
   // On the third bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 2.5;}; upper_func = [](double x){return 7.5;};
 
-  sample = tab_distribution->sampleSecondaryConditional( 1.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
+
   TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 1.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
+
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 1.0, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.0 );
 
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // In the third bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
 
-  sample = tab_distribution->sampleSecondaryConditional( 1.5, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
+
   TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 1.5, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 4.711538461538, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 1.5, lower_func, upper_func );
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditional( 1.5 );
+
   TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
 
-
   // On the upper bin boundary
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
 
-  sample = tab_distribution->sampleSecondaryConditional( 2.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 2.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
+
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 2.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 2.0 );
+
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   // After the third bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditional( 3.0, lower_func, upper_func ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditional( 3.0 ),
               std::logic_error );
-
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = tab_distribution->sampleSecondaryConditional( 3.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 3.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
+
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->sampleSecondaryConditional( 3.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditional( 3.0 );
+
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -1159,18 +1085,11 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditional )
+                   sampleSecondaryConditionalExact )
 {
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional(
-              -1.0*MeV,
-              ua_lower_func,
-              ua_upper_func ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional( -1.0*MeV ),
               std::logic_error );
-
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
@@ -1181,181 +1100,99 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<cgs::length> sample =
-    unit_aware_tab_distribution->sampleSecondaryConditional(
-                        -1.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditional( -1.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        -1.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( -1.0*MeV );
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        -1.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( -1.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
-
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        0.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        0.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        0.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
 
   // In the second bin
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        0.5*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.5*MeV );
   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        0.5*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.5*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        0.5*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 0.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
 
-
   // On the third bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.5*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 7.5*cgs::centimeter;};
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        1.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        1.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        1.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
 
   // In the third bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        1.5*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        1.5*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        1.5*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 1.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
 
-
   // On the upper bin boundary
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        2.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        2.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        2.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 2.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
-
   // After the third bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional(
-                        3.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func ),
-                        std::logic_error );
-
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV ),
+              std::logic_error );
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        3.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        3.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditional(
-                        3.0*MeV,
-                        ua_lower_func,
-                        ua_upper_func );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditional( 3.0*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1366,363 +1203,241 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries )
+                   sampleSecondaryConditionalExactWithRandomNumber )
 {
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0, lower_func, upper_func ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0 );
 
-  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.5, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.5 );
+
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 1.0-1e-15, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 1.0-1e-15 );
+
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.0, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.0 );
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.5, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 0.5 );
+
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 1.0-1e-15, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   // In the second bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.0, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.4230769230769231, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 4.711538461538, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.4230769230769231 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 1.0-1e-15, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
 
   // On the third bin
-  lower_func = [](double x){return 2.5;}; upper_func = [](double x){return 7.5;};
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.0, lower_func, upper_func );
   TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.4230769230769231, lower_func, upper_func );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.4230769230769231 );
+
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 1.0-1e-15, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 1.0-1e-15 );
 
-  // In the third bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0, lower_func, upper_func );
-  TEST_EQUALITY_CONST( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.4230769230769231, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 4.711538461538, 1e-12 );
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 1.0-1e-15, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
-
-  // On the upper bin boundary
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.0, lower_func, upper_func );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.5, lower_func, upper_func );
-  TEST_EQUALITY_CONST( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 1.0-1e-15, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-
-  // After the third bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.0, lower_func, upper_func ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.0, lower_func, upper_func );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.5, lower_func, upper_func );
-  TEST_EQUALITY_CONST( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 1.0-1e-15, lower_func, upper_func );
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditionalWithRandomNumberInBoundaries )
-{
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
-  // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0, ua_lower_func, ua_upper_func ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.5, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.0, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.5, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
-
-  // In the second bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.0, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.4230769230769231, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
-
-  // On the third bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.5*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 7.5*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.4230769230769231, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-15 );
-
-  // In the third bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.4230769230769231, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.711538461538*cgs::centimeter, 1e-12 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
-
-  // On the upper bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.0, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.5, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
-
-  // After the third bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0, ua_lower_func, ua_upper_func ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.5, ua_lower_func, ua_upper_func );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditionalInSubrangeInBoundaries )
-{
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
-  // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, lower_func, upper_func, 7.5 ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  // Subrange
-  double sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, lower_func, upper_func, 7.5 );
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
-  // Beyond full range - check that expected range will be used
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, lower_func, upper_func, 11.0 );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, lower_func, upper_func, 11.0 );
-  TEST_EQUALITY_CONST( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, lower_func, upper_func, 11.0 );
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
-
-  // In the second bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.4230769230769231;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 4.13461538461539, 1e-12 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
-
-  // On the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 2.5;}; upper_func = [](double x){return 7.5;};
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 2.5 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
-
   // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, lower_func, upper_func, 7.5 );
   TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 4.13461538461539, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.4230769230769231 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
 
   // On the upper bin boundary
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, lower_func, upper_func, 7.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 3.75 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 0.5 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   // After the third bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, lower_func, upper_func, 7.5 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.0 ),
               std::logic_error );
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, lower_func, upper_func, 7.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, lower_func, upper_func, 7.5 );
-  TEST_EQUALITY_CONST( sample, 3.75 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.5 );
 
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 1.0-1e-15 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditionalInSubrangeInBoundaries )
+                   sampleSecondaryConditionalExactWithRandomNumber )
 {
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0 );
 
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 1.0-1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+
+  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.0*MeV, 1.0-1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+
+  // In the second bin
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.4230769230769231 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 1.0-1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
+
+  // On the third bin
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.4230769230769231 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 1.0-1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
+  // In the third bin
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.4230769230769231 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
+
+  // On the upper bin boundary
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 2.0*MeV, 1.0-1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+
+  // After the third bin - no extension
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0 ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 1.0-1e-15 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+
+  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
+                   sampleSecondaryConditionalExactInSubrange )
+{
+  // Before the first bin - no extension
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 ),
+              std::logic_error );
+
+  // Before the first bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+  
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
@@ -1730,103 +1445,281 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Subrange
-  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  double sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 );
 
-  // Beyond full range - check that expected range will be used
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, ua_lower_func, ua_upper_func, 11.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 3.75 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, ua_lower_func, ua_upper_func, 11.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, ua_lower_func, ua_upper_func, 11.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+  // Full Range
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 11.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 11.0 );
+
+  TEST_EQUALITY_CONST( sample, 5.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 11.0 );
+
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 7.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // In the second bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  // On the third bin
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.4230769230769231;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 7.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.13461538461539*cgs::centimeter, 1e-12 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 7.5 );
 
-  // On the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.5*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 7.5*cgs::centimeter;};
+  TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.0, 7.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // In the third bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.13461538461539*cgs::centimeter, 1e-12 );
+  TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689, 1e-15 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // On the upper bin boundary
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
   fake_stream[2] = 1.0-1e-15;
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 7.5 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
-  TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 2.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // After the third bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 7.5 ),
+              std::logic_error );
+
+  // After the third bin - with extension
+  tab_distribution->extendBeyondPrimaryIndepLimits();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 7.5 );
+
+  TEST_EQUALITY_CONST( sample, 3.75 );
+
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
+
+  tab_distribution->limitToPrimaryIndepLimits();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware secondary conditional PDF can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
+                   sampleSecondaryConditionalExactInSubrange )
+{
+  // Before the first bin - no extension
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 7.5*cgs::centimeter ),
+              std::logic_error );
+
+  // Before the first bin - with extension
+  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // Subrange
+  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
+  // Full Range
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 11.0*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 11.0*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 11.0*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+
+  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
+
+  // On the second bin
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.0*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
+  // In the second bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689*cgs::centimeter, 1e-15 );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
+  // On the third bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.4230769230769231;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.0*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
+  // In the third bin
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689*cgs::centimeter, 1e-15 );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
+  // On the upper bin boundary
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0-1e-15;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 7.5*cgs::centimeter );
+
+  TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 2.0*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
+  // After the third bin - no extension
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 7.5*cgs::centimeter ),
               std::logic_error );
 
   // After the third bin - with extension
@@ -1834,14 +1727,17 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 7.5*cgs::centimeter );
+
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 7.5*cgs::centimeter );
+
   TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 7.5*cgs::centimeter );
+
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
@@ -1849,241 +1745,243 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF can be sampled
+// Check that a secondary conditional PDF an be sampled
 TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries )
+                   sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
-
   // Before the first bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, lower_func, upper_func, 7.5 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 7.5 ),
               std::logic_error );
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  std::vector<double> fake_stream( 3 );
 
   // Subrange
-  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, lower_func, upper_func, 7.5 );
+  double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 7.5 );
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.5, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.5, 7.5 );
+
   TEST_EQUALITY_CONST( sample, 3.75 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 1.0-1e-15, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 1.0-1e-15, 7.5 );
+
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
-  // Beyond full range - check that expected range will be used
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, lower_func, upper_func, 11.0 );
-
+  // Full Range
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 11.0 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.5, lower_func, upper_func, 11.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.5, 11.0 );
   TEST_EQUALITY_CONST( sample, 5.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 1.0-1e-15, lower_func, upper_func, 11.0 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 1.0-1e-15, 11.0 );
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 
+  // Full Range for upper bin and subrange for lower bin
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.0, 8.0 );
+  TEST_EQUALITY_CONST( sample, 1.25 );
+
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.5, 8.0 );
+  TEST_FLOATING_EQUALITY( sample, 4.62829175487371547, 1e-12 );
+
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 1.0-1e-15, 8.0 );
+  TEST_FLOATING_EQUALITY( sample, 7.75, 1e-12 );
+
   // On the second bin
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.0, 7.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.5, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 0.5, 7.5 );
   TEST_EQUALITY_CONST( sample, 3.75 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 7.5 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // In the second bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.0, lower_func, upper_func, 7.5 );
-
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.0, 7.5 );
   TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.4230769230769231, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 4.13461538461539, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.5, 7.5 );
+  TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 1.0-1e-15, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 1.0-1e-15, 7.5 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // On the third bin
-  lower_func = [](double x){return 2.5;}; upper_func = [](double x){return 7.5;};
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.0, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.0, 7.5 );
   TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.4230769230769231, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 0.4230769230769231, 7.5 );
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0-1e-15, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 7.5 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // In the third bin
-  lower_func = [](double x){return 1.25;}; upper_func = [](double x){return 8.75;};
-
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.0, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.0, 7.5 );
   TEST_EQUALITY_CONST( sample, 1.25 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.4230769230769231, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 4.13461538461539, 1e-12 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.5, 7.5 );
+  TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689, 1e-15 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 7.5 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // On the upper bin boundary
-  lower_func = [](double x){return 0.0;}; upper_func = [](double x){return 10.0;};
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.0, 7.5 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.0, lower_func, upper_func, 7.5 );
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.5, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 0.5, 7.5 );
+
   TEST_EQUALITY_CONST( sample, 3.75 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 1.0-1e-15, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // After the third bin - no extension
-  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.0, lower_func, upper_func, 7.5 ),
+  TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.0, 7.5 ),
               std::logic_error );
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.0, lower_func, upper_func, 7.5 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.0, 7.5 );
+
   TEST_EQUALITY_CONST( sample, 0.0 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.5, lower_func, upper_func, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.5, 7.5 );
+
   TEST_EQUALITY_CONST( sample, 3.75 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 1.0-1e-15, lower_func, upper_func, 7.5 );
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 7.5 );
+
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
+// Check that a unit-aware secondary conditional PDF an be sampled
 TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
-                   correlatedSampleSecondaryConditionalWithRandomNumberInSubrangeInBoundaries )
+                   sampleSecondaryConditionalExactWithRandomNumberInSubrange )
 {
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 7.5*cgs::centimeter ),
               std::logic_error );
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
+  
+  std::vector<double> fake_stream( 3 );
+
 
   // Subrange
-  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
+  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.5, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.5, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
-  // Beyond full range - check that expected range will be used
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, ua_lower_func, ua_upper_func, 11.0*cgs::centimeter );
+
+  // Full Range
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 11.0*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.5, ua_lower_func, ua_upper_func, 11.0*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.5, 11.0*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 11.0*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 1.0-1e-15, 11.0*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
-  // On the second bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
 
+  // On the second bin
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.0, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
-
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // In the second bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.0, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.4230769230769231, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.13461538461539*cgs::centimeter, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.5, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689*cgs::centimeter, 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
 
   // On the third bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 2.5*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 7.5*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.0, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.4230769230769231, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 0.4230769230769231, 7.5*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-15 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
 
   // In the third bin
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 1.25*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 8.75*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.0, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.4230769230769231, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.13461538461539*cgs::centimeter, 1e-12 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.5, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.5032917548737154689*cgs::centimeter, 1e-15 );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
 
   // On the upper bin boundary
-  ua_lower_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 0.0*cgs::centimeter;};
-  ua_upper_func = [](UnitAwareDist::PrimaryIndepQuantity x){return 10.0*cgs::centimeter;};
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.0, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.5, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 0.5, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
+
 
   // After the third bin - no extension
-  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter ),
+  TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.0, 7.5*cgs::centimeter ),
               std::logic_error );
+
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.0, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.0, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.5, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.5, 7.5*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 3.75*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, ua_lower_func, ua_upper_func, 7.5*cgs::centimeter);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 }
@@ -2121,7 +2019,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     distribution_data[3].first = 2.0;
     distribution_data[3].second = distribution_data[0].second;
 
-    tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+    tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
                                                             distribution_data,
                                                             1e-3,
                                                             1e-7 ) );
@@ -2156,7 +2054,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     primary_bins[3] = 2.0*MeV;
     secondary_dists[3] = secondary_dists[0];
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;
   }
@@ -2168,5 +2066,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstLinLinLinCorrelatedInterpolatedFullyTabularTwoDDistribution.cpp
+// end tstLinLinLinExactInterpolatedFullyTabularTwoDDistribution.cpp
 //---------------------------------------------------------------------------//
