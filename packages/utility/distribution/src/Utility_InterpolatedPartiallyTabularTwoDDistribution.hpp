@@ -18,16 +18,17 @@ namespace Utility{
  * \ingroup two_d_distributions
  */
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareInterpolatedPartiallyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Stochastic,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedPartiallyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 private:
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,Stochastic,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
   
 public:
   
@@ -70,8 +71,8 @@ public:
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename TwoDInterpPolicy> using InterpolatedPartiallyTabularTwoDDistribution =
-  UnitAwareInterpolatedPartiallyTabularTwoDDistribution<TwoDInterpPolicy,void,void,void>;
+template<typename TwoDInterpPolicy,typename TwoDSamplePolicy> using InterpolatedPartiallyTabularTwoDDistribution =
+  UnitAwareInterpolatedPartiallyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
   
 } // end Utility namespace
 

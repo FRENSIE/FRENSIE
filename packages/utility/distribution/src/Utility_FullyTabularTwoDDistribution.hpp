@@ -98,8 +98,7 @@ public:
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method = true ) const;
+              max_secondary_indep_var_functor ) const;
 
   //! Evaluate the secondary conditional PDF
   virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
@@ -108,14 +107,12 @@ public:
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method = true ) const;
+              max_secondary_indep_var_functor ) const;
 
   //! Evaluate the secondary conditional CDF
   virtual double evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method = true ) const = 0;
+            const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
   //! Evaluate the secondary conditional CDF
   virtual double evaluateSecondaryConditionalCDF(
@@ -124,8 +121,7 @@ public:
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method = true ) const;
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF
   virtual SecondaryIndepQuantity sampleSecondaryConditional(
@@ -209,13 +205,10 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method ) const
+              max_secondary_indep_var_functor ) const
   -> DepQuantity
 {
-  return this->evaluate( primary_indep_var_value,
-                         secondary_indep_var_value,
-                         use_direct_eval_method );
+  return this->evaluate( primary_indep_var_value, secondary_indep_var_value );
 }
 
 // Evaluate the secondary conditional PDF
@@ -228,13 +221,11 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method ) const
+              max_secondary_indep_var_functor ) const
   ->InverseSecondaryIndepQuantity
 {
   return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
-                                                secondary_indep_var_value,
-                                                use_direct_eval_method );
+                                                secondary_indep_var_value );
 }
 
 // Evaluate the secondary conditional CDF
@@ -247,12 +238,10 @@ inline double UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Secon
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method ) const
+              max_secondary_indep_var_functor ) const
 {
   return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
-                                                secondary_indep_var_value,
-                                                use_direct_eval_method );
+                                                secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF
@@ -325,11 +314,11 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 }
 
 // Return a random sample from the secondary conditional PDF and the index
-/*! \details When the secondary conditional sampling method is stochastic it
- * is common to sample from one of the distributions on the bin boundaries
- * and then to scale the sample so that it preserves intermediate grid limits.
- * Certain methods require the unscaled (or raw) sample, which can be
- * acquired with this method.
+/*! \details When the secondary conditional sampling method is unit-base or
+ * direct it is common to use statistical sampling, which samples from one of
+ * the distributions on the bin boundaries and, if unit-base, then scales the
+ * sample so that it preserves intermediate grid limits. Certain methods require
+ * the unscaled (or raw) sample, which can be acquired with this method.
  */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,

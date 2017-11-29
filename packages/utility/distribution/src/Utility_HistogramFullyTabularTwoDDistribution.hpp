@@ -45,9 +45,9 @@ private:
 
   // Typedef for QuantityTraits<DepQuantity>
   typedef typename ParentType::DQT DQT;
-  
+
 public:
-  
+
   //! The primary independent quantity type
   typedef typename ParentType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
@@ -85,8 +85,7 @@ public:
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method = true ) const;
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(

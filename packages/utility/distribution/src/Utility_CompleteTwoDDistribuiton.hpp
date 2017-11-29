@@ -1,12 +1,12 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_CompleteTwoDDistribuiton.hpp
+//! \file   Utility_CompleteTwoDDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The complete two-dimensional distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_COMPLETE_TWO_D_DISTRIBUITON_HPP
+#ifndef UTILITY_COMPLETE_TWO_D_DISTRIBUTION_HPP
 #define UTILITY_COMPLETE_TWO_D_DISTRIBUTION_HPP
 
 // Std Lib Includes
@@ -68,8 +68,7 @@ public:
   //! Evaluate the secondary conditional PDF
   virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
                const PrimaryIndepQuantity primary_indep_var_value,
-               const SecondaryIndepQuantity secondary_indep_var_value,
-                const bool use_direct_eval_method = true ) const
+               const SecondaryIndepQuantity secondary_indep_var_value ) const
 
   //! Return a random sample from the distribution
   virtual std::pair<PrimaryIndepQuantity,SecondaryIndepQuantity>
@@ -99,7 +98,7 @@ public:
 
   //! Return a random sample and record the number of trials
   virtual PrimaryIndepQuantity samplePrimaryConditionalAndRecordTrials(
-                         const SecondaryIndepQuantity seconary_indep_var_value,
+                         const SecondaryIndepQuantity secondary_indep_var_value,
                          unsigned& trials ) const;
 
   //! Return the upper bound of the distribution secondary independent variable
@@ -135,8 +134,7 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit>
 InverseSecondaryIndepQuantity UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const bool use_direct_eval_method ) const
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
   return this->evaluateJointPDF( primary_indep_var_value,
                                  secondary_indep_var_value )/
