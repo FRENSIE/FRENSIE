@@ -80,6 +80,86 @@ TEUCHOS_UNIT_TEST( Direct,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the Y lower bound can be calculated
+TEUCHOS_UNIT_TEST( Direct, calculateLowerBound )
+{
+  lower_bin = distribution->begin();
+  upper_bin = lower_bin;
+  ++upper_bin;
+
+  // On the first bin boundary
+  double x_value = 0.0;
+  double bound = Utility::Direct::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 0.0 );
+
+  // In the first bin
+  x_value = 0.5;
+  bound = Utility::Direct::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 0.0 );
+
+  // On the second bin boundary
+  ++lower_bin; ++upper_bin;
+  x_value = 1.0;
+  bound = Utility::Direct::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 2.5 );
+
+  // In the second bin
+  x_value = 1.5;
+  bound = Utility::Direct::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 0.0 );
+
+  // On the upper bin boundary
+  x_value = 2.0;
+  bound = Utility::Direct::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Y lower bound can be calculated
+TEUCHOS_UNIT_TEST( Direct, calculateUpperBound )
+{
+  lower_bin = distribution->begin();
+  upper_bin = lower_bin;
+  ++upper_bin;
+
+  // On the first bin boundary
+  double x_value = 0.0;
+  double bound = Utility::Direct::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 10.0 );
+
+  // In the first bin
+  x_value = 0.5;
+  bound = Utility::Direct::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 10.0 );
+
+  // On the second bin boundary
+  ++lower_bin; ++upper_bin;
+  x_value = 1.0;
+  bound = Utility::Direct::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 7.5 );
+
+  // In the second bin
+  x_value = 1.5;
+  bound = Utility::Direct::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 10.0 );
+
+  // On the upper bin boundary
+  x_value = 2.0;
+  bound = Utility::Direct::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 10.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( Direct, evaluatePDF )
 {
@@ -95,7 +175,7 @@ TEUCHOS_UNIT_TEST( Direct, evaluatePDF )
   ++upper_bin;
 
   double x_value = 0.0;
-  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
 
   // On the first bin boundary
   TEST_EQUALITY_CONST( evaluate( 0.0, -1.0 ), 0.0 );
@@ -228,7 +308,7 @@ TEUCHOS_UNIT_TEST( Direct, evaluateCDF )
   std::function<double(double,double)> evaluate =
   [&min_func, &max_func, &lower_bin, &upper_bin](double x_value, double y_value)
   {
-    return Utility::Direct::evaluatePDF<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
+    return Utility::Direct::evaluateCDF<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double>(
       x_value, y_value, min_func, max_func, &Utility::TabularOneDDistribution::evaluateCDF, lower_bin, upper_bin );
   };
 
@@ -237,7 +317,7 @@ TEUCHOS_UNIT_TEST( Direct, evaluateCDF )
   ++upper_bin;
 
   double x_value = 0.0;
-  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};;
+  min_func = [](double x){return 0.0;}; max_func = [](double x){return 10.0;};
 
   // On the first bin boundary
   TEST_EQUALITY_CONST( evaluate( 0.0, -1.0 ), 0.0 );
@@ -291,7 +371,7 @@ TEUCHOS_UNIT_TEST( UnitAwareDirect, evaluateCDF )
   std::function<double(XIndepType,YIndepType)> evaluate = 
   [&ua_min_func, &ua_max_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
   {
-    return Utility::Direct::evaluatePDF<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,double>(
+    return Utility::Direct::evaluateCDF<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType>(
       x_value, y_value, ua_min_func, ua_max_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluateCDF, ua_lower_bin, ua_upper_bin );
   };
 

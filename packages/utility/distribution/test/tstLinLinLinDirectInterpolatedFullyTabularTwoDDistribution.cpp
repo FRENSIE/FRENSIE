@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLinLinLinUnitBaseInterpolatedFullyTabularTwoDDistribution.cpp
+//! \file   tstLinLinLinDirectInterpolatedFullyTabularTwoDDistribution.cpp
 //! \author Alex Robinson, Luke Kersting
 //! \brief  The interpolated fully tabular two-dimensional dist. unit tests
-//!         (LinLinLin UnitBase interpolation)
+//!         (LinLinLin Direct interpolation)
 //!
 //---------------------------------------------------------------------------//
 
@@ -204,7 +204,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // In the second bin
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 0.5 ),
-                       1.25 );
+                       0.0 );
 
   // On the third bin
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 1.0 ),
@@ -212,7 +212,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // On the fourth bin
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 1.5 ),
-                       1.25 );
+                       0.0 );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 2.0 ),
@@ -255,7 +255,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   // In the second bin
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.5*MeV ),
-                       1.25*cgs::centimeter );
+                       0.0*cgs::centimeter );
 
   // On the third bin
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.0*MeV ),
@@ -263,7 +263,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   // On the fourth bin
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.5*MeV ),
-                       1.25*cgs::centimeter );
+                       0.0*cgs::centimeter );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 2.0*MeV ),
@@ -305,7 +305,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // In the second bin
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 0.5 ),
-                       8.75 );
+                       10.0 );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 1.0 ),
@@ -313,7 +313,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // In the third bin
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 1.5 ),
-                       8.75 );
+                       10.0 );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 2.0 ),
@@ -356,7 +356,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   // In the second bin
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.5*MeV ),
-                       8.75*cgs::centimeter );
+                       10.0*cgs::centimeter );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.0*MeV ),
@@ -364,7 +364,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   // In the third bin
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.5*MeV ),
-                       8.75*cgs::centimeter );
+                       10.0*cgs::centimeter );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 2.0*MeV ),
@@ -406,7 +406,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 1.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Direct>(
                                                          distribution_data ) );
   }
 
@@ -425,7 +425,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Direct>(
                                                          distribution_data ) );
   }
 
@@ -456,7 +456,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Direct>(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -495,17 +495,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, evaluate )
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 11.0 ), 0.0 );
 
   // In the second bin
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 1.25 ),
-                          0.7,
-                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 1.0 ), 0.5 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 1.25 ), 0.5 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 5.0 ),
                           1.0,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 8.75 ),
-                          0.8333333333333334,
-                          1e-15 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 9.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 8.75 ), 0.5 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.5, 9.0 ), 0.5 );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 2.0 ), 0.0 );
@@ -515,17 +511,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution, evaluate )
   TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 8.0 ), 0.0 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 1.25 ),
-                          0.1,
-                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 1.0 ), 0.05 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 1.25 ), 0.05 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 5.0 ),
-                          0.4,
+                          0.55,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 1.5, 8.75 ),
-                          0.23333333333333334,
-                          1e-15 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 9.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 8.75 ), 0.05 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 9.0 ), 0.05 );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( distribution->evaluate( 2.0, -1.0 ), 0.0 );
@@ -584,17 +576,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   // In the second bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
-                                  0.7*barn,
-                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 1.25*cgs::centimeter ), 0.5*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
                                   1.0*barn,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
-                                  0.8333333333333334*barn,
-                                  1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 8.75*cgs::centimeter ), 0.5*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.5*barn );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
@@ -604,17 +592,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
 
   // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
-                                  0.1*barn,
-                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.05*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 1.25*cgs::centimeter ), 0.05*barn );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
-                                  0.4*barn,
+                                  0.55*barn,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
-                                  0.23333333333333334*barn,
-                                  1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 8.75*cgs::centimeter ), 0.05*barn );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.05*barn );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
@@ -673,17 +657,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, 11.0 ), 0.0 );
 
   // In the second bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.25 ),
-                          0.07692307692307691,
-                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0 ), 0.05 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.25 ), 0.05 );
   TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 5.0 ),
-                          0.1692307692307692,
+                          2.0384615384615384e-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 8.75 ),
-                          0.11794871794871795,
-                          1e-15 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 9.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 8.75 ), 0.05 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.5, 9.0 ), 0.05 );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 2.0 ), 0.0 );
@@ -699,17 +679,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 8.0 ), 0.0 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.25 ),
-                          0.07692307692307691,
-                          1e-15 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0 ), 0.05 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.25 ), 0.05 );
   TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 5.0 ),
-                          0.1692307692307692,
+                          2.0384615384615384e-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 8.75 ),
-                          0.11794871794871795,
-                          1e-15 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 9.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 8.75 ), 0.05 );
+  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 9.0 ), 0.05 );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ), 0.0 );
@@ -768,17 +744,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   // In the second bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.25*cgs::centimeter ),
-                                  0.07692307692307691/cgs::centimeter,
-                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter ), 0.05/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.25*cgs::centimeter ), 0.05/cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 5.0*cgs::centimeter ),
-                                  0.1692307692307692/cgs::centimeter,
+                                  2.0384615384615384e-01/cgs::centimeter,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 8.75*cgs::centimeter ),
-                                  0.11794871794871795/cgs::centimeter,
-                                  1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 9.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 8.75*cgs::centimeter ), 0.05/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 9.0*cgs::centimeter ), 0.05/cgs::centimeter );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.0*cgs::centimeter ), 0.0/cgs::centimeter );
@@ -794,17 +766,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 8.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.25*cgs::centimeter ),
-                                  0.07692307692307691/cgs::centimeter,
-                                  1e-15 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.05/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.25*cgs::centimeter ), 0.05/cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 5.0*cgs::centimeter ),
-                                  0.1692307692307692/cgs::centimeter,
+                                  2.0384615384615384e-01/cgs::centimeter,
                                   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 8.75*cgs::centimeter ),
-                                  0.11794871794871795/cgs::centimeter,
-                                  1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 9.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 8.75*cgs::centimeter ), 0.05/cgs::centimeter );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 9.0*cgs::centimeter ), 0.05/cgs::centimeter );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
@@ -863,13 +831,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.0, 11.0 ), 1.0 );
 
   // In the second bin
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.25 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.0 ), 0.05 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.25 ), 0.0625 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 5.0 ),
                           4.6153846153846156e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 8.75 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 9.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 8.75 ), 0.9375 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 9.0 ), 0.95 );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 2.0 ), 0.0 );
@@ -881,13 +849,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.0, 8.0 ), 1.0 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.25 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.0 ), 0.05 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.25 ), 0.0625 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 5.0 ),
                           4.6153846153846156e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 8.75 ), 1.0 );
-  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 9.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 8.75 ), 0.9375 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 9.0 ), 0.95 );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( tab_distribution->evaluateSecondaryConditionalCDF( 2.0, -1.0 ), 0.0 );
@@ -946,13 +914,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.0*MeV, 11.0*cgs::centimeter ), 1.0 );
 
   // In the second bin
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.0*cgs::centimeter ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.25*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.0*cgs::centimeter ), 0.05 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.25*cgs::centimeter ), 0.0625 );
   TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 5.0*cgs::centimeter ),
                           4.6153846153846156e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 8.75*cgs::centimeter ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 9.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 8.75*cgs::centimeter ), 0.9375 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 9.0*cgs::centimeter ), 0.95 );
 
   // On the third bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 2.0*cgs::centimeter ), 0.0 );
@@ -964,13 +932,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.0*MeV, 8.0*cgs::centimeter ), 1.0 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.25*cgs::centimeter ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.05 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.25*cgs::centimeter ), 0.0625 );
   TEST_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 5.0*cgs::centimeter ),
                           4.6153846153846156e-01,
                           1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 8.75*cgs::centimeter ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 9.0*cgs::centimeter ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 8.75*cgs::centimeter ), 0.9375 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 9.0*cgs::centimeter ), 0.95 );
 
   // On the upper bin boundary
   TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 2.0*MeV, -1.0*cgs::centimeter ), 0.0 );
@@ -1065,24 +1033,24 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // Samples from lower boundary of second bin
   sample = distribution->sampleSecondaryConditional( 0.5 );
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
   TEST_EQUALITY_CONST( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // Samples from the upper boundary of the second bin
   sample = distribution->sampleSecondaryConditional( 0.5 );
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // On the third bin
   fake_stream.resize( 6 );
@@ -1121,23 +1089,23 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // Samples from lower boundary of third bin
   sample = distribution->sampleSecondaryConditional( 1.5 );
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = distribution->sampleSecondaryConditional( 1.5 );
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
   TEST_EQUALITY_CONST( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // On the upper bin boundary
   fake_stream.resize( 6 );
@@ -1254,23 +1222,23 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   // Samples from lower boundary of second bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // Samples from the upper boundary of the second bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // On the third bin
   fake_stream.resize( 6 );
@@ -1309,23 +1277,23 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   // Samples from lower boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
   TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // On the upper bin boundary
   fake_stream.resize( 6 );
@@ -1462,7 +1430,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
@@ -1472,13 +1440,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
   TEST_EQUALITY_CONST( trials, 3u );
 
   // Samples from the upper boundary of the second bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
   TEST_EQUALITY_CONST( trials, 4u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
@@ -1488,7 +1456,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
   TEST_EQUALITY_CONST( trials, 6u );
 
   // On the third bin
@@ -1539,7 +1507,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
   TEST_EQUALITY_CONST( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
@@ -1549,13 +1517,13 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
   TEST_EQUALITY_CONST( trials, 3u );
 
   // Samples from upper boundary of third bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( trials, 4u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
@@ -1565,7 +1533,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
   TEST_EQUALITY_CONST( trials, 6u );
 
   // On the upper bin boundary
@@ -1718,7 +1686,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
@@ -1728,13 +1696,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( trials, 3u );
 
   // Samples from the upper boundary of the second bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( trials, 4u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
@@ -1744,7 +1712,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( trials, 6u );
 
   // On the third bin
@@ -1795,7 +1763,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
@@ -1805,13 +1773,13 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( trials, 3u );
 
   // Samples from upper boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( trials, 4u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
@@ -1821,7 +1789,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( trials, 6u );
 
   // On the upper bin boundary
@@ -1976,7 +1944,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -1988,14 +1956,14 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   // Samples from the upper boundary of the second bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2007,7 +1975,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
 
@@ -2058,7 +2026,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2070,14 +2038,14 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
 
   // Samples from upper boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2089,7 +2057,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2247,7 +2215,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2259,14 +2227,14 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
   // Samples from the upper boundary of the second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2278,7 +2246,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
 
@@ -2329,7 +2297,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2341,14 +2309,14 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
 
   // Samples from upper boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2360,7 +2328,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
 
@@ -2525,7 +2493,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( raw_sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2539,7 +2507,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
   TEST_FLOATING_EQUALITY( raw_sample, 10.0, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2547,7 +2515,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from the upper boundary of the second bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
   TEST_EQUALITY_CONST( raw_sample, 2.5 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2561,7 +2529,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
   TEST_FLOATING_EQUALITY( raw_sample, 7.5, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
@@ -2616,7 +2584,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
   TEST_EQUALITY_CONST( raw_sample, 2.5 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2630,7 +2598,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
   TEST_FLOATING_EQUALITY( raw_sample, 7.5, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
@@ -2638,7 +2606,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from upper boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
   TEST_EQUALITY_CONST( raw_sample, 0.0 );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2652,7 +2620,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
   TEST_FLOATING_EQUALITY( raw_sample, 10.0, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2824,7 +2792,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( raw_sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2838,7 +2806,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
   UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 10.0*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 1u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2846,7 +2814,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from the upper boundary of the second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( raw_sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2860,7 +2828,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 0.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
   UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 7.5*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
@@ -2915,7 +2883,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( raw_sample, 2.5*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2929,7 +2897,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
   UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 7.5*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 2u );
   TEST_EQUALITY_CONST( secondary_bin_index, 1u );
@@ -2937,7 +2905,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from upper boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( raw_sample, 0.0*cgs::centimeter );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -2951,7 +2919,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 1.5*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
   UTILITY_TEST_FLOATING_EQUALITY( raw_sample, 10.0*cgs::centimeter, 1e-14 );
   TEST_EQUALITY_CONST( primary_bin_index, 3u );
   TEST_EQUALITY_CONST( secondary_bin_index, 0u );
@@ -3078,7 +3046,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.5 );
 
@@ -3086,12 +3054,12 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 1.0-1e-15 );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // Samples from the upper boundary of the second bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 0.4230769230769231 );
 
@@ -3099,7 +3067,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5, 1.0-1e-15 );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // On the third bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0, 0.0 );
@@ -3126,7 +3094,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.4230769230769231 );
 
@@ -3134,12 +3102,12 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 1.0-1e-15 );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 0.5 );
 
@@ -3147,7 +3115,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5, 1.0-1e-15 );
 
-  TEST_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
+  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -3238,7 +3206,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.5 );
 
@@ -3246,12 +3214,12 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 1.0-1e-15 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // Samples from the upper boundary of the second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 0.4230769230769231 );
 
@@ -3259,7 +3227,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 0.5*MeV, 1.0-1e-15 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // On the third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.0*MeV, 0.0 );
@@ -3287,7 +3255,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.4230769230769231 );
 
@@ -3295,12 +3263,12 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 0.5 );
 
@@ -3308,7 +3276,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -3368,28 +3336,22 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // Subrange
   double sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 );
-
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 );
-
   TEST_EQUALITY_CONST( sample, 3.75 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 7.5 );
-
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
 
   // Beyond full range - check that expected range will be used
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 11.0 );
-
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 11.0 );
-
   TEST_EQUALITY_CONST( sample, 5.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 11.0 );
-
   TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -3405,15 +3367,12 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 7.5 );
-
   TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 7.5 );
-
   TEST_EQUALITY_CONST( sample, 3.75 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.0, 7.5 );
-
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // In the second bin
@@ -3426,7 +3385,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   fake_stream[5] = 0.5; // use lower bin boundary
   fake_stream[6] = 0.0;
   fake_stream[7] = 0.49; // use upper bin boundary
-  fake_stream[8] = 0.49748743718592964;
+  fake_stream[8] = 0.4230769230769231;
   fake_stream[9] = 0.49; // use upper bin boundary
   fake_stream[10] = 1.0-1e-15;
   fake_stream[11] = 0.49; // use upper bin boundary
@@ -3434,28 +3393,22 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
 
   // Samples from lower boundary of second bin
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
-
-  TEST_EQUALITY_CONST( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
-
-  TEST_FLOATING_EQUALITY( sample, 4.375, 1e-15 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
+  TEST_FLOATING_EQUALITY( sample, 3.75, 1e-15 );
 
+  sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // Samples from the upper boundary of the second bin
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
-
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
-
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 0.5, 7.5 );
-
   TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // On the third bin
@@ -3484,7 +3437,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   fake_stream.resize( 12 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5; // use lower bin boundary
-  fake_stream[2] = 0.49748743718592964;
+  fake_stream[2] = 0.4230769230769231;
   fake_stream[3] = 0.5; // use lower bin boundary
   fake_stream[4] = 1.0-1e-15;
   fake_stream[5] = 0.5; // use lower bin boundary
@@ -3499,7 +3452,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
 
@@ -3512,11 +3465,11 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from upper boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 4.375, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 3.75, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 1.5, 7.5 );
 
@@ -3654,7 +3607,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   fake_stream[5] = 0.5; // use lower bin boundary
   fake_stream[6] = 0.0;
   fake_stream[7] = 0.49; // use upper bin boundary
-  fake_stream[8] = 0.49748743718592964;
+  fake_stream[8] = 0.4230769230769231;
   fake_stream[9] = 0.49; // use upper bin boundary
   fake_stream[10] = 1.0-1e-15;
   fake_stream[11] = 0.49; // use upper bin boundary
@@ -3663,11 +3616,11 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.375*cgs::centimeter, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 3.75*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
 
@@ -3676,7 +3629,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from the upper boundary of the second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
 
@@ -3712,7 +3665,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   fake_stream.resize( 12 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5; // use lower bin boundary
-  fake_stream[2] = 0.49748743718592964;
+  fake_stream[2] = 0.4230769230769231;
   fake_stream[3] = 0.5; // use lower bin boundary
   fake_stream[4] = 1.0-1e-15;
   fake_stream[5] = 0.5; // use lower bin boundary
@@ -3727,7 +3680,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
 
@@ -3740,11 +3693,11 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from upper boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.375*cgs::centimeter, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 3.75*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
 
@@ -3871,11 +3824,11 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.0, 7.5 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.5, 7.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 4.375, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 3.75, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 1.0-1e-15, 7.5 );
 
@@ -3884,9 +3837,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from the upper boundary of the second bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.0, 7.5 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.49748743718592964, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5, 0.4230769230769231, 7.5 );
 
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
@@ -3922,9 +3875,9 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.0, 7.5 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 2.5 );
 
-  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.49748743718592964, 7.5 );
+  sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.4230769230769231, 7.5 );
 
   TEST_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
@@ -3935,11 +3888,11 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
   // Samples from upper boundary of third bin
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.0, 7.5 );
 
-  TEST_EQUALITY_CONST( sample, 1.25 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 0.5, 7.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 4.375, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 3.75, 1e-15 );
 
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 7.5 );
 
@@ -4064,11 +4017,11 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.0, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.5, 7.5*cgs::centimeter );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.375*cgs::centimeter, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 3.75*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
 
@@ -4077,9 +4030,9 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from the upper boundary of the second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.0, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.49748743718592964, 7.5*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.5*MeV, 0.4230769230769231, 7.5*cgs::centimeter );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
@@ -4115,9 +4068,9 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.0, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
 
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.49748743718592964, 7.5*cgs::centimeter );
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.4230769230769231, 7.5*cgs::centimeter );
 
   UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
@@ -4128,11 +4081,11 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedFullyTabularTwoDDistribution,
   // Samples from upper boundary of third bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.0, 7.5*cgs::centimeter );
 
-  TEST_EQUALITY_CONST( sample, 1.25*cgs::centimeter );
+  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 0.5, 7.5*cgs::centimeter );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 4.375*cgs::centimeter, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 3.75*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
 
@@ -4208,7 +4161,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     distribution_data[3].first = 2.0;
     distribution_data[3].second = distribution_data[0].second;
 
-    tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Direct>(
                                                             distribution_data,
                                                             1e-3,
                                                             1e-7 ) );
@@ -4243,7 +4196,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     primary_bins[3] = 2.0*MeV;
     secondary_dists[3] = secondary_dists[0];
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Direct,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;
   }
@@ -4255,5 +4208,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstLinLinLinUnitBaseInterpolatedFullyTabularTwoDDistribution.cpp
+// end tstLinLinLinDirectInterpolatedFullyTabularTwoDDistribution.cpp
 //---------------------------------------------------------------------------//

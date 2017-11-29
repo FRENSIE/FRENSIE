@@ -108,8 +108,7 @@ public:
   //! Evaluate the distribution
   DepQuantity evaluate(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method = true ) const;
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the distribution
   DepQuantity evaluate(
@@ -118,14 +117,12 @@ public:
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method = true ) const;
+              max_secondary_indep_var_functor ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method = true ) const;
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
@@ -134,8 +131,7 @@ public:
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method = true ) const;
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
@@ -178,10 +174,7 @@ protected:
   ReturnType evaluateImpl(
     const PrimaryIndepQuantity primary_indep_var_value,
     const SecondaryIndepQuantity secondary_indep_var_value,
-    EvaluationMethod evaluate,
-    const bool use_direct_eval_method = true,
-    const ReturnType below_lower_bound_return = QuantityTraits<ReturnType>::zero(),
-    const ReturnType above_upper_bound_return = QuantityTraits<ReturnType>::zero() ) const;
+    EvaluationMethod evaluate ) const;
 
   //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,
@@ -195,9 +188,25 @@ protected:
     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
       max_secondary_indep_var_functor,
     EvaluationMethod evaluate,
-    const bool use_direct_eval_method = true,
-    const ReturnType below_lower_bound_return = QuantityTraits<ReturnType>::zero(),
-    const ReturnType above_upper_bound_return = QuantityTraits<ReturnType>::zero(),
+    unsigned max_number_of_iterations = 500 ) const;
+
+  //! Evaluate the distribution using the desired CDF evaluation method
+  template<typename LocalTwoDInterpPolicy, typename EvaluationMethod>
+  double evaluateCDFImpl(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const SecondaryIndepQuantity secondary_indep_var_value,
+    EvaluationMethod evaluateCDF ) const;
+
+  //! Evaluate the distribution using the desired CDF evaluation method
+  template<typename LocalTwoDInterpPolicy, typename EvaluationMethod>
+  double evaluateCDFImpl(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const SecondaryIndepQuantity secondary_indep_var_value,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+      min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+      max_secondary_indep_var_functor,
+    EvaluationMethod evaluateCDF,
     unsigned max_number_of_iterations = 500 ) const;
 
   //! Sample from the distribution using the desired sampling functor

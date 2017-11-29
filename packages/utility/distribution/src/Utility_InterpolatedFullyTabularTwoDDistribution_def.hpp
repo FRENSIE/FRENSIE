@@ -144,28 +144,21 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method ) const
+            const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  if ( TwoDSamplePolicy::name() == "Exact" )
+  if ( TwoDSamplePolicy::name() == "Direct" )
   {
-    return this->template evaluateImpl<TwoDInterpPolicy,double>(
+    return this->template evaluateCDFImpl<TwoDInterpPolicy>(
                                         primary_indep_var_value,
                                         secondary_indep_var_value,
-                                        &BaseOneDDistributionType::evaluateCDF,
-                                        use_direct_eval_method,
-                                        0.0,
-                                        1.0 );
+                                        &BaseOneDDistributionType::evaluateCDF );
   }
   else
   {
-    return this->template evaluateImpl<CDFInterpPolicy,double>(
+    return this->template evaluateCDFImpl<CDFInterpPolicy>(
                                         primary_indep_var_value,
                                         secondary_indep_var_value,
-                                        &BaseOneDDistributionType::evaluateCDF,
-                                        use_direct_eval_method,
-                                        0.0,
-                                        1.0 );
+                                        &BaseOneDDistributionType::evaluateCDF );
   }
 }
 
@@ -182,32 +175,25 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSa
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method ) const
+              max_secondary_indep_var_functor ) const
 {
-  if ( TwoDSamplePolicy::name() == "Exact" )
+  if ( TwoDSamplePolicy::name() == "Direct" )
   {
-    return this->template evaluateImpl<TwoDInterpPolicy,double>(
+    return this->template evaluateCDFImpl<TwoDInterpPolicy>(
                                         primary_indep_var_value,
                                         secondary_indep_var_value,
                                         min_secondary_indep_var_functor,
                                         max_secondary_indep_var_functor,
-                                        &BaseOneDDistributionType::evaluateCDF,
-                                        use_direct_eval_method,
-                                        0.0,
-                                        1.0 );
+                                        &BaseOneDDistributionType::evaluateCDF );
   }
   else
   {
-        return this->template evaluateImpl<CDFInterpPolicy,double>(
+    return this->template evaluateCDFImpl<CDFInterpPolicy>(
                                         primary_indep_var_value,
                                         secondary_indep_var_value,
                                         min_secondary_indep_var_functor,
                                         max_secondary_indep_var_functor,
-                                        &BaseOneDDistributionType::evaluateCDF,
-                                        use_direct_eval_method,
-                                        0.0,
-                                        1.0 );
+                                        &BaseOneDDistributionType::evaluateCDF );
   }
 }
 

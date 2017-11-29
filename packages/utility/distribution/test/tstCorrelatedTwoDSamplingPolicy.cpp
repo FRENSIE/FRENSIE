@@ -110,6 +110,86 @@ TEUCHOS_UNIT_TEST( Correlated,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the Y lower bound can be calculated
+TEUCHOS_UNIT_TEST( Correlated, calculateLowerBound )
+{
+  lower_bin = distribution->begin();
+  upper_bin = lower_bin;
+  ++upper_bin;
+
+  // On the first bin boundary
+  double x_value = 0.0;
+  double bound = Utility::Correlated::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 0.0 );
+
+  // In the first bin
+  x_value = 0.5;
+  bound = Utility::Correlated::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 1.25 );
+
+  // On the second bin boundary
+  ++lower_bin; ++upper_bin;
+  x_value = 1.0;
+  bound = Utility::Correlated::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 2.5 );
+
+  // In the second bin
+  x_value = 1.5;
+  bound = Utility::Correlated::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 1.25 );
+
+  // On the upper bin boundary
+  x_value = 2.0;
+  bound = Utility::Correlated::calculateLowerBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Y lower bound can be calculated
+TEUCHOS_UNIT_TEST( Correlated, calculateUpperBound )
+{
+  lower_bin = distribution->begin();
+  upper_bin = lower_bin;
+  ++upper_bin;
+
+  // On the first bin boundary
+  double x_value = 0.0;
+  double bound = Utility::Correlated::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 10.0 );
+
+  // In the first bin
+  x_value = 0.5;
+  bound = Utility::Correlated::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 8.75 );
+
+  // On the second bin boundary
+  ++lower_bin; ++upper_bin;
+  x_value = 1.0;
+  bound = Utility::Correlated::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 7.5 );
+
+  // In the second bin
+  x_value = 1.5;
+  bound = Utility::Correlated::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 8.75 );
+
+  // On the upper bin boundary
+  x_value = 2.0;
+  bound = Utility::Correlated::calculateUpperBound<Utility::LinLinLin,double>(
+                    x_value, lower_bin, upper_bin );
+  TEST_EQUALITY_CONST( bound, 10.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( Correlated, evaluatePDF )
 {
@@ -138,9 +218,9 @@ TEUCHOS_UNIT_TEST( Correlated, evaluatePDF )
   func = [](double x){return 1.25;}; func = [](double x){return 8.75;};
 
   TEST_EQUALITY_CONST( evaluate( 0.5, 1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( evaluate( 0.5, 1.25 ), 0.55 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 1.25 ), 2.0/11.0 );
   TEST_FLOATING_EQUALITY( evaluate( 0.5, 5.0 ), 9.8048179459037177e-01, 1e-12 );
-  TEST_EQUALITY_CONST( evaluate( 0.5, 8.75 ), 0.75 );
+  TEST_EQUALITY_CONST( evaluate( 0.5, 8.75 ), 2.0/3.0 );
   TEST_EQUALITY_CONST( evaluate( 0.5, 9.0 ), 0. );
 
   // On the second bin boundary
@@ -159,7 +239,7 @@ TEUCHOS_UNIT_TEST( Correlated, evaluatePDF )
   TEST_EQUALITY_CONST( evaluate( 1.5, 1.0 ), 0.0 );
   TEST_EQUALITY_CONST( evaluate( 1.5, 1.25 ), 0.1 );
   TEST_FLOATING_EQUALITY( evaluate( 1.5, 5.0 ), 1.8116248070721774e-01, 1e-12 );
-  TEST_EQUALITY_CONST( evaluate( 1.5, 8.75 ), 0.3 );
+  TEST_EQUALITY_CONST( evaluate( 1.5, 8.75 ), 1.0/6.0 );
   TEST_EQUALITY_CONST( evaluate( 1.5, 9.0 ), 0.0 );
 
   // On the upper bin boundary
@@ -202,11 +282,11 @@ TEUCHOS_UNIT_TEST( UnitAwareCorrelated, evaluatePDF )
   ua_func = [](XIndepType x){return 8.75*cgs::centimeter;};
 
   TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.25*cgs::centimeter ), 0.55*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 1.25*cgs::centimeter ), 2.0/11.0*barn );
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
                                   9.8048179459037177e-01*barn,
                                   1e-12 );
-  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 8.75*cgs::centimeter ), 0.75*barn );
+  TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 8.75*cgs::centimeter ), 2.0/3.0*barn );
   TEST_EQUALITY_CONST( evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
 
   // On the second bin boundary
@@ -229,7 +309,7 @@ TEUCHOS_UNIT_TEST( UnitAwareCorrelated, evaluatePDF )
   UTILITY_TEST_FLOATING_EQUALITY( evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
                                   1.8116248070721774e-01*barn,
                                   1e-12 );
-  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 8.75*cgs::centimeter ), 0.3*barn );
+  TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 8.75*cgs::centimeter ), 1.0/6.0*barn );
   TEST_EQUALITY_CONST( evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
 
   // On the upper bin boundary
@@ -250,7 +330,7 @@ TEUCHOS_UNIT_TEST( Correlated, evaluateCDF )
   std::function<double(double,double)> evaluate = 
   [&func, &lower_bin, &upper_bin](double x_value, double y_value)
   {
-    return Utility::Correlated::evaluateCDF<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double,double>(
+    return Utility::Correlated::evaluateCDF<Utility::LinLinLin,Utility::TabularOneDDistribution,double,double>(
       x_value, y_value, func, func, &Utility::TabularOneDDistribution::evaluateCDF, lower_bin, upper_bin, 1e-3, 1e-15 );
   };
 
@@ -313,7 +393,7 @@ TEUCHOS_UNIT_TEST( UnitAwareCorrelated, evaluateCDF )
   std::function<double(XIndepType,YIndepType)> evaluate = 
   [&ua_func, &ua_lower_bin, &ua_upper_bin](XIndepType x_value, YIndepType y_value)
   {
-    return Utility::Correlated::evaluateCDF<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType,double>(
+    return Utility::Correlated::evaluateCDF<Utility::LinLinLin,Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>,XIndepType,YIndepType>(
       x_value, y_value, ua_func, ua_func, &Utility::UnitAwareTabularOneDDistribution<cgs::length,Barn>::evaluateCDF, ua_lower_bin, ua_upper_bin, 1e-3, 1e-15 );
   };
 

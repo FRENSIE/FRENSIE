@@ -32,6 +32,26 @@ struct Direct
 {
 public:
 
+  //! Calculate the Y independent lower bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateLowerBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
+  //! Calculate the Y independent upper bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateUpperBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
            typename BaseOneDDistributionType,
@@ -81,11 +101,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDFCos(
+  static double evaluateCDFCos(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -103,11 +122,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDF(
+  static double evaluateCDF(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -213,6 +231,26 @@ struct UnitBase
 {
 public:
 
+  //! Calculate the Y independent lower bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateLowerBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
+  //! Calculate the Y independent upper bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateUpperBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
            typename BaseOneDDistributionType,
@@ -262,11 +300,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDFCos(
+  static double evaluateCDFCos(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -284,11 +321,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDF(
+  static double evaluateCDF(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -394,6 +430,26 @@ struct CumulativePoints
 {
 public:
 
+  //! Calculate the Y independent lower bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateLowerBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
+  //! Calculate the Y independent upper bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateUpperBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
            typename BaseOneDDistributionType,
@@ -443,11 +499,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDFCos(
+  static double evaluateCDFCos(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -465,11 +520,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDF(
+  static double evaluateCDF(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -578,6 +632,26 @@ struct Correlated
 {
 public:
 
+  //! Calculate the Y independent lower bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateLowerBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
+  //! Calculate the Y independent upper bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateUpperBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
            typename BaseOneDDistributionType,
@@ -627,11 +701,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDFCos(
+  static double evaluateCDFCos(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -649,11 +722,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDF(
+  static double evaluateCDF(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -746,7 +818,6 @@ private:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor,
@@ -773,6 +844,26 @@ private:
 struct UnitBaseCorrelated
 {
 public:
+
+  //! Calculate the Y independent lower bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateLowerBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
+
+  //! Calculate the Y independent upper bound between bin boundaries
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename XIndepType,
+           typename YZIterator>
+  static YIndepType calculateUpperBound(
+                      const XIndepType& x_indep_value,
+                      const YZIterator& lower_bin_boundary,
+                      const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
@@ -823,11 +914,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDFCos(
+  static double evaluateCDFCos(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -845,11 +935,10 @@ public:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor>
-  static ReturnType evaluateCDF(
+  static double evaluateCDF(
               const XIndepType& x_indep_value,
               const YIndepType& y_indep_value,
               const YBoundsFunctor& min_y_indep_functor,
@@ -942,7 +1031,6 @@ private:
            typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
-           typename ReturnType,
            typename YZIterator,
            typename EvaluationMethod,
            typename YBoundsFunctor,
