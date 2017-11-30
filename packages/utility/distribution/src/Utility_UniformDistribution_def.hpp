@@ -375,16 +375,10 @@ std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::typeNam
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -406,37 +400,32 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std:
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream(
-                                                           std::istream& is,
-                                                           const std::string& )
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Set the lower boundary of the distribution
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, true ) <<
+                      "The " << this->getTypeName( true, true ) <<
                       " could not be constructed because the lower boundary "
                       "was not specified!" );
 
   this->extractValue( distribution_data.front(),
                       d_min_independent_value ,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
   // Set the upper boundary of the distribution
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, true ) <<
+                      "The " << this->getTypeName( true, true ) <<
                       " could ot be constructed because the upper boundary "
                       "was not specified!" );
 
   this->extractValue( distribution_data.front(),
                       d_max_independent_value,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -445,7 +434,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream(
   {
     this->extractValue( distribution_data.front(),
                         d_dependent_value,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -456,9 +445,6 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream(
   this->verifyValidShapeParameters( d_min_independent_value,
                                     d_max_independent_value,
                                     d_dependent_value );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 
   // Calculate the distribution's pdf
   this->calculatePDFValue();
@@ -496,7 +482,7 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromPropertyTr
     // Initialize the dependent value
     d_dependent_value = DQT::one();
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;

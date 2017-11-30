@@ -19,7 +19,7 @@ namespace Utility{
 
 //! The base Utility::OneDDistribution property tree converter class
 template<typename DistributionType, typename BaseDistributionType>
-class OneDDistributionPropertyTreeConverter: public PropertyTreeConverter<BaseDistributionType>
+class OneDDistributionPropertyTreeConverter : public PropertyTreeConverter<BaseDistributionType>
 {
 
   // Typedef for this type
@@ -32,7 +32,7 @@ public:
   { /* ... */ }
 
   //! Return the property tree type name associated with this converter
-  std::string getTypeName() const override;
+  std::string getConcreteTypeName() const override;
 
 protected:
 
@@ -51,21 +51,10 @@ private:
 
   // Extract the type name from an inlined property tree
   static std::string extractTypeNameFromInlinedPropertyTree(
-                                           const Utility::PropertyTree& ptree )
-  {
-    return DistributionType::getInlinedPropertyTreeTypeName( ptree );
-  }
+                                          const Utility::PropertyTree& ptree );
 
   // Register this converter with the factory
-  static bool registerWithFactory()
-  {
-    typedef PropertyTreeConversionFactory<BaseDistributionType> FactoryType;
-    // Create the converter
-    typename FactoryType::ConverterPtr converter( new ThisType );
-
-    return FactoryType::registerConverter( converter ) &&
-      FactoryType::registerInlineTypeExtractionMethod( &ThisType::extractTypeNameFromInlinedPropertyTree );      
-  }
+  static bool registerWithFactory();
 
   // Used for factory registration
   static const bool s_registered;

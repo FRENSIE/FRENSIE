@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 
@@ -20,7 +21,9 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+                                   private OneDDistributionPropertyTreeConverter<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
+                                   private OneDDistributionPropertyTreeConverter<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
 {
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -123,12 +126,6 @@ public:
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
 
-  //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is, const std::string& delims ) override;
-
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
   //! Method for converting the type to a property tree
   Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
 
@@ -154,11 +151,13 @@ protected:
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int );
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  std::string getTypeNameImpl( const bool verbose_name ) const override;
+
+  //! Process the data that was extracted the stream
+  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the dependent variable can be zero within the indep bounds
-  bool canDepVarBeZeroInIndepBounds() const;
+  bool canDepVarBeZeroInIndepBounds() const override;
 
   //! Get the default location
   template<typename InputIndepQuantity>

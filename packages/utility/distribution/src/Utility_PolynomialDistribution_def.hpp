@@ -317,16 +317,10 @@ std::string UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::type
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -348,50 +342,47 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::toStream( s
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
+void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Extract the coefficients
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getgetTypeName( true, true ) <<
                       " could not be constructed because no coefficients "
                       "are specified!" );
 
   this->extractArray( distribution_data.front(),
                       d_coefficients,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getgetTypeName( true, true ) );
 
   distribution_data.pop_front();
   
   // Extract the lower limit
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getgetTypeName( true, true ) <<
                       " could not be constructed because the lower limit "
                       "was not specified!" );
 
   IndepQuantity lower_limit;
   this->extractValue( distribution_data.front(),
                       lower_limit,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getgetTypeName( true, true ) );
   
   distribution_data.pop_front();
 
   // Extract the upper limit
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getgetTypeName( true, true ) <<
                       " could not be constructed because the upper limit "
                       "was not specified!" );
 
   IndepQuantity upper_limit;
   this->extractValue( distribution_data.front(),
                       upper_limit,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getgetTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -400,9 +391,6 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   // Initialize the distribution
   this->initializeDistribution( lower_limit, upper_limit );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for converting the type to a property tree
@@ -436,7 +424,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromPropert
   {
     IndepQuantity lower_limit, upper_limit;
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getgetTypeName( true, true );
     
     typename BaseType::DataExtractorMap data_extractors;
 

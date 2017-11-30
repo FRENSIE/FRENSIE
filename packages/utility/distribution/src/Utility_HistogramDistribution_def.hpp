@@ -421,16 +421,10 @@ std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::typeN
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 //! Test if the distribution is continuous
@@ -455,39 +449,34 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::toStream(
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
-                                                           std::istream& is,
-                                                           const std::string& )
+void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Extract the bin boundaries
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getTypeName( true, true ) <<
                       " could not be constructed because no bin boundaries "
                       "are not specified!" );
   
   std::vector<double> bin_boundaries;
   this->extractArray( distribution_data.front(),
                       bin_boundaries,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
   // Extract the bin values
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getTypeName( true, true ) <<
                       " could not be constructed because no bin values "
                       "are not specified!" );
   
   std::vector<double> bin_values;
   this->extractArray( distribution_data.front(),
                       bin_values,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -498,7 +487,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
   {
     this->extractValue( distribution_data.front(),
                         cdf_specified,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -508,9 +497,6 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   // Initialize the distribution
   this->initializeDistribution( bin_boundaries, bin_values, cdf_specified );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for converting the type to a property tree
@@ -549,7 +535,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromProperty
     std::vector<double> bin_boundaries, bin_values;
     bool cdf_specified = false;
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     typename BaseType::DataExtractorMap data_extractors;
 

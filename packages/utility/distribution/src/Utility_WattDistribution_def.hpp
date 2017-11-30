@@ -382,16 +382,10 @@ std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::typeName(
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -416,18 +410,15 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::toStream( std::os
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
+void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Set the incident energy
   if( !distribution_data.empty() )
   {
     this->extractValue( distribution_data.front(),
                         d_incident_energy,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -439,7 +430,7 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::
   {
     this->extractValue( distribution_data.front(),
                         d_a_parameter,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -451,7 +442,7 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::
   {
     this->extractValue( distribution_data.front(),
                         d_b_parameter,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -463,7 +454,7 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::
   {
     this->extractValue( distribution_data.front(),
                         d_restriction_energy,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -475,7 +466,7 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::
   {
     this->extractValue( distribution_data.front(),
                         d_multiplier,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -535,7 +526,7 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
     Utility::setQuantity( d_multiplier,
                           ThisType::getDefaultConstantMultiplier() );
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;    

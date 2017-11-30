@@ -34,7 +34,7 @@ public:
   { /* ... */ }
 
   //! Return the property tree type name associated with this converter
-  virtual std::string getTypeName() const = 0;
+  virtual std::string getConcreteTypeName() const = 0;
 
   //! Convert the property tree to the desired type
   void convert( const Utility::PropertyTree& ptree,

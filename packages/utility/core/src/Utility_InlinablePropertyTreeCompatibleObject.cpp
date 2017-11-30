@@ -29,7 +29,8 @@ Utility::PropertyTree InlinablePropertyTreeCompatibleObject::toPropertyTree() co
 // Extract data from the stream
 /*! \details If the type cannot be verified an exception will be thrown.
  */
-void InlinablePropertyTreeCompatibleObject::fromStream( std::istream& is )
+void InlinablePropertyTreeCompatibleObject::fromStream( std::istream& is,
+                                                        const std::string& )
 {
   // Extract the stream data
   VariantList stream_data;

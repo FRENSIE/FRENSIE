@@ -489,16 +489,10 @@ std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,Dep
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
-std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -529,37 +523,34 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
+void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Extract the independent values
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getTypeName( true, true ) <<
                       " could not be reconstructed because no independent "
                       "values are specified!" );
 
   std::vector<double> independent_values;
   this->extractArray( distribution_data.front(),
                       independent_values,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
   // Extract the dependent values
   TEST_FOR_EXCEPTION( distribution_data.empty(),
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getTypeName( true, true ) <<
                       " could not be reconstructed because no dependent "
                       "values are specified!" );
 
   std::vector<double> dependent_values;
   this->extractArray( distribution_data.front(),
                       dependent_values,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -569,9 +560,6 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   // Initialize the distribution
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for converting the type to a property tree
@@ -612,7 +600,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   {
     std::vector<double> independent_values, dependent_values;
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     typename BaseType::DataExtractorMap data_extractors;
 

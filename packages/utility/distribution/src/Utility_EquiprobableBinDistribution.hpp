@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_TypeNameTraits.hpp"
 
@@ -20,7 +21,9 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+                                             private OneDDistributionPropertyTreeConverter<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
+                                             private OneDDistributionPropertyTreeConverter<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
 {
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -55,7 +58,7 @@ public:
   UnitAwareEquiprobableBinDistribution();
 
   //! Basic constructor (potentially dangerous)
-  explicit UnitAwareEquiprobableBinDistribution( const std::vector<double>& bin_boundaries);
+  explicit UnitAwareEquiprobableBinDistribution( const std::vector<double>& bin_boundaries );
 
   //! Constructor
   template<typename InputIndepQuantity>
@@ -126,12 +129,6 @@ public:
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
 
-  //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is, const std::string& delims ) override;
-
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
   //! Method for converting the type to a property tree
   Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
 
@@ -156,14 +153,16 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareEquiprobableBinDistribution( const UnitAwareEquiprobableBinDistribution<void,void>& unitless_dist_instance, int );
 
+  //! Return the distribution type name
+  std::string getTypeNameImpl( const bool verbose_name ) const override;
+
+  //! Process the data that was extracted the stream
+  void fromStreamImpl( VariantList& distribution_data ) override;
+
   //! Test if the dependent variable can be zero within the indep bounds
-  bool canDepVarBeZeroInIndepBounds() const;
+  bool canDepVarBeZeroInIndepBounds() const override;
 
 private:
-
-  //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,

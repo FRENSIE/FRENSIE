@@ -361,16 +361,10 @@ std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -393,12 +387,9 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::toStrea
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
+void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Set the incident energy
   if( !distribution_data.empty() )
   {
@@ -452,9 +443,6 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
                                     d_nuclear_temperature,
                                     d_restriction_energy,
                                     d_multiplier );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();

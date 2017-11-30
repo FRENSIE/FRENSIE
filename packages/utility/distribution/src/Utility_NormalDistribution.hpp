@@ -11,13 +11,15 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
 //! Normal distribution class
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
+                                    private OneDDistributionPropertyTreeConverter<UnitAwareNormalDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
 {
   // Typedef for base type
   typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -135,9 +137,6 @@ public:
   void toStream( std::ostream& os ) const override;
 
   //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is, const std::string& delims ) override;
-
-  //! Method for initializing the object from an input stream
   using IStreamableObject::fromStream;
 
   //! Method for converting the type to a property tree
@@ -165,11 +164,13 @@ protected:
   UnitAwareNormalDistribution( const UnitAwareNormalDistribution<void,void>& unitless_dist_instance, int );
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  std::string getTypeNameImpl( const bool verbose_name ) const override;
+
+  //! Process the data that was extracted the stream
+  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the dependent variable can be zero within the indep bounds
-  bool canDepVarBeZeroInIndepBounds() const;
+  bool canDepVarBeZeroInIndepBounds() const override;
 
   //! Get the default mean
   template<typename InputIndepQuantity>

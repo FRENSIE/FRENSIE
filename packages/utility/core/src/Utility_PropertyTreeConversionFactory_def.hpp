@@ -39,7 +39,7 @@ bool PropertyTreeConversionFactory<T>::registerConverter(
   // Make sure that the converter is valid
   testPrecondition( converter.get() );
 
-  const std::string type_name = converter.getTypeName();
+  const std::string type_name = converter.getConcreteTypeName();
   
   ConverterMap::const_iterator converter_it = s_converters.find( type_name );
 
@@ -104,8 +104,6 @@ void PropertyTreeConversionFactory<T>::convertImpl(
     ptree_type_name = s_inline_type_extractor( ptree );
   else
     ptree_type_name = this->extractType( ptree );
-
-  
 }
 
 // Default inline type extraction method

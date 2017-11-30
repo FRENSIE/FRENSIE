@@ -339,16 +339,10 @@ std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::typ
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -373,12 +367,9 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::toStream( std::
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
+void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Set the exponent multiplier
   if( !distribution_data.empty() )
   {
@@ -430,9 +421,6 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStream
                                     d_exponent_multiplier,
                                     d_lower_limit,
                                     d_upper_limit );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
   
   // Initialize the distribution
   this->initialize();
@@ -472,6 +460,8 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromProper
     d_lower_limit = ThisType::getDefaultLowerLimit<IndepQuantity>();
     d_upper_limit = ThisType::getDefaultUpperLimit<IndepQuantity>();
 
+    std::string type_name = this->getTypeName( true, true );
+
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;
 
@@ -484,21 +474,24 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromProper
     data_extractors.insert(
      std::make_pair( s_exponent_multiplier_value_key,
       std::make_tuple( s_exponent_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<InverseIndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<InverseIndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_exponent_multiplier)) )));
+                       std::ref(d_exponent_multiplier),
+                       std::cref(type_name)) )));
     data_extractors.insert(
      std::make_pair( s_lower_limit_value_key,
       std::make_tuple( s_lower_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_lower_limit)) )));
+                       std::ref(d_lower_limit),
+                       std::cref(type_name)) )));
     data_extractors.insert(
      std::make_pair( s_upper_limit_value_key,
       std::make_tuple( s_upper_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&ThisType::extractShapeParameterFromNode<IndepQuantity>,
+       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
                        std::placeholders::_1,
-                       std::ref(d_upper_limit)) )));
+                       std::ref(d_upper_limit),
+                       std::cref(type_name)) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 
@@ -584,43 +577,6 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::initialize
     d_exp_lower_limit = exp( -d_exponent_multiplier*d_lower_limit );
   else
     d_exp_lower_limit = 1.0;
-}
-
-// Extract a shape parameter from a node
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::extractShapeParameterFromNode(
-                             const Utility::PropertyTree& shape_parameter_data,
-                             QuantityType& shape_parameter )
-{
-  // The data must be inlined in the node
-  TEST_FOR_EXCEPTION( shape_parameter_data.size() != 0,
-                      Utility::PropertyTreeConversionException,
-                      "Could not extract the shape parameter value!" );
-
-  ThisType::extractShapeParameter( shape_parameter_data.data(),
-                                   shape_parameter );
-}
-
-// Extract a shape parameter
-template<typename IndependentUnit, typename DependentUnit>
-template<typename QuantityType>
-void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::extractShapeParameter(
-                                  const Utility::Variant& shape_parameter_data,
-                                  QuantityType& shape_parameter )
-{
-  double raw_shape_parameter;
-
-  try{
-    raw_shape_parameter =
-      Utility::variant_cast<double>( shape_parameter_data );
-  }
-  EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
-                           "The exponential distribution cannot be "
-                           "constructed because a shape parameter is not "
-                           "valid!" );
-
-  Utility::setQuantity( shape_parameter, raw_shape_parameter );
 }
 
 // Verify that the shape parameters are valid

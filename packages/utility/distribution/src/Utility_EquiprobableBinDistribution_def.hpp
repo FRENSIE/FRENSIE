@@ -342,16 +342,9 @@ std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>:
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl( const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -375,17 +368,12 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::toStre
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromStream(
-                                                           std::istream& is,
-                                                           const std::string& )
+void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   TEST_FOR_EXCEPTION( distribution_data.size() == 0,
                       Utility::StringConversionException,
-                      "The " << this->getDistributionTypeName( true, false ) <<
+                      "The " << this->getTypeName( true, true ) <<
                       " could not be constructed because no bin boundaries "
                       "have been specified!" );
   
@@ -394,7 +382,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromSt
 
   this->extractArray( distribution_data.front(),
                       bin_boundaries,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -403,9 +391,6 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromSt
 
   // Initialize the distribution
   this->initializeDistribution( bin_boundaries );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for converting the type to a property tree
@@ -450,7 +435,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPr
          std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
                          std::placeholders::_1,
                          std::ref(bin_boundaries),
-                         this->getDistributionTypeName( true, true )) )));
+                         this->getTypeName( true, true )) )));
 
     this->fromPropertyTreeImpl( node, unused_children, data_extractors );
 

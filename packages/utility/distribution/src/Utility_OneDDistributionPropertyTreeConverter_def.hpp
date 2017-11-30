@@ -17,9 +17,9 @@ bool OneDDistributionPropertyTreeConverter<DistributionType,BaseDistributionType
 
 // Return the property tree type name associated with this converter
 template<typename DistributionType, typename BaseDistributionType>
-std::string OneDDistributionPropertyTreeConverter<DistributionType,BaseDistributionType>::getTypeName() const override
+std::string OneDDistributionPropertyTreeConverter<DistributionType,BaseDistributionType>::getConcreteTypeName() const
 {
-  return DistributionType::typeName( false, false, " " );
+  return dynamic_cast<DistributionType*>( this )->getTypeName( false, false );
 }
 
 // Convert the property tree to the desired type
@@ -35,6 +35,14 @@ BaseDistributionType* OneDDistributionPropertyTreeConverter<DistributionType,Bas
   return distribution;
 }
 
+// Extract the type name from an inlined property tree
+template<typename DistributionType, typename BaseDistributionType>
+std::string OneDDistributionPropertyTreeConverter<DistributionType,BaseDistributionType>::extractTypeNameFromInlinedPropertyTree(
+                                           const Utility::PropertyTree& ptree )
+{
+  return DistributionType::getInlinedPropertyTreeTypeName( ptree );
+}
+
 // Register this converter with the factory
 template<typename DistributionType, typename BaseDistributionType>
 bool OneDDistributionPropertyTreeConverter<DistributionType,BaseDistributionType>::registerWithFactory()
@@ -42,7 +50,7 @@ bool OneDDistributionPropertyTreeConverter<DistributionType,BaseDistributionType
   typedef PropertyTreeConversionFactory<BaseDistributionType> FactoryType;
   
   // Create the converter
-  typename FactoryType::ConverterPtr converter( new ThisType );
+  typename FactoryType::ConverterPtr converter( new DistributionType );
 
   return FactoryType::registerConverter( converter ) &&
     FactoryType::registerInlineTypeExtractionMethod( &ThisType::extractTypeNameFromInlinedPropertyTree );      

@@ -37,7 +37,10 @@ public:
   Utility::PropertyTree toPropertyTree() const override;
 
   //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is ) override;
+  void fromStream( std::istream& is, const std::string& delims ) override;
+
+  //! Method for initializing the object from an input stream
+  using IStreamableObject::fromStream;
 
 protected:
 

@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
@@ -26,7 +27,8 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
+                                  private OneDDistributionPropertyTreeConverter<UnitAwareWattDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
 {
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
@@ -146,12 +148,6 @@ public:
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
 
-  //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is, const std::string& delims ) override;
-
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
   //! Method for converting the type to a property tree
   Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
 
@@ -177,11 +173,13 @@ protected:
   UnitAwareWattDistribution( const UnitAwareWattDistribution<void,void>& unitless_dist_instance, int );
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  std::string getTypeNameImpl( const bool verbose_name ) const override;
+
+  //! Process the data that was extracted the stream
+  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the dependent variable can be zero within the indep bounds
-  bool canDepVarBeZeroInIndepBounds() const;
+  bool canDepVarBeZeroInIndepBounds() const override;
 
   //! Get the default incident energy
   template<typename InputIndepQuantity>
