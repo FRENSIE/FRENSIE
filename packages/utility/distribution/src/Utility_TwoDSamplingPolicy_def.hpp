@@ -185,7 +185,7 @@ double Direct::evaluateCDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return Direct::evaluatePDFCos<TwoDInterpPolicy, BaseOneDDistributionType,
+  return Direct::evaluateCDF<TwoDInterpPolicy, BaseOneDDistributionType,
                                   XIndepType, YIndepType, YZIterator,
                                   EvaluationMethod, YBoundsFunctor>(
                                               x_indep_value,
@@ -224,33 +224,21 @@ double Direct::evaluateCDF(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  if( lower_bin_boundary->first == x_indep_value )
-  {
-    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-  }
-  else if( upper_bin_boundary->first == x_indep_value )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
-  }
-  else
-  {
-    // Get the evaluation at the lower and upper bin boundaries
-    double min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-    double min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
-
-    if ( min_eval_0 == min_eval_1 )
-      return min_eval_0;
-    else
-    {
-      // Return the interpolated evaluation
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-              lower_bin_boundary->first,
-              upper_bin_boundary->first,
-              x_indep_value,
-              min_eval_0,
-              min_eval_1 );
-    }
-  }
+  return Direct::evaluatePDF<TwoDInterpPolicy, BaseOneDDistributionType,
+                             XIndepType, YIndepType,
+                             double, YZIterator, EvaluationMethod,
+                             YBoundsFunctor>(
+                                    x_indep_value,
+                                    y_indep_value,
+                                    min_y_indep_functor,
+                                    max_y_indep_functor,
+                                    evaluate,
+                                    lower_bin_boundary,
+                                    upper_bin_boundary,
+                                    fuzzy_boundary_tol,
+                                    rel_error_tol,
+                                    error_tol,
+                                    max_number_of_iterations );
 }
 
 // Sample between bin boundaries using the desired sampling functor
@@ -546,33 +534,21 @@ ReturnType UnitBase::evaluatePDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  if( lower_bin_boundary->first == x_indep_value )
-  {
-    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-  }
-  else if( upper_bin_boundary->first == x_indep_value )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
-  }
-  else
-  {
-    // Get the evaluation at the lower and upper bin boundaries
-    ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-    ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
-
-    if ( min_eval_0 == min_eval_1 )
-      return min_eval_0;
-    else
-    {
-      // Return the interpolated evaluation
-      return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
-              lower_bin_boundary->first,
-              upper_bin_boundary->first,
-              x_indep_value,
-              min_eval_0,
-              min_eval_1 );
-    }
-  }
+  return Direct::evaluatePDF<TwoDInterpPolicy, BaseOneDDistributionType,
+                             XIndepType, YIndepType,
+                             ReturnType, YZIterator, EvaluationMethod,
+                             YBoundsFunctor>(
+                                    x_indep_value,
+                                    y_indep_value,
+                                    min_y_indep_functor,
+                                    max_y_indep_functor,
+                                    evaluate,
+                                    lower_bin_boundary,
+                                    upper_bin_boundary,
+                                    fuzzy_boundary_tol,
+                                    rel_error_tol,
+                                    error_tol,
+                                    max_number_of_iterations );
 }
 
 // Evaluate the PDF between bin boundaries using the desired evaluation method
@@ -651,7 +627,7 @@ double UnitBase::evaluateCDFCos(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  return UnitBase::evaluatePDFCos<TwoDInterpPolicy, BaseOneDDistributionType,
+  return Direct::evaluateCDF<TwoDInterpPolicy, BaseOneDDistributionType,
                                   XIndepType, YIndepType, YZIterator,
                                   EvaluationMethod, YBoundsFunctor>(
                                               x_indep_value,
@@ -1142,10 +1118,11 @@ auto Correlated::calculateUpperBound(
 }
 
 // Evaluate the PDF between bin boundaries using the desired evaluation method
-/*! \details The EvaluationMethod must evalute using a Cosine variable. This
- *  method uses an iterative method to estimate the CDF for correlated sampling
- *  to a relative error tolerance in order to get the proper interpolation
- *  parameters.
+/*! \details The EvaluationMethod must evalute using a Cosine variable. The edge
+ *  case of no scattering (i.e. y = 1 ) is must be specially handled with
+ *  LogCosLog interpolation in order to avoid a ln(1). This method uses an
+ *  iterative method to estimate the CDF for correlated sampling to a relative
+ *  error tolerance in order to get the proper interpolation parameters.
  */
 template<typename TwoDInterpPolicy,
          typename BaseOneDDistributionType,
@@ -1261,7 +1238,13 @@ ReturnType Correlated::evaluatePDFCos(
       return lower_eval;
     else
     {
-      if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LinLin" )
+      /* NOTE: The special edge case of cosine of 1 (i.e. y = 1 ) will give a
+       * ln(1) for LogCosLog interpolation unless treated specifically. At the
+       * limits -1 and 1, the y values are the same (i.e. y_0 = y_1 = y ) and
+       * the LogCosLog equation reduces to the LinLin equation.
+       */
+      if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" ||
+         ( lower_y_value == upper_y_value && lower_y_value == y_indep_value ) )
       {
         /* The PDF for lin-lin interpolation is defined as:
           * f(x,y) = ( f_0( y_0 ) * f_1( y_1 ) )/
@@ -1269,16 +1252,18 @@ ReturnType Correlated::evaluatePDFCos(
           */
         return (lower_eval*upper_eval)/LinLin::interpolate( beta, upper_eval, lower_eval );
       }
-      else if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LogLog" )
+      else if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" )
       {
         /* The PDF for log-log interpolation is defined as:
-          * f(x,y) = ( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
-          *          ( y_1*f_1(y_1)*( (y_0*f_0(y_0))/(y_1*f_1(y_1)) )^beta )
+          * f(x,y) = (1/y)*( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
+          *          ( y_1*f_1(y_1)+( (y_0*f_0(y_0)) - (y_1*f_1(y_1)) )*beta )
           */
-        auto lower_product = lower_eval*lower_y_value;
-        auto upper_product = upper_eval*lower_y_value;
+        auto lower_product = lower_eval*TwoDInterpPolicy::YXInterpPolicy::convertCosineVar(lower_y_value);
+        auto upper_product = upper_eval*TwoDInterpPolicy::YXInterpPolicy::convertCosineVar(upper_y_value);
 
-        return (lower_eval*upper_eval)/(LogLog::interpolate( beta, upper_product, lower_product )*y_indep_value);
+        return (lower_eval*upper_eval)/
+               (LinLin::interpolate( beta, upper_product, lower_product )*
+               TwoDInterpPolicy::YXInterpPolicy::convertCosineVar(y_indep_value) );
       }
       else
       {
@@ -1417,7 +1402,7 @@ ReturnType Correlated::evaluatePDF(
       return lower_eval;
     else
     {
-      if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LinLin" )
+      if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" )
       {
         /* The PDF for lin-lin interpolation is defined as:
         * f(x,y) = ( f_0( y_0 ) * f_1( y_1 ) )/
@@ -1425,16 +1410,17 @@ ReturnType Correlated::evaluatePDF(
         */
         return (lower_eval*upper_eval)/LinLin::interpolate( beta, upper_eval, lower_eval );
       }
-      else if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LogLog" )
+      else if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LogLog" ||
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" )
       {
         /* The PDF for log-log interpolation is defined as:
-        * f(x,y) = ( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
-        *          ( y_1*f_1(y_1)*( (y_0*f_0(y_0))/(y_1*f_1(y_1)) )^beta )
+        * f(x,y) = (1/y)*( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
+        *          ( y_1*f_1(y_1) + ( (y_0*f_0(y_0))-(y_1*f_1(y_1)) )*beta )
         */
         auto lower_product = lower_eval*lower_y_value;
-        auto upper_product = upper_eval*lower_y_value;
+        auto upper_product = upper_eval*upper_y_value;
 
-        return (lower_product*upper_product)/(LogLog::interpolate( beta, upper_product, lower_product )*y_indep_value);
+        return (lower_product*upper_product)/(LinLin::interpolate( beta, upper_product, lower_product )*y_indep_value);
       }
       else
       {
@@ -2266,7 +2252,7 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
       return lower_eval;
     else
     {
-      if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LinLin" )
+      if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" )
       {
         /* The PDF for lin-lin interpolation is defined as:
         * f(x,y) = 1/L * ( L_0f_0( y_0 ) * L_1f_1( y_1 ) )/
@@ -2277,11 +2263,12 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
 
         return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/intermediate_grid_length;
       }
-      else if ( TwoDInterpPolicy::ZXInterpPolicy::name() == "LogLog" )
+      else if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LogLog" ||
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" )
       {
         /* The PDF for log-log interpolation is defined as:
         * f(x,y) = 1/(eta*L)*( eta_0*L_0*f_0( y_0 ) * eta_1*L_1*f_1( y_1 ) )/
-        * ( eta_1*L_1*f_1(y_1)*( (eta_0*L_0*f_0(y_0))/(eta_1*L_1*f_1(y_1)) )^beta )
+        * ( eta_1*L_1*f_1(y_1) + ( (eta_0*L_0*f_0(y_0)) - (eta_1*L_1*f_1(y_1)) )*beta )
         */
         auto lower_product =
           lower_eval*( lower_y_value - lower_bin_boundary->second->getLowerBoundOfIndepVar() );
@@ -2289,7 +2276,7 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
           upper_eval*( upper_y_value - upper_bin_boundary->second->getLowerBoundOfIndepVar() );
         auto product = eta*intermediate_grid_length;
 
-        return (lower_product*upper_product)/(LogLog::interpolate( beta, upper_product, lower_product )*y_indep_value)/product;
+        return (lower_product*upper_product)/(LinLin::interpolate( beta, upper_product, lower_product )*y_indep_value)/product;
       }
       else
       {

@@ -2593,7 +2593,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExact )
+                   sampleSecondaryConditionalDirect )
 {
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditional( -1.0 ),
@@ -2708,7 +2708,7 @@ TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExact )
+                   sampleSecondaryConditionalDirect )
 {
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditional( -1.0*MeV ),
@@ -2824,7 +2824,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumber )
+                   sampleSecondaryConditionalDirectWithRandomNumber )
 {
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0 ),
@@ -2922,7 +2922,7 @@ TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumber )
+                   sampleSecondaryConditionalDirectWithRandomNumber )
 {
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0 ),
@@ -3018,7 +3018,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExactInSubrange )
+                   sampleSecondaryConditionalDirectInSubrange )
 {
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 1.0 ),
@@ -3133,7 +3133,7 @@ TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExactInSubrange )
+                   sampleSecondaryConditionalDirectInSubrange )
 {
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 1.0*cgs::centimeter ),
@@ -3248,7 +3248,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumberInSubrange )
+                   sampleSecondaryConditionalDirectWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
   TEST_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 1.0 ),
@@ -3346,7 +3346,7 @@ TEUCHOS_UNIT_TEST( HistogramFullyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
 TEUCHOS_UNIT_TEST( UnitAwareHistogramFullyTabularTwoDDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumberInSubrange )
+                   sampleSecondaryConditionalDirectWithRandomNumberInSubrange )
 {
   // Before the first bin - no extension
   TEST_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 1.0*cgs::centimeter ),

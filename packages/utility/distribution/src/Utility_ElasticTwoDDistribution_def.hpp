@@ -80,15 +80,13 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const bool use_direct_eval_method ) const
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> DepQuantity
 {
   return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluate,
-                                      use_direct_eval_method );
+                                      &BaseOneDDistributionType::evaluate );
 }
 
 // Evaluate the secondary conditional PDF
@@ -99,15 +97,13 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const bool use_direct_eval_method ) const
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
 {
   return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluatePDF,
-                                      use_direct_eval_method );
+                                      &BaseOneDDistributionType::evaluatePDF );
 }
 
 // Evaluate the secondary conditional PDF
@@ -122,8 +118,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method ) const
+              max_secondary_indep_var_functor ) const
   -> InverseSecondaryIndepQuantity
 {
   return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
@@ -131,8 +126,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
                                       secondary_indep_var_value,
                                       min_secondary_indep_var_functor,
                                       max_secondary_indep_var_functor,
-                                      &BaseOneDDistributionType::evaluatePDF,
-                                      use_direct_eval_method );
+                                      &BaseOneDDistributionType::evaluatePDF );
 }
 
 // Evaluate the secondary conditional CDF
@@ -143,24 +137,21 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const bool use_direct_eval_method ) const
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  if ( TwoDSamplePolicy::name() == "Exact" )
+  if ( CosSamplingPolicy::name() == "Direct" )
   {
     return this->evaluateImpl<TwoDInterpPolicy,double>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF,
-                                      use_direct_eval_method );
+                                      &BaseOneDDistributionType::evaluateCDF );
   }
   else
   {
     return this->evaluateImpl<CDFInterpPolicy,double>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF,
-                                      use_direct_eval_method );
+                                      &BaseOneDDistributionType::evaluateCDF );
   }
 }
 
@@ -176,8 +167,7 @@ template<typename LocalTwoDInterpPolicy,
 inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
                         const PrimaryIndepQuantity incoming_energy,
                         const SecondaryIndepQuantity angle_cosine,
-                        EvaluationMethod evaluate,
-                        const bool use_direct_eval_method ) const
+                        EvaluationMethod evaluate ) const
 {
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
@@ -206,34 +196,18 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
           return d_upper_bound_conditional_indep_var;
         };
 
-    if ( use_direct_eval_method )
-    {
-      return Stochastic::evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
-          incoming_energy,
-          angle_cosine,
-          min_secondary_indep_var_functor,
-          max_secondary_indep_var_functor,
-          evaluate,
-          lower_bin_boundary,
-          upper_bin_boundary,
-          this->getRelativeErrorTolerance(),
-          this->getErrorTolerance(),
-          500 );
-    }
-    else
-    {
-      return TwoDSamplePolicy::template evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
-          incoming_energy,
-          angle_cosine,
-          min_secondary_indep_var_functor,
-          max_secondary_indep_var_functor,
-          evaluate,
-          lower_bin_boundary,
-          upper_bin_boundary,
-          this->getRelativeErrorTolerance(),
-          this->getErrorTolerance(),
-          500 );
-    }
+    return CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+        incoming_energy,
+        angle_cosine,
+        min_secondary_indep_var_functor,
+        max_secondary_indep_var_functor,
+        evaluate,
+        lower_bin_boundary,
+        upper_bin_boundary,
+        this->getFuzzyBoundTolerance(),
+        this->getRelativeErrorTolerance(),
+        this->getErrorTolerance(),
+        500 );
   }
   // Check for a primary value outside of the primary grid limits
   else
@@ -289,9 +263,6 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               max_secondary_indep_var_functor,
             EvaluationMethod evaluate,
-            const bool use_direct_eval_method,
-            const ReturnType below_lower_bound_return,
-            const ReturnType above_upper_bound_return,
             unsigned max_number_of_iterations ) const
 {
   // Make sure the angle cosine is valid
@@ -307,34 +278,18 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    if ( use_direct_eval_method )
-    {
-      return Stochastic::evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
-          incoming_energy,
-          angle_cosine,
-          min_secondary_indep_var_functor,
-          max_secondary_indep_var_functor,
-          evaluate,
-          lower_bin_boundary,
-          upper_bin_boundary,
-          this->getRelativeErrorTolerance(),
-          this->getErrorTolerance(),
-          500 );
-    }
-    else
-    {
-      return TwoDSamplePolicy::template evaluateCosSampleBased<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
-          incoming_energy,
-          angle_cosine,
-          min_secondary_indep_var_functor,
-          max_secondary_indep_var_functor,
-          evaluate,
-          lower_bin_boundary,
-          upper_bin_boundary,
-          this->getRelativeErrorTolerance(),
-          this->getErrorTolerance(),
-          500 );
-    }
+    return CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+        incoming_energy,
+        angle_cosine,
+        min_secondary_indep_var_functor,
+        max_secondary_indep_var_functor,
+        evaluate,
+        lower_bin_boundary,
+        upper_bin_boundary,
+        this->getFuzzyBoundTolerance(),
+        this->getRelativeErrorTolerance(),
+        this->getErrorTolerance(),
+        500 );
   }
   // Check for a primary value outside of the primary grid limits
   else
@@ -605,7 +560,7 @@ inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,P
   {
     typename DistributionType::const_iterator sampled_bin_boundary;
     sample =
-      TwoDSamplePolicy::template sampleCosDetailed<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+      CosSamplingPolicy::template sampleCosDetailed<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
           sample_functor,
           primary_indep_var_value,
           lower_bin_boundary,

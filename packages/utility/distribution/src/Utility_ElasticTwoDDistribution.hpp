@@ -17,6 +17,34 @@
 
 namespace Utility{
 
+namespace {
+
+//! Helper class used to construct a cosine sampling policy
+template<typename TwoDSamplePolicy>
+struct CosineSamplingHelper
+{
+  //! The cosine sampling policy
+  using CosSamplingPolicy = TwoDSamplePolicy;
+};
+
+//! Helper class used to construct a UnitBase cosine sampling policy
+template<>
+struct CosineSamplingHelper<UnitBase>
+{
+  //! The cosine sampling policy
+  using CosSamplingPolicy = Direct;
+};
+
+//! Helper class used to construct a UnitBaseCorrelated cosine sampling policy
+template<>
+struct CosineSamplingHelper<UnitBaseCorrelated>
+{
+  //! The cosine sampling policy
+  using CosSamplingPolicy = Correlated;
+};
+
+} // end local namespace
+
 /*! The unit-aware interpolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
@@ -48,7 +76,7 @@ private:
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename ParentType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename ParentType::SIQT SIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -63,9 +91,12 @@ private:
   //! The secondary independent quantity type
   typedef typename TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
 
-  // The CDF interpolation policy
+  // The cdf interpolation policy
   typedef typename ParentType::CDFInterpPolicy CDFInterpPolicy;
-  
+
+  // The cosine sampling policy
+  typedef typename CosineSamplingHelper<TwoDSamplePolicy>::CosSamplingPolicy CosSamplingPolicy;
+
 public:
   
   //! The primary independent quantity type
@@ -109,14 +140,12 @@ public:
   //! Evaluate the distribution
   DepQuantity evaluate(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method = true ) const;
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method = true ) const;
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
@@ -125,14 +154,12 @@ public:
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-              max_secondary_indep_var_functor,
-            const bool use_direct_eval_method = true ) const;
+              max_secondary_indep_var_functor ) const;
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value,
-            const bool use_direct_eval_method = true ) const;
+            const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
@@ -197,8 +224,7 @@ private:
   ReturnType evaluateImpl(
                     const PrimaryIndepQuantity incoming_energy,
                     const SecondaryIndepQuantity angle_cosine,
-                    EvaluationMethod evaluate,
-                    const bool use_direct_eval_method = true ) const;
+                    EvaluationMethod evaluate ) const;
 
   //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,
@@ -212,9 +238,6 @@ private:
     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
       max_secondary_indep_var_functor,
     EvaluationMethod evaluate,
-    const bool use_direct_eval_method = true,
-    const ReturnType below_lower_bound_return = QuantityTraits<ReturnType>::zero(),
-    const ReturnType above_upper_bound_return = QuantityTraits<ReturnType>::zero(),
     unsigned max_number_of_iterations = 500 ) const;
 
   //! Sample from the distribution using the desired sampling functor

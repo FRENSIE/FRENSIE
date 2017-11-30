@@ -18,8 +18,7 @@ namespace Utility{
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const bool use_direct_eval_method ) const
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> DepQuantity
 {
   return this->evaluateImpl<DepQuantity>( primary_indep_var_value,
@@ -31,8 +30,7 @@ auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
 template<typename Distribution>
 auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value,
-                const bool use_direct_eval_method ) const
+                const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
 {
   return this->evaluateImpl<InverseSecondaryIndepQuantity>(

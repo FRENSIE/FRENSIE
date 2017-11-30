@@ -71,7 +71,7 @@ struct CDFInterpolationHelper<LogCosIndepVarProcessingTag,LogIndepVarProcessingT
 
 } // end local namespace
 
-/*! The unit-aware inteprolated fully tabular two-dimensional distribution
+/*! The unit-aware interpolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
 template<typename TwoDInterpPolicy,
