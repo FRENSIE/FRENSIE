@@ -70,7 +70,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == EXACT_SAMPLING )
+    else if( electron_sampling == STOCHASTIC_SAMPLING )
     {
       ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Stochastic>(
                               raw_electroatom_data,
@@ -102,7 +102,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == EXACT_SAMPLING )
+    else if( electron_sampling == STOCHASTIC_SAMPLING )
     {
       ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Stochastic>(
                               raw_electroatom_data,
@@ -134,7 +134,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == EXACT_SAMPLING )
+    else if( electron_sampling == STOCHASTIC_SAMPLING )
     {
       ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Stochastic>(
                               raw_electroatom_data,
