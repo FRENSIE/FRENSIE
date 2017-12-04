@@ -276,16 +276,10 @@ std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::typeName(
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -310,20 +304,15 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toStream( std::o
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
-                                                           std::istream& is,
-                                                           const std::string& )
+void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Extract the location value
   if( !distribution_data.empty() )
   {
     this->extractValue( distribution_data.front(),
                         d_location,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -335,7 +324,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
   {
     this->extractValue( distribution_data.front(),
                         d_multiplier,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -344,9 +333,6 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   // Verify that shape parameters are valid
   this->verifyValidShapeParameters( d_location, d_multiplier );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for placing the object in the desired property tree node
@@ -381,7 +367,7 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree
     d_location = ThisType::getDefaultLocation<IndepQuantity>();
     d_multiplier = ThisType::getDefaultMultiplier<DepQuantity>();
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;

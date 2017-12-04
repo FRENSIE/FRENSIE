@@ -392,16 +392,10 @@ std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::typeNam
 
 // Return the distribution type name
 template<size_t N, typename IndependentUnit, typename DependentUnit>
-std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -425,19 +419,15 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream(
 
 // Method for initializing the object from an input stream
 template<size_t N, typename IndependentUnit, typename DependentUnit>
-void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
-                                         std::istream& is, const std::string& )
+void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Set the lower boundary of the distribution
   if( !distribution_data.empty() )
   {
     this->extractValue( distribution_data.front(),
                         d_min_indep_limit,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -449,7 +439,7 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
   {
     this->extractValue( distribution_data.front(),
                         d_max_indep_limit,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -461,7 +451,7 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
   {
     this->extractValue( distribution_data.front(),
                         d_multiplier,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -475,9 +465,6 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
   this->verifyValidShapeParameters( d_multiplier,
                                     d_min_indep_limit,
                                     d_max_indep_limit );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 
   // Initialize the distribution
   this->initializeDistribution();
@@ -516,7 +503,7 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromPropertyTr
     d_min_indep_limit = ThisType::getDefaultLowerLimit<IndepQuantity>();
     d_max_indep_limit = ThisType::getDefaultUpperLimit<IndepQuantity>();
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;

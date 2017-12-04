@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
@@ -21,7 +22,8 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareExponentialDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareExponentialDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
+                                         private OneDDistributionPropertyTreeConverter<UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
 {
   // Typedef for base type
   typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -124,12 +126,6 @@ public:
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
 
-  //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is, const std::string& delims ) override;
-
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
   //! Method for converting the type to a property tree
   Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
 
@@ -155,11 +151,10 @@ protected:
   UnitAwareExponentialDistribution( const UnitAwareExponentialDistribution<void,void>& unitless_dist_instance, int );
 
   //! Return the distribution type name
-  std::string getDistributionTypeName( const bool verbose_name,
-                                       const bool lowercase ) const override;
+  std::string getTypeNameImpl( const bool verbose_name ) const override;
 
   //! Test if the dependent variable can be zero within the indep bounds
-  bool canDepVarBeZeroInIndepBounds() const;
+  bool canDepVarBeZeroInIndepBounds() const override;
 
   //! Get the default constant multiplier
   template<typename InputDepQuantity>
@@ -185,18 +180,6 @@ private:
 
   // Initialize the distribution
   void initialize();
-
-  // Extract a shape parameter from a node
-  template<typename QuantityType>
-  static void extractShapeParameterFromNode(
-                             const Utility::PropertyTree& shape_parameter_data,
-                             QuantityType& shape_parameter );
-
-  // Extract a shape parameter
-  template<typename QuantityType>
-  static void extractShapeParameter(
-                                  const Utility::Variant& shape_parameter_data,
-                                  QuantityType& shape_parameter );
 
   // Verify that the shape parameters are valid
   static void verifyValidShapeParameters(

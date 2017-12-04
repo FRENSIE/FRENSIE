@@ -414,16 +414,10 @@ std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::typeNa
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -447,26 +441,22 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toStream( std
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
-                                                           std::istream& is,
-                                                           const std::string& )
+void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-  
   // Verify that the correct amount of distribution data is present
   TEST_FOR_EXCEPTION( distribution_data.size() < 2,
                       Utility::StringConversionException,
-                      "The discrete distribution cannot be constructed "
-                      "because the string representation is not valid!" );
+                      "The " << this->getTypeName( true, true ) <<
+                      " cannot be constructed because the string "
+                      "representation is not valid!" );
 
   // Extract the independent values
   std::vector<double> independent_values;
 
   this->extractArray( distribution_data.front(),
                       independent_values,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -475,7 +465,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
 
   this->extractArray( distribution_data.front(),
                       dependent_values,
-                      this->getDistributionTypeName( true, true ) );
+                      this->getTypeName( true, true ) );
 
   distribution_data.pop_front();
 
@@ -486,7 +476,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
   {
     this->extractValue( distribution_data.front(),
                         cdf_specified,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -495,9 +485,6 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream(
   this->verifyValidValues( independent_values, dependent_values, cdf_specified );        
 
   this->initializeDistribution( independent_values, dependent_values, cdf_specified );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for converting the type to a property tree
@@ -536,7 +523,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyT
     std::vector<double> independent_values, dependent_values;
     bool cdf_specified = false;
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
     
     typename BaseType::DataExtractorMap data_extractors;
 

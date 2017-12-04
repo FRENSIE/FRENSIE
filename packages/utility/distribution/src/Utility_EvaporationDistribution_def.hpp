@@ -346,16 +346,11 @@ std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::typ
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
+std::string UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
                                                    const bool verbose_name,
                                                    const bool lowercase ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -378,18 +373,15 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::toStream( 
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
+void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Set the incident energy
   if( !distribution_data.empty() )
   {
     this->extractValue( distribution_data.front(),
                         d_incident_energy,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -401,7 +393,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   {
     this->extractValue( distribution_data.front(),
                         d_nuclear_temperature,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -413,7 +405,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   {
     this->extractValue( distribution_data.front(),
                         d_restriction_energy,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -425,7 +417,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
   {
     this->extractValue( distribution_data.front(),
                         d_multiplier,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
     
     distribution_data.pop_front();
   }
@@ -437,9 +429,6 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
                                     d_nuclear_temperature,
                                     d_restriction_energy,
                                     d_multiplier );
-
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
@@ -484,7 +473,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromProper
     Utility::setQuantity( d_multiplier,
                           ThisType::getDefaultConstantMultiplier() );
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;    

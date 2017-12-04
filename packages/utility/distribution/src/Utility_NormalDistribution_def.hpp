@@ -347,16 +347,10 @@ std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::typeName
 
 // Return the distribution type name
 template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getDistributionTypeName(
-                                                   const bool verbose_name,
-                                                   const bool lowercase ) const
+std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
+                                                const bool verbose_name ) const
 {
-  std::string name = this->typeName( verbose_name, false, " " );
-
-  if( lowercase )
-    boost::algorithm::to_lower( name );
-
-  return name;
+  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -380,18 +374,15 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::toStream( std::
 
 // Method for initializing the object from an input stream
 template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is, const std::string& )
+void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
+                                               VariantList& distribution_data )
 {
-  VariantList distribution_data;
-
-  this->fromStreamImpl( is, distribution_data );
-
   // Set the mean
   if( !distribution_data.empty() )
   {
     this->extractValue( distribution_data.front(),
                         d_mean,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -403,7 +394,7 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   {
     this->extractValue( distribution_data.front(),
                         d_standard_deviation,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -418,7 +409,7 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   {
     this->extractValue( distribution_data.front(),
                         d_min_independent_value,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -430,7 +421,7 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   {
     this->extractValue( distribution_data.front(),
                         d_max_independent_value,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -442,7 +433,7 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
   {
     this->extractValue( distribution_data.front(),
                         d_constant_multiplier,
-                        this->getDistributionTypeName( true, true ) );
+                        this->getTypeName( true, true ) );
 
     distribution_data.pop_front();
   }
@@ -455,9 +446,6 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
                                     d_standard_deviation,
                                     d_min_independent_value,
                                     d_max_independent_value );
-  
-  // Check if there is any superfluous data
-  this->checkForUnusedStreamData( distribution_data );
 }
 
 // Method for converting the type to a property tree
@@ -497,7 +485,7 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromPropertyTre
     d_min_independent_value = ThisType::getDefaultLowerLimit<IndepQuantity>();
     d_max_independent_value = ThisType::getDefaultUpperLimit<IndepQuantity>();
 
-    std::string type_name = this->getDistributionTypeName( true, true );
+    std::string type_name = this->getTypeName( true, true );
 
     // Create the data extractor map
     typename BaseType::DataExtractorMap data_extractors;
